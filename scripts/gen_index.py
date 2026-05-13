@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-自动扫描 _experiments/ 目录下的所有 HTML 文件，生成 index.html。
+自动扫描当前目录下的所有 HTML 文件，生成 index.html。
 每个 HTML 文件需要包含 <!-- index: title, date, description --> 注释头。
 """
 import os
@@ -9,9 +9,10 @@ import html
 from pathlib import Path
 from datetime import datetime
 
-EXPERIMENTS_DIR = Path("_experiments")
+EXPERIMENTS_DIR = Path(".")
 OUTPUT_FILE = Path("index.html")
-SKIP_FILES = {"index.html", "gen_index.py"}
+SKIP_FILES = {"index.html", "gen_index.py", ".nojekyll", "README.md"}
+SKIP_DIRS = {".git", ".github", "scripts", "node_modules"}
 
 
 def parse_html_metadata(filepath: Path) -> dict:
