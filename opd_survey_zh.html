@@ -1,0 +1,1079 @@
+<!-- index: AwesomeOPD 深度中文解析 | 2026-04-29 | 76篇OPD论文全景图谱，覆盖10大分类 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AwesomeOPD 深度解析 — On-Policy Distillation 综述</title>
+<style>
+:root {
+  --bg: #0f1117; --card: #1a1d27; --card2: #222636; --border: #2e3348;
+  --text: #e4e6f0; --text2: #a0a4b8; --accent: #6c8cff; --accent2: #48dbfb;
+  --green: #26de81; --orange: #fd9644; --pink: #fc5c65; --purple: #a55eea;
+  --yellow: #fed330; --cyan: #0fb9b1; --tag-survey: #4E6813; --tag-white: #BFA2DB;
+  --tag-black: #845C40; --tag-opsd: #A259FF; --tag-iter: #50C878; --tag-rl: #9B59B6;
+  --tag-reason: #FF69B4; --tag-mm: #2ECC71; --tag-agent: #1F4CAD;
+  --tag-spec: #D89F7B; --tag-fw: #FA5A4C; --tag-prod: #ffc884;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif; line-height:1.7; }
+a { color: var(--accent); text-decoration:none; }
+a:hover { text-decoration: underline; }
+code { background: var(--card2); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+
+/* Nav */
+.nav { position: fixed; top:0; left:0; width:220px; height:100vh; background: var(--card); border-right:1px solid var(--border); padding:20px 12px; overflow-y:auto; z-index:100; }
+.nav h2 { font-size:14px; color: var(--accent); margin-bottom:12px; letter-spacing:1px; }
+.nav a { display:block; padding:6px 10px; margin:2px 0; border-radius:6px; font-size:13px; color: var(--text2); transition: all .2s; }
+.nav a:hover, .nav a.active { background: var(--accent); color: #fff; text-decoration:none; }
+
+/* Main */
+.main { margin-left:220px; padding:30px 40px 60px; }
+.hero { text-align:center; padding:50px 20px 40px; }
+.hero h1 { font-size:36px; background: linear-gradient(135deg, var(--accent), var(--accent2), var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:10px; }
+.hero .subtitle { font-size:16px; color: var(--text2); max-width:700px; margin:0 auto 20px; }
+.hero .meta { font-size:13px; color: var(--text2); }
+
+/* Badge bar */
+.badge-bar { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0 10px; }
+.badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; color:#fff; }
+
+/* TLDR */
+.tldr { background: var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin:24px 0; }
+.tldr h3 { font-size:15px; color: var(--accent2); margin-bottom:8px; }
+.tldr p { font-size:14px; color: var(--text2); }
+
+/* Section */
+.section { margin:40px 0; }
+.section h2 { font-size:22px; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.section h2 .icon { font-size:24px; }
+.section .desc { font-size:14px; color: var(--text2); margin-bottom:16px; max-width:900px; }
+
+/* Paper card */
+.paper-card { background: var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin:10px 0; transition: border-color .2s; }
+.paper-card:hover { border-color: var(--accent); }
+.paper-card .title { font-size:15px; font-weight:600; margin-bottom:4px; }
+.paper-card .title a { color: var(--text); }
+.paper-card .title a:hover { color: var(--accent); }
+.paper-card .meta-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:12px; color: var(--text2); margin:6px 0; }
+.paper-card .tag { padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; }
+.paper-card .notes { font-size:13px; color: var(--text2); margin-top:6px; line-height:1.6; }
+.paper-card .notes strong { color: var(--text); }
+
+/* Tech detail toggle */
+.tech-toggle { background:var(--card2); border:none; color:var(--accent2); padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px; margin:8px 0; display:inline-block; }
+.tech-toggle:hover { background: var(--border); }
+.tech-detail { display:none; background:var(--card2); border-radius:8px; padding:16px; margin:8px 0 12px; overflow-x:auto; }
+.tech-detail.show { display:block; }
+.tech-detail table { width:100%; border-collapse:collapse; font-size:12px; }
+.tech-detail th { text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); color:var(--accent2); font-weight:600; }
+.tech-detail td { padding:5px 10px; border-bottom:1px solid var(--border); color:var(--text2); }
+
+/* Definition box */
+.def-box { background: linear-gradient(135deg, rgba(108,140,255,0.1), rgba(72,219,251,0.05)); border:1px solid var(--accent); border-radius:12px; padding:20px 24px; margin:20px 0; }
+.def-box h3 { color: var(--accent); margin-bottom:10px; }
+.def-box ul { padding-left:20px; }
+.def-box li { margin:6px 0; font-size:14px; color: var(--text2); }
+.def-box code { color: var(--accent2); }
+
+/* Stats grid */
+.stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:12px; margin:20px 0; }
+.stat-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; }
+.stat-card .num { font-size:28px; font-weight:700; }
+.stat-card .label { font-size:12px; color:var(--text2); margin-top:2px; }
+
+/* Reading list */
+.reading-list { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin:20px 0; }
+.reading-list ol { padding-left:20px; }
+.reading-list li { margin:8px 0; font-size:14px; color:var(--text2); }
+.reading-list li strong { color:var(--text); }
+
+/* Responsive */
+@media (max-width:900px) {
+  .nav { display:none; }
+  .main { margin-left:0; padding:20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <h2>OPD 综述导航</h2>
+  <a href="#overview">概览 & 定义</a>
+  <a href="#stats">统计速览</a>
+  <a href="#surveys">综述 & 基础</a>
+  <a href="#whitebox">白盒 OPD</a>
+  <a href="#blackbox">黑盒 OPD</a>
+  <a href="#opsd">自蒸馏 OPSD</a>
+  <a href="#iterative">迭代自举</a>
+  <a href="#opdrl">OPD-RL 混合</a>
+  <a href="#reasoning">推理 OPD</a>
+  <a href="#multimodal">多模态 OPD</a>
+  <a href="#agent">Agent & 具身</a>
+  <a href="#specdec">推测解码蒸馏</a>
+  <a href="#frameworks">框架 & 工具</a>
+  <a href="#industrial">工业落地</a>
+  <a href="#reading">推荐阅读</a>
+  <a href="#tex-status">TeX 源码</a>
+</nav>
+
+<div class="main">
+
+<div class="hero">
+  <h1>AwesomeOPD 深度中文解析</h1>
+  <div class="subtitle">On-Policy Distillation（在策略蒸馏）—— 从理论到工业落地的全景图谱。<br>基于 <a href="https://github.com/thinkwee/AwesomeOPD">thinkwee/AwesomeOPD</a> 仓库深度解析，覆盖 76 篇论文、10 大研究方向。</div>
+  <div class="meta">仓库 74 Stars &nbsp;|&nbsp; 更新于 2026-04-28 &nbsp;|&nbsp; 解析日期 2026-04-29</div>
+  <div class="badge-bar">
+    <span class="badge" style="background:var(--tag-survey)">综述 7</span>
+    <span class="badge" style="background:var(--tag-white)">白盒 OPD 17</span>
+    <span class="badge" style="background:var(--tag-black)">黑盒 OPD 3</span>
+    <span class="badge" style="background:var(--tag-opsd)">OPSD 9</span>
+    <span class="badge" style="background:var(--tag-iter)">迭代自举 2</span>
+    <span class="badge" style="background:var(--tag-rl)">OPD-RL 混合 17</span>
+    <span class="badge" style="background:var(--tag-reason)">推理 3</span>
+    <span class="badge" style="background:var(--tag-mm)">多模态 5</span>
+    <span class="badge" style="background:var(--tag-agent)">Agent & 具身 5</span>
+    <span class="badge" style="background:var(--tag-spec)">推测解码 11</span>
+    <span class="badge" style="background:var(--tag-fw)">框架 11</span>
+    <span class="badge" style="background:var(--tag-prod)">工业报告 8</span>
+  </div>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section" id="overview">
+  <h2><span class="icon">🎯</span> 核心定义：什么是 OPD？</h2>
+  <div class="def-box">
+    <h3>On-Policy Distillation（在策略蒸馏）= C1 + C2</h3>
+    <ul>
+      <li><strong>C1（在策略采样）：</strong>学生在训练过程中采样自己的轨迹 <code>y ~ π_student(·|x)</code>，而非在固定的教师数据上训练。</li>
+      <li><strong>C2（教师监督）：</strong>教师在这些<strong>学生生成的样本</strong>上提供逐 token / 序列级别的监督信号（logits、奖励、评分等）。</li>
+      <li><strong>OPSD（在策略自蒸馏）：</strong>特殊情况——教师和学生是<strong>同一个模型</strong>，但教师拥有特权上下文（已验证的推理链 / 答案 / "请简洁"前缀 / 更长上下文等），或教师是更早的 checkpoint。</li>
+    </ul>
+    <h3 style="margin-top:16px;">四维设计轴</h3>
+    <ul>
+      <li><strong>教师来源：</strong>外部模型 · 同模型+特权上下文 · 早期 checkpoint · 多教师 · 判别器</li>
+      <li><strong>监督信号：</strong>logits / top-k / 序列奖励 / 口头评分 / 判别器 / 验证器 / 特征</li>
+      <li><strong>rollout 消耗方式：</strong>全部 / 筛选 / 截断 / 替换 / 作为 PG 样本</li>
+      <li><strong>pipeline 位置：</strong>冷启动 / 中期 / RL 替代 / RL 内部 / 跨阶段 / 压缩 / 持续锚点</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== STATS ===== -->
+<div class="section" id="stats">
+  <h2><span class="icon">📊</span> 统计速览</h2>
+  <div class="stats">
+    <div class="stat-card"><div class="num" style="color:var(--accent)">76</div><div class="label">收录论文总数</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--green)">75</div><div class="label">已拉取 TeX 源码</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--orange)">10</div><div class="label">研究方向分类</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--purple)">8</div><div class="label">工业落地报告</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--pink)">11</div><div class="label">开源框架</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--cyan)">50+</div><div class="label">方法被收录</div></div>
+  </div>
+  <div class="tldr">
+    <h3>TLDR — 一句话总结 OPD 为什么重要</h3>
+    <p>OPD 让小模型（学生）在自己生成的数据上获得大模型（教师）的指导，比 SFT 更高效（避免了分布偏移），比 RL 更稳定（教师的 logit 信号比稀疏奖励更密集）。Qwen3 报告 OPD 仅用 RL 十分之一的成本达到了同等性能；DeepSeek-V4 用多教师 OPD 替换了 RL 统一阶段。</p>
+  </div>
+</div>
+
+<!-- ===== SURVEYS ===== -->
+<div class="section" id="surveys">
+  <h2><span class="icon">📚</span> 综述 & 基础论文（7 篇）</h2>
+  <div class="desc">元参考和奠基性工作，为理解 OPD 全景提供理论根基。GKD 和 MiniLLM 是"命名 OPD"的两篇开创性论文。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2306.13649">GKD: On-Policy Distillation of Language Models — Learning from Self-Generated Mistakes</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">ICLR 2024</span>
+      <span>Google DeepMind</span><span>2023.06</span>
+    </div>
+    <div class="notes">
+      <strong>开创性论文</strong>——首次正式命名"On-Policy Distillation"的概念。使用广义 JSD（可配置 FKL/RKL），在学生和教师数据之间通过 λ 参数混合。核心洞察：让学生在自己犯错的分布上接受教师指导，比在教师数据上训练更高效。已在 <a href="https://github.com/huggingface/trl">TRL</a> 中实现为 <code>GKDTrainer</code>。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2306.08543">MiniLLM: Knowledge Distillation of Large Language Models</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">ICLR 2024</span>
+      <span>Microsoft / Tsinghua</span><span>2023.06</span>
+    </div>
+    <div class="notes">
+      与 GKD 同期的另一篇开创性工作。使用 Reverse KL + policy gradient 进行序列级蒸馏。Mode-seeking 特性使小模型更集中学习教师的众数，避免"平均化"问题。比 GKD 早几天发布。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines Lab — On-Policy Distillation Blog</a></div>
+    <div class="meta-row">
+      <span>Thinking Machines Lab (Kevin Lu et al.)</span><span>2025.10</span>
+      <span><a href="https://github.com/thinking-machines-lab/tinker-cookbook">tinker-cookbook</a></span>
+    </div>
+    <div class="notes">
+      <strong>最清晰的 OPD 入门教程</strong>——"将 RL 训练器中的 KL 参考模型换成更强的教师"即可，仅需一行代码修改。在约 1/10 RL 成本下复现了 Qwen3 的结果。配套 <code>tinker-cookbook</code> 提供可复现的实现。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.00626">A Survey of On-Policy Distillation for LLMs</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">综述</span>
+      <span>Tencent</span><span>2026.04</span>
+    </div>
+    <div class="notes">
+      收录 50+ 方法的系统性综述，适合作为参考索引使用。涵盖了 OPD 的各种变体、损失函数选择、数据策略等。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.13016">Rethinking On-Policy Distillation: Phenomenology, Mechanism & Recipe</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">THUNLP</span>
+      <span>Tsinghua</span><span>2026.04</span>
+    </div>
+    <div class="notes">
+      <strong>"OPD 理论"</strong>——识别出两个成功条件：(1) 教师和学生思维模式兼容 (2) 教师确实拥有学生不具备的新能力。提出实用 Recipe：<strong>off-policy 冷启动 + 教师对齐的 prompt 筛选</strong>。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.25562">Revisiting OPD: Failure Modes & Simple Fixes</a></div>
+    <div class="meta-row"><span>CASIA</span><span>2026.03</span></div>
+    <div class="notes">
+      <strong>排错指南</strong>——诊断了三种失败模式：不平衡的单 token 信号、不可靠的前缀引导、tokenizer 不匹配。修复方案：截断 Reverse KL + top-p 采样 + 特殊 token 掩码。读这篇能省一周调试时间。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.13010">Lightning OPD: Efficient Post-Training with Offline OPD</a></div>
+    <div class="meta-row"><span>Wu, Han, Cai</span><span>2026.04</span></div>
+    <div class="notes">
+      提出"离线 OPD"——预计算教师 log-probs，消除训练时需要在线教师服务器的需求。引入"教师一致性"概念：SFT 和 OPD 必须使用同一教师，否则梯度有偏。
+    </div>
+  </div>
+</div>
+
+<!-- ===== WHITE-BOX ===== -->
+<div class="section" id="whitebox">
+  <h2><span class="icon">🔬</span> 白盒 OPD — 使用教师 Logits（17 篇）</h2>
+  <div class="desc">白盒方法利用<strong>教师的 logits/log-probabilities</strong>在学生生成的 rollout 上进行逐 token 级别的监督。这是最"正统"的 OPD 形式。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2402.03898">DistiLLM: Streamlining Distillation via Skewed KL</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-white)">ICML 2024</span>
+      <span>KAIST / Microsoft</span><span>2024.02</span>
+      <span><a href="https://github.com/jongwooko/distillm">Code</a></span>
+    </div>
+    <div class="notes">
+      使用 Skewed-KL（FKL 和 RKL 的混合），通过参数 α 在前向和反向 KL 之间插值。配合重要性重加权的学生样本，实现自适应的 off→on-policy 过渡。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2503.07067">DistiLLM-2: Contrastive On-Policy Distillation</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-white)">ICML 2025 Oral</span>
+      <span>KAIST / Microsoft</span><span>2025.03</span>
+      <span><a href="https://github.com/jongwooko/distillm-2">Code</a></span>
+    </div>
+    <div class="notes">
+      在教师数据上用 Skew-FKL、学生数据上用 Skew-RKL 的<strong>非对称损失</strong>设计。ICML 2025 Oral，是 DistiLLM 的显著升级版。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.12125">G-OPD: Generalized On-Policy Distillation</a></div>
+    <div class="meta-row">
+      <span>RUC / Tencent</span><span>2026.02</span>
+      <span><a href="https://github.com/RUCBM/G-OPD">Code</a></span>
+    </div>
+    <div class="notes">
+      将 OPD 泛化为<strong>KL 约束的 RL</strong>，允许奖励缩放 >1 来"超越教师"。<strong>关键理论贡献</strong>：OPD = KL-constrained RL with reward extrapolation。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.11137">REOPOLD: Relaxed On-Policy Distillation</a></div>
+    <div class="meta-row"><span>KAIST / Microsoft</span><span>2026.03</span></div>
+    <div class="notes">
+      将 OPD 视为带教师-学生 log-ratio 奖励的策略优化。使用混合奖励裁剪 + 基于熵的动态采样。"Relaxed"体现在放松了严格 KL 约束。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.10688">SCOPE: Signal-Calibrated On-Policy Distillation</a></div>
+    <div class="meta-row">
+      <span>USTC / Meituan / Fudan</span><span>2026.04</span>
+      <span><a href="https://github.com/machine981/SCOPE">Code</a></span>
+    </div>
+    <div class="notes">
+      双路径自适应加权：在错误 rollout 上用教师-PPL 加权的 KL；在正确 rollout 上用学生-PPL 加权的 MLE。验证器路由机制。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.13260">TSD-KD: Token-Selective Dual Knowledge Distillation</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-white)">ICLR 2026</span>
+      <span>Korea Univ.</span><span>2026.03</span>
+    </div>
+    <div class="notes">
+      混合方法：学生提议 + 教师重排的间接路径 + 选择性 logit KD 的直接路径。在 token 级别进行筛选。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.20244">HPD: Hybrid Policy Distillation</a></div>
+    <div class="meta-row">
+      <span><a href="https://github.com/zwhong714/Hybrid-Policy-Distillation">Code</a></span><span>2026.04</span>
+    </div>
+    <div class="notes">
+      将 KD 统一为 token 级别重加权似然，同时覆盖 FKL + RKL。轻量级近似在策略采样保持训练效率。后端支持 LlamaFactory 和 verl。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2410.11325">Speculative KD: Interleaved Propose-and-Correct</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-white)">ICLR 2025</span>
+      <span>UCSB / Google</span><span>2024.10</span>
+    </div>
+    <div class="notes">
+      交织式提议-修正机制（gated KL），学生提议、教师修正。通过交错采样弥合师生差距。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2504.11426">DSKDv2: Cross-Tokenizer Distillation</a></div>
+    <div class="meta-row">
+      <span>BJTU</span><span>2025.04</span>
+      <span><a href="https://github.com/songmzhang/DSKDv2">Code</a></span>
+    </div>
+    <div class="notes">
+      在对齐的双重空间中计算 KL，支持跨词汇表蒸馏。同时支持 on/off-policy 模式。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2601.07155">Veto: Stable On-Policy Distillation</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-white)">ACL 2026 Findings</span>
+      <span>SNU</span><span>2026.01</span>
+    </div>
+    <div class="notes">
+      Logit 空间的几何桥接 + 自适应梯度否决机制（Adaptive Target Reformulation），提升 OPD 训练稳定性。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.15260">Fast OPD: Prefix-Truncated Distillation</a></div>
+    <div class="meta-row"><span>Industrial</span><span>2026.02</span></div>
+    <div class="notes">
+      通过推理前缀截断减少 FLOPs，实现 2× 到 47× 加速。直觉：推理链的前缀大多是"模板"，教师和学生的差异集中在后半段。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.07079">Entropy-Aware OPD</a></div>
+    <div class="meta-row"><span>KAIST / IBM</span><span>2026.03</span></div>
+    <div class="notes">
+      根据教师熵动态切换：教师熵高 → 用 FKL（覆盖多模式）；教师熵低 → 用 RKL（集中学习）。简单但有效。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.14084">TIP: Token Importance for On-Policy Distillation</a></div>
+    <div class="meta-row"><span>Meta / LinkedIn</span><span>2026.04</span></div>
+    <div class="notes">
+      仅对 top-50% 高熵学生 token 施加 OPD 损失。节省约 47% 内存。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.11178">PACED: Frontier Curriculum Self-Distillation</a></div>
+    <div class="meta-row"><span>LinkedIn</span><span>2026.03</span></div>
+    <div class="notes">
+      在学生能力边界构建前沿课程，难度加权 w(p)=p(1−p)。自蒸馏风格（特权上下文/早期 checkpoint）。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2510.07842">AdaSwitch: Adaptive On/Off-Policy Switching</a></div>
+    <div class="meta-row"><span>RUC / Baidu</span><span>2025.10</span></div>
+    <div class="notes">
+      基于散度阈值动态在教师数据和学生 rollout 之间切换。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2509.22921">Constrained OPD (CMDP)</a></div>
+    <div class="meta-row"><span>Huawei Noah's Ark</span><span>2025.09</span></div>
+    <div class="notes">
+      将 KL 约束建模为约束马尔可夫决策过程（CMDP），使用硬 KL 约束而非软惩罚。处于 OPD-RL 边界。
+    </div>
+  </div>
+</div>
+
+<!-- ===== BLACK-BOX ===== -->
+<div class="section" id="blackbox">
+  <h2><span class="icon">🎭</span> 黑盒 OPD — 无教师 Logits（3 篇）</h2>
+  <div class="desc">教师是 API-only（无 logits），OPD 使用标量奖励、口头评分、偏好或对抗判别器——全部基于<strong>学生 rollout</strong>评估。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2511.10643">GAD: Generative Adversarial Distillation — Black-Box OPD</a></div>
+    <div class="meta-row"><span>Microsoft Research</span><span>2025.11</span></div>
+    <div class="notes">
+      <strong>黑盒 OPD 种子论文</strong>——训练判别器区分学生输出和教师（如 GPT-5）响应，minimax 博弯使判别器共演化为在策略奖励模型。Qwen2.5-14B 学生达到接近 GPT-5-Chat 的 LMSYS 评分。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2601.21968">OVD: On-Policy Verbal Distillation</a></div>
+    <div class="meta-row"><span>HKU / Huawei</span><span>2026.01</span></div>
+    <div class="notes">
+      用口头评分（0-9分）替代逐 token logit 匹配。比基线高 +25.7%。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2509.25100">ORPO-Distill</a></div>
+    <div class="meta-row"><span>Industrial</span><span>2025.09</span></div>
+    <div class="notes">
+      "混合策略"：学生生成的输出作为负样本，教师输出作为正样本，使用 ORPO 对比损失。NeurIPS 2025 Workshop。
+    </div>
+  </div>
+</div>
+
+<!-- ===== OPSD ===== -->
+<div class="section" id="opsd">
+  <h2><span class="icon">♻️</span> 自蒸馏 OPSD — 特权上下文（9 篇）</h2>
+  <div class="desc"><strong>同一个模型 = 教师 = 学生</strong>，但教师拥有特权上下文（已验证推理链、答案、前缀、更长上下文等）。差异来自<strong>条件</strong>而非权重。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2601.18734">OPSD: Self-Distilled Reasoner</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-opsd)">Canonical OPSD</span>
+      <span>UCLA / Meta FAIR</span><span>2026.01</span>
+      <span><a href="https://github.com/siyan-zhao/OPSD">Code</a></span>
+    </div>
+    <div class="notes">
+      <strong>OPSD 的定义性论文</strong>——用已验证推理链作为特权上下文，逐 token RKL + point-wise 裁剪。在 1×8 rollout、1024 长度下匹配 GRPO（8×16 / 16k）的效果。基于 TRL 的 GOLD trainer 构建。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.05433">CRISP / OPSDC: Reasoning Compression via Self-Distillation</a></div>
+    <div class="meta-row"><span>LinkedIn</span><span>2026.03</span></div>
+    <div class="notes">
+      用"请简洁"指令前缀作为特权上下文。压缩长 CoT 时不产生熵坍缩（不像 RL+长度惩罚那样）。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2601.19897">SDFT-Continual: Self-Distillation for Continual Learning</a></div>
+    <div class="meta-row"><span>MIT / ETH</span><span>2026.01</span></div>
+    <div class="notes">
+      Demo 条件化的同模型自蒸馏，实现持续学习而不遗忘。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.12275">OPCD: On-Policy Context Distillation</a></div>
+    <div class="meta-row"><span>Microsoft Research</span><span>2026.02</span></div>
+    <div class="notes">
+      上下文内知识增强的同模型 → 移除上下文后的知识内化。学生在自己的 rollout 上用 RKL 学习教师（带知识上下文的同模型）。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.16856">OEL: Online Experiential Learning</a></div>
+    <div class="meta-row"><span>Microsoft Research</span><span>2026.03</span></div>
+    <div class="notes">
+      同模型 + 交互式游戏环境。在交互轨迹上进行自蒸馏，面向游戏/规划领域。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.06019">MTP Self-Distill: Multi-Token Prediction</a></div>
+    <div class="meta-row"><span>UMD / LLNL</span><span>2026.02</span></div>
+    <div class="notes">
+      多 token 预测同模型的自蒸馏。作者声明的 on-policy 方法。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.01193">Apple SSD: Embarrassingly Simple Self-Distillation</a></div>
+    <div class="meta-row"><span>Apple MLR</span><span>2026.04</span></div>
+    <div class="notes">
+      "极其简单"——用 temperature/截断采样生成数据，然后 SFT。退化的 OPSD：特权上下文 = 不同的解码配置。接近 STaR 风格的自举。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.20574">GATES: Self-Distillation under Privileged Context</a></div>
+    <div class="meta-row"><span>UMD</span><span>2026.02</span></div>
+    <div class="notes">
+      文档条件化的同模型教师，RKL 由教师共识门控。作者的消融实验显示 off-policy 轨迹级蒸馏是主要增益来源，on-policy 部分仅有"适度改进"。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.17535">OPSDL: Long-Context Self-Distillation</a></div>
+    <div class="meta-row"><span>Baidu</span><span>2026.04</span></div>
+    <div class="notes">
+      短上下文同模型教师蒸馏给长上下文学生。逐 token Point-wise RKL。
+    </div>
+  </div>
+</div>
+
+<!-- ===== ITERATIVE ===== -->
+<div class="section" id="iterative">
+  <h2><span class="icon">🔁</span> 迭代自举（2 篇）</h2>
+  <div class="desc">同模型作为<strong>冻结的早期 checkpoint</strong> 教师。教师 snapshot 冻结一轮 → 学生训练 → snapshot 前滚。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2401.01335">SPIN: Self-Play Fine-Tuning</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-iter)">ICML 2024</span>
+      <span>UCLA</span><span>2024.01</span>
+      <span><a href="https://github.com/uclaml/SPIN">Code</a></span>
+    </div>
+    <div class="notes">
+      学生采样（C1✓），但监督是序列级 DPO 偏好（对比前一个冻结 checkpoint），不是逐 token logit KL。更准确地说是"迭代 on-policy DPO"。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2501.04519">rStar / rStar-Math / rStar2-Agent</a></div>
+    <div class="meta-row"><span>Microsoft Research</span><span>2025.01</span></div>
+    <div class="notes">
+      MCTS 筛选的学生样本 + SFT。教师信号是步骤级 PPM/判别器评分，不是逐 token logit KL。迭代自改进而非经典 OPD。
+    </div>
+  </div>
+</div>
+
+<!-- ===== OPD-RL ===== -->
+<div class="section" id="opdrl">
+  <h2><span class="icon">🤝</span> OPD-RL 混合 — RL 内部的 OPD（17 篇）</h2>
+  <div class="desc">将 OPD 与 RLVR/GRPO/PPO/DPO 融合。教师 logits 变为 RL 目标内的密集奖励塑形或信赖域锚点。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2601.20802">SDPO: Self-Distillation Policy Optimization via RL</a></div>
+    <div class="meta-row"><span>ETH / MIT</span><span>2026.01</span></div>
+    <div class="notes">
+      学生采样 rollout → 获取 token 化反馈 → 反馈条件化的自教师重评估 → 将修正后的 next-token 分布蒸馏回策略。面向代码、工具使用、科学推理。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.10165">OpenClaw-RL: GRPO + OPD Unified Trainer</a></div>
+    <div class="meta-row"><span>Gen-Verse</span><span>2026.03</span></div>
+    <div class="notes">
+      判别模型提取后知之明提示，教师 token-logprob 差距 = 方向优势。在单一 trainer 中统一二值 RL 和 OPD。覆盖终端/GUI/SWE/工具调用。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2503.02832">AlignDistil: RLHF-Equivalent KD</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-rl)">ACL 2025</span>
+      <span>BJTU / Tencent</span><span>2025.03</span>
+    </div>
+    <div class="notes">
+      将 DPO 重新框架化为策略蒸馏。DPO 模型 + ref-model logits 的组合作为教师信号。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2504.14945">LUFFY: Mixed-Policy GRPO with Off-Policy Traces</a></div>
+    <div class="meta-row"><span>Westlake U.</span><span>2025.04</span></div>
+    <div class="notes">
+      "在离策略指导下学习推理"。一半 on-policy 学生 rollout + 一半离策略 R1 trace 混入 GRPO。混合策略 OPD。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.20733">NPO / AutoNPO: Learn from Your Near-Future Self</a></div>
+    <div class="meta-row"><span>IIE CAS / UCAS / JD.COM</span><span>2026.04</span></div>
+    <div class="notes">
+      <strong>"向未来的自己学习"</strong>——从同一训练运行的更后 checkpoint 选取验证器过滤的轨迹作为教师。选"足够强"（Q > 当前策略）又"足够近"（V 低）的教师。AutoNPO 自适应调度干预时机。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.22495">RLAD: Reinforcement-Aware KD</a></div>
+    <div class="meta-row"><span>AWS</span><span>2026.02</span></div>
+    <div class="notes">
+      PPO/GRPO 的比率锚定到教师-旧策略混合体。信赖域似然比设计。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2506.02208">KDRL: Joint KD + RL</a></div>
+    <div class="meta-row"><span>HIT / Huawei</span><span>2025.06</span></div>
+    <div class="notes">
+      统一的 Reverse-KL + GRPO 规则奖励目标。外部教师（Skywork-OR1）提供 KD 信号。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.03128">RLSD: Self-Distilled RLVR</a></div>
+    <div class="meta-row"><span>Multi-org</span><span>2026.04</span></div>
+    <div class="notes">
+      RLVR 方向 + 教师证据比率调节幅度。将自蒸馏幅度与 RLVR 方向结合。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.23871">HDPO: Hybrid Distillation PO</a></div>
+    <div class="meta-row"><span>NVIDIA</span><span>2026.03</span></div>
+    <div class="notes">
+      大部分 prompt 用 RL；在"悬崖"prompt 上生成特权 rollout 并自蒸馏。自蒸馏作为 RL 的回退机制。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.12002">SD-Zero: Self-Distillation Zero</a></div>
+    <div class="meta-row"><span>Princeton / Toronto / CMU</span><span>2026.04</span></div>
+    <div class="notes">
+      生成器 + 修订器共享权重；修订器提供密集监督。将二值奖励转化为密集信号。
+    </div>
+  </div>
+</div>
+
+<!-- ===== REASONING ===== -->
+<div class="section" id="reasoning">
+  <h2><span class="icon">🧠</span> 推理 OPD（3 篇独有）</h2>
+  <div class="desc">数学/代码/长 CoT 推理的 OPD 工作。大部分推理相关工作已交叉列在 OPSD、迭代自举、OPD-RL、白盒等类别中。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.13016">THUNLP Rethinking OPD (同综述节)</a></div>
+    <div class="meta-row"><span>Tsinghua THUNLP</span><span>2026.04</span></div>
+    <div class="notes">
+      数学推理上的 OPD Recipe：off-policy 冷启动 + RKL 渐进 top-K 对齐 + 教师新颖性与思维模式兼容性两个成功条件。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2604.07944">OPD for Autonomous Vehicle Motion Planning</a></div>
+    <div class="meta-row"><span>Academic</span><span>2026.04</span></div>
+    <div class="notes">
+      GPT-Driver 框架 + GKD 在学生生成的轨迹上蒸馏。实现 5× 模型大小缩减，用于自动驾驶运动规划。
+    </div>
+  </div>
+</div>
+
+<!-- ===== MULTIMODAL ===== -->
+<div class="section" id="multimodal">
+  <h2><span class="icon">🖼️</span> 多模态 OPD（5 篇）</h2>
+  <div class="desc">VLM、视频、音频、图像等非文本模态的严格 OPD 工作。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2510.14974">π-Flow: Image Generation OPD for Flow Models</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-mm)">ICLR 2026</span>
+      <span>Multi-org</span><span>2025.10</span>
+    </div>
+    <div class="notes">
+      <strong>扩散模型的严格 OPD</strong>——学生沿自身轨迹在每个 timestep 预测策略。L2 模仿蒸馏。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2510.23497">VOLD: LLM→VLM On-Policy Distillation</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-mm)">ICLR 2026</span>
+      <span>INRIA / Goethe Univ.</span><span>2025.10</span>
+    </div>
+    <div class="notes">
+      <strong>VLM OPD 旗舰方案</strong>——冷启动 SFT 对齐 + 统一 RL+KD。从纯文本 LLM 蒸馏到 VLM，使用 GRPO + on-policy KL 蒸馏。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2511.15848">Step-Audio-R1: Audio Reasoning</a></div>
+    <div class="meta-row"><span>StepFun</span><span>2025.11</span></div>
+    <div class="notes">
+      音频推理的迭代自蒸馏 + SFT + PPO/RLVR。仅对音频相关问题进行自蒸馏循环。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.02994">Video-OPD: Temporal Video Grounding</a></div>
+    <div class="meta-row"><span>Industrial</span><span>2026.02</span></div>
+    <div class="notes">
+      LLM 教师 → MLLM 学生，在学生 rollout 上进行逐 token KL 蒸馏。用于时序视频定位。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.24596">X-OPD: Speech LLM Distillation</a></div>
+    <div class="meta-row"><span>Tencent Hunyuan / ZJU</span><span>2026.03</span></div>
+    <div class="notes">
+      跨模态 token 级 KL 蒸馏。从文本 LLM 到语音 LLM 的能力对齐。
+    </div>
+  </div>
+</div>
+
+<!-- ===== AGENT ===== -->
+<div class="section" id="agent">
+  <h2><span class="icon">🤖</span> Agent & 具身 OPD（5 篇）</h2>
+  <div class="desc">学生是<strong>执行动作的 Agent</strong>，教师（或自身）监督这些轨迹。排除纯 RL Agent 和离策略 SFT-on-Teacher 方法。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.10165">OpenClaw-RL (同 OPD-RL 节)</a></div>
+    <div class="meta-row"><span>Gen-Verse</span><span>2026.03</span></div>
+    <div class="notes">
+      终端/GUI/SWE/工具调用多域 Agent。GRPO + OPD 统一训练器，后知之明提示提取 + 二值 RL + 逐 token OPD。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2509.14257">SCoRe: Small Agent Matches 72B Teacher</a></div>
+    <div class="meta-row"><span>Alibaba ModelScope</span><span>2025.09</span></div>
+    <div class="notes">
+      72B 教师纠正学生 rollout 中<strong>最早的错误</strong>，SFT-on-corrections + 短视界 RL。7B 学生匹配 72B 教师。12 个 Agent benchmark。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2503.05833">RPD: Refined Policy Distillation for VLA</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-agent)">IROS 2026</span>
+      <span>TUM / Freiburg</span><span>2025.03</span>
+    </div>
+    <div class="notes">
+      <strong>最干净的 VLA OPD 方案</strong>——教师 VLA 动作 + PPO + 学生 rollout 上的行为克隆。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.26666">VLA-OPD: Bridging Offline SFT & Online RL for VLA</a></div>
+    <div class="meta-row"><span>HKUST Guangzhou</span><span>2026.03</span></div>
+    <div class="notes">
+      使用 Reverse-KL（避免 FKL 熵爆炸 + Hard-CE 坍缩），在学生轨迹上进行密集 token 级监督。替代稀疏 RL 奖励，保留通用先验并缓解灾难性遗忘。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2311.13373">LLM4Teach: Small RL Agent Guided by LLM</a></div>
+    <div class="meta-row"><span>ZJ Lab AMMI</span><span>2023.11</span></div>
+    <div class="notes">
+      <strong>具身 OPD 先驱</strong>——LLM 教师（动作级）+ 蒸馏 + RL 退火。在 OPD 概念流行之前就实现了严格在策略蒸馏。
+    </div>
+  </div>
+</div>
+
+<!-- ===== SPECULATIVE DECODING ===== -->
+<div class="section" id="specdec">
+  <h2><span class="icon">⚡</span> 推测解码蒸馏（11 篇）</h2>
+  <div class="desc">蒸馏<strong>草稿模型（drafter）</strong>使其更好地模拟验证器/目标模型。目标不是学生能力提升，而是<strong>推理加速</strong>。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2503.01840">EAGLE-3: On-Policy Multi-Step TTT</a></div>
+    <div class="meta-row"><span>PKU / Microsoft</span><span>2025.03</span></div>
+    <div class="notes">
+      "Training-Time Test" 在训练中模拟草稿 rollout。自推测（使用目标特征），Smooth-L1（特征）+ CE（token）损失。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2310.07177">Online Speculative Decoding (OSD)</a></div>
+    <div class="meta-row"><span>UCB / NVIDIA</span><span>2023.10</span></div>
+    <div class="notes">
+      <strong>推测解码的 on-policy 经典论文</strong>——在拒绝 token 上进行在线 KD。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2310.08461">DistillSpec: OPD for Speculative Decoding</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-spec)">ICLR 2024</span>
+      <span>Google DeepMind</span><span>2023.10</span>
+    </div>
+    <div class="notes">
+      <strong>"OPD for SD" 的开创性论文</strong>——在草稿样本上选择 FKL/RKL/JSD/TVD。奠定了推测解码蒸馏的理论基础。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2502.16880">CORAL: Cross-Step Representation Alignment</a></div>
+    <div class="meta-row"><span>ACL 2025</span><span>2025.02</span></div>
+    <div class="notes">
+      跨步对齐 + CE。修复草稿训练/推理不匹配问题。自推测 on-policy 多步。
+    </div>
+  </div>
+</div>
+
+<!-- ===== FRAMEWORKS ===== -->
+<div class="section" id="frameworks">
+  <h2><span class="icon">🛠️</span> 框架 & 工具（11 个）</h2>
+  <div class="desc">支持 OPD（训练时学生生成 rollout）的开源框架/库。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/huggingface/trl">TRL — Hugging Face</a></div>
+    <div class="meta-row"><span class="tag" style="background:var(--tag-fw)">最丰富 OPD 集合</span><span>Hugging Face</span></div>
+    <div class="notes">
+      <code>trl/experimental/</code> 下包含 <strong>gkd, gold, minillm, sdft, self_distillation, sdpo, nash_md, xpo, online_dpo, papo, prm</strong>。单一最广泛的 OPD trainer 集合。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/volcengine/verl">verl — ByteDance Seed</a></div>
+    <div class="meta-row"><span class="tag" style="background:var(--tag-fw)">生产就绪</span><span>ByteDance</span></div>
+    <div class="notes">
+      <code>recipe/on_policy_distill/</code> — 最生产就绪的 OPD 方案。Forward KL + 稀疏 top-k 教师 logits。集成 vLLM，支持 FSDP/Megatron/Ray。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/songmzhang/KDFlow">KDFlow — KD-First Framework</a></div>
+    <div class="meta-row"><span>BJTU</span><span>2026.03</span></div>
+    <div class="notes">
+      <strong>KD 优先框架</strong>——SGLang 教师 + FSDP2 学生解耦。传输教师隐藏状态（零拷贝），在学生端重计算 logits 降低通信成本。比同类方案快 1.44-6.36×。原生跨 tokenizer + VLM 支持（Qwen3-VL）。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/THUDM/slime">slime — Tsinghua THUDM</a></div>
+    <div class="meta-row"><span>Tsinghua</span></div>
+    <div class="notes">
+      GLM-4.5/4.6/4.7 背后的 RL 框架。Reverse KL token 级 OPD 作为任意优势估计器的加性惩罚。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/NVIDIA-NeMo/RL">NeMo-RL — NVIDIA</a></div>
+    <div class="meta-row"><span>NVIDIA</span><span>2026.01</span></div>
+    <div class="notes">
+      原生 OPD 支持学生 rollout。FKL/RKL/混合可配置（<code>kl_type</code>）。替代已归档的 NeMo-Aligner。Ray + Megatron + vLLM。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/NovaSky-AI/SkyRL">SkyRL — UC Berkeley NovaSky</a></div>
+    <div class="meta-row"><span>UC Berkeley</span></div>
+    <div class="notes">
+      Reverse KL + 重要性采样。2025 年 11 月新增 OPD 支持（PR #585）。Ray + vLLM/SGLang。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/rllm-org/rllm">rllm — UC Berkeley Sky</a></div>
+    <div class="meta-row"><span>UC Berkeley</span></div>
+    <div class="notes">
+      <code>examples/math_distill/</code>（含 <code>opsd/</code> 自蒸馏）。RKL 优势 = log P_teacher − log P_student。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/alibaba/ROLL">ROLL — Alibaba</a></div>
+    <div class="meta-row"><span>Alibaba</span></div>
+    <div class="notes">
+      一等公民 <code>DistillPipeline</code>，多种散度支持（<code>various_divergence.py</code>），VLM 支持。Megatron 后端。
+    </div>
+  </div>
+</div>
+
+<!-- ===== INDUSTRIAL ===== -->
+<div class="section" id="industrial">
+  <h2><span class="icon">🏭</span> 工业落地报告（8 篇）</h2>
+  <div class="desc">旗舰模型技术报告中公开描述了在 post-training pipeline 中使用<strong>在策略蒸馏</strong>的模型。</div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2505.09388">Qwen3 — Canonical Industrial OPD Recipe</a></div>
+    <div class="meta-row">
+      <span class="tag" style="background:var(--tag-prod)">Canonical</span>
+      <span>Alibaba Qwen</span><span>2025.05</span>
+    </div>
+    <div class="notes">
+      <strong>工业 OPD 的标准范本</strong>——两阶段：(1) off-policy SFT 冷启动（/think 和 /no_think 教师样本）；(2) <strong>on-policy 阶段</strong>——学生生成，教师提供 logit-KL 目标。报告约 10× 成本优势。启发了 Thinking Machines Lab 博客。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2408.00118">Gemma 2 — Among the First to Name OPD</a></div>
+    <div class="meta-row"><span>Google DeepMind</span><span>2024.07</span></div>
+    <div class="notes">
+      "We also use <strong>on-policy distillation</strong>, where the student generates completions from the SFT prompts" — KL on student samples。首批在生产模型中显式命名 OPD 的报告。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2602.15763">GLM-5 — Cross-Stage OPD</a></div>
+    <div class="meta-row"><span>Zhipu / Z.ai</span><span>2026.02</span></div>
+    <div class="notes">
+      "On-Policy Cross-Stage Distillation"——在各 post-training 阶段之间施加最终抗遗忘精炼。将 Qwen3 方案泛化为"OPD 作为阶段粘合剂"。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://github.com/XiaomiMiMo/MiMo-V2-Flash">MiMo-V2-Flash — Multi-Teacher OPD (MOPD)</a></div>
+    <div class="meta-row"><span>Xiaomi</span><span>2026.01</span></div>
+    <div class="notes">
+      <strong>多教师 OPD</strong>——"学生模型从自身演化分布中采样，并从领域特定教师接收 token 级监督"。逐 token MOPD 优势公式。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title"><a href="https://arxiv.org/abs/2603.19220">Nemotron Cascade 2 — Multi-Domain OPD</a></div>
+    <div class="meta-row"><span>NVIDIA</span><span>2026.03</span></div>
+    <div class="notes">
+      "We sample y~π_inf(·|x)"，教师提供 token 级蒸馏优势。30-160 步匹配 RL 效果（vs 1000+ 步）。极高样本效率。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title">DeepSeek-V4 — Multi-Teacher OPD Replaces RL Stage</div>
+    <div class="meta-row"><span>DeepSeek-AI</span><span>2026.04</span></div>
+    <div class="notes">
+      <strong>首个用 OPD 替代 RL 统一阶段的 DeepSeek 版本</strong>——领域专家独立训练（SFT + GRPO per domain），然后统一学生在自身 rollout 上对各专家集优化 Reverse-KL。全词汇表 KL（非 token 级估计）在专家不一致时稳定梯度。V4-Pro 1.6T MoE；V4-Flash 284B。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title">Qwen3-Coder — Production Scaling</div>
+    <div class="meta-row"><span>Alibaba Qwen</span><span>2026.03</span></div>
+    <div class="notes">
+      将 Qwen3 OPD 方案扩展到多专家→80A3 学生的代码领域。SFT + on-policy logit 对齐。
+    </div>
+  </div>
+
+  <div class="paper-card">
+    <div class="title">GLM-4.5 / 4.6 — Predecessors</div>
+    <div class="meta-row"><span>Zhipu / Z.ai</span><span>2025.08</span></div>
+    <div class="notes">
+      专家迭代 + RL，SFT 蒸馏合并专家为混合通用模型。GLM-5 跨阶段 OPD 的前身。
+    </div>
+  </div>
+</div>
+
+<!-- ===== READING LIST ===== -->
+<div class="section" id="reading">
+  <h2><span class="icon">🌟</span> 推荐阅读路径</h2>
+  <div class="desc">面向开始 OPD 项目的读者，按优先级排序的阅读清单。</div>
+
+  <div class="reading-list">
+    <ol>
+      <li><strong>Thinking Machines Lab 博客（2025.10）</strong> — 为什么 OPD 比 SFT 和 RL 都更高效的一页纸解释。<a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Link</a></li>
+      <li><strong>Qwen3 技术报告 §4</strong> — 大家都在复制的工业方案。<a href="https://arxiv.org/abs/2505.09388">arXiv</a></li>
+      <li><strong>tinker-cookbook</strong> — &lt;200 行可复现的 OPD 实现。<a href="https://github.com/thinking-machines-lab/tinker-cookbook">GitHub</a></li>
+      <li><strong>THUNLP Rethinking OPD</strong> — "OPD 理论"——什么时候有效，什么时候失败。<a href="https://arxiv.org/abs/2604.13016">arXiv</a></li>
+      <li><strong>OPSD: Self-Distilled Reasoner</strong> — 命名 OPSD、建立特权上下文模式的论文。<a href="https://arxiv.org/abs/2601.18734">arXiv</a></li>
+      <li><strong>G-OPD</strong> — 将 OPD 晶体化为 KL 约束 RL + 奖励外推。<a href="https://arxiv.org/abs/2602.12125">arXiv</a></li>
+      <li><strong>Tencent OPD Survey</strong> — 50+ 方法目录，作为索引用。<a href="https://arxiv.org/abs/2604.00626">arXiv</a></li>
+      <li><strong>TRL experimental/</strong> — 最多样化的 OPD trainer 开源集合。<a href="https://github.com/huggingface/trl">GitHub</a></li>
+      <li><strong>GAD</strong> — 黑盒 OPD 种子论文——对抗判别器作为在策略奖励。<a href="https://arxiv.org/abs/2511.10643">arXiv</a></li>
+      <li><strong>Revisiting OPD</strong> — 失败模式经验论文——能省一周调试。<a href="https://arxiv.org/abs/2603.25562">arXiv</a></li>
+    </ol>
+  </div>
+</div>
+
+<!-- ===== TEX STATUS ===== -->
+<div class="section" id="tex-status">
+  <h2><span class="icon">📄</span> TeX 源码拉取状态</h2>
+  <div class="desc">已从 arXiv 拉取的论文 TeX 源码，存放于 <code>assets/input/arxiv_tex/</code>。</div>
+  <div id="tex-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:8px; margin:12px 0;"></div>
+</div>
+
+<!-- ===== TIMELINE ===== -->
+<div class="section" id="timeline">
+  <h2><span class="icon">📅</span> OPD 发展时间线</h2>
+  <div id="timeline-container" style="position:relative; padding:20px 0; margin:20px 0; border-left:3px solid var(--border); margin-left:20px;"></div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ===== TeX grid =====
+const texIds = [
+"2306.08543","2306.13649","2310.07177","2310.08461","2311.13373",
+"2401.01335","2402.03898","2407.14622","2408.00118","2408.15766",
+"2410.11325","2410.20727","2412.12639","2501.04519","2502.16880",
+"2503.02832","2503.05833","2503.07067","2504.11426","2504.14945",
+"2504.19024","2505.09388","2505.10526","2506.02208","2508.06471",
+"2509.14257","2509.22921","2509.25100","2510.05421","2510.07842",
+"2510.14974","2510.23497","2510.24021","2510.26475","2511.10643",
+"2511.15848","2601.02780","2601.07155","2601.18734","2601.19897",
+"2601.20802","2601.21968","2602.00400","2602.02994","2602.06019",
+"2602.12125","2602.12222","2602.12275","2602.12674","2602.15260",
+"2602.15763","2602.20574","2602.22495","2603.01875","2603.05433",
+"2603.07079","2603.10165","2603.11137","2603.11178","2603.13260",
+"2603.16856","2603.19220","2603.19266","2603.23871","2603.24596",
+"2603.25562","2603.26666","2604.00626","2604.01193","2604.03128",
+"2604.07944","2604.10688","2604.12002","2604.13010","2604.13016",
+"2604.14084","2604.17535","2604.20244","2604.20733"
+];
+
+const downloaded = new Set([
+"2306.13649","2306.08543","2310.07177","2310.08461","2311.13373",
+"2401.01335","2402.03898","2407.14622","2408.00118","2408.15766",
+"2410.11325","2410.20727","2412.12639","2501.04519","2502.16880",
+"2503.01840","2503.02832","2503.05833","2503.07067","2504.11426",
+"2504.14945","2504.19024","2505.09388","2506.02208","2508.06471",
+"2509.14257","2509.22921","2509.25100","2510.05421","2510.07842",
+"2510.11325","2510.14974","2510.23497","2510.24021","2510.26475",
+"2511.10643","2511.15848","2601.02780","2601.07155","2601.18734",
+"2601.19897","2601.20802","2601.21968","2602.00400","2602.02994",
+"2602.06019","2602.12125","2602.12275","2602.12674","2602.15763",
+"2602.20574","2602.22495","2603.01875","2603.05433","2603.07079",
+"2603.10165","2603.11137","2603.11178","2603.13260","2603.16856",
+"2603.19220","2603.23871","2603.24596","2603.25562","2603.26666",
+"2604.00626","2604.01193","2604.03128","2604.07944","2604.10688",
+"2604.12002","2604.13010","2604.14084","2604.17535","2604.20244",
+"2604.20733"
+]);
+
+const grid = document.getElementById('tex-grid');
+texIds.forEach(id => {
+  const d = document.createElement('div');
+  const ok = downloaded.has(id);
+  d.style.cssText = `background:${ok?'var(--card)':'var(--card2)'};border:1px solid ${ok?'var(--green)':'var(--border)'};border-radius:8px;padding:8px 10px;font-size:12px;text-align:center;`;
+  d.innerHTML = `<a href="https://arxiv.org/abs/${id}" style="color:${ok?'var(--green)':'var(--text2)'}">${id}</a><br><span style="font-size:11px;color:${ok?'var(--green)':'var(--text2)'}">${ok?'✓ 已拉取':'—'}</span>`;
+  grid.appendChild(d);
+});
+
+// ===== Timeline =====
+const milestones = [
+  {date:'2023.06', label:'MiniLLM + GKD', desc:'开创性论文命名 OPD'},
+  {date:'2023.10', label:'OSD + DistillSpec', desc:'推测解码蒸馏奠基'},
+  {date:'2024.02', label:'DistiLLM', desc:'Skewed-KL 插值'},
+  {date:'2024.07', label:'Gemma 2', desc:'首批工业模型命名 OPD'},
+  {date:'2024.08', label:'HASS', desc:'多步草稿轨迹蒸馏'},
+  {date:'2024.10', label:'Speculative KD', desc:'交织提议-修正'},
+  {date:'2025.05', label:'Qwen3', desc:'工业 OPD 标准范本'},
+  {date:'2025.10', label:'π-Flow + VOLD + TM Blog', desc:'多模态 + 入门教程'},
+  {date:'2026.01', label:'OPSD + MiMo + SPIN 系列', desc:'自蒸馏 + 多教师爆发'},
+  {date:'2026.02', label:'GLM-5 + G-OPD + Fast OPD', desc:'跨阶段 OPD + 理论深化'},
+  {date:'2026.03', label:'OpenClaw-RL + CRISP + EAGLE-3 系列', desc:'Agent + 推理压缩 + 推测解码'},
+  {date:'2026.04', label:'DeepSeek-V4 + THUNLP + Nemotron', desc:'OPD 替代 RL 统一阶段'}
+];
+const tl = document.getElementById('timeline-container');
+milestones.forEach(m => {
+  const node = document.createElement('div');
+  node.style.cssText = 'margin-left:20px;margin-bottom:16px;position:relative;';
+  node.innerHTML = `
+    <div style="position:absolute;left:-29px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);"></div>
+    <div style="font-size:13px;color:var(--accent2);font-weight:600;">${m.date}</div>
+    <div style="font-size:14px;font-weight:600;">${m.label}</div>
+    <div style="font-size:12px;color:var(--text2);">${m.desc}</div>`;
+  tl.appendChild(node);
+});
+
+// ===== Nav active highlight =====
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+
+</body>
+</html>
