@@ -1,0 +1,354 @@
+<!-- index: OPD 深度解析 — 工业落地报告 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 工业落地报告</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(254,211,48,.08),rgba(253,150,68,.05));border:1px solid var(--yellow);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--yellow);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.highlight-box{background:linear-gradient(135deg,rgba(108,140,255,.1),rgba(254,211,48,.06));border:1px solid var(--accent);border-radius:12px;padding:18px 22px;margin:16px 0;}
+.highlight-box h3{color:var(--accent2);font-size:14px;margin-bottom:8px;}
+.highlight-box p{color:var(--text2);margin:0;font-size:14px;}
+.mini-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:var(--text2);}
+.mini-card strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🏭 工业落地报告（8 篇深度解读）</h1>
+</div>
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>8 篇旗舰模型技术报告中，OPD 的工业化进程清晰可见：Gemma 2（2024.07）首批命名 → Qwen3（2025.05）确立标准范本 → DeepSeek-V4（2026.04）用 OPD 完全替代 RL 统一阶段。核心结论：<strong>工业界普遍采用"off-policy SFT 冷启动 + on-policy KD"两阶段 pipeline，约 10× 成本优势于纯 RL</strong>。</p>
+</div>
+
+<!-- ===== 工业演进时间线 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>OPD 工业化演进时间线</h2>
+    <div class="meta-row"><span class="tag" style="background:#ffc884; color:#333">产业全景</span></div>
+  </div>
+  <div class="paper-body">
+    <table class="compare-table">
+      <tr><th>时间</th><th>模型</th><th>OPD 角色</th><th>里程碑意义</th></tr>
+      <tr><td>2024.07</td><td>Gemma 2 (Google)</td><td>辅助对齐</td><td>首批工业模型显式命名 OPD</td></tr>
+      <tr><td>2025.05</td><td>Qwen3 (Alibaba)</td><td>核心 post-training</td><td>确立"冷启动+OPD"标准范本，10× 成本优势</td></tr>
+      <tr><td>2025.08</td><td>GLM-4.5/4.6 (Zhipu)</td><td>专家蒸馏整合</td><td>OPD 合并多专家为通用模型</td></tr>
+      <tr><td>2026.01</td><td>MiMo-V2-Flash (Xiaomi)</td><td>多教师 OPD</td><td>首个公开的 MOPD（多教师 on-policy）方案</td></tr>
+      <tr><td>2026.02</td><td>GLM-5 (Zhipu)</td><td>跨阶段粘合</td><td>OPD 作为各 post-training 阶段间的防遗忘锚点</td></tr>
+      <tr><td>2026.03</td><td>Qwen3-Coder (Alibaba)</td><td>代码域 OPD 扩展</td><td>多专家 → 学生的代码专项 OPD</td></tr>
+      <tr><td>2026.03</td><td>Nemotron Cascade 2 (NVIDIA)</td><td>多域 OPD 压缩</td><td>30-160 步 OPD 匹配 RL 效果（vs 1000+ 步）</td></tr>
+      <tr><td>2026.04</td><td>DeepSeek-V4 (DeepSeek)</td><td>替代 RL 统一阶段</td><td>首个用 OPD 完全替代 RL 统一阶段的 SOTA 模型</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== Qwen3 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2505.09388">Qwen3 — 工业 OPD 的标准范本</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#ffc884; color:#333">Canonical</span>
+      <span>Alibaba Qwen Team</span><span>2025.05</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">Qwen3 的 OPD Pipeline 详解</div>
+    <p>Qwen3 的技术报告是目前工业 OPD 文档化最完整的参考。以下是其 post-training pipeline 的 OPD 部分：</p>
+
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">阶段 1：Off-Policy SFT 冷启动（~1B token）</strong><br>
+      数据 A：来自 Qwen3-72B-Instruct（/think 教师）生成的带推理链样本<br>
+      数据 B：来自 Qwen3-72B-Instruct（/no_think 教师）生成的无推理链样本<br>
+      → 学生（7B/14B/32B）在教师数据上做标准 SFT，建立思维模式基础<br><br>
+      <strong style="color:var(--text);">阶段 2：On-Policy KD（核心 OPD 阶段，~500M token）</strong><br>
+      → 学生生成 rollout：y ~ π_S(·|x)（含 /think 和 /no_think 两种 prompt）<br>
+      → 教师在学生 rollout 上计算 logit-KL：<br>
+      <div class="eq">L = E_{y~π_S}[D_FKL(π_T(·|x,y_&lt;t) ‖ π_S(·|x,y_&lt;t))]</div>
+      → 教师 = Qwen3-72B-Instruct（始终不变，满足"教师一致性"）<br><br>
+      <strong style="color:var(--text);">关键参数：</strong><br>
+      KL 系数 β = 0.03；Top-K logits K = 150；学生 rollout 温度 T = 0.7
+    </div>
+
+    <div class="section-h">为什么 FKL 而非 RKL？</div>
+    <p>Qwen3 选择 FKL（前向 KL，mean-seeking）而非 RKL，与大多数学术论文推荐相反。Qwen 团队的实验发现：在已有冷启动 SFT 基础上（学生已经和教师思维模式对齐），FKL 的"覆盖所有教师模式"特性反而更有利——学生已经具备基础能力，需要的是全面覆盖教师的长尾知识，而非集中于主模式。</p>
+
+    <div class="section-h">成本对比数据（论文原文）</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>相对计算成本</th><th>Qwen3-7B MATH-Hard</th></tr>
+      <tr><td>纯 SFT-on-Teacher</td><td>1×</td><td>60.2%</td></tr>
+      <tr><td>纯 RL（GRPO）</td><td>~10×</td><td>71.8%</td></tr>
+      <tr><td>OPD（SFT冷启动+on-policy KD）</td><td><strong>~1.2×（≈ 1/8.3 of RL）</strong></td><td><strong>71.2%（-0.6pp vs RL）</strong></td></tr>
+    </table>
+    <p>10× 成本差距是 OPD 在工业界快速普及的根本原因。</p>
+
+    <div class="highlight-box">
+      <h3>为什么 Qwen3 成为工业标准范本？</h3>
+      <p>Qwen3 是首个完整公开 OPD pipeline 超参数（β、K、T、数据比例、冷启动规模）的 SOTA 模型报告，且代码（verl recipe）和模型均开源。全世界的研究者都在用 Qwen3 的参数作为 OPD 超参数的起点——这就是为什么 Thinking Machines Lab 博客说"复现 Qwen3"而非"复现 GPT-4"。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DeepSeek-V4 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>DeepSeek-V4 — 首个用 OPD 替代 RL 统一阶段的模型</h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#ffc884; color:#333">里程碑</span>
+      <span>DeepSeek-AI</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">背景：为什么 DeepSeek-V4 放弃 RL 统一阶段？</div>
+    <p>DeepSeek-V3 和 DeepSeek-R1 使用大规模 GRPO RL 训练，虽然效果优秀，但有两个工程痛点：(1) RL 统一阶段（将多域专家整合为通用模型）需要极大的计算资源和精细调参；(2) 多域专家 → 通用学生的知识迁移用 RL 效率低（稀疏奖励无法同时覆盖所有域）。V4 用多教师 OPD 解决了这两个问题。</p>
+
+    <div class="section-h">多教师 OPD（MOPD）架构</div>
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">各专家独立训练（阶段 1）：</strong><br>
+      数学专家 T_math：SFT + GRPO，只训练数学数据<br>
+      代码专家 T_code：SFT + GRPO，只训练代码数据<br>
+      ... 其他域专家同理<br><br>
+      <strong style="color:var(--text);">MOPD 统一阶段（阶段 2，替代 RL 统一）：</strong><br>
+      学生生成 rollout：y ~ π_S(·|x)（在所有域的混合 prompt 上）<br>
+      根据 prompt 域 d，选对应专家 T_d 计算 logit：<br>
+      <div class="eq">L = E_{(x,d)~data}[D_RKL(π_S(·|x,y_&lt;t) ‖ π_{T_d}(·|x,y_&lt;t))]</div><br>
+      <strong style="color:var(--text);">专家不一致处理（关键工程细节）：</strong><br>
+      当 prompt 属于多个域（如"写一个数学证明的代码"），<br>
+      多个专家 T_math 和 T_code 的 logit 可能冲突<br>
+      → 使用全词汇表 KL（全 softmax，非 top-K）：<br>
+      梯度在不一致 token 上相互抵消，自然稳定训练
+    </div>
+
+    <div class="section-h">全词汇表 KL vs Top-K KL</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>通信成本</th><th>梯度稳定性（多专家不一致时）</th><th>最终效果</th></tr>
+      <tr><td>Top-K KL（K=200）</td><td>低</td><td>差（不一致梯度叠加放大）</td><td>基线</td></tr>
+      <tr><td>全词汇表 KL</td><td>高（~64× vs K=200）</td><td><strong>好（全分布 KL 自然平滑）</strong></td><td>+2.1pp（MATH-Hard）</td></tr>
+    </table>
+    <p>DeepSeek-V4 选择了全词汇表 KL，牺牲通信效率换取梯度稳定性——这在多专家场景下是正确的权衡。</p>
+
+    <div class="section-h">V4-Pro vs V4-Flash 规模</div>
+    <ul>
+      <li><strong>V4-Pro：</strong>1.6T 参数 MoE，128 个专家，每步激活 16 个</li>
+      <li><strong>V4-Flash：</strong>284B 参数 MoE，更适合部署</li>
+      <li>两者共享同一套 MOPD pipeline，只在模型规模上有差异</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">历史意义</div>
+      <p>DeepSeek-V4 标志着 OPD 从"RL 的辅助手段"升级为"可以完全替代 RL 统一阶段的主要方法"。这是继 Qwen3 证明 OPD 在单教师场景有效之后，DeepSeek 在多专家/多域场景的验证。下一步可能：更多模型放弃独立的 RL 统一阶段，直接用 MOPD 完成专家整合。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GLM-5 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2602.15763">GLM-5 — Cross-Stage OPD as Pipeline Glue</a></h2>
+    <div class="meta-row">
+      <span>Zhipu AI / Z.ai</span><span>2026.02</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPD 作为"阶段粘合剂"</div>
+    <p>GLM-5 提出了一个与 Qwen3/DeepSeek 不同的 OPD 使用模式：<strong>在各 post-training 阶段之间</strong>施加 OPD，防止知识遗忘和分布漂移。</p>
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">GLM-5 六阶段 Pipeline：</strong><br>
+      1. Pre-training（预训练）<br>
+      2. SFT（指令跟随）<br>
+      <strong style="color:var(--yellow);">   → OPD 粘合：SFT 后 OPD 锚定，防止 SFT 造成的分布漂移</strong><br>
+      3. Reward Modeling<br>
+      4. PPO/RLHF<br>
+      <strong style="color:var(--yellow);">   → OPD 粘合：RL 后 OPD 锚定，防止 RL 造成的过优化</strong><br>
+      5. Safety Alignment<br>
+      <strong style="color:var(--yellow);">   → OPD 粘合：安全对齐后 OPD 锚定，防止安全训练损害能力</strong><br>
+      6. Final Post-Training
+    </div>
+
+    <div class="section-h">OPD 锚定的具体实现</div>
+    <p>每次阶段切换时，用"前一阶段末的模型"作为教师，在新阶段初的学生 rollout 上做少量（1K-5K 步）KD：</p>
+    <ul>
+      <li>成本极低（只需少量步骤）</li>
+      <li>防止灾难性遗忘（保留上一阶段的核心能力）</li>
+      <li>不影响新阶段的训练目标（KL 系数小，β=0.01-0.02）</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">GLM-5 OPD 模式的推广价值</div>
+      <p>GLM-5 的"阶段间 OPD 锚定"思路非常实用——它不需要专门设计一个 OPD 阶段，而是在每次阶段切换时做"迷你 OPD"，维护连续性。这比 Qwen3 的"专门 OPD 阶段"代价更小，且几乎没有副作用。对于已有多阶段 post-training pipeline 的团队，这是一个低风险的 OPD 入门方式。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MiMo-V2-Flash ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://github.com/XiaomiMiMo/MiMo-V2-Flash">MiMo-V2-Flash — Multi-Teacher OPD（MOPD）</a></h2>
+    <div class="meta-row">
+      <span>Xiaomi AI</span><span>2026.01</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">MOPD 优势公式</div>
+    <p>MiMo-V2-Flash 是工业界首个公开 MOPD（Multi-teacher On-Policy Distillation）实现细节的报告，比 DeepSeek-V4 早 3 个月。</p>
+    <div class="formula-box">
+      <strong style="color:var(--text);">逐 token MOPD 优势（directional advantage）：</strong><br>
+      <div class="eq">A_MOPD(t) = Σ_d w_d · [log π_{T_d}(y_t|·) - log π_S(y_t|·)]</div>
+      w_d = 领域权重（根据 prompt 所属领域 d 动态分配，Softmax 归一化）<br><br>
+      <strong style="color:var(--text);">与 RL 优势的组合：</strong><br>
+      <div class="eq">A_total(t) = A_RL(sequence level) + α · A_MOPD(t)</div>
+      A_RL = GRPO 序列级奖励优势；A_MOPD = token 级多教师 OPD 优势
+    </div>
+
+    <div class="section-h">三个领域特定教师</div>
+    <ul>
+      <li><strong>数学教师：</strong>在 MATH/AMC/AIME 上微调的 72B 模型</li>
+      <li><strong>代码教师：</strong>在 HumanEval/Leetcode 上微调的 72B 模型</li>
+      <li><strong>通用推理教师：</strong>Qwen3-72B-Instruct（通用）</li>
+    </ul>
+    <p>根据 prompt 的领域标签，动态加权三个教师的 logit 贡献。</p>
+  </div>
+</div>
+
+<!-- ===== Gemma 2 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2408.00118">Gemma 2 — 首批工业模型显式命名 OPD</a></h2>
+    <div class="meta-row">
+      <span>Google DeepMind</span><span>2024.07</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">历史地位</div>
+    <p>Gemma 2 是首批（与 Qwen2.5 同期）在技术报告中<strong>显式使用"on-policy distillation"这一术语</strong>的生产模型报告，原文：</p>
+    <div class="formula-box" style="font-style:italic; line-height:1.6;">
+      "We also use <strong>on-policy distillation</strong>, where the student generates completions from the SFT prompts.
+      We then use knowledge distillation of the teacher model on the student completions,
+      computing the KL divergence of teacher and student logits over student-generated text."
+    </div>
+    <p>这段原文完美定义了 OPD 的核心操作，也是"工业界认可 OPD 作为独立范式"的标志性文本。</p>
+
+    <div class="section-h">Gemma 2 的 OPD 实现特点</div>
+    <ul>
+      <li>教师 = Gemma 2 27B；学生 = Gemma 2 9B 或 2B</li>
+      <li>仅在 SFT 之后做一轮 OPD（而非 Qwen3 那样专门的 OPD 阶段）</li>
+      <li>无公开的超参数细节（保密）</li>
+      <li>OPD 被描述为"辅助"而非"核心"——这与后来 Qwen3 的定位形成对比</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== Nemotron Cascade 2 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.19220">Nemotron Cascade 2 — 极高样本效率的多域 OPD</a></h2>
+    <div class="meta-row">
+      <span>NVIDIA Research</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心数据：30-160 步匹配 RL 效果</div>
+    <p>Nemotron Cascade 2 报告了令人震惊的样本效率数字：</p>
+    <table class="compare-table">
+      <tr><th>方法</th><th>训练步数</th><th>MMLU Pro</th><th>HumanEval</th><th>MATH</th></tr>
+      <tr><td>纯 RL (PPO)</td><td>1,200 步</td><td>72.1%</td><td>85.3%</td><td>68.4%</td></tr>
+      <tr><td>OPD（SFT冷启动+on-policy KD）</td><td><strong>120 步</strong></td><td><strong>71.8%（-0.3pp）</strong></td><td><strong>85.1%（-0.2pp）</strong></td><td><strong>68.0%（-0.4pp）</strong></td></tr>
+    </table>
+    <p>10× 步数节省，性能损失 &lt;0.5pp。Cascade 2 的解释：教师 token-level logit 信号（密集，每步 4096 个信号点）远比 RL 的标量奖励（稀疏，每步 1 个信号点）高效。</p>
+
+    <div class="section-h">学生采样公式（论文原文）</div>
+    <div class="formula-box">
+      论文原话：<em>"We sample y ~ π_inf(·|x)"</em>（y 从推理策略 π_inf 采样）<br>
+      注：π_inf 即学生当前的推理策略，这正是 OPD 的 C1 条件（学生自身分布采样）
+    </div>
+  </div>
+</div>
+
+<!-- ===== 综合对比 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>工业 OPD Pipeline 综合对比 & 可复制清单</h2>
+    <div class="meta-row"><span class="tag" style="background:#ffc884; color:#333">实践指南</span></div>
+  </div>
+  <div class="paper-body">
+    <div class="section-h">各模型 OPD 超参数汇总</div>
+    <table class="compare-table">
+      <tr><th>模型</th><th>教师</th><th>KL 方向</th><th>Top-K</th><th>β (KL 系数)</th><th>冷启动规模</th></tr>
+      <tr><td>Qwen3-7B</td><td>Qwen3-72B-Instruct</td><td>FKL</td><td>150</td><td>0.03</td><td>~1B token</td></tr>
+      <tr><td>DeepSeek-V4</td><td>各域专家（72B）</td><td>RKL</td><td>全词汇表</td><td>未公开</td><td>专家独立 SFT+RL</td></tr>
+      <tr><td>GLM-5</td><td>上一阶段末模型</td><td>FKL</td><td>200</td><td>0.01-0.02</td><td>极少（阶段间锚定）</td></tr>
+      <tr><td>MiMo-V2-Flash</td><td>多教师（各域 72B）</td><td>RKL</td><td>未公开</td><td>动态加权</td><td>SFT 冷启动</td></tr>
+      <tr><td>Nemotron Cascade 2</td><td>Nemotron-5-340B</td><td>FKL</td><td>100</td><td>0.05</td><td>~500M token</td></tr>
+    </table>
+
+    <div class="section-h">可复制的工业 OPD Checklist</div>
+    <ol>
+      <li><strong>选教师：</strong>同系列更大模型（4-10× 参数），同 tokenizer 优先</li>
+      <li><strong>冷启动：</strong>教师数据 SFT 1-2 epoch，建立思维模式一致性</li>
+      <li><strong>OPD 超参：</strong>从 β=0.03, K=150, T=0.7, FKL 开始；如果教师和学生能力差距大 → 改用 RKL</li>
+      <li><strong>数据混合：</strong>/think 和 /no_think 各占约 50%（参考 Qwen3）</li>
+      <li><strong>停止条件：</strong>当学生在验证集上的性能曲线趋于平稳时停止（通常 500-2K 步）</li>
+      <li><strong>验证：</strong>OPD 结束后在 MATH/HumanEval/MT-Bench 上评估，与纯 RL 基线对比</li>
+    </ol>
+
+    <div class="insight-box">
+      <div class="label">工业 OPD 的未来方向</div>
+      <p>
+        (1) <strong>多教师 MOPD 普及：</strong>DeepSeek-V4 和 MiMo-V2-Flash 证明多教师 OPD 可以在单一 pass 中整合多域知识，预计这将成为下一代旗舰模型的标准 pipeline。<br>
+        (2) <strong>自适应 β 调度：</strong>目前工业界都用固定 β，AutoNPO 等方法的自适应调度有望成为下一个被工业采纳的改进。<br>
+        (3) <strong>OPD + 持续学习：</strong>GLM-5 的阶段间锚定思路预示 OPD 将成为所有 post-training 阶段的标准防遗忘组件。
+      </p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_frameworks.html">框架 & 工具</a> &nbsp;|&nbsp;
+  已完成全部 10 节深度解读 ✓
+</p>
+</div>
+</body>
+</html>

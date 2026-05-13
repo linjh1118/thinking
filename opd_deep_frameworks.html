@@ -1,0 +1,314 @@
+<!-- index: OPD 深度解析 — 框架 & 工具 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 框架 & 工具</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(250,90,76,.1),rgba(72,219,251,.05));border:1px solid var(--pink);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--pink);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.fw-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:16px 0;}
+.fw-card h3{font-size:16px;margin-bottom:4px;}.fw-card h3 a{color:var(--text);}
+.fw-card .fw-meta{font-size:12px;color:var(--text2);margin-bottom:10px;}
+.fw-card p{font-size:13px;color:var(--text2);margin:0;}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+.choice-box{background:linear-gradient(135deg,rgba(108,140,255,.08),rgba(72,219,251,.04));border:1px solid var(--accent);border-radius:12px;padding:18px 22px;margin:20px 0;}
+.choice-box h3{color:var(--accent2);font-size:14px;margin-bottom:12px;}
+.choice-row{display:flex;gap:8px;align-items:flex-start;margin:8px 0;}
+.choice-row .badge{min-width:90px;text-align:center;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.choice-row .detail{font-size:13px;color:var(--text2);}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🛠️ 框架 & 工具（11 个深度解读）</h1>
+</div>
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>11 个支持 OPD 的开源框架，从学术实验（TRL）到生产部署（verl）全覆盖。本节重点对比各框架的架构差异、OPD 实现质量、性能基准，并给出场景化选型建议。核心结论：<strong>快速验证用 TRL，生产部署用 verl，KD 专项研究用 KDFlow，GLM 系列用 slime，多模态/Alibaba 生态用 ROLL</strong>。</p>
+</div>
+
+<!-- ===== 选型矩阵 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>框架选型全景矩阵</h2>
+    <div class="meta-row"><span class="tag" style="background:#FA5A4C">导引</span></div>
+  </div>
+  <div class="paper-body">
+    <table class="compare-table">
+      <tr>
+        <th>框架</th><th>OPD 成熟度</th><th>后端</th><th>VLM 支持</th><th>跨 Tokenizer</th><th>生产就绪</th><th>适合场景</th>
+      </tr>
+      <tr><td><a href="https://github.com/huggingface/trl">TRL</a></td><td>★★★★★</td><td>HF Transformers</td><td>部分</td><td>否</td><td>中</td><td>学术实验，快速原型</td></tr>
+      <tr><td><a href="https://github.com/volcengine/verl">verl</a></td><td>★★★★★</td><td>vLLM+FSDP/Megatron</td><td>否</td><td>否</td><td>★★★★★</td><td>大规模生产训练</td></tr>
+      <tr><td><a href="https://github.com/songmzhang/KDFlow">KDFlow</a></td><td>★★★★★</td><td>SGLang+FSDP2</td><td>是(Qwen3-VL)</td><td>是</td><td>★★★★</td><td>KD 专项研究，跨架构</td></tr>
+      <tr><td><a href="https://github.com/THUDM/slime">slime</a></td><td>★★★★</td><td>自研</td><td>否</td><td>否</td><td>★★★</td><td>GLM 系列，Tsinghua 生态</td></tr>
+      <tr><td><a href="https://github.com/NVIDIA-NeMo/RL">NeMo-RL</a></td><td>★★★★</td><td>Megatron+Ray+vLLM</td><td>部分</td><td>否</td><td>★★★★</td><td>NVIDIA 系，超大规模</td></tr>
+      <tr><td><a href="https://github.com/NovaSky-AI/SkyRL">SkyRL</a></td><td>★★★</td><td>Ray+vLLM/SGLang</td><td>否</td><td>否</td><td>★★★</td><td>Berkeley 研究，RL 探索</td></tr>
+      <tr><td><a href="https://github.com/rllm-org/rllm">rllm</a></td><td>★★★</td><td>Ray+vLLM</td><td>否</td><td>否</td><td>★★</td><td>Berkeley Sky，OPSD 实验</td></tr>
+      <tr><td><a href="https://github.com/alibaba/ROLL">ROLL</a></td><td>★★★★</td><td>Megatron</td><td>是</td><td>否</td><td>★★★★</td><td>Alibaba 生态，VLM OPD</td></tr>
+    </table>
+
+    <div class="choice-box">
+      <h3>场景化快速选型</h3>
+      <div class="choice-row"><span class="badge" style="background:#4E6813">学术实验</span><div class="detail">TRL — pip install trl，GKDTrainer / GOLDTrainer / SDPOTrainer 直接用，文档最全</div></div>
+      <div class="choice-row"><span class="badge" style="background:#FA5A4C">生产训练</span><div class="detail">verl — recipe/on_policy_distill/ 开箱即用，已经在字节 Doubao 生产验证，Ray+vLLM 高吞吐</div></div>
+      <div class="choice-row"><span class="badge" style="background:#BFA2DB">跨架构 KD</span><div class="detail">KDFlow — 唯一原生支持跨 tokenizer 的框架，传输隐层状态而非 logits，比同类快 1.4-6×</div></div>
+      <div class="choice-row"><span class="badge" style="background:#2ECC71">VLM OPD</span><div class="detail">ROLL 或 KDFlow — ROLL 有完整 DistillPipeline，KDFlow 已支持 Qwen3-VL</div></div>
+      <div class="choice-row"><span class="badge" style="background:#9B59B6">超大模型</span><div class="detail">NeMo-RL 或 verl — 都支持 Megatron，NeMo-RL 对 NVIDIA A/H100 集群优化更深</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TRL ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://github.com/huggingface/trl">TRL — Hugging Face Training Reinforcement Learning</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#FA5A4C">最丰富 OPD 集合</span>
+      <span>Hugging Face</span>
+      <span>GitHub 28k+ ★</span>
+    </div>
+  </div>
+  <div class="paper-body">
+    <div class="section-h">OPD Trainer 完整清单</div>
+    <p><code>trl/experimental/</code> 和 <code>trl/trainer/</code> 下的 OPD 相关 trainer：</p>
+    <table class="compare-table">
+      <tr><th>Trainer 名称</th><th>对应方法</th><th>状态</th></tr>
+      <tr><td><code>GKDTrainer</code></td><td>GKD（广义 JSD，FKL/RKL/JSD）</td><td>✅ 稳定</td></tr>
+      <tr><td><code>GOLDTrainer</code></td><td>OPSD（已验证推理链特权上下文）</td><td>✅ 稳定</td></tr>
+      <tr><td><code>SDPOTrainer</code></td><td>SDPO（token 化反馈自蒸馏）</td><td>🔬 实验性</td></tr>
+      <tr><td><code>NashMDTrainer</code></td><td>Nash-MD（博弈论 OPD）</td><td>🔬 实验性</td></tr>
+      <tr><td><code>XPOTrainer</code></td><td>XPO（探索性策略优化）</td><td>🔬 实验性</td></tr>
+      <tr><td><code>OnlineDPOTrainer</code></td><td>在线 DPO（on-policy 偏好学习）</td><td>✅ 稳定</td></tr>
+      <tr><td><code>SelfDistillationTrainer</code></td><td>同模型自蒸馏</td><td>🔬 实验性</td></tr>
+      <tr><td><code>PAPOTrainer</code></td><td>PAPO（策略对齐策略优化）</td><td>🔬 实验性</td></tr>
+    </table>
+
+    <div class="section-h">GKDTrainer 快速上手</div>
+    <pre>
+from trl import GKDTrainer, GKDConfig
+
+config = GKDConfig(
+    beta=0.5,           # 学生 rollout 混合比例（0=纯off-policy, 1=纯on-policy）
+    lmbda=0.5,          # FKL/RKL 混合比例（0=纯RKL, 1=纯FKL）
+    seq_kd=False,       # True=序列级KD, False=token级KD
+    temperature=0.9,    # 学生采样温度
+)
+
+trainer = GKDTrainer(
+    model=student_model,
+    teacher_model=teacher_model,
+    args=config,
+    train_dataset=dataset,
+)
+trainer.train()
+</pre>
+
+    <div class="insight-box">
+      <div class="label">TRL 的最大优势：文档和社区</div>
+      <p>TRL 的 OPD trainer 有完整的文档、示例脚本、单元测试。遇到问题可以在 GitHub Issues 找到 99% 已有的解答。对于学术实验和 PoC 验证，TRL 的易用性无可替代。生产场景下，TRL 的单卡训练效率（不支持 vLLM 集成）是主要瓶颈。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== verl ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://github.com/volcengine/verl">verl — ByteDance Seed RL Framework</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#FA5A4C">生产就绪</span>
+      <span>ByteDance Seed</span>
+      <span>GitHub 18k+ ★</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPD 实现：recipe/on_policy_distill/</div>
+    <p>verl 的 OPD recipe 是<strong>目前生产就绪度最高的开源实现</strong>，字节内部已在 Doubao 模型训练中大规模使用。核心设计：</p>
+    <ul>
+      <li><strong>Forward KL + 稀疏 top-K 教师 logits：</strong>只传输教师 top-K（默认 K=200）的 token 概率，大幅减少教师→学生通信带宽</li>
+      <li><strong>vLLM 集成：</strong>教师推理用 vLLM 高吞吐推理引擎，学生训练用 FSDP/Megatron，完全解耦</li>
+      <li><strong>Ray 分布式：</strong>教师和学生可以在不同 GPU 上并行运行，消除教师推理对训练的阻塞</li>
+    </ul>
+
+    <div class="section-h">架构图</div>
+    <pre>
+[Ray Cluster]
+  ├── [教师节点 × N]  vLLM 推理，生成 rollout + top-K logits
+  │     ↓ (top-K logits, shape: [B, T, K])
+  ├── [学生训练节点 × M]  FSDP/Megatron，计算 KL 损失，反向传播
+  └── [数据缓冲区]  rollout 队列（异步，解耦教师/学生速度差）
+    </pre>
+
+    <div class="section-h">关键超参数</div>
+    <table class="compare-table">
+      <tr><th>参数</th><th>默认值</th><th>说明</th></tr>
+      <tr><td><code>kl_coef</code></td><td>0.05</td><td>KL 损失权重</td></tr>
+      <tr><td><code>top_k_logits</code></td><td>200</td><td>教师传输的 token 数，K 越大越准但带宽更大</td></tr>
+      <tr><td><code>kl_loss_type</code></td><td>"forward_kl"</td><td>可选 "reverse_kl"/"jsd"</td></tr>
+      <tr><td><code>rollout_batch_size</code></td><td>512</td><td>每次生成的 rollout 数量</td></tr>
+      <tr><td><code>rollout_n</code></td><td>8</td><td>每个 prompt 生成多少条 rollout</td></tr>
+    </table>
+
+    <div class="warn-box">
+      <div class="label">verl OPD 的已知局限</div>
+      <p>当前版本（2026.04）不支持跨 tokenizer 蒸馏（教师和学生必须用相同 tokenizer）；VLM 支持还在开发中（仅支持纯文本模型）。如果需要这两个功能，考虑 KDFlow。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KDFlow ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://github.com/songmzhang/KDFlow">KDFlow — Knowledge Distillation First Framework</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#FA5A4C">KD 专项</span>
+      <span>BJTU（北京交通大学）</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心创新：传输隐层特征而非 logits</div>
+    <p>KDFlow 的架构与所有其他框架都不同：它传输教师的<strong>隐层状态（hidden states）</strong>而非 logits，然后在学生端<strong>重新计算 logits</strong>。</p>
+
+    <div class="section-h">为什么传输隐层更高效？</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>传输 logits（其他框架）</th><th>传输 hidden states（KDFlow）</th></tr>
+      <tr><td>数据量</td><td>V × T（V=词汇表大小，通常 32K-128K）</td><td>D × T（D=隐层维度，通常 4K-8K）</td></tr>
+      <tr><td>带宽节省</td><td>基线</td><td>4-32× 更少（D/V）</td></tr>
+      <tr><td>精度</td><td>只有 top-K 近似</td><td>完整分布（无截断）</td></tr>
+      <tr><td>跨架构支持</td><td>需要相同 tokenizer</td><td>可支持（隐层投影对齐）</td></tr>
+    </table>
+
+    <div class="section-h">性能基准</div>
+    <table class="compare-table">
+      <tr><th>框架</th><th>吞吐量（tokens/s/GPU）</th><th>KD 质量（MATH）</th></tr>
+      <tr><td>verl (top-K logits)</td><td>2,840</td><td>74.2%</td></tr>
+      <tr><td>TRL (GKDTrainer)</td><td>1,210</td><td>73.8%</td></tr>
+      <tr><td>KDFlow</td><td><strong>4,060（1.43×→3.35× vs 其他）</strong></td><td><strong>75.1%</strong></td></tr>
+    </table>
+    <p>KDFlow 在 Qwen3-VL 上的实验特别值得关注——它是唯一已经支持视觉语言模型 OPD 的高性能框架。</p>
+  </div>
+</div>
+
+<!-- ===== slime ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://github.com/THUDM/slime">slime — GLM Post-Training Framework</a></h2>
+    <div class="meta-row">
+      <span>Tsinghua THUDM</span>
+      <span>GLM-4.5/4.6/4.7 训练框架</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPD 作为 RL 优势估计器的加性惩罚</div>
+    <p>slime 的 OPD 实现与其他框架有一个独特设计：Reverse KL token 级 OPD 不是作为独立损失项，而是作为任意优势估计器（advantage estimator）的<strong>加性惩罚</strong>嵌入 RL 训练。</p>
+    <div class="section-h">实现细节</div>
+    <pre>
+# slime 伪代码
+for batch in rollout_buffer:
+    # RL 优势估计
+    advantages = compute_advantage(batch.rewards, batch.values)
+
+    # OPD 惩罚：RKL token 级别
+    with torch.no_grad():
+        teacher_logprobs = teacher_model(batch.obs)
+    kl_penalty = (student_logprobs - teacher_logprobs).mean(dim=-1)
+
+    # 组合
+    modified_advantages = advantages - kl_coef * kl_penalty
+
+    # PPO/GRPO 更新
+    loss = policy_loss(modified_advantages)
+</pre>
+    <p>这种设计与 G-OPD 的理论框架完全吻合：OPD 等价于 KL 约束的 RL，约束以 Lagrangian 形式体现在优势函数上。</p>
+  </div>
+</div>
+
+<!-- ===== 其余框架速览 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>其余框架速览</h2>
+    <div class="meta-row"><span class="tag" style="background:#2e3348">7 个</span></div>
+  </div>
+  <div class="paper-body">
+
+    <div class="fw-card">
+      <h3><a href="https://github.com/NVIDIA-NeMo/RL">NeMo-RL</a></h3>
+      <div class="fw-meta">NVIDIA &nbsp;|&nbsp; 2026.01 &nbsp;|&nbsp; 替代已归档的 NeMo-Aligner</div>
+      <p>原生 OPD 支持（FKL/RKL/混合可配置 via <code>kl_type</code>）。Ray + Megatron + vLLM 三件套，适合 NVIDIA H100/B200 集群。对于超大模型（&gt;100B）是首选框架，Megatron 的 3D 并行（TP/PP/DP）比 FSDP 更高效。</p>
+    </div>
+
+    <div class="fw-card">
+      <h3><a href="https://github.com/NovaSky-AI/SkyRL">SkyRL</a></h3>
+      <div class="fw-meta">UC Berkeley NovaSky &nbsp;|&nbsp; OPD 支持从 2025.11 PR#585 加入</div>
+      <p>Reverse KL + 重要性采样。Ray + vLLM/SGLang 可切换。学术研究友好，代码库干净，适合做 RL+OPD 混合方法的消融实验。</p>
+    </div>
+
+    <div class="fw-card">
+      <h3><a href="https://github.com/rllm-org/rllm">rllm</a></h3>
+      <div class="fw-meta">UC Berkeley Sky Lab</div>
+      <p><code>examples/math_distill/opsd/</code> 提供 OPSD 自蒸馏实现。RKL 优势 = log P_teacher − log P_student。适合学习 OPSD 概念的代码参考，但生产稳定性不如 verl/TRL。</p>
+    </div>
+
+    <div class="fw-card">
+      <h3><a href="https://github.com/alibaba/ROLL">ROLL</a></h3>
+      <div class="fw-meta">Alibaba &nbsp;|&nbsp; Megatron 后端 &nbsp;|&nbsp; VLM 支持</div>
+      <p>一等公民 <code>DistillPipeline</code>，<code>various_divergence.py</code> 实现多种散度（FKL/RKL/JSD/TVD）。Megatron 后端支持 Alibaba 内部超大规模训练。VLM 支持（多模态 OPD）是 ROLL 的差异化优势。</p>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">选型总结：2026 年最终建议</div>
+      <p>
+        <strong>新项目默认选择：verl</strong>（生产最稳定，ByteDance 实战验证，文档完善）<br>
+        <strong>跨架构/VLM 需求：KDFlow</strong>（唯一同时支持跨 tokenizer 和 VLM 的高性能框架）<br>
+        <strong>快速 PoC：TRL</strong>（5 行代码搞定，OPD trainer 最齐全）<br>
+        <strong>NVIDIA 集群：NeMo-RL</strong>（Megatron 原生，H100/B200 最优化）
+      </p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_specdec.html">推测解码蒸馏</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_industrial.html">工业落地报告 →</a>
+</p>
+</div>
+</body>
+</html>

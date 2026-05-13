@@ -1,0 +1,343 @@
+<!-- index: OPD 深度解析 — OPD-RL 混合 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — OPD-RL 混合</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(155,89,182,.12),rgba(72,219,251,.05));border:1px solid var(--purple);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--purple);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.mini-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:var(--text2);}
+.mini-card strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🤝 OPD-RL 混合（17 篇深度解读）</h1>
+</div>
+
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>OPD-RL 混合是当前最活跃的方向：将 OPD 的密集 logit 信号嵌入 RL 框架（GRPO/PPO/DPO），作为<strong>奖励塑形（reward shaping）</strong>或<strong>信赖域锚点（trust region anchor）</strong>。核心价值：RL 提供任务导向（稀疏但准确），OPD 提供过程指导（密集但需要教师）——两者互补。代表性工作：LUFFY（混合策略）、KDRL（统一 RKL+GRPO）、HDPO（自蒸馏作 RL 回退）、NPO（向未来的自己学习）。</p>
+</div>
+
+<!-- ===== 分类框架 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>OPD-RL 混合模式分类</h2>
+    <div class="meta-row"><span class="tag" style="background:#9B59B6">导引</span></div>
+  </div>
+  <div class="paper-body">
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">模式 1：OPD 作为 RL 的附加损失</strong><br>
+      L_total = L_RL(GRPO/PPO) + α · L_OPD(KL)<br>
+      代表：KDRL、RLSD、LUFFY<br><br>
+      <strong style="color:var(--text);">模式 2：OPD 信号替换 RL 奖励</strong><br>
+      r(y) = λ · r_task(y) + (1-λ) · [log π_T(y) - log π_S(y)]<br>
+      代表：OpenClaw-RL（token-logprob 差距作为方向优势）<br><br>
+      <strong style="color:var(--text);">模式 3：OPD 作为 RL 的信赖域</strong><br>
+      π_student 被约束在教师 π_T 附近（KL 约束），RL 在这个约束内优化<br>
+      代表：RLAD（信赖域似然比）、Constrained OPD (CMDP)<br><br>
+      <strong style="color:var(--text);">模式 4：OPD 作为 RL 的回退机制</strong><br>
+      当 RL 遇到"悬崖问题"（奖励方差大）时，切换到 OPD 稳定训练<br>
+      代表：HDPO（NVIDIA）
+    </div>
+  </div>
+</div>
+
+<!-- ===== LUFFY ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2504.14945">LUFFY: Mixed-Policy GRPO with Off-Policy Traces</a></h2>
+    <div class="meta-row">
+      <span>Westlake University</span><span>2025.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心思想：混合 on-policy 和 off-policy 样本</div>
+    <p>纯 on-policy GRPO 的问题：学生在探索阶段（初期）能力很弱，生成的 rollout 几乎全错，奖励信号极度稀疏，训练效率低。LUFFY 提出：<strong>在每个 batch 中混入一半高质量的 off-policy 样本（来自 DeepSeek-R1 等强模型）</strong>，提供密集的正样本信号，同时保留 on-policy 梯度的正确方向。</p>
+
+    <div class="section-h">混合策略梯度</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">On-policy 部分（学生自己的 rollout）：</strong><br>
+      <div class="eq">L_on = E_{y~π_S}[GRPO_loss(y)]&nbsp;&nbsp;（标准 GRPO）</div><br>
+      <strong style="color:var(--text);">Off-policy 部分（R1/Qwen3 等强模型的 trace）：</strong><br>
+      <div class="eq">L_off = E_{y~π_teacher}[w(y) · GRPO_loss(y)]</div>
+      <div class="eq">w(y) = π_S(y)/π_teacher(y)&nbsp;&nbsp;（重要性采样权重，截断于 [0.1, 10]）</div><br>
+      <strong style="color:var(--text);">总损失：</strong><br>
+      <div class="eq">L_LUFFY = 0.5 · L_on + 0.5 · L_off</div>
+    </div>
+
+    <div class="section-h">为什么重要性采样能桥接 on/off-policy？</div>
+    <p>当 π_teacher 和 π_S 差异很大时，重要性权重 w(y) 很小（off-policy 样本被自动降权），避免了分布外样本的破坏性更新。随着训练进行，π_S → π_teacher，w(y) → 1，off-policy 样本的权重自然上升——这实现了从"半 off-policy"到"近似 on-policy"的平滑过渡。</p>
+
+    <div class="section-h">实验数据</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>MATH</th><th>AMC 2023</th><th>收敛步数</th></tr>
+      <tr><td>纯 GRPO</td><td>72.1%</td><td>65.3%</td><td>8,000</td></tr>
+      <tr><td>SFT-on-R1 + GRPO</td><td>74.3%</td><td>68.1%</td><td>6,000</td></tr>
+      <tr><td>LUFFY（混合策略）</td><td><strong>76.8%</strong></td><td><strong>71.2%</strong></td><td><strong>4,000（快 2×）</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">工程建议</div>
+      <p>LUFFY 的混合比例（50/50）可以调节。实践中建议早期（前 20% 步骤）用 70% off-policy，随着学生进步逐渐降到 30% off-policy。off-policy 数据来源推荐与训练任务强相关的高质量 trace（如 DeepSeek-R1-Distill 系列），避免用领域不相关的数据。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KDRL ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2506.02208">KDRL: Joint Knowledge Distillation + Reinforcement Learning</a></h2>
+    <div class="meta-row">
+      <span>HIT / Huawei Noah's Ark</span><span>2025.06</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">统一 RKL + GRPO 的目标函数</div>
+    <p>KDRL 是最干净的"OPD + RL 加法"设计——直接把 Reverse KL 和 GRPO 的规则奖励并列为两个损失项，共享同一批 rollout：</p>
+    <div class="formula-box">
+      <strong style="color:var(--text);">KDRL 目标：</strong><br>
+      <div class="eq">L = L_GRPO(y; r_rule) + α · D_RKL(π_S ‖ π_T)</div>
+      其中：<br>
+      L_GRPO = GRPO 规则奖励（如数学题验证、代码执行结果）<br>
+      D_RKL = 对同一批学生 rollout y 计算与外部教师（Skywork-OR1）的 KL<br>
+      α = 两个损失的权重平衡系数（论文默认 α=0.1）
+    </div>
+
+    <div class="section-h">为什么 KL 和 RL 信号互补而非冲突？</div>
+    <ul>
+      <li><strong>RL 信号（稀疏、准确）：</strong>告诉学生"最终答案对不对"，但不告诉中间推理步骤该怎么做。</li>
+      <li><strong>KL 信号（密集、近似）：</strong>告诉学生"每个 token 位置应该往哪个方向走"，但不保证一定能得到正确答案。</li>
+      <li><strong>两者组合：</strong>KL 提供方向感（不盲目探索），RL 提供纠错能力（验证最终对错）。</li>
+    </ul>
+
+    <div class="section-h">Skywork-OR1 作为外部 KL 教师</div>
+    <p>KDRL 用 Skywork-OR1（一个高质量开源推理模型）作为 KL 信号的来源。需要在训练时同时运行 Skywork-OR1（教师推理）和学生模型。内存需求：7B 学生 + 7B 教师，需约 2×40GB VRAM 或使用多节点。</p>
+
+    <div class="section-h">实验</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>MATH-500</th><th>OlympiadBench</th><th>Omni-MATH</th></tr>
+      <tr><td>纯 GRPO</td><td>85.2%</td><td>52.3%</td><td>43.1%</td></tr>
+      <tr><td>纯 RKL OPD</td><td>83.8%</td><td>50.1%</td><td>41.8%</td></tr>
+      <tr><td>KDRL</td><td><strong>87.6%</strong></td><td><strong>55.4%</strong></td><td><strong>46.2%</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">α 超参调节建议</div>
+      <p>α 太大（>0.5）：KL 项主导，模型过度模仿教师，RL 探索不足，收敛到教师上界。α 太小（&lt;0.01）：退化为纯 GRPO，初期探索效率低。α=0.05-0.15 通常是甜点区，具体取决于教师质量和任务难度。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NPO ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.20733">NPO / AutoNPO: Learn from Your Near-Future Self</a></h2>
+    <div class="meta-row">
+      <span>IIE CAS / UCAS / JD.COM</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">"向未来的自己学习"</div>
+    <p>NPO 提出了一个极富哲学意味的想法：在 RL 训练的过程中，随着学生不断进步，训练后期的 checkpoint 比训练初期更强。为什么不用<strong>未来的 checkpoint 作为当前的教师</strong>？</p>
+
+    <div class="section-h">教师选择准则</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">定义"近未来教师"的两个条件：</strong><br><br>
+      条件 1：Q(π_teacher, x) > Q(π_current, x)&nbsp;&nbsp;（教师比当前策略更强——"足够强"）<br>
+      条件 2：V(π_teacher, x) < V(π_current, x)&nbsp;&nbsp;（教师还没完全超出学生理解——"足够近"）<br><br>
+      <strong style="color:var(--text);">教师选择方法：</strong><br>
+      在训练 checkpoint 序列中，找到满足两个条件的最近 checkpoint 作为教师<br>
+      → 通常是当前步数 + 500-2000 步之后的 checkpoint
+    </div>
+
+    <div class="section-h">AutoNPO：自动调度干预时机</div>
+    <p>NPO 的升级版 AutoNPO 引入了自动化的"干预时机检测"：</p>
+    <ul>
+      <li>监控 RL 训练的奖励增长速度</li>
+      <li>当奖励增长停滞（plateau 检测）时，自动触发 NPO 注入（用未来 checkpoint 做一轮 KL 蒸馏）</li>
+      <li>KL 蒸馏结束后，恢复纯 RL 训练</li>
+    </ul>
+
+    <div class="section-h">NPO vs OPSD（已验证推理链）</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>NPO</th><th>OPSD</th></tr>
+      <tr><td>教师来源</td><td>未来的自己（后期 checkpoint）</td><td>同模型 + 已知正确答案</td></tr>
+      <tr><td>特权信息类型</td><td>更多训练步骤</td><td>正确推理链</td></tr>
+      <tr><td>需要外部验证器</td><td>否</td><td>是（需要验证推理链正确性）</td></tr>
+      <tr><td>适用阶段</td><td>RL 训练过程中</td><td>冷启动 / 独立 OPD 阶段</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">工程可行性</div>
+      <p>NPO 的实现需要保存训练过程中的多个 checkpoint（额外存储开销），并在每个时间点找到合适的"近未来 checkpoint"（需要历史评估数据）。对于大规模 (≥70B) 模型，checkpoint 存储成本高昂。AutoNPO 通过只在 plateau 时触发，大幅减少了存储需求。建议在 7B-13B 规模先验证效果再扩展。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HDPO ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.23871">HDPO: Hybrid Distillation Policy Optimization</a></h2>
+    <div class="meta-row">
+      <span>NVIDIA Research</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPD 作为 RL 的安全网</div>
+    <p>HDPO 的设计哲学：对大部分 prompt 用 RL（效果最好），但对"悬崖 prompt"（cliff prompts）用 OPSD 自蒸馏——这是 OPD 和 RL 最优雅的分工之一。</p>
+
+    <div class="section-h">什么是"悬崖 prompt"？</div>
+    <p>悬崖 prompt 是指：学生在这些 prompt 上的 rollout 奖励方差极大（有时全对，有时全错），导致 GRPO 梯度方向不稳定，强行用 RL 训练反而会损害已有能力。</p>
+    <div class="formula-box">
+      <strong style="color:var(--text);">悬崖检测：</strong><br>
+      Var[r(y) | y ~ π_S(·|x)] &gt; τ_cliff&nbsp;&nbsp;→ 判定为悬崖 prompt<br><br>
+      <strong style="color:var(--text);">路由规则：</strong><br>
+      if 悬崖 prompt → 用 OPSD（同模型 + 特权上下文做 RKL）<br>
+      else → 正常 GRPO<br><br>
+      特权上下文获取：对悬崖 prompt 生成多条 rollout → 取最高奖励的那条作为特权推理链
+    </div>
+
+    <div class="section-h">两路径设计的优点</div>
+    <ul>
+      <li><strong>避免梯度破坏：</strong>悬崖 prompt 在 RL 下容易导致梯度爆炸，OPSD 的密集 KL 信号更稳定。</li>
+      <li><strong>样本效率最大化：</strong>不是所有 prompt 都值得用 OPD（成本高），只在 RL 不稳定的地方切换。</li>
+      <li><strong>自适应：</strong>随着训练进行，悬崖 prompt 比例下降（学生越来越强），系统自动向纯 RL 演化。</li>
+    </ul>
+
+    <div class="section-h">实验</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>MATH-500</th><th>AIME 2024</th><th>训练稳定性</th></tr>
+      <tr><td>纯 GRPO</td><td>84.1%</td><td>23.3%</td><td>有 3 次崩塌</td></tr>
+      <tr><td>HDPO</td><td><strong>86.8%</strong></td><td><strong>27.8%</strong></td><td><strong>无崩塌</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">实用价值</div>
+      <p>HDPO 的"悬崖检测 + 路由"思想对所有大规模 RL 训练都有参考价值。即使不完整实现 HDPO，也可以将"对高方差 prompt 使用 OPD 稳定训练"作为一种简单的 RL 训练稳定技巧。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SD-Zero ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.12002">SD-Zero: Self-Distillation Zero</a></h2>
+    <div class="meta-row">
+      <span>Princeton / Toronto / CMU</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">将二值奖励转化为密集信号</div>
+    <p>DeepSeek-R1-Zero 风格的训练用纯二值奖励（对/错 = 1/0）驱动 RL，信号极度稀疏。SD-Zero 提出：用一个<strong>共享权重的修订器（reviser）</strong>将学生的错误输出修正，修订后的输出作为密集教师信号。</p>
+
+    <div class="section-h">生成器-修订器架构</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">Step 1：生成器生成初始 rollout</strong><br>
+      y_init ~ π_θ(·|x)&nbsp;&nbsp;（可能有错）<br><br>
+      <strong style="color:var(--text);">Step 2：修订器修正输出（共享同一套权重 θ！）</strong><br>
+      输入：(x, y_init, "请检查并修正上述答案")<br>
+      y_revised ~ π_θ(·|x, y_init, revise_prompt)&nbsp;&nbsp;（通常更好）<br><br>
+      <strong style="color:var(--text);">Step 3：自蒸馏损失</strong><br>
+      <div class="eq">L = D_RKL(π_S(·|x,y_init) ‖ π_θ(·|x,y_init,revise_prompt)) + λ·L_RLVR</div>
+      修订器输出作为生成器的 OPD 目标（密集信号）<br>
+      RLVR 提供最终正确性监督
+    </div>
+
+    <div class="section-h">为什么共享权重是关键？</div>
+    <p>如果生成器和修订器权重分离，系统退化为两个不同模型之间的蒸馏（标准 OPD）。共享权重使得：修订器的改进会直接反馈到生成器的权重上，形成"更好的生成 → 更好的修订 → 更好的生成"的正反馈循环。</p>
+
+    <div class="insight-box">
+      <div class="label">SD-Zero 的适用场景</div>
+      <p>SD-Zero 最适合"有外部验证器但验证器只能给 0/1 信号"的场景（数学、代码、逻辑推理）。对于 open-ended 生成任务（写作、对话），修订器的改进难以量化，SD-Zero 的优势不明显。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 其余方法速览 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>其余 OPD-RL 混合方法速览</h2>
+    <div class="meta-row"><span class="tag" style="background:#2e3348">11 篇</span></div>
+  </div>
+  <div class="paper-body">
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2601.20802">SDPO</a>（ETH / MIT, 2026.01）</strong>—— 学生 rollout → 获取 token 化反馈 → 反馈条件化的自教师重评估 → 将修正后分布蒸馏回策略。面向代码、工具使用、科学推理的复杂任务。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.10165">OpenClaw-RL</a>（Gen-Verse, 2026.03）</strong>—— 判别模型提取后知之明提示（hindsight prompt），教师 token-logprob 差距作为"方向优势"，统一二值 RL 和 OPD 于单一 trainer。覆盖终端/GUI/SWE/工具调用 Agent 场景。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2503.02832">AlignDistil</a>（BJTU / Tencent, ACL 2025）</strong>—— 将 DPO 重新框架化为策略蒸馏：DPO 模型 + ref-model logits 的组合作为教师信号。理论上证明了 DPO 等价于特定形式的 OPD，将两个社区连接起来。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2602.22495">RLAD</a>（AWS, 2026.02）</strong>—— 将 PPO/GRPO 的概率比 π/π_old 锚定到"教师-旧策略混合体"，形成信赖域似然比设计。理论上保证了更新步长不会超出教师分布的有效范围。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2604.03128">RLSD</a>（Multi-org, 2026.04）</strong>—— RLVR 方向 + 教师证据比率调节幅度。将自蒸馏幅度（magnitude）与 RLVR 方向（direction）解耦组合，方向来自 RL 梯度，大小来自教师-学生 logprob 差距。
+    </div>
+
+    <div class="mini-card">
+      <strong>AlignDistil、RLAD 的统一视角</strong>——这两篇都在尝试将"OPD 信号"编码进 RL 的更新步长控制（trust region），而非简单相加。核心理念：不是"让学生像教师"，而是"让学生更新的方向不要偏离教师太远"。
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_opsd.html">自蒸馏 OPSD</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_multimodal.html">多模态 OPD →</a>
+</p>
+
+</div>
+</body>
+</html>

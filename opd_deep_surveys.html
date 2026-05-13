@@ -1,0 +1,399 @@
+<!-- index: OPD 深度解析 — 综述 & 基础理论 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 综述 & 基础理论</title>
+<style>
+:root {
+  --bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;
+  --text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;
+  --green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0;}
+
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}
+.topbar h1{font-size:16px;font-weight:700;}
+
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+
+.tldr{background:linear-gradient(135deg,rgba(108,140,255,.1),rgba(72,219,251,.05));border:1px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--accent2);font-size:14px;margin-bottom:6px;}
+.tldr p{font-size:14px;color:var(--text2);}
+
+/* Paper deep block */
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}
+.paper-header h2 a{color:var(--text);}
+.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}
+.section-h:first-child{margin-top:0;}
+
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}
+p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}
+li{font-size:14px;color:var(--text2);margin:5px 0;}
+li strong{color:var(--text);}
+
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>📚 综述 & 基础理论（7 篇深度解读）</h1>
+</div>
+
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>这 7 篇论文构成了 OPD 的"认知骨架"：GKD 和 MiniLLM 各自命名和定义了 OPD（同月发布，互相独立），THUNLP 揭示了 OPD 何时失败，CASIA 给出排错 checklist，Lightning OPD 解决了"需要在线教师"的工程痛点。<strong>读完这 7 篇，能建立起完整的 OPD 心智模型。</strong></p>
+</div>
+
+<!-- =========== GKD =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2306.13649">GKD: On-Policy Distillation of Language Models</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">ICLR 2024</span>
+      <span>Google DeepMind</span><span>2023.06</span>
+      <span><a href="https://github.com/huggingface/trl">TRL GKDTrainer</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">背景动机</div>
+    <p>传统知识蒸馏（SFT-on-Teacher）在<strong>教师分布</strong>上训练学生，但推理时学生在<strong>自己的分布</strong>上生成文本——训练分布与推理分布不匹配（exposure bias / distribution mismatch），导致错误累积。GKD 的核心洞察：<strong>让学生在自己犯错的分布上获得教师纠正，效果远优于纯教师数据训练</strong>。</p>
+
+    <div class="section-h">方法核心</div>
+    <p>GKD 引入<strong>广义 JSD（Generalized Jensen-Shannon Divergence）</strong>，通过参数 λ 在前向 KL（FKL）和反向 KL（RKL）之间插值：</p>
+    <div class="formula-box">
+      <div class="eq">L_GKD = λ · D_FKL(p_T ‖ p_S) + (1-λ) · D_RKL(p_S ‖ p_T)</div>
+      <div style="margin-top:8px;color:var(--text2);">
+        其中数据来自混合分布：以概率 β 从学生采样，以 (1-β) 从教师采样<br>
+        <strong>关键参数：</strong>λ=0（纯 RKL，mode-seeking）; λ=1（纯 FKL，mean-seeking）; λ=0.5（JSD）
+      </div>
+    </div>
+    <p><strong>训练流程：</strong></p>
+    <ol>
+      <li>从混合分布采样 x（prompt），用学生生成 y ~ π_S(·|x)（on-policy 部分）</li>
+      <li>教师计算 log p_T(y_t | x, y_{&lt;t})（逐 token 概率）</li>
+      <li>在学生生成的 y 上计算 GKD 损失并反向传播</li>
+    </ol>
+
+    <div class="section-h">为什么 RKL 比 FKL 更适合小模型？</div>
+    <p>FKL（前向 KL）是 mean-seeking：最小化 FKL 时，学生必须覆盖教师分布的<strong>所有模式</strong>，小模型容量不足时会生成模糊的"平均"输出。RKL（反向 KL）是 mode-seeking：学生集中学习教师的<strong>主要模式</strong>，忽略次要模式，结果更清晰具体，适合容量受限的小模型。</p>
+
+    <div class="section-h">实验结果</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>WMT14 En-De</th><th>XSum</th><th>GSM8K（7B→1B）</th></tr>
+      <tr><td>SFT-on-Teacher</td><td>26.2</td><td>34.1</td><td>基线</td></tr>
+      <tr><td>GKD (β=0.5, λ=0.5)</td><td><strong>27.8</strong></td><td><strong>35.6</strong></td><td>+2.3pp</td></tr>
+      <tr><td>SeqKD (纯离策略)</td><td>26.8</td><td>34.5</td><td>+0.8pp</td></tr>
+    </table>
+
+    <div class="section-h">核心贡献</div>
+    <ul>
+      <li><strong>命名了 On-Policy Distillation</strong>——首次把"在学生分布上做 KD"作为独立范式提出</li>
+      <li>统一的 GKD 框架覆盖所有 KL 散度变体（λ 插值）</li>
+      <li>TRL 中的 <code>GKDTrainer</code> 直接实现此方法，工程可复现</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">关键洞察</div>
+      <p>GKD 的 β 参数（混合比例）等价于"在策略程度"：β=0 就是纯 SFT-on-Teacher（off-policy），β=1 就是纯 OPD。实践中 β=0.5 往往表现最佳，因为纯 on-policy 时初期学生太弱，教师损失信号噪声很大。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== MiniLLM =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2306.08543">MiniLLM: Knowledge Distillation of Large Language Models</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">ICLR 2024</span>
+      <span>Microsoft Research / Tsinghua</span><span>2023.06（比 GKD 早 5 天）</span>
+      <span><a href="https://github.com/microsoft/LMOps/tree/main/minillm">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">背景与动机</div>
+    <p>MiniLLM 与 GKD 同月独立发现了 OPD 的核心思想，但从<strong>策略梯度优化</strong>角度出发，而非 KL 插值。关键问题：为什么前向 KL（SFT-on-Teacher）会产生"幻觉"？因为 FKL 要求学生在所有教师有概率的地方都有概率——当教师在某位置有高概率而学生没有时，梯度会强迫学生胡乱填充，产生 unlikely 的 token 组合。</p>
+
+    <div class="section-h">核心方法</div>
+    <p>MiniLLM 最小化<strong>Reverse KL + Policy Gradient</strong>：</p>
+    <div class="formula-box">
+      <div class="eq">L_MiniLLM = D_RKL(π_S ‖ π_T) = E_{y~π_S}[log π_S(y|x) - log π_T(y|x)]</div>
+      <div style="margin-top:10px;color:var(--text2);">
+        梯度展开（策略梯度形式）：<br>
+        <div class="eq">∇L = E_{y~π_S}[(log π_S(y|x) - log π_T(y|x)) · ∇log π_S(y|x)] + 1</div>
+        即：奖励 r(x,y) = log π_T(y|x) - log π_S(y|x)（教师比学生更喜欢的程度）
+      </div>
+    </div>
+
+    <div class="section-h">与 GKD 的关键对比</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>GKD</th><th>MiniLLM</th></tr>
+      <tr><td>优化目标</td><td>广义 JSD（可配置）</td><td>纯 Reverse KL</td></tr>
+      <tr><td>优化视角</td><td>散度最小化（token 级）</td><td>策略梯度（序列级）</td></tr>
+      <tr><td>方差控制</td><td>无专门处理</td><td>多步 REINFORCE 基线</td></tr>
+      <tr><td>采样策略</td><td>混合 β 参数</td><td>纯学生 rollout</td></tr>
+      <tr><td>工程复杂度</td><td>低（类 SFT）</td><td>中（需 PG 稳定训练）</td></tr>
+    </table>
+
+    <div class="section-h">为什么 Reverse KL = mode-seeking？</div>
+    <p>RKL 的梯度项 <code>(log π_S - log π_T)</code> 是负数时（学生比教师概率低），梯度会推动学生<strong>提高</strong>这个 token 的概率。但这只对学生已有一定概率的 token 有效（否则 π_S 接近 0 导致梯度消失）。因此 RKL 自然形成了"集中学习教师主模式"的行为。</p>
+
+    <div class="insight-box">
+      <div class="label">历史地位</div>
+      <p>MiniLLM 比 GKD 早 5 天挂出，但 GKD 有更好的框架推广（TRL 集成）。两篇论文的同期独立发现证明了"在学生分布上做 KD"是当时的时代需求，而非偶然。2023.06 是 OPD 正式诞生的时间节点。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== THUNLP Rethinking =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.13016">Rethinking On-Policy Distillation: Phenomenology, Mechanism & Recipe</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">THUNLP</span>
+      <span>Tsinghua University</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">论文定位</div>
+    <p>这是目前最系统的"OPD 为什么有效，何时失败"理论分析。论文从<strong>现象学、机制、配方</strong>三层递进展开，给出了 OPD 实践者最需要的答案。</p>
+
+    <div class="section-h">两个成功条件（核心理论）</div>
+    <p>论文发现 OPD 成功需要同时满足：</p>
+    <ol>
+      <li><strong>思维模式兼容（Thinking Pattern Compatibility）：</strong>教师和学生的推理风格要兼容。例如：将 DeepSeek-R1（中英混合推理）蒸馏到纯英文学生时，风格不匹配导致 OPD 无效，需先做 off-policy 冷启动对齐风格。</li>
+      <li><strong>教师具备学生缺乏的新能力（Teacher Superiority）：</strong>如果教师在某类题目上与学生性能相当，OPD 收益极小；教师必须在目标任务上有实质领先。</li>
+    </ol>
+
+    <div class="section-h">实用 Recipe</div>
+    <div class="formula-box" style="line-height:1.8;">
+      <strong style="color:var(--text);">Step 1：Off-policy 冷启动（2-3 epoch SFT on teacher data）</strong><br>
+      → 让学生思维模式向教师靠拢，确保条件 1 满足<br><br>
+      <strong style="color:var(--text);">Step 2：教师对齐的 prompt 筛选</strong><br>
+      → 过滤掉教师无优势的 prompt（避免无效梯度）<br><br>
+      <strong style="color:var(--text);">Step 3：渐进 top-K Reverse KL OPD</strong><br>
+      → 先用大 K（覆盖更多教师知识），随训练收敛缩小 K<br>
+      → 公式：<span class="eq">L = -E_{y~π_S}[Σ_t min(π_T(y_t|·), topK) · log π_S(y_t|·)]</span>
+    </div>
+
+    <div class="section-h">失败模式图谱</div>
+    <table class="compare-table">
+      <tr><th>失败模式</th><th>症状</th><th>原因</th><th>修复</th></tr>
+      <tr><td>风格不匹配</td><td>学生困惑，损失震荡</td><td>思维模式不兼容</td><td>off-policy 冷启动</td></tr>
+      <tr><td>教师无优势</td><td>收益接近零</td><td>教师 ≈ 学生能力</td><td>换更强教师 / 换任务</td></tr>
+      <tr><td>梯度主导错误</td><td>易题学好，难题无收益</td><td>未筛选 prompt</td><td>教师-胜率加权采样</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">最重要的实践启示</div>
+      <p>OPD 不是银弹——如果直接在 Raw 学生上做 OPD 而不冷启动，效果经常不如纯 SFT。这篇论文解释了为什么：教师的"语言"学生还听不懂。冷启动是 OPD 成功的前提条件，而不是可选步骤。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== Revisiting OPD =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.25562">Revisiting OPD: Failure Modes & Simple Fixes</a></h2>
+    <div class="meta-row">
+      <span>CASIA（中国科学院自动化所）</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">论文价值</div>
+    <p>这是一篇<strong>经验性排错论文</strong>，不提新算法，专门诊断 OPD 实现时最常踩的三个坑。读完能省一周调试时间。</p>
+
+    <div class="section-h">三大失败模式与修复</div>
+
+    <p><strong>失败模式 1：不平衡的单 token 信号</strong></p>
+    <p>问题：RKL 在每个 token 位置独立计算，高概率 token 主导梯度（高概率位置的 KL 贡献大），低概率位置的信号被淹没。</p>
+    <div class="formula-box">
+      修复：<span class="eq">截断 Reverse KL（Truncated RKL）</span><br>
+      L_trunc = -Σ_t [min(1, π_T(y_t)/π_S(y_t))] · log π_S(y_t)<br>
+      类似 PPO 的 clip 机制，防止单 token 梯度爆炸
+    </div>
+
+    <p><strong>失败模式 2：不可靠的前缀引导（Prefix Guidance Failure）</strong></p>
+    <p>问题：OPD 采样时用教师的前缀引导学生（教师生成前 k token，学生续写），但教师前缀在学生分布上概率极低，导致后续采样完全偏离。</p>
+    <div class="formula-box">
+      修复：纯学生 rollout（不使用前缀引导），用 <span class="eq">top-p 核采样（p=0.95）</span> 代替贪心采样，增加多样性
+    </div>
+
+    <p><strong>失败模式 3：Tokenizer 不匹配</strong></p>
+    <p>问题：教师和学生用不同 tokenizer 时，同一段文本的 token 序列不同，无法直接对齐 logit。</p>
+    <div class="formula-box">
+      修复：使用 <span class="eq">特殊 token 掩码（Special Token Masking）</span><br>
+      对 BOS/EOS/PAD 位置的 KL 贡献清零；或使用子词对齐（见 DSKDv2）
+    </div>
+
+    <div class="warn-box">
+      <div class="label">踩坑警告</div>
+      <p>失败模式 3 在跨架构蒸馏（如 LLaMA→Qwen 或 DeepSeek→Mistral）时必然出现。如果你的教师和学生是同一系列（如 Qwen3-72B → Qwen3-7B），tokenizer 相同，可以忽略这个问题。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== Lightning OPD =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.13010">Lightning OPD: Efficient Post-Training with Offline OPD</a></h2>
+    <div class="meta-row">
+      <span>Wu, Han, Cai</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">解决的工程痛点</div>
+    <p>标准 OPD 要求训练时<strong>同时运行教师和学生</strong>（教师在线提供 logit），导致：(1) GPU 内存翻倍（要同时载入两个模型）；(2) 教师推理成为训练瓶颈（每个 batch 都需要教师 forward）；(3) 分布式训练时教师和学生需要在不同节点通信。</p>
+
+    <div class="section-h">核心方案：预计算教师 log-probs</div>
+    <div class="formula-box" style="line-height:1.8;">
+      <strong style="color:var(--text);">离线阶段（一次性）：</strong><br>
+      1. 用当前学生（或初始化模型）生成 rollout 数据集 D = {(x_i, y_i)}<br>
+      2. 用教师计算所有 (x_i, y_i) 的 log p_T(y_t|x,y_&lt;t)，存储到磁盘<br><br>
+      <strong style="color:var(--text);">在线训练阶段：</strong><br>
+      3. 读取预计算的教师 log-probs，直接计算 KL 损失<br>
+      4. 无需运行教师模型 → 内存减半，训练加速 2-3×
+    </div>
+
+    <div class="section-h">教师一致性约束（核心理论贡献）</div>
+    <p>论文证明了 Lightning OPD 要求 SFT 冷启动和 OPD 使用<strong>同一教师</strong>，否则梯度有偏：</p>
+    <div class="formula-box">
+      <span class="eq">如果 SFT 用教师 T1，OPD 用教师 T2（T1 ≠ T2）：</span><br>
+      → 学生先向 T1 靠拢，OPD 再向 T2 靠拢<br>
+      → 两个梯度方向冲突，训练不稳定<br>
+      → 实验验证：混合教师导致性能下降 1.5-3pp
+    </div>
+
+    <div class="warn-box">
+      <div class="label">离线 OPD 的关键局限</div>
+      <p>预计算 log-probs 在学生<strong>初始</strong>分布上，随着训练推进，学生分布偏移，预计算数据逐渐过时（distribution drift）。实践中需要每隔 N 步重新生成 rollout 并重新计算教师 log-probs（周期性刷新），论文推荐 N=500-2000 steps。</p>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">工程价值</div>
+      <p>Lightning OPD 是资源受限场景（单节点、内存不足以同时运行教师和学生）下的首选方案。如果你有两台 A100 节点，一台运行教师服务，一台训练学生，则不需要 Lightning OPD，直接用标准在线 OPD 效果更好（分布 drift 更小）。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== Tencent Survey =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.00626">A Survey of On-Policy Distillation for LLMs</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#4E6813">综述</span>
+      <span>Tencent AI Lab</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">综述定位</div>
+    <p>这是截至 2026.04 最完整的 OPD 学术综述，收录 50+ 方法，覆盖损失函数分类、数据策略、训练框架、应用场景。适合作为<strong>查询索引</strong>用（遇到新方法，先在这里找它的位置）。</p>
+
+    <div class="section-h">分类框架（论文提出的 OPD 四维分类）</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>选项</th></tr>
+      <tr><td>教师来源</td><td>外部模型 / 同模型特权上下文 / 早期 checkpoint / 多教师 / 判别器</td></tr>
+      <tr><td>监督信号</td><td>logit KL / top-K logits / 序列奖励 / 口头评分 / 特征对齐</td></tr>
+      <tr><td>rollout 使用方式</td><td>全部使用 / 筛选（验证器过滤）/ 截断 / 替换 / PG 样本</td></tr>
+      <tr><td>Pipeline 位置</td><td>冷启动 / SFT 替代 / RL 内部 / RL 替代 / 跨阶段粘合 / 推理压缩</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">如何用这篇综述</div>
+      <p>遇到一个新的 OPD 方法，先定位它在四维分类中的坐标（例如：白盒 + logit KL + 筛选 rollout + SFT 替代），再去综述中找同坐标的方法做对比。这比逐篇阅读高效 10 倍。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========== Thinking Machines Blog =========== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines Lab Blog: On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>Thinking Machines Lab (Kevin Lu et al.)</span><span>2025.10</span>
+      <span><a href="https://github.com/thinking-machines-lab/tinker-cookbook">tinker-cookbook（&lt;200 行实现）</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">为什么强烈推荐这篇博客</div>
+    <p>这是最适合初学者的 OPD 入口。一句话解释："<strong>将 RL 训练器中的 KL 参考模型（ref model）换成更强的教师模型</strong>"即可实现 OPD，仅需一行代码修改。</p>
+
+    <div class="section-h">GRPO 到 OPD 的一行代码转换</div>
+    <pre>
+# 标准 GRPO（ref model = 学生的初始化版本）
+kl_penalty = log π_student(y) - log π_student_init(y)
+
+# OPD（只改这一行！ref model → 教师模型）
+kl_penalty = log π_student(y) - log π_TEACHER(y)
+
+# 效果：student 越像 teacher，惩罚越小
+# 梯度方向：学生被推向教师的分布
+</pre>
+
+    <div class="section-h">复现 Qwen3 的关键参数</div>
+    <table class="compare-table">
+      <tr><th>超参数</th><th>值</th><th>说明</th></tr>
+      <tr><td>教师</td><td>Qwen3-72B-Instruct</td><td>完整模型，需约 80GB VRAM</td></tr>
+      <tr><td>学生</td><td>Qwen3-7B（或更小）</td><td>SFT 冷启动后再 OPD</td></tr>
+      <tr><td>KL 系数 β</td><td>0.01-0.05</td><td>太大则学生不敢偏离教师</td></tr>
+      <tr><td>top-K logits</td><td>K=50-200</td><td>只传输教师 top-K 概率，节省带宽</td></tr>
+      <tr><td>vs RL 成本</td><td>~1/10</td><td>无需奖励模型，无需大量采样</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">最重要的一行话</div>
+      <p>OPD = RL，但把"奖励信号"从"稀疏的标量奖励"换成"教师 logits 提供的密集概率监督"。这就是 OPD 比 RL 更稳定、更高效的根本原因。</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_whitebox.html">白盒 OPD — 教师 Logits →</a>
+</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!-- index: OPD 深度解析 — 自蒸馏 OPSD | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 自蒸馏 OPSD</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(162,89,255,.1),rgba(72,219,251,.05));border:1px solid var(--purple);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--purple);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.mini-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:var(--text2);}
+.mini-card strong{color:var(--text);}
+.opsd-variants{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.opsd-variant{background:var(--card2);border:1px solid var(--purple);border-radius:10px;padding:14px;font-size:13px;}
+.opsd-variant h4{color:var(--purple);font-size:13px;margin-bottom:8px;}
+.opsd-variant p{color:var(--text2);margin:0;}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>♻️ 自蒸馏 OPSD — 特权上下文（9 篇深度解读）</h1>
+</div>
+
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>OPSD（On-Policy Self-Distillation）的核心洞察：<strong>不需要外部更强的教师——同一个模型在"有特权信息"和"无特权信息"两种条件下表现差异，可以作为自我蒸馏的信号</strong>。特权上下文可以是：已验证的推理链、正确答案、"请简洁"指令前缀、更长的上下文窗口、知识文档……OPSD 是目前最符合"自力更生"精神的 OPD 变体，无需外部大模型。</p>
+</div>
+
+<!-- ===== OPSD 变体全景 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>OPSD 变体全景：特权上下文类型分类</h2>
+    <div class="meta-row"><span class="tag" style="background:#A259FF">导引</span></div>
+  </div>
+  <div class="paper-body">
+    <div class="opsd-variants">
+      <div class="opsd-variant">
+        <h4>已验证推理链 / 答案</h4>
+        <p>教师 = 同模型 + 正确答案（给教师"抄"，让学生自己想）<br>代表：OPSD（UCLA / Meta FAIR）</p>
+      </div>
+      <div class="opsd-variant">
+        <h4>指令前缀</h4>
+        <p>教师 = 同模型 + "请简洁回答"前缀<br>代表：CRISP / OPSDC（LinkedIn）</p>
+      </div>
+      <div class="opsd-variant">
+        <h4>知识上下文</h4>
+        <p>教师 = 同模型 + 相关文档/知识<br>代表：OPCD（Microsoft Research）</p>
+      </div>
+      <div class="opsd-variant">
+        <h4>长上下文</h4>
+        <p>教师 = 短上下文同模型 → 学生 = 长上下文<br>代表：OPSDL（Baidu）</p>
+      </div>
+      <div class="opsd-variant">
+        <h4>解码配置</h4>
+        <p>教师 = 同模型 + 高温/低温采样<br>代表：Apple SSD</p>
+      </div>
+      <div class="opsd-variant">
+        <h4>环境交互</h4>
+        <p>教师 = 同模型 + 游戏/任务环境反馈<br>代表：OEL（Microsoft Research）</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OPSD 定义性论文 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2601.18734">OPSD: Self-Distilled Reasoner</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#A259FF">Canonical OPSD</span>
+      <span>UCLA / Meta FAIR</span><span>2026.01</span>
+      <span><a href="https://github.com/siyan-zhao/OPSD">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPSD 的定义性论文</div>
+    <p>这篇论文正式定义了 OPSD（On-Policy Self-Distillation）这个概念，并建立了"特权上下文"的操作化定义。核心思想：对于数学/推理任务，如果给模型<strong>已验证正确的推理链</strong>作为前缀，它能生成更好的答案分布——这个"更聪明的自己"就是教师。</p>
+
+    <div class="section-h">训练流程详解</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">教师端（同一个模型，有特权上下文）：</strong><br>
+      输入：(x, c*)&nbsp;&nbsp;其中 c* = 已验证正确的推理链<br>
+      计算：log π_θ(y_t | x, c*, y_{&lt;t})&nbsp;&nbsp;对所有 token 位置<br><br>
+      <strong style="color:var(--text);">学生端（同一个模型，无特权上下文）：</strong><br>
+      采样：y ~ π_θ(·|x)&nbsp;&nbsp;（on-policy，C1 满足）<br><br>
+      <strong style="color:var(--text);">损失（Point-wise Clipped RKL）：</strong><br>
+      <div class="eq">L = Σ_t min(π_T(y_t|·)/π_S(y_t|·), clip_max) · log π_S(y_t|·)</div>
+      clip_max = 10（防止重要性权重爆炸）<br><br>
+      <strong style="color:var(--text);">注意：教师和学生共享同一套权重 θ！</strong><br>
+      训练时只有学生端反向传播，教师端 frozen（no_grad）
+    </div>
+
+    <div class="section-h">已验证推理链的获取方式</div>
+    <ol>
+      <li>用 beam search 或多次采样生成候选推理链集合</li>
+      <li>用验证器（数学题 = 答案比对；代码 = 单元测试）筛选正确的推理链</li>
+      <li>从正确推理链中随机采样 c*，作为特权上下文输入教师端</li>
+    </ol>
+
+    <div class="section-h">关键实验：vs GRPO 的成本对比</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>MATH 准确率</th><th>GPU 小时消耗</th><th>rollout 数量</th></tr>
+      <tr><td>GRPO</td><td>72.4%</td><td>160 GPU·h</td><td>8×16=128/step</td></tr>
+      <tr><td>OPSD</td><td><strong>72.8%</strong></td><td><strong>18 GPU·h（1/8.9×！）</strong></td><td>1×8=8/step</td></tr>
+      <tr><td>SFT-on-Teacher</td><td>68.1%</td><td>40 GPU·h</td><td>—</td></tr>
+    </table>
+    <p>OPSD 以约 1/9 的计算成本实现了与 GRPO 相当的效果。核心原因：RKL 的逐 token 密集信号比 GRPO 的稀疏序列奖励高效得多。</p>
+
+    <div class="section-h">基于 TRL GOLD Trainer 的实现</div>
+    <pre>
+from trl.experimental import GOLDTrainer
+
+# GOLD（Gold On-policy Learning via Distillation）是 OPSD 的 TRL 实现
+trainer = GOLDTrainer(
+    model=model,  # 教师和学生共享同一个 model 对象
+    privileged_context_fn=get_verified_chain,  # 获取已验证推理链的函数
+    loss_type="clipped_rkl",
+    clip_max=10.0,
+    rollout_batch_size=8,
+)
+</pre>
+
+    <div class="insight-box">
+      <div class="label">OPSD 的核心哲学突破</div>
+      <p>OPSD 证明了"超越当前自己"不需要外部更大的模型。模型在有额外信息时（已知答案）的表现，可以作为其在无信息时（正常推理）表现的"上限目标"。这种"借助外部验证，指导内部学习"的模式，与 STaR（Self-Taught Reasoner）有深刻联系，但 OPSD 用 KL 蒸馏代替 SFT，保留了更多分布信息。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CRISP ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.05433">CRISP / OPSDC: Reasoning Compression via Self-Distillation</a></h2>
+    <div class="meta-row">
+      <span>LinkedIn</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">问题：Long CoT 太冗长，但压缩损失质量</div>
+    <p>DeepSeek-R1、QwQ 等推理模型生成 4000-8000 token 的长链推理，实际有效内容可能只有 30%。传统压缩方法（RL + 长度惩罚）会导致<strong>熵坍缩</strong>：模型为了减少 token 开始走捷径，跳过重要推理步骤，质量下降。</p>
+
+    <div class="section-h">CRISP 的特权上下文：指令前缀</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">教师 = 同模型 + "请简洁回答" 前缀：</strong><br>
+      输入：("请用最简洁的方式回答，不要废话 " + x)<br>
+      输出：y_concise ~ π_θ(·|"简洁指令" + x)&nbsp;&nbsp;（短而精的推理链）<br><br>
+      <strong style="color:var(--text);">学生 = 同模型，正常推理：</strong><br>
+      输入：x<br>
+      采样：y_student ~ π_θ(·|x)&nbsp;&nbsp;（可能很长）<br><br>
+      <strong style="color:var(--text);">目标：</strong>在学生的 rollout y_student 上，用教师的 y_concise 分布做 RKL 蒸馏<br>
+      → 学生逐渐学会"不用指令也能简洁推理"
+    </div>
+
+    <div class="section-h">为什么不产生熵坍缩？</div>
+    <p>RL + 长度惩罚的问题：奖励函数直接惩罚"长"，模型学到的是"尽量少输出"，不管质量。</p>
+    <p>CRISP 的 KL 蒸馏信号：教师的"简洁版"在每个 token 位置都提供了"下一步往哪走"的方向，学生学到的是<strong>正确的简洁推理路径</strong>，而不是"尽量截断"。</p>
+
+    <div class="section-h">压缩效果</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>平均推理长度</th><th>MATH 准确率</th><th>质量保留率</th></tr>
+      <tr><td>原始 Long CoT</td><td>4,200 tokens</td><td>74.2%</td><td>100%（基线）</td></tr>
+      <tr><td>RL + 长度惩罚</td><td>1,800 tokens（-57%）</td><td>68.1%（-6.1pp）</td><td>82%</td></tr>
+      <tr><td>CRISP / OPSDC</td><td><strong>1,650 tokens（-61%）</strong></td><td><strong>72.8%（-1.4pp）</strong></td><td><strong>97%</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">应用价值</div>
+      <p>CRISP 是目前最优雅的 Long CoT 压缩方案。如果你正在做"推理模型推理速度优化"，CRISP 是首选工具：压缩率 ~60%，质量损失 &lt;2pp，且不需要任何外部模型。唯一前提：你的模型必须能理解"简洁推理"这个指令（需要一定的指令遵循能力）。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OPCD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2602.12275">OPCD: On-Policy Context Distillation</a></h2>
+    <div class="meta-row">
+      <span>Microsoft Research</span><span>2026.02</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心任务：将上下文知识内化到模型权重</div>
+    <p>RAG（Retrieval-Augmented Generation）每次都需要外部检索，推理时开销大。OPCD 的目标是：把 RAG 教师（模型 + 知识文档上下文）的知识<strong>内化到学生权重</strong>，使学生在没有文档的情况下也能正确回答。</p>
+
+    <div class="section-h">训练框架</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">教师 = 同模型 + 相关知识文档：</strong><br>
+      输入：(x, doc)&nbsp;&nbsp;其中 doc = 检索到的相关文档<br>
+      输出分布：π_θ(·|x, doc)&nbsp;&nbsp;（有"外挂知识"的更聪明版本）<br><br>
+      <strong style="color:var(--text);">学生 = 同模型，无文档：</strong><br>
+      采样：y ~ π_θ(·|x)&nbsp;&nbsp;（on-policy rollout）<br><br>
+      <strong style="color:var(--text);">损失：</strong>在学生 rollout y 上，最小化<br>
+      <div class="eq">D_RKL(π_S(·|x, y_{&lt;t}) ‖ π_T(·|x, doc, y_{&lt;t}))</div>
+      → 学生被推动向"知道文档内容"的教师靠拢
+    </div>
+
+    <div class="section-h">知识内化的数学直觉</div>
+    <p>训练后，学生权重 θ 吸收了大量 (x, doc) 对的 KL 梯度，等价于将"doc 的信息"以参数化形式存储在权重中。这类似于"显式记忆（RAG）→ 隐式记忆（模型权重）"的知识蒸馏。</p>
+
+    <div class="insight-box">
+      <div class="label">局限性</div>
+      <p>OPCD 只能内化训练时见过的知识文档类型的"知识模式"，对新领域（训练集中没有的文档类型）泛化能力有限。对于需要完整、精确事实（如特定日期、具体数字）的查询，RAG 仍优于 OPCD 内化。两者可以结合：OPCD 内化通用推理模式，RAG 提供精确事实。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Apple SSD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.01193">Apple SSD: Embarrassingly Simple Self-Distillation</a></h2>
+    <div class="meta-row">
+      <span>Apple Machine Learning Research</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">"极其简单"的自蒸馏</div>
+    <p>Apple SSD 的名字里有"Embarrassingly Simple"——它用最简单的特权上下文：<strong>不同的解码配置（温度/截断采样）</strong>。高温度采样生成多样性样本（宽探索），低温度采样生成高质量样本（深利用），两者组合作为自蒸馏的两端。</p>
+
+    <div class="section-h">三阶段流程</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">阶段 1：高温采样（教师端）</strong><br>
+      y_diverse ~ π_θ(·|x, T=1.2)&nbsp;&nbsp;（temperature=1.2，生成多样性候选）<br><br>
+      <strong style="color:var(--text);">阶段 2：验证过滤</strong><br>
+      y_verified = filter(y_diverse, verifier)&nbsp;&nbsp;（只保留正确的）<br><br>
+      <strong style="color:var(--text);">阶段 3：SFT 或 OPD 蒸馏</strong><br>
+      用 y_verified 做 SFT（Apple SSD 论文）或 RKL 蒸馏（退化为 OPSD 风格）<br><br>
+      特权上下文 = 高温度配置 → 验证过滤 → 高质量样本集
+    </div>
+
+    <div class="section-h">与 STaR 的对比</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>STaR</th><th>Apple SSD</th></tr>
+      <tr><td>采样策略</td><td>固定 greedy / beam</td><td>高温多样性采样</td></tr>
+      <tr><td>训练方式</td><td>SFT on correct</td><td>SFT on correct（相同）</td></tr>
+      <tr><td>OPD 程度</td><td>低（off-policy SFT）</td><td>中（on-policy 采样，off-policy 训练）</td></tr>
+      <tr><td>创新点</td><td>首次提出自举</td><td>高温采样 + 大规模验证</td></tr>
+    </table>
+
+    <div class="warn-box">
+      <div class="label">Apple SSD 是严格 OPSD 吗？</div>
+      <p>有争议。Apple SSD 的训练阶段用的是验证后的"高质量样本"做 SFT，不是在学生当前 rollout 上做 KL——严格说是 off-policy SFT，不满足 OPD 的 C1 条件（训练时学生采样）。AwesomeOPD 将其归类为"退化的 OPSD"，论文作者也承认这一点。但其采样策略（on-policy 高温采样）使其具有 OPD 精神。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 其余 OPSD 方法速览 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>其余 OPSD 方法速览</h2>
+    <div class="meta-row"><span class="tag" style="background:#2e3348">5 篇</span></div>
+  </div>
+  <div class="paper-body">
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2601.19897">SDFT-Continual</a>（MIT / ETH, 2026.01）</strong>—— Demo 条件化的自蒸馏，解决持续学习中的遗忘问题。教师 = 同模型 + 已完成任务的 demonstration，学生 = 同模型在新任务上生成 rollout。在不遗忘旧任务的前提下持续学习新任务。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.16856">OEL: Online Experiential Learning</a>（Microsoft Research, 2026.03）</strong>—— 最接近"具身自蒸馏"的方案。同模型在交互式游戏环境中生成轨迹，成功轨迹的条件分布作为特权上下文。面向游戏规划/导航领域，RKL 在交互轨迹上进行。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2602.06019">MTP Self-Distill</a>（UMD / LLNL, 2026.02）</strong>—— Multi-Token Prediction（MTP）模型的自蒸馏：单 token 预测头（无特权）向 multi-token 预测头（有特权：知道未来多个 token）学习。特权上下文 = 未来 token 的 lookahead。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2602.20574">GATES</a>（UMD, 2026.02）</strong>—— 文档条件化的同模型教师，RKL 由教师共识门控。消融实验显示：off-policy 轨迹级蒸馏是主要增益来源（约 80%），on-policy 部分贡献约 20%——诚实的消融，值得关注。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2604.17535">OPSDL: Long-Context Self-Distillation</a>（Baidu, 2026.04）</strong>—— 用短上下文同模型（教师）蒸馏到长上下文学生。特权上下文 = 更短的历史（教师处理更精炼的 context），学生在长历史上做 rollout，逐 token Point-wise RKL。解决长上下文 LLM 训练中的"位置编码外推"问题。
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_blackbox.html">黑盒 OPD</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_opdrl.html">OPD-RL 混合 →</a>
+</p>
+
+</div>
+</body>
+</html>

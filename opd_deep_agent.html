@@ -1,0 +1,257 @@
+<!-- index: OPD 深度解析 — Agent & 具身 OPD | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — Agent & 具身 OPD</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(31,76,173,.15),rgba(72,219,251,.05));border:1px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--accent2);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🤖 Agent & 具身 OPD（5 篇深度解读）</h1>
+</div>
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>Agent OPD 的特殊性在于：学生不是生成文本，而是<strong>在真实环境中执行动作</strong>（调用工具、操作 GUI、控制机器人）。OPD 信号来自教师在这些真实轨迹上的监督，而非虚构的文本序列。关键难题：动作空间离散（工具调用）或连续（机器人关节角度），需要适配 KL 或 L2 损失；轨迹可能很长（数十步），信用分配（credit assignment）困难。</p>
+</div>
+
+<!-- ===== SCoRe ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2509.14257">SCoRe: Small Agent Matches 72B Teacher via Error Correction</a></h2>
+    <div class="meta-row">
+      <span>Alibaba ModelScope</span><span>2025.09</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心思想：纠正最早的错误</div>
+    <p>SCoRe 的洞察非常精准：在 Agent 任务中，错误是连锁的——第一步错了，后续全错。如果 72B 教师能识别出学生轨迹中<strong>最早发生的第一个错误</strong>，并提供正确的替代动作，这个精准纠正比重新生成完整轨迹更高效。</p>
+
+    <div class="section-h">三阶段训练</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">阶段 1：学生（7B）生成完整轨迹</strong><br>
+      τ = (o_1, a_1, o_2, a_2, ..., o_T, a_T)&nbsp;&nbsp;（观察-动作序列）<br>
+      用外部验证器判断轨迹是否成功（任务完成率）<br><br>
+      <strong style="color:var(--text);">阶段 2：72B 教师定位最早错误</strong><br>
+      对失败轨迹，教师逐步回溯找到第一个错误动作 a_k*<br>
+      教师提供纠正动作 a_k_correct（只纠正这一步，后续保持学生原有动作）<br><br>
+      <strong style="color:var(--text);">阶段 3：SFT-on-corrections + 短视界 RL</strong><br>
+      L = L_SFT(a_k_correct | o_1,...,o_k) + λ · L_RL(后续 k+1 到 T 步短视界奖励)
+    </div>
+
+    <div class="section-h">为什么 7B 能匹配 72B？</div>
+    <p>SCoRe 的实验显示：7B 学生在 12 个 Agent benchmark 上达到了 72B 教师 95% 以上的性能。核心原因：Agent 任务中的大多数错误集中在<strong>少数几类关键决策点</strong>（如 API 选择、参数格式），而不是均匀分布在所有步骤上。SCoRe 的精准纠正机制恰好击中了这些关键点，7B 学生的参数容量对"学会这些纠正模式"是足够的。</p>
+
+    <div class="section-h">实验结果</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>ToolBench 成功率</th><th>APIBench 准确率</th><th>WebArena 分数</th></tr>
+      <tr><td>7B SFT-on-Teacher（off-policy）</td><td>61.2%</td><td>72.3%</td><td>14.8%</td></tr>
+      <tr><td>72B 教师直接推理</td><td>78.4%</td><td>89.1%</td><td>23.6%</td></tr>
+      <tr><td>SCoRe（7B）</td><td><strong>74.8%</strong></td><td><strong>86.2%</strong></td><td><strong>22.1%</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== RPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2503.05833">RPD: Refined Policy Distillation for Vision-Language-Action Models</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#1F4CAD">IROS 2026</span>
+      <span>TU Munich / University of Freiburg</span><span>2025.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">机器人控制的 OPD</div>
+    <p>RPD 是最干净的机器人 VLA（Vision-Language-Action）OPD 实现。VLA 模型直接从图像 + 语言指令预测机器人末端执行器的连续动作（6DoF 关节角度 + 夹爪）。</p>
+
+    <div class="section-h">核心设计</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">教师 VLA（大模型，如 RT-2-X）：</strong><br>
+      输入：(图像观察, 语言指令)<br>
+      输出：连续动作分布 π_T(a | s)<br><br>
+      <strong style="color:var(--text);">学生 VLA（小模型，目标 ≤1B 参数）：</strong><br>
+      在真实机器人上（或仿真）执行动作：a_student ~ π_S(·|s)&nbsp;&nbsp;（on-policy）<br><br>
+      <strong style="color:var(--text);">OPD 损失（连续动作空间，用 L2 替代 KL）：</strong><br>
+      <div class="eq">L_OPD = ‖μ_T(s) - μ_S(s)‖² + ‖Σ_T(s) - Σ_S(s)‖_F²</div>
+      μ = 动作分布均值，Σ = 协方差<br><br>
+      <strong style="color:var(--text);">PPO 任务奖励（任务成功 = +1）+ OPD：</strong><br>
+      L_total = L_PPO + λ · L_OPD
+    </div>
+
+    <div class="section-h">连续动作 OPD vs 离散 token OPD 的差异</div>
+    <table class="compare-table">
+      <tr><th>维度</th><th>离散 token OPD（LLM）</th><th>连续动作 OPD（VLA）</th></tr>
+      <tr><td>输出空间</td><td>离散 token（词汇表 ~32K）</td><td>连续向量（6-7 维）</td></tr>
+      <tr><td>OPD 损失</td><td>KL 散度</td><td>L2 / Wasserstein 距离</td></tr>
+      <tr><td>信号稠密度</td><td>每 token 一个损失值</td><td>每时间步一个损失值</td></tr>
+      <tr><td>分布表示</td><td>softmax 概率向量</td><td>高斯分布（均值+协方差）</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">机器人 OPD 的关键挑战</div>
+      <p>真实机器人实验中，on-policy 数据收集成本极高（需要机器人时间、场景重置）。RPD 用仿真预训练 + 少量真实微调的策略缓解了这个问题：在仿真环境中做大规模 OPD 训练，再迁移到真实机器人（需约 50-100 条真实轨迹）。仿真-真实差距（sim-to-real gap）是主要性能瓶颈。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VLA-OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.26666">VLA-OPD: Bridging Offline SFT and Online RL for Robot Learning</a></h2>
+    <div class="meta-row">
+      <span>HKUST Guangzhou</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">解决离线 SFT 和在线 RL 的鸿沟</div>
+    <p>机器人学习的痛点：离线 SFT（在专家演示数据上）学到的策略在真实执行时性能大幅下降（分布偏移）；纯在线 RL 探索效率太低（安全限制下无法随机探索）。VLA-OPD 用 OPD 作为桥接：在学生自己执行的真实轨迹上，用专家教师提供密集监督。</p>
+
+    <div class="section-h">Reverse KL 的特殊优势（机器人场景）</div>
+    <p>VLA-OPD 论文专门分析了为什么机器人动作 OPD 必须用 Reverse KL 而不是 Forward KL 或 Hard-CE：</p>
+    <ul>
+      <li><strong>FKL（前向 KL，mean-seeking）：</strong>强迫学生覆盖所有动作模式 → 机器人动作分布通常是多峰的（多种等效执行方式），FKL 会产生"折中"动作（两峰之间），导致执行失败。</li>
+      <li><strong>Hard-CE（行为克隆）：</strong>坍缩到单一模式 → 丢失动作多样性，过拟合专家演示，泛化差。</li>
+      <li><strong>RKL（反向 KL，mode-seeking）：</strong>学生集中学习教师最高概率的动作模式，同时保留探索空间 → 在安全约束下最优。</li>
+    </ul>
+
+    <div class="section-h">灾难性遗忘缓解</div>
+    <p>持续在线 OPD 训练的副作用：新任务训练会覆盖旧任务知识。VLA-OPD 通过保留教师（原始专家模型）的 logit 监督作为"锚点"，防止学生偏离太远，自然地缓解了遗忘问题。</p>
+  </div>
+</div>
+
+<!-- ===== LLM4Teach ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2311.13373">LLM4Teach: Small RL Agent Guided by LLM Teacher</a></h2>
+    <div class="meta-row">
+      <span>ZJ Lab AMMI</span><span>2023.11</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">具身 OPD 先驱（2023 年）</div>
+    <p>LLM4Teach 发表于 2023 年 11 月，比 OPD 这个概念正式命名（2023.06）晚 5 个月，但与 OPD 并行开发。它是<strong>具身 AI（Embodied AI）中最早实现严格 on-policy 蒸馏的论文</strong>。</p>
+
+    <div class="section-h">LLM 教师 + RL 学生的混合架构</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">学生：</strong>小型 RL 策略网络（仅 0.5M-5M 参数），在网格世界/导航任务中行动<br>
+      <strong style="color:var(--text);">教师：</strong>大型 LLM（GPT-4 或 Vicuna-13B），通过文字描述当前状态，生成推荐动作<br><br>
+      <strong style="color:var(--text);">OPD 信号（动作级蒸馏）：</strong><br>
+      <div class="eq">L_distill = -log π_student(a_teacher | s)</div>
+      a_teacher = LLM 推荐的动作（在学生当前状态 s 上）<br><br>
+      <strong style="color:var(--text);">RL 退火：</strong>α(t) = max(0, 1 - t/T_anneal)<br>
+      <div class="eq">L_total = α(t) · L_distill + (1-α(t)) · L_RL</div>
+      训练初期 OPD 主导（引导探索），后期 RL 接管（任务优化）
+    </div>
+
+    <div class="section-h">RL 退火的设计哲学</div>
+    <p>LLM4Teach 的退火机制解决了 OPD 和 RL 的根本矛盾：OPD 在前期提供"如何行动"的方向感（减少盲目探索），RL 在后期提供"是否完成任务"的最终验证（避免被教师上限锁死）。这个退火思想后来影响了 LUFFY、HDPO 等混合方案。</p>
+
+    <div class="section-h">在 OPD 概念前的先驱地位</div>
+    <table class="compare-table">
+      <tr><th>时间线</th><th>事件</th></tr>
+      <tr><td>2023.06</td><td>GKD / MiniLLM 正式命名 OPD（语言模型领域）</td></tr>
+      <tr><td>2023.11</td><td>LLM4Teach 独立实现具身 OPD（强化学习领域）</td></tr>
+      <tr><td>2024-2026</td><td>OPD 概念在 Agent、VLA、具身 AI 领域迅速扩展</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">历史意义</div>
+      <p>LLM4Teach 证明了"LLM 教小型 RL Agent"这条路是可行的——在 OPD 概念兴起之前就给出了正确答案。它的成功在 2023 年底并没有得到足够关注，但现在回头看，它预见了 SCoRe、RPD 等后续工作的核心设计。如果你在做具身 OPD 项目，LLM4Teach 是必读的先驱论文。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OpenClaw-RL ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.10165">OpenClaw-RL: GRPO + OPD Unified Agent Trainer</a></h2>
+    <div class="meta-row">
+      <span>Gen-Verse Team</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">多域 Agent 的统一训练框架</div>
+    <p>OpenClaw-RL 是目前覆盖最广的 Agent OPD 框架，同时支持：终端操作（Shell）、GUI 操作（Web Browser / Desktop）、代码仓库（SWE-bench 风格）、工具调用（Function Calling）四大 Agent 场景。</p>
+
+    <div class="section-h">后知之明提示（Hindsight Prompt）机制</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">Step 1：学生执行任务，收集轨迹</strong><br>
+      τ = (o_1, a_1, ..., o_T, a_T)，最终结果 r ∈ {0, 1}<br><br>
+      <strong style="color:var(--text);">Step 2：判别模型提取后知之明提示</strong><br>
+      给定完整轨迹 τ（包括最终结果），判别模型提取<br>
+      "关键决策点"和"如果在 step k 做了 a_k' 会更好"的后知之明<br><br>
+      <strong style="color:var(--text);">Step 3：教师在后知之明上下文中重新评估</strong><br>
+      π_T(a_k | o_1,...,o_k, hindsight_context)<br>
+      → 教师 token-logprob 差距 = 方向优势（directional advantage）<br><br>
+      <strong style="color:var(--text);">统一损失（二值 RL + OPD）：</strong><br>
+      <div class="eq">L = L_GRPO(r) + α · Σ_k KL(π_T_hindsight ‖ π_S)</div>
+    </div>
+
+    <div class="section-h">多域实验结果</div>
+    <table class="compare-table">
+      <tr><th>场景</th><th>基线（纯 GRPO）</th><th>OpenClaw-RL</th><th>提升</th></tr>
+      <tr><td>TerminalBench</td><td>42.3%</td><td><strong>51.7%</strong></td><td>+9.4pp</td></tr>
+      <tr><td>WebArena</td><td>18.2%</td><td><strong>24.6%</strong></td><td>+6.4pp</td></tr>
+      <tr><td>SWE-Bench-Lite</td><td>31.4%</td><td><strong>38.9%</strong></td><td>+7.5pp</td></tr>
+      <tr><td>ToolBench</td><td>65.1%</td><td><strong>72.4%</strong></td><td>+7.3pp</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">后知之明机制的独特价值</div>
+      <p>传统 OPD 中教师只能基于当前状态评估（不知道最终结果）。OpenClaw-RL 的后知之明机制让教师在"已知结果"的条件下重新评估每一步，这使得教师能更精准地指出"哪一步是关键错误"——而不是均匀地对所有步骤施加 KL 监督。这是 Agent OPD 相比语言 OPD 最重要的创新之一。</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_multimodal.html">多模态 OPD</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_specdec.html">推测解码蒸馏 →</a>
+</p>
+</div>
+</body>
+</html>

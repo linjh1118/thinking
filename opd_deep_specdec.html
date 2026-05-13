@@ -1,0 +1,286 @@
+<!-- index: OPD 深度解析 — 推测解码蒸馏 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 推测解码蒸馏</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(253,150,68,.1),rgba(72,219,251,.05));border:1px solid var(--orange);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--orange);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.mini-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:var(--text2);}
+.mini-card strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>⚡ 推测解码蒸馏（11 篇深度解读）</h1>
+</div>
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>推测解码（Speculative Decoding）的核心：用小草稿模型（drafter）快速提议 token，大验证器（verifier）并行验证，拒绝不符合的 token。这节的 OPD 目标不是提升模型智能，而是<strong>训练草稿模型更精准地模拟验证器的分布</strong>——从而提高接受率，加速推理。关键论文：DistillSpec（奠基）、OSD（在线适配）、EAGLE-3（当前 SOTA 自推测系列）、CORAL（多步对齐）。</p>
+</div>
+
+<!-- ===== 推测解码背景 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>推测解码工作原理 & OPD 的角色</h2>
+    <div class="meta-row"><span class="tag" style="background:#D89F7B">背景导引</span></div>
+  </div>
+  <div class="paper-body">
+    <div class="section-h">推测解码基础</div>
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">标准自回归解码：</strong>大模型一次生成 1 个 token，每步需要完整 forward pass<br>
+      延迟 = N × (大模型单步时间)<br><br>
+      <strong style="color:var(--text);">推测解码（Speculative Decoding）：</strong><br>
+      Step 1：草稿模型（小，快）连续生成 K 个候选 token<br>
+      Step 2：大验证器（原模型）并行验证所有 K 个 token<br>
+      <div class="eq">接受概率：α_i = min(1, π_verifier(x_i|·) / π_draft(x_i|·))</div>
+      Step 3：接受前 m 个 token（m ≤ K），拒绝后续<br><br>
+      <strong style="color:var(--text);">加速比 ≈ K × 接受率 α</strong><br>
+      α 越高（草稿越像验证器），加速比越大<br>
+      → <strong>OPD 的目标：提高 α（训练草稿模型更像验证器）</strong>
+    </div>
+    <div class="section-h">OPD 在推测解码中的角色</div>
+    <p>训练草稿模型面临典型的 distribution mismatch 问题：标准 SFT 在固定数据上训练，但推理时草稿模型在<strong>自己生成的前缀上</strong>继续生成——正是 OPD 最擅长解决的分布偏移问题。</p>
+  </div>
+</div>
+
+<!-- ===== DistillSpec ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2310.08461">DistillSpec: On-Policy Distillation for Speculative Decoding</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#D89F7B">ICLR 2024</span>
+      <span>Google DeepMind</span><span>2023.10</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">开创性贡献</div>
+    <p>DistillSpec 是第一篇系统研究"用 OPD 训练推测解码草稿模型"的论文。它奠定了这个方向的基础框架：<strong>在草稿模型自己生成的 token 样本上，最小化与验证器的 KL 散度</strong>。</p>
+
+    <div class="section-h">四种 OPD 损失的比较实验</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">在草稿样本 y ~ π_draft 上：</strong><br><br>
+      FKL：<div class="eq">L = Σ_t π_T(y_t|·) · log(π_T(y_t|·)/π_draft(y_t|·))</div>
+      RKL：<div class="eq">L = Σ_t π_draft(y_t|·) · log(π_draft(y_t|·)/π_T(y_t|·))</div>
+      JSD：<div class="eq">L = 0.5·FKL + 0.5·RKL</div>
+      TVD：<div class="eq">L = 0.5 · Σ_t |π_T(y_t|·) - π_draft(y_t|·)|</div>
+    </div>
+    <div class="section-h">哪种散度最适合推测解码？</div>
+    <table class="compare-table">
+      <tr><th>损失类型</th><th>接受率 α</th><th>加速比</th><th>分析</th></tr>
+      <tr><td>SFT（off-policy）</td><td>0.74</td><td>2.1×</td><td>基线</td></tr>
+      <tr><td>FKL（on-policy）</td><td>0.79</td><td>2.4×</td><td>覆盖验证器所有模式</td></tr>
+      <tr><td>RKL（on-policy）</td><td>0.81</td><td>2.6×</td><td>专注主模式，接受率更高</td></tr>
+      <tr><td><strong>JSD（on-policy）</strong></td><td><strong>0.83</strong></td><td><strong>2.8×</strong></td><td>折中最优</td></tr>
+      <tr><td>TVD（on-policy）</td><td>0.82</td><td>2.7×</td><td>接近 JSD</td></tr>
+    </table>
+    <p>JSD 在推测解码场景下表现最佳——原因：推测解码的接受率取决于两个分布的重叠程度，JSD 作为对称散度同时考虑了两个方向的差异，与接受率的相关性最强。</p>
+
+    <div class="insight-box">
+      <div class="label">为什么 OPD > SFT for SD？</div>
+      <p>草稿模型的训练-推理 mismatch 特别严重：推理时草稿在自己生成的前缀上继续生成（误差累积），而 SFT 在干净的固定数据上训练。DistillSpec 的 on-policy 训练直接在草稿自己生成的前缀上做 KL，消除了这种 mismatch。接受率提升 0.09（0.74→0.83）使加速比提升约 33%。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OSD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2310.07177">OSD: Online Speculative Decoding</a></h2>
+    <div class="meta-row">
+      <span>UC Berkeley / NVIDIA</span><span>2023.10</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">推测解码 on-policy 训练的经典论文</div>
+    <p>OSD 提出了一个极其简洁的思路：在推测解码的<strong>拒绝步骤本身</strong>提取训练信号。每次验证器拒绝草稿 token，就意味着草稿模型犯了一个错误——这正是最有价值的学习信号！</p>
+
+    <div class="section-h">在拒绝 token 上进行在线 KD</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">标准推测解码流程（推理时）：</strong><br>
+      草稿生成：(x_1, x_2, ..., x_K)<br>
+      验证器接受 x_1,...,x_m，拒绝 x_{m+1}<br><br>
+      <strong style="color:var(--text);">OSD：利用拒绝点做在线训练</strong><br>
+      被拒绝位置 m+1 处：<br>
+      → 草稿概率：π_draft(x_{m+1}|·)（错误的）<br>
+      → 验证器概率：π_T(x_{m+1}|·)（正确的）<br>
+      <div class="eq">L_online = D_KL(π_T(·|·) ‖ π_draft(·|·))&nbsp;&nbsp;在位置 m+1</div><br>
+      每次拒绝 = 一次免费的训练样本（完全 on-policy，零额外成本！）
+    </div>
+
+    <div class="section-h">零额外成本的在线学习</div>
+    <p>OSD 最大的工程优势：不需要额外的训练数据收集 pipeline。验证器在正常推理过程中自然产生拒绝信号，草稿模型在推理中自动更新。适合<strong>部署后持续适配</strong>的场景。</p>
+
+    <div class="section-h">实验：持续适配效果</div>
+    <table class="compare-table">
+      <tr><th>场景</th><th>初始接受率</th><th>OSD 适配后</th><th>提升</th></tr>
+      <tr><td>领域内（代码）</td><td>0.81</td><td>0.84</td><td>+0.03</td></tr>
+      <tr><td>领域外（法律）</td><td>0.68</td><td><strong>0.79</strong></td><td><strong>+0.11</strong></td></tr>
+      <tr><td>用户特定风格</td><td>0.72</td><td><strong>0.83</strong></td><td><strong>+0.11</strong></td></tr>
+    </table>
+    <p>OSD 对领域外适配效果特别显著——草稿模型通过在线学习用户特定分布，持续提升接受率。</p>
+  </div>
+</div>
+
+<!-- ===== EAGLE-3 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2503.01840">EAGLE-3: Training-Time Test with On-Policy Multi-Step</a></h2>
+    <div class="meta-row">
+      <span>PKU / Microsoft Research</span><span>2025.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">EAGLE 系列演进</div>
+    <table class="compare-table">
+      <tr><th>版本</th><th>核心创新</th><th>接受率</th></tr>
+      <tr><td>EAGLE-1（2024.01）</td><td>利用验证器特征作为额外输入</td><td>0.85</td></tr>
+      <tr><td>EAGLE-2（2024.06）</td><td>动态树推测（自适应草稿 tree）</td><td>0.87</td></tr>
+      <tr><td><strong>EAGLE-3（2025.03）</strong></td><td><strong>Training-Time Test（TTT）on-policy</strong></td><td><strong>0.91</strong></td></tr>
+    </table>
+
+    <div class="section-h">Training-Time Test（TTT）：OPD 的关键创新</div>
+    <p>EAGLE-3 的核心是"在训练时模拟多步草稿 rollout"——而不是单步训练：</p>
+    <div class="formula-box">
+      <strong style="color:var(--text);">EAGLE-1/2 的训练方式（单步，off-policy 风格）：</strong><br>
+      在固定数据集的 token 位置上训练草稿预测<br>
+      问题：推理时草稿在自己前 K 步的预测上继续生成（错误累积）<br><br>
+      <strong style="color:var(--text);">EAGLE-3（TTT，真正 on-policy）：</strong><br>
+      Step 1：草稿模型生成 K 步连续 token（完整多步 rollout）<br>
+      Step 2：在每步 草稿 rollout 的前缀上，用验证器特征监督<br>
+      <div class="eq">L = Σ_{k=1}^{K} [Smooth-L1(f_draft_k, f_verifier_k) + CE(y_{k+1}|draft_rollout)]</div>
+      f = 验证器隐藏层特征，Smooth-L1 = 特征对齐损失<br>
+      CE = 下一 token 预测损失（在 draft rollout 前缀上）
+    </div>
+
+    <div class="section-h">自推测（Self-Speculative）设计</div>
+    <p>EAGLE-3 的草稿模型复用验证器的中间层特征（不是独立的小模型），实现"自推测"：草稿 token 由同一个大模型的早期层生成，后续层进行验证。这减少了草稿-验证器分布差异，接受率相对外部草稿模型高约 8-12%。</p>
+
+    <div class="section-h">加速比对比</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>LLaMA-3.1-70B 加速比</th><th>Qwen3-72B 加速比</th></tr>
+      <tr><td>无推测解码</td><td>1.0×</td><td>1.0×</td></tr>
+      <tr><td>EAGLE-2</td><td>3.1×</td><td>3.4×</td></tr>
+      <tr><td>EAGLE-3</td><td><strong>3.8×</strong></td><td><strong>4.2×</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== CORAL ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2502.16880">CORAL: Cross-Step Representation Alignment</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#D89F7B">ACL 2025</span>
+      <span>2025.02</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">多步草稿的 train/test mismatch</div>
+    <p>即使用 OPD 单步训练草稿，在推理时草稿模型需要连续生成 K=5-10 步，每步的输入是上一步自己的预测（不是验证器的真实 token）。CORAL 专门解决这种"跨步 mismatch"。</p>
+
+    <div class="section-h">跨步表示对齐</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">标准单步 OPD 训练（步骤 k 独立）：</strong><br>
+      对每个 token 位置 t，在验证器真实前缀上训练<br>
+      → 训练时前缀来自真实数据，推理时前缀来自草稿自己的预测（mismatch）<br><br>
+      <strong style="color:var(--text);">CORAL：跨步前缀对齐</strong><br>
+      训练时模拟 K 步连续草稿生成，并在跨步前缀上对齐隐层表示：<br>
+      <div class="eq">L_CORAL = Σ_{k=1}^{K} ‖h_draft(step k) - h_verifier(step k)‖² + L_CE</div>
+      h = 最后层隐层表示，在 K 步连续 rollout 后对齐<br>
+      → 确保草稿的隐层状态与验证器在相同 token 位置对齐，无论前缀来自哪里
+    </div>
+
+    <div class="insight-box">
+      <div class="label">与 EAGLE-3 的关系</div>
+      <p>CORAL 和 EAGLE-3 都意识到了跨步 mismatch 问题，解决方案有重叠（都在模拟多步 rollout 训练），但角度不同：EAGLE-3 强调特征（f_verifier）监督，CORAL 强调表示（h）对齐。两者可以组合：CORAL 的跨步对齐损失可以作为 EAGLE-3 的附加项，进一步提升接受率。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 其余方法速览 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>其余推测解码 OPD 方法速览</h2>
+    <div class="meta-row"><span class="tag" style="background:#2e3348">7 篇</span></div>
+  </div>
+  <div class="paper-body">
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2408.15766">HASS</a>（2024.08）</strong>—— 多步草稿轨迹（Multi-step draft trajectory）蒸馏，专门处理 K 步连续草稿生成的联合分布对齐问题。引入"draft chain"的序列级 KL 损失。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2508.06471">Draft Model Scaling</a>（2025.08）</strong>—— 系统研究草稿模型大小 vs 接受率的 scaling law。发现草稿模型大小约为验证器的 5-10% 时效率最优（更大边际收益递减）。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2504.19024">Cascade Speculative Decoding</a>（2025.04）</strong>—— 多级推测（小→中→大），每级都用 OPD 训练对齐上一级分布。在超大模型（>100B）上加速比最高可达 6×。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2412.12639">Medusa v2</a>（2024.12）</strong>—— 多个解码头（hydra heads）并联，每个头预测后续不同步数的 token，全部用 on-policy 损失训练。多头联合接受率比单头提升约 15%。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2510.24021">REST-mcts</a>（2025.10）</strong>—— 将 MCTS 引入草稿 token 搜索，用 OPD 训练 MCTS 的先验策略（draft policy）。适合推理任务（数学、代码），需要探索多步候选路径时效果优于标准推测解码。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2410.20727">SpecInfer</a>（2024.10）</strong>—— 树式推测解码（tree-based SD）+ on-policy 草稿训练。多棵候选 tree 并行验证，OPD 训练 tree prior（树节点分裂概率）。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2407.14622">BiTA</a>（2024.07）</strong>—— Bidirectional Token Alignment：草稿模型向前（从草稿看验证器）和向后（从验证器看草稿）双向对齐，用非对称 KL 训练。类似 DistiLLM-2 的对比损失思路在推测解码中的应用。
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_agent.html">Agent & 具身 OPD</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_frameworks.html">框架 & 工具 →</a>
+</p>
+</div>
+</body>
+</html>

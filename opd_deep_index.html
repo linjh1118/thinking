@@ -1,0 +1,161 @@
+<!-- index: OPD 深度解析 — 总览 | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 总览</title>
+<style>
+:root {
+  --bg: #0f1117; --card: #1a1d27; --card2: #222636; --border: #2e3348;
+  --text: #e4e6f0; --text2: #a0a4b8; --accent: #6c8cff; --accent2: #48dbfb;
+  --green: #26de81; --orange: #fd9644; --pink: #fc5c65; --purple: #a55eea;
+  --yellow: #fed330; --cyan: #0fb9b1;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif; line-height:1.7; min-height:100vh; }
+a { color: var(--accent); text-decoration:none; }
+a:hover { text-decoration: underline; }
+
+.hero { text-align:center; padding:60px 20px 40px; }
+.hero h1 { font-size:40px; background: linear-gradient(135deg, var(--accent), var(--accent2), var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+.hero .subtitle { font-size:16px; color: var(--text2); max-width:700px; margin:0 auto 8px; }
+.hero .meta { font-size:13px; color: var(--text2); }
+
+.tldr-bar { background: linear-gradient(135deg, rgba(108,140,255,0.12), rgba(72,219,251,0.06)); border:1px solid var(--accent); border-radius:14px; padding:18px 28px; margin:20px auto; max-width:900px; font-size:14px; color: var(--text2); }
+.tldr-bar strong { color: var(--text); }
+
+.grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:20px; max-width:1200px; margin:0 auto; padding:30px 30px 60px; }
+
+.cat-card { background: var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; cursor:pointer; transition: all .25s; position:relative; overflow:hidden; }
+.cat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(108,140,255,0.15); }
+.cat-card .icon { font-size:36px; margin-bottom:12px; display:block; }
+.cat-card h2 { font-size:18px; margin-bottom:6px; }
+.cat-card .count { font-size:12px; color: var(--text2); margin-bottom:10px; }
+.cat-card .desc { font-size:13px; color: var(--text2); line-height:1.6; }
+.cat-card .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; color:#fff; margin-top:10px; }
+.cat-card .arrow { position:absolute; right:18px; top:50%; transform:translateY(-50%); font-size:22px; color: var(--border); transition: all .25s; }
+.cat-card:hover .arrow { color: var(--accent); right:14px; }
+
+.stats-row { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; max-width:900px; margin:0 auto 30px; padding:0 20px; }
+.stat { text-align:center; }
+.stat .num { font-size:32px; font-weight:800; }
+.stat .lbl { font-size:12px; color: var(--text2); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>On-Policy Distillation 深度解析</h1>
+  <div class="subtitle">76 篇论文 · 10 大研究方向 · 点击任意方向进入深度论文解读</div>
+  <div class="meta">基于 <a href="https://github.com/thinkwee/AwesomeOPD">thinkwee/AwesomeOPD</a> | 解析日期 2026-04-29</div>
+</div>
+
+<div class="tldr-bar">
+  <strong>TLDR：</strong>OPD 让小模型（学生）在<strong>自己生成的数据</strong>上获得大模型（教师）的逐 token 指导——比 SFT 更高效（避免分布偏移），比 RL 更稳定（密集 logit 信号 vs 稀疏奖励）。Qwen3 报告约 <strong>10× 成本优势</strong>；DeepSeek-V4 用多教师 OPD <strong>替代</strong>了整个 RL 统一阶段。
+</div>
+
+<div class="stats-row">
+  <div class="stat"><div class="num" style="color:var(--accent)">76</div><div class="lbl">收录论文</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)">10</div><div class="lbl">研究方向</div></div>
+  <div class="stat"><div class="num" style="color:var(--orange)">8</div><div class="lbl">工业落地</div></div>
+  <div class="stat"><div class="num" style="color:var(--purple)">11</div><div class="lbl">开源框架</div></div>
+  <div class="stat"><div class="num" style="color:var(--pink)">50+</div><div class="lbl">方法覆盖</div></div>
+</div>
+
+<div class="grid">
+
+  <div class="cat-card" onclick="location.href='opd_deep_surveys.html'">
+    <span class="icon">📚</span>
+    <h2>综述 & 基础理论</h2>
+    <div class="count">7 篇 · 包含 GKD、MiniLLM、THUNLP Recipe 等</div>
+    <div class="desc">OPD 的命名之战、理论根基、失败模式全诊断。读完这组即可建立完整 OPD 心智模型。</div>
+    <span class="badge" style="background:#4E6813">必读首选</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_whitebox.html'">
+    <span class="icon">🔬</span>
+    <h2>白盒 OPD — 教师 Logits</h2>
+    <div class="count">17 篇 · DistiLLM / G-OPD / SCOPE / Entropy-Aware 等</div>
+    <div class="desc">最"正统"的 OPD——学生生成 rollout，教师在上面提供逐 token KL 监督。涵盖损失函数设计、token 选择、加速技巧。</div>
+    <span class="badge" style="background:#BFA2DB">核心方向</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_blackbox.html'">
+    <span class="icon">🎭</span>
+    <h2>黑盒 OPD — 无 Logits</h2>
+    <div class="count">3 篇 · GAD / OVD / ORPO-Distill</div>
+    <div class="desc">教师是 API-only，用对抗判别器 / 口头评分 / 偏好信号代替 logit KL。适合教师不开放权重的场景。</div>
+    <span class="badge" style="background:#845C40">实用场景</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_opsd.html'">
+    <span class="icon">♻️</span>
+    <h2>自蒸馏 OPSD</h2>
+    <div class="count">9 篇 · OPSD / CRISP / OPCD / Apple SSD 等</div>
+    <div class="desc">同一个模型既是教师又是学生，差异来自"特权上下文"（已验证推理链/答案/"请简洁"前缀/更长上下文）。</div>
+    <span class="badge" style="background:#A259FF">前沿热点</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_opdrl.html'">
+    <span class="icon">🤝</span>
+    <h2>OPD-RL 混合</h2>
+    <div class="count">17 篇 · LUFFY / KDRL / HDPO / SD-Zero 等</div>
+    <div class="desc">将教师 logits 嵌入 GRPO/PPO/DPO 目标——作为密集奖励塑形或信赖域锚点，填补稀疏奖励的信号空白。</div>
+    <span class="badge" style="background:#9B59B6">工程首选</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_multimodal.html'">
+    <span class="icon">🖼️</span>
+    <h2>多模态 OPD</h2>
+    <div class="count">5 篇 · π-Flow / VOLD / Video-OPD / X-OPD 等</div>
+    <div class="desc">扩散模型、VLM、视频定位、语音 LLM 的严格 OPD 方案。跨模态 token-KL 蒸馏的挑战与解法。</div>
+    <span class="badge" style="background:#2ECC71">新兴方向</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_agent.html'">
+    <span class="icon">🤖</span>
+    <h2>Agent & 具身 OPD</h2>
+    <div class="count">5 篇 · OpenClaw-RL / SCoRe / RPD / VLA-OPD 等</div>
+    <div class="desc">学生是执行动作的 Agent，OPD 在真实交互轨迹上进行。工具调用、GUI、机器人控制等实战场景。</div>
+    <span class="badge" style="background:#1F4CAD">落地场景</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_specdec.html'">
+    <span class="icon">⚡</span>
+    <h2>推测解码蒸馏</h2>
+    <div class="count">11 篇 · EAGLE-3 / DistillSpec / OSD / CORAL 等</div>
+    <div class="desc">蒸馏草稿模型使其更精准模拟目标模型。目标不是提升能力，而是推理加速——在拒绝 token 上进行在线 KD。</div>
+    <span class="badge" style="background:#D89F7B">效率优化</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_frameworks.html'">
+    <span class="icon">🛠️</span>
+    <h2>框架 & 工具</h2>
+    <div class="count">11 个 · TRL / verl / KDFlow / slime / ROLL 等</div>
+    <div class="desc">支持 OPD 的开源框架深度对比——实现细节、架构差异、性能基准、选型建议。</div>
+    <span class="badge" style="background:#FA5A4C">动手必看</span>
+    <span class="arrow">›</span>
+  </div>
+
+  <div class="cat-card" onclick="location.href='opd_deep_industrial.html'">
+    <span class="icon">🏭</span>
+    <h2>工业落地报告</h2>
+    <div class="count">8 篇 · Qwen3 / DeepSeek-V4 / GLM-5 / Gemma 2 等</div>
+    <div class="desc">旗舰模型技术报告中的 OPD 实现细节拆解——超参数、pipeline 设计、成本对比、效果数字。</div>
+    <span class="badge" style="background:#ffc884; color:#333">产业标准</span>
+    <span class="arrow">›</span>
+  </div>
+
+</div>
+
+</body>
+</html>

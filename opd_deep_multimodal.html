@@ -1,0 +1,246 @@
+<!-- index: OPD 深度解析 — 多模态 OPD | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 多模态 OPD</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(46,204,113,.1),rgba(72,219,251,.05));border:1px solid var(--green);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--green);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🖼️ 多模态 OPD（5 篇深度解读）</h1>
+</div>
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>多模态 OPD 将"在学生自身轨迹上获得教师密集监督"的框架扩展到图像生成（扩散模型）、VLM、视频定位、音频推理、跨模态语音 LLM。核心挑战：非文本模态的"token"定义不同（扩散 timestep、视觉 patch、音频帧），OPD 损失需要适配到对应空间。</p>
+</div>
+
+<!-- ===== π-Flow ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2510.14974">π-Flow: On-Policy Distillation for Flow-Based Image Generation</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#2ECC71">ICLR 2026</span>
+      <span>Multi-institution</span><span>2025.10</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">扩散模型的 OPD 是什么？</div>
+    <p>扩散/flow 模型的"rollout"是去噪轨迹：从噪声 x_T 出发，学生模型一步步预测去噪方向，最终生成图像 x_0。π-Flow 将这条完整的去噪轨迹视为学生的"on-policy rollout"，在每个 denoising timestep 上用教师模型提供密集监督。</p>
+
+    <div class="section-h">核心设计：沿学生轨迹的 L2 模仿蒸馏</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">标准 flow-matching 蒸馏（off-policy）：</strong><br>
+      在固定的 (x_0, x_T) 对上训练，学生学习从 x_T 到 x_0 的映射<br><br>
+      <strong style="color:var(--text);">π-Flow（on-policy）：</strong><br>
+      Step 1：学生从 x_T 开始生成完整轨迹 {x̂_T, x̂_{T-1}, ..., x̂_0}<br>
+      Step 2：在学生生成的每个中间状态 x̂_t 上，教师计算最优方向 v_T(x̂_t)<br>
+      Step 3：<br>
+      <div class="eq">L = Σ_{t=0}^{T} ‖v_S(x̂_t) - v_T(x̂_t)‖²&nbsp;&nbsp;（学生预测方向 vs 教师最优方向的 L2）</div>
+      → 关键：监督点 x̂_t 来自学生轨迹（on-policy），而非固定数据集（off-policy）
+    </div>
+
+    <div class="section-h">为什么 on-policy 对扩散模型重要？</div>
+    <p>扩散模型的 distribution shift 问题比 LLM 更严重：off-policy 训练在 (x_0, t) 的随机组合上学习，但推理时每个 x_t 是<strong>前一步学生预测的结果</strong>，不是随机添加噪声的干净图像。积累的误差会导致生成图像质量显著下降。π-Flow 通过在学生真实推理轨迹上监督，消除了这种 train-test mismatch。</p>
+
+    <div class="section-h">实验</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>FID↓（COCO）</th><th>CLIP Score↑</th><th>推理步数</th></tr>
+      <tr><td>原始教师（256步）</td><td>8.1</td><td>0.312</td><td>256</td></tr>
+      <tr><td>一致性蒸馏（off-policy）</td><td>14.3</td><td>0.298</td><td>4</td></tr>
+      <tr><td>π-Flow（on-policy）</td><td><strong>9.8</strong></td><td><strong>0.309</strong></td><td>4</td></tr>
+    </table>
+    <p>4步推理的 FID 从 14.3 降到 9.8，接近 256 步教师的质量，但速度快 64 倍。</p>
+
+    <div class="insight-box">
+      <div class="label">扩展意义</div>
+      <p>π-Flow 证明了 OPD 的核心思想（在学生自身生成轨迹上做监督）适用于连续空间的生成模型，不仅限于离散 token。这为扩散模型的知识蒸馏开辟了一条新路，也提示视频生成、3D 生成等领域有类似的 on-policy 蒸馏机会。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VOLD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2510.23497">VOLD: Vision-Language OPD from Text-Only LLM</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#2ECC71">ICLR 2026</span>
+      <span>INRIA / Goethe University</span><span>2025.10</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">跨模态蒸馏：LLM → VLM</div>
+    <p>VOLD 解决的是：一个强大的纯文本 LLM（如 LLaMA-3.1-70B）能否将其语言能力蒸馏给一个视觉语言模型（VLM）学生，使后者在多模态任务上达到更高性能？难点在于教师（纯文本 LLM）无法直接处理图像输入。</p>
+
+    <div class="section-h">两阶段解决方案</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">阶段 1：冷启动 SFT 对齐（让 VLM 先有基础能力）</strong><br>
+      在多模态数据集（图文对）上做标准 SFT<br>
+      目的：让 VLM 学生能生成连贯的多模态 rollout<br><br>
+      <strong style="color:var(--text);">阶段 2：统一 RL + OPD 训练</strong><br>
+      VLM 学生输入：(图像, 文本问题)<br>
+      VLM 学生生成：y ~ π_VLM(·|图像, 问题)&nbsp;&nbsp;（on-policy rollout）<br><br>
+      <strong style="color:var(--text);">OPD 监督：</strong><br>
+      将图像转换为 caption：img → caption（用另一个 VLM 描述图像）<br>
+      纯文本 LLM 教师输入：(caption, 问题)<br>
+      <div class="eq">L_KD = D_KL(π_VLM(·|图像,问题,y_&lt;t) ‖ π_LLM(·|caption,问题,y_&lt;t))</div>
+      同时加入 GRPO 规则奖励（如 VQA 准确率）
+    </div>
+
+    <div class="section-h">Caption 桥接的设计选择</div>
+    <p>图像 → caption 的转换是 VOLD 的关键工程决策。论文测试了多种方案：</p>
+    <table class="compare-table">
+      <tr><th>桥接方案</th><th>VQA 准确率</th><th>成本</th></tr>
+      <tr><td>无桥接（LLM 跳过图像）</td><td>无法计算</td><td>最低</td></tr>
+      <tr><td>简短 caption（&lt;50 词）</td><td>72.1%</td><td>低</td></tr>
+      <tr><td>详细 caption（&lt;200 词）</td><td><strong>76.8%</strong></td><td>中</td></tr>
+      <tr><td>结构化 caption（区域描述）</td><td>75.2%</td><td>高</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">为什么用文本 LLM 教视觉 LLM 有效？</div>
+      <p>视觉理解的核心能力（逻辑推理、常识知识、语言理解）实际上是语言能力，不是视觉能力。强文本 LLM 在这些方面远超普通 VLM。VOLD 通过 caption 桥接，将文本 LLM 的语言推理能力转移到 VLM，弥补了 VLM 在纯推理方面的短板。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Video-OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2602.02994">Video-OPD: Temporal Video Grounding via OPD</a></h2>
+    <div class="meta-row">
+      <span>工业界（机构未完全公开）</span><span>2026.02</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">时序视频定位任务</div>
+    <p>时序视频定位（Temporal Video Grounding）：给定视频 + 文本查询（"找到 X 发生的时刻"），模型需要输出时间戳区间。Video-OPD 将 LLM 教师（仅处理视频的文字描述）的时序推理能力蒸馏给 MLLM（Multimodal LLM）学生（直接处理视频帧）。</p>
+
+    <div class="section-h">OPD 适配：时序输出的 token 级 KL</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">MLLM 学生输出格式：</strong><br>
+      "时间戳开始于 [&lt;t_start&gt;] 秒，结束于 [&lt;t_end&gt;] 秒"<br>
+      → 时间戳被 tokenize 为数字 token 序列<br><br>
+      <strong style="color:var(--text);">教师（纯文本 LLM + 视频文字描述）：</strong><br>
+      输入：视频帧的密集文字描述（每帧 1 句话）<br>
+      输出：相同格式的时间戳预测<br><br>
+      <strong style="color:var(--text);">OPD 损失：</strong><br>
+      在 MLLM 学生的 rollout 上，逐 token KL（特别是时间戳 token 位置权重更高）
+    </div>
+
+    <div class="insight-box">
+      <div class="label">关键挑战：视频帧的 token 爆炸</div>
+      <p>视频每秒 24 帧，每帧作为视觉 patch 展开可能有 256-576 个 token。10 秒视频 = 60K-140K 视觉 token，超出大多数模型上下文窗口。Video-OPD 用帧采样（每秒 1-4 帧）+ 视觉 token 压缩（平均池化）减少到可处理范围，是工程上的重要权衡。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== X-OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.24596">X-OPD: Cross-Modal Speech LLM Distillation</a></h2>
+    <div class="meta-row">
+      <span>Tencent Hunyuan / ZJU</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">跨模态 token 级 KL</div>
+    <p>X-OPD 将强大的文本 LLM 的能力蒸馏到语音 LLM（Speech LLM）。关键挑战：文本 token 和语音 token（通常是 codec token，如 EnCodec）是完全不同的表示空间，无法直接对齐 logit。</p>
+
+    <div class="section-h">跨空间对齐方案</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">Step 1：文本-语音投影层</strong><br>
+      训练一个轻量级投影层 P: 文本 logit 空间 → 语音 logit 空间<br><br>
+      <strong style="color:var(--text);">Step 2：在对齐空间计算 KL</strong><br>
+      教师文本 logits → P → 语音空间<br>
+      <div class="eq">L = D_KL(P(π_T_text) ‖ π_S_speech)&nbsp;&nbsp;在学生语音 rollout 上</div><br>
+      <strong style="color:var(--text);">Step 3：投影层 P 与学生 π_S_speech 联合训练</strong><br>
+      P 不是固定的，随训练动态调整以保持最优对齐
+    </div>
+
+    <div class="section-h">实验结果</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>ASR WER↓</th><th>SQA 准确率↑</th><th>语音翻译 BLEU↑</th></tr>
+      <tr><td>语音 LLM 基线（无蒸馏）</td><td>8.2%</td><td>61.3%</td><td>28.4</td></tr>
+      <tr><td>X-OPD</td><td><strong>6.1%</strong></td><td><strong>67.8%</strong></td><td><strong>33.2</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== Step-Audio-R1 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2511.15848">Step-Audio-R1: Audio Reasoning via Iterative Self-Distillation</a></h2>
+    <div class="meta-row">
+      <span>StepFun</span><span>2025.11</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">音频推理的迭代自蒸馏</div>
+    <p>Step-Audio-R1 是面向音频问答（如"这段音频说了什么意思？""这个声音属于什么乐器？"）的推理能力提升方案。采用"SFT → 自蒸馏 → PPO/RLVR"的三阶段 pipeline。</p>
+
+    <div class="section-h">音频 OPD 的特殊设计</div>
+    <ul>
+      <li><strong>只对音频相关问题自蒸馏：</strong>对纯文本问题不触发自蒸馏循环（避免过拟合音频域特征）</li>
+      <li><strong>音频 token 的特殊权重：</strong>在包含音频内容描述的 token 位置上，给 KL 损失加更高权重</li>
+      <li><strong>迭代自举：</strong>每轮用上轮模型的高质量输出（验证正确的）作为新的训练数据，循环 3-5 轮</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">多模态 OPD 的共同难题</div>
+      <p>本节 5 篇论文面临的核心共同挑战：(1) 多模态 token 与文本 token 的对齐问题；(2) 视觉/音频序列远比文本序列长（token 爆炸）；(3) 多模态教师（能理解视觉/音频）通常弱于文本教师。未来方向：随着原生多模态 LLM（如 GPT-5o、Gemini 2.0）能力提升，直接用多模态教师做 OPD 将成为主流。</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_opdrl.html">OPD-RL 混合</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_agent.html">Agent & 具身 OPD →</a>
+</p>
+</div>
+</body>
+</html>

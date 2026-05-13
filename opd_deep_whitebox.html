@@ -1,0 +1,501 @@
+<!-- index: OPD 深度解析 — 白盒 OPD | 2026-04-30 | 每篇核心论文：背景动机 + 方法公式 + 实验数据 + insight -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPD 深度解析 — 白盒 OPD</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--card2:#222636;--border:#2e3348;--text:#e4e6f0;--text2:#a0a4b8;--accent:#6c8cff;--accent2:#48dbfb;--green:#26de81;--orange:#fd9644;--pink:#fc5c65;--purple:#a55eea;--yellow:#fed330;--cyan:#0fb9b1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 7px;border-radius:4px;font-size:.88em;color:var(--accent2);}
+pre{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 30px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.topbar a.back{color:var(--text2);font-size:14px;}.topbar h1{font-size:16px;font-weight:700;}
+.main{max-width:960px;margin:0 auto;padding:36px 30px 80px;}
+.tldr{background:linear-gradient(135deg,rgba(108,140,255,.1),rgba(72,219,251,.05));border:1px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:30px;}
+.tldr h3{color:var(--accent2);font-size:14px;margin-bottom:6px;}.tldr p{font-size:14px;color:var(--text2);}
+.paper{background:var(--card);border:1px solid var(--border);border-radius:14px;margin:28px 0;overflow:hidden;}
+.paper-header{padding:20px 24px 14px;border-bottom:1px solid var(--border);}
+.paper-header h2{font-size:19px;margin-bottom:6px;}.paper-header h2 a{color:var(--text);}.paper-header h2 a:hover{color:var(--accent);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--text2);}
+.tag{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;}
+.paper-body{padding:20px 24px;}
+.section-h{font-size:13px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px;}.section-h:first-child{margin-top:0;}
+p{font-size:14px;color:var(--text2);margin-bottom:10px;}p strong{color:var(--text);}
+ul,ol{padding-left:20px;margin-bottom:10px;}li{font-size:14px;color:var(--text2);margin:5px 0;}li strong{color:var(--text);}
+.formula-box{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:12px 0;font-size:13px;line-height:2;overflow-x:auto;}
+.formula-box .eq{color:var(--accent2);font-style:italic;}
+.compare-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.compare-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.compare-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.compare-table tr:hover td{background:var(--card2);}
+.insight-box{background:rgba(38,222,129,.07);border:1px solid var(--green);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.insight-box .label{font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;}
+.insight-box p{color:var(--text2);margin:0;}
+.warn-box{background:rgba(253,150,68,.07);border:1px solid var(--orange);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.warn-box .label{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px;text-transform:uppercase;}
+.warn-box p{color:var(--text2);margin:0;}
+.mini-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:8px 0;font-size:13px;color:var(--text2);}
+.mini-card strong{color:var(--text);}
+.divider{border:none;border-top:1px solid var(--border);margin:36px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="opd_deep_index.html">← 返回总览</a>
+  <h1>🔬 白盒 OPD — 使用教师 Logits（17 篇深度解读）</h1>
+</div>
+
+<div class="main">
+
+<div class="tldr">
+  <h3>本节 TLDR</h3>
+  <p>白盒 OPD 是 OPD 的"主干道"：教师可以提供完整 logits，学生在自己的 rollout 上最小化与教师的 KL 散度。本节重点解读 6 个核心方向：<strong>损失函数设计（DistiLLM 系列）</strong>、<strong>理论统一（G-OPD）</strong>、<strong>信号自适应（Entropy-Aware / SCOPE）</strong>、<strong>效率优化（TIP / Fast OPD）</strong>、<strong>训练稳定性（Veto / REOPOLD）</strong>、<strong>跨 tokenizer（DSKDv2）</strong>。另有 11 篇简要速览。</p>
+</div>
+
+<!-- ===== 全局对比 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>白盒 OPD 方法全景对比</h2>
+    <div class="meta-row"><span class="tag" style="background:#BFA2DB">导引</span></div>
+  </div>
+  <div class="paper-body">
+    <div class="section-h">损失函数分类树</div>
+    <div class="formula-box" style="line-height:1.9;">
+      <strong style="color:var(--text);">固定损失类</strong><br>
+      ├── FKL：L = Σ_t π_T · log(π_T/π_S)&nbsp;&nbsp;← mean-seeking，覆盖所有模式<br>
+      ├── RKL：L = Σ_t π_S · log(π_S/π_T)&nbsp;&nbsp;← mode-seeking，集中学主模式<br>
+      └── JSD：λ·FKL + (1-λ)·RKL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← GKD 的广义形式<br><br>
+      <strong style="color:var(--text);">自适应损失类</strong><br>
+      ├── Skewed-KL（DistiLLM）：α·FKL + (1-α)·RKL，α 随学生状态动态调整<br>
+      ├── 对比损失（DistiLLM-2）：教师数据上 Skew-FKL，学生数据上 Skew-RKL<br>
+      ├── 熵感知切换（Entropy-Aware）：教师熵高→FKL，教师熵低→RKL<br>
+      └── 双路径加权（SCOPE）：错误 rollout→教师PPL权重KL，正确→学生PPL权重MLE<br><br>
+      <strong style="color:var(--text);">效率优化类</strong><br>
+      ├── Token 筛选（TIP）：只对 top-50% 高熵 token 计算 KL<br>
+      ├── 前缀截断（Fast OPD）：只计算推理链后半段的 KL<br>
+      └── 稀疏 top-K（verl recipe）：只传输教师 top-K logits（K≈50-200）
+    </div>
+    <div class="section-h">选型建议</div>
+    <table class="compare-table">
+      <tr><th>场景</th><th>推荐方法</th><th>理由</th></tr>
+      <tr><td>快速实验</td><td>GKD (λ=0.5, β=0.5)</td><td>TRL 直接支持，参数少</td></tr>
+      <tr><td>性能最优</td><td>DistiLLM-2</td><td>ICML 2025 Oral，非对称对比损失效果最佳</td></tr>
+      <tr><td>内存受限</td><td>TIP + Fast OPD</td><td>合计节省 ~60% 内存和计算</td></tr>
+      <tr><td>跨架构蒸馏</td><td>DSKDv2</td><td>专为不同 tokenizer 设计</td></tr>
+      <tr><td>理论分析需求</td><td>G-OPD</td><td>将 OPD 统一为 KL 约束 RL，理论最完整</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== DistiLLM ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2402.03898">DistiLLM: Streamlining Distillation via Skewed KL</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#BFA2DB">ICML 2024</span>
+      <span>KAIST / Microsoft</span><span>2024.02</span>
+      <span><a href="https://github.com/jongwooko/distillm">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心问题：FKL vs RKL 的"两难困境"</div>
+    <p>FKL（mean-seeking）和 RKL（mode-seeking）各有缺陷。FKL 强迫学生覆盖所有教师模式→容量不足时生成模糊输出。RKL 只学主模式→可能错过教师的多样性。DistiLLM 提出：<strong>能不能设计一个自适应在 FKL 和 RKL 之间切换的损失？</strong></p>
+
+    <div class="section-h">Skewed KL 损失函数</div>
+    <div class="formula-box">
+      <div class="eq">L_Skew-FKL(α) = Σ_t p_mix · log(p_mix / π_S)</div>
+      <div class="eq">其中 p_mix = α·π_T + (1-α)·π_S&nbsp;&nbsp;（混合分布）</div>
+      <br>
+      当 α→1：p_mix ≈ π_T → 退化为 FKL<br>
+      当 α→0：p_mix ≈ π_S → 退化为 RKL<br><br>
+      <strong style="color:var(--text);">自适应策略：</strong>α 随训练进度动态调整<br>
+      训练初期（学生差）→ 小 α（RKL 模式，先学主模式）<br>
+      训练后期（学生好）→ 大 α（FKL 模式，再覆盖多模式）
+    </div>
+
+    <div class="section-h">重要性重加权的 On-Policy 过渡</div>
+    <p>DistiLLM 还提出用重要性采样在 off-policy 教师数据上近似 on-policy 梯度：</p>
+    <div class="formula-box">
+      <div class="eq">w(y) = π_S(y|x) / π_T(y|x)&nbsp;&nbsp;（重要性权重）</div>
+      <div class="eq">L_IS = E_{y~π_T}[w(y) · L_Skew-FKL(y)]</div>
+      这允许在较少的学生 rollout 下近似 on-policy 效果，节省采样成本
+    </div>
+
+    <div class="section-h">实验结果</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>OpenHermes (ROUGE-L)</th><th>Dolly (ROUGE-L)</th><th>GSM8K (Acc)</th></tr>
+      <tr><td>SFT-on-Teacher</td><td>29.4</td><td>24.1</td><td>42.3</td></tr>
+      <tr><td>GKD</td><td>31.2</td><td>25.8</td><td>45.6</td></tr>
+      <tr><td>DistiLLM (Skew-FKL)</td><td><strong>33.1</strong></td><td><strong>27.4</strong></td><td><strong>48.2</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">关键洞察</div>
+      <p>Skewed KL 的本质是"软插值"——不是在 FKL 和 RKL 之间二选一，而是让混合分布 p_mix 成为可调节的监督目标。这个思路后来被 DistiLLM-2 进一步发展为"对比损失"（在不同数据类型上用不同方向的 Skew-KL）。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DistiLLM-2 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2503.07067">DistiLLM-2: Contrastive On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#BFA2DB">ICML 2025 Oral</span>
+      <span>KAIST / Microsoft</span><span>2025.03</span>
+      <span><a href="https://github.com/jongwooko/distillm-2">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">从插值到对比：核心创新</div>
+    <p>DistiLLM-2 发现了一个更深的规律：<strong>学生在教师数据上需要 FKL（覆盖教师模式），在自己生成的数据上需要 RKL（自我纠正）</strong>——这两种需求应该用不同的损失函数分开处理，而不是混合。</p>
+
+    <div class="section-h">非对称对比损失设计</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">教师数据 y_T ~ π_T 上：</strong><br>
+      <div class="eq">L_T = Skew-FKL(α)&nbsp;&nbsp;← 覆盖教师分布（FKL 倾向）</div><br>
+      <strong style="color:var(--text);">学生数据 y_S ~ π_S 上：</strong><br>
+      <div class="eq">L_S = Skew-RKL(β)&nbsp;&nbsp;← 自我纠正（RKL 倾向）</div><br>
+      <strong style="color:var(--text);">总损失（对比形式）：</strong><br>
+      <div class="eq">L = L_T - λ · L_S&nbsp;&nbsp;← 最大化教师相似性，最小化学生自满</div><br>
+      直觉：L_T 让学生"向教师靠拢"；-L_S 防止学生"停留在自己的分布"（自满 plateau）
+    </div>
+
+    <div class="section-h">为什么这是 ICML 2025 Oral？</div>
+    <p>对比损失框架从根本上解释了为什么之前的方法有天花板：<strong>单一损失函数无法同时满足"模仿教师"和"纠正自己"两个相互矛盾的目标</strong>。DistiLLM-2 将其显式分离，实验上在 10 个 benchmark 上全面超越 DistiLLM 和 GKD，平均提升 3-5pp。</p>
+
+    <div class="insight-box">
+      <div class="label">实践建议</div>
+      <p>如果你在做 OPD 项目且性能是首要目标，DistiLLM-2 目前是学术态最优方法之一。代码开源，实现难度中等。需要同时维护两个数据流（教师数据 + 学生 rollout），batch 大小需要设置得足够大（建议 ≥32）以确保对比损失稳定。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== G-OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2602.12125">G-OPD: Generalized On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>RUC / Tencent AI Lab</span><span>2026.02</span>
+      <span><a href="https://github.com/RUCBM/G-OPD">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心理论贡献：OPD = KL 约束的 RL</div>
+    <p>G-OPD 是白盒 OPD 方向最重要的理论论文。它证明了：</p>
+    <div class="formula-box">
+      <strong style="color:var(--text);">标准 OPD 的目标函数：</strong><br>
+      <div class="eq">max_π E_{y~π}[r(x,y)] - β · D_KL(π ‖ π_T)</div>
+      其中 r(x,y) = 0（无外部奖励），π_T = 教师<br>
+      → 退化为纯 KL 最小化：min D_KL(π_S ‖ π_T)<br><br>
+      <strong style="color:var(--text);">G-OPD 的扩展：允许 r(x,y) ≠ 0，并支持"超越教师"：</strong><br>
+      <div class="eq">max_π E_{y~π}[γ · r(x,y)] - β · D_KL(π ‖ π_T)</div>
+      当 γ &gt; 1 时（奖励外推 / reward extrapolation），学生可以超越教师
+    </div>
+
+    <div class="section-h">奖励外推：OPD 突破教师上界</div>
+    <p>传统 OPD 的一个隐患：学生永远无法超越教师（因为目标就是逼近教师）。G-OPD 通过设置 γ > 1 的奖励缩放，让学生在教师偏好方向上"过度学习"，从而在某些维度超越教师。实验显示在数学推理（MATH）上：</p>
+    <table class="compare-table">
+      <tr><th>γ</th><th>学生准确率</th><th>vs 教师</th></tr>
+      <tr><td>1.0（标准 OPD）</td><td>72.3%</td><td>-5.1pp</td></tr>
+      <tr><td>1.5（G-OPD）</td><td>76.8%</td><td>-0.6pp</td></tr>
+      <tr><td>2.0（G-OPD 激进）</td><td><strong>78.2%</strong></td><td><strong>+0.8pp（超教师！）</strong></td></tr>
+    </table>
+
+    <div class="section-h">统一框架价值</div>
+    <p>G-OPD 的统一框架将以下方法全部纳入同一公式：</p>
+    <ul>
+      <li>GKD（γ=1, β 大）= 纯 KL 约束</li>
+      <li>GRPO + OPD（γ≥1, β 中）= RL-OPD 混合</li>
+      <li>纯 RL（β→0）= 退化为无 KL 约束的策略梯度</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">理论意义</div>
+      <p>G-OPD 把 OPD 和 RL 的关系彻底说清楚了：OPD 是带强教师 KL 约束的 RL，RL 是不带 KL 约束的 OPD。这个统一视角对设计 OPD-RL 混合方法（下一节）有直接指导价值。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Entropy-Aware OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2603.07079">Entropy-Aware On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>KAIST / IBM Research</span><span>2026.03</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">核心思想：教师的不确定性决定用哪种 KL</div>
+    <p>这篇论文提出了一个极简但有效的规则：<strong>根据教师在当前 token 位置的熵动态选择 FKL 或 RKL</strong>。</p>
+    <div class="formula-box">
+      <div class="eq">H_T(t) = -Σ_v π_T(v|x,y_&lt;t) · log π_T(v|x,y_&lt;t)&nbsp;&nbsp;（教师在位置 t 的熵）</div><br>
+      <strong style="color:var(--text);">规则（阈值 τ 为超参）：</strong><br>
+      if H_T(t) &gt; τ → 用 FKL（教师不确定，需覆盖多模式）<br>
+      if H_T(t) ≤ τ → 用 RKL（教师确定，集中学主模式）
+    </div>
+
+    <div class="section-h">直觉解释</div>
+    <ul>
+      <li><strong>教师熵高（H_T 大）：</strong>这个位置教师也"不太确定"该选哪个词（多个合理选择），强行用 RKL 会让学生过度集中在一个词上，丢失多样性。用 FKL 让学生覆盖所有合理选择。</li>
+      <li><strong>教师熵低（H_T 小）：</strong>这个位置教师非常确定（例如数学步骤的必然推导），用 RKL 让学生精确学习这个确定性模式。</li>
+    </ul>
+
+    <div class="section-h">实验数据</div>
+    <table class="compare-table">
+      <tr><th>方法</th><th>GSM8K</th><th>MATH</th><th>HumanEval</th></tr>
+      <tr><td>固定 FKL</td><td>68.4</td><td>41.2</td><td>52.3</td></tr>
+      <tr><td>固定 RKL</td><td>70.1</td><td>43.8</td><td>54.6</td></tr>
+      <tr><td>Entropy-Aware</td><td><strong>73.2</strong></td><td><strong>46.5</strong></td><td><strong>57.8</strong></td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">为什么这么简单的方法有效？</div>
+      <p>不同 token 位置的"重要性"差异很大：高熵位置（创意、多样性相关）和低熵位置（逻辑、计算相关）需要截然不同的学习策略。固定损失函数"一刀切"，必然在某类位置欠拟合。Entropy-Aware 用最少的代码（加一个阈值判断）实现了自适应——这是极佳的工程-效果比。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCOPE ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.10688">SCOPE: Signal-Calibrated On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>USTC / Meituan / Fudan</span><span>2026.04</span>
+      <span><a href="https://github.com/machine981/SCOPE">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">动机：正确和错误的 rollout 应该用不同损失</div>
+    <p>SCOPE 的出发点很直观：学生生成的 rollout 有些是对的（验证器判断正确），有些是错的。对错 rollout 用相同损失是浪费甚至有害的——正确的 rollout 说明学生已经学会了，不需要强制 KL；错误的 rollout 才是需要教师纠正的地方。</p>
+
+    <div class="section-h">双路径设计</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">路径 1：错误 rollout（y 被验证器判为错）</strong><br>
+      <div class="eq">L_wrong = -Σ_t w_T(t) · log π_S(y_t|·)</div>
+      <div class="eq">w_T(t) = π_T(y_t|·)&nbsp;&nbsp;（教师概率加权，教师确定的位置权重大）</div><br>
+      <strong style="color:var(--text);">路径 2：正确 rollout（y 被验证器判为对）</strong><br>
+      <div class="eq">L_correct = -Σ_t w_S(t) · log π_S(y_t|·)</div>
+      <div class="eq">w_S(t) = π_S(y_t|·)&nbsp;&nbsp;（学生概率加权，学生确定的位置权重大）</div><br>
+      <strong style="color:var(--text);">总损失：</strong>L = L_wrong + λ · L_correct
+    </div>
+
+    <div class="section-h">验证器路由机制</div>
+    <p>SCOPE 引入轻量级验证器（可以是规则基础的，如数学验证器；也可以是另一个模型）对每条 rollout 打标，决定走哪条路径。验证器本身不需要 gradient，只需要 forward。</p>
+
+    <div class="insight-box">
+      <div class="label">与 OPSD / OPCD 的关系</div>
+      <p>SCOPE 是白盒 OPD + 验证器的组合，与 OPSD 的"特权上下文"思路有异曲同工之处——都在利用"学生自身对错信息"来区分处理。区别在于 SCOPE 用验证器判断对错，OPSD 用已验证推理链作为特权输入给同一个模型。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TIP ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2604.14084">TIP: Token Importance for On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>Meta AI / LinkedIn</span><span>2026.04</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">问题：大多数 token 的 KL 计算是浪费的</div>
+    <p>在一个 2048 token 的输出中，真正"值得学"的 token 远少于总数。低不确定性位置（学生已经高度自信的 token）的 KL 贡献接近零，但仍占据计算资源。TIP 提出：<strong>只对最"重要"的 token 计算 OPD 损失。</strong></p>
+
+    <div class="section-h">Token 重要性定义</div>
+    <div class="formula-box">
+      <div class="eq">Importance(t) = H_S(t) = -Σ_v π_S(v|·) · log π_S(v|·)&nbsp;&nbsp;（学生自身的熵）</div><br>
+      <strong style="color:var(--text);">选择策略：</strong>只对 H_S(t) 排名前 50% 的 token 计算 KL 损失<br>
+      → 高熵位置 = 学生不确定 = 最需要教师指导<br>
+      → 低熵位置 = 学生已确定 = KL 贡献趋近零，跳过节省计算
+    </div>
+
+    <div class="section-h">效率收益</div>
+    <table class="compare-table">
+      <tr><th>指标</th><th>标准 OPD</th><th>TIP (top-50%)</th></tr>
+      <tr><td>KL 计算量</td><td>100%</td><td>50%</td></tr>
+      <tr><td>内存占用（logit 存储）</td><td>100%</td><td><strong>53%</strong></td></tr>
+      <tr><td>训练速度</td><td>1×</td><td><strong>1.38×</strong></td></tr>
+      <tr><td>性能损失</td><td>—</td><td>&lt;0.5pp（可忽略）</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">与 Entropy-Aware 的区别</div>
+      <p>Entropy-Aware 用教师熵决定用哪种 KL；TIP 用学生熵决定要不要计算 KL。两者可以叠加：先用 TIP 筛选 top-50% token，再在这些 token 上用 Entropy-Aware 选 FKL/RKL。实测叠加后效率提升 ~1.5× 且性能几乎不变。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DSKDv2 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2504.11426">DSKDv2: Cross-Tokenizer On-Policy Distillation</a></h2>
+    <div class="meta-row">
+      <span>BJTU（北京交通大学）</span><span>2025.04</span>
+      <span><a href="https://github.com/songmzhang/DSKDv2">Code</a></span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">跨 tokenizer 蒸馏的根本难题</div>
+    <p>当教师和学生使用<strong>不同 tokenizer</strong>时（如 LLaMA tokenizer → Qwen tokenizer），同一段文本被切成不同数量、不同位置的 token，无法直接对齐 logit。传统方案要么要求同 tokenizer（限制了教师选择），要么用字符级对齐（计算昂贵）。</p>
+
+    <div class="section-h">双空间对齐方案</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">Step 1：公共词汇表子集投影</strong><br>
+      → 找到教师词汇表 V_T 和学生词汇表 V_S 的共同 token 子集 V_common<br>
+      → 在 V_common 上对齐教师和学生的概率分布（重归一化）<br><br>
+      <strong style="color:var(--text);">Step 2：双重 KL 对齐</strong><br>
+      <div class="eq">L = D_KL(π_T|_{V_common} ‖ π_S|_{V_common}) + λ · L_MLE</div><br>
+      V_common 通常覆盖 70-90% 的高频 token，KL 损失的有效性得到保障
+    </div>
+
+    <div class="section-h">支持 on-policy 和 off-policy 双模式</div>
+    <p>DSKDv2 同时支持在学生 rollout（on-policy）和教师数据（off-policy）上计算跨 tokenizer KL，可以无缝嵌入 GKD / DistiLLM 等任何现有框架。</p>
+
+    <div class="warn-box">
+      <div class="label">局限性</div>
+      <p>V_common 方案只对共同 token 有效，对于专属 token（如教师有但学生没有的中文字符集，或代码特殊符号）无法对齐。对于这类情况，需要额外的映射层或退回到字符级对齐（计算成本更高）。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Fast OPD ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2602.15260">Fast OPD: Prefix-Truncated Distillation for Reasoning</a></h2>
+    <div class="meta-row">
+      <span>工业界（机构未完全公开）</span><span>2026.02</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">直觉：推理链的前缀大多是"模板"</div>
+    <p>在长链思维（Long CoT）场景下，学生生成 1024-4096 token 的推理链。其中前 30-50% 往往是固定的问题分析框架（"让我分析一下这道题..."），教师和学生在这部分差异极小，KL 贡献接近零。<strong>有效学习主要发生在推理链后半段（实际计算和验证步骤）</strong>。</p>
+
+    <div class="section-h">前缀截断策略</div>
+    <div class="formula-box">
+      <strong style="color:var(--text);">标准 OPD：</strong>对全部 T 个 token 计算 KL<br>
+      <div class="eq">L = Σ_{t=1}^{T} KL(π_T(·|x,y_&lt;t) ‖ π_S(·|x,y_&lt;t))</div><br>
+      <strong style="color:var(--text);">Fast OPD：</strong>只对后 (1-ρ)·T 个 token 计算 KL<br>
+      <div class="eq">L = Σ_{t=⌈ρT⌉}^{T} KL(π_T(·|x,y_&lt;t) ‖ π_S(·|x,y_&lt;t))</div><br>
+      最优 ρ 通常在 0.3-0.5（截断前 30-50%），实现 2×-47× 加速
+    </div>
+
+    <div class="section-h">加速比分析</div>
+    <table class="compare-table">
+      <tr><th>推理链长度</th><th>截断比例 ρ</th><th>FLOPs 节省</th><th>性能损失</th></tr>
+      <tr><td>512 tokens</td><td>0.3</td><td>30%</td><td>&lt;0.3pp</td></tr>
+      <tr><td>2048 tokens</td><td>0.5</td><td>50%</td><td>&lt;0.5pp</td></tr>
+      <tr><td>4096 tokens</td><td>0.7</td><td>70%（47× 等效加速）</td><td>~1pp</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <div class="label">适用场景</div>
+      <p>Fast OPD 对 Long CoT 模型（DeepSeek-R1、Qwen3-think 系列）收益最大。对短输出模型（&lt;256 tokens）收益可忽略。实践中可以将 TIP（token 筛选）和 Fast OPD（前缀截断）叠加，双重节省。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Veto ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2><a href="https://arxiv.org/abs/2601.07155">Veto: Stable On-Policy Distillation via Adaptive Gradient Veto</a></h2>
+    <div class="meta-row">
+      <span class="tag" style="background:#BFA2DB">ACL 2026 Findings</span>
+      <span>Seoul National University</span><span>2026.01</span>
+    </div>
+  </div>
+  <div class="paper-body">
+
+    <div class="section-h">OPD 训练不稳定的根本原因</div>
+    <p>OPD 训练经常出现损失震荡、梯度爆炸、性能崩塌（catastrophic forgetting）。Veto 诊断根本原因：<strong>当教师和学生在 logit 空间的"方向"相反时，强行拉近 KL 会产生破坏性梯度</strong>。</p>
+
+    <div class="section-h">两个核心机制</div>
+
+    <p><strong>机制 1：Logit 空间几何桥接（Geometric Bridging）</strong></p>
+    <div class="formula-box">
+      不直接最小化 KL(π_S ‖ π_T)，而是引入插值目标 π_bridge：<br>
+      <div class="eq">π_bridge = (1-γ)·π_S + γ·π_T&nbsp;&nbsp;（γ 从 0 渐增到 1）</div>
+      → 学生先向"中间桥接点"靠拢，再逐步向教师靠拢<br>
+      → 避免直接"跨越"引发的梯度方向突变
+    </div>
+
+    <p><strong>机制 2：自适应梯度否决（Adaptive Target Reformulation）</strong></p>
+    <div class="formula-box">
+      对每个 token t，计算当前梯度与历史平均梯度的余弦相似度 cos_sim：<br>
+      if cos_sim &lt; -0.5 → "否决"该 token 的梯度（置零）<br>
+      else → 正常更新<br><br>
+      直觉：梯度方向反转（cos_sim 很负）意味着这个更新会"撤销"之前学到的知识
+    </div>
+
+    <div class="insight-box">
+      <div class="label">什么时候需要 Veto？</div>
+      <p>如果你的 OPD 训练出现：(1) loss 剧烈震荡（波动 &gt;20%）；(2) 验证集性能在训练中途崩塌；(3) 梯度 norm 经常出现尖峰——这时 Veto 的两个机制可以直接缓解。对于稳定的教师-学生对（同系列模型），Veto 的收益相对较小。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 其余方法速览 ===== -->
+<div class="paper">
+  <div class="paper-header">
+    <h2>其余白盒 OPD 方法速览</h2>
+    <div class="meta-row"><span class="tag" style="background:#2e3348">8 篇</span></div>
+  </div>
+  <div class="paper-body">
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.11137">REOPOLD</a>（KAIST / Microsoft, 2026.03）</strong>—— 将 OPD 视为带教师-学生 log-ratio 奖励的策略优化，混合奖励裁剪 + 基于熵的动态采样。比标准 OPD 更新更保守，适合教师-学生差距大的场景。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.13260">TSD-KD</a>（Korea Univ., ICLR 2026）</strong>—— 混合"间接路径"（学生提议 + 教师重排）和"直接路径"（选择性 logit KD），在 token 级别自适应路由。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2604.20244">HPD: Hybrid Policy Distillation</a>（2026.04）</strong>—— 将 KD 统一为 token 级重加权似然，覆盖 FKL + RKL。后端支持 LlamaFactory 和 verl，工程化程度高。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2410.11325">Speculative KD</a>（UCSB / Google, ICLR 2025）</strong>—— 交织式提议-修正机制：学生提议 token，教师以 gated KL 方式修正。弥合师生差距的增量式方案。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.11178">PACED</a>（LinkedIn, 2026.03）</strong>—— 在学生能力"边界"处构建课程，难度加权 w(p)=p(1-p)。自蒸馏风格（早期 checkpoint 作教师），渐进式难度递增。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2510.07842">AdaSwitch</a>（RUC / Baidu, 2025.10）</strong>—— 根据 KL 散度阈值动态在"用教师数据训练"和"用学生 rollout 训练"之间切换。自动化的 off→on-policy 过渡。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2509.22921">Constrained OPD (CMDP)</a>（Huawei Noah's Ark, 2025.09）</strong>—— 将 KL 约束建模为约束马尔可夫决策过程（CMDP），使用<strong>硬 KL 约束</strong>（Lagrangian 乘子法）而非软惩罚。当你需要严格控制师生 KL 上界时使用。
+    </div>
+
+    <div class="mini-card">
+      <strong><a href="https://arxiv.org/abs/2603.19266">G-OPD 扩展</a></strong>—— G-OPD 的多教师扩展版本，支持对多个教师的 logit 加权聚合，适用于 DeepSeek-V4 风格的多专家蒸馏场景。
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回总览</a> &nbsp;|&nbsp;
+  上一节：<a href="opd_deep_surveys.html">综述 & 基础理论</a> &nbsp;|&nbsp;
+  下一节：<a href="opd_deep_blackbox.html">黑盒 OPD →</a>
+</p>
+
+</div>
+</body>
+</html>
