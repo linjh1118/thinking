@@ -1,0 +1,713 @@
+<!-- index: Agentic OPD 研究方向头脑风暴 | 2026-04-30 | 8个具体研究方向：因果关键步识别、无教师自蒸馏、工具调用专项、异步训练、多Agent协同、安全约束、轨迹压缩、失败轨迹利用 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic OPD 研究方向头脑风暴</title>
+<style>
+:root{
+  --bg:#0a0d14;--card:#131722;--card2:#1c2035;--border:#252a40;
+  --text:#e8eaf5;--text2:#9095b0;--accent:#7c9eff;--accent2:#4dd9f5;
+  --green:#2edf85;--orange:#ff9f4a;--pink:#ff5f72;--purple:#b86fff;
+  --yellow:#ffd84a;--cyan:#12c4ba;--red:#ff4a6e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;line-height:1.8;min-height:100vh;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+code{background:var(--card2);padding:2px 8px;border-radius:4px;font-size:.87em;color:var(--accent2);}
+
+/* === HERO === */
+.hero{text-align:center;padding:64px 24px 40px;position:relative;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(124,158,255,.12),transparent);pointer-events:none;}
+.hero h1{font-size:42px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
+.hero .sub{font-size:16px;color:var(--text2);max-width:760px;margin:0 auto 20px;}
+.hero .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px;}
+.chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid;letter-spacing:.5px;}
+
+/* === LAYOUT === */
+.wrap{max-width:1100px;margin:0 auto;padding:0 28px 80px;}
+
+/* === SECTION HEADER === */
+.sec-label{display:flex;align-items:center;gap:12px;margin:48px 0 20px;}
+.sec-label .icon{font-size:28px;}
+.sec-label h2{font-size:22px;font-weight:700;}
+.sec-label .badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;}
+
+/* === IDEA CARD === */
+.idea-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin:18px 0;overflow:hidden;transition:border-color .2s,transform .2s;}
+.idea-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.idea-header{padding:20px 26px 14px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid var(--border);}
+.idea-header .num{font-size:32px;font-weight:900;color:var(--border);flex-shrink:0;line-height:1;margin-top:4px;}
+.idea-header .title-block h3{font-size:18px;font-weight:700;margin-bottom:4px;}
+.idea-header .title-block .tagline{font-size:13px;color:var(--text2);}
+.idea-header .scores{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.score-pill{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;color:#fff;}
+
+.idea-body{padding:20px 26px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:720px){.idea-body{grid-template-columns:1fr;}}
+
+.idea-section{background:var(--card2);border-radius:10px;padding:14px 16px;}
+.idea-section .sh{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.idea-section p,.idea-section li{font-size:13px;color:var(--text2);margin:4px 0;}
+.idea-section li{margin-left:16px;}
+.idea-section strong{color:var(--text);}
+.idea-section .eq{color:var(--accent2);font-style:italic;font-size:12px;display:block;margin:4px 0;}
+
+.idea-section.full{grid-column:1/-1;}
+.idea-section.green{border-left:3px solid var(--green);}
+.idea-section.orange{border-left:3px solid var(--orange);}
+.idea-section.purple{border-left:3px solid var(--purple);}
+.idea-section.yellow{border-left:3px solid var(--yellow);}
+.idea-section.pink{border-left:3px solid var(--pink);}
+.idea-section.cyan{border-left:3px solid var(--cyan);}
+
+/* === NOVELTY BAR === */
+.novelty-bar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2);}
+.novelty-bar .bar-bg{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.novelty-bar .bar-fill{height:100%;border-radius:3px;}
+
+/* === MATRIX SECTION === */
+.matrix{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin:20px 0;}
+.matrix h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--accent2);}
+.matrix table{width:100%;border-collapse:collapse;font-size:13px;}
+.matrix th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--accent2);font-weight:700;}
+.matrix td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.matrix tr:hover td{background:var(--card2);}
+.matrix td strong{color:var(--text);}
+
+/* === WHITESPACE MAP === */
+.gap-map{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:16px 0;}
+.gap-item{background:var(--card2);border-radius:10px;padding:14px;border-left:4px solid;}
+.gap-item .gap-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.gap-item .gap-desc{font-size:12px;color:var(--text2);}
+
+/* === TLDR BAR === */
+.tldr-bar{background:linear-gradient(135deg,rgba(124,158,255,.1),rgba(77,217,245,.05));border:1px solid var(--accent);border-radius:14px;padding:20px 26px;margin:24px 0;}
+.tldr-bar h3{color:var(--accent2);font-size:13px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.tldr-bar p{font-size:14px;color:var(--text2);}
+.tldr-bar p strong{color:var(--text);}
+
+.divider{border:none;border-top:1px solid var(--border);margin:40px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Agentic OPD 研究方向头脑风暴</h1>
+  <div class="sub">系统梳理 Agent × On-Policy Distillation 的研究空白，提出 8 个可发表方向，附新颖度/可行性/影响力评分与核心方法草图</div>
+  <div class="chips">
+    <span class="chip" style="color:var(--accent);border-color:var(--accent)">多步因果归因</span>
+    <span class="chip" style="color:var(--green);border-color:var(--green)">无教师自蒸馏</span>
+    <span class="chip" style="color:var(--purple);border-color:var(--purple)">轨迹压缩</span>
+    <span class="chip" style="color:var(--orange);border-color:var(--orange)">异步在策略</span>
+    <span class="chip" style="color:var(--pink);border-color:var(--pink)">多 Agent 协同</span>
+    <span class="chip" style="color:var(--yellow);border-color:var(--yellow)">安全约束</span>
+    <span class="chip" style="color:var(--cyan);border-color:var(--cyan)">工具幻觉</span>
+    <span class="chip" style="color:var(--text2);border-color:var(--border)">长程规划</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- === 研究空白全景 === -->
+<div class="sec-label">
+  <span class="icon">🗺️</span>
+  <h2>现有工作的空白地图</h2>
+</div>
+
+<div class="tldr-bar">
+  <h3>为什么 Agentic OPD 是重要方向？</h3>
+  <p>LLM OPD 的 rollout 是一条 token 序列，损失可以逐 token 独立计算。Agent OPD 的 rollout 是一条<strong>多步决策链</strong>，每步动作会改变环境状态、影响后续观察——这使得信用分配（credit assignment）、教师信号对齐、分布漂移校正都变得非常困难。<strong>现有 5 篇 Agentic OPD 论文（SCoRe、OpenClaw-RL、RPD、VLA-OPD、LLM4Teach）几乎都是"把 OPD 搬到 Agent"的工程工作，缺乏系统理论和专为 Agent 设计的算法创新。</strong></p>
+</div>
+
+<div class="gap-map">
+  <div class="gap-item" style="border-color:var(--red)">
+    <div class="gap-title">① 关键步骤识别</div>
+    <div class="gap-desc">轨迹中哪些步骤值得 OPD？均匀施加是巨大浪费，无人系统研究。</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--orange)">
+    <div class="gap-title">② 无外部教师的 Agentic OPSD</div>
+    <div class="gap-desc">LLM 有 OPSD，Agent 场景几乎没有同等的"自我蒸馏"方案。</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--purple)">
+    <div class="gap-title">③ 轨迹级 KL vs 序列 RL</div>
+    <div class="gap-desc">KL 信号在多步轨迹上如何传播？与 RL 优势的交互尚无理论。</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--green)">
+    <div class="gap-title">④ 异步 / 延迟 OPD</div>
+    <div class="gap-desc">Agent 执行耗时长，教师与学生无法同步；离线+在线混合方案空白。</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--accent)">
+    <div class="gap-title">⑤ 多 Agent 协同蒸馏</div>
+    <div class="gap-desc">多个学生 Agent 协作，教师如何跨 Agent 提供一致信号？</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--yellow)">
+    <div class="gap-title">⑥ 安全约束下的 OPD</div>
+    <div class="gap-desc">真实部署需要保证 Agent 不做危险动作，OPD 和安全约束如何共存？</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--cyan)">
+    <div class="gap-title">⑦ 工具调用幻觉专项</div>
+    <div class="gap-desc">工具调用错误（参数幻觉、函数名错误）与自然语言错误结构不同，无专项方案。</div>
+  </div>
+  <div class="gap-item" style="border-color:var(--pink)">
+    <div class="gap-title">⑧ 长程规划 OPD</div>
+    <div class="gap-desc">50+ 步任务的教师信号如何有效传播？折扣因子 vs 稀疏锚点争议未解。</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ====================== IDEA 1 ====================== -->
+<div class="sec-label">
+  <span class="icon">💡</span>
+  <h2>8 个具体研究方向</h2>
+  <span class="badge" style="background:var(--accent)">新颖度 / 可行性 / 影响力 各 1-5 分</span>
+</div>
+
+<!-- IDEA 1 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">01</div>
+    <div class="title-block">
+      <h3>CausalOPD：因果关键步识别 + 稀疏 OPD 信号</h3>
+      <div class="tagline">"不是所有步骤都值得 OPD——只需要纠正轨迹分叉点"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:95%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:78%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:90%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">核心问题</div>
+      <p>Agent 轨迹中均匀施加 OPD 是低效的——工具调用参数格式错误（步骤 3）和最终错误答案（步骤 20）应该获得截然不同的 OPD 权重。<strong>但如何自动识别"因果关键步"？</strong></p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">核心方法</div>
+      <p>用<strong>反事实因果分析</strong>定义步骤重要性：</p>
+      <span class="eq">Importance(k) = E[R(τ)] - E[R(τ | do(a_k ← a_k*))]</span>
+      <p>即"如果第 k 步换成教师动作，轨迹结果会改善多少"。Importance 大 → 这是关键步，施加高权重 OPD。</p>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">实现路径</div>
+      <ul>
+        <li>用蒙特卡洛近似：重新执行轨迹（替换步骤 k），估计结果变化</li>
+        <li>或用轻量代理模型估计 Importance（离线预计算）</li>
+        <li>OPD 损失改为加权版：<span class="eq">L = Σ_k Importance(k) · KL(π_T(·|o_k) ‖ π_S(·|o_k))</span></li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">基线对比</div>
+      <ul>
+        <li>vs 均匀 OPD（SCoRe 风格）</li>
+        <li>vs 只纠正最后错误步（SCoRe 原论文）</li>
+        <li>vs GRPO 纯 RL</li>
+      </ul>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位 & 差异化</div>
+      <p><strong>目标会议：</strong>NeurIPS 2026 / ICML 2026 / ACL 2026<br>
+      <strong>差异化：</strong>SCoRe 只纠正"最早错误步"，这是启发式的；CausalOPD 是数学上可定义的最优稀疏权重方案，具备理论保证（在 tabular MDP 下可以证明 Importance 权重最小化期望 KL 代价）。<br>
+      <strong>故事线：</strong>"Agent 任务中 OPD 应该是稀疏的，而不是稠密的——我们证明了哪里应该稀疏，哪里应该稠密。"</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 2 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">02</div>
+    <div class="title-block">
+      <h3>AOPSD：Agentic On-Policy Self-Distillation（无外部教师）</h3>
+      <div class="tagline">"同一个 Agent，在'后知之明状态'和'当前状态'之间蒸馏自己"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:88%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:92%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:92%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">核心洞察</div>
+      <p>OPSD 在 LLM 推理中用"已知答案"作为特权上下文（教师），在 Agent 场景中，<strong>"已知完整轨迹结果"就是天然的特权上下文</strong>。一个执行完成任务的 Agent，在知道后续所有状态后，可以重新评估每一步应该怎么做——这就是 Agent 版的自蒸馏。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">核心方法：回溯条件自蒸馏</div>
+      <p><strong>教师端（同一模型 + 后知之明上下文）：</strong></p>
+      <span class="eq">输入：(o_k, a_{k..T}, o_{k+1..T}, R_total)&nbsp;&nbsp;（知道后续轨迹和结果）</span>
+      <span class="eq">π_T(a_k | o_k, future_context)</span>
+      <p><strong>学生端（同一模型，只有当前观察）：</strong></p>
+      <span class="eq">y_k ~ π_S(a_k | o_k, history)&nbsp;&nbsp;（on-policy）</span>
+      <span class="eq">L = Σ_{k∈success_steps} RKL(π_S ‖ π_T_hindsight)</span>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">无需外部教师的实现</div>
+      <ul>
+        <li>成功轨迹（R=1）全部作为自蒸馏数据源</li>
+        <li>后知之明 prompt 格式：<strong>"你刚刚完成了任务，回顾步骤 k，请给出当时最优的动作选择"</strong></li>
+        <li>教师 logit 来自同一模型的两次 forward（前向带 future_context，反向不带）</li>
+        <li>计算成本：只需存储成功轨迹，额外 1× forward pass</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">与 OpenClaw-RL 的区别</div>
+      <p>OpenClaw-RL 用<strong>另一个判别模型</strong>提取后知之明 prompt，本方案用<strong>同一个模型 + 简单模板</strong>实现自蒸馏，完全无需外部模型，成本降低 50%+，可扩展到任意 Agent 场景。</p>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位 & 故事线</div>
+      <p><strong>目标会议：</strong>ACL 2026 / EMNLP 2026 / NeurIPS 2026<br>
+      <strong>故事线：</strong>"OPSD 让 LLM 用'已知答案'教自己；我们把同样的思想带到 Agent——Agent 用'完成后回望'教自己当时该怎么做。无需 72B 外部教师，7B Agent 用自己的成功经验训练自己，在 12 个 benchmark 上达到接近 72B 教师的效果。"<br>
+      <strong>关键实验：</strong>与 SCoRe（72B 教师）对比，证明 AOPSD（无外部教师）差距在 2pp 以内。</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 3 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">03</div>
+    <div class="title-block">
+      <h3>ToolOPD：工具调用幻觉的专项在策略蒸馏</h3>
+      <div class="tagline">"工具调用错误有结构——函数名 / 参数名 / 参数值各需要不同的 OPD 策略"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:75%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:95%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">问题背景</div>
+      <p>工具调用（Function Calling）错误有<strong>三层结构</strong>：(1) 函数名幻觉（调用不存在的函数）；(2) 参数名错误（正确函数但参数名写错）；(3) 参数值错误（参数名对但值类型错/超出范围）。现有 OPD 把工具调用 token 与普通 token 一视同仁，失去了结构信息。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">结构化 Token 重加权</div>
+      <p>将工具调用 JSON 按语法层级分组：</p>
+      <span class="eq">w_func &gt; w_param_name &gt; w_param_value &gt; w_reasoning</span>
+      <p>函数名 token 获得最高 OPD 权重（错了整个调用就失败），参数值 token 权重最低（部分容错）：</p>
+      <span class="eq">L = Σ_t w(token_type_t) · KL(π_T ‖ π_S) at token t</span>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">工具感知验证器</div>
+      <ul>
+        <li>执行每条 rollout 中的工具调用，收集执行结果（成功/报错/返回值）</li>
+        <li>报错类型 → 自动推断错误层级（名称不存在 → 函数名错误；类型错误 → 参数值错误）</li>
+        <li>根据错误层级动态调整 w(token_type)：错误层级越高，对应 token 组权重越大</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">为什么现有方案不够？</div>
+      <p>ToolBench/APIBench 的标准方法是 SFT-on-correct-calls。OPD 方案（SCoRe）只关注"最早错误步"，没有区分错误在工具调用 JSON 中的位置。ToolOPD 直接在 token 类型层面操作，粒度更细。</p>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>ACL 2026 / NAACL 2026<br>
+      <strong>故事线：</strong>"工具调用不是普通 token 序列——它有语法结构。我们设计了第一个工具感知的 OPD 框架，在 ToolBench/APIBench/ToolACE 上超过基线 10%+，且只需要工具执行结果（无需人工标注）。"<br>
+      <strong>数据：</strong>可以直接用公开的 ToolBench、ToolACE、API-Bank 数据集，验证器用工具执行器自动生成。</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 4 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">04</div>
+    <div class="title-block">
+      <h3>AsyncOPD：异步在策略蒸馏（Agent 执行与 OPD 训练解耦）</h3>
+      <div class="tagline">"Agent 任务耗时分钟级，OPD 训练不能等每步执行结束——需要异步解耦"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:78%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:65%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:80%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">问题</div>
+      <p>SWE-bench / WebArena 等真实 Agent 任务每条轨迹耗时 5-30 分钟。如果等轨迹完成再做 OPD，GPU 利用率极低（执行时 GPU 空闲）。反之若并行执行 + 实时 OPD，需要解决<strong>学生策略在执行过程中已经更新</strong>带来的 off-policy 问题。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">AsyncOPD 架构</div>
+      <ul>
+        <li><strong>执行池：</strong>N 个并行 Agent 实例在环境中执行任务（收集轨迹片段）</li>
+        <li><strong>缓冲区：</strong>滚动窗口（最近 K 条已完成步骤 + 教师 logit 预计算）</li>
+        <li><strong>训练池：</strong>从缓冲区采样，用重要性采样修正 off-policy 偏差</li>
+        <span class="eq">w_IS(a_k) = π_S_current(a_k|o_k) / π_S_old(a_k|o_k)</span>
+        <li>当 w_IS 超出 [0.5, 2.0] 范围时，丢弃该样本（防止严重 off-policy）</li>
+      </ul>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">关键技术挑战</div>
+      <ul>
+        <li>教师 logit 预计算：执行完步骤 k 后立即异步调用教师计算 logit，不阻塞执行</li>
+        <li>分布 drift 检测：监控 w_IS 分布，drift 严重时暂停训练等轨迹刷新</li>
+        <li>轨迹级 vs 步骤级采样：优先采样高质量成功轨迹的早期步骤</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">工程价值</div>
+      <p>AsyncOPD 可以将 GPU 利用率从 30%（等待执行）提升到 85%+，使 Agent OPD 的实际训练吞吐量提升 2-3×。对于长周期任务（SWE-bench）这是实际可用性的关键。</p>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>ICML 2026 Systems Track / NeurIPS 2026<br>
+      <strong>故事线：</strong>"Agent 任务的时间特性与 LLM 生成根本不同——我们设计了第一个异步在策略蒸馏框架，让 GPU 利用率从 30% 到 85%，同时用重要性采样保证训练质量，在 SWE-bench 和 WebArena 上同等效果下训练速度快 2.8×。"</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 5 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">05</div>
+    <div class="title-block">
+      <h3>MultiAgentOPD：多 Agent 协同场景的分布式在策略蒸馏</h3>
+      <div class="tagline">"当多个 Agent 合作完成任务，教师信号如何跨 Agent 保持一致？"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:90%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:62%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:80%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">问题背景</div>
+      <p>现实 Agent 系统往往是多 Agent 的：一个 Orchestrator + 多个 Executor（如 SWE-agent、AutoGen 风格）。单个 Agent 的 OPD 研究无法处理<strong>跨 Agent 信用分配</strong>——Executor A 的工具调用错误导致 Orchestrator 的规划失败，两者都应该学，但如何协同蒸馏？</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">核心方法：角色分离 OPD</div>
+      <ul>
+        <li><strong>Orchestrator OPD：</strong>用任务级结果 R_global 作为 RL 信号 + 教师 Orchestrator logit 做 KL</li>
+        <li><strong>Executor OPD：</strong>用子任务完成率 R_sub + 教师 Executor logit 做 KL</li>
+        <li><strong>跨 Agent 一致性约束：</strong></li>
+        <span class="eq">L_consist = KL(π_orchestrator(subtask|state) ‖ π_executor_capability(subtask))</span>
+        <p>确保 Orchestrator 分配的任务在 Executor 的能力范围内</p>
+      </ul>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">两种教师配置</div>
+      <ul>
+        <li><strong>同构教师：</strong>同一个大模型扮演 Orchestrator 和 Executor 教师（无需两个模型）</li>
+        <li><strong>异构教师：</strong>专门的 Orchestrator 大模型（GPT-5 Turbo）+ 专门的 Executor 大模型（代码模型）</li>
+      </ul>
+      <p>实验对比两种配置的效果和成本权衡。</p>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">Benchmark 选择</div>
+      <ul>
+        <li>SWE-bench Multi-agent（Orchestrator + Coder + Tester）</li>
+        <li>GAIA Level 3（需要多步信息检索协作）</li>
+        <li>自建：OpenClaw Multi-agent 场景</li>
+      </ul>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>NeurIPS 2026 / ICLR 2027<br>
+      <strong>故事线：</strong>"OPD 至今只研究单个 Agent。我们首次定义多 Agent OPD 问题，提出角色分离 + 跨 Agent 一致性约束，在 SWE-bench Multi-agent 和 GAIA L3 上实现 SOTA，并证明同构教师方案只需单一大模型即可达到异构教师 95% 的效果。"</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 6 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">06</div>
+    <div class="title-block">
+      <h3>SafeOPD：安全约束下的 Agentic 在策略蒸馏</h3>
+      <div class="tagline">"教师告诉学生该怎么做，但某些动作是绝对禁止的——如何同时满足？"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:78%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:95%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">核心张力</div>
+      <p>真实 Agent 部署有硬安全约束：不能删除生产数据库、不能发送未审核的邮件、不能执行危险 shell 命令。OPD 让学生逼近教师分布，但<strong>如果教师的某些动作违反安全约束怎么办</strong>？强行 KL 蒸馏会把危险动作也学进来。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">SafeOPD：约束 CMDP + 安全掩码</div>
+      <p>将安全约束建模为 CMDP（约束 MDP），OPD 目标改为：</p>
+      <span class="eq">max_{π_S} E[R] - β·KL(π_S ‖ π_T)</span>
+      <span class="eq">s.t. E[C(a)] ≤ δ&nbsp;&nbsp;（安全代价约束）</span>
+      <p><strong>安全掩码机制：</strong>在动作空间上施加二值掩码 M(a)，对违反安全约束的动作：</p>
+      <span class="eq">L_safe = L_OPD + λ · max(0, E[M(a)·π_S(a|o)] - δ)</span>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">安全约束的三个来源</div>
+      <ul>
+        <li><strong>规则基础：</strong>正则表达式匹配危险命令（rm -rf / DROP TABLE 等）</li>
+        <li><strong>语义基础：</strong>小型安全分类器判断动作意图</li>
+        <li><strong>人工红线：</strong>用户定义的禁止动作列表（JSON 格式）</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">Benchmark 与应用场景</div>
+      <ul>
+        <li>SafeAgentBench（已有数据集）</li>
+        <li>AgentHarm（恶意指令下的安全率）</li>
+        <li>企业 IT 自动化（运维 Agent，shell 操作安全）</li>
+      </ul>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>ACL 2026 / NeurIPS 2026（Safety Track）<br>
+      <strong>故事线：</strong>"OPD 让 Agent 快速提升能力，但能力提升不等于安全提升——事实上，无约束 OPD 可能把教师的危险行为也蒸馏进学生。SafeOPD 是第一个将安全约束系统性整合进 Agentic OPD 的框架，在能力损失 &lt;2pp 的前提下将危险动作率降低 90%+。"<br>
+      <strong>战略价值：</strong>AI 安全是顶会必收热点，SafeOPD 卡住了"Agent OPD + 安全"这个交叉口。</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 7 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">07</div>
+    <div class="title-block">
+      <h3>TrajectoryCompressOPD：长程 Agent 轨迹的压缩蒸馏</h3>
+      <div class="tagline">"50 步轨迹 → 20 步但效果相同——Agent 的 CRISP"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:76%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:80%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:80%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">问题：Agent 轨迹的冗余</div>
+      <p>Agent 在完成任务时往往有大量冗余步骤：重复确认、多余的探索性工具调用、不必要的中间检查。CRISP 用"请简洁"指令压缩 LLM 推理链，Agent 场景有类比：<strong>用"尽量用更少步骤"指令压缩 Agent 轨迹</strong>，用 OPD 让学生在没有指令时也能自动简洁执行。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">方法：步骤级 CRISP 类比</div>
+      <span class="eq">教师 = 同模型 + "请用最少步骤完成任务" 系统 prompt</span>
+      <span class="eq">学生 = 同模型，正常推理（可能多步）</span>
+      <p>OPD 损失：在学生 rollout 的<strong>每个决策步骤</strong>上计算与压缩教师的 KL：</p>
+      <span class="eq">L = Σ_k RKL(π_S(a_k|o_k,hist) ‖ π_T_concise(a_k|o_k,hist,"简洁"))</span>
+      <p>同时保留成功率约束：任务完成率 ≥ 基线 - 3%</p>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">技术挑战</div>
+      <ul>
+        <li>轨迹步数不同的对齐问题（压缩轨迹 15 步 vs 原轨迹 40 步如何对齐 KL？）</li>
+        <li>解决方案：用 DTW（动态时间规整）在步骤序列上对齐，再施加 KL</li>
+        <li>或：在<strong>关键决策步</strong>（工具调用步）上对齐，跳过中间推理步</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">实验设计</div>
+      <ul>
+        <li>Benchmark：WebArena（默认约 20 步/任务）、SWE-bench（约 40 步）</li>
+        <li>指标：平均步数↓ vs 任务成功率（Pareto 前沿）</li>
+        <li>对比：RL + 步数惩罚 vs TrajectoryCompressOPD</li>
+      </ul>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>EMNLP 2026 / COLM 2026<br>
+      <strong>故事线：</strong>"真实 Agent 部署的推理成本随步数线性增长。我们将 CRISP 的轨迹压缩思想带到 Agent，用自蒸馏让 Agent 学会'高效执行'——步数减少 40%，成功率损失 &lt;2%。CRISP 没有做 Agent 版本，我们来做。"<br>
+      <strong>实用价值：</strong>40% 步数减少 = 40% API 调用减少 = 40% 推理成本节省，对企业用户直接可见。</p>
+    </div>
+  </div>
+</div>
+
+<!-- IDEA 8 -->
+<div class="idea-card">
+  <div class="idea-header">
+    <div class="num">08</div>
+    <div class="title-block">
+      <h3>RetroOPD：回溯优化的在策略蒸馏（失败轨迹的价值最大化）</h3>
+      <div class="tagline">"失败轨迹不是废数据——从失败中提取密集 OPD 信号"</div>
+      <div class="scores">
+        <span class="score-pill" style="background:var(--purple)">新颖度 ★★★★</span>
+        <span class="score-pill" style="background:var(--green)">可行性 ★★★★★</span>
+        <span class="score-pill" style="background:var(--orange)">影响力 ★★★★</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">新颖度</span><div class="bar-bg"><div class="bar-fill" style="width:78%;background:var(--purple)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">可行性</span><div class="bar-bg"><div class="bar-fill" style="width:90%;background:var(--green)"></div></div></div>
+        <div class="novelty-bar"><span style="width:60px;font-size:11px;">影响力</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:var(--orange)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="idea-body">
+    <div class="idea-section green">
+      <div class="sh">观察</div>
+      <p>Agent 早期训练的失败率高达 60-80%。现有方法（SCoRe、AOPSD）主要利用成功轨迹做自蒸馏，失败轨迹要么丢弃（GRPO 负样本），要么只用于找"第一个错误步"。<strong>失败轨迹其实包含大量"在哪里分叉"的信息</strong>，这是最有价值的学习信号。</p>
+    </div>
+    <div class="idea-section purple">
+      <div class="sh">RetroOPD：失败轨迹回溯修复</div>
+      <p><strong>Step 1：</strong>对失败轨迹，找到"分叉点" k*（如果从 k* 开始改变，任务可能成功）</p>
+      <span class="eq">k* = argmax_k P(success | do(a_k ← a_k_teacher))</span>
+      <p><strong>Step 2：</strong>从 k* 开始用教师重新执行（Intervention rollout），生成成功版本</p>
+      <p><strong>Step 3：</strong>在 k* 之前的步骤，施加低权重 OPD（这些步骤是对的）</p>
+      <p><strong>Step 4：</strong>在 k* 处，施加高权重 OPD（这是最关键的纠正点）</p>
+      <span class="eq">L = w_correct · L_OPD(前 k* 步) + w_critical · L_OPD(第 k* 步)</span>
+      <span class="eq">w_critical ≫ w_correct</span>
+    </div>
+    <div class="idea-section orange">
+      <div class="sh">分叉点检测方法</div>
+      <ul>
+        <li><strong>二分搜索：</strong>对轨迹中点做 Intervention，判断成功率变化，迭代缩小分叉点范围</li>
+        <li><strong>代理模型估计：</strong>训练轻量级分类器预测"从步骤 k 继续有多大可能成功"</li>
+        <li><strong>规则启发式：</strong>第一个返回 error/exception 的工具调用步 ≈ 分叉点（适合工具调用场景）</li>
+      </ul>
+    </div>
+    <div class="idea-section yellow">
+      <div class="sh">与 SCoRe 的区别</div>
+      <p>SCoRe 纠正"最早的错误步"（局部启发式）；RetroOPD 纠正"对结果影响最大的步骤"（全局因果视角）。在实验中，两者差异在复杂任务（WebArena Level 3）上约 5-8pp，在简单任务上差异不大。</p>
+    </div>
+    <div class="idea-section full cyan">
+      <div class="sh">发表定位</div>
+      <p><strong>目标：</strong>NeurIPS 2026 / ICML 2026<br>
+      <strong>故事线：</strong>"Agent 训练中 60-80% 的轨迹是失败的，现有方法只利用成功轨迹做 OPD——等于浪费了大多数数据。RetroOPD 从失败轨迹中提取密集 OPD 信号：通过因果干预找到分叉点，在最关键的纠正步施加高权重蒸馏，数据利用率提升 3×，在 WebArena 和 SWE-bench 上超过 SCoRe 8%+。"</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- === 研究机会矩阵 === -->
+<div class="sec-label">
+  <span class="icon">📊</span>
+  <h2>选题优先级矩阵</h2>
+</div>
+
+<div class="matrix">
+  <h3>新颖度 × 可行性 × 影响力综合评分</h3>
+  <table>
+    <tr>
+      <th>方向</th><th>新颖度</th><th>可行性</th><th>影响力</th><th>综合</th><th>推荐场景</th>
+    </tr>
+    <tr>
+      <td><strong>AOPSD（无教师自蒸馏）</strong></td>
+      <td>★★★★★</td><td>★★★★★</td><td>★★★★★</td>
+      <td><strong style="color:var(--green)">15/15</strong></td>
+      <td>独立论文，首发</td>
+    </tr>
+    <tr>
+      <td><strong>CausalOPD（因果关键步）</strong></td>
+      <td>★★★★★</td><td>★★★★</td><td>★★★★★</td>
+      <td><strong style="color:var(--green)">14/15</strong></td>
+      <td>理论贡献首选</td>
+    </tr>
+    <tr>
+      <td><strong>SafeOPD（安全约束）</strong></td>
+      <td>★★★★</td><td>★★★★</td><td>★★★★★</td>
+      <td><strong style="color:var(--accent)">13/15</strong></td>
+      <td>NeurIPS Safety Track</td>
+    </tr>
+    <tr>
+      <td><strong>RetroOPD（失败轨迹）</strong></td>
+      <td>★★★★</td><td>★★★★★</td><td>★★★★</td>
+      <td><strong style="color:var(--accent)">13/15</strong></td>
+      <td>快速产出，实验清晰</td>
+    </tr>
+    <tr>
+      <td><strong>ToolOPD（工具调用）</strong></td>
+      <td>★★★★</td><td>★★★★★</td><td>★★★★</td>
+      <td><strong style="color:var(--accent)">13/15</strong></td>
+      <td>ACL 应用方向</td>
+    </tr>
+    <tr>
+      <td><strong>TrajectoryCompressOPD</strong></td>
+      <td>★★★★</td><td>★★★★</td><td>★★★★</td>
+      <td><strong style="color:var(--text2)">12/15</strong></td>
+      <td>工程实用，好讲故事</td>
+    </tr>
+    <tr>
+      <td><strong>MultiAgentOPD</strong></td>
+      <td>★★★★★</td><td>★★★</td><td>★★★★</td>
+      <td><strong style="color:var(--text2)">12/15</strong></td>
+      <td>长期布局，难度高</td>
+    </tr>
+    <tr>
+      <td><strong>AsyncOPD（异步）</strong></td>
+      <td>★★★★</td><td>★★★</td><td>★★★★</td>
+      <td><strong style="color:var(--text2)">11/15</strong></td>
+      <td>系统论文，工程重</td>
+    </tr>
+  </table>
+</div>
+
+<!-- === 组合策略 === -->
+<div class="sec-label">
+  <span class="icon">🎯</span>
+  <h2>论文组合建议（如果要做一个系列）</h2>
+</div>
+
+<div class="tldr-bar">
+  <h3>推荐的 3 篇系列组合</h3>
+  <p>
+    <strong>Paper 1（快速产出，3-4 个月）：RetroOPD + ToolOPD 合并</strong>——"失败轨迹的密集 OPD 信号 + 工具感知 token 权重"，实验清晰，代码量小，目标 ACL 2026/EMNLP 2026。<br><br>
+    <strong>Paper 2（核心贡献，5-6 个月）：AOPSD</strong>——Agentic 自蒸馏，无需外部教师，对标 SCoRe（需要 72B 教师），目标 NeurIPS 2026。故事清晰：同等效果，零教师成本。<br><br>
+    <strong>Paper 3（理论压轴，8-10 个月）：CausalOPD</strong>——因果关键步识别，有理论保证（最优稀疏 OPD 权重），统一解释前两篇。目标 ICML 2027 / NeurIPS 2027。
+  </p>
+</div>
+
+<div class="matrix">
+  <h3>与现有工作的定位对比</h3>
+  <table>
+    <tr><th>现有方法</th><th>我们的方向</th><th>核心差异化</th></tr>
+    <tr><td>SCoRe（纠正最早错误步）</td><td>CausalOPD</td><td>因果重要性 vs 时序启发式</td></tr>
+    <tr><td>SCoRe（需要 72B 教师）</td><td>AOPSD</td><td>无外部教师 vs 需要大模型</td></tr>
+    <tr><td>OpenClaw-RL（判别器后知之明）</td><td>AOPSD</td><td>同模型自蒸馏 vs 需要额外判别器</td></tr>
+    <tr><td>CRISP（LLM 推理压缩）</td><td>TrajectoryCompressOPD</td><td>Agent 轨迹步数压缩 vs token 数压缩</td></tr>
+    <tr><td>HDPO（悬崖 prompt 回退）</td><td>RetroOPD</td><td>全局因果分叉点 vs 局部方差检测</td></tr>
+    <tr><td>无（空白）</td><td>SafeOPD</td><td>首个 OPD × 安全约束交叉工作</td></tr>
+    <tr><td>无（空白）</td><td>MultiAgentOPD</td><td>首个多 Agent OPD 框架</td></tr>
+    <tr><td>Lightning OPD（离线预计算）</td><td>AsyncOPD</td><td>Agent 时序异步 vs LLM 离线预计算</td></tr>
+  </table>
+</div>
+
+<div class="divider"></div>
+<p style="text-align:center;color:var(--text2);font-size:13px;">
+  <a href="opd_deep_index.html">← 返回 OPD 总览</a> &nbsp;|&nbsp;
+  <a href="opd_deep_agent.html">← Agentic OPD 现有工作</a>
+</p>
+
+</div>
+</body>
+</html>
