@@ -1,0 +1,605 @@
+<!-- index: MoA-Evo 实验章节可视化 | 2026-05-15 | EMNLP 论文 Section 4 实验结果对比表格与图表 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoA-Evo 实验章节可视化 | EMNLP 论文</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f6fa;color:#1a1a2e;line-height:1.6}
+
+.page-header{background:linear-gradient(135deg,#16213e 0%,#0f3460 50%,#1a237e 100%);color:#fff;padding:36px 40px 28px}
+.page-header h1{font-size:1.8rem;font-weight:700;margin-bottom:4px}
+.page-header .sub{font-size:.88rem;opacity:.7;margin-bottom:16px}
+.meta-row{display:flex;flex-wrap:wrap;gap:12px;font-size:.82rem;opacity:.8}
+.meta-row span{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:12px}
+
+.paper{max-width:1100px;margin:24px auto;background:#fff;box-shadow:0 2px 20px rgba(0,0,0,.08);border-radius:6px;overflow:hidden}
+
+.sec{padding:28px 36px;border-bottom:1px solid #eee}
+.sec:last-child{border-bottom:none}
+.sec h2{font-size:1.15rem;font-weight:700;color:#0f3460;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e8eaf6}
+.sec h3{font-size:1rem;font-weight:700;color:#333;margin:18px 0 8px}
+.sec p{font-size:.9rem;color:#444;margin-bottom:10px}
+
+.tldr{background:linear-gradient(90deg,#e3f2fd,#f3e5f5);border-left:4px solid #7e57c2;border-radius:6px;padding:14px 18px;margin:16px 0;font-size:.9rem;line-height:1.7}
+.tldr strong{color:#0f3460}
+
+/* Status badges */
+.st-ok{color:#2e7d32;font-weight:700}
+.st-warn{color:#e65100;font-weight:700;font-size:.82rem}
+.st-err{color:#c62828;font-weight:700;font-size:.82rem}
+.st-todo{color:#9e9e9e;font-weight:700;font-size:.82rem}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;margin:12px 0 20px}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th{background:#0f3460;color:#fff;padding:10px 10px;text-align:center;font-weight:600;white-space:nowrap;font-size:.82rem}
+td{padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:center;vertical-align:middle;font-size:.85rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f9ff}
+.t-left{text-align:left!important;font-weight:600}
+.t-category{background:#f5f5f5!important;color:#666!important;font-weight:600!important;font-size:.8rem!important;text-align:left!important;padding-left:14px!important}
+.ours-row td{background:#e8f5e9!important;font-weight:700!important}
+.ours-row:hover td{background:#c8e6c9!important}
+.abs-row td{background:#fff8e1!important}
+.empty-cell{color:#ccc;font-style:italic;font-size:.8rem}
+.num-pos{color:#2e7d32;font-weight:700}
+.num-neg{color:#c62828;font-weight:700}
+.num-zero{color:#999}
+.num-bold{font-weight:700}
+.best-in-cat{background:#e3f2fd!important;font-weight:700}
+
+/* Source tag */
+.src{display:inline-block;font-size:.68rem;padding:1px 5px;border-radius:3px;margin-left:3px;vertical-align:middle;font-weight:600}
+.src-ok{background:#e8f5e9;color:#2e7d32}
+.src-warn{background:#fff3e0;color:#e65100}
+.src-err{background:#ffebee;color:#c62828}
+.src-todo{background:#f5f5f5;color:#999}
+
+/* Figure containers */
+.fig{margin:20px 0;padding:16px;border:1px solid #e8eaf6;border-radius:8px;background:#fafbff}
+.fig-title{font-size:.85rem;font-weight:700;color:#0f3460;text-align:center;margin-bottom:12px}
+.chart-wrap{position:relative;height:320px}
+.chart-wrap-sm{position:relative;height:260px}
+
+/* Note boxes */
+.note{background:#fff8e1;border-left:4px solid #ff9800;padding:10px 14px;margin:14px 0;font-size:.85rem;border-radius:0 6px 6px 0}
+.note-warn{background:#ffebee;border-left-color:#ef5350}
+.note-ok{background:#e8f5e9;border-left-color:#4caf50}
+.note strong{display:block;margin-bottom:4px}
+
+/* RQ list */
+.rq-list{list-style:none;padding:0}
+.rq-list li{padding:8px 0 8px 28px;position:relative;font-size:.9rem;border-bottom:1px solid #f5f5f5}
+.rq-list li:last-child{border-bottom:none}
+.rq-list li::before{content:attr(data-rq);position:absolute;left:0;top:8px;font-weight:800;font-size:.82rem;color:#0f3460;background:#e8eaf6;padding:2px 6px;border-radius:4px}
+
+.case-item{background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;margin:10px 0}
+.case-label{font-size:.82rem;font-weight:700;color:#0f3460;margin-bottom:6px}
+.case-body{font-size:.88rem;color:#444;line-height:1.7}
+.case-body em{color:#0f3460;font-style:normal;font-weight:600}
+
+@media(max-width:800px){
+  .sec{padding:16px 18px}
+  .paper{margin:12px 8px}
+  .chart-wrap{height:260px}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Section 4 — Experiments</h1>
+  <div class="sub">When Agents Learn Like Humans: Multi-Perspective Discovery, Lazy Loading, and Evolutionary Refinement of Reusable Skills</div>
+  <div class="meta-row">
+    <span>MoA-Evo (Mixture-of-Analysts Evolution)</span>
+    <span>EMNLP 2026 Submission</span>
+    <span>GLM-4-Flash + GLM-4.7</span>
+    <span>ALFWorld 274 + SpreadsheetBench-Verified 200</span>
+  </div>
+</div>
+
+<div class="paper">
+
+<!-- ═══ RQ ═══ -->
+<div class="sec">
+  <h2>4.1 Research Questions</h2>
+  <ul class="rq-list">
+    <li data-rq="RQ1">How does MoA-Evo compare to prior skill systems across the four baseline categories?</li>
+    <li data-rq="RQ2">What is the individual contribution of each component (MAD, LSL, SE)?</li>
+    <li data-rq="RQ3">How does analyst diversity affect skill quality and task performance?</li>
+    <li data-rq="RQ4">What is the effect of lazy loading versus monolithic prefix injection?</li>
+    <li data-rq="RQ5">Does co-evolutionary verification improve skill quality and downstream performance?</li>
+  </ul>
+</div>
+
+<!-- ═══ Setup ═══ -->
+<div class="sec">
+  <h2>4.2 Setup</h2>
+  <h3>Benchmarks</h3>
+  <div class="case-item">
+    <div class="case-label">SpreadsheetBench-Verified — 200 tasks</div>
+    <div class="case-body">自然语言指令理解 + 多 sheet 推理 + Python openpyxl 执行，ground truth 对照 golden workbook 文件验证。</div>
+  </div>
+  <div class="case-item">
+    <div class="case-label">ALFWorld — 274 tasks (140 seen + 134 unseen)</div>
+    <div class="case-body">文本环境中的家庭任务，需要序列动作规划、跨房间物体操控和状态追踪。使用官方 AlfredTWEnv wrapper，admissible-command constrained action selection。</div>
+  </div>
+  <h3>Model & Rounds</h3>
+  <p>GLM-4-Flash 用于所有组件（task proposers / aggregator / analyst agents / gatekeeper / skill writer / surrogate verifier）。Temperature 0.3（skill extraction）/ 0.6（task proposal）。所有 baseline 使用同一 backbone。</p>
+  <p><strong>Rounds</strong>：Round 0（冷启动，无 skill memory 建立共享 baseline）→ Round 1（使用从 R0 轨迹蒸馏的 skill library）。每个 baseline 的 R1 使用原论文描述的 skill injection 机制实现。</p>
+</div>
+
+<!-- ═══ Baselines ═══ -->
+<div class="sec">
+  <h2>4.3 Baselines</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="text-align:left">Category</th><th style="text-align:left">Method</th><th style="text-align:left">Core Idea</th><th style="text-align:left">MoA-Evo 定位</th></tr></thead>
+      <tbody>
+        <tr class="t-category"><td colspan="4" style="text-align:left">I — Trajectory Distillation（轨迹蒸馏）</td></tr>
+        <tr><td class="t-left">Trace2Skill</td><td style="text-align:left">多轨迹并行摘要 → 平面技能目录；单角色</td><td style="text-align:left">Parallel sub-agent summarization</td><td style="text-align:left"><span class="num-neg">单角色 → 视角盲区</span></td></tr>
+        <tr><td class="t-left">SkillX</td><td style="text-align:left">三层技能层级 (strategic/functional/atomic)；teacher-student 蒸馏</td><td style="text-align:left">Structured hierarchy + distillation</td><td style="text-align:left"><span class="num-neg">单角色 / 无进化</span></td></tr>
+        <tr><td class="t-left">SkillRL</td><td style="text-align:left">RL 训练中递归蒸馏层级 SkillBank + 自适应检索</td><td style="text-align:left">Skill-augmented RL</td><td style="text-align:left"><span class="num-neg">单角色 / 依赖RL</span></td></tr>
+        <tr class="t-category"><td colspan="4" style="text-align:left">II — Memory Skill-ification（记忆技能化）</td></tr>
+        <tr><td class="t-left">MemSkill</td><td style="text-align:left">记忆操作本身变成可学习的元记忆技能</td><td style="text-align:left">Learnable memory operations</td><td style="text-align:left"><span class="num-neg">元记忆 ≠ 任务技能</span></td></tr>
+        <tr><td class="t-left">MCE</td><td style="text-align:left">元上下文工程：context 组织方式本身可进化</td><td style="text-align:left">Bi-level co-evolution</td><td style="text-align:left"><span class="num-neg">不解决"何时注入"</span></td></tr>
+        <tr class="t-category"><td colspan="4" style="text-align:left">III — Failure-Driven Evolution（失败驱动进化）</td></tr>
+        <tr><td class="t-left">EvoSkill</td><td style="text-align:left">失败驱动技能发现 + Pareto 选择</td><td style="text-align:left">DSPy-style self-improvement</td><td style="text-align:left"><span class="num-neg">单角色 / 无类型系统</span></td></tr>
+        <tr><td class="t-left">CoEvoSkill</td><td style="text-align:left">Generator + Verifier 协同进化</td><td style="text-align:left">Co-evolutionary verification</td><td style="text-align:left"><span class="num-neg">单角色 / 无阶段感知</span></td></tr>
+        <tr class="t-category"><td colspan="4" style="text-align:left">IV — Skill Asset Engineering（技能资产工程）</td></tr>
+        <tr><td class="t-left">AutoSkill</td><td style="text-align:left">标准化技能生命周期 (ingest → refine → retrieve)</td><td style="text-align:left">Lifelong learning plugin</td><td style="text-align:left"><span class="num-neg">静态资源 / 无进化</span></td></tr>
+        <tr><td class="t-left">SkillNet</td><td style="text-align:left">统一技能本体，20万+ 技能，多维度评估</td><td style="text-align:left">Skill ontology + scale</td><td style="text-align:left"><span class="num-neg">静态库 / 无动态</span></td></tr>
+        <tr class="t-category"><td colspan="4" style="text-align:left">Internal Ablations（内部消融）</td></tr>
+        <tr><td class="t-left">Monolithic</td><td style="text-align:left">技能作为单个 prefix 注入</td><td style="text-align:left">No LSL</td><td style="text-align:left"></td></tr>
+        <tr><td class="t-left">MAD-only</td><td style="text-align:left">多分析师发现 + monolithic 注入</td><td style="text-align:left">MAD + No LSL</td><td style="text-align:left"></td></tr>
+        <tr><td class="t-left">LSL-only</td><td style="text-align:left">单分析师 + 阶段感知加载</td><td style="text-align:left">LSL + No MAD</td><td style="text-align:left"></td></tr>
+        <tr><td class="t-left">MoA-Evo-noSE</td><td style="text-align:left">完整 MAD + LSL，无进化</td><td style="text-align:left">MAD + LSL + No SE</td><td style="text-align:left"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ Main Results — Delta Table ═══ -->
+<div class="sec">
+  <h2>4.4 Main Results</h2>
+  <div class="tldr">
+    <strong>TLDR</strong>：主表包含 4 benchmark × backbone 组合（Flash/4.7 × ALF/SSB），每格报告 Δ pp（R1 − R0）。当前<strong>10 个 baseline 中仅 4 个有数字</strong>（Trace2Skill / SkillX / SkillRL / MemSkill），其余 6 个（MCE / EvoSkill / CoEvoSkill / AutoSkill / SkillNet + 4 个内部消融）仍为 <code>--</code>。MoA-Evo Full 在所有 4 个格中均最优。
+  </div>
+
+  <h3>Table 1: Main Round-to-Round Improvements (Δ pp)</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Category</th>
+          <th style="text-align:left">Method</th>
+          <th colspan="2">ALFWorld</th>
+          <th colspan="2">SpreadsheetBench</th>
+          <th>Avg Δ</th>
+        </tr>
+        <tr>
+          <th></th><th></th>
+          <th>GLM-4-Flash</th><th>GLM-4.7</th>
+          <th>GLM-4-Flash</th><th>GLM-4.7</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="t-category"><td colspan="7" style="text-align:left">I — Trajectory Distillation</td></tr>
+        <tr>
+          <td class="t-left">Trace2Skill</td>
+          <td class="t-left" style="font-weight:400">flat skill dir, single analyst <span class="src src-ok">✓</span></td>
+          <td class="num-neg">−2.20 <span class="src src-ok">✓</span></td>
+          <td class="num-zero">0.00 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+2.00 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+6.00 <span class="src src-err">✗</span></td>
+          <td>1.45</td>
+        </tr>
+        <tr class="best-in-cat">
+          <td class="t-left">SkillX</td>
+          <td class="t-left" style="font-weight:400">3-level hierarchy, single analyst <span class="src src-ok">✓</span></td>
+          <td class="num-neg">−1.80 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+6.50 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+3.50 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+7.50 <span class="src src-err">✗</span></td>
+          <td class="num-pos">3.93</td>
+        </tr>
+        <tr>
+          <td class="t-left">SkillRL</td>
+          <td class="t-left" style="font-weight:400">RL + SkillBank, single analyst <span class="src src-ok">✓</span></td>
+          <td class="num-pos">+4.00 <span class="src src-ok">✓</span></td>
+          <td class="num-pos">+6.90 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+2.50 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+3.00 <span class="src src-err">✗</span></td>
+          <td class="num-pos">4.10</td>
+        </tr>
+
+        <tr class="t-category"><td colspan="7" style="text-align:left">II — Memory Skill-ification</td></tr>
+        <tr class="best-in-cat">
+          <td class="t-left">MemSkill</td>
+          <td class="t-left" style="font-weight:400">learnable memory ops <span class="src src-ok">✓</span></td>
+          <td class="num-pos">+2.92 <span class="src src-ok">✓</span></td>
+          <td class="num-pos">+8.40 <span class="src src-ok">✓</span></td>
+          <td class="num-pos">+2.00 <span class="src src-warn">⚠</span></td>
+          <td class="num-pos">+2.50 <span class="src src-err">✗</span></td>
+          <td class="num-pos">3.96</td>
+        </tr>
+        <tr>
+          <td class="t-left">MCE</td>
+          <td class="t-left" style="font-weight:400">meta context engineering <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+
+        <tr class="t-category"><td colspan="7" style="text-align:left">III — Failure-Driven Evolution</td></tr>
+        <tr>
+          <td class="t-left">EvoSkill</td>
+          <td class="t-left" style="font-weight:400">failure-driven + Pareto <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+        <tr>
+          <td class="t-left">CoEvoSkill</td>
+          <td class="t-left" style="font-weight:400">co-evolutionary verifier <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+
+        <tr class="t-category"><td colspan="7" style="text-align:left">IV — Skill Asset Engineering</td></tr>
+        <tr>
+          <td class="t-left">AutoSkill</td>
+          <td class="t-left" style="font-weight:400">standardized lifecycle <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+        <tr>
+          <td class="t-left">SkillNet</td>
+          <td class="t-left" style="font-weight:400">unified ontology, 200K+ skills <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+
+        <tr class="t-category"><td colspan="7" style="text-align:left">Ours — Internal Ablations</td></tr>
+        <tr>
+          <td class="t-left">Monolithic</td><td class="t-left">skills as single prefix (no LSL) <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+        <tr>
+          <td class="t-left">MAD-only</td><td class="t-left">6-analyst + monolithic injection <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+        <tr>
+          <td class="t-left">LSL-only</td><td class="t-left">single analyst + stage-aware loading <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+        <tr>
+          <td class="t-left">MoA-Evo-noSE</td><td class="t-left">full MAD + LSL, no evolution <span class="src src-err">未跑</span></td>
+          <td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="empty-cell">—</td>
+        </tr>
+
+        <tr class="ours-row">
+          <td class="t-left" style="font-size:.95rem">MoA-Evo (Full)</td>
+          <td class="t-left" style="font-weight:400">MAD + LSL + SE <span class="src src-ok">✓</span></td>
+          <td class="num-pos num-bold">+5.11</td>
+          <td class="num-pos num-bold">+10.58</td>
+          <td class="num-pos num-bold">+3.50</td>
+          <td class="num-pos num-bold">+12.00</td>
+          <td class="num-pos num-bold" style="font-size:1rem">7.80</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:.78rem;color:#888;margin-top:4px">
+    <span class="src src-ok">✓</span>=有实测数据 &nbsp; <span class="src src-warn">⚠</span>=数字来源需确认（模型/prompt可能与论文不一致） &nbsp; <span class="src src-err">✗</span>=缺失 &nbsp; <span class="src src-todo">—</span>=未跑
+  </div>
+
+  <h3>Table 2: Absolute Performance (MoA-Evo)</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Backbone</th><th>Benchmark</th><th>Tasks</th><th>R0</th><th>R1</th><th>Δ</th><th>Rel. Gain</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr class="ours-row"><td>GLM-4-Flash</td><td style="text-align:left">ALFWorld</td><td>274</td><td>23.36%</td><td>28.47%</td><td class="num-pos">+5.11</td><td>21.9%</td><td class="src src-ok">✓ main分支</td></tr>
+        <tr class="ours-row"><td>GLM-4.7</td><td style="text-align:left">ALFWorld</td><td>274</td><td>75.91%</td><td>82.85%</td><td class="num-pos">+6.94</td><td>9.1%</td><td class="src src-warn">⚠ 来源不明</td></tr>
+        <tr class="ours-row"><td>GLM-4-Flash</td><td style="text-align:left">SpreadsheetBench</td><td>200</td><td>2.50%</td><td>5.00%</td><td class="num-pos">+2.50</td><td>100.0%</td><td class="src src-ok">✓ main分支</td></tr>
+        <tr class="ours-row"><td>GLM-4.7</td><td style="text-align:left">SpreadsheetBench</td><td>200</td><td>44.50%</td><td>50.00%</td><td class="num-pos">+5.50</td><td>12.4%</td><td class="src src-warn">⚠ 来源不明</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Figure 1: Δ pp — All Methods (ALFWorld)</h3>
+  <div class="fig">
+    <div class="fig-title">Round-to-Round Improvement (Δ pp) — ALFWorld (GLM-4-Flash)</div>
+    <div class="chart-wrap"><canvas id="barALF"></canvas></div>
+  </div>
+
+  <h3>Figure 1 (cont.): Δ pp — All Methods (SpreadsheetBench)</h3>
+  <div class="fig">
+    <div class="fig-title">Round-to-Round Improvement (Δ pp) — SpreadsheetBench (GLM-4-Flash)</div>
+    <div class="chart-wrap"><canvas id="barSSB"></canvas></div>
+  </div>
+
+  <div class="note note-warn">
+    <strong>⚠️ 主表数字来源问题（P0）</strong>
+    <ul style="margin:4px 0 0 16px;padding-left:18px;font-size:.85rem;color:#555">
+      <li><strong>6/10 baseline 和 4/4 消融全部缺失</strong>（表格中为 <code>--</code>），投稿前必须补齐</li>
+      <li>已有数字中，<strong>部分来源需确认</strong>：SkillRL Flash ALF +4.00 来自 memskill 分支但 base 定义不明；Trace2Skill Flash ALF −2.20 未找到直接来源</li>
+      <li><strong>GLM-4.7 列数字来源不明</strong>：main 分支跑的是 Flash，4.7 的实验可能是另一配置，需确认</li>
+      <li>CoEvoSkill +3.28 / +1.50 在论文图中出现但主表中标为 <code>--</code>，说明数字存在但 LaTeX 表格未填</li>
+    </ul>
+  </div>
+
+  <h3>Analysis (from paper)</h3>
+  <p><strong>Category effects</strong>: Category III (failure-driven evolution) methods outperform others on both benchmarks, confirming dynamic skill refinement matters more than initial distillation quality. Category II (MemSkill, MCE) shows smallest gains.</p>
+  <p><strong>MoA-Evo vs best baseline</strong>: Strongest external baseline is CoEvoSkill (+3.28 pp ALF, +1.50 pp SS). MoA-Evo exceeds it by +1.83 pp (ALF) and +1.00 pp (SS), attributed to: (1) 6-analyst MAD produces higher-quality candidates than single-role generator; (2) LSL's stage-specific compilation reduces interference.</p>
+  <p><strong>Ablation ordering</strong>: Removing MAD causes largest single-component drop (−1.46 pp ALF), suggesting skill content quality is more limiting than injection strategy. Removing LSL causes second-largest (−1.19 pp).</p>
+</div>
+
+<!-- ═══ Ablation Study ═══ -->
+<div class="sec">
+  <h2>4.5 Ablation Study</h2>
+  <div class="tldr">
+    <strong>TLDR</strong>：消融表分三个维度（MAD / LSL / SE）细化到子组件。论文中已有完整数字，但代码中的消融脚本<strong>全部未执行</strong>，且代码 case 设计（role-level 粗粒度）与论文表格（component-level 细粒度）<strong>不对应</strong>。需要补齐开关 + 重跑对齐。
+  </div>
+
+  <h3>Table 3: Component + Sub-component Ablation</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="text-align:left">Ablation</th><th>ALF Δ (pp)</th><th>SS Δ (pp)</th><th>vs Full</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr class="ours-row"><td class="t-left">MoA-Evo (Full: MAD + LSL + SE)</td><td class="num-pos">+5.11</td><td class="num-pos">+2.50</td><td>—</td><td><span class="src src-ok">✓</span></td></tr>
+
+        <tr style="background:#f5f5f5"><td class="t-left" colspan="5" style="font-weight:700;color:#1565c0;font-size:.84rem">▼ MAD (Multi-Analyst Discovery)</td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;w/o Skill Evolution</td><td class="num-pos">+4.38</td><td class="num-pos">+2.00</td><td>−0.73 / −0.50</td><td><span class="src src-warn">⚠ 论文有，代码未跑</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;w/o Lazy Loading</td><td class="num-pos">+3.65</td><td class="num-pos">+1.50</td><td>−1.46 / −1.00</td><td><span class="src src-warn">⚠ 论文有，代码未跑</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;w/o Multi-Analyst</td><td class="num-pos">+2.92</td><td class="num-pos">+1.50</td><td>−2.19 / −1.00</td><td><span class="src src-warn">⚠ 论文有，代码未跑</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;w/o all skills (MoA-NoSkill)</td><td class="num-zero">0.00</td><td class="num-zero">0.00</td><td>−5.11 / −2.50</td><td><span class="src src-todo">未定义</span></td></tr>
+
+        <tr style="background:#f5f5f5"><td class="t-left" colspan="5" style="font-weight:700;color:#6a1b9a;font-size:.84rem">▼ MAD: Analyst Count</td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;6 analysts (full, 3⁻ + 3⁺)</td><td class="num-pos">+5.11</td><td class="num-pos">+2.50</td><td>—</td><td><span class="src src-ok">✓</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;3 analysts (error only: A⁻)</td><td class="num-pos">+4.05</td><td class="num-pos">+1.80</td><td>−1.06 / −0.70</td><td><span class="src src-warn">⚠</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;3 analysts (success only: A⁺)</td><td class="num-pos">+3.72</td><td class="num-pos">+1.60</td><td>−1.39 / −0.90</td><td><span class="src src-warn">⚠</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;1 analyst (single role)</td><td class="num-pos">+2.92</td><td class="num-pos">+1.50</td><td>−2.19 / −1.00</td><td><span class="src src-warn">⚠</span></td></tr>
+
+        <tr style="background:#f5f5f5"><td class="t-left" colspan="5" style="font-weight:700;color:#e65100;font-size:.84rem">▼ LSL (Lazy Skill Loading)</td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;Stage-specific bundles (full LSL)</td><td class="num-pos">+5.11</td><td class="num-pos">+2.50</td><td>—</td><td><span class="src src-ok">✓</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;Monolithic prefix injection</td><td class="num-pos">+3.65</td><td class="num-pos">+1.50</td><td>−1.46 / −1.00</td><td><span class="src src-warn">⚠</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;No skill injection</td><td class="num-zero">0.00</td><td class="num-zero">0.00</td><td>−5.11 / −2.50</td><td><span class="src src-todo">未定义</span></td></tr>
+
+        <tr style="background:#f5f5f5"><td class="t-left" colspan="5" style="font-weight:700;color:#2e7d32;font-size:.84rem">▼ SE (Skill Evolution)</td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;Full (decay + verifier)</td><td class="num-pos">+5.11</td><td class="num-pos">+2.50</td><td>—</td><td><span class="src src-ok">✓</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;No verifier</td><td class="num-pos">+4.75</td><td class="num-pos">+2.20</td><td>−0.36 / −0.30</td><td><span class="src src-warn">⚠</span></td></tr>
+        <tr><td class="t-left">&nbsp;&nbsp;No decay/pruning</td><td class="num-pos">+4.38</td><td class="num-pos">+2.00</td><td>−0.73 / −0.50</td><td><span class="src src-warn">⚠</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Figure 2: Analyst Diversity → Performance</h3>
+  <div class="fig">
+    <div class="fig-title">ALFWorld R1 Success Rate vs Number of Analyst Roles</div>
+    <div class="chart-wrap-sm"><canvas id="analystChart"></canvas></div>
+  </div>
+
+  <h3>Figure 3: LSL Token Efficiency</h3>
+  <div class="fig">
+    <div class="fig-title">Average Skill Tokens Injected per Stage (Monolithic vs LSL)</div>
+    <div class="chart-wrap-sm"><canvas id="tokenChart"></canvas></div>
+  </div>
+
+  <div class="note">
+    <strong>消融实验进展</strong>
+    <ul style="margin:4px 0 0 12px;padding-left:18px;font-size:.85rem;color:#555">
+      <li><strong>论文数字</strong>：消融表（Table 3）中所有数字已在 LaTeX 中写好（包括子组件消融 w/o verifier / w/o decay 等），但这些数字<strong>无法验证来源</strong></li>
+      <li><strong>代码脚本</strong>：<code>run_paper_ablations.sh</code> 只实现了 3 个 role-level case（no_memory / repair_only / planner_no_episode），与论文表格的 component-level 消融<strong>不对应</strong></li>
+      <li><strong>代码脚本</strong>只覆盖 SpreadsheetBench，ALFWorld 消融完全缺失</li>
+      <li><strong>所有 4 个代码 case 均未执行</strong>（output 目录为空）</li>
+      <li><strong>需要补齐</strong>：MAD/LSL/SE 各组件开关 + ALFWorld 支持 + 至少 3 seed 取方差</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ Analysis ═══ -->
+<div class="sec">
+  <h2>4.6 Analysis</h2>
+  <div class="tldr">
+    <strong>TLDR</strong>：Analysis 章节有 5 个子节，含技能库增长分布、失败前沿分析、单 vs 多分析师 case study、置信度演化、API 成本。其中**失败前沿分析**是论文最有说服力的质性证据（31% SS / 24% ALF 任务失败签名在轮次间偏移）。
+  </div>
+
+  <h3>Skill Library Composition (R1)</h3>
+  <div class="fig">
+    <div class="fig-title">Skill Library Composition after Round 1</div>
+    <div class="chart-wrap-sm"><canvas id="libraryChart"></canvas></div>
+  </div>
+  <p>SS 产生更多 FailureGuards（44 entries，API 失败有固定分类），ALF 产生更多 EpisodeCases（52 entries，状态追踪失败高度实例相关）。</p>
+
+  <h3>Failure-Frontier Shifts</h3>
+  <div class="case-item">
+    <div class="case-label">SpreadsheetBench — SS-047</div>
+    <div class="case-body">
+      <strong>R0 failure:</strong> <code>ROW_INDEX_GROUNDING_LOST</code><br>
+      <strong>R1 shift:</strong> FailureGuard 抑制了行索引错误（agent 正确 ground 了行引用），但仍失败于 <code>TYPE_CONVERSION_FAILURE</code>。<br>
+      <em>→ 技能在结构上改变了执行流程，不是表面记忆。</em>
+    </div>
+  </div>
+  <div class="case-item">
+    <div class="case-label">ALFWorld — ALF-112</div>
+    <div class="case-body">
+      <strong>R0 failure:</strong> <code>PREMATURE_TERMINATION</code>（agent 完成第一个子目标就停止）<br>
+      <strong>R1 shift:</strong> PlanTemplate 指导 agent 先枚举所有子目标，两个子目标完成后但失败于 <code>OBJECT_LOCATION_AMNESIA</code>。<br>
+      <em>→ 失败前沿向任务更深层推进。</em>
+    </div>
+  </div>
+  <div class="note note-ok">
+    <strong>31% SS / 24% ALF</strong> 的仍失败任务在 R0→R1 间发生了失败签名偏移，证明技能在结构上塑造 agent 行为，而非表面记忆。
+  </div>
+
+  <h3>Cost and Overhead</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="text-align:left">Stage</th><th>ALFWorld</th><th>SpreadsheetBench</th></tr></thead>
+      <tbody>
+        <tr><td class="t-left">Proposers (×3)</td><td>3</td><td>3</td></tr>
+        <tr><td class="t-left">Aggregator</td><td>1</td><td>1</td></tr>
+        <tr><td class="t-left">Repair (if needed)</td><td>0–2</td><td>0–3</td></tr>
+        <tr style="background:#e3f2fd"><td class="t-left" style="font-weight:700">Analysts (×6) [MAD overhead]</td><td style="font-weight:700">6</td><td style="font-weight:700">6</td></tr>
+        <tr style="background:#e3f2fd"><td class="t-left">Merge + Gate [MAD overhead]</td><td style="font-weight:700">2</td><td style="font-weight:700">2</td></tr>
+        <tr style="background:#e3f2fd"><td class="t-left" style="font-weight:700">Verifier [SE overhead]</td><td style="font-weight:700">1</td><td style="font-weight:700">1</td></tr>
+        <tr class="ours-row"><td class="t-left" style="font-weight:800">Total per task</td><td style="font-weight:800">13–17</td><td style="font-weight:800">13–16</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>MAD + SE 的开销是每任务额外 9 次 API 调用（6 analysts + merge + gate + verifier），相对于无 skill MoA baseline（4–6 calls）的增量。Analyst 调用并行执行，wall-clock 延迟增加有限。</p>
+
+  <h3>Skill Evolution Dynamics</h3>
+  <div class="fig">
+    <div class="fig-title">Skill Confidence Evolution across Round 1 Tasks</div>
+    <div class="chart-wrap-sm"><canvas id="confidenceChart"></canvas></div>
+  </div>
+  <p>Active skills 的置信度随任务推进稳步上升（0.70→0.81），Frozen skills 因 harm_rate > 0.25 在 task 60 左右开始被冻结，置信度持续衰减（0.70→0.50）直至被 Pareto 剪枝移除。</p>
+</div>
+
+</div><!-- end paper -->
+
+<script>
+const COLORS = {
+  alf: 'rgba(66,165,245,0.8)', alfLight: 'rgba(66,165,245,0.5)',
+  ssb: 'rgba(255,167,38,0.8)', ssbLight: 'rgba(255,167,38,0.5)',
+  green: 'rgba(76,175,80,0.8)', greenLight: 'rgba(76,175,80,0.5)',
+  purple: 'rgba(126,87,194,0.8)', red: 'rgba(239,83,80,0.6)',
+  ours: 'rgba(13,71,161,0.9)',
+};
+
+// ── Bar: ALFWorld ──
+new Chart(document.getElementById('barALF'), {
+  type: 'bar',
+  data: {
+    labels: ['Trace2Skill','SkillX','MemSkill','MCE','EvoSkill','CoEvoSkill','AutoSkill','SkillNet','Monolithic','MAD-only','LSL-only','noSE','MoA-Evo'],
+    datasets: [{
+      label: 'Δ pp (ALFWorld, Flash)',
+      data: [-2.20,-1.80,2.92,null,null,null,null,null,null,null,null,null,5.11],
+      backgroundColor: COLORS.alfLight,
+      borderColor: COLORS.alf,
+      borderWidth: 1.5,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.x + ' pp' } } },
+    scales: {
+      x: { title: { display: true, text: 'Δ Accuracy (pp)' }, grid: { color: '#e0e0e0' }, min: -4, max: 7 },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Bar: SpreadsheetBench ──
+new Chart(document.getElementById('barSSB'), {
+  type: 'bar',
+  data: {
+    labels: ['Trace2Skill','SkillX','MemSkill','MCE','EvoSkill','CoEvoSkill','AutoSkill','SkillNet','Monolithic','MAD-only','LSL-only','noSE','MoA-Evo'],
+    datasets: [{
+      label: 'Δ pp (SSB, Flash)',
+      data: [2.00,3.50,2.00,null,null,null,null,null,null,null,null,null,3.50],
+      backgroundColor: COLORS.ssbLight,
+      borderColor: COLORS.ssb,
+      borderWidth: 1.5,
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.x + ' pp' } } },
+    scales: {
+      x: { title: { display: true, text: 'Δ Accuracy (pp)' }, grid: { color: '#e0e0e0' }, min: -1, max: 5 },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Line: Analyst Diversity ──
+new Chart(document.getElementById('analystChart'), {
+  type: 'line',
+  data: {
+    labels: ['1','2','3 (error)','3 (success)','4','5','6 (full)'],
+    datasets: [{
+      label: 'ALFWorld R1 (%)',
+      data: [26.28,26.64,null,null,27.37,27.74,28.47],
+      borderColor: COLORS.ours, backgroundColor: COLORS.alfLight,
+      fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: COLORS.ours,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { title: { display: true, text: 'Number of Analyst Roles' } },
+      y: { title: { display: true, text: 'R1 Success (%)' }, min: 25, max: 30, grid: { color: '#e0e0e0' } }
+    }
+  }
+});
+
+// ── Bar: Token Efficiency ──
+new Chart(document.getElementById('tokenChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Planning', 'Execution', 'Repair'],
+    datasets: [
+      { label: 'Monolithic', data: [840,840,840], backgroundColor: 'rgba(158,158,158,0.6)', borderColor: '#9e9e9e', borderWidth: 1 },
+      { label: 'LSL (Lazy)', data: [310,590,480], backgroundColor: COLORS.alfLight, borderColor: COLORS.alf, borderWidth: 1 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { title: { display: true, text: 'Avg Skill Tokens' }, grid: { color: '#e0e0e0' }, max: 1000 }
+    }
+  }
+});
+
+// ── Stacked Bar: Library Composition ──
+new Chart(document.getElementById('libraryChart'), {
+  type: 'bar',
+  data: {
+    labels: ['SS-R0','SS-R1','ALF-R0','ALF-R1'],
+    datasets: [
+      { label: 'PlanTemplate', data: [0,12,0,8], backgroundColor: 'rgba(66,165,245,0.85)' },
+      { label: 'EpisodeCase', data: [0,38,0,52], backgroundColor: 'rgba(76,175,80,0.85)' },
+      { label: 'FailureGuard', data: [0,44,0,28], backgroundColor: 'rgba(239,83,80,0.85)' },
+      { label: 'ProceduralSkill', data: [0,30,0,36], backgroundColor: 'rgba(255,167,38,0.85)' },
+      { label: 'RepairOperator', data: [0,26,0,18], backgroundColor: 'rgba(126,87,194,0.85)' },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, title: { display: true, text: 'Skill Count' }, grid: { color: '#e0e0e0' } }
+    }
+  }
+});
+
+// ── Line: Confidence Evolution ──
+new Chart(document.getElementById('confidenceChart'), {
+  type: 'line',
+  data: {
+    labels: ['0','20','40','60','80','100','120','140','160','180','200'],
+    datasets: [
+      { label: 'Active skills', data: [0.70,0.72,0.73,0.75,0.76,0.77,0.76,0.78,0.79,0.80,0.81],
+        borderColor: COLORS.alf, backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
+      { label: 'Frozen skills', data: [0.70,0.68,0.66,0.64,0.62,0.60,0.58,0.56,0.54,0.52,0.50],
+        borderColor: COLORS.red, backgroundColor: 'transparent', tension: 0.3, pointRadius: 3, borderDash: [6,3] },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+    scales: {
+      x: { title: { display: true, text: 'Task Index (within Round 1)' } },
+      y: { title: { display: true, text: 'Mean Skill Confidence' }, min: 0.4, max: 0.9, grid: { color: '#e0e0e0' } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
