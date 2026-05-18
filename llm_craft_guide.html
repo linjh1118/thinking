@@ -1,0 +1,725 @@
+<!-- index: LLM-Craft 代码学习宝库 | 2026-05-18 | 汇总 5 个仓库的 DL/LLM 代码实现，从数学基础到全模态大模型 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM-Craft — 深度学习代码学习宝库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f1117; color: #e0e0e0; line-height: 1.7;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1a1b2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 3rem 2rem; text-align: center; border-bottom: 1px solid #2a2d3e;
+        }
+        .hero h1 { font-size: 2.2rem; color: #fff; margin-bottom: 0.5rem; }
+        .hero .tagline { color: #8892b0; font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .hero .stats { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+        .stat-box {
+            background: rgba(255,255,255,0.05); border: 1px solid #2a2d3e;
+            border-radius: 10px; padding: 0.8rem 1.5rem; text-align: center;
+        }
+        .stat-box .num { font-size: 1.6rem; font-weight: 700; color: #64ffda; }
+        .stat-box .label { font-size: 0.8rem; color: #8892b0; }
+
+        .roadmap {
+            max-width: 1000px; margin: 2rem auto; padding: 0 2rem;
+        }
+        .roadmap h2 { color: #64ffda; margin-bottom: 1rem; font-size: 1.3rem; }
+        .roadmap-flow {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+            justify-content: center; margin-bottom: 2rem;
+        }
+        .flow-node {
+            background: #1e2233; border: 1px solid #2a2d3e; border-radius: 8px;
+            padding: 0.4rem 0.8rem; font-size: 0.82rem; color: #ccd6f6;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .flow-node:hover { border-color: #64ffda; color: #64ffda; transform: translateY(-2px); }
+        .flow-arrow { color: #4a5068; font-size: 1.2rem; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem 3rem; }
+        .section {
+            background: #1a1b2e; border: 1px solid #2a2d3e; border-radius: 12px;
+            margin-bottom: 1.5rem; overflow: hidden;
+        }
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 1.5rem; cursor: pointer; user-select: none;
+            transition: background 0.2s;
+        }
+        .section-header:hover { background: rgba(255,255,255,0.03); }
+        .section-header h3 { color: #ccd6f6; font-size: 1.1rem; }
+        .section-header .badge {
+            font-size: 0.7rem; padding: 0.15rem 0.6rem; border-radius: 12px;
+            font-weight: 600;
+        }
+        .badge-easy { background: #1b4332; color: #52b788; }
+        .badge-medium { background: #2d2b1b; color: #f4d35e; }
+        .badge-hard { background: #2d1b1b; color: #ef476f; }
+        .section-tldr {
+            padding: 0 1.5rem; color: #8892b0; font-size: 0.85rem;
+            border-bottom: 1px solid #2a2d3e; padding-bottom: 0.8rem;
+        }
+        .section-body { padding: 1rem 1.5rem; display: none; }
+        .section.open .section-body { display: block; }
+        .section-header .arrow { color: #4a5068; transition: transform 0.2s; font-size: 0.9rem; }
+        .section.open .section-header .arrow { transform: rotate(90deg); }
+
+        .file-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.6rem;
+        }
+        .file-card {
+            background: #12131f; border: 1px solid #22243a; border-radius: 8px;
+            padding: 0.7rem 1rem; transition: all 0.2s;
+        }
+        .file-card:hover { border-color: #64ffda; }
+        .file-card .fname { color: #64ffda; font-family: 'Fira Code', monospace; font-size: 0.85rem; }
+        .file-card .fdesc { color: #8892b0; font-size: 0.78rem; margin-top: 0.2rem; }
+        .file-card .fsource {
+            font-size: 0.7rem; margin-top: 0.3rem; padding: 0.1rem 0.5rem;
+            border-radius: 4px; display: inline-block;
+        }
+        .src-llmcraft { background: #1b2d4a; color: #5b9bd5; }
+        .src-easyoffer { background: #2d1b3d; color: #c77dff; }
+        .src-minimind { background: #1b3d2d; color: #52b788; }
+        .src-minimindv { background: #3d2d1b; color: #f4a261; }
+        .src-minimindo { background: #3d1b2d; color: #ef476f; }
+
+        .sources-section {
+            max-width: 1000px; margin: 0 auto 2rem; padding: 0 2rem;
+        }
+        .sources-section h2 { color: #8892b0; font-size: 1rem; margin-bottom: 0.8rem; }
+        .sources-list { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .source-link {
+            background: #1a1b2e; border: 1px solid #2a2d3e; border-radius: 8px;
+            padding: 0.5rem 1rem; text-decoration: none; color: #ccd6f6;
+            font-size: 0.85rem; transition: all 0.2s;
+        }
+        .source-link:hover { border-color: #64ffda; color: #64ffda; }
+        .footer { text-align: center; color: #4a5068; font-size: 0.8rem; padding: 2rem; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.5rem; }
+            .hero .stats { gap: 0.8rem; }
+            .stat-box { padding: 0.5rem 1rem; }
+            .stat-box .num { font-size: 1.2rem; }
+            .file-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>LLM-Craft</h1>
+    <p class="tagline">深度学习与大模型代码学习宝库 — 5 个仓库精华汇总</p>
+    <div class="stats">
+        <div class="stat-box">
+            <div class="num">13</div>
+            <div class="label">主题模块</div>
+        </div>
+        <div class="stat-box">
+            <div class="num">80+</div>
+            <div class="label">代码文件</div>
+        </div>
+        <div class="stat-box">
+            <div class="num">5</div>
+            <div class="label">开源仓库</div>
+        </div>
+        <div class="stat-box">
+            <div class="num">20+</div>
+            <div class="label">面经合集</div>
+        </div>
+    </div>
+</div>
+
+<div class="roadmap">
+    <h2>推荐学习路线</h2>
+    <div class="roadmap-flow">
+        <span class="flow-node">00 数学基础</span><span class="flow-arrow">→</span>
+        <span class="flow-node">01 注意力机制</span><span class="flow-arrow">→</span>
+        <span class="flow-node">02 Transformer</span><span class="flow-arrow">→</span>
+        <span class="flow-node">03 生成策略</span><span class="flow-arrow">→</span>
+        <span class="flow-node">07 MiniMind</span><span class="flow-arrow">→</span>
+        <span class="flow-node">10 RLHF</span><span class="flow-arrow">→</span>
+        <span class="flow-node">08 VLM</span><span class="flow-arrow">→</span>
+        <span class="flow-node">09 全模态</span>
+    </div>
+    <div class="roadmap-flow">
+        <span class="flow-node" style="border-color:#5b9bd5">04 CV</span><span class="flow-arrow">→</span>
+        <span class="flow-node" style="border-color:#5b9bd5">05 多模态</span><span class="flow-arrow">→</span>
+        <span class="flow-node" style="border-color:#c77dff">06 DeepSeek</span><span class="flow-arrow">→</span>
+        <span class="flow-node" style="border-color:#f4d35e">11 面经</span><span class="flow-arrow">→</span>
+        <span class="flow-node" style="border-color:#f4d35e">12 思维题</span>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- 00 Fundamentals -->
+<div class="section open" id="s00">
+    <div class="section-header" onclick="toggle('s00')">
+        <h3>00_fundamentals/ — 数学 & PyTorch 基础</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: Softmax、交叉熵、KL散度、反向传播、SGD，以及矩阵运算练习——理解 DL 的数学地基。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">softmax.py</div>
+                <div class="fdesc">Softmax 函数的数值稳定实现</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">cross_entropy.py</div>
+                <div class="fdesc">交叉熵损失函数</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">kl_divergence.py</div>
+                <div class="fdesc">KL 散度损失</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">sgd.py</div>
+                <div class="fdesc">随机梯度下降优化器</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">backpropagation.py</div>
+                <div class="fdesc">手撕反向传播算法</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">matrix_operations/</div>
+                <div class="fdesc">矩阵运算练习 (10题): 点乘/转置/特征值/求逆等</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 01 Attention -->
+<div class="section" id="s01">
+    <div class="section-header" onclick="toggle('s01')">
+        <h3>01_attention/ — 注意力机制全家桶</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: 从 Self-Attention → MHA → GQA，再到 RoPE、RMSNorm、LoRA，掌握 LLM 的核心积木。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">self_attention.py</div>
+                <div class="fdesc">自注意力机制: Q/K/V 线性投影 + 缩放点积</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">multi_head_attention.py</div>
+                <div class="fdesc">多头注意力 (MHA): 分头并行计算 + 拼接</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">grouped_query_attention.py</div>
+                <div class="fdesc">分组查询注意力 (GQA): KV 头共享，推理加速</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">rms_norm.py</div>
+                <div class="fdesc">RMSNorm: Root Mean Square 归一化</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">rope.py</div>
+                <div class="fdesc">旋转位置编码 (RoPE): 相对位置编码</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">positional_embedding.py</div>
+                <div class="fdesc">正弦/余弦位置编码</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">ffn.py</div>
+                <div class="fdesc">前馈网络 (FFN): 两层线性+激活</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">mlp.py</div>
+                <div class="fdesc">多层感知机 (MLP)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">activation_functions.py</div>
+                <div class="fdesc">激活函数集: GELU/SwiGLU/SiLU/GeLU 等</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">lora.py</div>
+                <div class="fdesc">LoRA 低秩适配: A·B 矩阵分解微调</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 02 Transformer -->
+<div class="section" id="s02">
+    <div class="section-header" onclick="toggle('s02')">
+        <h3>02_transformer/ — Transformer 架构</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: Encoder-Decoder 双塔、LLaMA2 架构、MoE 专家路由——理解现代 LLM 的骨架。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">transformer_encoder.py</div>
+                <div class="fdesc">Transformer 编码器: 双向注意力掩码</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">transformer_decoder.py</div>
+                <div class="fdesc">Transformer 解码器: 因果注意力掩码</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">llama2.py</div>
+                <div class="fdesc">LLaMA2: RMSNorm + GQA + SwiGLU + RoPE</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">moe.py</div>
+                <div class="fdesc">混合专家模型 (MoE): Top-K 路由</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 03 Generation -->
+<div class="section" id="s03">
+    <div class="section-header" onclick="toggle('s03')">
+        <h3>03_generation/ — 解码生成策略</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: 从贪心搜索到 Top-K/Top-P 采样，再到温度缩放——控制 LLM 生成质量的关键。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">greedy_search.py</div>
+                <div class="fdesc">贪心搜索: 每步取最大概率 token</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">top_k_sampling.py</div>
+                <div class="fdesc">Top-K 采样: 限制候选 token 数量</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">top_p_sampling.py</div>
+                <div class="fdesc">Top-P (核采样): 按累积概率截断</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">temperature_sampling.py</div>
+                <div class="fdesc">温度采样: 控制分布锐度</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 04 Vision -->
+<div class="section" id="s04">
+    <div class="section-header" onclick="toggle('s04')">
+        <h3>04_vision/ — CV 基础模型</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: ViT (图像分块+Transformer) 和 UNet (编码器-解码器+跳跃连接)——CV 的两大基石。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">vit.py</div>
+                <div class="fdesc">Vision Transformer: Conv2d 分块 + 位置编码</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">unet.py</div>
+                <div class="fdesc">UNet: 编码器-解码器 + 跳跃连接</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 05 Multimodal -->
+<div class="section" id="s05">
+    <div class="section-header" onclick="toggle('s05')">
+        <h3>05_multimodal/ — 多模态理解模型</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: CLIP 对比学习 → LLaVA 视觉投影 → InternLM-XComposer2 多模态理解，覆盖主流多模态架构。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">clip.py</div>
+                <div class="fdesc">CLIP: 图像-文本对比损失</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">blip2.py</div>
+                <div class="fdesc">BLIP-2: Q-Former 跨模态注意力</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">llava.py</div>
+                <div class="fdesc">LLaVA: MLP 视觉投影器</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">modeling_internlm2.py</div>
+                <div class="fdesc">InternLM2 完整实现</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">modeling_internlm_xcomposer2.py</div>
+                <div class="fdesc">InternLM-XComposer2: 多模态理解</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 06 DeepSeek -->
+<div class="section" id="s06">
+    <div class="section-header" onclick="toggle('s06')">
+        <h3>06_deepseek/ — DeepSeek 模型完整实现</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: DeepSeek 全家桶——MoE 路由、MLA 多头潜在注意力、量化、分布式训练，从 config 到 main.py 一应俱全。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">config.py</div>
+                <div class="fdesc">模型配置 (n_heads, n_kv_heads, etc.)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">attention.py</div>
+                <div class="fdesc">注意力机制实现 (含 MLA)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">feedforward.py</div>
+                <div class="fdesc">前馈网络</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">moe.py</div>
+                <div class="fdesc">MoE 路由机制 (含 Mermaid 流程图)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">rotary_embeddings.py</div>
+                <div class="fdesc">RoPE 旋转位置编码</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">linear_layers.py</div>
+                <div class="fdesc">线性层 (RowParallel/ColParallel)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">kernel.py</div>
+                <div class="fdesc">核函数实现</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">quantization.py</div>
+                <div class="fdesc">FP8/INT8 量化</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">distributed.py</div>
+                <div class="fdesc">分布式训练 (TP/PP/EP)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">transformer_block.py</div>
+                <div class="fdesc">Transformer Block</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">transformer.py</div>
+                <div class="fdesc">Transformer 主体</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">main.py</div>
+                <div class="fdesc">模型入口</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 07 MiniMind -->
+<div class="section" id="s07">
+    <div class="section-header" onclick="toggle('s07')">
+        <h3>07_minimind/ — MiniMind: 从零训练 64M LLM</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: 仅 64M 参数的完整 LLM——支持预训练/SFT/DPO/PPO/GRPO/LoRA/知识蒸馏/工具调用，单卡即可跑通全流程。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">model/model_minimind.py</div>
+                <div class="fdesc">LLM 模型: Dense + MoE, GQA, YaRN 长上下文</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">model/model_lora.py</div>
+                <div class="fdesc">LoRA 适配器: rank=16, A·B 分解</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">dataset/lm_dataset.py</div>
+                <div class="fdesc">数据集: Pretrain/SFT/DPO/RLAIF/Agent</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_pretrain.py</div>
+                <div class="fdesc">预训练脚本</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_full_sft.py</div>
+                <div class="fdesc">SFT 监督微调</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_lora.py</div>
+                <div class="fdesc">LoRA 高效微调</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_dpo.py</div>
+                <div class="fdesc">DPO 直接偏好优化</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_ppo.py</div>
+                <div class="fdesc">PPO 近端策略优化</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_grpo.py</div>
+                <div class="fdesc">GRPO 全局排名策略优化</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_agent.py</div>
+                <div class="fdesc">工具调用训练 (6 个内置工具)</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_distillation.py</div>
+                <div class="fdesc">知识蒸馏</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_tokenizer.py</div>
+                <div class="fdesc">分词器训练 (BPE)</div>
+                <span class="fsource src-minimind">MiniMind</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 08 MiniMind-V -->
+<div class="section" id="s08">
+    <div class="section-header" onclick="toggle('s08')">
+        <h3>08_minimind_vlm/ — MiniMind-V: 视觉语言模型</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: SigLIP 视觉编码器 + MLP 投影器 + MiniMind LLM，构成最小 VLM，支持图文对话。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">model/model_vlm.py</div>
+                <div class="fdesc">VLM: SigLIP + 视觉投影器 + LLM</div>
+                <span class="fsource src-minimindv">MiniMind-V</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_sft_vlm.py</div>
+                <div class="fdesc">VLM SFT 训练</div>
+                <span class="fsource src-minimindv">MiniMind-V</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_pretrain_vlm.py</div>
+                <div class="fdesc">VLM 预训练</div>
+                <span class="fsource src-minimindv">MiniMind-V</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">dataset/lm_dataset.py</div>
+                <div class="fdesc">视觉对话数据集</div>
+                <span class="fsource src-minimindv">MiniMind-V</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 09 MiniMind-O -->
+<div class="section" id="s09">
+    <div class="section-header" onclick="toggle('s09')">
+        <h3>09_minimind_omni/ — MiniMind-O: 全模态模型</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: Thinker-Talker 双架构，SenseVoice 音频编码 + SigLIP 视觉编码，支持语音克隆和实时交互。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">model/model_omni.py</div>
+                <div class="fdesc">全模态: Thinker + Talker + 音频/视觉编码</div>
+                <span class="fsource src-minimindo">MiniMind-O</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">trainer/train_sft_omni.py</div>
+                <div class="fdesc">全模态 SFT 训练</div>
+                <span class="fsource src-minimindo">MiniMind-O</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">dataset/omni_dataset.py</div>
+                <div class="fdesc">多模态数据集 (文本/音频/图像)</div>
+                <span class="fsource src-minimindo">MiniMind-O</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">eval_omni.py</div>
+                <div class="fdesc">全模态评估脚本</div>
+                <span class="fsource src-minimindo">MiniMind-O</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 10 RLHF -->
+<div class="section" id="s10">
+    <div class="section-header" onclick="toggle('s10')">
+        <h3>10_rlhf/ — 对齐算法</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: DPO (偏好对学习)、PPO (策略优化)、GRPO (无需 Value Model 的在线 RL)——LLM 对齐的三大主流方法。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">grpo_llmcraft.py</div>
+                <div class="fdesc">GRPO 实现</div>
+                <span class="fsource src-llmcraft">LLM-Craft</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">dpo/DPO.ipynb</div>
+                <div class="fdesc">DPO 直接偏好优化 (完整实现)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">ppo/PPO.ipynb</div>
+                <div class="fdesc">PPO 近端策略优化 (完整实现)</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 11 Interview -->
+<div class="section" id="s11">
+    <div class="section-header" onclick="toggle('s11')">
+        <h3>11_interview/ — LLM 大厂面经合集</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: 20+ 篇 2025 年最新面经，覆盖阿里/字节/腾讯/百度/小米/快手/讯飞/蚂蚁/旷视。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">阿里/ (3 篇)</div>
+                <div class="fdesc">阿里 LLM 面试经验</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">字节/ (4 篇)</div>
+                <div class="fdesc">字节跳动 LLM 面试经验</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">腾讯/ (5 篇)</div>
+                <div class="fdesc">腾讯 IEG/WXG/PCG 面经</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">百度/ (3 篇)</div>
+                <div class="fdesc">百度一面/二面经验</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">小米/ 快手/ 讯飞/ 蚂蚁/ 旷视/</div>
+                <div class="fdesc">更多公司面经</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 12 Brainteasers -->
+<div class="section" id="s12">
+    <div class="section-header" onclick="toggle('s12')">
+        <h3>12_brainteasers/ — 大厂思维题</h3>
+        <span class="arrow">▶</span>
+    </div>
+    <div class="section-tldr">TLDR: 字节、小红书等公司的经典思维题——64 匹马赛马、凸 n 边形面积等。</div>
+    <div class="section-body">
+        <div class="file-grid">
+            <div class="file-card">
+                <div class="fname">字节/</div>
+                <div class="fdesc">64 匹马赛马、凸 n 边形面积问题</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+            <div class="file-card">
+                <div class="fname">小红书/</div>
+                <div class="fdesc">小红书思维题</div>
+                <span class="fsource src-easyoffer">EasyOffer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="sources-section">
+    <h2>代码来源</h2>
+    <div class="sources-list">
+        <a href="https://github.com/linjh1118/LLM-Craft" target="_blank" class="source-link" style="border-color:#5b9bd5">LLM-Craft — 深度学习模型实现</a>
+        <a href="https://github.com/jingtian11/EasyOffer" target="_blank" class="source-link" style="border-color:#c77dff">EasyOffer — LLM 面试题 + 手撕代码</a>
+        <a href="https://github.com/jingyaogong/minimind" target="_blank" class="source-link" style="border-color:#52b788">MiniMind — 64M LLM</a>
+        <a href="https://github.com/jingyaogong/minimind-v" target="_blank" class="source-link" style="border-color:#f4a261">MiniMind-V — 视觉语言模型</a>
+        <a href="https://github.com/jingyaogong/minimind-o" target="_blank" class="source-link" style="border-color:#ef476f">MiniMind-O — 全模态模型</a>
+    </div>
+</div>
+
+<div class="footer">
+    <p>LLM-Craft — 汇总 5 个优质仓库的深度学习代码学习资源</p>
+    <p style="margin-top:0.3rem">生成日期: 2026-05-18</p>
+</div>
+
+<script>
+function toggle(id) {
+    const section = document.getElementById(id);
+    section.classList.toggle('open');
+}
+// Open all on load for better UX
+document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+</script>
+
+</body>
+</html>
