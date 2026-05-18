@@ -1,0 +1,874 @@
+<!-- index: LLM-Craft 代码教学手册 | 2026-05-18 | 从零手撕 LLM 全部核心组件，含完整代码+公式+讲解 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM-Craft 代码教学手册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace; background: #0d1117; color: #c9d1d9; line-height: 1.6; }
+
+        .hero { background: linear-gradient(135deg, #161b22 0%, #1a1e2e 50%, #0d2137 100%); padding: 2.5rem 2rem; border-bottom: 1px solid #30363d; text-align: center; }
+        .hero h1 { font-size: 2rem; color: #58a6ff; font-family: -apple-system, sans-serif; }
+        .hero .tagline { color: #8b949e; font-family: -apple-system, sans-serif; margin-top: 0.5rem; font-size: 0.95rem; }
+        .nav-tabs { display: flex; flex-wrap: wrap; gap: 0; background: #161b22; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100; overflow-x: auto; }
+        .nav-tab { padding: 0.6rem 1rem; cursor: pointer; color: #8b949e; font-size: 0.82rem; font-family: -apple-system, sans-serif; border-right: 1px solid #30363d; white-space: nowrap; transition: all 0.2s; }
+        .nav-tab:hover { color: #58a6ff; background: #1c2128; }
+        .nav-tab.active { color: #58a6ff; background: #0d1117; border-bottom: 2px solid #58a6ff; }
+
+        .content { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+        .topic { display: none; }
+        .topic.active { display: block; }
+
+        .tldr-card { background: #1c2128; border: 1px solid #30363d; border-left: 3px solid #58a6ff; border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; font-family: -apple-system, sans-serif; }
+        .tldr-card .tldr-title { color: #58a6ff; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .tldr-card .tldr-body { color: #c9d1d9; margin-top: 0.4rem; font-size: 0.9rem; }
+
+        .formula { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 0.8rem 1.2rem; margin: 1rem 0; font-family: 'Latin Modern Math', 'STIX Two Math', serif; color: #79c0ff; font-size: 1rem; text-align: center; }
+
+        .explain { background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0; font-family: -apple-system, sans-serif; }
+        .explain h4 { color: #f0883e; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .explain p, .explain li { color: #8b949e; font-size: 0.88rem; line-height: 1.8; }
+        .explain ul { padding-left: 1.2rem; margin-top: 0.3rem; }
+        .explain code { background: #0d1117; padding: 0.15rem 0.4rem; border-radius: 3px; color: #79c0ff; font-family: inherit; font-size: 0.85em; }
+
+        .code-block { position: relative; margin: 1rem 0; }
+        .code-block .code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 1rem; background: #161b22; border: 1px solid #30363d; border-bottom: none; border-radius: 6px 6px 0 0; }
+        .code-block .code-filename { color: #8b949e; font-size: 0.78rem; }
+        .code-block .code-source { color: #484f58; font-size: 0.72rem; }
+        .code-block pre { background: #0d1117; border: 1px solid #30363d; border-radius: 0 0 6px 6px; padding: 1rem; overflow-x: auto; font-size: 0.82rem; line-height: 1.7; }
+        .code-block pre .kw { color: #ff7b72; }
+        .code-block pre .fn { color: #d2a8ff; }
+        .code-block pre .cls { color: #79c0ff; }
+        .code-block pre .str { color: #a5d6ff; }
+        .code-block pre .cm { color: #484f58; font-style: italic; }
+        .code-block pre .num { color: #79c0ff; }
+        .code-block pre .op { color: #ff7b72; }
+        .code-block pre .param { color: #ffa657; }
+        .code-block pre .self { color: #ff7b72; font-style: italic; }
+        .code-block pre .builtin { color: #79c0ff; }
+
+        .section-title { font-family: -apple-system, sans-serif; color: #e6edf3; font-size: 1.2rem; margin: 2rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid #21262d; }
+        .subsection-title { font-family: -apple-system, sans-serif; color: #d2a8ff; font-size: 1rem; margin: 1.5rem 0 0.6rem; }
+
+        .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-family: -apple-system, sans-serif; font-size: 0.85rem; }
+        .compare-table th { background: #161b22; color: #58a6ff; padding: 0.5rem 0.8rem; text-align: left; border: 1px solid #30363d; }
+        .compare-table td { padding: 0.5rem 0.8rem; border: 1px solid #30363d; color: #c9d1d9; }
+        .compare-table tr:hover td { background: #161b22; }
+
+        .footer { text-align: center; color: #484f58; font-size: 0.78rem; padding: 2rem; font-family: -apple-system, sans-serif; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.3rem; }
+            .code-block pre { font-size: 0.72rem; }
+            .content { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>LLM-Craft 代码教学手册</h1>
+    <p class="tagline">从零手撕 LLM 全部核心组件 — Softmax 到全模态大模型，代码逐行讲解</p>
+</div>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTopic('t00')">Softmax</div>
+    <div class="nav-tab" onclick="showTopic('t01')">交叉熵 & KL</div>
+    <div class="nav-tab" onclick="showTopic('t02')">Self-Attention</div>
+    <div class="nav-tab" onclick="showTopic('t03')">MHA & GQA</div>
+    <div class="nav-tab" onclick="showTopic('t04')">RMSNorm</div>
+    <div class="nav-tab" onclick="showTopic('t05')">RoPE</div>
+    <div class="nav-tab" onclick="showTopic('t06')">FFN & SwiGLU</div>
+    <div class="nav-tab" onclick="showTopic('t07')">LoRA</div>
+    <div class="nav-tab" onclick="showTopic('t08')">激活函数</div>
+    <div class="nav-tab" onclick="showTopic('t09')">MoE</div>
+    <div class="nav-tab" onclick="showTopic('t10')">温度采样</div>
+    <div class="nav-tab" onclick="showTopic('t11')">位置编码</div>
+    <div class="nav-tab" onclick="showTopic('t12')">Transformer</div>
+    <div class="nav-tab" onclick="showTopic('t13')">矩阵运算</div>
+</div>
+
+<div class="content">
+
+<!-- ============ Softmax ============ -->
+<div class="topic active" id="t00">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">Softmax 把任意实数向量变成概率分布（和为 1）。核心技巧：<b>减去最大值</b>防止数值溢出。Online Softmax 用两趟遍历解决流式计算问题。</div>
+    </div>
+
+    <div class="formula">softmax(x<sub>i</sub>) = exp(x<sub>i</sub>) / Σ<sub>j</sub> exp(x<sub>j</sub>) &nbsp;&nbsp;→&nbsp;&nbsp; 数值稳定版: softmax(x<sub>i</sub>) = exp(x<sub>i</sub> - max(x)) / Σ<sub>j</sub> exp(x<sub>j</sub> - max(x))</div>
+
+    <div class="section-title">1. 基础 Softmax（有溢出风险）</div>
+    <div class="explain">
+        <h4>为什么不能直接 exp?</h4>
+        <p>当输入值很大（如 1000），<code>exp(1000)</code> 会超出 float16 的范围（最大 65504），返回 <code>inf</code>。所有项都是 <code>inf</code>，除以 <code>inf</code> 得到 <code>nan</code>。</p>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">softmax_basic.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+input = np.array([<span class="num">0</span>, <span class="num">7</span>, <span class="num">6</span>, <span class="num">12</span>, <span class="num">10</span>], dtype=np.float16)
+eInputs = np.exp(input)       <span class="cm"># ⚠️ exp(12) 可能溢出!</span>
+result = eInputs / np.sum(eInputs)
+<span class="builtin">print</span>(result)</pre>
+    </div>
+
+    <div class="section-title">2. 数值稳定版 Softmax（减去最大值）</div>
+    <div class="explain">
+        <h4>数学等价性</h4>
+        <p>exp(x - max) / Σ exp(x - max) = exp(x) / exp(max) / Σ (exp(x) / exp(max)) = exp(x) / Σ exp(x)</p>
+        <p>减去 max 后，最大值为 0，其余为负数，exp 值域在 (0, 1]，不会溢出。</p>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">softmax_stable.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+input = np.array([<span class="num">0</span>, <span class="num">7</span>, <span class="num">6</span>, <span class="num">12</span>, <span class="num">10</span>], dtype=np.float16)
+max_val = np.<span class="fn">max</span>(input)
+emInputs = np.exp(input - max_val)  <span class="cm"># ✅ 最大项 = exp(0) = 1，其余 ≤ 1</span>
+result = emInputs / np.<span class="fn">sum</span>(emInputs)
+<span class="builtin">print</span>(result)  <span class="cm"># [0.000113, 0.00580, 0.00214, 0.858, 0.134]</span></pre>
+    </div>
+
+    <div class="section-title">3. Online Softmax（两趟遍历，用于 GPU kernel）</div>
+    <div class="explain">
+        <h4>为什么需要 Online?</h4>
+        <ul>
+            <li><b>Flash Attention</b> 在 SRAM 中逐 block 计算注意力，无法一次看到所有 q·k 值</li>
+            <li>需要一种<b>增量式</b>的方法，逐步更新 max 和 sum</li>
+            <li>第一趟遍历：找全局 max；第二趟遍历：用全局 max 算最终概率</li>
+        </ul>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">softmax_online.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> torch
+
+L = <span class="num">8</span>
+inputs = torch.<span class="fn">randn</span>(L)
+result = torch.<span class="fn">zeros</span>(L)
+
+<span class="cm"># 第一趟：找到全局最大值 m</span>
+m = torch.<span class="fn">tensor</span>(<span class="fn">float</span>(<span class="str">"-inf"</span>))
+d = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(L):
+    m_new = torch.<span class="fn">max</span>(m, inputs[i])
+    d = d * (m - m_new).exp() + (inputs[i] - m_new).exp()
+    m = m_new
+
+<span class="cm"># 第二趟：用全局 max 算概率</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(L):
+    result[i] = (inputs[i] - m).exp() / d
+
+<span class="builtin">print</span>(<span class="str">'online softmax:'</span>, result)
+<span class="builtin">print</span>(torch.<span class="fn">sum</span>(result))  <span class="cm"># 1.0 ✅</span></pre>
+    </div>
+    <div class="explain">
+        <h4>关键公式推导</h4>
+        <p>更新规则：<code>d_new = d_old × exp(m_old - m_new) + exp(x_i - m_new)</code></p>
+        <p>含义：旧 sum 需要乘以一个缩放因子（因为基准 max 从 m_old 变成了 m_new），再加上新元素的贡献。</p>
+    </div>
+</div>
+
+<!-- ============ 交叉熵 & KL ============ -->
+<div class="topic" id="t01">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">交叉熵衡量模型预测分布与真实分布的差距。KL 散度衡量两个分布的"距离"。两者关系：<b>CE(p,q) = H(p) + KL(p||q)</b>，当 p 是 one-hot 时 CE = -log q(y)。</div>
+    </div>
+
+    <div class="formula">CE = -Σ<sub>i</sub> p(x<sub>i</sub>) log q(x<sub>i</sub>) &nbsp;&nbsp;|&nbsp;&nbsp; KL(p||q) = Σ<sub>i</sub> p(x<sub>i</sub>) log(p(x<sub>i</sub>) / q(x<sub>i</sub>))</div>
+
+    <div class="section-title">交叉熵损失函数（手写版）</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">cross_entropy.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> torch
+
+<span class="cm"># 模拟数据：batch_size=3, vocab_size=5</span>
+logits = torch.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">5</span>)
+labels = torch.<span class="fn">tensor</span>([<span class="num">2</span>, <span class="num">0</span>, <span class="num">4</span>])
+
+<span class="kw">def</span> <span class="fn">manual_cross_entropy</span>(logits, labels):
+    <span class="cm"># Step 1: softmax 得到概率分布</span>
+    max_vals = torch.<span class="fn">max</span>(logits, dim=<span class="num">1</span>, keepdim=<span class="kw">True</span>).values
+    exp_logits = torch.exp(logits - max_vals)
+    probs = exp_logits / torch.<span class="fn">sum</span>(exp_logits, dim=<span class="num">1</span>, keepdim=<span class="kw">True</span>)
+
+    <span class="cm"># Step 2: 取出正确类别的概率</span>
+    <span class="cm"># 等价于 one-hot 乘 log_probs 再求和</span>
+    log_probs = torch.<span class="fn">log</span>(probs)
+    loss = -log_probs[torch.<span class="fn">arange</span>(<span class="fn">len</span>(labels)), labels]
+    <span class="kw">return</span> loss.<span class="fn">mean</span>()
+
+ce_manual = <span class="fn">manual_cross_entropy</span>(logits, labels)
+ce_torch = torch.nn.functional.<span class="fn">cross_entropy</span>(logits, labels)
+<span class="builtin">print</span>(<span class="str">f"手动: {ce_manual:.4f}, PyTorch: {ce_torch:.4f}"</span>)  <span class="cm"># 两者一致 ✅</span></pre>
+    </div>
+
+    <div class="explain">
+        <h4>为什么分类任务用交叉熵而不是 MSE?</h4>
+        <ul>
+            <li>交叉熵对<b>错误分类的惩罚更大</b>：如果正确类别的概率接近 0，-log(ε) → +∞</li>
+            <li>MSE 的梯度在饱和区非常小（sigmoid/tanh 的平坦区），训练慢</li>
+            <li>PyTorch 的 <code>F.cross_entropy</code> 内部做了 <code>log_softmax</code> 融合，比先 softmax 再 log 更稳定</li>
+        </ul>
+    </div>
+
+    <div class="section-title">KL 散度</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">kl_divergence.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">def</span> <span class="fn">KL</span>(logits_p, logits_q):
+    eps = <span class="num">1e-9</span>
+    <span class="cm"># KL(p || q) = Σ p(x) * [log p(x) - log q(x)]</span>
+    kl_div = logits_p * (torch.<span class="fn">log</span>(logits_p + eps) - torch.<span class="fn">log</span>(logits_q + eps))
+    <span class="kw">return</span> torch.<span class="fn">sum</span>(kl_div, dim=-<span class="num">1</span>)</pre>
+    </div>
+    <div class="explain">
+        <h4>KL 散度的性质</h4>
+        <ul>
+            <li><b>非对称</b>：KL(p||q) ≠ KL(q||p)，p 是真实分布，q 是近似分布</li>
+            <li><b>非负</b>：KL(p||q) ≥ 0，当且仅当 p = q 时为 0（Gibbs 不等式）</li>
+            <li>RLHF 中用 KL 散度约束策略不要偏离参考模型太远：<code>loss = -reward + β × KL(π||π_ref)</code></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ Self-Attention ============ -->
+<div class="topic" id="t02">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">Self-Attention 是 Transformer 的核心：每个 token 通过 Q/K/V 三组线性变换，计算与其他所有 token 的相关性，加权求和得到新表示。公式：Attention(Q,K,V) = softmax(QK^T / √d_k) V</div>
+    </div>
+
+    <div class="formula">Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>) · V</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">self_attention.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="kw">class</span> <span class="cls">SelfAttention</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, embed_size, heads):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.embed_size = embed_size
+        <span class="self">self</span>.heads = heads
+        <span class="self">self</span>.head_dim = embed_size // heads  <span class="cm"># 每个头的维度</span>
+
+        <span class="cm"># Q/K/V 各一个线性投影（无 bias）</span>
+        <span class="self">self</span>.values = nn.Linear(<span class="self">self</span>.head_dim, <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.keys   = nn.Linear(<span class="self">self</span>.head_dim, <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.queries = nn.Linear(<span class="self">self</span>.head_dim, <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.fc_out  = nn.Linear(heads * <span class="self">self</span>.head_dim, embed_size)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, values, keys, query, mask):
+        N = query.shape[<span class="num">0</span>]
+        val_len, key_len, query_len = values.shape[<span class="num">1</span>], keys.shape[<span class="num">1</span>], query.shape[<span class="num">1</span>]
+
+        <span class="cm"># Step 1: reshape 成多头形状 [batch, seq_len, heads, head_dim]</span>
+        values  = values.reshape(N, val_len,   <span class="self">self</span>.heads, <span class="self">self</span>.head_dim)
+        keys    = keys.reshape(N, key_len,    <span class="self">self</span>.heads, <span class="self">self</span>.head_dim)
+        queries = query.reshape(N, query_len, <span class="self">self</span>.heads, <span class="self">self</span>.head_dim)
+
+        <span class="cm"># Step 2: 线性投影</span>
+        values  = <span class="self">self</span>.values(values)
+        keys    = <span class="self">self</span>.keys(keys)
+        queries = <span class="self">self</span>.queries(queries)
+
+        <span class="cm"># Step 3: 计算注意力分数 (缩放点积)</span>
+        energy = torch.<span class="fn">einsum</span>(<span class="str">"nqhd,nkhd-&gt;nhqk"</span>, [queries, keys])  <span class="cm"># [batch, heads, q_len, k_len]</span>
+        <span class="kw">if</span> mask <span class="kw">is not</span> <span class="kw">None</span>:
+            energy = energy.<span class="fn">masked_fill</span>(mask == <span class="num">0</span>, <span class="fn">float</span>(<span class="str">"-1e20"</span>))
+
+        attention = torch.<span class="fn">softmax</span>(energy / (<span class="self">self</span>.embed_size ** (<span class="num">1</span> / <span class="num">2</span>)), dim=<span class="num">3</span>)  <span class="cm"># 缩放 + softmax</span>
+
+        <span class="cm"># Step 4: 加权求和得到输出</span>
+        out = torch.<span class="fn">einsum</span>(<span class="str">"nhql,nlhd-&gt;nqhd"</span>, [attention, values])
+        out = out.<span class="fn">reshape</span>(N, query_len, <span class="self">self</span>.heads * <span class="self">self</span>.head_dim)
+
+        <span class="cm"># Step 5: 输出投影</span>
+        <span class="kw">return</span> <span class="self">self</span>.fc_out(out)</pre>
+    </div>
+
+    <div class="explain">
+        <h4>逐行解读</h4>
+        <ul>
+            <li><code>einsum("nqhd,nkhd->nhqk")</code>：batch 维不变，head 维不变，q 维 × k 维 = 注意力矩阵。等价于 <code>torch.matmul(q, k.transpose(-1,-2))</code></li>
+            <li><code>/ (embed_size ** 0.5)</code>：缩放因子 √d<sub>k</sub>。当 d<sub>k</sub> 大时，点积值也大，softmax 进入梯度极小的饱和区。除以 √d 使方差保持为 1</li>
+            <li><code>einsum("nhql,nlhd->nqhd")</code>：注意力权重 × V = 加权求和。每行（一个 query）对所有 value 加权</li>
+            <li><b>为什么 Q/K/V 各一个 Linear?</b> 这里是为每个 head 单独投影。实际实现中通常用一个大 Linear (d → 3d) 一次算完再 chunk</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ MHA & GQA ============ -->
+<div class="topic" id="t03">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">MHA 让每个头学习不同的注意力模式。GQA 让多个 Q 头共享一组 KV 头，大幅减少推理时的 KV Cache 内存。LLaMA2 用 GQA 实现了高效的推理加速。</div>
+    </div>
+
+    <div class="subsection-title">Multi-Head Attention (MHA)</div>
+    <div class="explain">
+        <p>与上面 SelfAttention 的区别：<b>用一个 Linear 一次投影出 QKV</b>，而不是为每个 head 单独投影。</p>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">multi_head_attention.py (Llama 风格)</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">LlamaMHA</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, dim, num_heads, head_dim=<span class="kw">None</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.num_heads = num_heads
+        <span class="self">self</span>.head_dim = head_dim <span class="kw">or</span> dim // num_heads
+        <span class="self">self</span>.scale = <span class="num">1.0</span> / math.<span class="fn">sqrt</span>(<span class="self">self</span>.head_dim)
+
+        <span class="cm"># 一个大 Linear 投影出 QKV（无 bias，LLaMA 风格）</span>
+        <span class="self">self</span>.q_proj = nn.Linear(dim, num_heads * <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.k_proj = nn.Linear(dim, num_heads * <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.v_proj = nn.Linear(dim, num_heads * <span class="self">self</span>.head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.o_proj = nn.Linear(num_heads * <span class="self">self</span>.head_dim, dim, bias=<span class="kw">False</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x, attention_mask=<span class="kw">None</span>, cache=<span class="kw">None</span>):
+        bs, seq_len, _ = x.shape
+
+        <span class="cm"># 线性投影 + reshape 成多头</span>
+        q = <span class="self">self</span>.q_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        k = <span class="self">self</span>.k_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        v = <span class="self">self</span>.v_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        <span class="cm"># q: [batch, heads, seq_len, head_dim]</span>
+
+        <span class="cm"># KV Cache（推理加速）</span>
+        <span class="kw">if</span> cache <span class="kw">is not</span> <span class="kw">None</span>:
+            past_k, past_v = cache
+            k = torch.<span class="fn">cat</span>([past_k, k], dim=<span class="num">2</span>)
+            v = torch.<span class="fn">cat</span>([past_v, v], dim=<span class="num">2</span>)
+            cache = (k, v)
+
+        <span class="cm"># 注意力计算</span>
+        attn_scores = torch.<span class="fn">matmul</span>(q, k.<span class="fn">transpose</span>(-<span class="num">1</span>, -<span class="num">2</span>)) * <span class="self">self</span>.scale
+        <span class="kw">if</span> attention_mask <span class="kw">is not</span> <span class="kw">None</span>:
+            attn_scores = attn_scores + attention_mask
+        attn_weights = F.<span class="fn">softmax</span>(attn_scores, dim=-<span class="num">1</span>)
+
+        <span class="cm"># 加权求和 + 输出投影</span>
+        output = torch.<span class="fn">matmul</span>(attn_weights, v)
+        output = output.<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>).<span class="fn">contiguous</span>().<span class="fn">view</span>(bs, seq_len, -<span class="num">1</span>)
+        <span class="kw">return</span> <span class="self">self</span>.o_proj(output)</pre>
+    </div>
+
+    <div class="subsection-title">Grouped-Query Attention (GQA)</div>
+    <div class="explain">
+        <p>GQA 的核心改动只有<b>两行代码</b>：</p>
+        <ul>
+            <li>K/V 的投影维度从 <code>num_heads × head_dim</code> 变成 <code>num_kv_heads × head_dim</code></li>
+            <li>计算前用 <code>k.repeat_interleave(kv_groups, dim=1)</code> 扩展 KV 以匹配 Q 头数</li>
+        </ul>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">grouped_query_attention.py（核心差异部分）</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">LlamaGQA</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, dim, num_query_heads, num_kv_heads, head_dim=<span class="kw">None</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.kv_groups = num_query_heads // num_kv_heads  <span class="cm"># 每 group 共享一组 KV</span>
+
+        <span class="cm"># Q 投影：num_query_heads 个头（完整）</span>
+        <span class="self">self</span>.q_proj = nn.Linear(dim, num_query_heads * head_dim, bias=<span class="kw">False</span>)
+        <span class="cm"># K/V 投影：num_kv_heads 个头（更少！）</span>
+        <span class="self">self</span>.k_proj = nn.Linear(dim, num_kv_heads * head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.v_proj = nn.Linear(dim, num_kv_heads * head_dim, bias=<span class="kw">False</span>)
+        <span class="self">self</span>.o_proj = nn.Linear(num_query_heads * head_dim, dim, bias=<span class="kw">False</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x, attention_mask=<span class="kw">None</span>, cache=<span class="kw">None</span>):
+        bs, seq_len, _ = x.shape
+        q = <span class="self">self</span>.q_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_query_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        k = <span class="self">self</span>.k_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_kv_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+        v = <span class="self">self</span>.v_proj(x).<span class="fn">view</span>(bs, seq_len, <span class="self">self</span>.num_kv_heads, <span class="self">self</span>.head_dim).<span class="fn">transpose</span>(<span class="num">1</span>, <span class="num">2</span>)
+
+        <span class="cm"># ⭐ GQA 核心：将 KV 复制到与 Q 头数匹配</span>
+        <span class="cm"># 例如：8 个 Q 头, 2 个 KV 头 → 每个 KV 头被 4 个 Q 头共享</span>
+        k = k.<span class="fn">repeat_interleave</span>(<span class="self">self</span>.kv_groups, dim=<span class="num">1</span>)
+        v = v.<span class="fn">repeat_interleave</span>(<span class="self">self</span>.kv_groups, dim=<span class="num">1</span>)
+
+        <span class="cm"># 后续与 MHA 完全一致...</span>
+        attn_scores = torch.<span class="fn">matmul</span>(q, k.<span class="fn">transpose</span>(-<span class="num">1</span>, -<span class="num">2</span>)) * <span class="self">self</span>.scale
+        <span class="cm">...</span></pre>
+    </div>
+
+    <table class="compare-table">
+        <tr><th></th><th>MHA</th><th>GQA</th><th>MQA (极端)</th></tr>
+        <tr><td>Q 头数</td><td>8</td><td>8</td><td>8</td></tr>
+        <tr><td>KV 头数</td><td>8</td><td>2</td><td>1</td></tr>
+        <tr><td>KV Cache 大小</td><td>100%</td><td>25%</td><td>12.5%</td></tr>
+        <tr><td>质量损失</td><td>—</td><td>极小</td><td>略明显</td></tr>
+    </table>
+</div>
+
+<!-- ============ RMSNorm ============ -->
+<div class="topic" id="t04">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">RMSNorm 是 LayerNorm 的简化版：不做均值减法，只除以 RMS。计算更快（少一次减法），效果几乎一样。LLaMA/Mistral/MiniMind 都用 RMSNorm。</div>
+    </div>
+
+    <div class="formula">RMSNorm(x) = (x / √(mean(x²) + ε)) × γ &nbsp;&nbsp;vs&nbsp;&nbsp; LayerNorm(x) = (x - μ) / √(σ² + ε) × γ + β</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">rms_norm.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">RMSNorm</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, dim, eps=<span class="num">1e-6</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.eps = eps
+        <span class="self">self</span>.weight = nn.Parameter(torch.<span class="fn">ones</span>(dim))  <span class="cm"># 可学习的缩放参数 γ</span>
+
+    <span class="kw">def</span> <span class="fn">_norm</span>(<span class="self">self</span>, x):
+        <span class="cm"># 核心：x * rsqrt(mean(x²) + eps)</span>
+        <span class="cm"># rsqrt = 1/sqrt，比先 sqrt 再求逆更快</span>
+        <span class="kw">return</span> x * torch.<span class="fn">rsqrt</span>(x.<span class="fn">pow</span>(<span class="num">2</span>).<span class="fn">mean</span>(-<span class="num">1</span>, keepdim=<span class="kw">True</span>) + <span class="self">self</span>.eps)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="kw">return</span> <span class="self">self</span>.weight * <span class="self">self</span>.<span class="fn">_norm</span>(x)</pre>
+    </div>
+    <div class="explain">
+        <h4>LayerNorm vs RMSNorm</h4>
+        <ul>
+            <li>LayerNorm：减均值 → 除标准差 → 仿射变换 (γx + β)</li>
+            <li>RMSNorm：除 RMS → 缩放 (γx)，没有 β，没有减均值</li>
+            <li>直觉：当输入已经居中（均值为 0）时，减均值步骤可以省掉</li>
+            <li>在 Transformer 中，残差连接 + RMSNorm 已经足够保证稳定训练</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ RoPE ============ -->
+<div class="topic" id="t05">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">RoPE 通过对 Q 和 K 做<b>旋转</b>来编码位置信息。两个 token 的注意力分数只取决于它们的<b>相对位置</b>（q₁·k₂ 只含 pos₂-pos₁）。LLaMA/MiniMind 都用 RoPE。</div>
+    </div>
+
+    <div class="formula">q' = q × cos(mθ) + rotate_half(q) × sin(mθ) &nbsp;&nbsp;|&nbsp;&nbsp; rotate_half([x₁,x₂,...]) = [-x₂,x₁,-x₄,x₃,...]</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">rope.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">RotaryEmbedding</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, dim, max_seq_len=<span class="num">2048</span>, base=<span class="num">10000</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="cm"># 频率向量: θ_i = 1 / (base^(2i/dim))</span>
+        inv_freq = <span class="num">1.0</span> / (base ** (torch.<span class="fn">arange</span>(<span class="num">0</span>, dim, <span class="num">2</span>).<span class="fn">float</span>() / dim))
+        <span class="self">self</span>.<span class="fn">register_buffer</span>(<span class="str">"inv_freq"</span>, inv_freq)
+
+        <span class="cm"># 预计算 cos/sin 缓存</span>
+        t = torch.<span class="fn">arange</span>(max_seq_len).<span class="fn">type_as</span>(inv_freq)
+        freqs = torch.<span class="fn">einsum</span>(<span class="str">"i,j-&gt;ij"</span>, t, inv_freq)  <span class="cm"># [seq_len, dim/2]</span>
+        emb = torch.<span class="fn">cat</span>((freqs, freqs), dim=-<span class="num">1</span>)     <span class="cm"># 复制一份变成 [seq_len, dim]</span>
+        <span class="self">self</span>.<span class="fn">register_buffer</span>(<span class="str">"cos_cached"</span>, emb.<span class="fn">cos</span>())
+        <span class="self">self</span>.<span class="fn">register_buffer</span>(<span class="str">"sin_cached"</span>, emb.<span class="fn">sin</span>())
+
+<span class="kw">def</span> <span class="fn">rotate_half</span>(x):
+    <span class="cm"># [x₁, x₂, x₃, x₄, ...] → [-x₂, x₁, -x₄, x₃, ...]</span>
+    x1 = x[..., : x.shape[-<span class="num">1</span>] // <span class="num">2</span>]
+    x2 = x[..., x.shape[-<span class="num">1</span>] // <span class="num">2</span>:]
+    <span class="kw">return</span> torch.<span class="fn">cat</span>((-x2, x1), dim=-<span class="num">1</span>)
+
+<span class="kw">def</span> <span class="fn">apply_rotary_pos_emb</span>(q, k, cos, sin, position_ids):
+    q_embed = (q * cos) + (<span class="fn">rotate_half</span>(q) * sin)
+    k_embed = (k * cos) + (<span class="fn">rotate_half</span>(k) * sin)
+    <span class="kw">return</span> q_embed, k_embed</pre>
+    </div>
+    <div class="explain">
+        <h4>为什么 RoPE 天然编码相对位置?</h4>
+        <p>假设 token A 在位置 m，token B 在位置 n：</p>
+        <ul>
+            <li>q' = q·cos(mθ) + rotate(q)·sin(mθ)  — 本质是 q 旋转了 mθ 角度</li>
+            <li>k' = k·cos(nθ) + rotate(k)·sin(nθ)  — 本质是 k 旋转了 nθ 角度</li>
+            <li>q'·k' = q·k·cos((n-m)θ) + ...  — <b>角度差 = n-m = 相对位置</b></li>
+        </ul>
+        <p>所以注意力分数只依赖相对位置 n-m，与绝对位置无关。这就是为什么 RoPE 有很好的长度外推性。</p>
+    </div>
+</div>
+
+<!-- ============ FFN & SwiGLU ============ -->
+<div class="topic" id="t06">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">FFN 是 Transformer 的"记忆库"：两层线性 + 激活函数。SwiGLU 用门控机制替代 ReLU/GELU，效果更好。公式：SwiGLU(x) = (SiLU(xW₁) ⊗ xW₃) W₂</div>
+    </div>
+
+    <div class="formula">SwiGLU(x) = (SiLU(xW₁) ⊗ xW₃) W₂ &nbsp;&nbsp;where&nbsp;&nbsp; SiLU(x) = x · σ(x) &nbsp;&nbsp;and&nbsp;&nbsp; ⊗ = element-wise multiply</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">mlp.py (LLaMA 风格 SwiGLU MLP)</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="kw">class</span> <span class="cls">LlamaMLP</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, dim, hidden_dim=<span class="kw">None</span>, multiple_of=<span class="num">256</span>):
+        <span class="kw">super</span>().__init__()
+        hidden_dim = hidden_dim <span class="kw">or</span> <span class="num">4</span> * dim
+
+        <span class="cm"># SwiGLU 特殊缩放：2/3 × 4d，然后向上取整到 256 的倍数</span>
+        hidden_dim = <span class="fn">int</span>(<span class="num">2</span> * hidden_dim / <span class="num">3</span>)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - <span class="num">1</span>) // multiple_of)
+
+        <span class="cm"># 三个投影矩阵（无 bias）</span>
+        <span class="self">self</span>.gate_proj = nn.Linear(dim, hidden_dim, bias=<span class="kw">False</span>)  <span class="cm"># W₁: 门控分支</span>
+        <span class="self">self</span>.up_proj   = nn.Linear(dim, hidden_dim, bias=<span class="kw">False</span>)  <span class="cm"># W₃: 上投影分支</span>
+        <span class="self">self</span>.down_proj = nn.Linear(hidden_dim, dim, bias=<span class="kw">False</span>) <span class="cm"># W₂: 下投影</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="cm">#        SiLU(W₁x)  ⊗  W₃x        然后通过 W₂</span>
+        gate = F.<span class="fn">silu</span>(<span class="self">self</span>.gate_proj(x))  <span class="cm"># 门控：x·sigmoid(x)</span>
+        up   = <span class="self">self</span>.up_proj(x)            <span class="cm"># 上投影</span>
+        <span class="kw">return</span> <span class="self">self</span>.down_proj(gate * up)   <span class="cm"># 门控 × 上投影 → 下投影</span></pre>
+    </div>
+    <div class="explain">
+        <h4>为什么 SwiGLU 比普通 FFN 好?</h4>
+        <ul>
+            <li>普通 FFN：<code>ReLU(xW₁)W₂</code> — 只有一条信息通路</li>
+            <li>SwiGLU：<code>(SiLU(xW₁) ⊗ xW₃)W₂</code> — <b>门控机制</b>让网络选择性通过信息</li>
+            <li>SiLU (Swish) = x·sigmoid(x)：当 x < 0 时有非零梯度（ReLU 直接截断），更平滑</li>
+            <li><b>为什么 hidden_dim 缩放到 2/3?</b> SwiGLU 有两个 W（W₁ 和 W₃），参数量已经是 2d×h。缩放到 2/3 使总参数量 ≈ d × 4d/3 × 2 ≈ 原始 FFN 的参数量</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ LoRA ============ -->
+<div class="topic" id="t07">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">LoRA 冻结原始权重 W，旁路添加低秩分解 ΔW = AB（rank 远小于维度）。只训练 A 和 B，参数量减少 10000x。推理时可合并回原矩阵，零额外延迟。</div>
+    </div>
+
+    <div class="formula">W' = W + ΔW = W + BA &nbsp;&nbsp;where&nbsp;&nbsp; B ∈ R<sup>d×r</sup>, A ∈ R<sup>r×k</sup>, r ≪ min(d,k)</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">lora.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">LoRALayer</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, input_dim, output_dim, rank):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.rank = rank
+
+        <span class="cm"># A: [input_dim, rank], B: [rank, output_dim]</span>
+        <span class="cm"># ΔW = A @ B 的形状 = [input_dim, output_dim] ✅</span>
+        <span class="self">self</span>.A = nn.Parameter(torch.<span class="fn">randn</span>(input_dim, rank))
+        <span class="self">self</span>.B = nn.Parameter(torch.<span class="fn">randn</span>(rank, output_dim))
+
+        <span class="cm"># 关键初始化：B 初始化为零 → 初始时 ΔW = A×0 = 0</span>
+        <span class="cm"># → LoRA 注入后不影响原始模型的行为</span>
+        nn.init.<span class="fn">zeros_</span>(<span class="self">self</span>.B)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        delta_W = torch.<span class="fn">matmul</span>(<span class="self">self</span>.A, <span class="self">self</span>.B)
+        <span class="kw">return</span> torch.<span class="fn">matmul</span>(x, delta_W)
+
+<span class="kw">class</span> <span class="cls">LoRA</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        base_output = <span class="self">self</span>.base_model(x)  <span class="cm"># 原始模型（冻结）</span>
+        <span class="kw">for</span> lora_layer <span class="kw">in</span> <span class="self">self</span>.lora_layers:
+            base_output += lora_layer(x)      <span class="cm"># 逐层叠加 LoRA</span>
+        <span class="kw">return</span> base_output</pre>
+    </div>
+    <div class="explain">
+        <h4>关键细节</h4>
+        <ul>
+            <li><b>B 初始化为零</b>：确保 LoRA 注入时模型行为不变。如果 B 也随机初始化，模型能力会突然变化</li>
+            <li><b>A 用 Kaiming 初始化</b>：保持方差稳定</li>
+            <li><b>rank 的选择</b>：通常 r=8 或 r=16。rank 越大表达能力越强但参数越多</li>
+            <li><b>LoRA 加在哪里?</b> 通常加在 Q/K/V/O 投影上。加在 attention 层效果最好</li>
+            <li><b>推理时合并</b>：W_merged = W + BA，合并后 LoRA 不增加任何延迟</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ 激活函数 ============ -->
+<div class="topic" id="t08">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">ReLU 最简单但"死神经元"问题严重。GELU 更平滑。SiLU（Swish）= x·sigmoid(x) 在 x<0 也有梯度。Sigmoid 用于二分类输出。</div>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">activation_functions.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">class</span> <span class="cls">ReLU</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="kw">return</span> torch.<span class="fn">maximum</span>(x, torch.<span class="fn">tensor</span>(<span class="num">0.0</span>))
+        <span class="cm"># x > 0: 保留; x ≤ 0: 置零 → "死神经元"</span>
+
+<span class="kw">class</span> <span class="cls">Sigmoid</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="kw">return</span> <span class="num">1</span> / (<span class="num">1</span> + torch.<span class="fn">exp</span>(-x))
+        <span class="cm"># 输出 (0, 1)，用于概率/门控</span>
+
+<span class="kw">def</span> <span class="fn">silu</span>(x):
+    <span class="kw">return</span> x * torch.<span class="fn">sigmoid</span>(x)
+    <span class="cm"># SiLU = x · σ(x)</span>
+    <span class="cm"># x > 0: ≈ x (近似线性)</span>
+    <span class="cm"># x < 0: ≈ 0 (但不是完全置零!)</span>
+    <span class="cm"># x = 0: = 0</span>
+    <span class="cm"># 比 ReLU 更平滑，无"死神经元"问题</span></pre>
+    </div>
+    <table class="compare-table">
+        <tr><th>激活函数</th><th>公式</th><th>x<0 时</th><th>用在哪</th></tr>
+        <tr><td>ReLU</td><td>max(0, x)</td><td>完全置零</td><td>早期 Transformer</td></tr>
+        <tr><td>GELU</td><td>x·Φ(x)</td><td>接近零但非零</td><td>BERT, GPT-2</td></tr>
+        <tr><td>SiLU/Swish</td><td>x·σ(x)</td><td>接近零但非零</td><td>LLaMA, SwiGLU</td></tr>
+        <tr><td>Sigmoid</td><td>1/(1+e⁻ˣ)</td><td>(0, 0.5)</td><td>门控/二分类</td></tr>
+    </table>
+</div>
+
+<!-- ============ MoE ============ -->
+<div class="topic" id="t09">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">MoE 把一个 FFN 替换成 N 个 expert FFN + 一个 router。每个 token 由 router 决定去哪几个 expert。DeepSeek 用了 256 个 expert，只激活 8 个。</div>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">moe.py</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">class</span> <span class="cls">SwiGLU_FFN</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, input_dim, intermediate_dim=<span class="kw">None</span>):
+        <span class="kw">super</span>().__init__()
+        intermediate_dim = intermediate_dim <span class="kw">or int</span>(input_dim * <span class="num">4</span> * <span class="num">3</span>/<span class="num">2</span>)
+        <span class="self">self</span>.gate_proj = nn.Linear(input_dim, intermediate_dim)
+        <span class="self">self</span>.act_fn = nn.SiLU()
+        <span class="self">self</span>.up_proj = nn.Linear(input_dim, intermediate_dim)
+        <span class="self">self</span>.down_proj = nn.Linear(intermediate_dim, input_dim)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        gate = <span class="self">self</span>.act_fn(<span class="self">self</span>.gate_proj(x))
+        <span class="kw">return</span> <span class="self">self</span>.down_proj(gate * <span class="self">self</span>.up_proj(x))
+
+<span class="kw">class</span> <span class="cls">MoE</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, input_dim, n_expert, ffn_class, expert_hidden_dim=<span class="kw">None</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="cm"># N 个 expert FFN</span>
+        <span class="self">self</span>.experts = nn.ModuleList([
+            ffn_class(input_dim, expert_hidden_dim) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n_expert)
+        ])
+        <span class="cm"># Router: 为每个 token 生成到每个 expert 的权重</span>
+        <span class="self">self</span>.gate = nn.Linear(input_dim, n_expert)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):  <span class="cm"># x: [batch, seq_len, dim]</span>
+        <span class="cm"># 1. 所有 expert 并行计算</span>
+        experts_out = [expert(x) <span class="kw">for</span> expert <span class="self">self</span>.experts]  <span class="cm"># 每个: [bs, len, dim]</span>
+        experts_out = torch.<span class="fn">stack</span>(experts_out, dim=<span class="num">2</span>)            <span class="cm"># [bs, len, n_expert, dim]</span>
+
+        <span class="cm"># 2. Router 生成门控权重</span>
+        gates = F.<span class="fn">softmax</span>(<span class="self">self</span>.gate(x), dim=-<span class="num">1</span>)               <span class="cm"># [bs, len, n_expert]</span>
+
+        <span class="cm"># 3. 加权求和: output = Σ gate_e × expert_e</span>
+        output = torch.<span class="fn">einsum</span>(<span class="str">"b l e, b l e d -&gt; b l d"</span>, gates, experts_out)
+        <span class="kw">return</span> output</pre>
+    </div>
+    <div class="explain">
+        <h4>MoE 的关键概念</h4>
+        <ul>
+            <li><b>Top-K Routing</b>：实际只选权重最大的 K 个 expert（如 K=2），其余不计算，节省算力</li>
+            <li><b>Auxiliary Loss</b>：加入负载均衡损失，防止所有 token 都选同一个 expert（"专家崩塌"）</li>
+            <li><b>实际实现用 scatter/gather</b>而非循环，这里的教学版本用 stack+einsum 更直观</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ 温度采样 ============ -->
+<div class="topic" id="t10">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">温度采样通过 logits/temperature 调整分布的"尖锐度"。T→0 退化为贪心搜索；T→∞ 退化为均匀分布；T=1 是原始分布。</div>
+    </div>
+
+    <div class="formula">P(x<sub>i</sub>) = softmax(z<sub>i</sub>/T) &nbsp;&nbsp;|&nbsp;&nbsp; T→0: 最尖 (贪心) &nbsp; T=1: 原始 &nbsp; T→∞: 最平 (均匀)</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">temperature_sampling.py</span><span class="code-source">EasyOffer</span></div>
+        <pre><span class="kw">def</span> <span class="fn">temperature_sampling</span>(logits, temperature=<span class="num">1.0</span>):
+    <span class="cm"># Step 1: 除以温度</span>
+    logits = logits / temperature
+    <span class="cm"># Step 2: 得到概率分布</span>
+    probs = F.<span class="fn">softmax</span>(logits, dim=-<span class="num">1</span>)
+    <span class="cm"># Step 3: 按概率采样</span>
+    <span class="kw">return</span> torch.<span class="fn">multinomial</span>(probs, num_samples=<span class="num">1</span>).<span class="fn">squeeze</span>(-<span class="num">1</span>)
+
+<span class="cm"># 示例：logits = [1, 2, 3, 4, 5]</span>
+logits = torch.<span class="fn">tensor</span>([[<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>, <span class="num">4.0</span>, <span class="num">5.0</span>]])
+
+<span class="builtin">print</span>(<span class="str">"T=1.0:"</span>, F.<span class="fn">softmax</span>(logits/<span class="num">1.0</span>, dim=-<span class="num">1</span>))
+<span class="cm"># [0.011, 0.031, 0.086, 0.234, 0.637] → 偏向最大</span>
+
+<span class="builtin">print</span>(<span class="str">"T=0.5:"</span>, F.<span class="fn">softmax</span>(logits/<span class="num">0.5</span>, dim=-<span class="num">1</span>))
+<span class="cm"># [0.002, 0.011, 0.058, 0.310, 0.619] → 更尖锐</span>
+
+<span class="builtin">print</span>(<span class="str">"T=2.0:"</span>, F.<span class="fn">softmax</span>(logits/<span class="num">2.0</span>, dim=-<span class="num">1</span>))
+<span class="cm"># [0.096, 0.129, 0.173, 0.234, 0.367] → 更平坦</span></pre>
+    </div>
+    <div class="explain">
+        <h4>直觉</h4>
+        <p>除以 T 就是把 logits 整体缩小。当 T<1 时，大值和小值的差距被放大（概率更集中）；当 T>1 时，差距被缩小（概率更均匀）。</p>
+    </div>
+</div>
+
+<!-- ============ 位置编码 ============ -->
+<div class="topic" id="t11">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">绝对位置编码（正弦余弦）：直接加一个位置向量到 token embedding 上。RoPE（旋转位置编码）：对 Q/K 做旋转，天然编码相对位置。</div>
+    </div>
+
+    <div class="formula">PE(pos, 2i) = sin(pos/10000^(2i/d)) &nbsp;&nbsp; PE(pos, 2i+1) = cos(pos/10000^(2i/d))</div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">positional_embedding.py</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">class</span> <span class="cls">AbsolutePositionEmbedding</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, max_length=<span class="num">512</span>, embed_dim=<span class="num">768</span>):
+        <span class="kw">super</span>().__init__()
+        <span class="cm"># 频率向量: 10000^(-2i/d), i = 0, 1, ..., d/2-1</span>
+        _2i = torch.<span class="fn">arange</span>(<span class="num">0</span>, embed_dim, <span class="num">2</span>)
+        inv_freq_vec = <span class="num">10000</span> ** (-_2i.<span class="fn">float</span>() / embed_dim)
+
+        pos = torch.<span class="fn">arange</span>(max_length).<span class="fn">float</span>()
+        angle = torch.<span class="fn">einsum</span>(<span class="str">'l,d-&gt;ld'</span>, pos, inv_freq_vec)  <span class="cm"># [max_len, d/2]</span>
+
+        sin_part = torch.<span class="fn">sin</span>(angle)
+        cos_part = torch.<span class="fn">cos</span>(angle)
+
+        <span class="cm"># 交错排列: [sin₀, cos₀, sin₁, cos₁, ...]</span>
+        pos_emb = rearrange(
+            torch.<span class="fn">stack</span>([sin_part, cos_part], dim=-<span class="num">1</span>),
+            <span class="str">'max_len dim_pair two -&gt; max_len (dim_pair two)'</span>
+        )
+        <span class="self">self</span>.<span class="fn">register_buffer</span>(<span class="str">'pos_embedding'</span>, pos_emb)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="cm"># 扩展到 batch 维度并截取到实际 seq_len</span>
+        <span class="kw">return</span> <span class="fn">repeat</span>(<span class="self">self</span>.pos_embedding[:x.size(<span class="num">1</span>)], <span class="str">'l d -&gt; b l d'</span>, b=x.size(<span class="num">0</span>))</pre>
+    </div>
+    <div class="explain">
+        <h4>为什么频率用 10000^(-2i/d)?</h4>
+        <ul>
+            <li>低频（i 小）：编码<b>长距离</b>位置关系，变化慢</li>
+            <li>高频（i 大）：编码<b>短距离</b>位置关系，变化快</li>
+            <li>这类似于信号处理中的<b>多分辨率分析</b>（不同频率捕捉不同尺度）</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ Transformer ============ -->
+<div class="topic" id="t12">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">Transformer Encoder 用双向注意力（所有 token 互相看见），Decoder 用因果掩码（只能看过去的 token）。Encoder 用于 BERT，Decoder 用于 GPT。</div>
+    </div>
+
+    <div class="subsection-title">Encoder 层（Post-LN 版本）</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">transformer_encoder.py (核心结构)</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">class</span> <span class="cls">TransformerEncoderLayer</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>, emb_dim, hid_dim_ffn, n_head, dim_each_head):
+        <span class="kw">super</span>().__init__()
+        <span class="self">self</span>.attention_layer = SelfAttentionLayer(emb_dim, n_head, dim_each_head)
+        <span class="self">self</span>.ffn = nn.Sequential(
+            nn.Linear(emb_dim, hid_dim_ffn),
+            nn.LeakyReLU(),
+            nn.Linear(hid_dim_ffn, emb_dim)
+        )
+        <span class="self">self</span>.layer_norm = nn.LayerNorm(emb_dim)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, x):
+        <span class="cm"># Post-LN: 先 sublayer，再 LayerNorm</span>
+        x_attn = <span class="self">self</span>.attention_layer(x)    <span class="cm"># 1. Self-Attention</span>
+        x = <span class="self">self</span>.layer_norm(x + x_attn)     <span class="cm"># 2. Residual + Norm</span>
+        x_ffn = <span class="self">self</span>.ffn(x)                 <span class="cm"># 3. FFN</span>
+        x = <span class="self">self</span>.layer_norm(x + x_ffn)      <span class="cm"># 4. Residual + Norm</span>
+        <span class="kw">return</span> x</pre>
+    </div>
+
+    <div class="subsection-title">Decoder 层（因果掩码）</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">transformer_decoder.py (核心结构)</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="cm"># 因果掩码：上三角为 True（被屏蔽）</span>
+<span class="kw">def</span> <span class="fn">create_autoregressive_mask</span>(size):
+    <span class="kw">return</span> torch.<span class="fn">triu</span>(torch.<span class="fn">ones</span>(size, size), diagonal=<span class="num">1</span>).<span class="fn">type</span>(torch.bool)
+    <span class="cm"># [[F, T, T, T],</span>
+    <span class="cm">#  [F, F, T, T],</span>
+    <span class="cm">#  [F, F, F, T],</span>
+    <span class="cm">#  [F, F, F, F]]</span>
+
+<span class="cm"># GPT 风格的损失：shift logits 和 labels</span>
+<span class="kw">class</span> <span class="cls">GPTLMLoss</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="self">self</span>, logits, labels):
+        shift_logits = logits[..., :-<span class="num">1</span>, :].<span class="fn">contiguous</span>()  <span class="cm"># 预测下一个 token</span>
+        shift_labels = labels[..., <span class="num">1</span>:].<span class="fn">contiguous</span>()   <span class="cm"># 对应的真实 token</span>
+        <span class="kw">return</span> F.<span class="fn">cross_entropy</span>(shift_logits.<span class="fn">flatten</span>(<span class="num">0</span>,<span class="num">1</span>), shift_labels.<span class="fn">flatten</span>())</pre>
+    </div>
+    <div class="explain">
+        <h4>Post-LN vs Pre-LN</h4>
+        <ul>
+            <li><b>Post-LN</b>（原论文）：x → sublayer → LN。训练不稳定，需要 warmup</li>
+            <li><b>Pre-LN</b>（GPT-2/LLaMA）：x → LN → sublayer。训练更稳定，是现代标准</li>
+            <li>LLaMA 的 <code>LlamaLayer</code> 注释："之前的 LN(x+FFN(x)) 变成 x + FFN(LN(x))"</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ 矩阵运算 ============ -->
+<div class="topic" id="t13">
+    <div class="tldr-card">
+        <div class="tldr-title">TLDR</div>
+        <div class="tldr-body">矩阵运算是 DL 的基石：点积（attention 的核心）、转置（QK^T）、矩阵乘法（全连接层）。</div>
+    </div>
+
+    <div class="subsection-title">矩阵 × 向量</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">1_matrix_dot_vector.py</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">def</span> <span class="fn">matrix_dot_vector</span>(a, b):
+    <span class="cm"># a: [m, n] 矩阵, b: [n] 向量</span>
+    <span class="cm"># 结果: [m] 向量，每个元素是对应行的点积</span>
+    <span class="kw">return</span> [<span class="fn">sum</span>(x*y <span class="kw">for</span> x, y <span class="kw">in</span> <span class="fn">zip</span>(row, b)) <span class="kw">for</span> row <span class="kw">in</span> a]
+
+<span class="cm"># 例: [[1,2],[3,4]] · [5,6] = [1×5+2×6, 3×5+4×6] = [17, 39]</span></pre>
+    </div>
+
+    <div class="subsection-title">矩阵转置</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">2_transpose.py</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">def</span> <span class="fn">transpose_matrix</span>(a):
+    <span class="cm"># Pythonic: zip(*a) 自动解包每行，然后按列重新打包</span>
+    <span class="kw">return</span> [<span class="fn">list</span>(col_tuple) <span class="kw">for</span> col_tuple <span class="kw">in</span> <span class="fn">zip</span>(*a)]
+
+<span class="cm"># [[1,2,3],[4,5,6]] → [[1,4],[2,5],[3,6]]</span>
+<span class="cm"># 就是 QK^T 中 transpose 的本质</span></pre>
+    </div>
+
+    <div class="subsection-title">矩阵 × 矩阵</div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-filename">9_matrix_dot_matrix.py</span><span class="code-source">LLM-Craft</span></div>
+        <pre><span class="kw">def</span> <span class="fn">matrixmul</span>(a, b):
+    m, n = <span class="fn">len</span>(a), <span class="fn">len</span>(a[<span class="num">0</span>])
+    <span class="kw">if</span> n != <span class="fn">len</span>(b): <span class="kw">return</span> -<span class="num">1</span>
+    p = <span class="fn">len</span>(b[<span class="num">0</span>])
+    get_col = <span class="kw">lambda</span> j: [row[j] <span class="kw">for</span> row <span class="kw">in</span> b]
+    <span class="kw">return</span> [[<span class="fn">sum</span>(x*y <span class="kw">for</span> x,y <span class="kw">in</span> <span class="fn">zip</span>(a[i], <span class="fn">get_col</span>(j)))
+             <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(p)] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(m)]
+
+<span class="cm"># 矩阵乘法 = 全连接层的前向传播本质</span>
+<span class="cm"># output = input @ W^T + bias</span></pre>
+    </div>
+</div>
+
+</div>
+
+<div class="footer">
+    <p>LLM-Craft 代码教学手册 — 汇总自 LLM-Craft, EasyOffer, MiniMind</p>
+    <p>生成日期: 2026-05-18</p>
+</div>
+
+<script>
+function showTopic(id) {
+    document.querySelectorAll('.topic').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
