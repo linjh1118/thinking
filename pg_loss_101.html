@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL 训练调参 — pg_loss 全解</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1117;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* === Header === */
+        .header {
+            background: linear-gradient(135deg, #1a1c2e 0%, #2d1b4e 50%, #1a2e4e 100%);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 28px 32px;
+        }
+        .header h1 {
+            font-size: 1.7em;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .header p { color: #94a3b8; font-size: 0.92em; }
+        .backlinks {
+            margin-top: 10px; padding: 8px 14px;
+            background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2);
+            border-radius: 8px; font-size: 0.82em;
+        }
+        .backlinks a { color: #a78bfa; text-decoration: none; }
+
+        /* === Tabs === */
+        .tab-bar {
+            display: flex; gap: 0; background: #161820;
+            border-bottom: 2px solid rgba(139,92,246,0.15);
+            padding: 0 24px; overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 14px 22px; cursor: pointer; border: none; background: none;
+            color: #94a3b8; font-size: 0.92em; font-weight: 500;
+            border-bottom: 2px solid transparent; transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { color: #c4b5fd; }
+        .tab-btn.active {
+            color: #a78bfa; border-bottom-color: #a78bfa;
+            background: rgba(139,92,246,0.06);
+        }
+
+        /* === Tab Content === */
+        .tab-content { display: none; padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
+        .tab-content.active { display: block; }
+
+        /* === Cards === */
+        .tldr {
+            background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(96,165,250,0.08));
+            border: 1px solid rgba(139,92,246,0.25); border-radius: 10px;
+            padding: 16px 20px; margin-bottom: 24px;
+        }
+        .tldr strong { color: #c4b5fd; }
+
+        .card {
+            background: #1a1d2e; border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 10px; padding: 22px; margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 1.15em; color: #c4b5fd; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .card h2 .num {
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+            color: #fff; border-radius: 6px; padding: 2px 8px; font-size: 0.78em;
+        }
+        .card h3 { color: #93c5fd; font-size: 1em; margin: 14px 0 8px; }
+
+        /* === Formula === */
+        .formula-box {
+            background: #12141e; border: 1px solid rgba(96,165,250,0.2);
+            border-radius: 8px; padding: 18px 22px; margin: 14px 0;
+            font-family: 'Cambria Math', 'Latin Modern Math', Georgia, serif;
+            font-size: 1.08em; line-height: 2; color: #e2e8f0;
+            overflow-x: auto;
+        }
+        .formula-box .var { color: #60a5fa; font-style: italic; }
+        .formula-box .op { color: #fbbf24; }
+        .formula-box .fn { color: #34d399; }
+        .formula-box .comment { color: #64748b; font-size: 0.88em; font-family: sans-serif; }
+
+        /* === Chart === */
+        .chart-container {
+            background: #12141e; border: 1px solid rgba(139,92,246,0.15);
+            border-radius: 8px; padding: 16px; margin: 16px 0;
+        }
+        .chart-title {
+            font-size: 0.88em; color: #94a3b8; margin-bottom: 8px;
+        }
+        canvas { width: 100%; height: 260px; display: block; }
+
+        /* === Table === */
+        .styled-table {
+            width: 100%; border-collapse: collapse; margin: 14px 0;
+            font-size: 0.9em;
+        }
+        .styled-table th {
+            background: rgba(139,92,246,0.15); color: #c4b5fd;
+            padding: 10px 14px; text-align: left; font-weight: 600;
+            border-bottom: 2px solid rgba(139,92,246,0.3);
+        }
+        .styled-table td {
+            padding: 10px 14px; border-bottom: 1px solid rgba(100,100,140,0.15);
+        }
+        .styled-table tr:hover td { background: rgba(139,92,246,0.05); }
+
+        /* === Status tags === */
+        .tag {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.78em; font-weight: 600;
+        }
+        .tag-ok { background: rgba(52,211,153,0.15); color: #34d399; }
+        .tag-warn { background: rgba(251,191,36,0.15); color: #fbbf24; }
+        .tag-bad { background: rgba(248,113,113,0.15); color: #f87171; }
+
+        /* === Case selector === */
+        .case-selector {
+            display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap;
+        }
+        .case-btn {
+            padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.3);
+            background: rgba(139,92,246,0.08); color: #c4b5fd; cursor: pointer;
+            font-size: 0.88em; transition: all 0.2s;
+        }
+        .case-btn:hover { background: rgba(139,92,246,0.15); }
+        .case-btn.active {
+            background: rgba(139,92,246,0.25); border-color: #a78bfa;
+            color: #fff;
+        }
+
+        /* === Multi-metric view === */
+        .metrics-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0;
+        }
+        .metric-card {
+            background: #12141e; border: 1px solid rgba(139,92,246,0.12);
+            border-radius: 8px; padding: 12px;
+        }
+        .metric-label {
+            font-size: 0.82em; color: #94a3b8; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .metric-dot {
+            width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+        }
+
+        /* === Diagnosis panel === */
+        .diagnosis {
+            margin-top: 16px; padding: 16px 20px;
+            border-radius: 8px; border-left: 4px solid;
+        }
+        .diagnosis-healthy { background: rgba(52,211,153,0.08); border-color: #34d399; }
+        .diagnosis-unstable { background: rgba(248,113,113,0.08); border-color: #f87171; }
+        .diagnosis-stagnant { background: rgba(251,191,36,0.08); border-color: #fbbf24; }
+        .diagnosis-aggressive { background: rgba(248,113,113,0.08); border-color: #f87171; }
+        .diagnosis h4 { margin-bottom: 6px; }
+        .diagnosis ul { padding-left: 18px; font-size: 0.9em; color: #cbd5e1; }
+        .diagnosis li { margin: 4px 0; }
+
+        /* === QA card highlight === */
+        .card[style*="rgba(52,211,153"] h2 .num {
+            background: linear-gradient(135deg, #059669, #10b981) !important;
+        }
+
+        /* === Insight callout === */
+        .insight {
+            background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.2);
+            border-radius: 8px; padding: 14px 18px; margin: 14px 0;
+        }
+        .insight::before { content: '💡 '; }
+
+        /* === Checklist === */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 8px 0; border-bottom: 1px solid rgba(100,100,140,0.1);
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .checklist .icon { font-size: 1.1em; flex-shrink: 0; }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: 1fr; }
+            .tab-content { padding: 16px; }
+        }
+
+        /* === Scrollbar === */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>RL 训练调参 101 — pg_loss 全解</h1>
+    <p>从公式到曲线，从正常到异常，4 个 Tab 带你彻底理解 Policy Gradient Loss</p>
+    <div class="backlinks">
+        <span style="color:#64748b;">📚 源文档：</span>
+        <a href="obsidian://open?vault=BrainHao&file=Topics%2FTrain%2FTrain%20MOC"
+           onmouseover="this.style.textDecoration='underline'"
+           onmouseout="this.style.textDecoration='none'">Train MOC</a>
+    </div>
+</div>
+
+<div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(0)">1. 公式拆解</button>
+    <button class="tab-btn" onclick="switchTab(1)">2. 正常曲线</button>
+    <button class="tab-btn" onclick="switchTab(2)">3. 异常诊断</button>
+    <button class="tab-btn" onclick="switchTab(3)">4. 实战检查单</button>
+</div>
+
+<!-- ==================== TAB 1: Formula Breakdown ==================== -->
+<div class="tab-content active" id="tab0">
+    <div class="tldr">
+        <strong>TL;DR</strong> pg_loss 不是"越低越好"的有符号损失函数。它衡量的是「当前策略相比旧策略，沿 advantage 方向更新了多少」。理解它的关键在于：它是一个<strong>有方向的信号</strong>，而非一个<strong>要最小化的标量</strong>。
+    </div>
+
+    <div class="card">
+        <h2><span class="num">1</span> PPO 的总目标函数</h2>
+        <p>在 PPO 中，总 Loss 由三部分组成：</p>
+        <div class="formula-box">
+            <span class="fn">L<sub>PPO</sub></span> = <span class="op">-</span> <span class="fn">L<sub>pg</sub></span> <span class="op">+</span> <span class="var">c₁</span> · <span class="fn">L<sub>VF</sub></span> <span class="op">+</span> <span class="var">c₂</span> · <span class="fn">L<sub>ENT</sub></span>
+            <br>
+            <span class="comment">其中 c₁ (value loss 系数) 通常 = 0.5，c₂ (entropy 系数) 通常 = 0.01</span>
+        </div>
+        <p>训练时 <strong>最大化</strong> 总目标（等价于最小化负值）。三个子 loss 各司其职：</p>
+        <table class="styled-table">
+            <tr><th>Loss</th><th>作用</th><th>含义</th></tr>
+            <tr><td><span style="color:#60a5fa">L<sub>pg</sub></span></td><td>策略梯度</td><td>让策略朝高 advantage 动作方向更新</td></tr>
+            <tr><td><span style="color:#f87171">L<sub>VF</sub></span></td><td>价值函数</td><td>让 value prediction 更准（MSE）</td></tr>
+            <tr><td><span style="color:#34d399">L<sub>ENT</sub></span></td><td>熵正则</td><td>防止策略坍缩到确定性行为</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">2</span> pg_loss 的核心公式（逐步拆解）</h2>
+
+        <h3>Step 2.1 — 重要性采样比率</h3>
+        <div class="formula-box">
+            <span class="var">r<sub>t</sub></span>(<span class="var">θ</span>) = <span style="font-size:1.1em">π<sub>θ</sub></span>(<span class="var">a<sub>t</sub></span> | <span class="var">s<sub>t</sub></span>) <span class="op">/</span> <span style="font-size:1.1em">π<sub>θ<sub>old</sub></sub></span>(<span class="var">a<sub>t</sub></span> | <span class="var">s<sub>t</sub></span>)
+            <br><span class="comment"># 新策略在该状态选择该动作的概率 ÷ 旧策略的概率</span>
+            <br><span class="comment"># r = 1 表示新旧策略一致；r > 1 表示新策略更倾向该动作；r < 1 反之</span>
+        </div>
+
+        <h3>Step 2.2 — Clip 机制（PPO 的核心创新）</h3>
+        <div class="formula-box">
+            <span class="fn">clip</span>(<span class="var">r<sub>t</sub></span>, 1<span class="op">-</span><span class="var">ε</span>, 1<span class="op">+</span><span class="var">ε</span>)
+            <br><span class="comment"># ε 通常 = 0.2，即把 ratio 限制在 [0.8, 1.2] 区间</span>
+            <br><span class="comment"># 目的：防止单步更新过大，导致策略崩溃</span>
+        </div>
+
+        <h3>Step 2.3 — 优势函数 Advantage</h3>
+        <div class="formula-box">
+            <span class="var">Â<sub>t</sub></span> = <span class="var">Q</span>(<span class="var">s<sub>t</sub></span>,<span class="var">a<sub>t</sub></span>) <span class="op">-</span> <span class="var">V</span>(<span class="var">s<sub>t</sub></span>)
+            <br><span class="comment"># 该动作比"平均水平"好多少</span>
+            <br><span class="comment"># Â > 0：这个动作比期望好，应该提高概率</span>
+            <br><span class="comment"># Â < 0：这个动作比期望差，应该降低概率</span>
+            <br><span class="comment"># 实际中用 GAE(λ) 来估计，引入 bias-variance tradeoff</span>
+        </div>
+
+        <h3>Step 2.4 — PPO-Clip 目标（最终公式）</h3>
+        <div class="formula-box" style="border-color: rgba(96,165,250,0.4); background: rgba(96,165,250,0.04);">
+            <span class="fn">L<sup>CLIP</sup></span> = <span style="font-size:1.0em">𝔼<sub>t</sub></span> [
+                <span class="op">min</span>(
+                    <span class="var">r<sub>t</sub></span>(<span class="var">θ</span>) · <span class="var">Â<sub>t</sub></span>,
+                    <span class="fn">clip</span>(<span class="var">r<sub>t</sub></span>(<span class="var">θ</span>), 1<span class="op">-</span><span class="var">ε</span>, 1<span class="op">+</span><span class="var">ε</span>) · <span class="var">Â<sub>t</sub></span>
+                )
+            ]
+            <br><br><span class="comment"># 取 min = 在 "无clip的原始目标" 和 "clip后的目标" 中选更保守的那个</span>
+            <br><span class="comment"># 训练代码中 pg_loss = -L<sup>CLIP</sup>（取负号因为优化器是 minimize）</span>
+        </div>
+
+        <div class="insight">
+            <strong>关键直觉</strong>：pg_loss 的值 = <code>-1 × L<sup>CLIP</sup></code>。训练越好 → L<sup>CLIP</sup> 越大 → pg_loss 越小（越负）。但 pg_loss 不是单调下降的！因为每轮 rollout 产生新的 advantage，它的正负和大小都在变化。
+        </div>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">3</span> 一个具体的数值例子</h2>
+        <p>假设某个 training step，模型在状态 s<sub>t</sub> 下选择了动作 a<sub>t</sub>：</p>
+        <table class="styled-table">
+            <tr><th>变量</th><th>值</th><th>含义</th></tr>
+            <tr><td>π<sub>old</sub>(a<sub>t</sub>|s<sub>t</sub>)</td><td>0.3</td><td>旧策略选这个动作的概率</td></tr>
+            <tr><td>π<sub>new</sub>(a<sub>t</sub>|s<sub>t</sub>)</td><td>0.4</td><td>新策略选这个动作的概率</td></tr>
+            <tr><td>r<sub>t</sub>(θ)</td><td>0.4/0.3 ≈ <strong style="color:#60a5fa">1.33</strong></td><td>新策略更倾向这个动作</td></tr>
+            <tr><td>Â<sub>t</sub></td><td><strong style="color:#34d399">+2.0</strong></td><td>这个动作比平均好很多</td></tr>
+            <tr><td>ε</td><td>0.2</td><td>clip 范围 [0.8, 1.2]</td></tr>
+        </table>
+
+        <h3>计算过程：</h3>
+        <div class="formula-box">
+            <span class="comment"># 无 clip：</span>
+            <span class="var">r<sub>t</sub></span> · <span class="var">Â<sub>t</sub></span> = 1.33 × 2.0 = <strong style="color:#60a5fa">2.67</strong>
+            <br><br><span class="comment"># 有 clip：</span>
+            <span class="fn">clip</span>(1.33, 0.8, 1.2) = <strong style="color:#fbbf24">1.2</strong>  <span class="comment"># 超过上界，被 clip 到 1.2</span>
+            <br><span class="fn">clip</span> · <span class="var">Â<sub>t</sub></span> = 1.2 × 2.0 = <strong style="color:#fbbf24">2.40</strong>
+            <br><br><span class="comment"># 取 min（更保守）：</span>
+            <span class="fn">L<sup>CLIP</sup></span> = <span class="op">min</span>(2.67, 2.40) = <strong>2.40</strong>
+            <br><br><span class="comment"># pg_loss：</span>
+            <strong style="color:#f87171">pg_loss = -2.40</strong>
+        </div>
+
+        <div class="insight">
+            <strong>解读</strong>：pg_loss = -2.40（负值，较大绝对值）。这表示策略在 advantage 方向上做了有效更新。注意：ratio 被从 1.33 clip 到 1.2，说明更新被限制了——这是 PPO 的保护机制，防止一步走太远。
+        </div>
+
+        <h3>对比：如果 Advantage 是负的</h3>
+        <div class="formula-box">
+            <span class="comment"># 假设 Â<sub>t</sub> = -1.5（这个动作比平均差）：</span>
+            <span class="var">r<sub>t</sub></span> · <span class="var">Â<sub>t</sub></span> = 1.33 × (-1.5) = <strong style="color:#f87171">-2.00</strong>
+            <br><span class="fn">clip</span> · <span class="var">Â<sub>t</sub></span> = 1.2 × (-1.5) = <strong style="color:#fbbf24">-1.80</strong>
+            <br><span class="op">min</span>(-2.00, -1.80) = <strong>-2.00</strong>  <span class="comment"># 负 advantage 时，选更小的（更负的）= 更保守</span>
+            <br><strong style="color:#60a5fa">pg_loss = +2.00</strong> <span class="comment"># 正值 → 策略在错误方向上偏移，需要被纠正</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">4</span> clipfrac 是什么？怎么解读？</h2>
+        <p>clipfrac = 被 clip 的 token / 总 token 数。它告诉你有多少比例的更新被"截断"了。</p>
+        <table class="styled-table">
+            <tr><th>clipfrac 范围</th><th>含义</th><th>应对</th></tr>
+            <tr><td><span class="tag tag-ok">0.05 ~ 0.15</span></td><td>健康，大部分更新在合理区间</td><td>正常训练</td></tr>
+            <tr><td><span class="tag tag-warn">0.2 ~ 0.3</span></td><td>偏高，策略变化较大</td><td>考虑降低学习率</td></tr>
+            <tr><td><span class="tag tag-bad">&gt; 0.3</span></td><td>过高，大量更新被截断</td><td>降低学习率或增大 batch size</td></tr>
+            <tr><td><span class="tag tag-warn">&lt; 0.01</span></td><td>过低，更新可能太保守</td><td>考虑增大学习率</td></tr>
+        </table>
+    </div>
+
+    <div class="card" style="border-color: rgba(52,211,153,0.3);">
+        <h2><span class="num">5</span> QA：被 clip 的样本是不是就"没用了"？</h2>
+        <p style="margin-bottom:12px;color:#94a3b8;">一个常见的困惑：如果 r(θ) 被 clip 住了，梯度回不到策略网络，那这个样本是不是白白浪费了？</p>
+
+        <h3>先搞清楚：clip 不是在所有情况下都阻断梯度</h3>
+        <p>min(r·Â, clip(r)·Â) 的 min 选谁取决于 Â 的符号和 r 的位置：</p>
+        <table class="styled-table">
+            <tr><th>Â 符号</th><th>r 的位置</th><th>min 选了谁</th><th>梯度</th><th>直觉</th></tr>
+            <tr>
+                <td><span class="tag tag-ok">Â &gt; 0</span><br><span style="color:#64748b;font-size:0.82em">好动作</span></td>
+                <td>r &gt; 1+ε<br><span style="color:#64748b;font-size:0.82em">概率已经涨够了</span></td>
+                <td>clip 分支（更小）</td>
+                <td><span class="tag tag-bad">阻断</span></td>
+                <td style="font-size:0.88em">不让好动作概率继续暴涨</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-ok">Â &gt; 0</span><br><span style="color:#64748b;font-size:0.82em">好动作</span></td>
+                <td>r &lt; 1-ε<br><span style="color:#64748b;font-size:0.82em">概率反而降了</span></td>
+                <td>r·Â 分支（更小）</td>
+                <td><span class="tag tag-ok">流过</span></td>
+                <td style="font-size:0.88em">还在纠正：继续推高好动作</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-bad">Â &lt; 0</span><br><span style="color:#64748b;font-size:0.82em">差动作</span></td>
+                <td>r &gt; 1+ε<br><span style="color:#64748b;font-size:0.82em">概率反而涨了</span></td>
+                <td>r·Â 分支（更负=更小）</td>
+                <td><span class="tag tag-ok">流过</span></td>
+                <td style="font-size:0.88em">还在纠正：继续压低差动作</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-bad">Â &lt; 0</span><br><span style="color:#64748b;font-size:0.82em">差动作</span></td>
+                <td>r &lt; 1-ε<br><span style="color:#64748b;font-size:0.82em">概率已经降够了</span></td>
+                <td>clip 分支（更负=更小）</td>
+                <td><span class="tag tag-bad">阻断</span></td>
+                <td style="font-size:0.88em">不让差动作概率继续暴跌</td>
+            </tr>
+        </table>
+
+        <div class="insight">
+            <strong>关键发现</strong>：4 种情况中只有 2 种梯度被阻断。clip 的逻辑是：<strong>当策略已经沿 advantage 方向走得够远了（r 偏离 1 超过 ε），就踩刹车</strong>。但如果策略在"反向走"（好动作概率反而降了 / 差动作概率反而涨了），clip 不干预，梯度正常纠正。
+        </div>
+
+        <h3>即使策略梯度被 clip 阻断了，样本仍然有两个学习通道</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+            <div style="background:#12141e;border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:14px;">
+                <div style="color:#f87171;font-weight:600;margin-bottom:6px;">L<sub>VF</sub>（Value Function）</div>
+                <div style="font-size:0.88em;color:#cbd5e1;line-height:1.6;">
+                    Value network 的 MSE loss <strong>不受 clip 影响</strong>。被 clip 的样本仍然参与 V(s) 的更新。<br><br>
+                    → 改善 future advantage 估计的准确性<br>
+                    → 间接帮助策略在后续 step 做更好的决策
+                </div>
+            </div>
+            <div style="background:#12141e;border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:14px;">
+                <div style="color:#34d399;font-weight:600;margin-bottom:6px;">L<sub>ENT</sub>（Entropy Bonus）</div>
+                <div style="font-size:0.88em;color:#cbd5e1;line-height:1.6;">
+                    Entropy 正则项 <strong>不依赖 r(θ)</strong>，始终提供梯度。<br><br>
+                    → 防止策略坍缩到确定性行为<br>
+                    → 即使策略梯度被 clip，entropy 仍在"拉"着策略保持探索
+                </div>
+            </div>
+        </div>
+
+        <h3>用刚才的数值例子验证</h3>
+        <div class="formula-box">
+            <span class="comment"># 回顾：π_old=0.3, π_new=0.4, r=1.33, Â=+2.0, ε=0.2</span>
+            <br>
+            <br><span class="comment"># r=1.33 > 1+ε=1.2，且 Â>0 → 梯度被阻断的情况</span>
+            <br><span class="comment"># 但这个样本仍然参与了：</span>
+            <br>
+            <br><span style="color:#f87171">1. Value update</span>：V(s<sub>t</sub>) 的目标值（return）被用来算 MSE loss
+            <br><span class="comment"># 如果 value 预测不准，value loss 会大 → value network 会学到更好的估计</span>
+            <br>
+            <br><span style="color:#34d399">2. Entropy update</span>：π(·|s<sub>t</sub>) 的熵被计算并加入 entropy bonus
+            <br><span class="comment"># 即使策略梯度被 clip，entropy 梯度仍然流过</span>
+        </div>
+
+        <div class="insight">
+            <strong>总结</strong>：被 clip 的样本不是"没用了"。策略梯度信号被保护性截断了（只截了一半方向），但 value function 和 entropy 仍在学习。这正是 PPO 相比 TRPO 的巧妙之处——用简单的 clip 替代昂贵的 KL 约束优化，同时在"安全区间外"保留了其他学习通道。
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TAB 2: Normal Curves ==================== -->
+<div class="tab-content" id="tab1">
+    <div class="tldr">
+        <strong>TL;DR</strong> 正常训练的 pg_loss 不会单调下降。它初期波动大（随机策略 + 噪声 advantage），中期逐步收敛（策略变好），后期在小区间波动（稳定训练）。关键看它和 reward 是否<strong>协同变化</strong>。
+    </div>
+
+    <div class="card">
+        <h2><span class="num">1</span> 三阶段正常曲线模拟</h2>
+        <p>下面是 PPO 训练一个 typical run 的 5 条指标曲线。观察它们之间的联动关系。</p>
+        <div class="case-selector">
+            <button class="case-btn active" onclick="drawNormal('typical')">典型正常训练</button>
+            <button class="case-btn" onclick="drawNormal('slow')">慢收敛（小 LR）</button>
+            <button class="case-btn" onclick="drawNormal('fast')">快收敛（大 LR）</button>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#60a5fa"></span>pg_loss</div>
+                <canvas id="normal_pgloss" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#34d399"></span>reward / score</div>
+                <canvas id="normal_reward" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#fbbf24"></span>KL divergence</div>
+                <canvas id="normal_kl" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#f87171"></span>entropy</div>
+                <canvas id="normal_entropy" height="200"></canvas>
+            </div>
+        </div>
+        <div id="normal-diagnosis" class="diagnosis diagnosis-healthy">
+            <h4 style="color:#34d399">✅ 典型正常训练 — 诊断</h4>
+            <ul>
+                <li><strong>pg_loss</strong>：初期在 [-1.5, 0.5] 波动 → 中期收敛到 [-0.4, 0] → 后期稳定在 [-0.2, 0.1]</li>
+                <li><strong>reward</strong>：持续上升，与 pg_loss 下降趋势对齐 → 训练信号健康</li>
+                <li><strong>KL</strong>：前期较高（策略变化大）→ 中后期控制在 0.01~0.05 → 更新稳定</li>
+                <li><strong>entropy</strong>：从 ~1.5 缓慢降到 ~0.8 → 策略逐步收敛，未过早坍缩</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">2</span> 各阶段特征详解</h2>
+        <table class="styled-table">
+            <tr><th>阶段</th><th>Steps</th><th>pg_loss</th><th>reward</th><th>KL</th><th>entropy</th></tr>
+            <tr>
+                <td><span class="tag tag-warn">初期探索</span></td>
+                <td>0 ~ 50</td>
+                <td>大幅波动，正负交替</td>
+                <td>低且不稳定</td>
+                <td>较高（策略在大改）</td>
+                <td>高（策略不确定）</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-ok">中期收敛</span></td>
+                <td>50 ~ 200</td>
+                <td>波动收窄，趋势向下</td>
+                <td>稳步上升</td>
+                <td>中等，逐渐降低</td>
+                <td>缓慢下降</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-ok">后期稳定</span></td>
+                <td>200 ~ 400</td>
+                <td>小幅波动在 0 附近</td>
+                <td>高且稳定</td>
+                <td>低（策略几乎不变）</td>
+                <td>较低但 &gt;0</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== TAB 3: Abnormal Diagnosis ==================== -->
+<div class="tab-content" id="tab2">
+    <div class="tldr">
+        <strong>TL;DR</strong> pg_loss 单独看不出问题。下面 4 个异常 Case 模拟了真实训练中常见的翻车场景，每个都配 4 条联动曲线和诊断结论。
+    </div>
+
+    <div class="card">
+        <h2><span class="num">1</span> 异常场景选择器</h2>
+        <p>点击不同场景，观察 4 条曲线如何联动出问题：</p>
+        <div class="case-selector">
+            <button class="case-btn active" onclick="drawAbnormal('oscillation')">Case A：剧烈震荡</button>
+            <button class="case-btn" onclick="drawAbnormal('stagnant')">Case B：学习停滞</button>
+            <button class="case-btn" onclick="drawAbnormal('collapse')">Case C：策略坍缩</button>
+            <button class="case-btn" onclick="drawAbnormal('reward_hack')">Case D：Reward Hacking</button>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#60a5fa"></span>pg_loss</div>
+                <canvas id="abnormal_pgloss" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#34d399"></span>reward / score</div>
+                <canvas id="abnormal_reward" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#fbbf24"></span>KL divergence</div>
+                <canvas id="abnormal_kl" height="200"></canvas>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label"><span class="metric-dot" style="background:#f87171"></span>entropy</div>
+                <canvas id="abnormal_entropy" height="200"></canvas>
+            </div>
+        </div>
+        <div id="abnormal-diagnosis"></div>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">2</span> 异常速查表</h2>
+        <table class="styled-table">
+            <tr><th>异常现象</th><th>pg_loss</th><th>reward</th><th>KL/clipfrac</th><th>entropy</th><th>根因</th><th>修复</th></tr>
+            <tr>
+                <td><span class="tag tag-bad">剧烈震荡</span></td>
+                <td>大幅正负波动</td>
+                <td>不稳定</td>
+                <td>KL spike</td>
+                <td>高且不稳定</td>
+                <td>LR 太大 / reward 噪声高</td>
+                <td>降 LR，增大 batch，smooth reward</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-warn">学习停滞</span></td>
+                <td>平缓在 0 附近</td>
+                <td>不上升</td>
+                <td>KL/clipfrac 极低</td>
+                <td>中等不变</td>
+                <td>学习信号太弱 / KL 限制太强</td>
+                <td>增大 LR / KL coef，检查 reward 设计</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-bad">策略坍缩</span></td>
+                <td>下降但 reward 不涨</td>
+                <td>不变或下降</td>
+                <td>KL 正常</td>
+                <td>快速降到极低</td>
+                <td>entropy 系数不够 / 过早收敛</td>
+                <td>增大 entropy coef，early stop</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-bad">Reward Hacking</span></td>
+                <td>巨幅负值</td>
+                <td>暴涨</td>
+                <td>KL/clipfrac 高</td>
+                <td>可能下降</td>
+                <td>模型找到 reward 漏洞</td>
+                <td>检查 reward 设计，加 penalty，人工 inspect</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== TAB 4: Checklist ==================== -->
+<div class="tab-content" id="tab3">
+    <div class="tldr">
+        <strong>TL;DR</strong> 调参不是玄学。按这个检查单逐步排查，大部分问题能在 5 分钟内定位。
+    </div>
+
+    <div class="card">
+        <h2><span class="num">1</span> 训练前：检查清单</h2>
+        <ul class="checklist">
+            <li><span class="icon">☐</span><div><strong>Reward 设计</strong>：reward 信号是否清晰？range 是否合理？有没有明显的 hacking 途径？</div></li>
+            <li><span class="icon">☐</span><div><strong>Baseline（Value Network）</strong>：能否准确预测 return？如果 value loss 不降，advantage 估计就不准。</div></li>
+            <li><span class="icon">☐</span><div><strong>超参初始值</strong>：LR=1e-6 ~ 3e-6，KL coef=0.02~0.05，clip epsilon=0.2，entropy coef=0.01</div></li>
+            <li><span class="icon">☐</span><div><strong>Batch Size</strong>：rollout batch 至少 512+，mini-batch 64~128。太小 → 噪声大；太大 → 内存不够。</div></li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">2</span> 训练中：看什么 + 怎么判</h2>
+        <table class="styled-table">
+            <tr><th>指标组合</th><th>✅ 健康信号</th><th>❌ 危险信号</th></tr>
+            <tr>
+                <td><strong>pg_loss + reward</strong></td>
+                <td>pg_loss 下降趋势 ≈ reward 上升趋势</td>
+                <td>pg_loss 下降但 reward 不涨 → 学到坏策略</td>
+            </tr>
+            <tr>
+                <td><strong>pg_loss + KL</strong></td>
+                <td>两者同步平稳下降</td>
+                <td>KL 突然 spike → 策略一步跳太远</td>
+            </tr>
+            <tr>
+                <td><strong>pg_loss + clipfrac</strong></td>
+                <td>clipfrac 在 5~15%</td>
+                <td>clipfrac > 30% → 大量更新被截 → LR 太大</td>
+            </tr>
+            <tr>
+                <td><strong>entropy</strong></td>
+                <td>缓慢下降到 ~0.5-0.8</td>
+                <td>快速降到 <0.1 → 策略坍缩到少数动作</td>
+            </tr>
+            <tr>
+                <td><strong>value_loss</strong></td>
+                <td>稳步下降 → value 预测越来越准</td>
+                <td>不降或暴涨 → value network 没学到东西</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">3</span> 调参优先级（从高到低）</h2>
+        <table class="styled-table">
+            <tr><th>#</th><th>调什么</th><th>影响</th><th>经验值</th></tr>
+            <tr><td>1</td><td><strong>Learning Rate</strong></td><td>最大。决定每步更新幅度</td><td>1e-6 → 3e-6，震荡就减半，停滞就翻倍</td></tr>
+            <tr><td>2</td><td><strong>KL Coefficient</strong></td><td>约束策略偏移幅度</td><td>0.02~0.1；太低→不稳定，太高→停滞</td></tr>
+            <tr><td>3</td><td><strong>Entropy Coefficient</strong></td><td>控制探索程度</td><td>0.01~0.03；坍缩就增大</td></tr>
+            <tr><td>4</td><td><strong>Clip Epsilon</strong></td><td>更新裁剪范围</td><td>通常 0.2，很少调</td></tr>
+            <tr><td>5</td><td><strong>Batch / Mini-batch Size</strong></td><td>梯度估计质量</td><td>batch=512~2048, mini=64~128</td></tr>
+            <tr><td>6</td><td><strong>GAE λ</strong></td><td>advantage 的 bias-variance</td><td>0.95（少调）</td></tr>
+            <tr><td>7</td><td><strong>γ (discount)</strong></td><td>对未来回报的重视程度</td><td>0.99（少调）</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><span class="num">4</span> 常见调参场景</h2>
+
+        <h3>场景 A：「pg_loss 震荡 + KL 爆了」</h3>
+        <div class="formula-box">
+            <span class="comment"># 诊断：更新太激进</span>
+            <br><strong>操作</strong>：LR × 0.5 → 观察 50 steps
+            <br><span class="comment"># 如果 KL 仍高 → KL coef × 2.0</span>
+            <br><span class="comment"># 如果 clipfrac > 30% → LR 再减半</span>
+        </div>
+
+        <h3>场景 B：「pg_loss 平了 + reward 不涨」</h3>
+        <div class="formula-box">
+            <span class="comment"># 诊断：学习信号太弱或 KL 限制太死</span>
+            <br><strong>操作</strong>：先查 reward 是否有效 → 如果 reward 有梯度但 pg_loss 不动
+            <br>→ KL coef × 0.5 → 释放更新空间
+            <br>→ 或 LR × 2.0 → 加大步长
+            <br><span class="comment"># 如果 entropy 已经很低 → 增大 entropy coef</span>
+        </div>
+
+        <h3>场景 C：「entropy 快速降到 0」</h3>
+        <div class="formula-box">
+            <span class="comment"># 诊断：策略坍缩到少数确定性行为</span>
+            <br><strong>操作</strong>：entropy coef × 3.0
+            <br><span class="comment"># 如果还不行 → 从 checkpoint 重启 + 更大 entropy coef</span>
+            <br><span class="comment"># 检查 reward 是否只奖励少数 action</span>
+        </div>
+
+        <h3>场景 D：「pg_loss 巨幅负 + reward 暴涨」</h3>
+        <div class="formula-box">
+            <span class="comment"># ⚠️ 这看起来像"好事"但很可能是 reward hacking</span>
+            <br><strong>操作</strong>：
+            <br>1. 立即 inspect 生成样本 → 模型是否在刷 reward？
+            <br>2. 检查 reward 函数是否有漏洞（格式 trick、shortcut）
+            <br>3. 加 rule-based penalty 或多维度 reward
+            <br><span class="comment"># Reward hacking 是最隐蔽的 bug，loss 和 reward 都"好看"但模型实际没学到</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// ====== Tab Switching ======
+function switchTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+    if (idx === 1) drawNormal('typical');
+    if (idx === 2) drawAbnormal('oscillation');
+}
+
+// ====== Chart Drawing ======
+function drawLine(canvasId, data, color, opts = {}) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 200 * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '200px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = 200;
+    const pad = { top: 10, right: 12, bottom: 22, left: 44 };
+    const pw = W - pad.left - pad.right, ph = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // compute range
+    let minV = opts.min !== undefined ? opts.min : Math.min(...data);
+    let maxV = opts.max !== undefined ? opts.max : Math.max(...data);
+    if (maxV === minV) { maxV += 1; minV -= 1; }
+    const rangeV = maxV - minV;
+
+    // grid
+    ctx.strokeStyle = 'rgba(100,116,139,0.12)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = pad.top + (ph * i / 4);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + pw, y); ctx.stroke();
+        const val = maxV - (rangeV * i / 4);
+        ctx.fillStyle = '#64748b'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+        ctx.fillText(val.toFixed(2), pad.left - 4, y + 3);
+    }
+
+    // zero line
+    if (minV < 0 && maxV > 0) {
+        const zy = pad.top + ((maxV - 0) / rangeV) * ph;
+        ctx.strokeStyle = 'rgba(100,116,139,0.3)'; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(pad.left, zy); ctx.lineTo(pad.left + pw, zy); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // line
+    ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    data.forEach((v, i) => {
+        const x = pad.left + (i / (data.length - 1)) * pw;
+        const y = pad.top + ((maxV - v) / rangeV) * ph;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // x-axis label
+    ctx.fillStyle = '#64748b'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('training steps', pad.left + pw / 2, H - 2);
+}
+
+// ====== Data Generators ======
+function genNormalData(type) {
+    const N = 200;
+    const pgloss = [], reward = [], kl = [], entropy = [];
+
+    for (let i = 0; i < N; i++) {
+        const t = i / N;
+        let p, r, k, e;
+        if (type === 'typical') {
+            p = -0.8 * Math.exp(-3*t) * Math.cos(i*0.3) + 0.1 * (Math.random()-0.5) + 0.05 * (1-t);
+            r = 0.3 + 0.6 * (1 - Math.exp(-4*t)) + 0.05 * (Math.random()-0.5);
+            k = 0.08 * Math.exp(-2*t) + 0.01 + 0.005 * Math.random();
+            e = 1.5 - 0.7 * t + 0.05 * Math.sin(i*0.2) + 0.02 * Math.random();
+        } else if (type === 'slow') {
+            p = -0.4 * Math.exp(-1.5*t) * Math.cos(i*0.15) + 0.08 * (Math.random()-0.5) + 0.1 * (1-t);
+            r = 0.3 + 0.4 * (1 - Math.exp(-2*t)) + 0.03 * (Math.random()-0.5);
+            k = 0.03 * Math.exp(-1*t) + 0.005 + 0.003 * Math.random();
+            e = 1.5 - 0.4 * t + 0.03 * Math.random();
+        } else { // fast
+            p = -1.2 * Math.exp(-5*t) * Math.cos(i*0.5) + 0.2 * (Math.random()-0.5) + 0.02;
+            r = 0.3 + 0.7 * (1 - Math.exp(-6*t)) + 0.06 * (Math.random()-0.5);
+            k = 0.12 * Math.exp(-3*t) + 0.02 + 0.008 * Math.random();
+            e = 1.6 - 0.9 * t + 0.04 * Math.random();
+        }
+        pgloss.push(p); reward.push(r); kl.push(k); entropy.push(e);
+    }
+    return { pgloss, reward, kl, entropy };
+}
+
+function genAbnormalData(type) {
+    const N = 200;
+    const pgloss = [], reward = [], kl = [], entropy = [];
+
+    for (let i = 0; i < N; i++) {
+        const t = i / N;
+        let p, r, k, e;
+        if (type === 'oscillation') {
+            p = 1.5 * Math.sin(i*0.4) * Math.exp(-0.3*t) + 0.8 * (Math.random()-0.5);
+            r = 0.4 + 0.1 * Math.sin(i*0.15) + 0.15 * (Math.random()-0.5);
+            k = 0.1 + 0.15 * Math.abs(Math.sin(i*0.3)) + 0.02 * Math.random();
+            e = 1.4 + 0.3 * Math.sin(i*0.2) + 0.05 * Math.random();
+        } else if (type === 'stagnant') {
+            p = 0.02 * (Math.random()-0.5);
+            r = 0.35 + 0.02 * (Math.random()-0.5);
+            k = 0.002 + 0.001 * Math.random();
+            e = 1.0 + 0.01 * (Math.random()-0.5);
+        } else if (type === 'collapse') {
+            p = -0.3 - 0.2*t + 0.05 * (Math.random()-0.5);
+            r = 0.4 + 0.02 * (Math.random()-0.5);
+            k = 0.03 * Math.exp(-t) + 0.005;
+            e = 1.4 * Math.exp(-6*t) + 0.02;
+        } else { // reward_hack
+            if (t < 0.3) {
+                p = -0.5 * t + 0.1 * (Math.random()-0.5);
+                r = 0.35 + 0.1*t + 0.03 * Math.random();
+                k = 0.03 + 0.01 * Math.random();
+                e = 1.4 - 0.3*t;
+            } else {
+                p = -1.5 - 2.0*(t-0.3) + 0.3 * (Math.random()-0.5);
+                r = 0.45 + 3.0*(t-0.3) + 0.1 * Math.random();
+                k = 0.05 + 0.3*(t-0.3) + 0.02 * Math.random();
+                e = 1.3 - 1.0*(t-0.3);
+            }
+        }
+        pgloss.push(p); reward.push(r); kl.push(Math.max(0, k)); entropy.push(Math.max(0.01, e));
+    }
+    return { pgloss, reward, kl, entropy };
+}
+
+// ====== Draw Functions ======
+function drawNormal(type) {
+    document.querySelectorAll('#tab1 .case-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const d = genNormalData(type);
+    drawLine('normal_pgloss', d.pgloss, '#60a5fa', { min: -1.5, max: 0.8 });
+    drawLine('normal_reward', d.reward, '#34d399', { min: 0, max: 1.2 });
+    drawLine('normal_kl', d.kl, '#fbbf24', { min: 0, max: 0.15 });
+    drawLine('normal_entropy', d.entropy, '#f87171', { min: 0, max: 2.0 });
+
+    const diag = document.getElementById('normal-diagnosis');
+    const info = {
+        typical: { cls: 'diagnosis-healthy', title: '✅ 典型正常训练', color: '#34d399',
+            items: ['pg_loss 初期大幅波动 → 中期收敛 → 后期稳定', 'reward 持续上升，与 pg_loss 下降对齐', 'KL 从高到低，控制在合理范围', 'entropy 缓慢下降，未过早坍缩'] },
+        slow: { cls: 'diagnosis-healthy', title: '⚠️ 慢收敛（小 LR）', color: '#fbbf24',
+            items: ['pg_loss 波动幅度小，收敛慢', 'reward 缓慢上升但速度慢', 'KL 始终较低 → 更新保守', '建议：适当增大 LR 或减小 KL coef'] },
+        fast: { cls: 'diagnosis-unstable', title: '⚡ 快收敛（大 LR）— 需关注', color: '#f87171',
+            items: ['pg_loss 初期波动很大，快速下降', 'reward 快速上升但后期波动', 'KL 前期较高 → 有不稳定风险', 'entropy 下降较快 → 注意是否过早收敛'] },
+    }[type];
+    diag.className = 'diagnosis ' + info.cls;
+    diag.innerHTML = `<h4 style="color:${info.color}">${info.title}</h4><ul>${info.items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
+}
+
+function drawAbnormal(type) {
+    document.querySelectorAll('#tab2 .case-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const d = genAbnormalData(type);
+    drawLine('abnormal_pgloss', d.pgloss, '#60a5fa', { min: -3, max: 2 });
+    drawLine('abnormal_reward', d.reward, '#34d399', { min: 0, max: 4 });
+    drawLine('abnormal_kl', d.kl, '#fbbf24', { min: 0, max: 0.4 });
+    drawLine('abnormal_entropy', d.entropy, '#f87171', { min: 0, max: 2 });
+
+    const diag = document.getElementById('abnormal-diagnosis');
+    const info = {
+        oscillation: { cls: 'diagnosis-unstable', title: '❌ Case A：剧烈震荡', color: '#f87171',
+            items: ['<strong>pg_loss</strong>：在 [-1.5, 1.5] 之间持续大幅震荡，无收敛趋势', '<strong>reward</strong>：在 0.3~0.5 之间波动，无上升', '<strong>KL</strong>：持续高位（0.1~0.25）→ 策略每步都在大幅偏移', '<strong>entropy</strong>：高且波动 → 策略完全不稳定', '<strong>根因</strong>：LR 太大，或 reward 信号噪声太高', '<strong>修复</strong>：LR × 0.5，增大 batch size，检查 reward 是否需要 normalize'] },
+        stagnant: { cls: 'diagnosis-stagnant', title: '⚠️ Case B：学习停滞', color: '#fbbf24',
+            items: ['<strong>pg_loss</strong>：在 0 附近 ±0.02 微弱波动，几乎不动', '<strong>reward</strong>：卡在 0.35，完全不涨', '<strong>KL</strong>：极低（~0.002）→ 策略几乎没在更新', '<strong>entropy</strong>：稳定在 1.0 → 策略保持随机但没学到东西', '<strong>根因</strong>：KL 限制太死 / LR 太小 / reward 信号太弱', '<strong>修复</strong>：LR × 2，KL coef × 0.5，检查 reward 设计是否有效'] },
+        collapse: { cls: 'diagnosis-unstable', title: '❌ Case C：策略坍缩', color: '#f87171',
+            items: ['<strong>pg_loss</strong>：持续下降（看起来"好"）', '<strong>reward</strong>：不涨！说明模型没在学到更好的策略', '<strong>KL</strong>：低 → 策略收敛了但不是往好的方向', '<strong>entropy</strong>：从 1.4 快速降到接近 0 → 策略坍缩到确定性行为', '<strong>根因</strong>：entropy 系数不够，策略过早收敛到次优解', '<strong>修复</strong>：增大 entropy coef（×3），从较早 checkpoint 重启'] },
+        reward_hack: { cls: 'diagnosis-aggressive', title: '🚨 Case D：Reward Hacking（最危险）', color: '#f87171',
+            items: ['<strong>pg_loss</strong>：前 30% 正常，之后巨幅负值（-3 以下）', '<strong>reward</strong>：同步暴涨到 3+ → 表面看"训练成功"', '<strong>KL</strong>：同步飙升 → 策略在剧烈变化', '<strong>entropy</strong>：快速下降 → 策略锁定到特定行为', '<strong>根因</strong>：模型找到了 reward 函数的漏洞，不是真的学到了好策略', '<strong>修复</strong>：立即停训练！inspect 生成样本，修复 reward 设计，加多维度评估'] },
+    }[type];
+    diag.className = 'diagnosis ' + info.cls;
+    diag.innerHTML = `<h4 style="color:${info.color}">${info.title}</h4><ul>${info.items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
+}
+
+// ====== Init ======
+window.addEventListener('load', () => {
+    // Tab 1 doesn't need charts
+});
+window.addEventListener('resize', () => {
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab.id === 'tab1') {
+        const activeBtn = document.querySelector('#tab1 .case-btn.active');
+        if (activeBtn) activeBtn.click();
+    }
+    if (activeTab.id === 'tab2') {
+        const activeBtn = document.querySelector('#tab2 .case-btn.active');
+        if (activeBtn) activeBtn.click();
+    }
+});
+</script>
+
+</body>
+</html>
