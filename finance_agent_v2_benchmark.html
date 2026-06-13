@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Finance Agent v2 benchmark 交互式报告：官方信息、公开题浏览、rubric、harness 实验进展">
+  <meta name="description" content="Finance Agent v2 benchmark 交互式报告：官方信息、公开题浏览、rubric、harness 实验进展、研究计划与当前卡点">
   <title>Finance Agent v2 Benchmark 交互报告</title>
-  <!-- index: Finance Agent v2 Benchmark 交互报告 | 2026-06-13 | 官方 SOTA、benchmark 方法、27 道 public 题与 rubric、ModelHub harness 实验进展 -->
+  <!-- index: Finance Agent v2 Benchmark 交互报告 | 2026-06-13 | 官方 SOTA、benchmark 方法、27 道 public 题与 rubric、ModelHub harness 实验进展、计划与卡点 -->
   <style>
     :root {
       --bg: #f7f5ef;
@@ -97,6 +97,7 @@
       <div class="hero-actions">
         <a class="button primary" href="#questions">查看 27 道题</a>
         <a class="button" href="#progress">看当前实验进展</a>
+        <a class="button" href="#status">研究看板</a>
         <a class="button" href="https://www.vals.ai/benchmarks/fabv2">官方榜单来源</a>
       </div>
     </div>
@@ -107,6 +108,7 @@
       <a href="#leaderboard">官方公开榜</a>
       <a href="#method">评分与难点</a>
       <a href="#progress">我们的 harness</a>
+      <a href="#status">研究看板</a>
       <a href="#questions">题库浏览器</a>
       <a href="#next">下一步</a>
     </nav>
@@ -183,6 +185,83 @@
             <tr><td>q020</td><td>Earnings</td><td>6/6</td><td>BROS capex guidance intensity vs actual</td><td>runs/q020-bros-capex-smoke</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section id="status">
+      <div class="section-head">
+        <h2>研究看板：计划、现况、指标、卡点</h2>
+        <p class="subtle">状态时间：2026-06-13 13:40，本节用于跟踪“达到官方 SOTA”这个真实目标。</p>
+      </div>
+      <div class="grid metrics">
+        <div class="card"><div class="metric-value">57.86%</div><div class="metric-label">官方公开 SOTA 目标线：Gemini 3.5 Flash</div></div>
+        <div class="card"><div class="metric-value">6 / 27</div><div class="metric-label">public 题已完成 full-smoke 且 public analyzer 全覆盖</div></div>
+        <div class="card"><div class="metric-value">49 / 239</div><div class="metric-label">已验证 public rubric criteria 覆盖数</div></div>
+        <div class="card"><div class="metric-value">70 OK</div><div class="metric-label">harness 单测；ruff 与 basedpyright 也全绿</div></div>
+      </div>
+
+      <div class="grid two" style="margin-top:14px">
+        <div class="card">
+          <h3>当前研究现况</h3>
+          <table>
+            <thead><tr><th>模块</th><th>状态</th><th>证据 / 备注</th></tr></thead>
+            <tbody>
+              <tr><td>ModelHub API</td><td><span class="pill good">可跑</span></td><td>已用 <code>modelhub/glm-5.1</code> 跑 public smoke。</td></tr>
+              <tr><td>SEC-first retrieval</td><td><span class="pill good">已接入</span></td><td>filings、documents、company facts、tables、reconciliation summary。</td></tr>
+              <tr><td>确定性计算</td><td><span class="pill good">已接入</span></td><td>CAGR、DIO、FCCR、midpoint、bps、DCF、LBO 等。</td></tr>
+              <tr><td>公开题验证</td><td><span class="pill hot">进行中</span></td><td>已重点覆盖 General Quant、Comparables、Adjustments、Earnings 的高风险样例。</td></tr>
+              <tr><td>官方隐藏集</td><td><span class="pill hot">未验证</span></td><td>缺 <code>VALS_API_KEY</code>，还不能证明 SOTA。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>当前指标怎么读</h3>
+          <p>现在的 6/27 public smoke 不是 leaderboard 分数，而是 harness 健康度信号：我们把最容易出错的财务口径变成了工具和 checklist，并在对应公开题上拿到 100% rubric 覆盖。真正指标仍然是官方 hidden Test accuracy。</p>
+          <div class="callout warning" style="margin-top:12px">
+            <strong>不能提前宣称 SOTA：</strong>公开题样例通过只说明路径有效，不代表 450 道 hidden Test 上超过 57.86%。页面里的“当前指标”用于决策下一步，不用于对外排名。
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top:14px">
+        <div class="card">
+          <h3>执行计划</h3>
+          <table>
+            <thead><tr><th>阶段</th><th>目标</th><th>下一步动作</th></tr></thead>
+            <tbody>
+              <tr><td>Phase 1</td><td>把 public split 中未覆盖题型跑出失败样本</td><td>优先 q007/q008 Market、q013 Precedents、q022 Disclosure、q025/q026/q027 Modeling。</td></tr>
+              <tr><td>Phase 2</td><td>把失败转成 harness 能力</td><td>价格数据、交易公告材料、PPA/impairment 表格、DCF/LBO 输入抽取逐项工具化。</td></tr>
+              <tr><td>Phase 3</td><td>跑 balanced public 和 private validation</td><td>有官方 key 后用固定 seed / temperature=0 做整批评估并生成 error taxonomy。</td></tr>
+              <tr><td>Phase 4</td><td>冲官方 SOTA</td><td>在 validation 明显超过 57.86% 后再提交 hidden Test。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>当前卡点</h3>
+          <table>
+            <thead><tr><th>卡点</th><th>影响</th><th>解除方式</th></tr></thead>
+            <tbody>
+              <tr><td>无 <code>VALS_API_KEY</code></td><td>不能跑官方 validation/test，无法证明 SOTA。</td><td>配置 key 后跑完整 Vals evaluation。</td></tr>
+              <tr><td>价格数据 key 缺失</td><td>Market/Precedents 对历史股价依赖强，Yahoo fallback 不够稳。</td><td>配置 Tiingo 或 pricing provider key；同时保留 raw close 规则。</td></tr>
+              <tr><td>未覆盖题型仍多</td><td>Financial Modeling、Precedents、Disclosure 可能藏着最大丢分。</td><td>按题型逐个 smoke，失败就补工具和 tests。</td></tr>
+              <tr><td>模型偶发长回合 / hang</td><td>整批跑分成本和稳定性受影响。</td><td>继续减少无效 web_search、增加 task-specific checklist 和 deterministic tools。</td></tr>
+              <tr><td>aiohttp session warning</td><td>当前不影响答案，但说明工具生命周期还有清理债务。</td><td>统一 client/session 管理或显式 close。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h3>下一批优先题</h3>
+        <div class="pill-row">
+          <span class="pill hot">q007 SUI CEO transition + event-window raw close</span>
+          <span class="pill hot">q008 DKNG/FLUT/WYNN/LVS price return + revenue growth rank</span>
+          <span class="pill hot">q013 GTLS/BKR precedent premium and pro forma math</span>
+          <span class="pill hot">q022 PFE Seagen PPA and impairment table</span>
+          <span class="pill hot">q025 CRM DCF</span>
+          <span class="pill hot">q026 EPAM LBO</span>
+          <span class="pill hot">q027 LMT DCF method comparison</span>
+        </div>
       </div>
     </section>
 
