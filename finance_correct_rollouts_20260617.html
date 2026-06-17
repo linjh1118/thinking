@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Finance Agent 正确 rollout 中文讲解：逐题解释 13 道 judge 100% 的非 hack trace、金融概念和解题路径。">
+  <title>Finance Agent Correct Rollouts Walkthrough</title>
+  <!-- index: Finance Agent 正确 Rollout 中文讲解 | 2026-06-17 | 13 道 judge 100% 金融题的非 hack trace、概念解释与解题路径 -->
+  <style>
+    :root { --bg:#f6f7f4; --paper:#fff; --ink:#182230; --muted:#667085; --line:#d7dde5; --navy:#123044; --green:#0f766e; --gold:#b7791f; --blue:#2457a7; --soft-green:#e8f5f2; --soft-blue:#edf4ff; --soft-gold:#fff7e8; --shadow:0 18px 48px rgba(18,48,68,.12); }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); line-height:1.62; }
+    a { color:var(--blue); text-decoration:none; } a:hover { text-decoration:underline; }
+    .hero { background:linear-gradient(135deg,#123044 0%,#184d47 55%,#4c3f23 100%); color:white; } .hero-inner { width:min(1180px,calc(100% - 36px)); margin:0 auto; padding:38px 0 30px; }
+    .kicker { display:inline-flex; border:1px solid rgba(255,255,255,.36); border-radius:999px; padding:6px 10px; color:rgba(255,255,255,.88); background:rgba(255,255,255,.12); font-size:13px; }
+    h1 { max-width:980px; margin:16px 0 12px; font-size:clamp(30px,4.6vw,58px); line-height:1.05; letter-spacing:0; } .hero p { max-width:900px; margin:0; font-size:clamp(15px,1.5vw,18px); color:rgba(255,255,255,.88); }
+    .toolbar { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; } .button { display:inline-flex; min-height:40px; align-items:center; justify-content:center; border-radius:7px; border:1px solid rgba(255,255,255,.36); padding:9px 13px; color:white; background:rgba(255,255,255,.12); font-weight:680; } .button:hover { text-decoration:none; background:rgba(255,255,255,.2); }
+    main { width:min(1180px,calc(100% - 36px)); margin:0 auto; padding:28px 0 76px; } .layout { display:grid; grid-template-columns:280px minmax(0,1fr); gap:22px; align-items:start; } .side { position:sticky; top:14px; display:grid; gap:12px; }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:15px; box-shadow:0 1px 0 rgba(18,48,68,.04); } .search { width:100%; min-height:42px; padding:10px 12px; border:1px solid var(--line); border-radius:7px; font-size:14px; }
+    .nav-list { display:grid; gap:5px; max-height:calc(100vh - 170px); overflow:auto; } .nav-list a { padding:7px 8px; border-radius:6px; color:var(--ink); font-size:13px; } .nav-list a:hover { background:var(--soft-blue); text-decoration:none; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; } .metric { background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:15px; } .metric-value { font-size:34px; line-height:1; font-weight:850; color:var(--green); } .metric-label { margin-top:7px; font-size:13px; color:var(--muted); font-weight:720; } .metric p { margin:8px 0 0; color:var(--muted); font-size:13px; }
+    .pipeline { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:16px 0 18px; } .pipe-step { background:var(--soft-blue); border:1px solid #c8dcfb; border-radius:8px; padding:12px; min-height:88px; } .pipe-step strong { display:block; color:var(--navy); margin-bottom:5px; }
+    article { background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:clamp(18px,3vw,30px); box-shadow:var(--shadow); } article h2 { margin:36px 0 10px; padding-top:8px; font-size:clamp(22px,2.6vw,34px); line-height:1.16; letter-spacing:0; color:var(--navy); } article h2:first-child { margin-top:0; } article h3 { margin:22px 0 8px; font-size:18px; color:#24364b; } article p { margin:10px 0; } article ul,article ol { padding-left:22px; } article li { margin:5px 0; }
+    .walkthrough-section { border-top:1px solid var(--line); margin-top:28px; padding-top:8px; } .walkthrough-section:first-of-type { border-top:0; }
+    .data-table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14px; } .data-table th,.data-table td { text-align:left; border-bottom:1px solid var(--line); padding:9px 10px; vertical-align:top; } .data-table th { background:#eef2f6; color:#475467; font-size:12px; text-transform:uppercase; letter-spacing:.03em; }
+    .code-block { background:#101828; color:#e6edf6; border-radius:8px; padding:13px 14px; overflow-x:auto; font-size:13px; } code { background:#eef2f6; padding:1px 5px; border-radius:5px; } pre code { background:transparent; padding:0; }
+    .insight { border-left:4px solid var(--gold); background:var(--soft-gold); border-radius:8px; padding:12px 14px; margin:18px 0; } .insight strong { display:block; margin-bottom:6px; color:#8a4b00; } .note { border-left:4px solid var(--green); background:var(--soft-green); border-radius:8px; padding:13px 15px; margin-bottom:18px; } .overview-table { margin-bottom:20px; } .hidden { display:none!important; } footer { color:var(--muted); font-size:13px; margin-top:24px; padding-top:18px; border-top:1px solid var(--line); }
+    @media (max-width:980px) { .layout,.metrics,.pipeline { grid-template-columns:1fr; } .side { position:static; } }
+  </style>
+</head>
+<body>
+  <header class="hero"><div class="hero-inner"><span class="kicker">Finance Agent · non-hack rollout walkthrough</span><h1>Finance Agent 正确 Rollout 中文讲解</h1><p>面向金融小白，逐题拆解 13 道 judge 100% 的金融题：题目真正问什么、模型 trace 如何正常检索和计算、每个金融概念怎么理解。</p><div class="toolbar"><a class="button" href="#what-i-counted-as-actually-correct">筛选标准</a><a class="button" href="#question-map">13 题速览</a><a class="button" href="#q004-crwd-vs-panw-two-year-revenue-cagr">先看 CAGR 示例</a><a class="button" href="#q013-baker-hughes-buying-chart-industries">先看 M&A 示例</a></div></div></header>
+  <main><div class="metrics"><div class="metric"><div class="metric-value">13</div><div class="metric-label">judge 100% questions</div><p>Only full-rubric correct examples are included.</p></div>
+<div class="metric"><div class="metric-value">0</div><div class="metric-label">fast-path tools</div><p>No public answer shortcut appears in selected traces.</p></div>
+<div class="metric"><div class="metric-value">7</div><div class="metric-label">finance task families</div><p>Qualitative, quantitative, comps, M&amp;A, adjustments, earnings, disclosure.</p></div>
+<div class="metric"><div class="metric-value">1</div><div class="metric-label">source run</div><p>runs/exp1_full27_round1</p></div></div><div class="panel overview-table" id="question-map"><h2 style="margin-top:0">13 题速览</h2><table class="data-table"><thead><tr><th>题号</th><th>主题</th><th>你会学到什么</th></tr></thead><tbody><tr><td><a href="#q002-marriott-vs-wyndham-loyalty-programs">q002</a></td><td>MAR vs. WH loyalty</td><td>Loyalty penetration and funding model</td></tr>
+<tr><td><a href="#q003-ea-vs-take-two-competitors">q003</a></td><td>EA vs. TTWO competitors</td><td>Disclosure depth and competitive landscape</td></tr>
+<tr><td><a href="#q004-crwd-vs-panw-two-year-revenue-cagr">q004</a></td><td>CRWD vs. PANW CAGR</td><td>Two-year revenue CAGR and basis points</td></tr>
+<tr><td><a href="#q006-home-depot-vs-lowe-s-inventory-efficiency">q006</a></td><td>HD vs. LOW DIO</td><td>Inventory efficiency and fiscal-day handling</td></tr>
+<tr><td><a href="#q011-target-vs-walmart-fixed-charge-coverage">q011</a></td><td>TGT vs. WMT FCCR</td><td>Fixed charge coverage with lease nuance</td></tr>
+<tr><td><a href="#q013-baker-hughes-buying-chart-industries">q013</a></td><td>BKR / GTLS deal</td><td>Premium, mix shift, synergy sizing</td></tr>
+<tr><td><a href="#q014-ionq-buying-skywater">q014</a></td><td>IONQ / SKYT deal</td><td>Transaction multiples and strategic premium</td></tr>
+<tr><td><a href="#q015-pfizer-buying-seagen">q015</a></td><td>PFE / SGEN deal</td><td>Equity value, EV, EV/revenue</td></tr>
+<tr><td><a href="#q017-kraft-heinz-adjusted-ebitda-and-cash-adjusted-margin">q017</a></td><td>KHC adjusted EBITDA</td><td>GAAP-to-non-GAAP bridge and cash adjustment</td></tr>
+<tr><td><a href="#q019-vse-2026-guidance-implied-revenue-and-ebitda">q019</a></td><td>VSEC guidance</td><td>Midpoint guidance and EBITDA margin bps</td></tr>
+<tr><td><a href="#q020-dutch-bros-capex-intensity">q020</a></td><td>BROS capex intensity</td><td>Guided versus actual reinvestment intensity</td></tr>
+<tr><td><a href="#q021-dutch-bros-vs-cava-store-opening-guidance">q021</a></td><td>BROS vs. CAVA openings</td><td>Beat/miss versus guidance conservatism</td></tr>
+<tr><td><a href="#q023-intel-2024-restructuring-plan">q023</a></td><td>INTC restructuring</td><td>Plan-only cost versus broad restructuring line</td></tr></tbody></table></div><div class="panel"><h2 style="margin-top:0">非 hack trace 的可审计路径</h2><div class="pipeline"><div class="pipe-step"><strong>1. 找来源</strong>SEC filing、8-K 展示材料、10-K/10-Q、公司 facts。</div><div class="pipe-step"><strong>2. 定口径</strong>确认 FY、表格行、lease 组件、guidance midpoint 等。</div><div class="pipe-step"><strong>3. 抽数字</strong>从主文、脚注、reconciliation 或 XBRL facts 提取。</div><div class="pipe-step"><strong>4. 算公式</strong>CAGR、margin、EV、coverage、beat/miss、bps。</div><div class="pipe-step"><strong>5. 对 rubric</strong>每个 required field 都能回溯到来源或公式。</div></div></div><div class="layout" style="margin-top:18px"><aside class="side"><div class="panel"><input class="search" id="search" placeholder="搜索 ticker / 概念 / 题号" aria-label="Search report"></div><div class="panel"><strong>快速跳转</strong><nav class="nav-list" id="toc"></nav></div></aside><article id="article"><div class="note">这页来自本地 run artifact：<code>runs/exp1_full27_round1</code>。我按 judge 100% coverage 筛选，排除了仅仅提交成功但 rubric 没全中的题，也没有使用 public fast-path sanity run。</div><p>Source run: <code>runs/exp1_full27_round1</code></p>
+<p>This note explains the questions that the judge marked as fully correct
+(<code>overall_coverage = 100%</code>) in the Stage 1 full-27 run. I intentionally do
+not use the deterministic <code>public-fast-path</code> sanity run, and I exclude
+questions that were merely submitted successfully but were not fully covered by
+the judge rubric.</p>
+<h2 id="what-i-counted-as-actually-correct">What I Counted as "Actually Correct"</h2>
+<p>I used <code>runs/exp1_full27_round1/judge_results.json</code> and kept only questions
+where every rubric criterion was covered. This yields 13 questions:</p>
+<table class="data-table">
+<thead>
+<tr>
+<th>Question</th>
+<th>Type</th>
+<th>Tool-call pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>q002</td>
+<td>General qualitative analysis</td>
+<td>SEC filings, page parsing, filing search</td>
+</tr>
+<tr>
+<td>q003</td>
+<td>General qualitative analysis</td>
+<td>SEC filings, page parsing, filing search</td>
+</tr>
+<tr>
+<td>q004</td>
+<td>General quantitative analysis</td>
+<td>SEC XBRL company facts, finance calculator</td>
+</tr>
+<tr>
+<td>q006</td>
+<td>General quantitative analysis</td>
+<td>SEC XBRL company facts, filings, finance calculator</td>
+</tr>
+<tr>
+<td>q011</td>
+<td>Comparables</td>
+<td>SEC company facts, filing tables, calculator</td>
+</tr>
+<tr>
+<td>q013</td>
+<td>Precedents / M&amp;A</td>
+<td>Web + SEC filings/exhibits, price data, calculator</td>
+</tr>
+<tr>
+<td>q014</td>
+<td>Precedents / M&amp;A</td>
+<td>Web + SEC filings/exhibits, calculator</td>
+</tr>
+<tr>
+<td>q015</td>
+<td>Precedents / M&amp;A</td>
+<td>SEC filings, EDGAR search, calculator</td>
+</tr>
+<tr>
+<td>q017</td>
+<td>Adjustments</td>
+<td>8-K exhibit, filing search, calculator</td>
+</tr>
+<tr>
+<td>q019</td>
+<td>Earnings analysis</td>
+<td>8-K exhibits, guidance midpoint math</td>
+</tr>
+<tr>
+<td>q020</td>
+<td>Earnings analysis</td>
+<td>8-K exhibits, SEC facts, capex intensity math</td>
+</tr>
+<tr>
+<td>q021</td>
+<td>Earnings analysis</td>
+<td>8-K exhibits, guidance-vs-actual calculations</td>
+</tr>
+<tr>
+<td>q023</td>
+<td>Disclosure analysis</td>
+<td>10-K / 10-Q disclosures, restructuring roll-forward math</td>
+</tr>
+</tbody>
+</table>
+<p>No selected question used <code>public_benchmark_hunt</code>, <code>adjusted_ebitdar_hunt</code>, or a
+fast-path public answer tool. The traces show ordinary research and calculation
+behavior: find primary filings, parse relevant sections/tables, extract values,
+calculate, then submit.</p>
+<div class="insight"><strong>Insight</strong><ul><li>In this benchmark, `success=true` means the agent submitted an answer; it does not mean the answer is correct.</li><li>The judge rubric is the better correctness signal because it checks each required fact/calculation separately.</li><li>A non-hack rollout should leave a paper trail: filings opened, tables searched, values extracted, calculations performed.</li></ul></div>
+<section class="walkthrough-section" data-title="q002 - Marriott vs. Wyndham Loyalty Programs"><h2 id="q002-marriott-vs-wyndham-loyalty-programs">q002 - Marriott vs. Wyndham Loyalty Programs</h2>
+<h3 id="what-the-question-asks">What the question asks</h3>
+<p>This is not asking "which hotel company is better" in general. It asks how much
+customer demand flows through each loyalty program and how each loyalty program
+is funded. Then it asks which program is more likely to become a durable
+economic advantage.</p>
+<h3 id="rollout-in-plain-english">Rollout, in plain English</h3>
+<p>The model looked up the FY2025 10-K filings for Marriott (<code>MAR</code>) and Wyndham
+(<code>WH</code>), parsed the filings, searched inside them for loyalty-program language,
+and pulled out the exact operating metrics:</p>
+<ul>
+<li>Marriott: about 75% of U.S. hotel room nights and about 68% of global room
+  nights were booked by loyalty members.</li>
+<li>Wyndham: over 53% of U.S. check-ins and over 37% of global check-ins came
+  from Wyndham Rewards members.</li>
+<li>Marriott's loyalty program is funded partly by hotel/franchisee
+  reimbursements and significantly by co-branded credit-card agreements.</li>
+<li>Wyndham Rewards is funded by contributions from eligible revenues generated
+  by loyalty members and collected from hotels in the system.</li>
+</ul>
+<h3 id="beginner-finance-interpretation">Beginner finance interpretation</h3>
+<p>A loyalty program is valuable because it can reduce dependence on online travel
+agencies, increase direct bookings, improve customer data, and make customers
+more likely to stay inside the brand family. Marriott wins this comparison
+because it has higher penetration and a more monetizable funding model.</p>
+<p>The credit-card piece matters a lot. A hotel loyalty program funded by
+co-branded card economics can become a standalone profit engine, not only a
+marketing expense. Wyndham's program is still valuable, but the disclosed
+funding mechanism is more like a hotel-system contribution pool.</p>
+</section><section class="walkthrough-section" data-title="q003 - EA vs. Take-Two Competitors"><h2 id="q003-ea-vs-take-two-competitors">q003 - EA vs. Take-Two Competitors</h2>
+<h3 id="what-the-question-asks-2">What the question asks</h3>
+<p>This is a disclosure-comparison question. It asks who EA and Take-Two say they
+compete with, including both direct gaming competitors and non-gaming
+entertainment competitors.</p>
+<h3 id="rollout-in-plain-english-2">Rollout, in plain English</h3>
+<p>The model found both companies' FY2025 10-K filings, parsed the business
+sections, and searched for "competition" disclosures. It noticed an important
+difference:</p>
+<ul>
+<li>EA describes competitors generically: console, PC, mobile game companies,
+  large diversified companies, new entrants, and other entertainment options
+  such as movies, TV, social media, casual entertainment, and music.</li>
+<li>Take-Two names specific competitors: EA, Embracer, Playrix, Playtika, Roblox,
+  Savvy Games, Tencent, Ubisoft, and platform holders such as Sony, Microsoft,
+  and Nintendo. It also names non-interactive entertainment such as motion
+  pictures, TV, social networking, online apps, and short-form video.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-2">Beginner finance interpretation</h3>
+<p>For public-company analysis, the level of disclosure can matter. A more
+detailed competitor list can help investors understand where the company thinks
+the real strategic pressure is. Here, Take-Two's disclosure is more granular
+because it names direct competitors and categorizes competitive threats.</p>
+</section><section class="walkthrough-section" data-title="q004 - CRWD vs. PANW Two-Year Revenue CAGR"><h2 id="q004-crwd-vs-panw-two-year-revenue-cagr">q004 - CRWD vs. PANW Two-Year Revenue CAGR</h2>
+<h3 id="what-the-question-asks-3">What the question asks</h3>
+<p>This asks which cybersecurity company grew revenue faster from FY2023 to FY2025
+and by how many basis points.</p>
+<h3 id="rollout-in-plain-english-3">Rollout, in plain English</h3>
+<p>The model used SEC XBRL company facts to fetch revenue for CrowdStrike (<code>CRWD</code>)
+and Palo Alto Networks (<code>PANW</code>) for FY2023 and FY2025. Then it used the finance
+calculator for CAGR:</p>
+<pre class="code-block"><code class="language-text">CAGR = (Ending revenue / Beginning revenue)^(1 / number of years) - 1
+</code></pre>
+<p>The values used were:</p>
+<ul>
+<li>CRWD revenue: $2,241.236M in FY2023 to $3,953.624M in FY2025.</li>
+<li>PANW revenue: $6,892.700M in FY2023 to $9,221.500M in FY2025.</li>
+</ul>
+<p>The answer:</p>
+<ul>
+<li>CRWD two-year CAGR: 32.82%.</li>
+<li>PANW two-year CAGR: 15.67%.</li>
+<li>Difference: about 1,715 basis points.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-3">Beginner finance interpretation</h3>
+<p>CAGR is the "smoothed annual growth rate." It answers: if the company grew at
+the same rate each year, what annual rate would turn the starting revenue into
+the ending revenue?</p>
+<p>Basis points are just hundredths of a percent:</p>
+<pre class="code-block"><code class="language-text">1.00% = 100 basis points
+17.15% = 1,715 basis points
+</code></pre>
+<p>CRWD grew much faster, even though PANW had larger absolute revenue.</p>
+</section><section class="walkthrough-section" data-title="q006 - Home Depot vs. Lowe's Inventory Efficiency"><h2 id="q006-home-depot-vs-lowe-s-inventory-efficiency">q006 - Home Depot vs. Lowe's Inventory Efficiency</h2>
+<h3 id="what-the-question-asks-4">What the question asks</h3>
+<p>This asks which retailer turns inventory faster in FY2024. The key metric is
+Days Inventory Outstanding, or DIO.</p>
+<h3 id="rollout-in-plain-english-4">Rollout, in plain English</h3>
+<p>The model gathered each company's cost of sales, beginning inventory, ending
+inventory, and actual fiscal-year day count from filings and XBRL facts. Then it
+calculated:</p>
+<pre class="code-block"><code class="language-text">Average inventory = (Beginning inventory + Ending inventory) / 2
+DIO = Average inventory / Cost of sales * Actual fiscal days
+</code></pre>
+<p>The answer:</p>
+<ul>
+<li>Home Depot: 371 fiscal days, average inventory $22,213.5M, DIO 77.60 days.</li>
+<li>Lowe's: 364 fiscal days, average inventory $17,151.5M, DIO 111.89 days.</li>
+<li>Home Depot turns inventory faster by about 34.29 days.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-4">Beginner finance interpretation</h3>
+<p>DIO means roughly "how many days of inventory is sitting in the business before
+being sold." Lower is usually better because it means less cash is trapped in
+inventory. Home Depot's lower DIO implies it converts inventory into sales much
+faster than Lowe's.</p>
+</section><section class="walkthrough-section" data-title="q011 - Target vs. Walmart Fixed Charge Coverage"><h2 id="q011-target-vs-walmart-fixed-charge-coverage">q011 - Target vs. Walmart Fixed Charge Coverage</h2>
+<h3 id="what-the-question-asks-5">What the question asks</h3>
+<p>This compares Target and Walmart using Fixed Charge Coverage Ratio (FCCR). It
+asks which company has more earnings cushion to cover interest and fixed rent.</p>
+<h3 id="rollout-in-plain-english-5">Rollout, in plain English</h3>
+<p>The model found operating income, depreciation and amortization, interest
+expense, and fixed operating lease cost. It also handled the lease nuance:
+Target's operating lease cost included short-term and variable lease components,
+so those had to be removed; Walmart's $2,347M figure was already the fixed
+operating lease cost.</p>
+<p>Formula:</p>
+<pre class="code-block"><code class="language-text">EBITDAR = Operating income + D&amp;A + Fixed operating lease cost
+Total fixed charges = Interest expense + Fixed operating lease cost
+FCCR = EBITDAR / Total fixed charges
+</code></pre>
+<p>The answer:</p>
+<ul>
+<li>Target EBITDAR: $9,056M; fixed charges: $920M; FCCR: 9.84x.</li>
+<li>Walmart EBITDAR: $44,668M; fixed charges: $4,592M; FCCR: 9.73x.</li>
+<li>Target is slightly stronger by about 0.12x.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-5">Beginner finance interpretation</h3>
+<p>FCCR asks: for every dollar of unavoidable financing-like cost, how many dollars
+of earnings-before-rent-and-D&amp;A does the company generate? Both companies are
+strong here. The interesting part is not that Target is vastly safer; it is
+that Target is slightly better on this specific coverage metric.</p>
+</section><section class="walkthrough-section" data-title="q013 - Baker Hughes Buying Chart Industries"><h2 id="q013-baker-hughes-buying-chart-industries">q013 - Baker Hughes Buying Chart Industries</h2>
+<h3 id="what-the-question-asks-6">What the question asks</h3>
+<p>This is a precedent-transaction analysis. It asks for acquisition premium,
+strategic segment mix impact, cost synergies as percentages of Chart's
+financials, and a short deal-rationale summary.</p>
+<h3 id="rollout-in-plain-english-6">Rollout, in plain English</h3>
+<p>The model used SEC filings, 8-K exhibits, merger proxy material, market price
+data, and calculators. It traced the deal terms to the Baker Hughes/Chart
+announcement materials and used Chart's standalone FY2024 financials.</p>
+<p>Core answer:</p>
+<ul>
+<li>Offer price: $210 per share.</li>
+<li>Chart unaffected close on 7/28/2025: $171.65.</li>
+<li>Premium: $210 / $171.65 - 1 = 22.34%.</li>
+<li>Baker Hughes IET non-oil-and-gas revenue mix moves from about 15% standalone
+  to about 30% combined.</li>
+<li>Run-rate cost synergies: $325M.</li>
+<li>Synergies as percentage of Chart FY2024 revenue: 7.81%.</li>
+<li>Synergies as percentage of Chart FY2024 SG&amp;A: 59.37%.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-6">Beginner finance interpretation</h3>
+<p>In M&amp;A, the premium tells you how much extra the buyer is paying over the
+undisturbed stock price. Synergies are expected cost savings or revenue benefits
+from combining companies. Expressing synergies as a percent of revenue or SG&amp;A
+tests whether the synergy target is small, large, or wildly aggressive.</p>
+<p>Here, the model correctly tied the math to the strategy: Baker Hughes was
+buying Chart to increase exposure to industrial and energy technology markets
+outside traditional oil and gas.</p>
+<div class="insight"><strong>Insight</strong><ul><li>M&amp;A questions often mix three layers: deal terms, market data, and strategic logic.</li><li>A good rollout does not stop at "premium = X"; it verifies the unaffected price date and then explains why the buyer is paying.</li><li>Synergy percentages are a sanity check: $325M sounds abstract, but nearly 60% of SG&amp;A is a large operational claim.</li></ul></div>
+</section><section class="walkthrough-section" data-title="q014 - IonQ Buying SkyWater"><h2 id="q014-ionq-buying-skywater">q014 - IonQ Buying SkyWater</h2>
+<h3 id="what-the-question-asks-7">What the question asks</h3>
+<p>This asks whether IonQ's acquisition of SkyWater is valued like an ordinary
+semiconductor foundry, like strategic domestic manufacturing, or like a quantum
+vertical-integration premium.</p>
+<h3 id="rollout-in-plain-english-7">Rollout, in plain English</h3>
+<p>The model gathered the merger announcement, SkyWater's FY2025 results, balance
+sheet data, and used calculators for valuation multiples.</p>
+<p>Core answer:</p>
+<ul>
+<li>Equity value: about $1.8B.</li>
+<li>SkyWater FY2025 revenue: $442.1M.</li>
+<li>SkyWater FY2025 adjusted EBITDA: $53.2M.</li>
+<li>Equity-value / revenue: about 4.07x.</li>
+<li>Equity-value / adjusted EBITDA: about 33.83x.</li>
+<li>Adding net debt gives enterprise value around $2.0B, or about 4.52x revenue
+  and 37.60x adjusted EBITDA.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-7">Beginner finance interpretation</h3>
+<p>A valuation multiple compares price to a business metric. A mature foundry with
+modest margins usually would not command a roughly mid-30s EBITDA multiple. So
+the model concluded the price mainly reflects IonQ's desire to own manufacturing
+capability for its quantum roadmap. Domestic manufacturing value is relevant,
+but not enough by itself to explain the multiple.</p>
+</section><section class="walkthrough-section" data-title="q015 - Pfizer Buying Seagen"><h2 id="q015-pfizer-buying-seagen">q015 - Pfizer Buying Seagen</h2>
+<h3 id="what-the-question-asks-8">What the question asks</h3>
+<p>This asks for implied equity value, enterprise value, and EV/revenue multiple
+for Pfizer's cash acquisition of Seagen.</p>
+<h3 id="rollout-in-plain-english-8">Rollout, in plain English</h3>
+<p>The model found the March 13, 2023 Seagen 8-K for the deal price and the FY2022
+10-K for shares outstanding, cash, short-term investments, debt, and revenue.</p>
+<p>Core math:</p>
+<pre class="code-block"><code class="language-text">Equity value = offer price per share * shares outstanding
+Enterprise value = equity value + debt - cash and short-term investments
+EV / revenue = enterprise value / FY2022 revenue
+</code></pre>
+<p>The answer:</p>
+<ul>
+<li>Offer price: $229.00 per share.</li>
+<li>Shares outstanding: 186,789,367.</li>
+<li>Equity value: about $42.77B.</li>
+<li>Cash and short-term investments: about $1.735B.</li>
+<li>Long-term debt: $0.</li>
+<li>Enterprise value: about $41.04B.</li>
+<li>FY2022 revenue: $1.962B.</li>
+<li>EV/revenue: about 20.91x.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-8">Beginner finance interpretation</h3>
+<p>Equity value is what shareholders receive. Enterprise value is closer to what
+the buyer is paying for the operating business, because it adjusts for debt and
+cash. Since Seagen had a lot of cash and no long-term debt, enterprise value is
+lower than equity value.</p>
+</section><section class="walkthrough-section" data-title="q017 - Kraft Heinz Adjusted EBITDA and Cash-Adjusted Margin"><h2 id="q017-kraft-heinz-adjusted-ebitda-and-cash-adjusted-margin">q017 - Kraft Heinz Adjusted EBITDA and Cash-Adjusted Margin</h2>
+<h3 id="what-the-question-asks-9">What the question asks</h3>
+<p>This asks the model to reconstruct Kraft Heinz's non-GAAP adjusted EBITDA bridge
+from GAAP net income, then remove the equity-award compensation add-back to
+calculate a more cash-like margin.</p>
+<h3 id="rollout-in-plain-english-9">Rollout, in plain English</h3>
+<p>The model found the Q4/FY2024 earnings release filed as an 8-K exhibit and
+searched the reconciliation schedule. It pulled each line item in the bridge:
+net income, interest, other income/expense, taxes, D&amp;A, license income,
+restructuring, hedges, impairments, and equity-award compensation.</p>
+<p>Core answer:</p>
+<ul>
+<li>Company-reported adjusted EBITDA: $6,363M.</li>
+<li>Net sales: $25,846M.</li>
+<li>Reported adjusted EBITDA margin: 24.62%.</li>
+<li>Equity award compensation add-back: $109M.</li>
+<li>Cash-adjusted EBITDA: $6,254M.</li>
+<li>Cash-adjusted margin: 24.20%.</li>
+<li>Difference: about 42 basis points.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-9">Beginner finance interpretation</h3>
+<p>Adjusted EBITDA is management's version of earnings before interest, taxes,
+depreciation, and amortization, with extra items added back. But add-backs can
+make profitability look better. Stock/equity compensation is non-cash today,
+but it is still economically costly because it dilutes shareholders. Removing
+that add-back gives a stricter cash-adjusted margin.</p>
+</section><section class="walkthrough-section" data-title="q019 - VSE 2026 Guidance Implied Revenue and EBITDA"><h2 id="q019-vse-2026-guidance-implied-revenue-and-ebitda">q019 - VSE 2026 Guidance Implied Revenue and EBITDA</h2>
+<h3 id="what-the-question-asks-10">What the question asks</h3>
+<p>This asks the model to use guidance ranges, take midpoints, calculate implied
+2026 revenue and adjusted EBITDA, then compare the implied margin to historical
+margins in basis points.</p>
+<h3 id="rollout-in-plain-english-10">Rollout, in plain English</h3>
+<p>The model found VSE's Q4 2025 earnings release and extracted guidance:</p>
+<ul>
+<li>Revenue growth: 19% to 23%, midpoint 21%.</li>
+<li>Adjusted EBITDA margin: 16.8% to 17.3%, midpoint 17.05%.</li>
+<li>FY2025 revenue: $1,112.275M.</li>
+</ul>
+<p>Then it calculated:</p>
+<ul>
+<li>2026 implied revenue: $1,112.275M * 1.21 = $1,345.853M.</li>
+<li>2026 implied adjusted EBITDA: $1,345.853M * 17.05% = $229.468M.</li>
+</ul>
+<p>It compared 17.05% to historical adjusted EBITDA margins:</p>
+<ul>
+<li>+382 bps vs. FY2023.</li>
+<li>+217 bps vs. FY2024.</li>
+<li>+60 bps vs. FY2025.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-10">Beginner finance interpretation</h3>
+<p>Guidance often comes as a range. Taking the midpoint is a standard way to turn
+management guidance into a single model input. The "basis point comparison"
+shows whether management is implicitly guiding to margin expansion or margin
+compression. Here, VSE is guiding to continued margin expansion.</p>
+</section><section class="walkthrough-section" data-title="q020 - Dutch Bros Capex Intensity"><h2 id="q020-dutch-bros-capex-intensity">q020 - Dutch Bros Capex Intensity</h2>
+<h3 id="what-the-question-asks-11">What the question asks</h3>
+<p>This asks how Dutch Bros' guided capital expenditure intensity compared with
+actual FY2025 capital expenditure intensity.</p>
+<h3 id="rollout-in-plain-english-11">Rollout, in plain English</h3>
+<p>The model collected quarterly guidance from multiple 8-K earnings releases and
+actual FY2025 capex/revenue from the 10-K.</p>
+<p>Formula:</p>
+<pre class="code-block"><code class="language-text">Capex intensity = Capital expenditures / Revenue
+</code></pre>
+<p>The answer:</p>
+<ul>
+<li>Guided capex midpoint stayed $250M each quarter.</li>
+<li>Revenue guidance midpoint rose over the year.</li>
+<li>Guided capex intensity fell from 15.97% to 15.50%.</li>
+<li>Actual FY2025 capex: $241.134M.</li>
+<li>Actual FY2025 revenue: $1,638.159M.</li>
+<li>Actual capex intensity: 14.72%.</li>
+<li>Actual intensity was below every guided midpoint.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-11">Beginner finance interpretation</h3>
+<p>Capex intensity tells you how much of revenue a company reinvests into property,
+equipment, stores, or infrastructure. For a store-growth business like Dutch
+Bros, lower-than-guided capex intensity can mean it spent less than planned,
+generated more revenue than planned, or both. In this case, both happened.</p>
+</section><section class="walkthrough-section" data-title="q021 - Dutch Bros vs. CAVA Store Opening Guidance"><h2 id="q021-dutch-bros-vs-cava-store-opening-guidance">q021 - Dutch Bros vs. CAVA Store Opening Guidance</h2>
+<h3 id="what-the-question-asks-12">What the question asks</h3>
+<p>This asks which company gave more conservative guidance for FY2025 net new store
+openings by comparing actual openings to prior guidance.</p>
+<h3 id="rollout-in-plain-english-12">Rollout, in plain English</h3>
+<p>The model gathered each quarter's guidance from 8-K earnings releases and the
+actual FY2025 opening counts from Q4/FY2025 releases.</p>
+<p>Core answer:</p>
+<ul>
+<li>Dutch Bros actual: 154 new shops.</li>
+<li>Dutch Bros guidance: 160 in each vintage.</li>
+<li>Dutch Bros missed by 6 shops, or -3.75%.</li>
+<li>CAVA actual: 72 net new restaurants.</li>
+<li>CAVA midpoint guidance ranged from 64 to 69.</li>
+<li>CAVA beat midpoint guidance by +12.50% at the initial vintage and +4.35% at
+  later vintages.</li>
+<li>CAVA gave more conservative guidance.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-12">Beginner finance interpretation</h3>
+<p>Conservative guidance means management sets expectations below what it later
+delivers. CAVA consistently beat its guided midpoint, while Dutch Bros missed
+its target. This is not a broad statement that CAVA is a better company; it is a
+specific statement about guidance conservatism for new-unit openings.</p>
+</section><section class="walkthrough-section" data-title="q023 - Intel 2024 Restructuring Plan"><h2 id="q023-intel-2024-restructuring-plan">q023 - Intel 2024 Restructuring Plan</h2>
+<h3 id="what-the-question-asks-13">What the question asks</h3>
+<p>This is a disclosure-analysis question. It asks how Intel's restructuring plan
+flowed through the financial statements and how to reconcile three different
+numbers that can easily be confused:</p>
+<ul>
+<li>total FY2024 restructuring and other charges,</li>
+<li>severance/benefit charges attributable only to the 2024 plan,</li>
+<li>cumulative 2024 plan cost disclosed in Q3 2024.</li>
+</ul>
+<h3 id="rollout-in-plain-english-13">Rollout, in plain English</h3>
+<p>The model used Intel's FY2024 10-K, Q3 2024 10-Q, and FY2023 10-K. It searched
+the restructuring footnotes and human-capital disclosure, then calculated the
+roll-forward and headcount decline.</p>
+<p>Core answer:</p>
+<ul>
+<li>FY2024 total restructuring and other charges: $6,970M.</li>
+<li>FY2024 employee severance and benefit charges attributable solely to the 2024
+  plan: about $2.2B.</li>
+<li>Cumulative 2024 plan cost disclosed in Q3 2024: $2.8B.</li>
+<li>2024 plan severance liability roll-forward: $2,306M accruals, $2,004M cash
+  payments, $302M ending accrued liability.</li>
+<li>Headcount declined from 124,800 to 108,900, a reduction of 15,900 employees,
+  or about 12.74%.</li>
+</ul>
+<h3 id="beginner-finance-interpretation-13">Beginner finance interpretation</h3>
+<p>The key lesson is that similarly named restructuring numbers can refer to
+different scopes:</p>
+<ul>
+<li>The income-statement line is broad and includes severance, litigation, and
+  impairments.</li>
+<li>The 2024-plan-only severance number is narrower.</li>
+<li>The cumulative plan cost includes severance plus certain non-cash impairments.</li>
+</ul>
+<p>The model got this right because it did not collapse all "restructuring" words
+into one number. It separated the accounting line item, the plan-only severance
+component, and the cumulative plan cost.</p>
+</section><h2 id="how-to-read-these-rollouts-yourself">How to Read These Rollouts Yourself</h2>
+<p>For each question, use this order:</p>
+<ol>
+<li>Read the question and identify the required output fields.</li>
+<li>Open <code>runs/exp1_full27_round1/judge_report.md</code> and check the rubric criteria.</li>
+<li>Open <code>runs/exp1_full27_round1/results.json</code> for the final answer and tool
+   usage.</li>
+<li>Trace the tool pattern: filings first, source search second, calculations
+   last.</li>
+<li>Ask whether every number in the answer can be tied back to a source or a
+   formula.</li>
+</ol>
+<p>The most reusable finance patterns in these correct examples are:</p>
+<ul>
+<li>Growth: <code>(ending / beginning)^(1 / years) - 1</code></li>
+<li>Margin: <code>profit metric / revenue</code></li>
+<li>Basis points: percentage-point difference times 10,000</li>
+<li>Enterprise value: <code>equity value + debt - cash</code></li>
+<li>Coverage: earnings-like numerator divided by fixed obligation denominator</li>
+<li>Guidance beat/miss: <code>(actual - guidance) / guidance</code></li>
+<li>Adjusted EBITDA bridge: start from GAAP net income and add/subtract disclosed
+  reconciling items</li>
+</ul><footer>Generated on 2026-06-17 from <code>/Users/bytedance/Documents/github/finance/runs/correct_rollout_finance_walkthrough_stage1_20260617.md</code>. Published as a self-contained thinking page.</footer></article></div></main>
+  <script>const toc=document.getElementById('toc');const headings=[...document.querySelectorAll('article h2')];headings.forEach(h=>{const a=document.createElement('a');a.href='#'+h.id;a.textContent=h.textContent;toc.appendChild(a);});const search=document.getElementById('search');const sections=[...document.querySelectorAll('.walkthrough-section')];search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();sections.forEach(section=>{const hit=!q||section.textContent.toLowerCase().includes(q);section.classList.toggle('hidden',!hit);});});</script>
+</body>
+</html>
