@@ -35,6 +35,74 @@
     <div class='panel' id='question-map'><h2>13 题速览 / Question Map</h2><table class='data-table'><thead><tr><th>题号</th><th>Topic</th><th>Type</th><th>Tags</th></tr></thead><tbody><tr><td><a href='#q002-marriott-vs-wyndham-loyalty-programs'>q002</a></td><td>Marriott vs. Wyndham Loyalty Programs</td><td>General qualitative analysis</td><td>MAR, WH, loyalty, 10-K</td></tr><tr><td><a href='#q003-ea-vs-take-two-competitors'>q003</a></td><td>EA vs. Take-Two Competitors</td><td>General qualitative analysis</td><td>EA, TTWO, competition, disclosure</td></tr><tr><td><a href='#q004-crwd-vs-panw-two-year-revenue-cagr'>q004</a></td><td>CRWD vs. PANW Two-Year Revenue CAGR</td><td>General quantitative analysis</td><td>CRWD, PANW, CAGR, basis points</td></tr><tr><td><a href='#q006-home-depot-vs-lowe-s-inventory-efficiency'>q006</a></td><td>Home Depot vs. Lowe&#x27;s Inventory Efficiency</td><td>General quantitative analysis</td><td>HD, LOW, DIO, inventory</td></tr><tr><td><a href='#q011-target-vs-walmart-fixed-charge-coverage'>q011</a></td><td>Target vs. Walmart Fixed Charge Coverage</td><td>Comparables</td><td>TGT, WMT, FCCR, leases</td></tr><tr><td><a href='#q013-baker-hughes-buying-chart-industries'>q013</a></td><td>Baker Hughes Buying Chart Industries</td><td>Precedents / M&amp;A</td><td>BKR, GTLS, premium, synergies</td></tr><tr><td><a href='#q014-ionq-buying-skywater'>q014</a></td><td>IonQ Buying SkyWater</td><td>Precedents / M&amp;A</td><td>IONQ, SKYT, multiples, quantum</td></tr><tr><td><a href='#q015-pfizer-buying-seagen'>q015</a></td><td>Pfizer Buying Seagen</td><td>Precedents / M&amp;A</td><td>PFE, SGEN, enterprise value, EV revenue</td></tr><tr><td><a href='#q017-kraft-heinz-adjusted-ebitda-and-cash-adjusted-margin'>q017</a></td><td>Kraft Heinz Adjusted EBITDA and Cash-Adjusted Margin</td><td>Adjustments</td><td>KHC, Adjusted EBITDA, SBC, margin</td></tr><tr><td><a href='#q019-vse-2026-guidance-implied-revenue-and-ebitda'>q019</a></td><td>VSE 2026 Guidance Implied Revenue and EBITDA</td><td>Earnings analysis</td><td>VSEC, guidance, midpoint, margin</td></tr><tr><td><a href='#q020-dutch-bros-capex-intensity'>q020</a></td><td>Dutch Bros Capex Intensity</td><td>Earnings analysis</td><td>BROS, capex, intensity, guidance</td></tr><tr><td><a href='#q021-dutch-bros-vs-cava-store-opening-guidance'>q021</a></td><td>Dutch Bros vs. CAVA Store Opening Guidance</td><td>Earnings analysis</td><td>BROS, CAVA, guidance, beat miss</td></tr><tr><td><a href='#q023-intel-2024-restructuring-plan'>q023</a></td><td>Intel 2024 Restructuring Plan</td><td>Disclosure analysis</td><td>INTC, restructuring, roll-forward, headcount</td></tr></tbody></table></div>
     <div class='panel' id='audit-path'><h2>非 hack trace 的可审计路径 / Auditable Non-Hack Path</h2><div class='pipeline'><div class='pipe-step'><strong>1. 找来源 / Source</strong>SEC filings、8-K exhibits、10-K/10-Q、company facts。</div><div class='pipe-step'><strong>2. 定口径 / Scope</strong>确认 FY、表格行、lease 组件、guidance midpoint。</div><div class='pipe-step'><strong>3. 抽数字 / Extract</strong>从主文、脚注、reconciliation 或 XBRL facts 抽值。</div><div class='pipe-step'><strong>4. 算公式 / Calculate</strong>CAGR、margin、EV、coverage、beat/miss、bps。</div><div class='pipe-step'><strong>5. 对 rubric / Verify</strong>每个 required field 都能回溯到来源或公式。</div></div></div>
     <div class='layout'><aside class='side'><div class='panel'><input class='search' id='search' placeholder='搜索 ticker / 概念 / 题号' aria-label='Search report'></div><div class='panel'><strong>快速跳转 / Jump</strong><nav class='nav-list' id='toc'></nav></div></aside><article><div class='note'><strong>筛选标准 / Selection rule:</strong> 只保留 <code>runs/exp1_full27_round1</code> 中 judge overall coverage = 100% 的题；排除只是 <code>success=true</code> 但 rubric 没全中的题；没有使用 public fast-path sanity answer 工具。</div><div class='insight'><strong>为什么这不是 hack / Why this is not a hack:</strong> 这些 rollout 的工具调用模式是 primary filings → source search/table extraction → deterministic calculation → final answer。也就是说答案数字能从 SEC filing、8-K exhibit、XBRL facts 或明确公式回溯，而不是从公开答案表倒推。</div>
+      <section class='walkthrough-section' id='deep-dive-q011-fccr' data-search='q011 tgt wmt fccr target walmart fixed charge coverage ratio lease interest ebitdar rollout original question'>
+        <div class='section-title'>
+          <div><p class='qid'>Deep Dive · q011 · Comparables</p><h2>单题深拆：Target vs. Walmart 的 FCCR</h2></div>
+          <div class='tags'><span>原始问题</span><span>完整 rollout</span><span>TGT</span><span>WMT</span><span>FCCR</span></div>
+        </div>
+        <div class='bilingual-grid'>
+          <div class='lang zh'><div class='lang-label'>原始问题 / Original Question</div><p>For the fiscal years 2025 (NYSE: TGT for the fiscal year ended February 1, 2025; NYSE: WMT for the fiscal year ended January 31, 2025), calculate and compare the Fixed Charge Coverage Ratio (FCCR). Use EBITDAR divided by total fixed charges (interest expense plus fixed operating lease cost). For the rent addback, use operating lease cost excluding short-term and variable lease components. Note: $2,347 million for WMT represents the fixed operating lease cost net of variable and short-term components. Which company demonstrates stronger fixed charge coverage, and by how much?</p></div>
+          <div class='lang en'><div class='lang-label'>一句话翻译</div><p>题目要比较 Target 和 Walmart 在 FY2025 的固定费用覆盖能力：用 EBITDAR 除以总固定费用。固定费用只包括利息和“固定”的经营租赁成本；短期租赁、可变租赁不能算进去。最后判断谁覆盖能力更强、强多少。</p></div>
+        </div>
+        <h3>1. 这道题到底在考什么？</h3>
+        <p>FCCR，全称 Fixed Charge Coverage Ratio，直译是“固定费用覆盖倍数”。它回答的是：公司经营产生的 earnings-like 能力，能覆盖利息和固定租金这些硬性支出多少倍。公式不是普通 EBITDA，而是 EBITDAR，因为租金本身被当成类似固定融资负担，需要先加回到分子，再放进分母。</p>
+        <pre class='formula'><code>FCCR = EBITDAR / Total fixed charges
+EBITDAR = Operating income + Depreciation &amp; amortization + Fixed operating lease cost
+Total fixed charges = Interest expense + Fixed operating lease cost</code></pre>
+        <p>这题最容易错在 lease 口径。题目明确要求 rent addback 只用 fixed operating lease cost，不能把 short-term lease cost 和 variable lease cost 混进去。Walmart 的 $2,347M 题目已经提示是 fixed operating lease cost；Target 需要从披露的 operating lease cost 里扣掉 short-term and variable lease costs。</p>
+        <h3>2. 模型 rollout 是怎么一步步做的？</h3>
+        <table class='data-table'>
+          <thead><tr><th>Turn</th><th>工具调用</th><th>模型在做什么</th><th>为什么不是 hack</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>sec_company_facts</code> ×2</td><td>分别查 TGT、WMT 的 FY2025 标准化 SEC XBRL facts，先找 operating income 等核心财务项目。</td><td>从 SEC 公司事实数据库取公开 filing 数据，不是查答案表。</td></tr>
+            <tr><td>2</td><td><code>sec_company_facts</code> ×4</td><td>继续查 depreciation &amp; amortization、interest expense、lease cost 相关概念，补齐 FCCR 分子和分母需要的项目。</td><td>这是正常建模流程：先把公式需要的变量逐个找齐。</td></tr>
+            <tr><td>3</td><td><code>sec_filing_tables</code> ×2</td><td>直接抽 Target 和 Walmart 10-K 里的 lease cost 表，确认 operating lease cost、variable lease cost、short-term lease cost 的表格口径。</td><td>题目难点正是 lease 口径，模型专门回到 filing 表格核对。</td></tr>
+            <tr><td>4</td><td><code>parse_html_page</code> ×1</td><td>打开 Target FY2025 10-K 原文页面，准备查 footnote。</td><td>用一手 SEC filing 页面验证表格脚注。</td></tr>
+            <tr><td>5</td><td><code>search_storage</code> ×2</td><td>在已解析的 Target filing 中搜索 lease footnote，找到 $641M operating lease cost 包含 $132M short-term and variable lease costs。</td><td>这一句解释了为什么 Target fixed lease cost 不是 $641M，而是 $641M - $132M。</td></tr>
+            <tr><td>6</td><td><code>finance_calculator</code> ×2 + <code>calculator</code> ×1</td><td>计算 Target 和 Walmart 的 EBITDAR、fixed charges、FCCR。</td><td>计算由确定性工具完成，公式透明。</td></tr>
+            <tr><td>7</td><td><code>calculator</code> ×2</td><td>计算两家公司 FCCR 差值和百分比差异。</td><td>结论“强多少”来自计算，不是主观判断。</td></tr>
+            <tr><td>8</td><td><code>submit_final_result</code> ×1</td><td>提交最终答案，包含公式、取数表、逐家公司计算和 winner。</td><td>最终答案里的每个数字都能回溯到前面 source 或公式。</td></tr>
+          </tbody>
+        </table>
+        <h3>3. 取数和计算完整展开</h3>
+        <table class='data-table'>
+          <thead><tr><th>项目</th><th>Target (TGT)</th><th>Walmart (WMT)</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>Operating income</td><td>$5,566M</td><td>$29,348M</td><td>经营利润，来自 FY2025 10-K / XBRL facts。</td></tr>
+            <tr><td>D&amp;A</td><td>$2,981M</td><td>$12,973M</td><td>折旧摊销，加回到 operating income。</td></tr>
+            <tr><td>Operating lease cost as reported</td><td>$641M</td><td>$2,347M</td><td>Target 这个数还没净掉短期/可变租赁；Walmart 题目说明已是 fixed。</td></tr>
+            <tr><td>Less: short-term and variable lease cost</td><td>($132M)</td><td>$0</td><td>Target footnote 披露 $641M 包含 $132M short-term and variable lease costs。</td></tr>
+            <tr><td>Fixed operating lease cost</td><td>$509M</td><td>$2,347M</td><td>TGT: 641 - 132 = 509；WMT: 题目给定 $2,347M 已净额。</td></tr>
+            <tr><td>Interest expense</td><td>$411M</td><td>$2,245M</td><td>分母里的另一项固定费用。</td></tr>
+          </tbody>
+        </table>
+        <pre class='formula'><code>TGT EBITDAR = 5,566 + 2,981 + 509 = 9,056
+TGT fixed charges = 411 + 509 = 920
+TGT FCCR = 9,056 / 920 = 9.84x
+
+WMT EBITDAR = 29,348 + 12,973 + 2,347 = 44,668
+WMT fixed charges = 2,245 + 2,347 = 4,592
+WMT FCCR = 44,668 / 4,592 = 9.73x
+
+Difference = 9.84x - 9.73x ≈ 0.12x</code></pre>
+        <h3>4. 金融小白应该抓住的直觉</h3>
+        <p>不要被 Walmart 的绝对规模吓到。Walmart 的 EBITDAR 远大于 Target，但它的利息和固定租赁成本也大得多。FCCR 看的是“覆盖倍数”，不是绝对利润金额。最后 Target 是 9.84x，Walmart 是 9.73x，所以 Target 略强，大约强 0.12x。</p>
+        <p>这两个数都很高。一般来说，FCCR 高于 1.0x 才表示分子能覆盖固定费用；很多债权分析会希望看到明显高于 1.5x-2.0x。这里两家公司都接近 10x，说明固定费用压力都不大。题目不是要找“谁危险”，而是要精确比较谁更强。</p>
+        <h3>5. Judge 为什么判 8/8 全对？</h3>
+        <table class='data-table'>
+          <thead><tr><th>Rubric 要求</th><th>答案覆盖</th></tr></thead>
+          <tbody>
+            <tr><td>TGT EBITDAR</td><td>$9,056M，覆盖。</td></tr>
+            <tr><td>TGT total fixed charges</td><td>$920M，覆盖。</td></tr>
+            <tr><td>TGT FCCR</td><td>9.84x，覆盖。</td></tr>
+            <tr><td>WMT EBITDAR</td><td>$44,668M，覆盖。</td></tr>
+            <tr><td>WMT total fixed charges</td><td>$4,592M，覆盖。</td></tr>
+            <tr><td>WMT FCCR</td><td>9.73x，覆盖。</td></tr>
+            <tr><td>谁更强</td><td>Target 更强，覆盖。</td></tr>
+            <tr><td>强多少</td><td>约 0.12x，覆盖。</td></tr>
+          </tbody>
+        </table>
+      </section>
       <section class='walkthrough-section' id='q002-marriott-vs-wyndham-loyalty-programs' data-search='q002 marriott vs. wyndham loyalty programs general qualitative analysis mar wh loyalty 10-k'>
         <div class='section-title'>
           <div><p class='qid'>q002 · General qualitative analysis</p><h2>Marriott vs. Wyndham Loyalty Programs</h2></div>
