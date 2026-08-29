@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="金融 AI 创业公司地图、FiT 产品机会与金融基座大模型训练路线。" />
+  <title>金融 AI 的下一战：创业公司地图与基模训练师的价值</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --panel: #161a24;
+      --panel-2: #1d2230;
+      --panel-3: #232a3a;
+      --text: #edf2f7;
+      --muted: #9aa7b9;
+      --line: rgba(148, 163, 184, 0.22);
+      --purple: #a78bfa;
+      --blue: #60a5fa;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --rose: #fb7185;
+      --orange: #fb923c;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 84% 5%, rgba(96, 165, 250, 0.08), transparent 25rem),
+        radial-gradient(circle at 8% 45%, rgba(167, 139, 250, 0.06), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: #c4b5fd; }
+    a:hover { color: #ddd6fe; }
+    button { font: inherit; }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      padding: 44px 32px 30px;
+      background: linear-gradient(128deg, #17183a 0%, #292465 38%, #17407d 74%, #0f4c5c 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      width: 38rem;
+      height: 38rem;
+      right: -14rem;
+      top: -23rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.27), transparent 68%);
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      width: 30rem;
+      height: 30rem;
+      left: 18%;
+      bottom: -24rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.34), transparent 68%);
+    }
+    .header-inner { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; }
+    .header-inner, h1, .subtitle, .backlinks { min-width: 0; overflow-wrap: anywhere; }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #a5f3fc;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 1000px;
+      margin: 0;
+      color: #fff;
+      font-size: clamp(30px, 4.5vw, 56px);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+    .subtitle {
+      max-width: 900px;
+      margin: 16px 0 20px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 15px;
+    }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.28);
+      color: #f8fafc;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .backlinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px 12px;
+      align-items: center;
+      max-width: 1000px;
+      margin-top: 20px;
+      padding: 10px 14px;
+      border: 1px solid rgba(196, 181, 253, 0.28);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.28);
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+    .backlinks a { text-decoration: none; font-weight: 700; }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 1400px;
+      margin: 24px auto 0;
+    }
+    .hero-stat {
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      background: rgba(9, 15, 31, 0.35);
+      backdrop-filter: blur(8px);
+    }
+    .hero-stat .value { font-size: 25px; font-weight: 850; color: #fff; line-height: 1.1; }
+    .hero-stat .label { margin-top: 5px; color: #bfdbfe; font-size: 11px; }
+
+    .tabs-wrap {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      background: rgba(15, 17, 23, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .tabs {
+      display: flex;
+      gap: 4px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 0 0 auto;
+      padding: 14px 15px 12px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .tab:hover { color: #dbeafe; }
+    .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    main { max-width: 1400px; margin: 0 auto; padding: 28px 32px 72px; }
+    .panel { display: none; animation: panel-in .22s ease both; }
+    .panel.active { display: block; }
+    @keyframes panel-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+    .tldr {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      padding: 18px 20px 18px 23px;
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.13), rgba(34, 211, 238, 0.06));
+    }
+    .tldr::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(var(--purple), var(--cyan));
+    }
+    .tldr .label { color: var(--purple); font-size: 11px; font-weight: 850; letter-spacing: .12em; }
+    .tldr p { margin: 5px 0 0; color: #e2e8f0; font-size: 14px; }
+
+    .section-title { margin: 30px 0 14px; font-size: 19px; letter-spacing: -0.01em; }
+    .section-kicker { margin: -8px 0 16px; color: var(--muted); font-size: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+    .card {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      padding: 17px 18px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 13px;
+      background: linear-gradient(160deg, rgba(29, 34, 48, 0.96), rgba(22, 26, 36, 0.96));
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    .card h3 { margin: 0 0 9px; color: #d8ccff; font-size: 14px; }
+    .card p { margin: 0; color: #cbd5e1; font-size: 13px; }
+    .card small { color: var(--muted); }
+    .card.accent { border-color: rgba(34, 211, 238, 0.27); }
+    .card.warn { border-color: rgba(251, 191, 36, 0.30); }
+    .card.danger { border-color: rgba(251, 113, 133, 0.28); }
+
+    .thesis-grid { display: grid; grid-template-columns: 1.25fr .85fr .85fr; gap: 15px; }
+    .thesis {
+      position: relative;
+      overflow: hidden;
+      min-height: 185px;
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .thesis.primary { background: linear-gradient(145deg, rgba(46, 38, 103, .92), rgba(22, 26, 36, .96)); }
+    .thesis .index { color: var(--cyan); font: 800 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
+    .thesis blockquote { margin: 17px 0 0; color: #f8fafc; font-size: clamp(18px, 2vw, 26px); font-weight: 820; line-height: 1.38; letter-spacing: -.02em; }
+    .thesis:not(.primary) blockquote { font-size: 18px; }
+    .thesis .note { margin-top: 12px; color: #a8b3c3; font-size: 12px; }
+
+    .decision-stack { display: grid; gap: 9px; }
+    .decision-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 145px;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(22, 26, 36, .86);
+    }
+    .decision-row .stage { color: #f8fafc; font-size: 13px; font-weight: 800; }
+    .decision-row .meaning { color: #cbd5e1; font-size: 12px; }
+    .decision-row .owner { justify-self: end; color: var(--green); font-size: 11px; font-weight: 750; }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .filter-btn {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 750;
+    }
+    .filter-btn:hover { color: #fff; border-color: rgba(167, 139, 250, .42); }
+    .filter-btn.active { color: #fff; border-color: var(--purple); background: rgba(124, 58, 237, .24); }
+
+    .startup-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }
+    .domain-chart { position: sticky; top: 70px; padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); }
+    .domain-chart h3 { margin: 0 0 14px; font-size: 14px; }
+    .bar-row { display: grid; grid-template-columns: 82px minmax(0, 1fr) 26px; gap: 9px; align-items: center; margin: 11px 0; }
+    .bar-row .bar-label { color: #cbd5e1; font-size: 11px; }
+    .bar-track { height: 8px; overflow: hidden; border-radius: 999px; background: #283044; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--purple), var(--cyan)); }
+    .bar-value { color: #f8fafc; font-size: 11px; font-weight: 800; text-align: right; }
+    .chart-note { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+
+    .startup-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .startup-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 218px;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, .17);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+    .startup-card .top { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .startup-card h3 { margin: 0; color: #f8fafc; font-size: 15px; }
+    .startup-card .domain { margin-top: 3px; color: var(--cyan); font-size: 10px; font-weight: 750; letter-spacing: .04em; }
+    .signal {
+      flex: 0 0 auto;
+      padding: 3px 7px;
+      border: 1px solid rgba(251, 191, 36, .28);
+      border-radius: 999px;
+      background: rgba(251, 191, 36, .08);
+      color: #fde68a;
+      font-size: 10px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .startup-card .wedge { margin: 13px 0 7px; color: #dbeafe; font-size: 13px; font-weight: 750; }
+    .startup-card .lesson { margin: 0 0 14px; color: #aeb9c8; font-size: 12px; }
+    .startup-card a { margin-top: auto; align-self: start; text-decoration: none; font-size: 11px; font-weight: 750; }
+
+    .pattern-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .pattern {
+      padding: 15px;
+      border-top: 2px solid var(--purple);
+      border-radius: 0 0 11px 11px;
+      background: rgba(22, 26, 36, .84);
+    }
+    .pattern b { display: block; color: #f8fafc; font-size: 13px; }
+    .pattern span { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; }
+
+    .boundary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+    }
+    .boundary-col { min-height: 245px; padding: 18px; border-right: 1px solid var(--line); background: rgba(22, 26, 36, .86); }
+    .boundary-col:last-child { border-right: 0; }
+    .boundary-col h3 { margin: 0 0 10px; color: #f8fafc; font-size: 14px; }
+    .boundary-col .who { color: var(--cyan); font-size: 10px; font-weight: 850; letter-spacing: .08em; }
+    .boundary-col ul { margin: 12px 0 0; padding-left: 17px; color: #b8c3d1; font-size: 12px; }
+    .boundary-col li { margin-bottom: 6px; }
+
+    .formula {
+      margin: 20px 0;
+      padding: 22px;
+      border: 1px solid rgba(34, 211, 238, .28);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(8, 47, 73, .48), rgba(46, 38, 103, .45));
+      color: #ecfeff;
+      text-align: center;
+      font-size: clamp(17px, 2.4vw, 25px);
+      font-weight: 850;
+      letter-spacing: -.02em;
+    }
+    .formula small { display: block; margin-top: 8px; color: #a5b4fc; font-size: 11px; font-weight: 600; letter-spacing: 0; }
+
+    .evidence-list { display: grid; gap: 10px; }
+    .evidence-item {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr) 160px;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel);
+    }
+    .evidence-item .source { color: #ddd6fe; font-size: 12px; font-weight: 800; }
+    .evidence-item .fact { color: #cbd5e1; font-size: 12px; }
+    .evidence-item .implication { color: var(--green); font-size: 11px; font-weight: 750; }
+
+    .topic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .topic-card { position: relative; overflow: hidden; padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); }
+    .topic-card.p0 { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(72, 61, 139, .42), rgba(22, 26, 36, .96)); border-color: rgba(167, 139, 250, .37); }
+    .topic-card .rank { color: var(--amber); font: 800 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
+    .topic-card h3 { margin: 8px 0 8px; color: #f8fafc; font-size: 16px; }
+    .topic-card .pitch { color: #cbd5e1; font-size: 12px; }
+    .topic-card .prove { margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: #a5f3fc; font-size: 11px; font-weight: 700; }
+    .topic-card .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+    .chip { padding: 3px 7px; border-radius: 999px; background: rgba(96, 165, 250, .11); color: #bfdbfe; font-size: 9px; font-weight: 750; }
+
+    .matrix-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; background: rgba(22, 26, 36, .88); }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); border-right: 1px solid rgba(148, 163, 184, .12); text-align: left; vertical-align: top; }
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td { border-bottom: 0; }
+    th { background: var(--panel-2); color: #c4b5fd; font-size: 11px; letter-spacing: .02em; }
+    td { color: #cbd5e1; font-size: 12px; }
+    td strong { color: #f8fafc; }
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, .11);
+      color: #a7f3d0;
+      font-size: 9px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .tag.judgment { background: rgba(251, 191, 36, .10); color: #fde68a; }
+
+    .experiment-selector {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin: 16px 0;
+    }
+    .experiment-box { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .experiment-box label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+    .experiment-box select { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: #111827; color: #e5e7eb; }
+    .versus { align-self: center; color: var(--purple); font-size: 11px; font-weight: 900; }
+    .experiment-result { padding: 15px 17px; border: 1px solid rgba(34, 211, 238, .27); border-radius: 11px; background: rgba(8, 47, 73, .28); }
+    .experiment-result b { color: #a5f3fc; }
+    .experiment-result span { color: #cbd5e1; font-size: 12px; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .metric { padding: 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
+    .metric b { display: block; color: #f8fafc; font-size: 12px; }
+    .metric span { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
+
+    .roadmap { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .roadmap::before { content: ""; position: absolute; top: 25px; left: 8%; right: 8%; height: 1px; background: linear-gradient(90deg, var(--purple), var(--cyan)); }
+    .phase { position: relative; padding: 45px 15px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .phase::before { content: ""; position: absolute; top: 18px; left: 18px; width: 14px; height: 14px; border: 3px solid var(--bg); border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 3px rgba(34, 211, 238, .18); }
+    .phase b { color: #f8fafc; font-size: 13px; }
+    .phase p { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+
+    .sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .source-card { padding: 14px 15px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+    .source-card .type { color: var(--cyan); font-size: 9px; font-weight: 850; letter-spacing: .1em; }
+    .source-card a { display: block; margin-top: 4px; text-decoration: none; font-size: 12px; font-weight: 750; }
+    .source-card p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
+
+    .footnote { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); color: #78869a; font-size: 10px; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 1060px) {
+      .hero-stats, .grid-4, .roadmap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .thesis-grid { grid-template-columns: 1fr 1fr; }
+      .thesis.primary { grid-column: 1 / -1; }
+      .startup-layout { grid-template-columns: 1fr; }
+      .domain-chart { position: static; }
+      .pattern-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .boundary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .boundary-col:nth-child(2) { border-right: 0; }
+      .boundary-col:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      header { padding: 32px 18px 24px; }
+      main { padding: 20px 16px 55px; }
+      .tabs { padding: 0 10px; }
+      .hero-stats, .grid-2, .grid-3, .grid-4, .thesis-grid, .startup-grid, .topic-grid, .metric-grid, .sources, .roadmap { grid-template-columns: 1fr; }
+      .topic-card.p0, .thesis.primary { grid-column: auto; }
+      .pattern-strip { grid-template-columns: 1fr 1fr; }
+      .boundary { grid-template-columns: 1fr; }
+      .boundary-col, .boundary-col:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .boundary-col:last-child { border-bottom: 0; }
+      .decision-row, .evidence-item { grid-template-columns: 1fr; gap: 5px; }
+      .decision-row .owner { justify-self: start; }
+      .experiment-selector { grid-template-columns: 1fr; }
+      .versus { justify-self: center; }
+      .roadmap::before { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <p class="eyebrow">Financial AI Frontier · 2026</p>
+      <h1>金融 AI 的下一战：创业公司地图与基模训练师的价值</h1>
+      <p class="subtitle">从 28 家创业与成长型公司、8 份金融模型/Agent 评测出发：什么值得 FiT 做，以及基础模型训练团队怎样用可证伪的结果证明自己。</p>
+      <div class="meta-row">
+        <span class="meta-pill">研究时点 · 2026-08-29</span>
+        <span class="meta-pill">28 家公司</span>
+        <span class="meta-pill">5 条创业赛道</span>
+        <span class="meta-pill">1 个总纲 + 6 个训练 Topic</span>
+        <span class="meta-pill">事实与判断分层</span>
+      </div>
+      <div class="backlinks">
+        <span>📚 完整报告：</span>
+        <a href="https://ncn5xqvmb1os.feishu.cn/docx/ExphdFIiyowWVnxa4EScT4UNnFc" target="_blank" rel="noopener">《未来金融 AI 可以做什么》飞书原文</a>
+        <span>· 本页保留精炼判断与第一手来源</span>
+      </div>
+      <div class="hero-stats" aria-label="研究摘要数字">
+        <div class="hero-stat"><div class="value">28</div><div class="label">创业 / 成长型公司样本</div></div>
+        <div class="hero-stat"><div class="value">56.0%</div><div class="label">FrontierFinance 当前最强系统得分</div></div>
+        <div class="hero-stat"><div class="value">760</div><div class="label">FinToolBench 可执行金融工具</div></div>
+        <div class="hero-stat"><div class="value">6 + 1</div><div class="label">金融基模训练 Topic 组合</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs-wrap">
+    <nav class="tabs" aria-label="页面章节">
+      <button class="tab active" data-tab="verdict">一句话结论</button>
+      <button class="tab" data-tab="startups">创业公司地图</button>
+      <button class="tab" data-tab="trainer">基模训练师价值</button>
+      <button class="tab" data-tab="topics">Topic 组合</button>
+      <button class="tab" data-tab="experiments">实验闭环</button>
+      <button class="tab" data-tab="evidence">原文证据</button>
+    </nav>
+  </div>
+
+  <main>
+    <section id="verdict" class="panel active">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>金融 AI 的战略上限不是把客服做得更像人，而是把研究、投顾、合规和财务等专业任务变成可审计、可执行的工作。对基模训练团队而言，真正的价值是让同一 Harness 更强，并把达到同等质量所需的工具调用、脚本分支和人工复核压下来。</p>
+      </div>
+
+      <div class="thesis-grid">
+        <article class="thesis primary">
+          <div class="index">01 · PRODUCT</div>
+          <blockquote>金融 AI 的壁垒不在“回答”，而在“完成工作”。</blockquote>
+          <p class="note">最终交付物应该是带来源的研究、可复算的模型、可编辑的工件、受控的业务动作。</p>
+        </article>
+        <article class="thesis">
+          <div class="index">02 · SYSTEM</div>
+          <blockquote>Harness 决定系统下限，模型决定能否走向未知任务。</blockquote>
+          <p class="note">已知流程靠编排兜底；未见实体、时间、工具组合与冲突规则依赖模型泛化。</p>
+        </article>
+        <article class="thesis">
+          <div class="index">03 · TRAINING</div>
+          <blockquote>少写规则、少调工具、少返工，就是基模智能的业务价值。</blockquote>
+          <p class="note">不要只报静态 QA 分数；要报 episode 成功率、调用成本和人工编辑距离。</p>
+        </article>
+      </div>
+
+      <h2 class="section-title">一条战略链路</h2>
+      <p class="section-kicker">把创业公司信号翻译成 FiT 的 Build / Partner / Avoid 决策。</p>
+      <div class="decision-stack">
+        <div class="decision-row"><div class="stage">专业任务入口</div><div class="meaning">从投研、投顾、合规中的高频任务束切入，不从通用金融聊天切入。</div><div class="owner">产品团队 · BUILD</div></div>
+        <div class="decision-row"><div class="stage">证据与数据层</div><div class="meaning">统一公开、授权和内部数据，保存 point-in-time、单位、版本、许可与来源。</div><div class="owner">数据平台 · BUILD + BUY</div></div>
+        <div class="decision-row"><div class="stage">金融原生模型</div><div class="meaning">训练证据规划、时间推理、工具调用、数值建模、合规判断与不确定性。</div><div class="owner">基模团队 · BUILD</div></div>
+        <div class="decision-row"><div class="stage">专业 Harness</div><div class="meaning">技能、连接器、权限、重试、回滚、工件编译、Evidence & Decision Ledger。</div><div class="owner">Agent 平台 · BUILD</div></div>
+        <div class="decision-row"><div class="stage">业务系统闭环</div><div class="meaning">把结果写回 Excel、PPT、CRM、审批、账本与组合系统；高风险动作必须确认。</div><div class="owner">业务共建 · PARTNER</div></div>
+      </div>
+
+      <h2 class="section-title">三件优先做，三件不要先做</h2>
+      <div class="grid-3">
+        <article class="card accent"><h3>做：Mira Research OS</h3><p>把财报复盘、公司深研、筛选发现、估值与监控串成长期研究记忆，而不是再做一个研报生成器。</p></article>
+        <article class="card accent"><h3>做：Advisor OS</h3><p>从会前、会中、会后占领客户事实生成时刻，再连接确定性规划和 next-best-action。</p></article>
+        <article class="card accent"><h3>做：Finance Runtime & Evals</h3><p>把工具、证据、权限、审批、回归评测做成两条产品线共用的运行时。</p></article>
+        <article class="card danger"><h3>不先做：金融聊天壳</h3><p>没有专有数据、动作和评测的问答入口，会迅速被通用模型与 Office 平台吸收。</p></article>
+        <article class="card danger"><h3>不先做：自动荐股 / 交易</h3><p>智能上限、适当性和系统性风险尚不支持跨过持牌专业人士的最终批准。</p></article>
+        <article class="card danger"><h3>不先做：平台先行</h3><p>Runtime 必须由真实任务倒逼生长；没有专业用户修改与拒绝数据，就没有训练飞轮。</p></article>
+      </div>
+    </section>
+
+    <section id="startups" class="panel">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>28 个样本指向同一条扩张路径：先拿下窄而高频、结果可验的专业任务，再沿数据、工件、审批与系统记录扩成 OS。创业公司的产品不是“金融更懂的聊天”，而是“更少人工搬运的工作系统”。</p>
+      </div>
+
+      <div class="pattern-strip" aria-label="创业公司共同规律">
+        <div class="pattern"><b>窄任务切入</b><span>先解决一个高频痛点，再进入上下游。</span></div>
+        <div class="pattern"><b>工件而非文本</b><span>Excel、PPT、CRM、表单、账本才是交付。</span></div>
+        <div class="pattern"><b>证据即产品</b><span>来源、计算、版本、修改与批准必须可回放。</span></div>
+        <div class="pattern"><b>确定性分工</b><span>核心计算交给可重放引擎，LLM 负责理解与编排。</span></div>
+        <div class="pattern"><b>Wedge → OS</b><span>会议、研究、KYC、Close 都只是系统入口。</span></div>
+      </div>
+
+      <h2 class="section-title">28 家创业与成长型公司</h2>
+      <p class="section-kicker">融资和客户数据均为公司公开口径，只作为产品与扩张信号，不等同于独立审计。</p>
+      <div id="filters" class="filter-row" aria-label="公司赛道筛选"></div>
+      <div class="startup-layout">
+        <aside class="domain-chart" aria-label="样本赛道分布">
+          <h3>Sample distribution</h3>
+          <div class="bar-row"><span class="bar-label">研究 / 投行</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">8</span></div>
+          <div class="bar-row"><span class="bar-label">财富管理</span><div class="bar-track"><div class="bar-fill" style="width:62.5%"></div></div><span class="bar-value">5</span></div>
+          <div class="bar-row"><span class="bar-label">合规 / AML</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-value">4</span></div>
+          <div class="bar-row"><span class="bar-label">信贷 / 保险</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-value">4</span></div>
+          <div class="bar-row"><span class="bar-label">财务 / 私募</span><div class="bar-track"><div class="bar-fill" style="width:87.5%"></div></div><span class="bar-value">7</span></div>
+          <p class="chart-note">本文有意跨越 FiT 内部边界，关注“专业角色 × 可执行工作”而不是已有产品菜单。</p>
+        </aside>
+        <div id="startupGrid" class="startup-grid" aria-live="polite"></div>
+      </div>
+
+      <h2 class="section-title">从公司地图读出的产品边界</h2>
+      <div class="grid-3">
+        <article class="card"><h3>Build</h3><p>中国金融 Evidence & Decision Ledger、专业工作流 Harness、Policy-as-Code 与内部 Eval。</p></article>
+        <article class="card"><h3>Partner / Buy</h3><p>持牌数据、税务/现金流/风险等确定性引擎、CRM/交易/Office 连接器。</p></article>
+        <article class="card warn"><h3>Watch</h3><p>Fintool 被 Microsoft 收购说明：通用研究 + Office 生成若没有数据和流程壁垒，很容易成为平台功能。</p></article>
+      </div>
+    </section>
+
+    <section id="trainer" class="panel">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>基模训练师不该与 Harness 团队争论“谁更重要”。正确问题是：哪些能力必须进入参数，才能让系统在未知任务上泛化，并用更少的规则、调用和复核达到相同或更高质量。</p>
+      </div>
+
+      <div class="formula">
+        基模训练价值 = 质量增益 + Harness 压缩 + 泛化半径 + 风险边界 − 通用能力回退
+        <small>不是数学等式，而是汇报口径：每项都必须有独立指标和对照组。</small>
+      </div>
+
+      <h2 class="section-title">把责任边界说清楚</h2>
+      <div class="boundary">
+        <div class="boundary-col">
+          <div class="who">DATA / PRODUCT</div>
+          <h3>提供“工作真相”</h3>
+          <ul><li>真实专业任务与修改记录</li><li>授权数据与 point-in-time 语料</li><li>工件模板和业务成功标准</li><li>持牌专家的拒绝原因</li></ul>
+        </div>
+        <div class="boundary-col">
+          <div class="who">BASE MODEL</div>
+          <h3>学习可迁移能力</h3>
+          <ul><li>任务分解与证据覆盖规划</li><li>时间、数值、情景与反事实推理</li><li>工具选择、参数构造与结果综合</li><li>政策推理、不确定性与拒答</li></ul>
+        </div>
+        <div class="boundary-col">
+          <div class="who">HARNESS</div>
+          <h3>保证可控执行</h3>
+          <ul><li>连接器、权限、状态与重试</li><li>计算器、代码、Office 与 CRM</li><li>证据账本和工件编译</li><li>审批、回滚、观测与回归</li></ul>
+        </div>
+        <div class="boundary-col">
+          <div class="who">DETERMINISTIC ENGINE</div>
+          <h3>承担硬约束</h3>
+          <ul><li>税务、现金流、估值公式</li><li>适当性与合规硬规则</li><li>账本、余额与交易限制</li><li>同输入同输出的高责任计算</li></ul>
+        </div>
+      </div>
+
+      <h2 class="section-title">为什么金融基模训练不是“多喂金融语料”</h2>
+      <div class="evidence-list">
+        <div class="evidence-item"><div class="source">XFinBench</div><div class="fact"><span class="tag">论文事实</span> 4,235 道研究生级多模态金融题；最佳文本模型 67.3%，仍落后人类专家 12.5 个百分点，时间与情景推理尤其弱。</div><div class="implication">知识不是主要剩余误差</div></div>
+        <div class="evidence-item"><div class="source">FrontierFinance</div><div class="fact"><span class="tag">论文事实</span> 共同 Harness 下最强系统仅 56.0%；筛选发现和行业宏观最高仅 33% / 39%。</div><div class="implication">开放任务仍有巨大上限</div></div>
+        <div class="evidence-item"><div class="source">FinToolBench</div><div class="fact"><span class="tag">论文事实</span> 760 个可执行工具、295 个必须调用工具的问题，并单独评测时效、意图与监管领域对齐。</div><div class="implication">Tool use 必须原生训练</div></div>
+        <div class="evidence-item"><div class="source">DianJin-R1</div><div class="fact"><span class="tag">论文事实</span> 结构化监督与 RL 训练后的单次推理模型，在真实合规集上匹配或超过更高计算成本的多 Agent 系统。</div><div class="implication">模型能压缩 Harness 复杂度</div></div>
+        <div class="evidence-item"><div class="source">CNFinBench</div><div class="fact"><span class="tag">论文事实</span> 从单模块进入完整执行链，模型平均下降 15.4；多轮攻击第二轮平均违规上升 159.05%。</div><div class="implication">能力与合规必须共同训练</div></div>
+      </div>
+
+      <h2 class="section-title">基模训练师的四个价值证明</h2>
+      <div class="grid-4">
+        <article class="card accent"><h3>01 · 同 Harness 更强</h3><p>锁定数据、工具、Prompt 与预算，只替换 base model；hard slice 的 episode 成功率提升才算模型增益。</p></article>
+        <article class="card accent"><h3>02 · 同质量更省</h3><p>在不降低质量和合规的前提下，减少 tool calls、tokens、分支脚本、延迟与人工复核。</p></article>
+        <article class="card accent"><h3>03 · 未见任务更稳</h3><p>在未见公司、事件窗口、工具组合和工作流上保持增益，证明学到能力而不是记住模板。</p></article>
+        <article class="card accent"><h3>04 · 风险边界更清楚</h3><p>在证据不足、规则冲突和越权请求中校准不确定性，主动补证、降级或请求批准。</p></article>
+      </div>
+    </section>
+
+    <section id="topics" class="panel">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>老板给的“提高金融基座大模型智能上限”适合作为总纲，但需要拆成六个可评测 Topic。前三个直接提高专业任务能力，第四个守住高风险边界，第五个专门证明训练 ROI，第六个形成中文与跨市场差异化。</p>
+      </div>
+
+      <div class="topic-grid">
+        <article class="topic-card p0">
+          <div class="rank">P0 · UMBRELLA</div>
+          <h3>提高金融基座大模型智能上限：面向证据、工具与决策的原生金融推理</h3>
+          <p class="pitch">不要把总纲写成“提升金融知识和问答”。建议定义为：在未知实体、未知时间和真实工具环境中，稳定完成可审计的专业金融任务。</p>
+          <div class="prove">北极星：同 Harness 的 episode success ↑；同质量的 calls / latency / manual edit ↓。</div>
+          <div class="chips"><span class="chip">Research</span><span class="chip">Advisor</span><span class="chip">Compliance</span><span class="chip">Finance Ops</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P0.1 · CORE</div>
+          <h3>金融长程证据推理与覆盖智能</h3>
+          <p class="pitch">跨公告、电话会、研报和表格规划证据覆盖，维护 entity × time × metric × source 矩阵，并主动发现缺口与反证。</p>
+          <div class="prove">证明：引用支持率、评分点覆盖、PIT 正确性、未见实体泛化。</div>
+          <div class="chips"><span class="chip">Evidence Ledger</span><span class="chip">Long Context</span><span class="chip">Coverage</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P0.2 · CORE</div>
+          <h3>金融原生工具调用与可执行工件</h3>
+          <p class="pitch">让模型在大量相似工具中选对工具、填对日期/币种/口径，并生成可验证的 Excel、PPT、CRM 与业务动作。</p>
+          <div class="prove">证明：tool selection、argument exact match、unnecessary call rate、artifact correctness。</div>
+          <div class="chips"><span class="chip">760 Tools</span><span class="chip">Excel</span><span class="chip">CRM</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P0.3 · HARD SLICE</div>
+          <h3>时间、情景与估值推理</h3>
+          <p class="pitch">把财年、披露时点、可比口径、驱动变量、情景传播和估值敏感性做成模型原生能力，而非堆叠脆弱脚本。</p>
+          <div class="prove">证明：期间/单位一致性、forecast error、scenario consistency、formula validity。</div>
+          <div class="chips"><span class="chip">Temporal</span><span class="chip">Scenario</span><span class="chip">Valuation</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P0.4 · TRUST</div>
+          <h3>合规约束下的可信推理与不确定性</h3>
+          <p class="pitch">让模型理解权限、适当性、法规版本与指令冲突；证据不足时补证，触碰风险边界时降级、拒绝或请求审批。</p>
+          <div class="prove">证明：critical violation、calibration、abstention quality、multi-turn drift。</div>
+          <div class="chips"><span class="chip">Policy</span><span class="chip">Abstention</span><span class="chip">Adversarial</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P1 · ROI</div>
+          <h3>Harness Compression：把系统复杂度压进模型</h3>
+          <p class="pitch">专门研究：哪些多 Agent 分工、重试分支、prompt patch 与人工检查可以通过训练压缩为一次稳定推理。</p>
+          <div class="prove">证明：非劣质量下 calls / tokens / rules / latency / review time 的下降曲线。</div>
+          <div class="chips"><span class="chip">Single-call</span><span class="chip">Cost</span><span class="chip">Latency</span></div>
+        </article>
+        <article class="topic-card">
+          <div class="rank">P1 · MOAT</div>
+          <h3>中文金融制度理解与跨市场迁移</h3>
+          <p class="pitch">覆盖 A/H 股、基金、保险、税务、资管新规和中英双语材料，评估法规版本、市场制度与同一指标跨市场口径迁移。</p>
+          <div class="prove">证明：法规时点、双语实体对齐、A/H 口径一致性、跨市场迁移保真。</div>
+          <div class="chips"><span class="chip">China</span><span class="chip">Bilingual</span><span class="chip">Cross-market</span></div>
+        </article>
+      </div>
+
+      <h2 class="section-title">优先级建议</h2>
+      <div class="matrix-wrap">
+        <table>
+          <thead><tr><th>Topic</th><th>为什么属于基模</th><th>近期业务拉力</th><th>评测可证伪性</th><th>建议</th></tr></thead>
+          <tbody>
+            <tr><td><strong>长程证据推理</strong></td><td>需要跨任务迁移的规划、覆盖与综合能力。</td><td>投研 / 尽调 / 合规均直接需要。</td><td>引用、覆盖、PIT、数值均可验证。</td><td><span class="tag">首批立项</span></td></tr>
+            <tr><td><strong>工具与工件</strong></td><td>工具选择和参数形成无法靠固定路由覆盖长尾。</td><td>直接连接 Excel、PPT、CRM 与业务系统。</td><td>工具轨迹和工件可执行验证。</td><td><span class="tag">首批立项</span></td></tr>
+            <tr><td><strong>时间 / 情景 / 估值</strong></td><td>是金融区别于通用 RAG 的核心推理弱点。</td><td>投研、投顾规划和风控都需要。</td><td>公式、口径、情景传播可程序验证。</td><td><span class="tag">首批立项</span></td></tr>
+            <tr><td><strong>可信合规推理</strong></td><td>规则理解、冲突处理与不确定性需进入行为层。</td><td>决定能否进入生产和外部客户场景。</td><td>风险触发、拒答与多轮漂移可验证。</td><td><span class="tag">并行底线</span></td></tr>
+            <tr><td><strong>Harness Compression</strong></td><td>直接量化参数能力替代外部复杂度的边界。</td><td>降低调用成本、延迟和维护负担。</td><td>对照实验最清楚。</td><td><span class="tag">价值证明</span></td></tr>
+            <tr><td><strong>中文与跨市场</strong></td><td>制度、语言和会计口径形成稳定域差异。</td><td>是 FiT 相对海外通用平台的差异化。</td><td>需自建跨市场和法规时点集。</td><td><span class="tag judgment">第二阶段</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="experiments" class="panel">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>要证明基模训练师价值，必须同时做模型替换、Harness 消融与压缩曲线。只比较“通用模型 + 简单 Prompt”和“金融模型 + 完整系统”，无法知道收益来自哪里。</p>
+      </div>
+
+      <h2 class="section-title">四格实验：一次只改变一个变量</h2>
+      <div class="matrix-wrap">
+        <table>
+          <thead><tr><th>实验组</th><th>Base model</th><th>Harness</th><th>回答什么问题</th><th>关键读数</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A · 基线</strong></td><td>通用基模</td><td>Simple：检索 + 基础工具</td><td>裸能力起点在哪里？</td><td>hard-slice success、错误类型</td></tr>
+            <tr><td><strong>B · Harness 增量</strong></td><td>通用基模</td><td>Full：规划、账本、校验、重试</td><td>外部系统能补多少？</td><td>B − A；调用、延迟、维护规则</td></tr>
+            <tr><td><strong>C · Model 增量</strong></td><td>金融训练基模</td><td>Simple：与 A 完全相同</td><td>训练本身带来多少？</td><td>C − A；未见实体 / 时间泛化</td></tr>
+            <tr><td><strong>D · Full system</strong></td><td>金融训练基模</td><td>Full：与 B 完全相同</td><td>模型与系统能否叠加？</td><td>D − B；质量、风险、成本</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="experiment-selector">
+        <div class="experiment-box"><label for="leftExp">选择左侧实验</label><select id="leftExp"></select></div>
+        <div class="versus">VS</div>
+        <div class="experiment-box"><label for="rightExp">选择右侧实验</label><select id="rightExp"></select></div>
+      </div>
+      <div id="experimentResult" class="experiment-result" aria-live="polite"></div>
+
+      <h2 class="section-title">建议汇报的 9 个指标</h2>
+      <div class="metric-grid">
+        <div class="metric"><b>Episode success</b><span>最终专业任务是否完成，不只看最后一句。</span></div>
+        <div class="metric"><b>Evidence coverage</b><span>关键事实是否被来源支持，是否遗漏评分点。</span></div>
+        <div class="metric"><b>Numeric integrity</b><span>数值、单位、币种、期间、公式与可复算性。</span></div>
+        <div class="metric"><b>Tool efficiency</b><span>选对工具、参数正确、无效调用与重试次数。</span></div>
+        <div class="metric"><b>Scenario consistency</b><span>假设变化是否沿模型与结论一致传播。</span></div>
+        <div class="metric"><b>Risk & calibration</b><span>越权、违规、证据不足时的拒绝与置信度。</span></div>
+        <div class="metric"><b>Artifact correctness</b><span>Excel 公式、PPT 数字、CRM 字段和业务动作。</span></div>
+        <div class="metric"><b>Human edit distance</b><span>专家从初稿到可用结果需要改多少、为何改。</span></div>
+        <div class="metric"><b>Cost / latency / calls</b><span>相同质量下，真实系统复杂度下降多少。</span></div>
+      </div>
+
+      <h2 class="section-title">建议的 Go / No-Go 门槛</h2>
+      <p class="section-kicker">以下为路线建议，不是外部 Benchmark 官方标准；团队应在基线跑通后校准。</p>
+      <div class="grid-4">
+        <article class="card"><h3>模型增益</h3><p>同 Harness 的目标 hard slice 至少出现清晰、统计稳定的绝对提升；不能只靠总体平均分掩盖。</p></article>
+        <article class="card"><h3>压缩收益</h3><p>非劣质量和风险下，tool calls / tokens / latency / 人工复核中至少两项显著下降。</p></article>
+        <article class="card"><h3>泛化保留</h3><p>未见实体、事件窗口与工具组合仍保留大部分增益；近邻样本泄漏必须阻断。</p></article>
+        <article class="card"><h3>回退控制</h3><p>通用能力与高风险合规不能因金融增强而明显退化；关键违规采用零容忍门禁。</p></article>
+      </div>
+
+      <h2 class="section-title">90 天最小闭环</h2>
+      <div class="roadmap">
+        <article class="phase"><b>0–2 周 · 定义</b><p>选择 3 个 hard slices；冻结相同 Harness、工具预算、数据截止日与评分器。</p></article>
+        <article class="phase"><b>3–5 周 · 数据</b><p>采集专家 episode、证据账本、失败恢复和工件修改；按实体图与时间窗切分。</p></article>
+        <article class="phase"><b>6–9 周 · 训练</b><p>先做可回放 SFT；每轮同时跑 A/B/C/D 四格，不只报训练集内分数。</p></article>
+        <article class="phase"><b>10–13 周 · 影子</b><p>进入研究员/投顾影子流量，收集编辑距离、拒绝原因、调用成本与风险事件。</p></article>
+      </div>
+    </section>
+
+    <section id="evidence" class="panel">
+      <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>关键判断尽量回链论文、公司公告和官方产品页。融资、用户数、资产规模与效率数据均为公司公开口径；本页使用它们识别产品方向，不把它们当成独立审计结论。</p>
+      </div>
+
+      <h2 class="section-title">基模与 Agent 评测</h2>
+      <div class="sources">
+        <article class="source-card"><div class="type">PAPER · 2026</div><a href="https://arxiv.org/abs/2608.11683" target="_blank" rel="noopener">FrontierFinance</a><p>220 个专家问题、11,543 个来源评分点；共同 Harness 下比较完整系统。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2026</div><a href="https://arxiv.org/abs/2603.08262" target="_blank" rel="noopener">FinToolBench</a><p>760 个可执行金融工具、295 个必须使用工具的问题。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2026</div><a href="https://arxiv.org/abs/2604.21006" target="_blank" rel="noopener">Deep FinResearch Bench</a><p>按定性严谨、预测/估值、主张可信与可核验评估专业金融研究。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2025</div><a href="https://arxiv.org/abs/2508.15861" target="_blank" rel="noopener">XFinBench</a><p>4,235 道复杂金融推理题，覆盖时间、预测、情景、数值与多模态。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2025</div><a href="https://arxiv.org/abs/2504.15716" target="_blank" rel="noopener">DianJin-R1</a><p>结构化监督与 GRPO；单次推理模型可匹配或超过更高成本多 Agent 系统。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2025</div><a href="https://arxiv.org/abs/2502.08127" target="_blank" rel="noopener">Fin-o1 / FinReason</a><p>通用推理能力不会稳定迁移到金融长文档与多表格，需要针对性数据与优化。</p></article>
+        <article class="source-card"><div class="type">PAPER · KDD 2026</div><a href="https://arxiv.org/abs/2512.09506" target="_blank" rel="noopener">CNFinBench</a><p>把专业能力、Agent 执行和多轮合规漂移放进同一中国金融评测。</p></article>
+        <article class="source-card"><div class="type">PAPER · 2024</div><a href="https://arxiv.org/abs/2407.02301" target="_blank" rel="noopener">CFinBench</a><p>99,100 道中文金融知识、资格、实务与法律题；适合作为基础层，不代表 Agent 上限。</p></article>
+      </div>
+
+      <h2 class="section-title">产品与行业原文</h2>
+      <div class="sources">
+        <article class="source-card"><div class="type">OFFICIAL RELEASE</div><a href="https://www.anthropic.com/news/finance-agents" target="_blank" rel="noopener">Anthropic · Agents for financial services</a><p>金融 Agent 模板、专业连接器、Office 工件、权限与审计。</p></article>
+        <article class="source-card"><div class="type">OFFICIAL CASE</div><a href="https://openai.com/index/morgan-stanley/" target="_blank" rel="noopener">Morgan Stanley uses AI evals</a><p>专家评测、每日回归与知识工作流的真实部署案例。</p></article>
+        <article class="source-card"><div class="type">OFFICIAL SITE</div><a href="https://www.fitgroup.com/business?module=invest-finance" target="_blank" rel="noopener">腾讯金融科技 · 投资理财</a><p>FiT 公开业务边界、用户触点与机构合作网络。</p></article>
+        <article class="source-card"><div class="type">FULL REPORT</div><a href="https://ncn5xqvmb1os.feishu.cn/docx/ExphdFIiyowWVnxa4EScT4UNnFc" target="_blank" rel="noopener">完整飞书报告</a><p>产品地图、28 家公司深挖、数据方案、评测与 24 个月路线。</p></article>
+      </div>
+
+      <h2 class="section-title">口径说明</h2>
+      <div class="grid-3">
+        <article class="card"><h3><span class="tag">事实</span> 可直接陈述</h3><p>论文结果、官方产品能力、公开融资轮次和已披露合作；都就近链接原文。</p></article>
+        <article class="card"><h3><span class="tag judgment">厂商口径</span> 只作信号</h3><p>客户数、AUM、采用率、节省时间与准确率；不当作第三方验证。</p></article>
+        <article class="card"><h3><span class="tag judgment">本文判断</span> 可被推翻</h3><p>优先级、壁垒、Build / Buy 边界和训练 Topic；必须接受真实评测与业务结果检验。</p></article>
+      </div>
+
+      <p class="footnote">本页是产品与技术路线分析，不构成投资建议、法律意见、金融产品营销或资源投入批准。任何面向客户、账务或交易的动作，都应经过持牌业务、法务、合规、数据安全和模型风险团队评审。</p>
+    </section>
+  </main>
+
+  <script>
+    const startups = [
+      {name:"Rogo", domain:"研究 / 投行", signal:"$75M Series C", wedge:"投行与买方专业工作流", lesson:"从研究助手扩成面向 partner 的 Agent 平台；来源、材料与机构流程一起占领。", url:"https://rogo.com/news/scaling-rogo-to-build-the-future-of-investment-banking-our-75m-series-c-and-european-expansion"},
+      {name:"Hebbia", domain:"研究 / 投行", signal:"$130M Series B", wedge:"大规模多文档 Matrix", lesson:"壁垒不是单次 RAG，而是可视化执行、逐项引用、Grid 与品牌化 PPT 工件。", url:"https://www.hebbia.com/product"},
+      {name:"Finster AI", domain:"研究 / 投行", signal:"Seed + A · $15M", wedge:"机构研究与投资备忘录", lesson:"把结构化数据、非结构化内容和机构知识放进同一权限治理环境。", url:"https://www.finster.ai/resources/news/finster-ai-raises-15-million-to-redefine-the-future-of-financial-intelligence"},
+      {name:"Brightwave", domain:"研究 / 投行", signal:"$6M Seed", wedge:"AI financial research analyst", lesson:"验证了报告、图表与演示的需求；也面对头部工作台和模型平台的双重挤压。", url:"https://www.brightwave.io/blog/brightwave-secures-6-million-to-launch-ai-financial-research-assistant"},
+      {name:"Daloopa", domain:"研究 / 投行", signal:"$47M Series C", wedge:"可回链的基本面数据层", lesson:"不争最终聊天入口，争单位、期间、指标定义与来源对齐的 AI-ready data layer。", url:"https://daloopa.com/blog/press-release/47-million-series-c"},
+      {name:"Fintool", domain:"研究 / 投行", signal:"Microsoft 收购", wedge:"研究 → Excel / PPT / Word", lesson:"需求被验证，但通用研究与 Office 自动化容易被基础办公平台吸收。", url:"https://app.fintool.com/"},
+      {name:"Gangtise 岗底斯", domain:"研究 / 投行", signal:"中国样本", wedge:"Data + Knowledge + Agent + MCP", lesson:"把另类数据、API/MCP、预生成数据库和企业 Agent 工作台放进同一产品栈。", url:"https://www.gangtise.com/"},
+      {name:"熵简科技", domain:"研究 / 投行", signal:"B 轮", wedge:"资管投研一体化平台", lesson:"系统与实施深度是优势；关键是把项目制平台升级为可学习的 Agent 产品。", url:"https://www.valuesimplex.com/"},
+
+      {name:"Jump", domain:"财富管理", signal:"$80M Series B", wedge:"顾问会议工作流", lesson:"从高频低风险的 meeting workflow 获客，再扩成 Advisor AI operating system。", url:"https://jump.ai/press/series-b-announcement"},
+      {name:"Zocks", domain:"财富管理", signal:"$45M Series B", wedge:"客户事实图谱与双向集成", lesson:"会议摘要不是壁垒；把对话转成跨 CRM、规划、税务、组合系统的客户记忆才是。", url:"https://www.zocks.io/press/zocks-raises-45m-series-b-to-accelerate-ai-powered-automation-for-financial-advisors"},
+      {name:"Conquest", domain:"财富管理", signal:"$80M Series B", wedge:"确定性财务规划引擎", lesson:"高责任计算采用同输入同输出的可重放引擎，LLM 负责理解、追问和解释。", url:"https://conquestplanning.com/en-ca/sam"},
+      {name:"Wealth.com", domain:"财富管理", signal:"Estate AI", wedge:"遗产与税务规划", lesson:"Ester 把复杂法律/税务材料转成顾问可执行的遗产规划工作流。", url:"https://www.wealth.com/ester-intelligence/"},
+      {name:"Unique", domain:"财富管理", signal:"$30M Series A", wedge:"金融服务 Agentic Workforce", lesson:"从顾问助手走向多角色 Agent 劳动力，但长期仍取决于机构数据、集成与治理。", url:"https://www.unique.ai/en/blog/unique-secures-usd-30-million-series-a-to-pioneer-agentic-ai-workforce-in-financial-services-2"},
+
+      {name:"Norm AI", domain:"合规 / AML", signal:"$120M Series C", wedge:"Regulations-as-Code", lesson:"把法规与机构政策编码成可解释检查，并沿 DDQ、RFP 和审计工件扩张。", url:"https://www.norm.ai/resources/norm-ai-raises-20-million-at-a-1-2-billion-valuation"},
+      {name:"Hadrius", domain:"合规 / AML", signal:"$22M Series A", wedge:"金融机构合规操作系统", lesson:"从 communications review 等高频审查切入，用审计链与规则版本形成系统入口。", url:"https://www.hadrius.com/insights/series-a"},
+      {name:"Bretton / Greenlite", domain:"合规 / AML", signal:"$75M Series B", wedge:"AML / KYC 调查工作台", lesson:"目标不是给调查员一段摘要，而是完成复杂案件的证据搜集、判断与叙事。", url:"https://www.bretton.com/blog/bretton-raises-75m-series-b-to-modernize-aml-kyc-staffing"},
+      {name:"WorkFusion", domain:"合规 / AML", signal:"$45M Funding", wedge:"金融犯罪 Digital Workers", lesson:"把 KYC、AML、制裁筛查和调查拆成可审计数字岗位，体现任务束替代逻辑。", url:"https://www.workfusion.com/news/workfusion-raises-45-million-in-funding-to-fuel-growth-for-agentic-ai-for-financial-crime-compliance/"},
+
+      {name:"Casca", domain:"信贷 / 保险", signal:"$29M Series A", wedge:"AI-native loan origination", lesson:"价值来自贯穿申请、材料、分析、决策与沟通的贷款流程，而不是单点评分。", url:"https://www.prnewswire.com/news-releases/ai-native-loan-origination-platform-casca-raises-29-million-to-replace-legacy-lending-302533000.html"},
+      {name:"EnFi", domain:"信贷 / 保险", signal:"$15M Series A", wedge:"银行信用工作团队", lesson:"以 AI credit workforce 连接信贷工作流，说明专业岗位与系统动作是商业化入口。", url:"https://www.enfi.ai/news/enfi-raises-15m-from-vcs-working-with-150-banks-signaling-industry-shift-on-ai-credit-workforce"},
+      {name:"FurtherAI", domain:"信贷 / 保险", signal:"$5M Funding", wedge:"商业保险文档与流程", lesson:"从保险 submission、quote、policy 等高摩擦材料流切入，以降低 expense ratio 作为 ROI。", url:"https://www.furtherai.com/blog/furtherai-raises-new-funding-to-help-commercial-insurers-reduce-expense-ratios-by-50"},
+      {name:"Liberate", domain:"信贷 / 保险", signal:"$50M Series B", wedge:"保险 Reasoning Agents", lesson:"围绕保险销售与服务的可执行对话和流程扩张；合规、准确动作与系统集成决定上限。", url:"https://www.liberate.ai/news/liberate-raises-50m-to-build-the-first-ever-reasoning-ai-agents-for-insurance"},
+
+      {name:"Basis", domain:"财务 / 私募", signal:"$100M · $1.15B", wedge:"会计 Agent", lesson:"会计的高重复、可核对任务适合 Agent；真正门槛在账本权限、证据和可审计动作。", url:"https://www.getbasis.ai/about"},
+      {name:"Rillet", domain:"财务 / 私募", signal:"$70M Series B", wedge:"AI-native ERP / ledger", lesson:"把 AI 放在总账与 close 核心，而不是外围插件；系统记录权带来数据与动作闭环。", url:"https://www.rillet.com/blog/rillet-raises-70m-series-b-from-andreessen-horowitz-and-iconiq"},
+      {name:"Numeric", domain:"财务 / 私募", signal:"$28M Funding", wedge:"Month-end close", lesson:"从余额核对、解释和 close 管理切入，让 AI 直接参与可验证的财务工件。", url:"https://www.numeric.io/blog/numerics-raises-28m"},
+      {name:"Tabs", domain:"财务 / 私募", signal:"$55M Series B", wedge:"Billing & collections agents", lesson:"围绕应收、合同、账单与催收形成动作闭环，ROI 比通用财务问答更直接。", url:"https://www.tabs.com/blog/tabs-raises-55M-series-b-to-launch-the-first-ai-agents-for-billing-and-collections"},
+      {name:"Juniper Square", domain:"财务 / 私募", signal:"$130M Series D", wedge:"私募市场 Fund Administration", lesson:"Junie AI 叠加在 LP、基金运营和系统记录之上，显示垂直软件有天然 Agent 数据闭环。", url:"https://www.junipersquare.com/news/series-d-junie-ai"},
+      {name:"Canoe", domain:"财务 / 私募", signal:"$36M Series C", wedge:"另类投资数据自动化", lesson:"用文档抽取、验证与标准化解决另类资产数据碎片化，为下游分析与 Agent 提供底座。", url:"https://canoeintelligence.com/canoe-intelligence-raises-36-million-series-c-funding-led-by-goldman-sachs-to-further-market-expansion/"},
+      {name:"OnCorps AI", domain:"财务 / 私募", signal:"$55M Growth", wedge:"基金运营 Agent", lesson:"把资管后台的异常、对账与运营判断做成 Agentic fund operations，体现中后台也能靠专业决策创造价值。", url:"https://www.prnewswire.com/news-releases/oncorps-ai-raises-55-million-to-scale-agentic-fund-operations-for-asset-managers-302638865.html"}
+    ];
+
+    const domainOrder = ["全部", "研究 / 投行", "财富管理", "合规 / AML", "信贷 / 保险", "财务 / 私募"];
+    const filters = document.getElementById("filters");
+    const startupGrid = document.getElementById("startupGrid");
+
+    function renderFilters(active = "全部") {
+      filters.innerHTML = domainOrder.map(domain => {
+        const count = domain === "全部" ? startups.length : startups.filter(item => item.domain === domain).length;
+        return `<button class="filter-btn ${domain === active ? "active" : ""}" data-domain="${domain}">${domain} · ${count}</button>`;
+      }).join("");
+      filters.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
+        renderFilters(button.dataset.domain);
+        renderStartups(button.dataset.domain);
+      }));
+    }
+
+    function renderStartups(domain = "全部") {
+      const list = domain === "全部" ? startups : startups.filter(item => item.domain === domain);
+      startupGrid.innerHTML = list.map(item => `
+        <article class="startup-card">
+          <div class="top">
+            <div><h3>${item.name}</h3><div class="domain">${item.domain}</div></div>
+            <span class="signal">${item.signal}</span>
+          </div>
+          <div class="wedge">${item.wedge}</div>
+          <p class="lesson">${item.lesson}</p>
+          <a href="${item.url}" target="_blank" rel="noopener">查看公司原文 ↗</a>
+        </article>`).join("");
+    }
+
+    function activateTab(tab, shouldScroll = true) {
+      document.querySelectorAll(".tab").forEach(node => node.classList.toggle("active", node === tab));
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("active", panel.id === tab.dataset.tab));
+      history.replaceState(null, "", `#${tab.dataset.tab}`);
+      if (shouldScroll) {
+        const tabsWrap = document.querySelector(".tabs-wrap");
+        const tabsTop = tabsWrap.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({top: tabsTop, behavior: "smooth"});
+      }
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => activateTab(tab));
+    });
+
+    const experiments = {
+      A: {label:"A · 通用基模 + Simple Harness"},
+      B: {label:"B · 通用基模 + Full Harness"},
+      C: {label:"C · 金融训练基模 + Simple Harness"},
+      D: {label:"D · 金融训练基模 + Full Harness"}
+    };
+    const comparisons = {
+      "A-B":"<b>Harness 增量：</b><span>同一模型增加规划、账本、校验和重试后改善多少；同时记录新增调用、延迟和维护规则。</span>",
+      "A-C":"<b>纯模型增量：</b><span>锁定 Simple Harness，只换金融训练基模；这是证明基模团队直接贡献的最干净对照。</span>",
+      "B-D":"<b>生产系统中的模型增量：</b><span>锁定 Full Harness 后只换模型；回答模型提升能否在强系统中继续兑现。</span>",
+      "C-D":"<b>训练后仍需要多少 Harness：</b><span>同一金融模型从 Simple 到 Full；用于识别训练尚未压缩的系统能力。</span>",
+      "A-D":"<b>端到端总增量：</b><span>最终产品相对裸基线的总收益，但不能单独用它归因；必须与 A→B、A→C、B→D 一起读。</span>",
+      "B-C":"<b>模型与 Harness 的替代关系：</b><span>比较“通用模型 + 强系统”和“金融模型 + 简系统”；在同质量下看谁更省调用、规则和延迟。</span>"
+    };
+    const leftExp = document.getElementById("leftExp");
+    const rightExp = document.getElementById("rightExp");
+    Object.entries(experiments).forEach(([key, value]) => {
+      leftExp.add(new Option(value.label, key));
+      rightExp.add(new Option(value.label, key));
+    });
+    leftExp.value = "A";
+    rightExp.value = "C";
+    function updateComparison() {
+      if (leftExp.value === rightExp.value) {
+        document.getElementById("experimentResult").innerHTML = "<b>请选择不同实验组：</b><span>只有单变量对照才能解释增益来自模型还是 Harness。</span>";
+        return;
+      }
+      const sorted = [leftExp.value, rightExp.value].sort().join("-");
+      document.getElementById("experimentResult").innerHTML = comparisons[sorted] || "<b>组合解读：</b><span>请同时锁定数据、工具预算、时间截止和评分器，再报告质量、成本、延迟与风险。</span>";
+    }
+    leftExp.addEventListener("change", updateComparison);
+    rightExp.addEventListener("change", updateComparison);
+
+    renderFilters();
+    renderStartups();
+    updateComparison();
+
+    const requestedTab = location.hash.slice(1);
+    if (requestedTab && document.getElementById(requestedTab)) {
+      const target = document.querySelector(`.tab[data-tab="${requestedTab}"]`);
+      if (target) {
+        activateTab(target, false);
+        requestAnimationFrame(() => {
+          const tabsWrap = document.querySelector(".tabs-wrap");
+          const tabsTop = tabsWrap.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo(0, tabsTop);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
