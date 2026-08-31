@@ -1276,7 +1276,7 @@ NOTE_CSS = r'''
 '''
 
 
-def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Path]) -> str | None:
+def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Path]) -> dict | None:
     """Publish a model's auditable first-party archive and a readable index."""
     source_root = model_root / "src"
     if not source_root.is_dir():
@@ -1284,6 +1284,7 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
     destination_root = dest_root / "src"
     destination_root.mkdir(parents=True, exist_ok=True)
     rows = []
+    source_docs = []
     for source in sorted((p for p in source_root.rglob("*") if p.is_file()), key=lambda p: str(p).lower()):
         rel = source.relative_to(source_root)
         destination = destination_root / rel
@@ -1304,13 +1305,54 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
             f'<tr id="{slugify(rel.parent.name or rel.stem)}"><td><a href="{html.escape(href, quote=True)}">{html.escape(str(rel))}</a></td>'
             f'<td>{html.escape(kind)}</td><td>{source.stat().st_size:,} B</td></tr>'
         )
+        if rel.parent == Path(".") and source.name != "Official Source.md":
+            label = source.stem.replace("official_", "").replace("_", " ").title()
+            if source.suffix.lower() == ".md":
+                source_docs.append({
+                    "label": f"{label} · 阅读版",
+                    "path": str(published.relative_to(ATLAS)),
+                    "kind": "readable",
+                    "name": source.name,
+                })
+            elif source.suffix.lower() == ".pdf":
+                source_docs.append({
+                    "label": f"{label} · PDF",
+                    "path": str(published.relative_to(ATLAS)),
+                    "kind": "pdf",
+                    "name": source.name,
+                })
+            elif source.suffix.lower() == ".html":
+                source_docs.append({
+                    "label": f"{label} · 原始 HTML",
+                    "path": str(published.relative_to(ATLAS)),
+                    "kind": "raw-html",
+                    "name": source.name,
+                })
     if not rows:
         return None
     index = dest_root / "Sources.html"
     index.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek 一手资料包</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#07111c;color:#eaf4ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:34px}}main{{max-width:1120px;margin:auto}}a{{color:#7dd3fc;text-decoration:none}}.back{{display:inline-block;margin-bottom:28px}}h1{{font-size:clamp(40px,7vw,74px);letter-spacing:-.05em;margin:0 0 12px}}.lead{{color:#9db2c3;line-height:1.7;max-width:820px}}.box{{margin-top:30px;overflow:auto;border:1px solid #20415a;border-radius:18px;background:#0b1b29}}table{{border-collapse:collapse;width:100%;font-size:13px}}th,td{{padding:13px 16px;border-bottom:1px solid #18374c;text-align:left;vertical-align:top}}th{{color:#78d7ec;background:#0d2435;position:sticky;top:0}}tr:last-child td{{border:0}}code{{color:#a7c5d8}}@media(max-width:700px){{body{{padding:20px 12px}}}}
 </style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的 DeepSeek 官方网页、模型卡、技术报告与可获得的论文源码。原始文件保留不改写；Markdown 另提供阅读版 HTML。来源 URL、抓取日期、字节数与 SHA-256 见 <a href="src/retrieval_manifest.json">retrieval_manifest.json</a>。</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
-    return str(index.relative_to(ATLAS))
+    priorities = {
+        "official_ga_release.md": 0,
+        "official_release.md": 1,
+        "official_preview_release.md": 2,
+        "official_readme.md": 3,
+        "official_pro_model_card.md": 4,
+        "official_model_card.md": 5,
+        "official_flash_model_card.md": 6,
+        "technical_report.pdf": 7,
+        "official_ga_release.html": 20,
+        "official_release.html": 21,
+        "official_preview_release.html": 22,
+    }
+    source_docs.sort(key=lambda item: (priorities.get(item["name"], 50), item["label"]))
+    return {
+        "index": str(index.relative_to(ATLAS)),
+        "reader": source_docs[0]["path"] if source_docs else str(index.relative_to(ATLAS)),
+        "docs": source_docs,
+    }
 
 
 def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
@@ -1342,9 +1384,11 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
         if record["team"] == "deepseek":
-            sources = sync_source_archive(model_root, dest_root, targets)
-            if sources:
-                record["sources"] = sources
+            source_archive = sync_source_archive(model_root, dest_root, targets)
+            if source_archive:
+                record["sources"] = source_archive["index"]
+                record["sourceReader"] = source_archive["reader"]
+                record["sourceDocs"] = source_archive["docs"]
 
 
 def validate_top8_mainline_contract(records: list[dict]) -> None:
@@ -1382,6 +1426,11 @@ def validate_top8_mainline_contract(records: list[dict]) -> None:
             posters = record.get("posters") or []
             if not posters or not all((ATLAS / poster).is_file() for poster in posters):
                 errors.append(f"{prefix}: missing published poster")
+            if team_id == "deepseek":
+                if not record.get("sources") or not (ATLAS / record["sources"]).is_file():
+                    errors.append(f"{prefix}: missing published source archive")
+                if not record.get("sourceReader") or not (ATLAS / record["sourceReader"]).is_file():
+                    errors.append(f"{prefix}: missing workspace source reader")
 
     if errors:
         raise RuntimeError("Top-8 mainline contract failed:\n- " + "\n- ".join(errors))
@@ -1538,7 +1587,26 @@ DETAIL_CSS = CSS + r'''
 
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2">${{x.sources?`<a class="button primary" href="workspace.html?id=${{encodeURIComponent(x.slug)}}">进入三合一研读台</a>`:''}}<a class="button ${{x.sources?'':'primary'}}" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+
+
+WORKSPACE_CSS = r'''
+:root{--bg:#080c12;--panel:#0e141d;--line:#263446;--text:#edf4ff;--muted:#8fa0b5;--accent:#62d8ef;--left:50%}*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}.toolbar{height:68px;padding:0 18px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);background:#0a1018eF;backdrop-filter:blur(18px);position:relative;z-index:30}.back{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;color:#c9d7e8;text-decoration:none}.identity{min-width:0;margin-right:auto}.identity small{display:block;color:#69d7eb;font-size:9px;letter-spacing:.15em;text-transform:uppercase}.identity b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.controls{display:flex;gap:7px;align-items:center}.control{height:36px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#111a26;color:#dce8f7;font:inherit;font-size:11px;cursor:pointer}.control:hover,.control.active{border-color:#58cce3;background:#123041}.poster-button{background:#9b7cff;color:#0b0715;border-color:transparent;font-weight:800}.desk{height:calc(100vh - 68px);display:grid;grid-template-columns:minmax(280px,var(--left)) 9px minmax(280px,1fr);min-width:0}.panel{min-width:0;height:100%;background:var(--panel);display:grid;grid-template-rows:48px minmax(0,1fr)}.panel-head{padding:0 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:#101823}.panel-head b{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:#9eb0c5}.panel-head span{font-size:10px;color:#64768b}.panel-head select{margin-left:auto;max-width:min(290px,47%);height:30px;border:1px solid #314258;border-radius:8px;background:#0b121b;color:#cfe0f3;padding:0 8px;font-size:10px}.open{color:#8ee8f6;text-decoration:none;font-size:10px;white-space:nowrap}.frame{display:block;width:100%;height:100%;border:0;background:#fff}.divider{position:relative;background:#111b27;cursor:col-resize;border-left:1px solid #253548;border-right:1px solid #253548}.divider:after{content:"";position:absolute;left:3px;top:50%;width:2px;height:44px;border-radius:3px;background:#577087;transform:translateY(-50%)}.resizing,.resizing *{cursor:col-resize!important;user-select:none!important}.drawer-backdrop{position:fixed;inset:68px 0 0;background:#0008;z-index:39;opacity:0;pointer-events:none;transition:.22s}.drawer{position:fixed;z-index:40;right:0;top:68px;bottom:0;width:min(720px,64vw);background:#08111a;border-left:1px solid #365064;box-shadow:-28px 0 80px #000a;transform:translateX(100%);transition:transform .25s ease;display:grid;grid-template-rows:50px minmax(0,1fr)}.drawer.open{transform:none}.drawer.open+.drawer-backdrop{opacity:1;pointer-events:auto}.drawer-head{display:flex;align-items:center;gap:10px;padding:0 13px;border-bottom:1px solid var(--line)}.drawer-head b{margin-right:auto}.drawer iframe{width:100%;height:100%;border:0}.mobile-tabs{display:none}.empty-workspace{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted)}@media(max-width:900px){.toolbar{height:112px;align-items:flex-start;padding-top:13px;flex-wrap:wrap}.identity{width:calc(100% - 56px);order:1}.back{order:0}.controls{order:2;width:100%;overflow:auto}.desk{height:calc(100vh - 112px);display:block}.panel{display:none}.desk[data-mobile="source"] .source-panel,.desk[data-mobile="note"] .note-panel{display:grid}.divider{display:none}.mobile-tabs{display:inline-flex}.drawer{top:112px;width:100vw}.drawer-backdrop{inset:112px 0 0}.panel-head select{max-width:44%}}
+'''
+
+
+def render_workspace(records: list[dict]) -> str:
+    available = [
+        {k: v for k, v in record.items() if not k.startswith("_")}
+        for record in records
+        if record.get("note") and record.get("sources")
+    ]
+    data = json.dumps(available, ensure_ascii=False).replace("</", "<\\/")
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="官方原文、BrainHao 笔记与 Poster 三合一研读台"><title>三合一研读台 · Base Model Atlas</title><style>{WORKSPACE_CSS}</style></head><body>
+<header class="toolbar"><a class="back" id="back" href="model.html">←</a><div class="identity"><small id="meta">BrainHao · Research Workspace</small><b id="title">三合一研读台</b></div><div class="controls"><span class="mobile-tabs"><button class="control active" data-mobile="source">原文</button><button class="control" data-mobile="note">笔记</button></span><button class="control" id="equal">50 / 50</button><a class="control" id="pack" href="#">全部一手资料</a><button class="control poster-button" id="posterToggle">展开 Poster</button></div></header>
+<main class="desk" id="desk" data-mobile="source"><section class="panel source-panel"><header class="panel-head"><b>Official source</b><span>一手材料</span><select id="sourceSelect" aria-label="切换一手材料"></select><a class="open" id="sourceOpen" target="_blank" rel="noopener">单独打开 ↗</a></header><iframe class="frame" id="sourceFrame" title="DeepSeek 官方原文"></iframe></section><div class="divider" id="divider" role="separator" aria-label="拖动调整两栏宽度" tabindex="0"></div><section class="panel note-panel"><header class="panel-head"><b>BrainHao note</b><span>精读与判断</span><a class="open" id="noteOpen" target="_blank" rel="noopener">单独打开 ↗</a></header><iframe class="frame" id="noteFrame" title="BrainHao 精读笔记"></iframe></section></main>
+<aside class="drawer" id="drawer"><header class="drawer-head"><b id="posterTitle">Research Poster</b><a class="open" id="posterOpen" target="_blank" rel="noopener">单独打开 ↗</a><button class="control" id="posterClose">收起</button></header><iframe id="posterFrame" title="模型研究 Poster"></iframe></aside><div class="drawer-backdrop" id="backdrop"></div>
+<script>const DATA={data};const query=new URLSearchParams(location.search);const x=DATA.find(item=>item.slug===query.get('id'))||DATA[0];const desk=document.querySelector('#desk');if(!x){{desk.innerHTML='<div class="empty-workspace"><div><h1>这个节点还没有三合一资料</h1><p>请返回模型 Overview。</p></div></div>'}}else{{document.title=`${{x.name}} · 三合一研读台`;document.querySelector('#title').textContent=x.name;document.querySelector('#meta').textContent=`${{x.teamName}} · ${{x.date}} · 原文 × 笔记 × Poster`;document.querySelector('#back').href=`model.html?id=${{encodeURIComponent(x.slug)}}`;document.querySelector('#pack').href=x.sources;const note=document.querySelector('#noteFrame');const noteOpen=document.querySelector('#noteOpen');note.src=x.note;noteOpen.href=x.note;const docs=x.sourceDocs?.length?x.sourceDocs:[{{label:'一手资料包',path:x.sourceReader||x.sources}}];const select=document.querySelector('#sourceSelect');select.innerHTML=docs.map((doc,i)=>`<option value="${{i}}">${{doc.label}}</option>`).join('');const source=document.querySelector('#sourceFrame');const sourceOpen=document.querySelector('#sourceOpen');function showSource(i){{const doc=docs[Number(i)]||docs[0];source.src=doc.path;sourceOpen.href=doc.path}}select.onchange=()=>showSource(select.value);showSource(0);const poster=(x.posters||[])[0];const drawer=document.querySelector('#drawer');const toggle=document.querySelector('#posterToggle');const close=document.querySelector('#posterClose');function setPoster(open){{drawer.classList.toggle('open',open);toggle.textContent=open?'收起 Poster':'展开 Poster';toggle.classList.toggle('active',open);if(open&&poster&&!document.querySelector('#posterFrame').src)document.querySelector('#posterFrame').src=poster}}toggle.onclick=()=>setPoster(!drawer.classList.contains('open'));close.onclick=()=>setPoster(false);document.querySelector('#backdrop').onclick=()=>setPoster(false);if(poster){{document.querySelector('#posterOpen').href=poster;document.querySelector('#posterTitle').textContent=`${{x.name}} · Research Poster`}}else{{toggle.disabled=true;toggle.textContent='暂无 Poster'}}document.addEventListener('keydown',event=>{{if(event.key==='Escape')setPoster(false)}});let ratio=Math.min(72,Math.max(28,Number(localStorage.getItem('atlasSplit'))||50));function applyRatio(){{desk.style.setProperty('--left',ratio+'%')}}applyRatio();document.querySelector('#equal').onclick=()=>{{ratio=50;localStorage.setItem('atlasSplit',ratio);applyRatio()}};const divider=document.querySelector('#divider');function resize(event){{const box=desk.getBoundingClientRect();ratio=Math.min(72,Math.max(28,(event.clientX-box.left)/box.width*100));applyRatio()}}divider.onpointerdown=event=>{{divider.setPointerCapture(event.pointerId);document.body.classList.add('resizing');resize(event)}};divider.onpointermove=event=>{{if(divider.hasPointerCapture(event.pointerId))resize(event)}};divider.onpointerup=event=>{{divider.releasePointerCapture(event.pointerId);document.body.classList.remove('resizing');localStorage.setItem('atlasSplit',ratio)}};divider.onkeydown=event=>{{if(['ArrowLeft','ArrowRight'].includes(event.key)){{ratio+=event.key==='ArrowLeft'?-2:2;ratio=Math.min(72,Math.max(28,ratio));localStorage.setItem('atlasSplit',ratio);applyRatio()}}}};document.querySelectorAll('[data-mobile]').forEach(button=>button.onclick=()=>{{desk.dataset.mobile=button.dataset.mobile;document.querySelectorAll('[data-mobile]').forEach(item=>item.classList.toggle('active',item===button))}})}};</script></body></html>'''
 
 
 def render_branch_audit(teams: list[dict]) -> str:
@@ -1615,7 +1683,9 @@ def write_legacy_compatibility() -> None:
     legacy_root = library_root / "library"
     rendered_notes = [
         page for page in library_root.rglob("*.html")
-        if legacy_root not in page.parents and page.with_suffix(".md").is_file()
+        if legacy_root not in page.parents
+        and "src" not in page.relative_to(library_root).parts
+        and page.with_suffix(".md").is_file()
     ]
     for page in rendered_notes:
         rel = page.relative_to(library_root)
@@ -1639,6 +1709,7 @@ def main() -> None:
     archive_entries = sync_archive(targets)
     (THINKING / "base_model_atlas.html").write_text(render_index_complete(teams, records), encoding="utf-8")
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
+    (ATLAS / "workspace.html").write_text(render_workspace(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
     (ATLAS / "branch-audit.html").write_text(render_branch_audit_complete(teams, records), encoding="utf-8")
     (ATLAS / "top8-tree.html").write_text(render_top8_tree_complete(teams, records), encoding="utf-8")
