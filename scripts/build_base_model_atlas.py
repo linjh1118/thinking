@@ -241,7 +241,7 @@ TEAM_PRIORITY = [
 # 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
-    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4"),
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash"),
     "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.6", "GLM-4.7", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
@@ -319,6 +319,17 @@ VARIANT_FAMILIES = {
 
 # Additional named models that should be visible on a team's horizontal line.
 PINNED_TIMELINE_VARIANTS = {
+    "deepseek": [
+        {
+            "date": "2604",
+            "name": "DeepSeek-V4-Flash",
+            "summary": "DeepSeek-V4 的高效率同代模型：284B 总参数、13B 激活参数，原生支持 1M context。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
+            "folder": "2604_deepseek_v4",
+            "lineageType": "mainline",
+            "label": "V4 同代模型",
+        }
+    ],
     "seed": [
         {
             "date": "2602",
@@ -1438,6 +1449,17 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 record["sources"] = source_archive["index"]
                 record["sourceReader"] = source_archive["reader"]
                 record["sourceDocs"] = source_archive["docs"]
+                if record["name"] == "DeepSeek-V4-Flash":
+                    flash_docs = [
+                        doc for doc in record["sourceDocs"]
+                        if doc["name"] == "DeepSeek-V4-Flash.md"
+                    ]
+                    if flash_docs:
+                        preferred = flash_docs[0]
+                        record["sourceReader"] = preferred["path"]
+                        record["sourceDocs"] = [preferred] + [
+                            doc for doc in record["sourceDocs"] if doc is not preferred
+                        ]
 
 
 def validate_top8_mainline_contract(records: list[dict]) -> None:
