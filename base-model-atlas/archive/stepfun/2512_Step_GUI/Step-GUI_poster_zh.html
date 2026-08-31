@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step-GUI Technical Report — 中文版</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #0c0a09;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  a { color: #fbbf24; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .poster {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #1c1917;
+    border-radius: 16px;
+    box-shadow: 0 12px 60px rgba(0,0,0,.7);
+    overflow: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 50%, #0891b2 100%);
+    padding: 28px 48px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+  }
+  .header-left .tag {
+    display: inline-block;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.65);
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+  }
+  .header-left h1 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .header-left .subtitle {
+    font-size: .8rem;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 10px;
+  }
+  .header-left .authors {
+    font-size: .7rem;
+    color: rgba(255,255,255,.55);
+  }
+  .scores {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .score-box {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 105px;
+  }
+  .score-box .num {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: #fde68a;
+    line-height: 1;
+  }
+  .score-box .sub {
+    font-size: .62rem;
+    color: rgba(255,255,255,.6);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+
+  /* ===== BACKLINKS ===== */
+  .backlinks {
+    margin: 0 48px;
+    padding: 8px 14px;
+    background: rgba(124,58,237,.06);
+    border: 1px solid rgba(124,58,237,.2);
+    border-radius: 8px;
+    font-size: .8rem;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .backlinks span { color: rgba(255,255,255,.45); }
+  .backlinks a { color: #a78bfa; }
+  .backlinks a:hover { color: #c4b5fd; }
+
+  /* ===== MAIN GRID ===== */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid rgba(168,162,158,.1);
+  }
+  .col {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(168,162,158,.1);
+  }
+  .col:last-child { border-right: none; }
+
+  /* ===== SECTION HEADER ===== */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .sec-head .nc {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .72rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .sec-head h2 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  /* ===== CALLOUT / ELEMENT BOXES ===== */
+  .callout {
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: .75rem;
+    line-height: 1.55;
+  }
+  .callout-purple { background: rgba(124,58,237,.1); border-left: 3px solid #7c3aed; }
+  .callout-cyan { background: rgba(8,145,178,.1); border-left: 3px solid #0891b2; }
+  .callout-amber { background: rgba(217,119,6,.1); border-left: 3px solid #d97706; }
+  .callout-green { background: rgba(5,150,105,.1); border-left: 3px solid #059669; }
+  .callout-red { background: rgba(220,38,38,.1); border-left: 3px solid #dc2626; }
+
+  .label { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+  .label-purple { color: #a78bfa; }
+  .label-cyan { color: #22d3ee; }
+  .label-amber { color: #fbbf24; }
+  .label-green { color: #6ee7b7; }
+  .label-red { color: #f87171; }
+
+  .bold { font-weight: 700; color: #fff; }
+  .white { color: #fff; }
+  .dim { color: rgba(255,255,255,.5); font-size: .7rem; }
+
+  /* ===== TRICK BOX ===== */
+  .trick-box {
+    background: rgba(5,150,105,.08);
+    border: 1px solid rgba(110,231,183,.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .trick-box .trick-title {
+    font-size: .65rem;
+    font-weight: 800;
+    color: #6ee7b7;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 5px;
+  }
+  .trick-box p {
+    font-size: .72rem;
+    color: rgba(255,255,255,.75);
+    line-height: 1.5;
+  }
+
+  /* ===== RESULT TABLE ===== */
+  .rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .68rem;
+    margin-bottom: 10px;
+  }
+  .rtable th {
+    color: #fff;
+    padding: 5px 6px;
+    text-align: center;
+    font-size: .6rem;
+    font-weight: 700;
+    background: rgba(76,29,149,.4);
+    border-bottom: 1px solid rgba(124,58,237,.3);
+  }
+  .rtable th:first-child { text-align: left; }
+  .rtable td {
+    padding: 4px 6px;
+    text-align: center;
+    color: rgba(255,255,255,.8);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+  .rtable td:first-child { text-align: left; color: rgba(255,255,255,.6); font-size: .62rem; }
+  .rtable .ours td {
+    background: rgba(253,230,138,.07);
+    color: #fde68a;
+    font-weight: 700;
+  }
+  .rtable .ours td:first-child { color: #fde68a; }
+  .rtable .best td { color: #86efac; font-weight: 700; }
+
+  /* ===== STAGE LIST ===== */
+  .stage-list { counter-reset: stage; margin: 8px 0; }
+  .stage-item {
+    position: relative;
+    padding: 7px 8px 7px 38px;
+    margin-bottom: 6px;
+    background: rgba(124,58,237,.06);
+    border-radius: 8px;
+    border: 1px solid rgba(124,58,237,.15);
+  }
+  .stage-item::before {
+    content: counter(stage);
+    counter-increment: stage;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #7c3aed;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-item .stitle { font-size: .76rem; font-weight: 700; color: #e9d5ff; margin-bottom: 2px; }
+  .stage-item .sdesc { font-size: .68rem; color: rgba(255,255,255,.6); line-height: 1.45; }
+
+  /* ===== FIG BOX ===== */
+  .fig-box {
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(124,58,237,.06);
+    border: 1px solid rgba(124,58,237,.15);
+    margin: 10px 0;
+  }
+  .fig-box img { width: 100%; display: block; }
+  .fig-cap {
+    text-align: center;
+    padding: 5px 10px;
+    font-size: .62rem;
+    color: #78716c;
+    font-style: italic;
+    background: rgba(28,25,23,.9);
+  }
+
+  /* ===== BOTTOM STRIP ===== */
+  .bottom-strip {
+    background: #0f0e0d;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid rgba(168,162,158,.15);
+  }
+  .bstrip {
+    padding: 16px 20px;
+    border-right: 1px solid rgba(168,162,158,.1);
+  }
+  .bstrip:last-child { border-right: none; }
+  .bstrip .bhead {
+    font-size: .6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #78716c;
+    margin-bottom: 5px;
+  }
+  .bstrip .hl { color: #fbbf24; font-weight: 800; font-size: .8rem; }
+  .bstrip p { font-size: .68rem; color: rgba(255,255,255,.55); line-height: 1.5; margin-top: 3px; }
+
+  /* ===== TAG ===== */
+  .tag-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .tag-item {
+    font-size: .6rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(124,58,237,.15);
+    color: #a78bfa;
+    border: 1px solid rgba(124,58,237,.3);
+  }
+
+  /* ===== LIST ===== */
+  ul.bullet {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0;
+  }
+  ul.bullet li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 4px;
+    font-size: .72rem;
+    color: rgba(255,255,255,.7);
+    line-height: 1.5;
+  }
+  ul.bullet li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #7c3aed;
+    font-size: .65rem;
+    top: 2px;
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin: 10px 0;
+  }
+  .flow-step {
+    background: rgba(124,58,237,.1);
+    border: 1px solid rgba(124,58,237,.25);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .flow-step .fs-num {
+    font-size: .6rem;
+    font-weight: 700;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 3px;
+  }
+  .flow-step .fs-name {
+    font-size: .72rem;
+    font-weight: 700;
+    color: #e9d5ff;
+    margin-bottom: 3px;
+  }
+  .flow-step .fs-desc {
+    font-size: .62rem;
+    color: rgba(255,255,255,.5);
+    line-height: 1.4;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(124,58,237,.5);
+    font-size: .8rem;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- ========== HEADER ========== -->
+  <div class="header">
+    <div class="header-left">
+      <div class="tag">arXiv 2512.15431 · StepFun</div>
+      <h1>Step-GUI Technical Report</h1>
+      <div class="subtitle">字节跳动 StepFun 开源 GUI Agent 模型族（4B/8B），基于 Qwen3-VL 主干实现 SOTA 表现</div>
+      <div class="authors">Haolong Yan, Jia Wang, Xin Huang, et al. · GELab Team, StepFun · 2025</div>
+    </div>
+    <div class="scores">
+      <div class="score-box">
+        <div class="num">80.2%</div>
+        <div class="sub">AndroidWorld<br>Pass@3</div>
+      </div>
+      <div class="score-box">
+        <div class="num">48.5%</div>
+        <div class="sub">OSWorld<br>Pass@3</div>
+      </div>
+      <div class="score-box">
+        <div class="num">89.91%</div>
+        <div class="sub">AndroidDaily<br>Static</div>
+      </div>
+      <div class="score-box">
+        <div class="num">52.50%</div>
+        <div class="sub">AndroidDaily<br>E2E</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BACKLINKS ========== -->
+  <div class="backlinks">
+    <span>📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2512_Step_GUI%2FStep-GUI">Step-GUI.md</a>
+    <span>·</span>
+    <a href="https://arxiv.org/abs/2512.15431">arXiv:2512.15431</a>
+    <span>·</span>
+    <a href="https://huggingface.co/stepfun-ai/GELab-Zero-4B-preview">HuggingFace</a>
+  </div>
+
+  <!-- ========== MAIN 3-COLUMN GRID ========== -->
+  <div class="main-grid">
+
+    <!-- ===== COL 1: 问题 + 背景/方法基础 ===== -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#7c3aed;">1</div>
+        <h2>问题与动机</h2>
+      </div>
+
+      <div class="callout callout-red">
+        <div class="label label-red">核心瓶颈</div>
+        <span class="bold">如何高效获取高质量训练数据，同时保持标注可靠性？</span>
+        <div style="margin-top:6px;color:rgba(255,255,255,.65);font-size:.72rem;line-height:1.5;">
+          传统人工标注成本高、主观性强，难以扩展。模型生成的轨迹存在幻觉和事实错误，无法直接作为监督信号。
+        </div>
+      </div>
+
+      <div class="callout callout-purple">
+        <div class="label label-purple">现有方法局限</div>
+        <ul class="bullet">
+          <li>自改进方法（STAR/Self-Refine）主要针对单轮任务，无法验证多轮轨迹正确性</li>
+          <li>单步级标注依赖模型自省，存在累积幻觉风险</li>
+          <li>轨迹级验证缺乏可靠的高置信度 reward 信号</li>
+        </ul>
+      </div>
+
+      <div class="callout callout-cyan">
+        <div class="label label-cyan">本文解决思路</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.75);line-height:1.55;">
+          CSRS 通过<strong style="color:#fff;">轨迹级校准</strong>将 LLM 生成的密集步级推理锚定到客观可验证的轨迹级信号，既保证标注质量，又维持扩展性。
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:18px;">
+        <div class="nc" style="background:#0891b2;">2</div>
+        <h2>核心贡献</h2>
+      </div>
+
+      <div class="tag-row">
+        <div class="tag-item">CSRS 自进化 pipeline</div>
+        <div class="tag-item">Step-GUI 4B/8B</div>
+        <div class="tag-item">GUI-MCP 协议</div>
+        <div class="tag-item">AndroidDaily</div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">💡 最重要洞察</div>
+        <p>用客观可验证的<strong>轨迹级成功/失败信号</strong>锚定 LLM 生成的密集步级推理，比单纯依赖模型自省或事后过滤更可靠。CSRS 实现了 &gt;90% 标注准确率，同时降低 10-100x 标注成本。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/figs/intro_head2.png" alt="Performance Overview" onerror="this.style.display='none'">
+        <div class="fig-cap">Step-GUI (4B/8B) 在 5 个 GUI benchmarks 上对比领先 baseline 的性能概览</div>
+      </div>
+    </div>
+
+    <!-- ===== COL 2: 核心方法 ===== -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#d97706;">3</div>
+        <h2>CSRS 校准步奖励系统</h2>
+      </div>
+
+      <div class="callout callout-amber">
+        <div class="label label-amber">Architecture</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:6px;">
+          CSRS 由两个核心组件构成：
+        </div>
+        <ul class="bullet">
+          <li><strong style="color:#fff;">校准层（Calibration Layer）</strong>：用验证脚本或人工进行二元成功/失败判断，提供高置信度 reward 锚点</li>
+          <li><strong style="color:#fff;">数据抽取层（Data Extraction）</strong>：由思维模型从轨迹中抽取 7 类结构化训练数据</li>
+        </ul>
+      </div>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="fs-num">Step 1</div>
+          <div class="fs-name">Rollout</div>
+          <div class="fs-desc">模型生成多步交互轨迹</div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-num">Step 2</div>
+          <div class="fs-name">CSRS</div>
+          <div class="fs-desc">轨迹级校准 + 7类数据抽取</div>
+        </div>
+        <div class="flow-step">
+          <div class="fs-num">Step 3</div>
+          <div class="fs-name">Training</div>
+          <div class="fs-desc">高质量数据训练更强模型</div>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">🔑 选择性学习策略</div>
+        <p><strong style="color:#fff;">成功轨迹</strong>：抽取全部 7 类数据（知识+动作）<br>
+        <strong style="color:#fff;">失败轨迹</strong>：只抽取知识类数据（1-6），不学习错误动作<br>
+        <em style="color:rgba(255,255,255,.5);font-size:.65rem;">"从失败中学知识，不学错误动作"</em></p>
+      </div>
+
+      <div class="callout callout-purple">
+        <div class="label label-purple">7 类结构化数据</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.65);line-height:1.65;">
+          ① 进度追踪 &nbsp;② 状态摘要 &nbsp;③ 效果预测 &nbsp;④ 自我反思<br>
+          ⑤ 状态验证 &nbsp;⑥ 意图执行 &nbsp;⑦ 动作预测
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#059669;">4</div>
+        <h2>三阶段训练范式</h2>
+      </div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">Mid-Train（~11.2M）</div>
+          <div class="sdesc">通用能力保留 + 基础 agent 能力建立：visual grounding、action alignment、trajectory data、跨平台环境数据</div>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Cold-Start（~1.67M）</div>
+          <div class="sdesc">错误驱动知识注入：分析轨迹执行失败 → 识别缺失知识 → 转为 VQA 对精准修补。52% 知识数据 + 24% trajectory data</div>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">RLVR / GRPO（迭代）</div>
+          <div class="sdesc">基于可验证 reward 的强化学习：空间几何 reward + 动作语义 reward + LLM-as-Judge 软 reward。含 Gradient Preservation + Semi-Online Hindsight 策略</div>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <div class="label label-green">自进化飞轮</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.7);line-height:1.5;">
+          Rollout → CSRS → Training → 更强模型 → 更好 Rollout<br>
+          <span style="color:#86efac;">成功率从 30-40% 提升至 85%+（专家级）</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== COL 3: 实验结果 ===== -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#dc2626;">5</div>
+        <h2>实验结果</h2>
+      </div>
+
+      <div class="label" style="color:#fbbf24;margin-bottom:6px;">GUI Grounding Benchmarks</div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>ScreenSpot-Pro</th>
+            <th>OSWorld-G</th>
+            <th>MMBench-G</th>
+            <th>VWebBench</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>UI-TARS-1.5</td><td>61.6</td><td>-</td><td>-</td><td>-</td>
+          </tr>
+          <tr>
+            <td>GUI-Owl-32B</td><td>58.0</td><td>58.0</td><td>83.0</td><td>-</td>
+          </tr>
+          <tr>
+            <td>Qwen3-30B-A3B</td><td>60.5</td><td>61.0</td><td>79.7</td><td>79.7</td>
+          </tr>
+          <tr class="ours">
+            <td>Step-GUI-4B</td><td>60.0</td><td style="color:#fde68a;">66.9</td><td>84.0</td><td style="color:#86efac;">90.7</td>
+          </tr>
+          <tr class="best">
+            <td>Step-GUI-8B</td><td style="color:#86efac;">62.6</td><td style="color:#86efac;">70.0</td><td style="color:#86efac;">85.6</td><td>89.7</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="label" style="color:#fbbf24;margin-bottom:6px;margin-top:10px;">End-to-End Benchmarks（Pass@3）</div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>OSWorld-Verified</th>
+            <th>AndroidWorld</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Claude-4.5-sonnet</td><td>61.4</td><td>-</td>
+          </tr>
+          <tr>
+            <td>UI-TARS-2</td><td>47.5</td><td>73.3</td>
+          </tr>
+          <tr>
+            <td>MobileRL-9B</td><td>-</td><td>80.2</td>
+          </tr>
+          <tr class="ours">
+            <td>Step-GUI-4B</td><td>40.4</td><td>75.8</td>
+          </tr>
+          <tr class="best">
+            <td>Step-GUI-8B</td><td style="color:#86efac;">48.5</td><td style="color:#86efac;">80.2</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="label" style="color:#fbbf24;margin-bottom:6px;margin-top:10px;">AndroidDaily Benchmark</div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Static AVG</th>
+            <th>E2E Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>UI-TARS-1.5</td><td>67.69%</td><td>56.64%</td>
+          </tr>
+          <tr class="ours">
+            <td>Step-GUI-4B</td><td>87.02%</td><td>49.06%</td>
+          </tr>
+          <tr class="best">
+            <td>Step-GUI-8B</td><td style="color:#86efac;">89.91%</td><td>52.50%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-amber" style="margin-top:8px;">
+        <div class="label label-amber">AndroidDaily E2E — 按维度拆分（Step-GUI-8B）</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);line-height:1.55;">
+          <strong style="color:#fff;">Task Type</strong>：Filter 52.50% / Query 63.82% / Analyze 32.95%<br>
+          <strong style="color:#fff;">Complexity</strong>：Atomic 59.09% / Composite 14.00% / Conditional 42.86%<br>
+          <strong style="color:#fff;">Ambiguity</strong>：Low 54.08% / Mid 44.55% / <span style="color:#86efac;">High 61.54%</span>
+        </div>
+        <div style="margin-top:5px;font-size:.65rem;color:rgba(255,255,255,.45);">
+          Step-GUI-8B 在高模糊度指令上超越 UI-TARS-1.5（61.54% vs 57.89%），展现强鲁棒性
+        </div>
+      </div>
+
+      <div class="trick-box" style="margin-top:8px;">
+        <div class="trick-title">📈 自进化训练动态（6轮迭代）</div>
+        <p>
+          <strong style="color:#fff;">AndroidWorld</strong>：Round 2 的 44.83% → Round 3 的 73.40%（<span style="color:#86efac;">+28.57pp</span>，CSRS 生成数据流催化）<br>
+          <strong style="color:#fff;">OSWorld</strong>：29.63% → 46.26%（<span style="color:#fbbf24;">+16.63pp</span>，Refinement 数据流持续挖掘弱点）
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <div class="label label-green">通用多模态能力保留</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);line-height:1.5;">
+          Step-GUI-8B 在 V*（89.0）、PhyX（41.9）、MMBench_en（89.1）、CharXiv_DQ（86.3）等通用 benchmark 上保持竞争力，证明 GUI 专项训练不损害通用多模态理解能力。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM STRIP ========== -->
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">核心创新</div>
+      <div class="hl">CSRS 轨迹级校准</div>
+      <p>用可验证的轨迹级 reward 锚定 LLM 推理，>90% 标注准确率，10-100x 成本降低</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">模型规模</div>
+      <div class="hl">4B / 8B</div>
+      <p>基于 Qwen3-VL，4B 可在消费级硬件本地部署，8B 达 SOTA 水平</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">隐私协议</div>
+      <div class="hl">GUI-MCP</div>
+      <p>首个 GUI 自动化 MCP 协议，截图中只发语义摘要给云端 LLM，原始图片留本地</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Benchmark</div>
+      <div class="hl">AndroidDaily</div>
+      <p>3146 静态 actions + 235 端到端任务，覆盖真实高频日常场景（交通/购物/社交等）</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

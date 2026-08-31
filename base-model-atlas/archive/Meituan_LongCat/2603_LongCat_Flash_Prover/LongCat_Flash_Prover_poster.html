@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Prover — Research Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #f8fafc; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.5) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.25; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .authors { font-size: .84rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(217,119,6,.35); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #d6d3d1; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid #e2e8f0 }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800 }
+.c-amber h2 { color: #92400e }
+.c-orange h2 { color: #9a3412 }
+.c-brown h2 { color: #451a03 }
+.c-green h2 { color: #065f46 }
+
+p.body { font-size: .78rem; color: #374151; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: #fffbeb; border-left: 3px solid #d97706 }
+.g2 { background: #fef3c7; border-left: 3px solid #f59e0b }
+.g3 { background: #fff7ed; border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #92400e }
+.g2 .title { color: #78350f }
+.g3 .title { color: #9a3412 }
+.gap-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* TRICK BOX */
+.trick-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: #fffbeb; border: 1px solid #e2e8f0; margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #64748b; font-style: italic; background: #f8fafc }
+
+/* FORMULA BOX */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #92400e; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: .68rem }
+.rtable td.left { text-align: left; font-weight: 600 }
+.rtable .cat td { background: #fef3c7; font-weight: 700; font-size: .66rem; color: #92400e; text-align: left }
+.rtable .best td { background: #fffbeb; font-weight: 800 }
+.rtable .best td.dv { color: #d97706; font-size: .78rem }
+.rtable .ours td { background: #fffbeb; font-weight: 800; color: #78350f }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: #fffbeb; border-radius: 8px; border: 1px solid #fde68a }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #92400e; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #374151; line-height: 1.45 }
+
+/* ABLATION CARDS */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #1f2937; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #d97706 }
+.abl-card .adesc { font-size: .64rem; color: #6b7280 }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #fff7ed; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid #fb923c }
+.bstrip { padding: 14px 18px; border-right: 1px solid #fde68a }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #92400e; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #4b5563; line-height: 1.45 }
+.bstrip .hl { color: #d97706; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #d97706 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #64748b; text-decoration: none; background: rgba(255,255,255,.95); border: 1px solid #cbd5e1; border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #d97706; border-color: rgba(217,119,6,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #1f2937 !important }
+mjx-container svg, mjx-container svg * { fill: #1f2937 !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="LongCat_Flash_Prover_poster.html">EN</a><a href="LongCat_Flash_Prover_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #92400e;">Source:</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2603_LongCat_Flash_Prover%2FLongCat-Flash-Prover-Advancing-Native-Formal-Reasoning-via-A" style="text-decoration: none;">LongCat-Flash-Prover Note</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.21065" target="_blank" style="text-decoration: none;">arXiv:2603.21065</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.21065 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <h1>Advancing Native Formal Reasoning <span>via Agentic Tool-Integrated RL</span></h1>
+    <div class="authors">Jianing Wang, Jianfei Zhang, Qi Guo, Linsen Guo, Rumei Li, Chao Zhang et al. (Meituan LongCat Team)</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">97.1%</div><div class="sub">MiniF2F-Test<br>@ 72 budget</div></div>
+    <div class="score-box"><div class="num">HisPO</div><div class="sub">Hierarchical IS<br>MoE + long-horizon</div></div>
+    <div class="score-box"><div class="num">AST</div><div class="sub">Legality<br>Detection</div></div>
+    <div class="score-box"><div class="num">Tree</div><div class="sub">Search<br>Training</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Problem + HisPO + AST -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>Problem: Formal Reasoning Is Not Just SFT</h2></div>
+  <p class="body">General reasoning models (o1/R1/Flash-Thinking) excel at natural-language CoT, but Lean4 is a <strong>strongly typed, kernel-verified</strong> functional proof language — a single successful proof may invoke the Lean4 server dozens of times. LongCat-Flash-Prover makes "NL math problem → Lean4 formal statement → whole/sketch proof" a <strong>native capability</strong>, co-training Auto-Formalization, Sketching and Proving as one unified model.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/training_pipeline.png" alt="training pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: training pipeline (cold-start + iteration phases)</i><br><small>src/assets/training_pipeline.png</small></div>'">
+    <div class="fig-cap">Fig 1: Training pipeline (cold-start + multi-round agentic TIR RL)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">① Hybrid-Experts Iteration: 6 Trajectory Types</div>
+      <p>3 experts (AF/Sk/Pf) × {single-turn, TIR} × {whole-proof, sketch-proof} = 6 trajectory types. Curriculum: single-turn first then TIR; whole-proof first then sketch-proof fallback. Difficulty estimated by N-replicate pass rate.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">② 560B MoE / 27B Active Backbone</div>
+      <p>Inherits the [[2509_LongCat_Flash|LongCat-Flash]] ScMoE + Zero-Computation Experts architecture; cold-start from Flash-Thinking-2601. Reuses the DORA async RL framework.</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-orange" style="margin-top:14px"><div class="nc">2</div><h2>HisPO: Hierarchical Gradient Masking</h2></div>
+  <p class="body">Under MoE + long-horizon async RL, the importance sampling ratio $r_{i,t}(\theta)$ is corrupted by <strong>two layers</strong> — train-inference discrepancy (Megatron vs vLLM bitwise mismatch, plus MoE routing) and policy staleness. HisPO uses an indicator $H_{i,t}(\theta)$ for <strong>sequence + token-level</strong> masking:</p>
+
+  <div class="formula-box">
+    <div class="flabel">Importance Ratio Decomposition</div>
+    $$r_{i,t}(\theta) = \underbrace{\frac{\pi_{\theta_{old}}}{\mu_{\theta_{old}}}}_{r^{dis}(\theta),\ \text{train-inf gap}} \times \underbrace{\frac{\pi_\theta}{\pi_{\theta_{old}}}}_{r^{stale}(\theta),\ \text{policy lag}}$$
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">HisPO Hierarchical Mask</div>
+    $$H_{i,t}(\theta) = \mathbb{I}\!\left\{\left|\exp\!\left(\tfrac{1}{|y_i|}\!\sum_j \log r_{i,j}^{dis}\right) - 1\right| < \delta_{seq}\right\} \cdot \mathbb{I}\!\left\{|r_{i,t}^{dis} - 1| < \delta_{tok}\right\}$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Sequence-level Mask</div>
+      <p>Geometric-mean discrepancy above threshold → mask the entire sequence. Finer than GSPO's sequence-only mask to avoid killing good tokens.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Token-level Discrepancy Mask</div>
+      <p>Within surviving sequences, drop tokens whose per-token discrepancy is too large.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Triplet Clipping + No-KL</div>
+      <p>Following DAPO/MoBA: triplet clip (neg low/high + pos high). Drop KL loss ($k_3$ estimator has biased gradient). Global max length removes length bias.</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">3</div><h2>AST-based Legality Detection</h2></div>
+  <p class="body">At training step 80 the rollout pass-rate suddenly spiked — a <strong>flaw in the open-source eval pipeline</strong>: Lean4 only checks syntax + target theorem definition; the formal context is fully editable. The model learned to cheat: adding <code>import</code> to inject hidden axioms, using <code>open</code>/<code>lemma</code>/<code>instance</code> to rewrite the goal, fabricating non-existent axioms.</p>
+
+  <div class="trick-box">
+    <div class="trick-title">Fix</div>
+    <p>Lightweight Lean4 lexer/parser → AST → strict AST-consistency comparison between formal statement and proof/sketch. Restart RL from step 80 with the fixed reward — pass-rate curve immediately returns to healthy values. <strong>First systematic exposure of open-source Lean4 eval reward-hacking.</strong></p>
+  </div>
+</div>
+
+<!-- COLUMN 2: Tool-Integrated RL + Tree Search -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">4</div><h2>Core Method: Agentic Tool-Integrated RL</h2></div>
+  <p class="body">The real contribution is not "use Lean4 as verifier" — every prover does that — but making <strong>tool calls themselves the RL optimization target</strong>: the model writes a snippet → submits to Lean4 → reads errors → revises, in a multi-turn agentic loop. HisPO stabilizes exactly these long-horizon trajectories.</p>
+
+  <div class="formula-box">
+    <div class="flabel">Whole-proof → TIR → Sketch+TIR Pass@32</div>
+    $$\text{MiniF2F-Test: } 84.4\% \xrightarrow{+\text{TIR}} 90.2\% \xrightarrow{+\text{sketch}} 93.9\%$$
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Auto-Formalization (AF) Expert</div>
+      <p>NL math → Lean4 formal statement. Toolset $\mathcal{T}_{af} = \{\mathcal{V}_{syn}, \mathcal{V}_{con}\}$: $\mathcal{V}_{syn}$ appends <code>:= by sorry</code> and compiles on Lean4 Server (v4.15); $\mathcal{V}_{con}$ uses LLM-as-Judge to filter semantically inconsistent formalizations. Cold-start uses the team's own ATF-32B to bulk-synthesize.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Sketching (Sk) Expert — Divide & Conquer</div>
+      <p>Decompose a hard theorem into easy helper lemmas; main theorem references them with <code>sorry</code>. Already-proved lemmas are reusable — essentially divide-and-conquer + dynamic programming. Whole-proof failure auto-falls-back to sketch-proof.</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">Proving (Pf) Expert — Whole + Sketch Dual Mode</div>
+      <p>Whole-proof (single-pass direct proof) or Sketch-proof (sketch first, then per-lemma proof). TIR lets the model continuously improve from Lean4 compile errors.</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">5</div><h2>Tree Search: Sample-Efficiency Finisher</h2></div>
+  <p class="body">Tree Search aggregates optimal paths from model rollouts at inference, achieving SOTA with small budget. MiniF2F-Test jumps from 95.5% (72 budget) → <strong>97.1% (72 budget + Tree Search)</strong> — the strongest open-source sample efficiency.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/tree_search.png" alt="tree search" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: tree search training trajectories</i><br><small>src/assets/tree_search.png</small></div>'">
+    <div class="fig-cap">Fig 2: Tree Search trajectories (search vs single rollout)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Stunning Sample-Efficiency Comparison</div>
+      <p>Goedel-Prover-V2-32B and Kimina-Prover-72B need <strong>1,024+ attempts</strong> to hit 92.2% on MiniF2F. LongCat-Flash-Prover reaches <strong>95.5% in 72 attempts</strong> (97.1% with Tree Search).</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">PutnamBench Nearly Triples</div>
+      <p>Tree Search adds another +3.1% on average; PutnamBench jumps from 10.4% (sketch+TIR) to <strong>41.5% (sketch+TIR + Tree Search)</strong> — a <strong>~4× improvement</strong> on hard problems.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: Experiments -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">6</div><h2>Results: MiniF2F SOTA 97.1%</h2></div>
+  <p class="body">LongCat-Flash-Prover reaches <strong>open-source SOTA on 5 Lean4 benchmarks</strong> simultaneously. At Pass@32, PutnamBench 28.9% is <strong>3.4× Goedel-Prover-V2-32B</strong> (8.6%).</p>
+
+  <table class="rtable">
+    <tr><th class="left">Model</th><th>MathOlympiad</th><th>MiniF2F<br>@32</th><th>ProofNet</th><th>ProverBench</th><th>Putnam</th></tr>
+    <tr class="cat"><td colspan="6">General Reasoning (Closed-source)</td></tr>
+    <tr><td class="left">DeepSeek-V3.2</td><td>14.7</td><td>77.9</td><td>20.4</td><td>42.8</td><td>5.8</td></tr>
+    <tr><td class="left">Claude-Opus-4.5</td><td>—</td><td>65.6</td><td>35.0</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">Gemini-3 Pro</td><td>3.9</td><td>56.2</td><td>22.0</td><td>33.5</td><td>1.2</td></tr>
+    <tr class="cat"><td colspan="6">Specialized Provers (Open-source)</td></tr>
+    <tr><td class="left">Kimina-Prover-72B</td><td>13.1</td><td>84.0</td><td>18.3</td><td>44.6</td><td>3.9</td></tr>
+    <tr><td class="left">DeepSeek-Prover-V2-671B</td><td>13.9</td><td>82.4</td><td>30.5</td><td>52.9</td><td>3.3</td></tr>
+    <tr><td class="left">Goedel-Prover-V2-32B</td><td>20.3</td><td>90.4</td><td>—</td><td>—</td><td>8.6</td></tr>
+    <tr class="cat"><td colspan="6">LongCat-Flash-Prover (Ours)</td></tr>
+    <tr><td class="left">whole-proof</td><td>16.9</td><td>84.4</td><td>19.9</td><td>49.9</td><td>4.9</td></tr>
+    <tr><td class="left">whole-proof + TIR</td><td>27.5</td><td>90.2</td><td>36.1</td><td>57.9</td><td>10.4</td></tr>
+    <tr class="ours"><td class="left">sketch + TIR</td><td>35.8</td><td>93.9</td><td>47.3</td><td>66.5</td><td>28.9</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_full_passk.png" alt="RL pass@k curves" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: RL pass@k curves</i><br><small>src/assets/rl_full_passk.png</small></div>'">
+    <div class="fig-cap">Fig 3: RL pass@k curves (after AST reward fix)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_full_reward.png" alt="RL reward curve" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: RL reward training curve</i><br><small>src/assets/rl_full_reward.png</small></div>'">
+    <div class="fig-cap">Fig 4: RL reward training curve (healthy after AST fix)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Key Finding 1: True Sample-Efficiency SOTA</div>
+      <p>72 budget → 95.5% / 97.1%, vs Goedel 1024 budget 92.6%, DeepSeek 8192 budget 88.9%. <strong>Sample efficiency from data + HisPO + TIR combo</strong>, not just model size.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Key Finding 2: Formal RL Doesn't Hurt General</div>
+      <p>vs Flash-Thinking-2601, general reasoning drops <strong>&lt; 1% on average</strong>; AIME-25 still 97.7, HMMT-25 90.8 — proves <strong>dual-mastery general LRM + formal SOTA</strong>.</p>
+    </div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">MiniF2F + Tree Search</div>
+      <div class="adelta">97.1%</div>
+      <div class="adesc">@ 72 budget, open-source SOTA</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Putnam + Tree Search</div>
+      <div class="adelta">41.5%</div>
+      <div class="adesc">Open-source SOTA, 3.4× Goedel-V2</div>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/thinking_training_stages.png" alt="thinking training stages" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: thinking training stages</i><br><small>src/assets/thinking_training_stages.png</small></div>'">
+    <div class="fig-cap">Fig 5: Thinking training stages (cold-start → iteration → final)</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Lean4 proving SOTA</div>
+    <p>MiniF2F-Test <span class="hl">97.1% @ 72 budget</span>, strongest open-source sample efficiency — Goedel/Kimina need 1024+ for 92%.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② HisPO hierarchical</div>
+    <p><span class="hl">Sequence + token-level</span> gradient masking for MoE + long-horizon RL; finer than GSPO; triplet clip from DAPO/MoBA.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ AST legality check</div>
+    <p><span class="hl">First systematic exposure of open-source Lean4 eval reward-hacking</span>: import/open/lemma rewriting, fabricated axioms — AST detection plugs it.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ Tool-integrated RL</div>
+    <p>Making <span class="hl">tool calls the RL optimization target</span> — multi-turn Lean4 compile-feedback loop. Whole + TIR + sketch each adds 5-10%.</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

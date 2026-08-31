@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step-DeepResearch — 技术报告</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #0c0a09;
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh;
+}
+.poster {
+  width: 1400px;
+  background: #1c1917;
+  border-radius: 12px;
+  box-shadow: 0 8px 60px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+/* ===== HEADER ===== */
+.header {
+  background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%);
+  color: #fff;
+  padding: 28px 48px 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 20px;
+}
+.header-left .venue-tag {
+  font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; opacity: .85; margin-bottom: 8px;
+}
+.header-left h1 {
+  font-size: 2.2rem; font-weight: 900; line-height: 1.1;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.header-left .subtitle {
+  font-size: .9rem; opacity: .92; max-width: 680px; line-height: 1.5;
+}
+.header-right {
+  display: flex; gap: 12px; align-items: flex-end;
+}
+.score-box {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px; padding: 12px 16px;
+  text-align: center; min-width: 110px;
+}
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1; }
+.score-box .sub { font-size: .66rem; color: rgba(255,255,255,.8); margin-top: 4px; }
+.score-box.main .num { color: #fde68a; }
+.score-box.cost .num { color: #86efac; font-size: 1.4rem; }
+
+/* ===== BACKLINKS ===== */
+.backlinks {
+  margin: 0 48px; padding: 10px 14px;
+  background: rgba(217,119,6,.08);
+  border: 1px solid rgba(217,119,6,.2);
+  border-radius: 8px; font-size: .82rem;
+  display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+}
+.backlinks a { color: #fbbf24; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.backlinks .sep { color: rgba(168,162,158,.4); }
+
+/* ===== MAIN GRID ===== */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.12); }
+.col:last-child { border-right: none; }
+
+/* ===== SECTION HEAD ===== */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.sec-head .nc {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.sec-head h2 { font-size: 1rem; font-weight: 800; color: #f5f5f4; }
+
+/* ===== BOXES ===== */
+.g1 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+.g2 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+.g3 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+.g4 { background: rgba(67,56,202,.08); border-left: 3px solid #4338ca; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+
+.box-label { font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.g1 .box-label { color: #fca5a5; }
+.g2 .box-label { color: #fdba74; }
+.g3 .box-label { color: #fde68a; }
+.g4 .box-label { color: #a5b4fc; }
+.box-title { font-size: .82rem; font-weight: 700; color: #f5f5f4; margin-bottom: 5px; }
+.box-content { font-size: .74rem; color: #d6d3d1; line-height: 1.55; }
+
+/* ===== TRICK BOX ===== */
+.trick-box {
+  background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2);
+  border-radius: 8px; padding: 10px 12px; margin: 8px 0;
+}
+.trick-title { font-size: .68rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.trick-content { font-size: .73rem; color: #d1fae5; line-height: 1.5; }
+
+/* ===== STAGE LIST ===== */
+.stage-list { counter-reset: stage; margin: 8px 0; }
+.stage-item {
+  position: relative; padding: 8px 8px 8px 40px; margin-bottom: 6px;
+  background: rgba(146,64,14,.08); border-radius: 8px;
+  border: 1px solid rgba(253,230,138,.08);
+}
+.stage-item::before {
+  content: counter(stage); position: absolute; left: 8px; top: 8px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #d97706; color: #fff; font-size: .72rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  counter-increment: stage;
+}
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fde68a; margin-bottom: 2px; }
+.stage-item .sdesc { font-size: .68rem; color: #a8a29e; line-height: 1.45; }
+
+/* ===== RESULT TABLE ===== */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0; }
+.rtable th {
+  color: #92400e; padding: 5px 6px; text-align: center; font-size: .66rem; font-weight: 800;
+  background: rgba(146,64,14,.1); border-bottom: 2px solid rgba(146,64,14,.3);
+}
+.rtable td { padding: 5px 6px; text-align: center; color: #e7e5e4; border-bottom: 1px solid rgba(168,162,158,.1); }
+.rtable td:first-child { text-align: left; font-weight: 600; }
+.rtable .ours td { background: rgba(253,230,138,.08); font-weight: 800; color: #fde68a; }
+.rtable .best td { background: rgba(110,231,183,.06); color: #6ee7b7; font-weight: 700; }
+.rtable .tier1 td { background: rgba(59,130,246,.06); color: #93c5fd; }
+.rtable .tier2 td { background: rgba(253,230,138,.06); color: #fde68a; }
+.rtable .tier3 td { background: rgba(168,162,158,.08); color: #a8a29e; }
+
+.table-note { font-size: .62rem; color: #78716c; margin-top: 6px; line-height: 1.4; }
+
+/* ===== BOTTOM STRIP ===== */
+.bottom-strip {
+  background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid rgba(146,64,14,.25);
+}
+.bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip .hl { color: #fbbf24; font-weight: 700; font-size: .82rem; }
+.bstrip .sub { font-size: .68rem; color: #a8a29e; margin-top: 2px; line-height: 1.4; }
+
+/* ===== FOOTER ===== */
+.footer {
+  padding: 12px 48px; border-top: 1px solid rgba(168,162,158,.1);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer .team { font-size: .72rem; color: #78716c; }
+.footer .team span { color: #d97706; font-weight: 700; }
+.footer .links { font-size: .72rem; }
+.footer .links a { color: #78716c; text-decoration: none; margin-left: 16px; }
+.footer .links a:hover { color: #fbbf24; }
+
+/* ===== HIGHLIGHT ===== */
+.hl-text { color: #fde68a; font-weight: 700; }
+.hl-green { color: #6ee7b7; font-weight: 700; }
+.hl-blue { color: #93c5fd; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- ===== BACKLINKS ===== -->
+<div class="backlinks" style="margin-top: 16px;">
+  <span style="color: #a8a29e;">📚 源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2512_Step_DeepResearch%2FStep-DeepResearch">Step-DeepResearch 笔记</a>
+  <span class="sep">|</span>
+  <a href="https://arxiv.org/abs/2512.20491" target="_blank">arXiv:2512.20491</a>
+  <span class="sep">|</span>
+  <a href="https://github.com/stepfun-ai/StepDeepResearch" target="_blank">GitHub</a>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="header-left">
+    <div class="venue-tag">arXiv Technical Report · 2025</div>
+    <h1>Step-DeepResearch</h1>
+    <div class="subtitle">32B 参数端到端 Deep Research Agent — 原子能力数据合成 + 三阶段渐进训练 + 中文评测基准 ADR-Bench</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box main">
+      <div class="num">61.42</div>
+      <div class="sub">ResearchRubrics<br>分数</div>
+    </div>
+    <div class="score-box cost">
+      <div class="num">&lt;¥0.5</div>
+      <div class="sub">单次调用成本<br>（Gemini≈¥6.65）</div>
+    </div>
+    <div class="score-box">
+      <div class="num">32B</div>
+      <div class="sub">模型参数</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN GRID ===== -->
+<div class="main-grid">
+
+<!-- ===== COL 1: 问题 + 方法基础 ===== -->
+<div class="col">
+  <div class="sec-head">
+    <div class="nc" style="background:#dc2626;">1</div>
+    <h2>问题与动机</h2>
+  </div>
+
+  <div class="g1">
+    <div class="box-label">核心痛点</div>
+    <div class="box-title">Search ≠ Research</div>
+    <div class="box-content">
+      现有评测基准（BrowseComp）关注学术多跳搜索，与真实开放域研究需求差距大。<strong>Search</strong> 有明确答案；<strong>Research</strong> 需要意图分解、规划、工具使用、跨源验证、结构化报告。
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="box-label">多跳 QA 作为优化目标的问题</div>
+    <div class="box-content">
+      压力导致 Agent 过度偏向检索行为，像"高效网络爬虫"而非"研究者"。信息碎片化、推理链断裂、幻觉等问题阻碍实际部署。
+    </div>
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;">
+    <div class="nc" style="background:#ea580c;">2</div>
+    <h2>原子能力体系</h2>
+  </div>
+
+  <div class="g3">
+    <div class="box-label">四大原子能力</div>
+    <div style="font-size:.72rem;color:#fde68a;margin-bottom:6px;">① 规划与任务分解</div>
+    <div class="box-content" style="margin-bottom:8px;">Reverse Engineering：从高质量报告逆向推导"项目任务"，利用摘要作为 hindsight 约束，轨迹一致性过滤。</div>
+
+    <div style="font-size:.72rem;color:#fde68a;margin-bottom:6px;">② 深度信息检索</div>
+    <div class="box-content" style="margin-bottom:8px;">Graph-based：Wikidata5m/CN-DBpedia 子图采样 + BFS 扩展 + 多跳问题生成；Multi-document：Wiki-doc 拓扑游走。</div>
+
+    <div style="font-size:.72rem;color:#fde68a;margin-bottom:6px;">③ 反思验证</div>
+    <div class="box-content" style="margin-bottom:8px;">Error-Reflection Loop：生成→验证→反思（最多3次）；Deep Verification Workflow：Extract/Plan/Verify/Replan/Report 多智能体协作。</div>
+
+    <div style="font-size:.72rem;color:#fde68a;margin-bottom:6px;">④ 报告生成</div>
+    <div class="box-content">Mid-training 学领域风格，SFT 学指令遵循和格式规范。</div>
+  </div>
+
+  <div class="trick-box" style="margin-top:12px;">
+    <div class="trick-title">核心设计原则</div>
+    <div class="trick-content">
+      将"预测下一个 token"重塑为"决定下一个原子动作"：原子动作子空间 $\mathcal{A}_{\text{atomic}} \subset \mathcal{A}_{\text{token}}$，最小化剪枝误差 $\epsilon_{\text{pruning}}$ + RL 难度 $\epsilon_{\text{RL}}$。
+    </div>
+  </div>
+</div>
+
+<!-- ===== COL 2: 训练 pipeline ===== -->
+<div class="col">
+  <div class="sec-head">
+    <div class="nc" style="background:#d97706;">3</div>
+    <h2>三阶段训练 pipeline</h2>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Stage 1: Agentic Mid-training</div>
+      <div class="sdesc">
+        <strong style="color:#fde68a;">32K Context：</strong>原子能力注入（规划/检索/反思/报告），<strong style="color:#86efac;">无工具调用</strong>，纯文本推理。150B tokens 规模未收敛。<br>
+        <strong style="color:#fde68a;">128K Context：</strong>引入工具调用，检索/规划/工具增强推理，覆盖 Web 交互、搜索、多工具协作。
+      </div>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Stage 2: Post-training SFT</div>
+      <div class="sdesc">
+        全链路轨迹对齐：Deep Search + Deep Research。<br>
+        <span style="color:#86efac;">"正确且最短"轨迹效率优化</span>；受控噪声注入（工具错误→反思-纠正）；N-gram 去重；严格引文格式对齐。
+      </div>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Stage 3: Reinforcement Learning</div>
+      <div class="sdesc">
+        <strong style="color:#fde68a;">Two-Step Reverse Synthesis：</strong>强模型生成隐藏任务摘要 + 细粒度评分标准 → 反向合成目标任务 → 一致性验证。<br>
+        <strong style="color:#fde68a;">Rubrics Judge：</strong>从强模型学习评分逻辑 → SFT + RL 训练。<br>
+        <strong style="color:#86efac;">Strict Reward Mapping：</strong>正 rubric 全满足=1，否则=0；负 rubric 反之（二值化消除中间状态噪声）。<br>
+        <strong style="color:#fde68a;">PPO + GAE(γ=1, λ=1)：</strong>actor-critic 支持 token 级学习信号，适合长周期、多工具场景。
+      </div>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-top:14px;">
+    <div class="box-label">Base Model</div>
+    <div class="box-title">Qwen2.5-32B-Base</div>
+    <div class="box-content">
+      32B 参数，128K 上下文，接近 72B 模型的指令跟随和逻辑推理能力，大幅降低训练成本，确保性能提升来自训练范式和数据策略。
+    </div>
+  </div>
+</div>
+
+<!-- ===== COL 3: 实验结果 ===== -->
+<div class="col">
+  <div class="sec-head">
+    <div class="nc" style="background:#059669;">4</div>
+    <h2>实验结果</h2>
+  </div>
+
+  <div class="box-label" style="color:#fde68a;margin-bottom:8px;">表1: ResearchRubrics 性能对比</div>
+  <table class="rtable">
+    <thead>
+      <tr>
+        <th>模型</th>
+        <th>分数</th>
+        <th>类别</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="best">
+        <td>Gemini DeepResearch</td>
+        <td>63.69</td>
+        <td>商业系统</td>
+      </tr>
+      <tr class="ours">
+        <td>Step-DeepResearch</td>
+        <td>61.42</td>
+        <td>单 Agent SOTA</td>
+      </tr>
+      <tr>
+        <td>OpenAI DeepResearch</td>
+        <td>~61</td>
+        <td>商业系统</td>
+      </tr>
+      <tr>
+        <td>Kimi-Researcher</td>
+        <td>~58</td>
+        <td>商业系统</td>
+      </tr>
+      <tr>
+        <td>Kimi-k2-thinking</td>
+        <td>56.17</td>
+        <td>开源模型</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box-label" style="color:#fde68a;margin:12px 0 8px;">表2: ADR-Bench 金融/法律子集</div>
+  <table class="rtable">
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>分数</th>
+        <th>系统</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="tier1">
+        <td>Tier 1</td>
+        <td>25-35</td>
+        <td>Gemini DeepResearch</td>
+      </tr>
+      <tr class="tier2">
+        <td>Tier 2</td>
+        <td>15-25</td>
+        <td>Step-DeepResearch, Kimi-Researcher, Kimi-k2-thinking, OpenAI</td>
+      </tr>
+      <tr class="tier3">
+        <td>Tier 3</td>
+        <td>0-15</td>
+        <td>Qwen DeepResearch, MiniMax-M2, MiniMax Agent Pro, GLM-4.6</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="table-note">金融/法律领域：负向评分标准对知识差距敏感，Agent 流程优化无法弥补基础模型知识缺陷。</div>
+
+  <div class="trick-box" style="margin-top:12px;">
+    <div class="trick-title">ADR-Bench 人类评估亮点</div>
+    <div class="trick-content">
+      Step-DeepResearch vs Gemini：累计 Wins+Ties 达 <strong style="color:#6ee7b7;">67.1%</strong><br>
+      vs 非 Mid-training 版本：30 wins / 21 losses（Mid-training 显著提升报告质量）
+    </div>
+  </div>
+
+  <div class="box-label" style="color:#fde68a;margin:12px 0 8px;">分维度得分（ResearchRubrics）</div>
+  <table class="rtable">
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th>Step-DR</th>
+        <th>对比</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Implicit Criteria</td>
+        <td style="color:#fde68a;font-weight:800;">54.5</td>
+        <td>vs OpenAI 52.4</td>
+      </tr>
+      <tr>
+        <td>Explicit Criteria</td>
+        <td style="color:#fde68a;font-weight:800;">72.0</td>
+        <td>领先</td>
+      </tr>
+      <tr>
+        <td>Citation Quality</td>
+        <td style="color:#6ee7b7;font-weight:800;">57.0</td>
+        <td>与 Gemini 并列第一</td>
+      </tr>
+      <tr>
+        <td>Communication Quality</td>
+        <td style="color:#fde68a;font-weight:800;">58.2</td>
+        <td>超越所有对手</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- end main-grid -->
+
+<!-- ===== BOTTOM STRIP ===== -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">关键数字</div>
+    <div class="hl">61.42</div>
+    <div class="sub">ResearchRubrics 分数<br>单 Agent SOTA</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">成本效率</div>
+    <div class="hl">&lt;¥0.5</div>
+    <div class="sub">单次调用成本<br>是 Gemini 的 1/13</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心发现</div>
+    <div class="hl">Mid-training 是必要条件</div>
+    <div class="sub">非 Mid-training 版本<br>人类评估输多赢少</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">架构优势</div>
+    <div class="hl">单 Agent 超越多智能体</div>
+    <div class="sub">内化原子能力<br>比外部工作流更有价值</div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <div class="team"><span>StepFun</span> Agent-Team · 字节跳动</div>
+  <div class="links">
+    <a href="https://arxiv.org/abs/2512.20491">arXiv</a>
+    <a href="https://github.com/stepfun-ai/StepDeepResearch">GitHub</a>
+  </div>
+</div>
+
+</div><!-- end poster -->
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMax-M1 — Lightning Attention + CISPO</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#0c0a09;color:#d6d3d1;min-height:100vh}
+  .poster{width:1400px;margin:24px auto;background:#1c1917;border-radius:16px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+  .header{background:linear-gradient(120deg,#065f46 0%,#10b981 40%,#34d399 100%);padding:40px 56px 36px;position:relative}
+  .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#065f46,#34d399,#10b981)}
+  .backlinks{margin:12px 56px 0;padding:10px 16px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:8px;font-size:.82em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .backlinks a{color:#fbbf24;text-decoration:none}
+  .backlinks a:hover{text-decoration:underline}
+  .backlinks .bl-sep{color:rgba(251,191,36,.4)}
+  h1{font-size:2.05em;font-weight:800;color:#fff;letter-spacing:.5px;line-height:1.25;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+  .subtitle{font-size:1.1em;color:rgba(255,255,255,.88);margin-bottom:20px;font-weight:400}
+  .meta-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .meta-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 14px;font-size:.82em;color:#fff;font-weight:500}
+  .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+  .score-box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 18px;text-align:center;backdrop-filter:blur(6px)}
+  .score-box .label{font-size:.72em;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .score-box .num{font-size:1.75em;font-weight:800;color:#fde68a;line-height:1.1}
+  .score-box .unit{font-size:.7em;color:rgba(255,255,255,.65);margin-top:2px}
+  .main{padding:32px 56px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .sec-head{margin-bottom:16px}
+  .sec-head h2{font-size:.95em;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding-bottom:8px;border-bottom:2px solid}
+  .sec-head.c-green h2{color:#6ee7b7;border-color:#059669}
+  .sec-head.c-orange h2{color:#fb923c;border-color:#ea580c}
+  .sec-head.c-amber h2{color:#fcd34d;border-color:#d97706}
+  .sec-head.c-blue h2{color:#93c5fd;border-color:#3b82f6}
+  .prob-box{background:#0f0e0d;border:1px solid #292524;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .prob-box p{font-size:.88em;line-height:1.6;color:#a8a29e}
+  .g1,.g2,.g3,.g4{border-left:3px solid;background:#0f0e0d;border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px}
+  .g1{border-color:#dc2626}
+  .g2{border-color:#ea580c}
+  .g3{border-color:#059669}
+  .g4{border-color:#10b981}
+  .g1 p,.g2 p,.g3 p,.g4 p{font-size:.85em;line-height:1.55;color:#d4d0c8}
+  .g-label{font-weight:700;font-size:.78em;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+  .g1 .g-label{color:#fca5a5}
+  .g2 .g-label{color:#fdba74}
+  .g3 .g-label{color:#6ee7b7}
+  .g4 .g-label{color:#34d399}
+  .fig-box{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:10px;padding:10px;text-align:center;margin-top:12px}
+  .fig-box img{max-width:100%;border-radius:6px;display:block;margin:0 auto}
+  .fig-cap{font-size:.72em;color:#78716c;text-align:center;margin-top:6px}
+  .trick-box{background:#0f0e0d;border:1px solid #292524;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+  .trick-title{font-size:.82em;font-weight:700;margin-bottom:6px}
+  .trick-title.t-green{color:#6ee7b7}
+  .trick-box p{font-size:.84em;line-height:1.55;color:#a8a29e}
+  .formula{background:#141210;border:1px solid #292524;border-radius:8px;padding:10px 14px;font-family:'Courier New',monospace;font-size:.8em;color:#a5f3c4;margin:8px 0;line-height:1.6;overflow-x:auto}
+  .stage-item{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.12);border-radius:8px;padding:10px 14px;margin-bottom:6px}
+  .stage-item p{font-size:.82em;line-height:1.5;color:#a8a29e}
+  .stage-item strong{color:#6ee7b7}
+  .rtable{width:100%;border-collapse:collapse;font-size:.8em;margin-top:10px}
+  .rtable th{background:#065f46;color:#fff;padding:8px 12px;text-align:left;font-weight:600}
+  .rtable td{padding:7px 12px;border-bottom:1px solid #292524;color:#d4d0c8}
+  .rtable tr:last-child td{border-bottom:none}
+  .rtable .highlight{color:#34d399;font-weight:600}
+  .callout{background:#0f0e0d;border:1px solid #292524;border-radius:10px;padding:12px 16px;margin-top:12px}
+  .callout p{font-size:.82em;line-height:1.6;color:#a8a29e}
+  .highlight-text{color:#fde68a;font-weight:600}
+  .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .tag{background:rgba(5,150,105,.12);border:1px solid rgba(5,150,105,.2);border-radius:12px;padding:2px 10px;font-size:.72em;color:#6ee7b7}
+  .bottom-strip{background:#0f0e0d;border-top:1px solid rgba(5,150,105,.3);padding:20px 56px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
+  .takeaway{display:flex;align-items:flex-start;gap:10px;max-width:300px}
+  .takeaway-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#065f46;border-radius:50%;font-size:.72em;font-weight:700;color:#6ee7b7;flex-shrink:0;margin-top:1px}
+  .takeaway p{font-size:.82em;line-height:1.5;color:#a8a29e}
+  .takeaway strong{color:#d4d0c8}
+  .layer-visual{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .layer-la{background:#059669;color:#fff;border-radius:4px;padding:4px 8px;font-size:.72em;font-weight:600}
+  .layer-sa{background:#1e40af;color:#fff;border-radius:4px;padding:4px 8px;font-size:.72em;font-weight:600}
+  @media(max-width:1450px){.poster{width:100%;margin:0;border-radius:0}.main{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- BACKLINKS -->
+  <div class="backlinks">
+    <span style="color:#78716c;">📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMiniMax%2F2506_MiniMax_M1%2FMiniMax-M1-Scaling-Test-Time-Compute-Lightning-Attention">MiniMax-M1 笔记</a>
+    <span class="bl-sep">|</span>
+    <a href="https://arxiv.org/abs/2506.13585">arXiv 2506.13585</a>
+    <span class="bl-sep">|</span>
+    <a href="https://github.com/MiniMax-AI/MiniMax-M1">GitHub</a>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention</h1>
+    <div class="subtitle">Lightning Attention 混合架构 · CISPO 算法 · 原生 1M 上下文</div>
+    <div class="meta-row">
+      <span class="meta-chip">arXiv 2506.13585</span>
+      <span class="meta-chip">MiniMax</span>
+      <span class="meta-chip">2025</span>
+      <span class="meta-chip">Lightning Attention</span>
+      <span class="meta-chip">CISPO</span>
+    </div>
+    <div class="score-grid">
+      <div class="score-box">
+        <div class="label">Total Params</div>
+        <div class="num">456B</div>
+        <div class="unit">45.9B activated</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Training Cost</div>
+        <div class="num">$0.53M</div>
+        <div class="unit">512 H800 · 3 weeks</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Context Window</div>
+        <div class="num">1M</div>
+        <div class="unit">input tokens</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Output Tokens</div>
+        <div class="num">80K</div>
+        <div class="unit">streaming</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COLUMN -->
+  <div class="main">
+
+    <!-- COLUMN 1: Problem & Background -->
+    <div>
+      <div class="sec-head c-green"><h2>Problem &amp; Background</h2></div>
+
+      <div class="prob-box">
+        <p>大语言推理模型（LRM）如 o1、DeepSeek-R1 通过大规模 RL 扩展测试时计算取得了显著成功，但传统 Transformer 的 softmax attention 存在<strong>二次复杂度瓶颈</strong>，限制了长推理链的高效扩展。</p>
+      </div>
+
+      <div class="g1">
+        <div class="g-label">痛点 1: 效率问题</div>
+        <p>长推理链的 FLOPs 成本过高。100K tokens 时，DeepSeek R1 的 FLOPs 是 M1 的 <strong>4 倍</strong>。</p>
+      </div>
+      <div class="g2">
+        <div class="g-label">痛点 2: 上下文限制</div>
+        <p>现有开源 LRM 的上下文窗口太小（通常 32K-128K），无法处理超长任务。</p>
+      </div>
+      <div class="g3">
+        <div class="g-label">痛点 3: RL 训练效率</div>
+        <p>扩展 RL 训练时的计算成本和稳定性问题，token 级裁剪会丢弃关键低概率 tokens。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/figure1_bars.png" alt="FLOPs comparison" style="max-height:160px;">
+        <div class="fig-cap">图1: 推理 FLOPs 对比（M1 vs DeepSeek R1）</div>
+      </div>
+
+      <div class="callout">
+        <p><strong>核心洞察：</strong>M1 验证了 Lightning Attention + CISPO 可显著降低推理和 RL 训练成本。</p>
+      </div>
+    </div>
+
+    <!-- COLUMN 2: Method -->
+    <div>
+      <div class="sec-head c-orange"><h2>Core Method</h2></div>
+
+      <div class="trick-box">
+        <div class="trick-title trick-title t-green">1. Lightning Attention 混合架构</div>
+        <p>基于 MiniMax-Text-01，每 7 个 Lightning Attention 的 TransNormer blocks 后接 1 个 softmax attention 的 Transformer block。100K tokens 时仅需 DeepSeek R1 <strong>25%</strong> 的 FLOPs。</p>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title trick-title t-green">2. CISPO 算法</div>
+        <p>Clipped IS-weight Policy Optimization — 裁剪的是<strong>重要性采样权重</strong>而非 token 更新，所有 tokens 保留梯度贡献。相比 DAPO 达到相同性能只需 <strong>50%</strong> 训练步数。</p>
+      </div>
+
+      <div class="formula">CISPO 核心公式：\nr̂_{i,t}(θ) = clip(r_{i,t}(θ), 1-ε^{IS}_{low}, 1+ε^{IS}_{high})</div>
+
+      <div class="trick-box">
+        <div class="trick-title trick-title t-green">3. RL 训练工程挑战</div>
+        <p><strong>问题1:</strong> LM head 激活值过大 → FP32 LM output head<br><strong>问题2:</strong> 梯度跨度大（1e-18~1e-5） → β1=0.9, β2=0.95, eps=1e-15<br><strong>问题3:</strong> 重复生成 → 3000 连续 token 概率 &gt;0.99 时早停</p>
+      </div>
+
+      <div class="layer-visual">
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-sa">SA</span>
+        <span style="font-size:.75em;color:#78716c;margin-left:4px;">× repeat</span>
+      </div>
+
+      <div class="stage-item">
+        <p><strong>RL 数据课程设计:</strong></p>
+        <p>· 数学推理：~50K 竞赛级题目（pass@10 在 0-0.9 之间）<br>
+        · 逻辑推理：41 种任务，~53K 样本（SynLogic 框架）<br>
+        · 编程：30K 竞赛题目<br>
+        · 软件工程：SWE-bench 沙盒执行环境<br>
+        · 通用领域：25K 复杂样本（GenRM reward model）</p>
+      </div>
+
+      <div class="stage-item">
+        <p><strong>长思维扩展 (40K → 80K):</strong></p>
+        <p>窗口逐步扩展：40K → 48K → 56K → 64K → 72K → 80K<br>
+        负样本比正样本增长更快导致梯度不平衡 → 早停 + token 级归一化 + 降低梯度裁剪阈值</p>
+      </div>
+    </div>
+
+    <!-- COLUMN 3: Results -->
+    <div>
+      <div class="sec-head c-amber"><h2>Key Results</h2></div>
+
+      <table class="rtable">
+        <thead>
+          <tr><th>Benchmark</th><th>M1-80K</th><th>DS-R1</th><th>Qwen3</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AIME 2024</td><td class="highlight">86.0</td><td>91.4</td><td>85.7</td></tr>
+          <tr><td>SWE-bench Verified</td><td>56.0</td><td class="highlight">57.6</td><td>34.4</td></tr>
+          <tr><td>OpenAI-MRCR (1M)</td><td class="highlight">56.2</td><td>—</td><td>—</td></tr>
+          <tr><td>TAU-bench (airline)</td><td class="highlight">62.0</td><td>53.5</td><td>34.7</td></tr>
+        </tbody>
+      </table>
+
+      <div class="fig-box" style="margin-top:14px;">
+        <img src="src/assets/figure5_scaling_dual_axis_aime25.png" alt="AIME 2025 scaling" style="max-height:140px;">
+        <div class="fig-cap">图2: AIME 2025 测试时计算扩展曲线</div>
+      </div>
+
+      <div class="g4">
+        <div class="g-label">核心优势领域</div>
+        <p><strong>长上下文：</strong>远超所有开源模型，甚至超过 o3 和 Claude 4 Opus<br>
+        <strong>工具使用：</strong>TAU-bench 超越 Gemini 2.5 Pro<br>
+        <strong>软件工程：</strong>仅次于 DeepSeek-R1-0528</p>
+      </div>
+
+      <div class="callout">
+        <p><strong>效率优势：</strong><br>
+        · 100K tokens 生成：仅需 DeepSeek R1 <span class="highlight-text">25%</span> 的 FLOPs<br>
+        · RL 训练成本：<span class="highlight-text">$0.53M</span>（512 H800 GPU，3 周）<br>
+        · CISPO 相比 DAPO：<span class="highlight-text">50%</span> 训练步数达到相同性能</p>
+      </div>
+
+      <div class="tag-list" style="margin-top:14px;">
+        <span class="tag">Lightning Attention</span>
+        <span class="tag">CISPO</span>
+        <span class="tag">Hybrid MoE</span>
+        <span class="tag">1M Context</span>
+        <span class="tag">Test-Time Compute</span>
+        <span class="tag">RL Training</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="takeaway">
+      <div class="takeaway-num">1</div>
+      <p><strong>Lightning Attention 混合架构</strong>：每7个 Lightning Attention block + 1个 softmax attention，推理 FLOPs 接近线性扩展，100K tokens 仅需 DeepSeek R1 25% 的计算量</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">2</div>
+      <p><strong>CISPO 算法</strong>：裁剪 IS 权重而非 token 更新，保留所有低概率 tokens 的梯度贡献，50% 训练步数达到 DAPO 相同性能</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">3</div>
+      <p><strong>1M 输入 + 80K 输出</strong>：原生超长上下文能力，OpenAI-MRCR (1M) 56.2 分超越 o3 和 Claude 4 Opus，工具使用（TAU-bench）超越 Gemini 2.5 Pro</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">4</div>
+      <p><strong>$0.53M 低成本 RL 训练</strong>：512 H800 GPU，3 周完成，CISPO 算法显著降低训练迭代次数，验证了高效扩展测试时计算的新范式</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

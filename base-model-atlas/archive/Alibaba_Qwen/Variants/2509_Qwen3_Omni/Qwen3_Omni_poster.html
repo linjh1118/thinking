@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1400">
+    <title>Qwen3-Omni Poster</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .poster {
+            width: 1400px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+            padding: 32px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header-left { flex: 1; }
+        .header-right { text-align: right; }
+        .main-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 16px;
+        }
+        .venue-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .arxiv-link {
+            color: rgba(255,255,255,0.85);
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .arxiv-link:hover { text-decoration: underline; }
+        .scores {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+        }
+        .score-box {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+            min-width: 90px;
+        }
+        .score-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .score-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 4px;
+        }
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0;
+        }
+        .col {
+            padding: 28px 32px;
+            border-right: 1px solid #e2e8f0;
+        }
+        .col:last-child { border-right: none; }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .section-num {
+            display: inline-block;
+            background: #3b82f6;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .fig-box {
+            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .fig-box img {
+            width: 100%;
+            border-radius: 6px;
+        }
+        .fig-caption {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+            text-align: center;
+        }
+        h4 {
+            font-size: 15px;
+            color: #1e3a8a;
+            margin: 16px 0 10px;
+        }
+        p {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.6;
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+        li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+        }
+        .highlight-box {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.25);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+        .highlight-box p {
+            color: #059669;
+            font-size: 13px;
+        }
+        .rtable {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+        .rtable th {
+            background: #1e3a8a;
+            color: #fff;
+            padding: 10px 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .rtable td {
+            padding: 10px 12px;
+            text-align: center;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .rtable tr:nth-child(even) td { background: #f8fafc; }
+        .best { color: #059669; font-weight: 600; }
+        .bottom {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 24px 48px;
+        }
+        .bottom-title {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 12px;
+        }
+        .takeaways {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .takeaway {
+            flex: 1;
+            min-width: 280px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+        .takeaway-num {
+            display: inline-block;
+            background: #fff;
+            color: #1e3a8a;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        .takeaway-text {
+            font-size: 13px;
+            color: #fff;
+            display: inline;
+        }
+        .backlinks {
+            margin: 12px 0;
+            padding: 8px 14px;
+            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: 8px;
+            font-size: 0.82em;
+        }
+        .backlinks a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .backlinks a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="poster">
+        <div class="header">
+            <div class="header-left">
+                <div class="main-title">Qwen3-Omni</div>
+                <div class="subtitle">Thinker-Talker Architecture for Multimodal LLM</div>
+                <div style="margin-top: 12px;">
+                    <span class="venue-badge">arXiv 2509.17765</span>
+                    <span class="venue-badge">Alibaba Qwen Team</span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <a class="arxiv-link" href="https://arxiv.org/abs/2509.17765">https://arxiv.org/abs/2509.17765</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="scores">
+                    <div class="score-box">
+                        <div class="score-value">32/36</div>
+                        <div class="score-label">Open-Source SOTA</div>
+                    </div>
+                    <div class="score-box">
+                        <div class="score-value">22/36</div>
+                        <div class="score-label">Overall SOTA</div>
+                    </div>
+                    <div class="score-box">
+                        <div class="score-value">234ms</div>
+                        <div class="score-label">Min Latency</div>
+                    </div>
+                    <div class="score-box">
+                        <div class="score-value">30B</div>
+                        <div class="score-label">Model Scale</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="col">
+                <div class="section-title"><span class="section-num">1</span>Problem & Motivation</div>
+
+                <div class="fig-box">
+                    <img src=""src/figures/q3o.png" alt="Architecture" onerror="this.style.display='none'">
+                    <div class="fig-caption">Qwen3-Omni Thinker-Talker Architecture</div>
+                </div>
+
+                <h4>Core Problem</h4>
+                <p>Traditional LLM-centric multimodal models often suffer from <strong style="color:#1e3a8a">modality trade-off</strong>: enhancing one modality leads to performance degradation in others.</p>
+
+                <h4>Research Goal</h4>
+                <p>Achieve joint multimodal training under the LLM paradigm, proving that all modalities can improve without degradation while significantly enhancing cross-modal reasoning (e.g., video understanding).</p>
+
+                <div class="highlight-box">
+                    <p><strong>Core Insight</strong>: Modality Preservation is the key challenge in multimodal learning</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="section-title"><span class="section-num">2</span>Method Core</div>
+
+                <h4>Thinker-Talker Architecture</h4>
+                <ul>
+                    <li><strong>Thinker</strong>: Responsible for understanding and reasoning, outputs text tokens and high-level representations</li>
+                    <li><strong>Talker</strong>: Receives multimodal features, generates streaming speech tokens</li>
+                </ul>
+
+                <h4>Five Major Upgrades (vs Qwen2.5-Omni)</h4>
+                <ul>
+                    <li><strong>MoE Design</strong>: Both Thinker and Talker use MoE architecture</li>
+                    <li><strong>AuT Audio Encoder</strong>: Audio Transformer trained from scratch, 20M hours supervised data, 12.5Hz token rate</li>
+                    <li><strong>Multi-codebook Representation</strong>: RVQ codec supports 12.5 Hz output, single-frame instant speech synthesis</li>
+                    <li><strong>MTP Module</strong>: Multi-Token Prediction generates residual codebooks</li>
+                    <li><strong>Low Latency</strong>: End-to-end latency as low as 234ms (audio input)</li>
+                </ul>
+
+                <h4>Key Technologies</h4>
+                <ul>
+                    <li><strong>TM-RoPE</strong>: Time-aligned multimodal rotary position encoding, supports arbitrary-duration streaming input</li>
+                    <li><strong>Chunked Prefilling</strong>: Asynchronous prefilling, Thinker and Talker work in parallel</li>
+                    <li><strong>Decoupled Design</strong>: Talker no longer consumes Thinker's high-level text representations</li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <div class="section-title"><span class="section-num">3</span>Key Results</div>
+
+                <h4>Modality Preservation Verification (30B-A3B Model)</h4>
+                <table class="rtable">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Qwen3-30B</th>
+                            <th>Qwen3-VL</th>
+                            <th>Omni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MMLU</td>
+                            <td>81.24</td>
+                            <td>-</td>
+                            <td class="best">81.69</td>
+                        </tr>
+                        <tr>
+                            <td>GSM8K</td>
+                            <td>90.83</td>
+                            <td>-</td>
+                            <td class="best">91.36</td>
+                        </tr>
+                        <tr>
+                            <td>MMMU_val</td>
+                            <td>-</td>
+                            <td>57.22</td>
+                            <td class="best">59.33</td>
+                        </tr>
+                        <tr>
+                            <td>Video-MME</td>
+                            <td>-</td>
+                            <td>69.22</td>
+                            <td class="best">69.25</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight-box">
+                    <p><strong>36 audio/audio-visual benchmarks: 32 achieve open-source SOTA, 22 achieve overall SOTA</strong></p>
+                </div>
+
+                <h4>Core Findings</h4>
+                <ul>
+                    <li>After adding audio modality, text capability actually improves</li>
+                    <li>Visual understanding capability remains unchanged</li>
+                    <li>Video understanding capability significantly enhanced</li>
+                </ul>
+
+                <h4>Research Implications</h4>
+                <ul>
+                    <li>Modality preservation is important for GUI Agents</li>
+                    <li>Thinker-Talker separation has reference value for real-time interaction</li>
+                    <li>Streaming speech generation is key for voice interaction Agents</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bottom">
+            <div class="bottom-title">KEY TAKEAWAYS</div>
+            <div class="takeaways">
+                <div class="takeaway">
+                    <span class="takeaway-num">1</span>
+                    <span class="takeaway-text"><strong>Modality Preservation</strong>: Joint training achieves comprehensive improvement in text + vision + audio</span>
+                </div>
+                <div class="takeaway">
+                    <span class="takeaway-num">2</span>
+                    <span class="takeaway-text"><strong>Thinker-Talker</strong>: Decoupled architecture enables real-time interaction with think-while-speaking</span>
+                </div>
+                <div class="takeaway">
+                    <span class="takeaway-num">3</span>
+                    <span class="takeaway-text"><strong>234ms Low Latency</strong>: End-to-end latency reaches real-time voice interaction level</span>
+                </div>
+                <div class="takeaway">
+                    <span class="takeaway-num">4</span>
+                    <span class="takeaway-text"><strong>Open-Source SOTA</strong>: 32 out of 36 benchmarks achieve best open-source results</span>
+                </div>
+            </div>
+            <div class="backlinks" style="margin-top: 16px; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12);">
+                <span style="color: rgba(255,255,255,0.6);">📚 Source Note：</span>
+                <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2509_Qwen3_Omni%2FQwen3-Omni-Thinker-Talker-Architecture">Qwen3-Omni Technical Note</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

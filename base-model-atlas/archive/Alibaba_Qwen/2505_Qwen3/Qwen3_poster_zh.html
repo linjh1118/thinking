@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen3 Technical Report — 中文研究海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — MoE/Agentic gradient */
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 40%, #0891b2 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #e9d5ff }
+.header-left .zh-title { font-size: 1.1rem; color: #c4b5fd; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(124,58,237,.4); border: 1px solid #a78bfa; color: #e9d5ff; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #e9d5ff; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-violet .nc { background: #7c3aed }
+.c-purple .nc { background: #6d28d9 }
+.c-cyan .nc { background: #0891b2 }
+.c-teal .nc { background: #0d9488 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #e9d5ff }
+.c-violet h2 { color: #c4b5fd }
+.c-purple h2 { color: #ddd6fe }
+.c-cyan h2 { color: #a5f3fc }
+.c-teal h2 { color: #5eead4 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed }
+.g2 { background: rgba(109,40,217,.08); border-left: 3px solid #6d28d9 }
+.g3 { background: rgba(8,145,178,.08); border-left: 3px solid #0891b2 }
+.g4 { background: rgba(13,148,136,.08); border-left: 3px solid #0d9488 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #c4b5fd }
+.g2 .title { color: #ddd6fe }
+.g3 .title { color: #a5f3fc }
+.g4 .title { color: #5eead4 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX */
+.trick-box { background: rgba(13,148,136,.08); border: 1px solid rgba(94,234,212,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #5eead4; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(124,58,237,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #4c1d95; color: #e9d5ff; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(124,58,237,.1); font-weight: 700; font-size: .66rem; color: #c4b5fd; text-align: left }
+.rtable .ours td { background: rgba(167,139,250,.06); font-weight: 800; color: #e9d5ff }
+.rtable .best td.dv { color: #c4b5fd; font-weight: 900 }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(124,58,237,.06); border-radius: 8px; border: 1px solid rgba(167,139,250,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #c4b5fd; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* DISTILL TABLE */
+.distill-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 6px 0 }
+.distill-table th { background: #4c1d95; color: #e9d5ff; padding: 3px 5px; text-align: center; font-size: .65rem }
+.distill-table td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.1); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.distill-table td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.distill-table .ours td { background: rgba(167,139,250,.06); font-weight: 800; color: #e9d5ff }
+.distill-table .delta-pos { color: #5eead4; font-weight: 700 }
+.distill-table .delta-neg { color: #fca5a5; font-weight: 700 }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(124,58,237,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #c4b5fd; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(124,58,237,.06); border: 1px solid rgba(124,58,237,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #c4b5fd }
+
+/* MODEL FAMILY TABLE */
+.family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0 }
+.fam-card { background: rgba(124,58,237,.06); border: 1px solid rgba(167,139,250,.12); border-radius: 8px; padding: 8px 10px }
+.fam-card .fname { font-size: .72rem; font-weight: 700; color: #c4b5fd; margin-bottom: 2px }
+.fam-card .fvals { font-size: .66rem; color: #a8a29e; line-height: 1.4 }
+.fam-card .fvals span { color: #5eead4; font-weight: 700 }
+.fam-card.highlight { background: rgba(124,58,237,.12); border-color: rgba(167,139,250,.3) }
+.fam-card.highlight .fname { color: #e9d5ff; font-size: .76rem }
+
+/* ARCH TABLE */
+.arch-table { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 6px 0 }
+.arch-table th { background: rgba(109,40,217,.3); color: #ddd6fe; padding: 3px 5px; text-align: center; font-size: .62rem }
+.arch-table td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.1); text-align: center; font-size: .65rem; color: #d6d3d1 }
+.arch-table td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.arch-table .moe td { background: rgba(8,145,178,.06); color: #a5f3fc; font-weight: 700 }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2F2505_Qwen3%2FQwen3-Technical-Report" style="text-decoration: none;">Qwen3 Technical Report</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2505.09388" target="_blank" style="text-decoration: none;">arXiv:2505.09388</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2505.09388 &nbsp;|&nbsp; 通义实验室，阿里巴巴集团</span>
+    <div class="zh-title">Qwen3 技术报告：Thinking + Non-Thinking 双模式融合</div>
+    <h1>Qwen3: <span>Open Foundation Models for Thinking</span> and Non-Thinking</h1>
+    <div class="authors">Qwen Team, 阿里云通义实验室 &nbsp;|&nbsp; 2505.09388</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">85.7</div><div class="sub">AIME'24<br>(235B MoE)</div></div>
+    <div class="score-box"><div class="num">70.7</div><div class="sub">LiveCodeBench<br>v5 (235B MoE)</div></div>
+    <div class="score-box"><div class="num">2056</div><div class="sub">CodeForces<br>Rating / 98.2%</div></div>
+    <div class="score-box"><div class="num">128K</div><div class="sub">Context<br>Length</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 模型架构 -->
+<div class="col">
+  <div class="sec-head c-violet"><div class="nc">1</div><h2>模型系列与架构设计</h2></div>
+  <p class="body">Qwen3 系列包含 <strong>6 个 Dense 模型</strong>和 <strong>2 个 MoE 模型</strong>，开创性地实现 thinking + non-thinking 双模式融合。</p>
+
+  <div class="family-grid">
+    <div class="fam-card highlight">
+      <div class="fname">Qwen3-235B-A22B (MoE)</div>
+      <div class="fvals">Total: <span>235B</span> &nbsp; Active: <span>22B</span><br>Experts: 128 &nbsp; Top-K: 8<br>No shared expert</div>
+    </div>
+    <div class="fam-card">
+      <div class="fname">Qwen3-30B-A3B (MoE)</div>
+      <div class="fvals">Total: <span>30B</span> &nbsp; Active: <span>3B</span><br>Experts: 128 &nbsp; Top-K: 8<br>Same architecture</div>
+    </div>
+    <div class="fam-card">
+      <div class="fname">Qwen3-32B / 14B / 8B / 4B</div>
+      <div class="fvals">Dense: GQA + SwiGLU<br>RoPE + RMSNorm<br>QK-Norm (no bias)</div>
+    </div>
+    <div class="fam-card">
+      <div class="fname">Qwen3-1.7B / 0.6B</div>
+      <div class="fvals">Edge-optimized<br>Tied embedding<br>32K context</div>
+    </div>
+  </div>
+
+  <table class="arch-table">
+    <tr><th>Model</th><th>Layers</th><th>Heads Q/KV</th><th>Context</th></tr>
+    <tr class="moe"><td class="left">235B-A22B MoE</td><td>94</td><td>64/4</td><td>128K</td></tr>
+    <tr class="moe"><td class="left">30B-A3B MoE</td><td>48</td><td>32/4</td><td>128K</td></tr>
+    <tr><td class="left">32B Dense</td><td>64</td><td>64/8</td><td>128K</td></tr>
+    <tr><td class="left">14B Dense</td><td>40</td><td>40/8</td><td>128K</td></tr>
+    <tr><td class="left">8B Dense</td><td>36</td><td>32/8</td><td>128K</td></tr>
+    <tr><td class="left">4B Dense</td><td>36</td><td>32/8</td><td>128K</td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g2">
+      <div class="title">BBPE Tokenizer — 151,669 Vocab</div>
+      <p>字节级 BPE，119 种语言，36T tokens 预训练数据，覆盖广泛语言与领域。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">MoE 关键设计：无 Shared Expert</div>
+      <p>128 experts，8 activated。与 Qwen2.5-MoE 不同，Qwen3-MoE 不使用 shared expert，采用 global-batch load balancing loss 鼓励 expert specialization。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src=""src/figures/main.png" alt="Qwen3 Model Overview" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#c4b5fd;font-size:.8rem;&quot;><i>Qwen3 模型概览图</i><br><small>src/assets/main.png</small></div>'">
+    <div class="fig-cap">图 1：Qwen3 全系列模型概览</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 后训练流程 -->
+<div class="col">
+  <div class="sec-head c-purple"><div class="nc">2</div><h2>后训练：四阶段流程</h2></div>
+  <p class="body">后训练包含<strong>四阶段精细化流程</strong>，实现 thinking + non-thinking 双模式统一，并完成从大模型到小模型的知识蒸馏。</p>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Stage 1: CoT Cold-Start SFT</div>
+      <p>使用长思维链（Chain-of-Thought）示例对模型进行冷启动监督微调，建立基础推理能力。数据来自数学、代码等领域的专家轨迹。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Stage 2: Reasoning RL</div>
+      <p>在数学和代码领域进行强化学习训练。使用规则基础奖励（答案正确性）+ 模型奖励（参考答案评分）。显著提升复杂推理能力。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Stage 3: Thinking Mode Fusion</div>
+      <p>将 thinking 能力与 non-thinking 能力统一融合。通过 /think 和 /no_think 指令切换模式。ThinkFollow 准确率从 0 提升至 88.7%。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Stage 4: General RL + Distillation</div>
+      <p>General RL 覆盖 20+ 任务类型（指令跟随、格式遵循、偏好对齐、Agent能力）。Strong-to-Weak Distillation 将能力蒸馏至 0.6B-30B 小模型。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src=""src/figures/posttrain_pipeline.png" alt="Post-training Pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#c4b5fd;font-size:.8rem;&quot;><i>后训练四阶段流程图</i><br><small>src/assets/posttrain_pipeline.png</small></div>'">
+    <div class="fig-cap">图 2：Qwen3 后训练四阶段流程</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Thinking Budget Scaling</div>
+    <p>增大 thinking budget 带来一致性能提升。Qwen3-235B-A22B 在 AIME'24/25、LiveCodeBench 上均呈现平滑的 scaling 曲线，证明长思考预算的有效性。</p>
+  </div>
+
+  <div class="fig-box">
+    <img src=""src/figures/thinking_budget.png" alt="Thinking Budget Scaling" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#c4b5fd;font-size:.8rem;&quot;><i>Thinking Budget Scaling 曲线</i><br><small>src/assets/thinking_budget.png</small></div>'">
+    <div class="fig-cap">图 3：Thinking Budget Scaling — 性能随思考预算单调提升</div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-teal"><div class="nc">3</div><h2>旗舰模型实验结果</h2></div>
+  <p class="body">Qwen3-235B-A22B 在 thinking 和 non-thinking 两种模式下均达到开源模型 SOTA，并在多项任务上逼近闭源顶级模型。</p>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#c4b5fd;">Qwen3-235B-A22B Thinking Mode vs 推理模型</p>
+  <table class="rtable">
+    <tr><th class="left">Model</th><th>AIME'24</th><th>AIME'25</th><th>LCB v5</th><th>CF Rating</th><th>BFCL v3</th><th>MATH-500</th><th>MMLU-Rdx</th></tr>
+    <tr class="cat"><td colspan="8">闭源推理模型</td></tr>
+    <tr><td class="left">o1</td><td>74.3</td><td>79.2</td><td>63.9</td><td>1891</td><td>67.8</td><td>96.4</td><td>92.8</td></tr>
+    <tr><td class="left">Grok-3-Beta (Think)</td><td>83.9</td><td>77.3</td><td>70.6</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td class="left">Gemini-2.5-Pro</td><td>92.0</td><td>86.7</td><td>70.4</td><td>2001</td><td>62.9</td><td>98.8</td><td>93.7</td></tr>
+    <tr class="cat"><td colspan="8">开源推理模型</td></tr>
+    <tr><td class="left">DeepSeek-R1</td><td>79.8</td><td>70.0</td><td>64.3</td><td>2029</td><td>56.9</td><td>97.3</td><td>92.9</td></tr>
+    <tr class="ours"><td class="left"><b>Qwen3-235B-A22B</b></td><td><b>85.7</b></td><td><b>81.5</b></td><td><b>70.7</b></td><td><b>2056</b></td><td><b>70.8</b></td><td><b>98.0</b></td><td>92.7</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#c4b5fd;margin-top:10px;">Qwen3-235B-A22B Non-Thinking Mode vs 非推理模型</p>
+  <table class="rtable">
+    <tr><th class="left">Model</th><th>MATH-500</th><th>AIME'24</th><th>GPQA</th><th>CF Rating</th><th>Arena-Hard</th><th>MMLU-Rdx</th></tr>
+    <tr><td class="left">GPT-4o-2024-11-20</td><td>77.2</td><td>11.1</td><td>46.0</td><td>864</td><td>85.3</td><td>87.0</td></tr>
+    <tr><td class="left">DeepSeek-V3</td><td>90.2</td><td>39.2</td><td>59.1</td><td>1134</td><td>85.5</td><td>89.1</td></tr>
+    <tr class="ours"><td class="left"><b>Qwen3-235B-A22B</b></td><td><b>91.2</b></td><td><b>40.1</b></td><td>62.9</td><td><b>1387</b></td><td><b>96.1</b></td><td>89.2</td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g4">
+      <div class="title">核心发现 1：开源第一推理 MoE</div>
+      <p>仅用 22B 激活参数（60% of DeepSeek-R1），Qwen3-235B-A22B 在 17/23 任务上超越 DeepSeek-R1，尤其在 Agent（BFCL v3 70.8）和数学推理（AIME'24 85.7）上优势明显。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">核心发现 2：Non-Thinking 也超越 GPT-4o</div>
+      <p>不开 thinking 的情况下，MATH-500 91.2（GPT-4o 仅 77.2），AIME'24 40.1（GPT-4o 仅 11.1），18/23 任务超越 GPT-4o。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#c4b5fd;margin-top:8px;">蒸馏效果：Qwen3-8B vs DeepSeek-R1-Distill-Qwen-14B</p>
+  <table class="distill-table">
+    <tr><th class="left">Model</th><th>AIME'24</th><th>AIME'25</th><th>LCB v5</th><th>CF Rating</th></tr>
+    <tr><td class="left">DeepSeek-R1-Distill-Qwen-14B</td><td>69.7</td><td>44.5</td><td>45.5</td><td>-</td></tr>
+    <tr class="ours"><td class="left"><b>Qwen3-8B</b></td><td><b>76.0</b> <span class="delta-pos">+6.3</span></td><td><b>67.3</b> <span class="delta-pos">+22.8</span></td><td><b>57.5</b> <span class="delta-pos">+12.0</span></td><td><b>1785</b></td></tr>
+  </table>
+  <p class="body" style="font-size:.68rem;color:#78716c;margin-top:2px;">Qwen3-8B 仅用 8B 参数，在 AIME'25 上领先 14B 蒸馏模型 22.8 分。</p>
+
+  <div class="trick-box">
+    <div class="trick-title">Distillation vs RL — 效率对比</div>
+    <p>同起点（off-policy distilled 8B checkpoint），on-policy distillation 仅用 <b>1,800 GPU hours</b> 达到 RL（17,920 GPU hours）的效果，且 AIME'24 pass@64 从 90.0 提升至 93.3。RL 则无 pass@64 提升。</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心结论 1</div>
+    <p><span class="hl">Thinking + Non-Thinking 双模式融合</span>是 Qwen3 核心创新。用户通过 /think 和 /no_think 指令自由切换思考模式，ThinkFollow 准确率达 98.9%。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 2</div>
+    <p><span class="hl">235B MoE 仅需 22B 激活参数</span>，在 17/23 任务上超越 DeepSeek-R1（671B/37B）。BFCL v3 70.8（开源第一），CodeForces 2056 rating / 98.2 percentile。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 3</div>
+    <p><span class="hl">Thinking Budget Scaling</span>证明：增大思考预算带来持续性能提升。Qwen3 性能随思考 token 数呈平滑 scaling 曲线，为未来更长推理奠定基础。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 4</div>
+    <p><span class="hl">Strong-to-Weak Distillation</span>让 8B 模型超越 14B 蒸馏模型（AIME'25 +22.8）。On-policy distillation 仅需 1/10 GPU hours 即可超越 RL 效果。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

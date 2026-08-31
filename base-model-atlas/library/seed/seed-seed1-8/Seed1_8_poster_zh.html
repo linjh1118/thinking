@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seed1.8 — 中文研究海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — teal gradient */
+.header { background: linear-gradient(120deg, #134e4a 0%, #0f766e 40%, #14b8a6 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #a7f3d0 }
+.header-left .zh-title { font-size: 1.1rem; color: #6ee7b7; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(20,184,166,.4); border: 1px solid #2dd4bf; color: #a7f3d0; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #a7f3d0; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-teal .nc { background: #0d9488 }
+.c-emerald .nc { background: #10b981 }
+.c-green .nc { background: #059669 }
+.c-cyan .nc { background: #06b6d4 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #a7f3d0 }
+.c-teal h2 { color: #99f6e4 }
+.c-emerald h2 { color: #6ee7b7 }
+.c-green h2 { color: #34d399 }
+.c-cyan h2 { color: #22d3ee }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(20,184,166,.08); border-left: 3px solid #0d9488 }
+.g2 { background: rgba(16,185,129,.08); border-left: 3px solid #10b981 }
+.g3 { background: rgba(5,150,105,.08); border-left: 3px solid #059669 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #99f6e4 }
+.g2 .title { color: #6ee7b7 }
+.g3 .title { color: #34d399 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(6,182,212,.08); border: 1px solid rgba(34,211,238,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #22d3ee; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(20,184,166,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #134e4a; color: #a7f3d0; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(20,184,166,.1); font-weight: 700; font-size: .66rem; color: #99f6e4; text-align: left }
+.rtable .ours td { background: rgba(167,243,208,.06); font-weight: 800; color: #a7f3d0 }
+.rtable .best td.dv { color: #34d399; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(20,184,166,.06); border-radius: 8px; border: 1px solid rgba(167,243,208,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #0d9488; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #99f6e4; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* THINKING MODES GRID */
+.thinking-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0 }
+.thinking-item { background: rgba(20,184,166,.06); border: 1px solid rgba(167,243,208,.1); border-radius: 8px; padding: 12px 8px; text-align: center }
+.thinking-item .tname { font-size: .8rem; font-weight: 700; color: #6ee7b7 }
+.thinking-item .tdesc { font-size: .64rem; color: #a8a29e; margin-top: 4px }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(20,184,166,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #34d399; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(20,184,166,.06); border: 1px solid rgba(20,184,166,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #34d399 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #34d399; border-color: rgba(52,211,153,.55) }
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="Seed1_8_poster.html">EN</a><a class="active" href="Seed1_8_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FByteDance_Seed%2F2603_Seed1_8_Model_Card%2FSeed18-Model-Card-Towards-Generalized-Real-World-Agency" style="text-decoration: none;">Seed1.8 Model Card — Towards Generalized Real-World Agency</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.20633" target="_blank" style="text-decoration: none;">arXiv:2603.20633</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.20633 &nbsp;|&nbsp; ByteDance Seed Team</span>
+    <div class="zh-title">Seed1.8：面向通用真实世界 Agent 的基础模型</div>
+    <h1>Seed1.8: <span>Generalized Real-World</span> Agency Foundation Model</h1>
+    <div class="authors">ByteDance Seed Team &nbsp;|&nbsp; 2026</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">85.9%</div><div class="sub">Online-Mind2Web<br>Browser Agent SOTA</div></div>
+    <div class="score-box"><div class="num">70.7%</div><div class="sub">AndroidWorld<br>Mobile Agent SOTA</div></div>
+    <div class="score-box"><div class="num">61.9%</div><div class="sub">OSWorld<br>Computer Use</div></div>
+    <div class="score-box"><div class="num">93.2</div><div class="sub">GAIA<br>Agentic Search</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 设计理念 + 能力 -->
+<div class="col">
+  <div class="sec-head c-teal"><div class="nc">1</div><h2>设计理念：通用真实世界 Agent</h2></div>
+  <p class="body">Seed1.8 面向 <strong>generalized real-world agency</strong>，不仅保持 LLM/VLM 能力，还扩展到多步交互和任务执行。将搜索、代码执行、GUI 交互统一在 agentic interface 中。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">四大设计考量</div>
+      <p>1. <b>Strong Base Capabilities</b>：保持 LLM/VLM 竞争性性能<br>
+      2. <b>Unified Agentic Interface</b>：Search + Code + GUI 统一<br>
+      3. <b>Latency/Cost-Aware Inference</b>：4 种 thinking modes<br>
+      4. <b>Practical Evaluation</b>：公共 benchmark + 内部高价值领域</p>
+    </div>
+  </div>
+
+  <div class="thinking-grid">
+    <div class="thinking-item">
+      <div class="tname">no_think</div>
+      <div class="tdesc">快速简单任务</div>
+    </div>
+    <div class="thinking-item">
+      <div class="tname">think-low</div>
+      <div class="tdesc">低延迟要求</div>
+    </div>
+    <div class="thinking-item">
+      <div class="tname">think-medium</div>
+      <div class="tdesc">平衡延迟与质量</div>
+    </div>
+    <div class="thinking-item">
+      <div class="tname">think-high</div>
+      <div class="tdesc">复杂任务</div>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figure/framework.png" alt="Seed1.8 架构">
+    <div class="fig-cap">图 1：Seed1.8 统一 Agentic Interface 架构</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Proactive Response Capability</div>
+    <p>无需显式触发即可识别最优干预时机，实现更自然的人机交互流程。</p>
+  </div>
+</div>
+
+<!-- COLUMN 2: 核心能力 -->
+<div class="col">
+  <div class="sec-head c-emerald"><div class="nc">2</div><h2>核心 Agent 能力</h2></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">GUI Agent（四项 SOTA）</div>
+      <p>OSWorld: <b>SOTA</b> &nbsp;|&nbsp; Realbench: <b>SOTA</b><br>
+      Online-Mind2Web: <b>SOTA</b> (85.9%) &nbsp;|&nbsp; AndroidWorld: <b>SOTA</b> (70.7%)</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Agentic Search</div>
+      <p>GAIA: <b>93.2</b>（超越 GPT-5-high: 76.7!）<br>
+      BrowseComp-en: 67.6 &nbsp;|&nbsp; BrowseComp-zh: 78.5</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">经济价值场景</div>
+      <p>WorldTravel: <b>Best</b>（多模态设置）<br>
+      XpertBench Finance: 62.0 &nbsp;|&nbsp; XpertBench Law: 55.2</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figure/agent_efficiency.png" alt="Agent 执行效率">
+    <div class="fig-cap">图 2：Agent 执行效率与 Scaling Behavior</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g2">
+      <div class="title">GUI Grounding 亮点</div>
+      <p>ScreenSpot-Pro: <b>64.3</b>（vs Seed1.5-VL: 60.9）<br>
+      With crop-box tool: <b>73.1</b>（new SOTA）</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figure/mapping.png" alt="能力映射">
+    <div class="fig-cap">图 3：Seed1.8 能力覆盖映射</div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验结果与分析</h2></div>
+
+  <p class="body">在 GUI Agent、Agentic Search、基础能力等多个维度评测。Seed1.8 在多项任务上达到 SOTA，超越 GPT-5-high。</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>Seed1.8</th><th>Best Competitor</th></tr>
+    <tr class="cat"><td colspan="3">GUI Agent</td></tr>
+    <tr><td class="left">OSWorld</td><td><b>SOTA</b></td><td>—</td></tr>
+    <tr><td class="left">Online-Mind2Web</td><td><b>85.9%</b></td><td>—</td></tr>
+    <tr><td class="left">AndroidWorld</td><td><b>70.7%</b></td><td>—</td></tr>
+    <tr class="cat"><td colspan="3">Agentic Search</td></tr>
+    <tr><td class="left">GAIA</td><td><b>93.2</b></td><td>GPT-5-high: 76.7</td></tr>
+    <tr><td class="left">BrowseComp-zh</td><td><b>78.5</b></td><td>—</td></tr>
+    <tr class="cat"><td colspan="3">Multimodal Reasoning</td></tr>
+    <tr><td class="left">ZeroBench (main)</td><td><b>11.0 SOTA</b></td><td>Gemini 3 Pro: 10.0</td></tr>
+    <tr><td class="left">MathVision</td><td>第二</td><td>Gemini 3 Pro</td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">核心发现：GAIA 93.2 超越 GPT-5-high</div>
+      <p>Seed1.8 在 GAIA 上达到 93.2，远超 GPT-5-high 的 76.7（+16.5）。国内模型在 agentic search 上已建立显著优势。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figure/worldtravel.png" alt="WorldTravel 案例">
+    <div class="fig-cap">图 4：WorldTravel 多模态场景案例</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">核心洞察</div>
+    <p>Seed1.8 的设计思路：<b>强基础能力</b> + <b>统一 agentic interface</b> + <b>可控 thinking modes</b> + <b>应用导向评测</b>，是完整的产品化路线图。</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心结论 1</div>
+    <p><span class="hl">GAIA 93.2</span> 超越 GPT-5-high 76.7（+16.5），国内模型在 agentic search 上已建立显著优势。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 2</div>
+    <p><span class="hl">GUI Agent 四项 SOTA</span>：OSWorld、Realbench、Online-Mind2Web、AndroidWorld 全覆盖。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 3</div>
+    <p><span class="hl">4 种 Thinking Modes</span>：no_think 到 think-high 可配置，平衡延迟与质量。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 4</div>
+    <p><span class="hl">Proactive Response</span>：无需显式触发即可识别最优干预时机。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

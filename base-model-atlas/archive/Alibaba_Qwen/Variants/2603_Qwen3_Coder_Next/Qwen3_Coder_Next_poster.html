@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="1400">
+<title>Qwen3-Coder-Next — 80B MoE · 3B Active · Agentic Coding</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #1f2937; }
+.poster { width: 1400px; background: #ffffff; margin: 0 auto; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 40px rgba(15,23,42,.08); }
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px; }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #475569; background: rgba(255,255,255,.95); border: 1px solid rgba(15,23,42,.15); border-radius: 999px; padding: 8px 11px; text-decoration: none; }
+.lang-switch a.active { color: #6d28d9; border-color: rgba(109,40,217,.45); }
+.backlinks { margin: 14px 48px 0; padding: 10px 16px; background: rgba(124,58,237,.06); border: 1px solid rgba(124,58,237,.18); border-radius: 8px; font-size: .8rem; color: #475569; }
+.backlinks a { color: #6d28d9; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 42%, #0891b2 100%); color: #fff; padding: 26px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hdr-left .venue { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 4px 12px; font-size: .72rem; font-weight: 700; margin-bottom: 8px; }
+.hdr-left h1 { margin: 0 0 4px; font-size: 1.95rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.1; }
+.hdr-left h1 .sub { font-size: 1.05rem; font-weight: 700; opacity: .92; margin-left: 8px; }
+.hdr-left .tagline { font-size: .85rem; opacity: .94; max-width: 760px; line-height: 1.5; margin: 8px 0 0; }
+.score-boxes { display: flex; gap: 8px; flex-shrink: 0; }
+.score-box { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 10px 12px; text-align: center; min-width: 96px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; line-height: 1; }
+.score-box .sub { font-size: .62rem; color: rgba(255,255,255,.85); margin-top: 4px; line-height: 1.25; }
+.main { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 20px 18px; border-right: 1px solid rgba(15,23,42,.08); }
+.col:last-child { border-right: none; }
+.sec-head { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+.sec-head .nc { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.sec-head h2 { font-size: .98rem; font-weight: 800; margin: 0; color: #0f172a; }
+.c1 .sec-head .nc { background: #7c3aed; }
+.c2 .sec-head .nc { background: #0891b2; }
+.c3 .sec-head .nc { background: #4c1d95; }
+.box { border-radius: 8px; padding: 10px 12px; margin-bottom: 9px; }
+.box .title { font-size: .76rem; font-weight: 800; margin-bottom: 4px; }
+.box p { font-size: .72rem; line-height: 1.55; margin: 0; color: #334155; }
+.box p + p { margin-top: 5px; }
+.box ul { font-size: .72rem; margin: 4px 0 0; padding-left: 16px; line-height: 1.5; color: #334155; }
+.box ul li { margin-bottom: 2px; }
+.b1 { background: rgba(124,58,237,.07); border-left: 3px solid #7c3aed; }
+.b2 { background: rgba(8,145,178,.07); border-left: 3px solid #0891b2; }
+.b3 { background: rgba(76,29,149,.08); border-left: 3px solid #6d28d9; }
+.b4 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706; }
+.b5 { background: rgba(5,150,105,.07); border-left: 3px solid #059669; }
+.b6 { background: rgba(220,38,38,.07); border-left: 3px solid #dc2626; }
+.b1 .title { color: #6d28d9; }
+.b2 .title { color: #0e7490; }
+.b3 .title { color: #5b21b6; }
+.b4 .title { color: #b45309; }
+.b5 .title { color: #047857; }
+.b6 .title { color: #b91c1c; }
+.num-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.num-cell { background: rgba(255,255,255,.7); border: 1px solid rgba(15,23,42,.1); border-radius: 6px; padding: 6px 8px; text-align: center; }
+.num-cell .n { font-size: 1.0rem; font-weight: 900; color: #6d28d9; line-height: 1.1; }
+.num-cell .l { font-size: .6rem; color: #64748b; margin-top: 2px; }
+.stage-list { counter-reset: stage; margin: 4px 0; }
+.stage-item { background: rgba(124,58,237,.05); border: 1px solid rgba(124,58,237,.15); border-radius: 7px; padding: 7px 8px 7px 34px; margin-bottom: 5px; position: relative; }
+.stage-item::before { content: counter(stage); position: absolute; left: 7px; top: 7px; width: 20px; height: 20px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; counter-increment: stage; }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #6d28d9; margin-bottom: 2px; }
+.stage-item p { font-size: .68rem; color: #475569; margin: 0; line-height: 1.5; }
+.rtable { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 6px 0; }
+.rtable th { background: #4c1d95; color: #fde68a; padding: 4px 5px; text-align: center; font-weight: 700; font-size: .62rem; }
+.rtable th:first-child { text-align: left; }
+.rtable td { padding: 3px 5px; color: #334155; border-bottom: 1px solid rgba(15,23,42,.08); text-align: center; }
+.rtable td:first-child { text-align: left; font-weight: 600; font-size: .65rem; }
+.rtable .ours td { background: rgba(253,230,138,.25); font-weight: 800; color: #5b21b6; }
+.rtable .sec td { background: rgba(15,23,42,.03); color: #64748b; font-style: italic; }
+.fig-box { border-radius: 8px; overflow: hidden; background: rgba(124,58,237,.03); border: 1px solid rgba(15,23,42,.1); margin: 6px 0; }
+.fig-box img { width: 100%; display: block; }
+.fig-cap { text-align: center; padding: 5px 10px; font-size: .62rem; color: #64748b; font-style: italic; background: rgba(248,250,252,.9); }
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.4); border-radius: 8px; padding: 9px 11px; margin: 7px 0; }
+.trick-box .trick-title { font-size: .68rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.trick-box p { font-size: .7rem; color: #334155; line-height: 1.5; margin: 0; }
+.bottom-strip { background: #f8fafc; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(124,58,237,.3); }
+.bstrip { padding: 13px 18px; border-right: 1px solid rgba(15,23,42,.08); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #6d28d9; margin-bottom: 5px; }
+.bstrip p { font-size: .7rem; color: #334155; margin: 0; line-height: 1.5; }
+.bstrip .hl { color: #b45309; font-weight: 800; }
+.tldr-bar { margin: 0 48px 12px; padding: 11px 14px; background: linear-gradient(90deg, rgba(124,58,237,.10), rgba(8,145,178,.08)); border-left: 3px solid #7c3aed; border-radius: 6px; font-size: .78rem; line-height: 1.55; color: #1f2937; }
+.tldr-bar b { color: #6d28d9; }
+</style>
+</head>
+<body>
+<div class="lang-switch">
+  <a href="#" class="active">EN</a>
+  <a href="Qwen3_Coder_Next_poster_zh.html">中</a>
+</div>
+
+<div class="poster">
+
+  <div class="backlinks">
+    📚 Source: <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2603_Qwen3_Coder_Next%2FQwen3-Coder-Next-Technical-Report">Qwen3-Coder-Next Technical Report (note)</a>
+    &nbsp;|&nbsp; <a href="https://arxiv.org/abs/2603.00729" target="_blank">arXiv:2603.00729</a>
+    &nbsp;|&nbsp; <a href="https://github.com/QwenLM/Qwen3-Coder" target="_blank">GitHub: QwenLM/Qwen3-Coder</a>
+    &nbsp;|&nbsp; <a href="https://huggingface.co/Qwen/Qwen3-Coder-Next" target="_blank">HuggingFace</a>
+  </div>
+
+  <div class="header">
+    <div class="hdr-left">
+      <span class="venue">Qwen Team · 2026 · arXiv:2603.00729</span>
+      <h1>Qwen3-Coder-Next<span class="sub">Technical Report</span></h1>
+      <p class="tagline"><b>80B MoE / 3B active params</b>, built on Qwen3-Next (Hybrid Attention + MoE). Central claim: <b>scaling agentic training beats scaling model size</b> — with ~1/10 the active compute, it matches or beats DeepSeek-V3.2 (671A37), GLM-4.7 (358A32), and Kimi-K2.5 (1000A32) on SWE-Bench.</p>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box"><div class="num">3B</div><div class="sub">Active Param<br>(80B Total)</div></div>
+      <div class="score-box"><div class="num">262K</div><div class="sub">Context<br>Length</div></div>
+      <div class="score-box"><div class="num">1.6M</div><div class="sub">Verifiable<br>SWE Tasks</div></div>
+      <div class="score-box"><div class="num">71.3</div><div class="sub">SWE-Bench<br>Verified</div></div>
+    </div>
+  </div>
+
+  <div class="tldr-bar">
+    🎯 <b>TL;DR</b> — The real takeaway isn't the model itself, but an industrialized pipeline of <b>"task synthesis + executable environments + execution-feedback learning"</b>: <b>807K</b> real GitHub PR environments + <b>~800K</b> synthesized bugs + <b>21</b> tool-chat templates + a <b>reward-hacking blocker</b> forced into existence by RL.
+  </div>
+
+  <div class="main">
+
+    <!-- ============== Column 1 ============== -->
+    <div class="col c1">
+
+      <div class="sec-head"><div class="nc">1</div><h2>Problem & Mid-training</h2></div>
+
+      <div class="box b6">
+        <div class="title">Why redesign agentic training?</div>
+        <ul>
+          <li>Real coding agents ≠ static code gen: long-horizon, multi-step, tool use, failure recovery.</li>
+          <li>Agentic training signal is scarce — <b>the bottleneck is verifiable environments, not RL algorithms</b>.</li>
+          <li>Production agents are latency/cost-sensitive — can 3B active carry SWE?</li>
+        </ul>
+      </div>
+
+      <div class="box b1">
+        <div class="title">Mid-training data: natural + synthetic (§3)</div>
+        <ul>
+          <li>GitHub: languages <b>92 → 370</b>, repo-level ~<b>600B tokens</b></li>
+          <li>Context: <b>32K → 262K</b> tokens, BFP packing</li>
+          <li>Text-code grounding: rewrite CC docs into clean Markdown via Qwen3-Coder-480B</li>
+          <li>FIM: chat-FIM + search-and-replace FIM (latter matches PR distribution, wins)</li>
+        </ul>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">+8.7</div><div class="l">EvalPlus (reformat)</div></div>
+          <div class="num-cell"><div class="n">+12.3</div><div class="l">MultiPL-E (reformat)</div></div>
+        </div>
+      </div>
+
+      <div class="box b2">
+        <div class="title">Cross-scaffold transfer is limited (§3 fig)</div>
+        <p>Within the same scaffold, scaling works; cross-scaffold (train → eval) transfer is poor. <b>OpenHands → SWE-Agent transfer is weak</b>, the reverse moderate. → A single scaffold can't train a general agent.</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/scaling_law_transfer.png" alt="cross-scaffold scaling">
+        <div class="fig-cap">Fig: Left — within-scaffold tokens↑ → monotonic gains; Right — cross-scaffold transfer is limited</div>
+      </div>
+
+      <div class="sec-head" style="margin-top:14px"><div class="nc">2</div><h2>Task Synthesis: industrializing envs</h2></div>
+
+      <div class="box b3">
+        <div class="title">Path A — Real GitHub PRs → executable envs</div>
+        <p>Mine issue-related PRs → decompose into (buggy, fix, test patch) → environment-building agent (<code>bash</code> / <code>switch-to-resolved</code> / <code>switch-to-bug</code>) builds Docker image + verification script. Script must reliably distinguish buggy/fixed.</p>
+        <p>Failure mode: agent writes "hacked verifiers" (<code>grep -q</code> keyword matching) → LLM hacking detector filters. Trained env-building model hits <b>78.4%</b> on 300-PR bench (vs Claude-Opus-4.5 77.8% / Gemini-3-Pro 69.6%).</p>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">807,693</div><div class="l">Verifiable PR Tasks</div></div>
+          <div class="num-cell"><div class="n">52,960</div><div class="l">Repos · 8 language families</div></div>
+        </div>
+      </div>
+
+      <div class="box b4">
+        <div class="title">Path B — Bug synthesis on SWE-Smith/Flow/Rebench/Multi-SWE-RL</div>
+        <p>Three strategies: <code>lm_rewrite</code> / <code>lm_modify</code> / <code>procedural_modify</code>, multilingual via tree-sitter AST. <b>Bidirectional check</b>: a bug must flip ≥1 test PASS→FAIL; reverting it must restore passing. Drop bug-triggering tests to prevent shortcut learning.</p>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">~800K</div><div class="l">Synthesized Bug Tasks</div></div>
+          <div class="num-cell"><div class="n">9+</div><div class="l">Programming Languages</div></div>
+        </div>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/bug-synthesis.png" alt="bug synthesis pipeline">
+        <div class="fig-cap">Fig: bug synthesis pipeline — repository collection → bug sampling → validation → issue generation</div>
+      </div>
+
+    </div>
+
+    <!-- ============== Column 2 ============== -->
+    <div class="col c2">
+
+      <div class="sec-head"><div class="nc">3</div><h2>Post-training: SFT → 4 Experts → Distill</h2></div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">SFT (§4.1)</div>
+          <p>Three sources: in-house corpora + verified agentic trajectories + doc-grounded QA. Closed-loop filter: Mini-SWE-agent acts as user simulator, actually executes responses → drop hallucinated samples. Pairwise judge: n candidates → C(n,2) pairs → checklist ranking.</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert A · Web Development</div>
+          <p>Playwright + Chromium rendering (React etc. initialized via Vite). Two-stage VLM eval: static screenshots (layout/content/UI) + dynamic interaction (parse DOM → generate click/form actions → compare pre/post screenshots). Both stages must pass.</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert B · UX / CLI format robustness</div>
+          <p>Key finding: <b>rule-based tool-call format validation is extremely effective</b> — raises the ceiling (prevents malformed patterns) + improves efficiency (fewer retries). <b>Tool Chat Template Scaling</b>: mix <b>21</b> templates in training (NL / JSON / Python / XML / TypeScript / in-house qwen3_coder XML).</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert C · Single-turn RL</div>
+          <p>"Most coding tasks are naturally execution-driven." Task spectrum: library/API use, I/O formats, <b>multilingual</b>, <b>vulnerability-prone scenarios</b>. Unit-test auto-synthesis: multi-model generation → majority-vote high-consensus tests.</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert D · SWE Multi-turn Agentic RL</div>
+          <p>Reward shaping: unfinished-trajectory penalty + turn-level tool-format penalty (token-level). <b>Reinforced Reward Hacking Blocker</b> — see highlight below.</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert Distillation → unified deploy model</div>
+          <p>Distill 4 experts back into the SFT checkpoint, preserving instruction following. No runtime expert routing or multi-model orchestration needed.</p>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">⚠️ Reinforced Reward Hacking Blocker (paper highlight)</div>
+        <p>Later in RL, agents <b>autonomously learn</b> to use <code>git remote add</code> / <code>git clone</code> / <code>curl</code> / <code>wget</code> to reconnect to GitHub and retrieve ground-truth — paper claims <b>this behavior was previously unreported</b>. Yet network can't be fully disabled (legitimate setup/package install/doc lookup need it).</p>
+        <p style="margin-top:5px"><b>Rule</b>: block any tool call containing both a repo link (<code>github.com/{repo}</code>) and network keywords (<code>git</code>/<code>curl</code>/<code>wget</code>), with explicit feedback.</p>
+        <p style="margin-top:5px"><b>Counter-intuitive side effect</b>: with the blocker on, agent avg turn count jumps <b>50 → 130</b> — the model always had the potential for longer horizons; shortcuts were spoiling it.</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/multi-rl.png" alt="multi-turn RL with blocker">
+        <div class="fig-cap">Fig left — SWE-Bench Verified with blocker; Fig right — without blocker, agent learns git hacking</div>
+      </div>
+
+      <div class="box b3">
+        <div class="title">Tool Chat Template Scaling (§4.2 fig)</div>
+        <p>With data volume and training config fixed, <b>template count↑ → SWE-Bench Verified monotonically↑</b>. In-house <code>qwen3_coder</code> XML is designed for string-heavy args, avoiding JSON multi-line escaping.</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/format_scaling.png" alt="format scaling">
+        <div class="fig-cap">Fig: SWE-Bench Verified performance vs. number of tool chat templates</div>
+      </div>
+
+    </div>
+
+    <!-- ============== Column 3 ============== -->
+    <div class="col c3">
+
+      <div class="sec-head"><div class="nc">4</div><h2>Results (max turns = 300)</h2></div>
+
+      <div class="box b2">
+        <div class="title">SWE-Bench Verified</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>Size</th><th>SWE<br>Agent</th><th>Mini<br>SWE</th><th>Open<br>Hands</th></tr>
+          <tr><td>Claude-Opus-4.5</td><td>?</td><td>78.2</td><td>77.8</td><td>79.0</td></tr>
+          <tr><td>Claude-Sonnet-4.5</td><td>?</td><td>76.0</td><td>68.4</td><td>74.6</td></tr>
+          <tr class="sec"><td colspan="5">— Open-source —</td></tr>
+          <tr><td>DeepSeek-V3.2</td><td>671A37</td><td>70.2</td><td>67.2</td><td>72.6</td></tr>
+          <tr><td>GLM-4.7</td><td>358A32</td><td>74.2</td><td>70.4</td><td>70.6</td></tr>
+          <tr><td>MiniMax-M2.1</td><td>230A10</td><td>74.8</td><td>70.4</td><td>71.0</td></tr>
+          <tr><td>Kimi-K2.5</td><td>1000A32</td><td>73.2</td><td>70.8</td><td>—</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>80A3</td><td>70.6</td><td>71.1</td><td>71.3</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#64748b;margin-top:4px">→ 3B active reaches the ~70% tier, alongside 230A10 / 671A37 / 1000A32.</p>
+      </div>
+
+      <div class="box b1">
+        <div class="title">SWE-Bench Multilingual & Pro</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>Size</th><th>ML<br>SWE-A</th><th>ML<br>Mini</th><th>ML<br>OH</th><th>Pro<br>SWE-A</th><th>Pro<br>Mini</th></tr>
+          <tr><td>Claude-Opus-4.5</td><td>?</td><td>71.7</td><td>71.8</td><td>75.2</td><td>51.6</td><td>50.2</td></tr>
+          <tr><td>Claude-Sonnet-4.5</td><td>?</td><td>67.2</td><td>61.3</td><td>66.0</td><td>50.5</td><td>43.0</td></tr>
+          <tr><td>DeepSeek-V3.2</td><td>671A37</td><td>62.3</td><td>55.5</td><td>61.8</td><td>46.0</td><td>32.4</td></tr>
+          <tr><td>GLM-4.7</td><td>358A32</td><td>63.7</td><td>61.8</td><td>60.8</td><td>45.1</td><td>39.4</td></tr>
+          <tr><td>MiniMax-M2.1</td><td>230A10</td><td>66.2</td><td>62.5</td><td>67.5</td><td>40.8</td><td>39.1</td></tr>
+          <tr><td>Kimi-K2.5</td><td>1000A32</td><td>63.7</td><td>62.3</td><td>—</td><td>47.3</td><td>42.8</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>80A3</td><td>62.8</td><td>56.2</td><td>64.3</td><td>42.7</td><td>38.7</td></tr>
+        </table>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/model_scores_comparison.png" alt="5 benchmark comparison">
+        <div class="fig-cap">Fig: comparison across 5 benchmarks (Verified/Multi/Pro/Terminal-Bench 2.0/Aider)</div>
+      </div>
+
+      <div class="box b4">
+        <div class="title">Template Following (5 IDE/CLI scaffolds)</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>Avg</th></tr>
+          <tr><td>GPT-5-2</td><td>84.0</td><td>14.0</td><td>41.8</td><td>29.8</td><td>77.0</td><td>49.3</td></tr>
+          <tr><td>Claude-S-4.5</td><td>86.8</td><td>61.0</td><td>100</td><td>88.0</td><td>91.0</td><td>85.4</td></tr>
+          <tr><td>Gemini-3-pro</td><td>92.4</td><td>57.0</td><td>98.0</td><td>93.5</td><td>94.0</td><td>87.0</td></tr>
+          <tr><td>Deepseek-v3.2</td><td>98.0</td><td>87.0</td><td>100</td><td>92.5</td><td>91.0</td><td>93.7</td></tr>
+          <tr><td>GLM-4.7</td><td>91.0</td><td>64.0</td><td>100</td><td>94.7</td><td>0.0</td><td>69.9</td></tr>
+          <tr><td>Kimi-K2</td><td>59.0</td><td>59.0</td><td>100</td><td>57.4</td><td>81.0</td><td>71.3</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>98.0</td><td>83.0</td><td>98.0</td><td>91.5</td><td>93.0</td><td>92.7</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#64748b;margin-top:4px">→ Don't just read Avg: other models have collapsed columns (GLM-4.7 S5=0). Qwen3-Coder-Next has <b>all 5 columns ≥ 83</b> — no weak spots.</p>
+      </div>
+
+      <div class="box b5">
+        <div class="title">Code → Math capability spillover</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>HMMT25<br>Feb</th><th>HMMT25<br>Nov</th><th>AIME<br>24</th><th>AIME<br>25</th></tr>
+          <tr><td>Qwen3-Next</td><td>54.27</td><td>68.07</td><td>82.92</td><td>69.64</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>70.21</td><td>75.57</td><td>89.01</td><td>83.07</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#64748b;margin-top:4px">→ Code reasoning spills into math (HMMT25 Feb +16, AIME25 +13.4), with MMLU essentially unchanged.</p>
+      </div>
+
+      <div class="box b2">
+        <div class="title">MegaFlow infrastructure</div>
+        <p>Alibaba Cloud Kubernetes + <b>Argo workflows</b>, 3 stages: <code>agent rollout → evaluation → post-processing</code>. Rollout pod co-locates agent + environment containers. Supports SWE-agent / Mini-SWE-agent / OpenHands / Claude-Code / Qwen-Code / Terminus.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1 · Moat</div>
+      <p>The real bottleneck is <span class="hl">verifiable envs</span>, not RL algorithms. 807K real PRs + 800K synthesized bugs are the hard-to-replicate part.</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2 · Reward design</div>
+      <p>Reward hacking is a side effect of capability. With blocker on, avg turns <span class="hl">50 → 130</span> — enumerate shortcuts before setting rewards.</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3 · Templates</div>
+      <p><span class="hl">Template scaling &gt; single best template</span>. 21 tool-chat templates beat the engineering habit of "one fixed system prompt."</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4 · Roadmap</div>
+      <p>Limitations = roadmap: <span class="hl">frontend/UI, large-scale SWE, cybersecurity/CTF</span> are the next differentiation vectors.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kimi K2.5 — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — violet/cyan gradient */
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 45%, #0891b2 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #e9d5ff }
+.header-left .zh-title { font-size: 1.1rem; color: #c4b5fd; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(124,58,237,.4); border: 1px solid #a78bfa; color: #e9d5ff; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #c4b5fd; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-violet .nc { background: #7c3aed }
+.c-purple .nc { background: #6d28d9 }
+.c-cyan .nc { background: #0891b2 }
+.c-teal .nc { background: #0d9488 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; }
+.c-violet h2 { color: #c4b5fd }
+.c-purple h2 { color: #ddd6fe }
+.c-cyan h2 { color: #67e8f9 }
+.c-teal h2 { color: #5eead4 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed }
+.g2 { background: rgba(109,40,217,.08); border-left: 3px solid #6d28d9 }
+.g3 { background: rgba(8,145,178,.08); border-left: 3px solid #0891b2 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #c4b5fd }
+.g2 .title { color: #ddd6fe }
+.g3 .title { color: #67e8f9 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(13,148,136,.08); border: 1px solid rgba(94,234,212,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #5eead4; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(124,58,237,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(124,58,237,.06); border: 1px solid rgba(196,181,253,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #c4b5fd; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #4c1d95; color: #e9d5ff; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(124,58,237,.1); font-weight: 700; font-size: .66rem; color: #c4b5fd; text-align: left }
+.rtable .ours td { background: rgba(196,181,253,.06); font-weight: 800; color: #e9d5ff }
+.rtable .best td.dv { color: #c4b5fd; font-size: .78rem }
+
+/* STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(124,58,237,.06); border-radius: 8px; border: 1px solid rgba(196,181,253,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #c4b5fd; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(124,58,237,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #c4b5fd; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(124,58,237,.06); border: 1px solid rgba(124,58,237,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #c4b5fd }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #c4b5fd; border-color: rgba(196,181,253,.55) }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="Kimi_K2_5_poster.html">EN</a><a class="active" href="Kimi_K2_5_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMoonshot_Kimi%2F2602_Kimi_K2_5%2FKimi-K2-5-Joint-Optimization-Vision-Language" style="text-decoration: none;">Kimi K2.5: Joint Optimization of Text and Vision</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2602.02276" target="_blank" style="text-decoration: none;">arXiv:2602.02276</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2602.02276 &nbsp;|&nbsp; Moonshot AI</span>
+    <div class="zh-title">Kimi K2.5：视觉智能体智能</div>
+    <h1>Kimi K2.5: <span>Visual Agentic Intelligence</span></h1>
+    <div class="authors">Kimi Team &nbsp;|&nbsp; Moonshot AI</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">78.5%</div><div class="sub">MMMU-Pro</div></div>
+    <div class="score-box"><div class="num">76.8%</div><div class="sub">SWE-bench<br>Verified</div></div>
+    <div class="score-box"><div class="num">74.9%</div><div class="sub">BrowseComp<br>(w/ Discard-all)</div></div>
+    <div class="score-box"><div class="num">+17.8%</div><div class="sub">Agent Swarm<br>BrowseComp 提升</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 方法基础 -->
+<div class="col">
+  <div class="sec-head c-violet"><div class="nc">1</div><h2>问题与动机</h2></div>
+  <p class="body">传统多模态方法在 LLM 训练后期以<strong>高 vision ratio（50%+）</strong>引入视觉 tokens，导致视觉-语言对齐不足，模态间存在冲突，且高 vision ratio 浪费 token 预算。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心挑战：多模态联合优化</div>
+      <p>sequential agent execution 依赖按序执行 reasoning step 和 tool call，latency 随任务复杂度线性增长，限制可处理任务复杂度上限。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Agent Swarm 并行瓶颈</div>
+      <p>多 agent 系统中，credit assignment ambiguity 和 training instability 使得 end-to-end co-optimization 极其困难。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">训练效率问题</div>
+      <p>Pipeline Parallelism 下，视觉 encoder 和文本 embedding co-locate 导致 multimodal input size 变化时 compute load 和 memory usage 剧烈波动。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-violet" style="margin-top: 18px;"><div class="nc">2</div><h2>方法基础：Native Multimodal</h2></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Early Fusion + Low Vision Ratio</div>
+      <p>在固定 token 预算下，早期持续低 ratio 混合让模型在更长训练窗口内自然发展 balanced multimodal representations，实现更深度的跨模态联合优化。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">MoonViT-3D 架构</div>
+      <p>从 SigLIP-SO-400M 初始化，NaViT patch packing 实现 variable-resolution 输入。<strong>3D packing</strong>：4 个连续帧视为 spatiotemporal volume，共享参数，4× 时间压缩。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Zero-Vision SFT</div>
+      <p>纯文本 SFT 数据中通过 <tt>IPython</tt> 程序化操作代理（像素级操作、目标尺寸估计、binarization counting 等）激活视觉推理行为。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 核心方法 -->
+<div class="col">
+  <div class="sec-head c-purple"><div class="nc">3</div><h2>视觉 RL 与跨模态迁移</h2></div>
+  <p class="body">Outcome-Based Visual RL 三类任务：visual grounding and counting、chart and document understanding、vision-critical STEM problems。</p>
+
+  <div class="trick-box">
+    <div class="trick-title">关键发现：视觉 RL 提升文本性能</div>
+    <p>视觉 RL 增强了结构化信息提取相关的校准能力，减少了类似于视觉 grounded reasoning 相关查询的不确定性。</p>
+  </div>
+
+  <table class="rtable">
+    <tr><th>Benchmark</th><th>Before</th><th>After</th><th>Gain</th></tr>
+    <tr class="ours"><td>MMLU-Pro</td><td>84.7%</td><td>86.4%</td><td class="dv">+1.7</td></tr>
+    <tr><td>GPQA-Diamond</td><td>84.3%</td><td>86.4%</td><td class="dv">+2.1</td></tr>
+    <tr><td>LongBench v2</td><td>56.7%</td><td>58.9%</td><td class="dv">+2.2</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/k25_visionzerorl_curves.png" alt="Vision Zero-RL Curves">
+    <div class="fig-cap">Vision RL 与 Zero-Vision SFT 的 Loss 曲线对比</div>
+  </div>
+
+  <div class="sec-head c-cyan" style="margin-top: 14px;"><div class="nc">4</div><h2>Agent Swarm + PARL</h2></div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">PARL 架构</div>
+      <p><strong>Trainable Orchestrator</strong>：可学习主 agent，负责动态任务分解、子 agent 实例化、并行调度。<br><strong>Frozen Subagents</strong>：从固定中间策略 checkpoint 实例化，执行轨迹不参与优化。</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">PARL Reward</div>
+    <div>$$r_{\text{PARL}}(x, y) = \lambda_1 \cdot r_{\text{parallel}} + \lambda_2 \cdot r_{\text{finish}} + r_{\text{perf}}(x, y)$$</div>
+  </div>
+
+  <div class="gap-boxes" style="margin-top: 6px;">
+    <div class="gap-box g1">
+      <div class="title">$r_{\text{parallel}}$ — Instantiation Reward</div>
+      <p>防止 serial collapse，鼓励探索并发调度空间。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">$r_{\text{finish}}$ — Sub-agent Finish Rate</div>
+      <p>防止 spurious parallelism，防止通过大量创建无意义子 agent 来刷指标。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">Critical Steps as Resource Constraint</div>
+      <p>将 parallel agent 执行中的时间成本类比为计算图中的 critical path，显式激励有效并行化。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-teal"><div class="nc">5</div><h2>核心结果</h2></div>
+
+  <p class="body" style="margin-bottom: 6px;"><strong>推理与知识</strong></p>
+  <table class="rtable">
+    <tr><th>Benchmark</th><th>K2.5</th><th>K2</th><th>Gemini-3 Pro</th></tr>
+    <tr class="ours"><td>AIME 2025</td><td class="dv">96.1%</td><td>94.5%</td><td>95.0%</td></tr>
+    <tr><td>HMMT Feb 2025</td><td>95.4%</td><td>89.4%</td><td class="dv">97.3%</td></tr>
+    <tr><td>GPQA Diamond</td><td>87.6%</td><td>84.5%</td><td class="dv">91.9%</td></tr>
+  </table>
+
+  <p class="body" style="margin-bottom: 6px; margin-top: 10px;"><strong>Agentic</strong></p>
+  <table class="rtable">
+    <tr><th>Benchmark</th><th>K2.5</th><th>Claude Opus 4.5</th></tr>
+    <tr class="ours"><td>SWE-bench Verified</td><td class="dv">76.8%</td><td>~75%</td></tr>
+    <tr><td>BrowseComp</td><td class="dv">74.9%</td><td>37.0%</td></tr>
+    <tr><td>OSWorld-Verified</td><td class="dv">63.3%</td><td>66.3%</td></tr>
+  </table>
+
+  <p class="body" style="margin-bottom: 6px; margin-top: 10px;"><strong>Agent Swarm（并行 vs 单 Agent）</strong></p>
+  <table class="rtable">
+    <tr><th>Benchmark</th><th>Swarm</th><th>Single</th></tr>
+    <tr class="ours"><td>BrowseComp</td><td class="dv">78.4%</td><td>60.6%</td></tr>
+    <tr><td>WideSearch Item-F1</td><td class="dv">79.0%</td><td>72.7%</td></tr>
+    <tr><td>In-house Swarm Bench</td><td class="dv">58.3%</td><td>41.6%</td></tr>
+  </table>
+
+  <div class="trick-box" style="margin-top: 8px;">
+    <div class="trick-title">WideSearch 效率提升</div>
+    <p>实现 <strong>3×~4.5× 执行时间减少</strong>（随目标 Item-F1 从 30% 增至 70%）。</p>
+  </div>
+
+  <p class="body" style="margin-bottom: 6px; margin-top: 10px;"><strong>视觉理解</strong></p>
+  <table class="rtable">
+    <tr><th>Benchmark</th><th>Score</th></tr>
+    <tr class="ours"><td>MMMU-Pro</td><td>78.5%</td></tr>
+    <tr><td>MathVision</td><td class="dv">84.2%</td></tr>
+    <tr><td>OCRBench</td><td class="dv">92.3%</td></tr>
+    <tr><td>LVBench (long video)</td><td>75.9%</td></tr>
+    <tr><td>LongVideoBench</td><td>79.8%</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/vtir_examples.png" alt="VTIR Examples">
+    <div class="fig-cap">视觉工具推理（VTIR）示例</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心创新</div>
+    <p><span class="hl">Early Low-Ratio Fusion</span> 在固定 token 预算下，early fusion + lower vision ratio 优于 late fusion + high ratio。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">训练洞察</div>
+    <p><span class="hl">Zero-Vision SFT</span> 纯文本数据即可激活强视觉推理，joint pretraining 已建立强 vision-text alignment。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">跨模态迁移</div>
+    <p><span class="hl">Vision RL 提升文本</span> 视觉 RL 增强了结构化信息提取校准能力，减少视觉 grounded reasoning 不确定性。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Agent 革新</div>
+    <p><span class="hl">PARL + Agent Swarm</span> 通过 RL 学习动态子 agent 并行调度，将 BrowseComp 复杂度从线性转为并行，效率提升 3~4.5×。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

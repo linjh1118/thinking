@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemini Robotics 1.5 — 中文版 Poster</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0c0a09;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #d6d3d1;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .backlinks {
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 12px;
+    padding: 8px 14px;
+    background: rgba(2,132,199,0.06);
+    border: 1px solid rgba(2,132,199,0.15);
+    border-radius: 8px;
+    font-size: 0.82em;
+  }
+  .backlinks a {
+    color: #38bdf8;
+    text-decoration: none;
+    margin-right: 12px;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+
+  .poster {
+    background: #1c1917;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1400px;
+    box-shadow: 0 32px 64px rgba(0,0,0,0.6);
+  }
+
+  /* ── Header ── */
+  .poster-header {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 55%, #38bdf8 100%);
+    padding: 32px 40px 28px;
+    position: relative;
+  }
+  .poster-header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #0c4a6e);
+  }
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .title-block h1 {
+    font-size: 1.75em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .title-block .subtitle {
+    margin-top: 6px;
+    font-size: 0.92em;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+  }
+  .scores {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .score-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 72px;
+  }
+  .score-box .num {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-box .label {
+    font-size: 0.7em;
+    color: rgba(255,255,255,0.8);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ── Main 3-column grid ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    padding: 24px 22px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .col:last-child { border-right: none; }
+
+  /* Section headings */
+  .sec-title {
+    font-size: 0.78em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .col1 .sec-title { background: rgba(2,132,199,0.15); color: #38bdf8; }
+  .col2 .sec-title { background: rgba(2,132,199,0.15); color: #38bdf8; }
+  .col3 .sec-title { background: rgba(16,185,129,0.15); color: #34d399; }
+
+  .col h3 {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #f5f5f4;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .col p, .col li {
+    font-size: 0.82em;
+    color: #a8a29e;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .col ul {
+    list-style: none;
+    padding: 0;
+  }
+  .col ul li {
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 5px;
+  }
+  .col ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #38bdf8;
+    font-size: 0.75em;
+    top: 2px;
+  }
+
+  .highlight-box {
+    background: rgba(2,132,199,0.07);
+    border: 1px solid rgba(2,132,199,0.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .highlight-box h4 {
+    font-size: 0.82em;
+    color: #7dd3fc;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  .highlight-box p {
+    font-size: 0.78em;
+    color: #a8a29e;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .fig-box {
+    background: rgba(2,132,199,0.04);
+    border: 1px solid rgba(2,132,199,0.12);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-caption {
+    font-size: 0.7em;
+    color: #78716c;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  table.rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76em;
+    margin-bottom: 10px;
+  }
+  .rtable th {
+    background: #0c4a6e;
+    color: #e0f2fe;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .rtable td {
+    padding: 5px 8px;
+    color: #d6d3d1;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .rtable tr:last-child td { border-bottom: none; }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .tag {
+    background: rgba(2,132,199,0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(2,132,199,0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7em;
+    font-weight: 600;
+  }
+
+  /* ── Bottom strip ── */
+  .bottom-strip {
+    background: rgba(2,132,199,0.06);
+    border-top: 1px solid rgba(2,132,199,0.15);
+    padding: 16px 40px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  .takeaway {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .takeaway-num {
+    background: #0c4a6e;
+    color: #7dd3fc;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72em;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .takeaway-text {
+    font-size: 0.78em;
+    color: #a8a29e;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .header-inner { flex-direction: column; }
+    .scores { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backlinks">
+  <span style="color: #64748b;">📚 源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FGoogle_DeepMind%2F2510_Gemini_Robotics_1_5%2FGemini-Robotics-1.5-Embodied-Reasoning">Gemini-Robotics-1.5-Embodied-Reasoning.md</a>
+  <span style="margin-left:12px;color:#64748b;">📄 arXiv：</span>
+  <a href="https://arxiv.org/abs/2510.03342" style="color:#38bdf8;">2510.03342</a>
+</div>
+
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="poster-header">
+    <div class="header-inner">
+      <div class="title-block">
+        <h1>Gemini Robotics 1.5</h1>
+        <div class="subtitle">Pushing the Frontier of Generalist Robots with Advanced Embodied Reasoning, Thinking, and Motion Transfer</div>
+        <div class="subtitle" style="margin-top:4px;font-size:0.8em;opacity:0.7;">Google DeepMind · arXiv 2510.03342 · 2025</div>
+      </div>
+      <div class="scores">
+        <div class="score-box">
+          <div class="num">230</div>
+          <div class="label">Benchmark 任务</div>
+        </div>
+        <div class="score-box">
+          <div class="num">4</div>
+          <div class="label">泛化维度</div>
+        </div>
+        <div class="score-box">
+          <div class="num">3</div>
+          <div class="label">机器人本体</div>
+        </div>
+        <div class="score-box">
+          <div class="num">3072</div>
+          <div class="label">Max Thinking Tokens</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COLUMN GRID -->
+  <div class="main-grid">
+
+    <!-- COL 1: Problem & Background -->
+    <div class="col col1">
+      <span class="sec-title">🔵 问题与动机</span>
+      <h3>通用机器人需要什么？</h3>
+      <ul>
+        <li>深度理解物理世界：空间推理、时间推理、直觉物理、affordances</li>
+        <li>高级推理能力：分解复杂多步任务、在执行中调整计划</li>
+        <li>跨本体泛化能力：无需针对每个机器人单独微调</li>
+      </ul>
+
+      <h3 style="margin-top:14px;">Gemini 1.0 的局限</h3>
+      <ul>
+        <li>缺乏显式的思考（Thinking）能力</li>
+        <li>跨本体泛化有限</li>
+        <li>无法进行复杂的具身推理</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>核心动机</h4>
+        <p>将 Gemini 的 Thinking 能力带入物理世界，让机器人不仅能执行动作，更能"思考"自己的动作。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/gr_1.5_overview_v6.png" alt="GR-1.5 Overview">
+        <div class="fig-caption">图 1: Gemini Robotics 1.5 系统概览 — 包含 GR-1.5 (Thinking VLA) 和 GR-ER 1.5 (具身推理模型) 两大核心组件</div>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">VLA</span>
+        <span class="tag">Motion Transfer</span>
+        <span class="tag">Thinking VLA</span>
+        <span class="tag">具身推理</span>
+      </div>
+    </div>
+
+    <!-- COL 2: Method -->
+    <div class="col col2">
+      <span class="sec-title">🔵 核心方法</span>
+
+      <h3>GR-1.5: Motion Transfer</h3>
+      <p>让模型从异构、多本体的机器人数据中学习，形成统一的运动和物理理解：</p>
+      <ul>
+        <li><strong>多本体预训练</strong>：ALOHA、Bi-arm Franka、Apollo 人形机器人等</li>
+        <li><strong>零样本技能迁移</strong>：一个机器人训练，零样本迁移到另一个</li>
+        <li><strong>MT 放大正迁移</strong>：对齐不同本体间的共性</li>
+      </ul>
+
+      <h3 style="margin-top:14px;">GR-1.5: Thinking VLA</h3>
+      <p>将思考与动作交织，自然语言形式的多层内部推理：</p>
+      <ul>
+        <li><strong>观察 → 思考 → 动作</strong> 的循环迭代</li>
+        <li>分解复杂任务为具体短视距步骤</li>
+        <li>自我纠正：检测失败后自动恢复</li>
+        <li>可解释性：可视化机器人的思考轨迹</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/thinking_sr.png" alt="Thinking VLA Results">
+        <div class="fig-caption">图 2: Thinking VLA 在多步任务上的成功率对比，启用 Thinking 后显著优于基线方法</div>
+      </div>
+
+      <h3 style="margin-top:14px;">GR-ER 1.5: 具身推理</h3>
+      <ul>
+        <li><strong>Complex Pointing</strong>：预测点集而非单个点，生成运动轨迹</li>
+        <li><strong>Progress Understanding</strong>：预测任务完成百分比、检测成功/失败</li>
+        <li><strong>多视角理解</strong>：综合多个相机视角进行判断</li>
+        <li><strong>Thinking Scaling</strong>：自动为不同任务分配合适的思考量</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/generality_vs_embodied_reasoning.png" alt="Generality vs ER">
+        <div class="fig-caption">图 3: GR-ER 1.5 在具身推理任务上的综合表现 — 全面超越 Gemini 2.5 和 GPT-5</div>
+      </div>
+    </div>
+
+    <!-- COL 3: Results -->
+    <div class="col col3">
+      <span class="sec-title">🟢 实验结果</span>
+
+      <h3>GR-1.5 多本体泛化（230 任务）</h3>
+      <table class="rtable">
+        <tr><th>泛化类型</th><th>描述</th><th>效果</th></tr>
+        <tr><td>Visual</td><td>抗背景/光照/纹理变化</td><td style="color:#34d399;font-weight:600;">显著提升</td></tr>
+        <tr><td>Instruction</td><td>同义改写/多语言/模糊指令</td><td style="color:#34d399;font-weight:600;">显著提升</td></tr>
+        <tr><td>Action</td><td>适应新初始条件/物体实例</td><td style="color:#34d399;font-weight:600;">显著提升</td></tr>
+        <tr><td>Task</td><td>新环境新任务（最综合）</td><td style="color:#34d399;font-weight:600;">显著提升</td></tr>
+      </table>
+
+      <h3 style="margin-top:14px;">跨本体零样本迁移</h3>
+      <ul>
+        <li><strong>ALOHA → Bi-arm Franka</strong>：成功执行仅在 Franka 数据上训练的任务</li>
+        <li><strong>Bi-arm Franka → ALOHA</strong>：成功执行仅在 ALOHA 数据上训练的任务</li>
+        <li><strong>其他机器人 → Apollo</strong>：形态差异巨大，仍有迁移效果</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/cross-emb-benchmark-visual.png" alt="Cross-Embodiment Transfer">
+        <div class="fig-caption">图 4: 跨本体零样本迁移 benchmark — GR-1.5 在 ALOHA、Omega、Atari 三种本体上均显著优于所有基线方法</div>
+      </div>
+
+      <h3 style="margin-top:14px;">GR-ER 1.5 具身推理</h3>
+      <table class="rtable">
+        <tr><th>任务</th><th>GR-ER 1.5 vs. SoTA</th></tr>
+        <tr><td>Average Pointing</td><td style="color:#34d399;font-weight:600;">新 SoTA</td></tr>
+        <tr><td>Spatial Pointing</td><td style="color:#34d399;font-weight:600;">显著超越 Gemini 2.5</td></tr>
+        <tr><td>Steerable Pointing</td><td style="color:#34d399;font-weight:600;">显著超越 GPT-5</td></tr>
+        <tr><td>Point-to-Count</td><td style="color:#34d399;font-weight:600;">新 SoTA</td></tr>
+        <tr><td>Success Detection</td><td style="color:#34d399;font-weight:600;">5Hz 实时多视角均强</td></tr>
+      </table>
+
+      <h3 style="margin-top:14px;">Thinking Scaling</h3>
+      <p style="font-size:0.78em;">GR-ER 1.5 展示出 Thinking 在具身推理任务上的 scaling 能力：图像/视频 QA 任务受益于更长的思考轨迹（峰值 3072 tokens），指向任务所需推理较少（峰值 2048 tokens），模型自动为不同任务分配合适的思考量。</p>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="takeaway">
+      <div class="takeaway-num">1</div>
+      <div class="takeaway-text"><strong>Thinking VLA 是机器人领域的未来方向</strong>：将思考与动作交织是处理复杂多步机器人任务的有效方法，GUI Agent 可借鉴"思考后行动"的范式。</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">2</div>
+      <div class="takeaway-text"><strong>多本体学习 + Motion Transfer 显著提升泛化能力</strong>：跨不同机器人形态的数据联合训练 + MT 机制可以带来大规模正迁移。</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">3</div>
+      <div class="takeaway-text"><strong>具身推理是通用 Agent 的关键能力</strong>：视觉-空间-时间理解对于物理世界任务至关重要，GR-ER 1.5 为通用物理 Agent 奠定基础。</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">4</div>
+      <div class="takeaway-text"><strong>工具使用 + 具身推理的结合</strong>：Gemini 的工具使用能力与具身推理结合，为能在物理世界和信息世界自由操作的通用 Agent 奠定基础。</div>
+    </div>
+  </div>
+
+</div><!-- /poster -->
+</body>
+</html>

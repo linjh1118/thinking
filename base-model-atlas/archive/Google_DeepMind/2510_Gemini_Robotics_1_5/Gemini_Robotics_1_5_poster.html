@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemini Robotics 1.5 — Poster</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1c1917;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .backlinks {
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 12px;
+    padding: 8px 14px;
+    background: rgba(2,132,199,0.06);
+    border: 1px solid rgba(2,132,199,0.18);
+    border-radius: 8px;
+    font-size: 0.82em;
+  }
+  .backlinks a {
+    color: #0284c7;
+    text-decoration: none;
+    margin-right: 12px;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+
+  .poster {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1400px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* ── Header ── */
+  .poster-header {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 55%, #38bdf8 100%);
+    padding: 32px 40px 28px;
+    position: relative;
+  }
+  .poster-header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #0c4a6e);
+  }
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .title-block h1 {
+    font-size: 1.75em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .title-block .subtitle {
+    margin-top: 6px;
+    font-size: 0.92em;
+    color: rgba(255,255,255,0.88);
+    font-weight: 400;
+  }
+  .scores {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .score-box {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 72px;
+  }
+  .score-box .num {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-box .label {
+    font-size: 0.7em;
+    color: rgba(255,255,255,0.85);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ── Main 3-column grid ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    padding: 24px 22px;
+    border-right: 1px solid rgba(0,0,0,0.07);
+  }
+  .col:last-child { border-right: none; }
+
+  .sec-title {
+    font-size: 0.78em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .col1 .sec-title { background: rgba(2,132,199,0.1); color: #0369a1; }
+  .col2 .sec-title { background: rgba(2,132,199,0.1); color: #0369a1; }
+  .col3 .sec-title { background: rgba(16,185,129,0.1); color: #047857; }
+
+  .col h3 {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #1c1917;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .col p, .col li {
+    font-size: 0.82em;
+    color: #44403c;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .col ul {
+    list-style: none;
+    padding: 0;
+  }
+  .col ul li {
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 5px;
+  }
+  .col ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #0284c7;
+    font-size: 0.75em;
+    top: 2px;
+  }
+
+  .highlight-box {
+    background: rgba(2,132,199,0.06);
+    border: 1px solid rgba(2,132,199,0.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .highlight-box h4 {
+    font-size: 0.82em;
+    color: #0369a1;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  .highlight-box p {
+    font-size: 0.78em;
+    color: #44403c;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .fig-box {
+    background: rgba(2,132,199,0.04);
+    border: 1px solid rgba(2,132,199,0.12);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-caption {
+    font-size: 0.7em;
+    color: #78716c;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  table.rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76em;
+    margin-bottom: 10px;
+  }
+  .rtable th {
+    background: #0c4a6e;
+    color: #e0f2fe;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .rtable td {
+    padding: 5px 8px;
+    color: #1c1917;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .rtable tr:last-child td { border-bottom: none; }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .tag {
+    background: rgba(2,132,199,0.1);
+    color: #0369a1;
+    border: 1px solid rgba(2,132,199,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7em;
+    font-weight: 600;
+  }
+
+  /* ── Bottom strip ── */
+  .bottom-strip {
+    background: rgba(2,132,199,0.05);
+    border-top: 1px solid rgba(2,132,199,0.12);
+    padding: 16px 40px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  .takeaway {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .takeaway-num {
+    background: #0c4a6e;
+    color: #7dd3fc;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72em;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .takeaway-text {
+    font-size: 0.78em;
+    color: #44403c;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.07); }
+    .header-inner { flex-direction: column; }
+    .scores { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backlinks">
+  <span style="color: #64748b;">📚 Source：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FGoogle_DeepMind%2F2510_Gemini_Robotics_1_5%2FGemini-Robotics-1.5-Embodied-Reasoning">Gemini-Robotics-1.5-Embodied-Reasoning.md</a>
+  <span style="margin-left:12px;color:#64748b;">📄 arXiv：</span>
+  <a href="https://arxiv.org/abs/2510.03342" style="color:#0284c7;">2510.03342</a>
+</div>
+
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="poster-header">
+    <div class="header-inner">
+      <div class="title-block">
+        <h1>Gemini Robotics 1.5</h1>
+        <div class="subtitle">Pushing the Frontier of Generalist Robots with Advanced Embodied Reasoning, Thinking, and Motion Transfer</div>
+        <div class="subtitle" style="margin-top:4px;font-size:0.8em;opacity:0.75;">Google DeepMind · arXiv 2510.03342 · 2025</div>
+      </div>
+      <div class="scores">
+        <div class="score-box">
+          <div class="num">230</div>
+          <div class="label">Benchmark Tasks</div>
+        </div>
+        <div class="score-box">
+          <div class="num">4</div>
+          <div class="label">Generalization Axes</div>
+        </div>
+        <div class="score-box">
+          <div class="num">3</div>
+          <div class="label">Robot Bodies</div>
+        </div>
+        <div class="score-box">
+          <div class="num">3072</div>
+          <div class="label">Max Thinking Tokens</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COLUMN GRID -->
+  <div class="main-grid">
+
+    <!-- COL 1: Problem & Background -->
+    <div class="col col1">
+      <span class="sec-title">🔵 Problem & Motivation</span>
+      <h3>What Does a Generalist Robot Need?</h3>
+      <ul>
+        <li>Deep physical world understanding: spatial reasoning, temporal reasoning, intuitive physics, affordances</li>
+        <li>High-level reasoning: decompose complex multi-step tasks, adjust plans during execution</li>
+        <li>Cross-body generalization: work across different robot morphologies without per-robot fine-tuning</li>
+      </ul>
+
+      <h3 style="margin-top:14px;">Limitations of Gemini 1.0</h3>
+      <ul>
+        <li>Lacked explicit Thinking capability</li>
+        <li>Limited cross-body generalization</li>
+        <li>Unable to perform complex embodied reasoning</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>Core Motivation</h4>
+        <p>Bring Gemini's Thinking capability into the physical world — so robots can not only execute actions but also "think" about their actions.</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/gr_1.5_overview_v6.png" alt="GR-1.5 Overview">
+        <div class="fig-caption">Fig. 1: Gemini Robotics 1.5 System Overview — two core components: GR-1.5 (Thinking VLA) and GR-ER 1.5 (Embodied Reasoning Model)</div>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">VLA</span>
+        <span class="tag">Motion Transfer</span>
+        <span class="tag">Thinking VLA</span>
+        <span class="tag">Embodied Reasoning</span>
+      </div>
+    </div>
+
+    <!-- COL 2: Method -->
+    <div class="col col2">
+      <span class="sec-title">🔵 Core Methods</span>
+
+      <h3>GR-1.5: Motion Transfer</h3>
+      <p>Learning unified motion and physical understanding from heterogeneous, multi-body robot data:</p>
+      <ul>
+        <li><strong>Multi-body pretraining</strong>: ALOHA, Bi-arm Franka, Apollo humanoid, and more</li>
+        <li><strong>Zero-shot skill transfer</strong>: trained on one robot, transferred zero-shot to another</li>
+        <li><strong>MT amplifies positive transfer</strong>: aligning commonalities across bodies</li>
+      </ul>
+
+      <h3 style="margin-top:14px;">GR-1.5: Thinking VLA</h3>
+      <p>Interleaving thinking and action with multi-layer internal reasoning in natural language:</p>
+      <ul>
+        <li><strong>Observe → Think → Act</strong> iterative loop</li>
+        <li>Decompose complex tasks into concrete short-horizon steps</li>
+        <li>Self-correction: automatically recover after detecting failures</li>
+        <li>Interpretability: visualize robot's thought trajectories</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/thinking_sr.png" alt="Thinking VLA Results">
+        <div class="fig-caption">Fig. 2: Thinking VLA success rate on multi-step tasks — enabling Thinking significantly outperforms baseline methods</div>
+      </div>
+
+      <h3 style="margin-top:14px;">GR-ER 1.5: Embodied Reasoning</h3>
+      <ul>
+        <li><strong>Complex Pointing</strong>: predict point sets (not single points), generate motion trajectories</li>
+        <li><strong>Progress Understanding</strong>: predict task completion percentage, detect success/failure</li>
+        <li><strong>Multi-view Understanding</strong>: synthesize multiple camera perspectives</li>
+        <li><strong>Thinking Scaling</strong>: automatically allocate appropriate thinking budget per task</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/generality_vs_embodied_reasoning.png" alt="Generality vs ER">
+        <div class="fig-caption">Fig. 3: GR-ER 1.5 performance on embodied reasoning tasks — comprehensively surpassing Gemini 2.5 and GPT-5</div>
+      </div>
+    </div>
+
+    <!-- COL 3: Results -->
+    <div class="col col3">
+      <span class="sec-title">🟢 Experimental Results</span>
+
+      <h3>GR-1.5 Multi-Body Generalization (230 tasks)</h3>
+      <table class="rtable">
+        <tr><th>Generalization Type</th><th>Description</th><th>Effect</th></tr>
+        <tr><td>Visual</td><td>Resist background/lighting/texture changes</td><td style="color:#047857;font-weight:600;">Major gains</td></tr>
+        <tr><td>Instruction</td><td>Paraphrase/multilingual/vague instructions</td><td style="color:#047857;font-weight:600;">Major gains</td></tr>
+        <tr><td>Action</td><td>Adapt to new initial conditions/object instances</td><td style="color:#047857;font-weight:600;">Major gains</td></tr>
+        <tr><td>Task</td><td>New environments + new tasks (most comprehensive)</td><td style="color:#047857;font-weight:600;">Major gains</td></tr>
+      </table>
+
+      <h3 style="margin-top:14px;">Zero-Shot Cross-Body Transfer</h3>
+      <ul>
+        <li><strong>ALOHA → Bi-arm Franka</strong>: successfully executes tasks trained only on Franka data</li>
+        <li><strong>Bi-arm Franka → ALOHA</strong>: successfully executes tasks trained only on ALOHA data</li>
+        <li><strong>Other robots → Apollo</strong>: significant morphology differences yet still effective transfer</li>
+      </ul>
+
+      <div class="fig-box">
+        <img src="src/assets/cross-emb-benchmark-visual.png" alt="Cross-Embodiment Transfer">
+        <div class="fig-caption">Fig. 4: Cross-body zero-shot transfer benchmark — GR-1.5 significantly outperforms all baselines on ALOHA, Omega, and Atari platforms</div>
+      </div>
+
+      <h3 style="margin-top:14px;">GR-ER 1.5 Embodied Reasoning</h3>
+      <table class="rtable">
+        <tr><th>Task</th><th>GR-ER 1.5 vs. SoTA</th></tr>
+        <tr><td>Average Pointing</td><td style="color:#047857;font-weight:600;">New SoTA</td></tr>
+        <tr><td>Spatial Pointing</td><td style="color:#047857;font-weight:600;">Surpasses Gemini 2.5</td></tr>
+        <tr><td>Steerable Pointing</td><td style="color:#047857;font-weight:600;">Surpasses GPT-5</td></tr>
+        <tr><td>Point-to-Count</td><td style="color:#047857;font-weight:600;">New SoTA</td></tr>
+        <tr><td>Success Detection</td><td style="color:#047857;font-weight:600;">Strong @ 5Hz multi-view</td></tr>
+      </table>
+
+      <h3 style="margin-top:14px;">Thinking Scaling</h3>
+      <p style="font-size:0.78em;">GR-ER 1.5 exhibits Thinking scaling on embodied reasoning: image/video QA tasks benefit from longer thought traces (peak 3072 tokens), pointing tasks require less reasoning (peak 2048 tokens), and the model automatically allocates appropriate thinking budget per task.</p>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="takeaway">
+      <div class="takeaway-num">1</div>
+      <div class="takeaway-text"><strong>Thinking VLA is the future of robotics</strong>: interleaving thinking with action is an effective approach for complex multi-step robot tasks; GUI Agents can learn from this "think-then-act" paradigm.</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">2</div>
+      <div class="takeaway-text"><strong>Multi-body learning + Motion Transfer dramatically improves generalization</strong>: joint training across different robot morphologies with MT mechanism yields large-scale positive transfer.</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">3</div>
+      <div class="takeaway-text"><strong>Embodied reasoning is key to generalist Agents</strong>: visual-spatial-temporal understanding is critical for physical world tasks; GR-ER 1.5 lays the foundation for general physical Agents.</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">4</div>
+      <div class="takeaway-text"><strong>Tool use + Embodied reasoning</strong>: combining Gemini's tool use with embodied reasoning lays the foundation for general Agents operating in both the physical and information worlds.</div>
+    </div>
+  </div>
+
+</div><!-- /poster -->
+</body>
+</html>

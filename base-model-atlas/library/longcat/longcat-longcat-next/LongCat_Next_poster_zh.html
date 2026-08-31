@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Next — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .78rem; color: #d6d3d1; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #d6d3d1; line-height: 1.45 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .64rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #a8a29e; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #ffffff !important }
+mjx-container svg, mjx-container svg * { fill: #ffffff !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="LongCat_Next_poster.html">EN</a><a class="active" href="LongCat_Next_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2603_LongCat_Next%2FLongCat-Next-Lexicalizing-Modalities-as-Discrete-Tokens" style="text-decoration: none;">LongCat-Next 笔记</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.27538" target="_blank" style="text-decoration: none;">arXiv:2603.27538</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.27538 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="zh-title">LongCat-Next：把模态词汇化为离散 token</div>
+    <h1>Lexicalizing Modalities <span>as Discrete Tokens</span></h1>
+    <div class="authors">Meituan LongCat Team</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">DiNA</div><div class="sub">离散原生<br>自回归</div></div>
+    <div class="score-box"><div class="num">dNaViT</div><div class="sub">任意分辨率<br>8 级 RVQ</div></div>
+    <div class="score-box"><div class="num">共享</div><div class="sub">Codebook<br>text/vis/audio</div></div>
+    <div class="score-box"><div class="num">Next</div><div class="sub">代际押注<br>vs Flash-Omni</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + DiNA + dNaViT -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>范式问题：抛弃拼接式 any-to-any</h2></div>
+  <p class="body">当前多模态系统的根本问题是 <strong>language-plus-auxiliary</strong>——视觉/听觉被当外挂组件，用连续 embedding 投影进 LLM。三类困境：(1) 架构碎片化（每个模态一套 encoder + projection + 模态专属设计堆积）；(2) 理解 vs 生成的对立（CLIP / SigLIP 与 VAE 不可调和）；(3) 基础设施不友好（连续特征流过 LLM 需要 modality-aware 路径）。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/dnavit.png" alt="dNaViT architecture" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：dNaViT 架构（SAE + 8 级 RVQ）</i><br><small>src/assets/dnavit.png</small></div>'">
+    <div class="fig-cap">图 1：dNaViT 架构（SAE + 8 级 RVQ 离散化任意分辨率图像）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">DiNA：Discrete Native Autoregressive</div>
+      <p>把 text / vision / audio <strong>全部 lexicalize 成离散 token</strong>，在单个 decoder-only MoE 上用同一个 NTP 目标统一建模。架构上只剩 decoder-only + tokenizer/detokenizer pair；理解与生成是同一 NTP 的两种 conditioning。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">不引入模态专属归纳偏置</div>
+      <p>禁用 3D RoPE / 双向 attention / modality-aware MoE——<strong>所有 token 走同一条 modality-agnostic 路径</strong>。纯 text 训练时每 expert 平均 507 token，多模态后增到 584（capacity 利用率 +15%），部分 expert 自发特化为「视觉 expert」/「音频 expert」。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-orange" style="margin-top:14px"><div class="nc">2</div><h2>dNaViT：任意分辨率离散视觉</h2></div>
+  <p class="body"><strong>dNaViT = Discrete Native-resolution Vision Transformer</strong>——把任意分辨率图像编码为层级离散 token、并支持从 token 反解图像的统一接口。视觉离散化的难点是 dual bottleneck：编码器的语义容量 + 连续→离散量化的信息损失。</p>
+
+  <div class="formula-box">
+    <div class="flabel">Semantic Completeness 准则</div>
+    $$\mathcal{P}(A \mid z, \mathcal{Q}) \approx \mathcal{P}(A \mid I, \mathcal{Q})$$
+  </div>
+  <div class="formula-box">
+    <div class="flabel">Residual 累积结构</div>
+    $$\mathbf{z}_p = \mathbf{x}_0 + \sum_{l=1}^{L} \mathcal{F}_l(\mathbf{x}_{l-1})$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">SAE 编码器（语义对齐）</div>
+      <p>选 Qwen2.5-ViT（28× 空间压缩）作为预量化 SAE——大规模 vision-language 训练后预量化空间已满足 semantic completeness。直接复用，免去从头训练 SAE 的成本。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">8 级 RVQ 离散化</div>
+      <p>每级 EMA 更新 codebook（非 gradient descent），Laplace smoothing 防数值不稳；inactive entry（$N_k<1$）从当前 batch 重初始化以维持 codebook 利用率。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Native Resolution + Variable-length</div>
+      <p>Pack-n-Pack 风格的 sequence-based 建模，不同分辨率图像 flatten 进单一序列，用 variable-length FlashAttention 处理。最大序列长 8192，最大分辨率 1736×1736。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">De-tokenization（独立训练）</div>
+      <p>400M ViT 像素解码器 + Flow-matching refiner（init from OmniGen2）——在像素解码器输出上做细化提升高频细节。Codebook 冻结后训练，反向恢复空间 patch 序列。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Audio Tokenizer + Image Reconstruction -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">3</div><h2>音频 Tokenizer：12.5 Hz RVQ</h2></div>
+  <p class="body">音频编码器用 Whisper-large-v3（冻初始再训），<strong>8 级 RVQ</strong> codebook 大小递减 8k/4k/2k/1k/1k/1k/1k/1k，<strong>12.5 Hz 帧率</strong>。训练数据 ~250 万小时（1990 万小时 web audio 清洗后剩 320 万 + 120 万合成 + 40 万任务专属）。关键设计：训练时借 Qwen3-1.7B 作 frozen LLM 监督对齐文本空间，<strong>提升后丢弃</strong>。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/audio_tokenizer.png" alt="audio tokenizer" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：audio tokenizer 训练 pipeline</i><br><small>src/assets/audio_tokenizer.png</small></div>'">
+    <div class="fig-cap">图 2：Audio Tokenizer（Whisper + 8 级 RVQ + LLM 监督）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Internal Linguistic Guidance</div>
+      <p>模仿 Moshi，把音频生成建模为 <strong>text-guided audio modality</strong>。Parallel（text/audio 同步生成，audio 延迟 N 步）和 Serial（先 text 后 audio，单步只预测一种）成为统一框架的两个极端——每个 text-audio segment 的 delay 从 1 到 text 长度之间<strong>随机采样</strong>。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">训练 3 阶段</div>
+      <p>decoder warm-up → semantic-acoustic joint（启用 RVQ）→ decoder fine-tune（DiT 24kHz）。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">4</div><h2>图像重建：Residual 隐式通路</h2></div>
+  <p class="body">一个意外发现：<strong>SAE 的 residual 架构本身保留了低层信号传播的隐式通路</strong>。identity mapping 让早期层的细粒度信号不被高层语义覆盖，逐步累积进 $\mathbf{z}_p$，所以即便没有显式重建监督，SAE 仍保有可观的重建能力。定量证据：</p>
+
+  <div class="fig-box">
+    <img src="src/assets/image_rec.png" alt="image reconstruction" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：图像重建（不同 encoder 对比）</i><br><small>src/assets/image_rec.png</small></div>'">
+    <div class="fig-cap">图 3：图像重建对比（不同 frozen encoder）</div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Quantization Loss</div>
+    $$\mathcal{L}_{\text{quant}} = \lambda_c \mathcal{L}_{\text{commit}} + \lambda_s \mathcal{L}_{\text{semantic}}$$
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/reconstruction.png" alt="reconstruction metrics" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：reconstruction 指标对比</i><br><small>src/assets/reconstruction.png</small></div>'">
+    <div class="fig-cap">图 4：重建质量指标（PSNR / SSIM / rFID）</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">核心反直觉发现</div>
+    <p>随机初始化 ViT-B/16 的重建质量 <strong>反而最好</strong>（PSNR 30.52），高于 QwenViT (PSNR 18.16) 和 ResNet50 (20.88)。这印证了 <strong>residual 结构本身</strong>——而非 learned semantics——是 recoverability 的主要来源。</p>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">5</div><h2>实验：离散 ≠ 性能瓶颈</h2></div>
+  <p class="body">LongCat-Next（A3B, 68.5B total / 平均 3B 激活）在视觉理解和生成双任务上同时达到 SOTA 级别，<strong>在 MathVista / MathVision 上反超专门 VLM Qwen3-VL-A3B</strong>。</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>LongCat<br>-Next</th><th>Qwen3<br>-Omni</th><th>Qwen3<br>-VL</th><th>Gemini2.5<br>-Flash-Lite</th></tr>
+    <tr class="cat"><td colspan="5">视觉理解</td></tr>
+    <tr><td class="left">MMMU-Pro</td><td>60.3</td><td>57.0</td><td>60.4</td><td><strong>64.1</strong></td></tr>
+    <tr><td class="left">MMMU-val</td><td>70.6</td><td>69.1</td><td><strong>74.2</strong></td><td>74.9</td></tr>
+    <tr class="ours"><td class="left">MathVista-mini</td><td class="dv">83.1</td><td>75.9</td><td>80.1</td><td>78.2</td></tr>
+    <tr class="ours"><td class="left">MathVision</td><td class="dv">64.7</td><td>56.3</td><td>60.2</td><td>61.9</td></tr>
+    <tr class="ours"><td class="left">VisuLogic</td><td class="dv">29.4</td><td>20.0</td><td>23.0</td><td>26.1</td></tr>
+    <tr><td class="left">CharXiv-RQ</td><td>60.1</td><td>42.8</td><td>48.9</td><td>60.0</td></tr>
+    <tr class="cat"><td colspan="5">视觉生成</td></tr>
+    <tr><td class="left">GenEval</td><td>84.44</td><td>87.00</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">DPG</td><td>84.66</td><td>88.32</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">LongText-EN</td><td class="dv">93.15</td><td>94.30</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">LongText-ZH</td><td class="dv">89.08</td><td>94.60</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">WISE</td><td>57.00</td><td>63.00</td><td>—</td><td>—</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/longcat-next-benchmark-charts-2026-03-26.png" alt="benchmark charts" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：LongCat-Next benchmark 全景图</i><br><small>src/assets/longcat-next-benchmark-charts-2026-03-26.png</small></div>'">
+    <div class="fig-cap">图 5：LongCat-Next benchmark 全景（理解 + 生成 + 音频 + 文本）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">关键发现 1：Discrete 追平 Continuous</div>
+      <p>短训练时 discrete 落后 continuous（OCRBench 598 vs 779），但 <strong>300B tokens 时几乎追平</strong>（844 vs 858），MathVista 反超（74.0 vs 75.0 几乎相等）。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">关键发现 2：Unified 不损失纯文本</div>
+      <p>SWE-Bench <strong>43.00</strong>、Tau2-Telecom <strong>62.06</strong> 大幅领先 Kimi-Linear / Qwen3-Next / Qwen3-Omni。证明 <strong>token-level 统一不会引入优化 trade-off</strong>。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/actor_entropy_v2.png" alt="actor entropy" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：理解 RL actor entropy</i><br><small>src/assets/actor_entropy_v2.png</small></div>'">
+    <div class="fig-cap">图 6：理解 RL actor entropy（sequence-level filter 抑制爆炸）</div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">T2I RL (GenEval)</div>
+      <div class="adelta">+7.5%</div>
+      <div class="adesc">counting 提升最大，多维 reward</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Und RL (MathVision)</div>
+      <div class="adelta">+4.24</div>
+      <div class="adesc">49.28 → 53.52，entropy filter 必要</div>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/case_rewards.png" alt="case rewards" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：case study rewards</i><br><small>src/assets/case_rewards.png</small></div>'">
+    <div class="fig-cap">图 7：Case study rewards（T2I 视觉质量 case 分析）</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/geneval_reward.png" alt="geneval reward" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：GenEval 多维 reward</i><br><small>src/assets/geneval_reward.png</small></div>'">
+    <div class="fig-cap">图 8：GenEval 多维 reward 训练曲线</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/ocr_math_equal.png" alt="OCR math" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：OCR / math 等 reward</i><br><small>src/assets/ocr_math_equal.png</small></div>'">
+    <div class="fig-cap">图 9：OCR / Math 等多模态 reward 曲线</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① 离散 token 统一</div>
+    <p>text / vision / audio <span class="hl">全部 lexicalize 成离散 token</span>，单一 decoder-only MoE + 单一 NTP 目标统一理解与生成。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② DiNA + dNaViT</div>
+    <p>DiNA = Discrete Native Autoregressive；dNaViT = SAE + <span class="hl">8 级 RVQ 任意分辨率离散视觉</span>，最大 1736×1736。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ 共享 codebook</div>
+    <p>视觉 8×16384、音频 8k/4k/2k/... <span class="hl">全部随机初始化与语言 token 共训</span>，t-SNE 显示交织分布。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ 下一代范式</div>
+    <p>vs Flash-Omni 拼接式 → <span class="hl">原生离散统一</span>。理解不损生成、生成反哺理解（Unified loss 比 Pure-Gen 低 0.02）。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

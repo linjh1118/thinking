@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step-3 Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; }
+
+.header { background: linear-gradient(120deg, #064e3b 0%, #059669 40%, #34d399 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hl { display: flex; flex-direction: column; gap: 6px; }
+.hl h1 { font-size: 1.7rem; font-weight: 900; color: #fff; line-height: 1.2; }
+.hl .sub { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+.hl .authors { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.score-row { display: flex; gap: 10px; }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 110px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; }
+.score-box .sub { font-size: .6rem; color: rgba(255,255,255,.7); margin-top: 2px; line-height: 1.2; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.col:last-child { border-right: none; }
+
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.h1 .nc { background: #059669; }
+.h2 .nc { background: #10b981; }
+.h3 .nc { background: #34d399; }
+.sec-head h2 { font-size: .95rem; font-weight: 800; color: #d6d3d1; }
+
+.box { background: rgba(5,150,105,.07); border: 1px solid rgba(5,150,105,.2); border-left: 3px solid #059669; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box2 { background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.2); border-left: 3px solid #10b981; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box h3 { font-size: .78rem; font-weight: 800; color: #6ee7b7; margin-bottom: 4px; }
+.box p, .box2 p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.param-table { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0; }
+.param-table td { padding: 5px 8px; border-bottom: 1px solid rgba(168,162,158,.07); color: #d6d3d1; }
+.param-table td:first-child { font-weight: 700; color: #fde68a; width: 45%; }
+
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0; }
+.rtable th { color: #fff; padding: 6px 8px; text-align: center; font-weight: 700; background: rgba(5,150,105,.3); }
+.rtable td { padding: 6px 8px; text-align: center; border-bottom: 1px solid rgba(168,162,158,.07); color: #d6d3d1; }
+.rtable .ours td { background: rgba(253,230,138,.08); color: #fde68a; font-weight: 800; }
+
+.insight { background: rgba(52,211,153,.07); border: 1px solid rgba(52,211,153,.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+.insight h3 { font-size: .7rem; font-weight: 800; color: #34d399; margin-bottom: 4px; }
+.insight p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(168,162,158,.15); padding: 16px 48px; gap: 16px; }
+.bstrip { border-right: 1px solid rgba(168,162,158,.08); padding-right: 16px; }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip .hl { color: #fbbf24; font-weight: 800; font-size: .88rem; }
+.bstrip p { font-size: .7rem; color: #a8a29e; line-height: 1.4; }
+
+.backlinks { margin: 16px 48px 0; padding: 8px 14px; background: rgba(5,150,105,.08); border: 1px solid rgba(5,150,105,.2); border-radius: 8px; font-size: .8rem; }
+.backlinks a { color: #34d399; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+
+.badge-bar { padding: 6px 48px; background: rgba(5,150,105,.05); border-bottom: 1px solid rgba(5,150,105,.1); }
+.badge-bar span { font-size: .68rem; color: #6ee7b7; background: rgba(5,150,105,.15); border: 1px solid rgba(5,150,105,.25); border-radius: 4px; padding: 2px 8px; font-weight: 700; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="badge-bar">
+    <span>arXiv: 2507.19427</span>
+    <span>Infra</span>
+    <span>MoE</span>
+    <span>MFA</span>
+    <span>AFD</span>
+  </div>
+  <div class="header">
+    <div class="hl">
+      <h1>Step-3: Large yet Affordable</h1>
+      <div class="sub">Model-System Co-design for Cost-effective Decoding</div>
+      <div class="authors">StepFun AI · 2025</div>
+    </div>
+    <div class="score-row">
+      <div class="score-box"><div class="num">321B</div><div class="sub">Total Params</div></div>
+      <div class="score-box"><div class="num">38B</div><div class="sub">Activated / Token</div></div>
+      <div class="score-box"><div class="num">4,039</div><div class="sub">tok/s/GPU (Hopper)</div></div>
+      <div class="score-box"><div class="num">-73%</div><div class="sub">vs DeepSeek-V3 Cost</div></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="col">
+      <div class="sec-head h1"><div class="nc">1</div><h2>Problem & Motivation</h2></div>
+      <div class="box">
+        <h3>解码效率瓶颈</h3>
+        <p>LLM 在 decoding 阶段硬件效率极低。现有方法存在两大问题：</p>
+        <p style="margin-top:4px">① <strong style="color:#fde68a">Attention</strong>：过度压缩 KV cache 牺牲计算效率</p>
+        <p>② <strong style="color:#fde68a">MoE FFN</strong>：过度稀疏但与硬件不匹配</p>
+      </div>
+      <div class="box2">
+        <h3>核心洞察</h3>
+        <p>参数量 ≠ 解码成本。Qwen3 MoE 比 Step-3 少 65% 总参，解码成本反而高 8%。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 关键发现</h3>
+        <p>Attention 设计对解码成本的影响 > 参数总量。解码成本由 attention arithmetic intensity 和 memory bandwidth 决定。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h2"><div class="nc">2</div><h2>Core Method</h2></div>
+      <div class="box">
+        <h3>MFA Attention</h3>
+        <p>Multi-Matrix Factorization Attention：对 Q-K 电路做低秩分解</p>
+        <p style="margin-top:4px">• 64 Q-heads + 1 shared KV-head</p>
+        <p>• Q 投影：7168 → 2048（低秩）→ 64×256</p>
+        <p>• 减少 KV cache 同时保持计算密度</p>
+      </div>
+      <div class="box">
+        <h3>AFD 解耦推理</h3>
+        <p>Attention-FFN Disaggregation：将 attention 和 FFN 部署到不同 GPU 集合</p>
+        <p style="margin-top:4px">• 3-stage 流水线：A / F / comm</p>
+        <p>• 每阶段 16.6ms，总计 50ms TPOT</p>
+        <p>• FFN 批次大小与 context length 解耦</p>
+      </div>
+      <table class="param-table">
+        <tr><td>总层数</td><td>61</td></tr>
+        <tr><td>Hidden Dim</td><td>7168</td></tr>
+        <tr><td>MoE 配置</td><td>除前4层和末层</td></tr>
+        <tr><td>激活参</td><td>38B/token</td></tr>
+      </table>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h3"><div class="nc">3</div><h2>Results & Insights</h2></div>
+      <table class="rtable">
+        <tr><th>Model</th><th>tok/s/GPU</th><th>vs Step-3</th></tr>
+        <tr class="ours"><td>Step-3</td><td>4,039</td><td>基准</td></tr>
+        <tr><td>DeepSeek-V3</td><td>2,324</td><td>+73%</td></tr>
+        <tr><td>Qwen3 MoE</td><td>-</td><td>+8%</td></tr>
+      </table>
+      <div class="insight">
+        <h3>💡 AFD vs EP</h3>
+        <p>AFD 仅需 32 GPU（vs DeepSeek 320 GPU），支持异构硬件和混合 TP-EP 策略，天然解决负载均衡问题。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 启示</h3>
+        <p>Model-system co-design 才是正解。线性注意力/量化/MTP 都是好方向，但细节决定成败。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1</div>
+      <div class="hl">AF = 最优解码系统</div>
+      <p>Attention-FFN Disaggregation 支持独立并行策略、动态扩展、异构硬件，是比 EP 更优的解码架构</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2</div>
+      <div class="hl">MFA 平衡 Cache 与算力</div>
+      <p>低秩 QK 分解在减少 KV cache 的同时保持足够计算密度，在弱硬件上也能高效运行</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3</div>
+      <div class="hl">Decoding 决定智能上限</div>
+      <p>更低的解码成本 → 相同预算下更高的 intelligence → test-time scaling 的关键杠杆</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4</div>
+      <div class="hl">Co-design 释放设计空间</div>
+      <p>AFD 让 attention 和 FFN 独立演进，MFA 与 AFD 联合优化实现新的 Pareto frontier</p>
+    </div>
+  </div>
+
+  <div class="backlinks">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2507_Step_3_Large_Affordable%2FStep_3_Large_Affordable">Step_3_Large_Affordable.md</a>
+    · arXiv: <a href="https://arxiv.org/abs/2507.19427">2507.19427</a>
+  </div>
+</div>
+</body>
+</html>

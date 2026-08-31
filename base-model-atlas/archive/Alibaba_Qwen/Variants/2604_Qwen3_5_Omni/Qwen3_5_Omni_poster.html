@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen3.5-Omni: Streaming Omni Agent</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; width: 1400px; margin: 0 auto; }
+
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    color: white; padding: 36px 48px 28px; position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 320px; height: 320px; background: rgba(255,255,255,0.05); border-radius: 50%;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .header-left { flex: 1; }
+  .venue-badge {
+    display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.08em; margin-bottom: 12px; text-transform: uppercase;
+  }
+  .paper-title { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+  .paper-authors { font-size: 13px; opacity: 0.85; margin-bottom: 6px; }
+  .paper-venue { font-size: 12px; opacity: 0.7; }
+  .metric-box {
+    background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 12px; padding: 14px 20px; min-width: 160px; text-align: center;
+    backdrop-filter: blur(8px); margin-left: 12px; flex-shrink: 0;
+  }
+  .metric-box .metric-value { font-size: 32px; font-weight: 900; line-height: 1; }
+  .metric-box .metric-label { font-size: 11px; opacity: 0.9; margin-top: 4px; font-weight: 600; }
+  .metric-box .metric-sub { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+  .header-tagline { margin-top: 16px; font-size: 14px; opacity: 0.88; font-style: italic; }
+
+  .backlink {
+    background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 8px; padding: 7px 16px; margin: 10px 48px 0;
+    font-size: 12px; color: #64748b;
+  }
+  .backlink a { color: #3b82f6; text-decoration: none; font-weight: 500; }
+  .backlink a:hover { text-decoration: underline; }
+
+  .main-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+    padding: 20px 24px 8px;
+  }
+  .col { display: flex; flex-direction: column; gap: 16px; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: #1e3a8a; margin-bottom: 12px;
+    padding-bottom: 8px; border-bottom: 2px solid #bfdbfe;
+    display: flex; align-items: center; gap: 6px;
+  }
+  p { font-size: 13px; line-height: 1.65; color: #374151; margin-bottom: 8px; }
+  p:last-child { margin-bottom: 0; }
+
+  .arch-diagram {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+    padding: 16px; margin: 10px 0;
+  }
+  .arch-title { font-size: 12px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px; }
+  .arch-flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .arch-block {
+    background: white; border: 1.5px solid #3b82f6; border-radius: 8px;
+    padding: 6px 12px; font-size: 11px; font-weight: 600; color: #1e3a8a;
+    text-align: center;
+  }
+  .arch-block.thinker { background: #eff6ff; border-color: #3b82f6; }
+  .arch-block.talker { background: #f0fdf4; border-color: #16a34a; }
+  .arch-arrow { color: #3b82f6; font-size: 18px; font-weight: 700; }
+
+  .upgrade-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 10px; margin: 5px 0;
+    background: #eff6ff; border-left: 3px solid #3b82f6;
+    border-radius: 0 6px 6px 0;
+  }
+  .upgrade-num {
+    background: #3b82f6; color: white; border-radius: 50%;
+    width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .upgrade-text { font-size: 12px; line-height: 1.5; color: #374151; }
+  .upgrade-text strong { color: #1e3a8a; }
+
+  .formula-box {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+    padding: 12px 16px; margin: 10px 0; text-align: center; font-size: 13px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin: 8px 0; }
+  th {
+    background: #1e3a8a; color: white; padding: 7px 8px;
+    text-align: center; font-size: 10.5px; font-weight: 600;
+  }
+  td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; }
+  tr:nth-child(even) td { background: #eff6ff; }
+  tr.highlight td { background: #bfdbfe; color: #1e3a8a; font-weight: 700; }
+  .best { color: #3b82f6; font-weight: 700; }
+
+  .latency-box {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0;
+  }
+  .lat-item {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+    padding: 8px; text-align: center;
+  }
+  .lat-conc { font-size: 11px; color: #6b7280; font-weight: 600; }
+  .lat-val { font-size: 18px; font-weight: 800; color: #3b82f6; }
+  .lat-ms { font-size: 10px; color: #1e3a8a; }
+
+  .modality-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
+  .mod-item {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+    padding: 10px; text-align: center;
+  }
+  .mod-icon { font-size: 22px; margin-bottom: 4px; }
+  .mod-name { font-size: 12px; font-weight: 700; color: #1e3a8a; }
+  .mod-stat { font-size: 11px; color: #3b82f6; margin-top: 2px; }
+
+  .insight-box {
+    background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+    border: 1.5px solid #3b82f6; border-radius: 8px; padding: 12px 14px;
+    margin: 8px 0; font-size: 12px; line-height: 1.6; color: #1e3a8a;
+  }
+  .insight-box .insight-title { font-weight: 700; margin-bottom: 4px; color: #1e3a8a; }
+
+  .tag {
+    display: inline-block; background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 12px; padding: 3px 10px; font-size: 11px; font-weight: 600;
+    color: #3b82f6; margin: 2px;
+  }
+
+  .section-divider { border: none; border-top: 1px dashed #bfdbfe; margin: 10px 0; }
+
+  .capability-card {
+    background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 10px; padding: 14px; margin-bottom: 10px;
+  }
+  .capability-card.green {
+    background: #f0fdf4; border-color: #16a34a;
+  }
+  .cap-title { font-size: 13px; font-weight: 700; color: #1e3a8a; margin-bottom: 6px; }
+  .capability-card.green .cap-title { color: #14532d; }
+  .cap-desc { font-size: 12px; color: #374151; }
+
+  .fig-img { width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; display: block; margin: 8px 0; }
+
+  .bottom-strip {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white; padding: 24px 32px; margin-top: 8px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;
+  }
+  .takeaway { display: flex; gap: 12px; align-items: flex-start; }
+  .takeaway-num {
+    background: rgba(255,255,255,0.2); border-radius: 50%;
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .takeaway-text { font-size: 12px; line-height: 1.55; opacity: 0.93; }
+  .takeaway-text strong { opacity: 1; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <div class="venue-badge">arXiv 2026 · 2604.15804 · Qwen Team</div>
+      <div class="paper-title">Qwen3.5-Omni Technical Report:<br>Native Omni Agent with Streaming Speech</div>
+      <div class="paper-authors">Qwen Team, Alibaba Group</div>
+      <div class="paper-venue">arXiv 2026 · Upgraded from Qwen3-Omni</div>
+    </div>
+    <div style="display:flex; gap:10px; flex-shrink:0; margin-left:24px;">
+      <div class="metric-box">
+        <div class="metric-value">215</div>
+        <div class="metric-label">Benchmarks</div>
+        <div class="metric-sub">SOTA on Plus variant</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">256K</div>
+        <div class="metric-label">Context Window</div>
+        <div class="metric-sub">10+ hours audio</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">235ms</div>
+        <div class="metric-label">First-Packet Latency</div>
+        <div class="metric-sub">Flash, 1 concurrent</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-tagline">
+    A native omni agent that not only perceives all modalities but <em>acts</em> — WebSearch, FunctionCall, speech generation, and Audio-Visual Vibe Coding in real-time streaming
+  </div>
+</div>
+
+<!-- Backlink -->
+<div class="backlink">
+  📚 Source:
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2604_Qwen3_5_Omni%2FQwen3-5-Omni-Streaming-Omni-Agent">
+    Qwen3.5-Omni — Obsidian Note
+  </a>
+  &nbsp;|&nbsp; arxiv: 2604.15804
+</div>
+
+<!-- Main Grid -->
+<div class="main-grid">
+
+  <!-- Column 1: Motivation + Architecture -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span class="icon">🎯</span> Motivation</div>
+      <p>Existing omni models are <strong>passive perception-response</strong> systems. They lack scalable agentic behavior, real-time interaction, autonomous tool use, and cross-modal reasoning — prerequisites for practical deployment.</p>
+      <p>Qwen3.5-Omni targets a <strong>native omni agent</strong>: not just perceiving and reasoning, but autonomously <em>acting</em> across all modalities.</p>
+      <div class="insight-box">
+        <div class="insight-title">🔑 Key Paradigm Shift</div>
+        Perception → Reasoning → <strong>Action</strong>: WebSearch invocation, FunctionCall execution, streaming speech generation, and emergent Audio-Visual Vibe Coding.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🏗️</span> Thinker-Talker Architecture</div>
+      <img src="src/figures/model.jpg" alt="Model Architecture" class="fig-img" onerror="this.style.display='none'">
+      <div class="arch-diagram">
+        <div class="arch-title">Hybrid MoE Thinker-Talker Design</div>
+        <div class="arch-flow">
+          <div class="arch-block">Vision<br>Encoder</div>
+          <div class="arch-arrow">+</div>
+          <div class="arch-block">AuT<br>Encoder</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-block thinker">Hybrid MoE<br>Thinker</div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-block talker">Hybrid MoE<br>Talker</div>
+        </div>
+        <div style="margin-top:8px; font-size:11px; color:#3b82f6;">Talker → MTP Module → Code2Wav (ConvNet) → Streaming Audio</div>
+      </div>
+      <p style="font-size:12px;">AuT (Audio Transformer) trained on <strong>40M hours</strong> of audio-text pairs in 6.25Hz token rate, covering 20+ languages.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🌍</span> Multilingual Coverage</div>
+      <div class="modality-grid">
+        <div class="mod-item">
+          <div class="mod-icon">🎙️</div>
+          <div class="mod-name">ASR</div>
+          <div class="mod-stat">113 languages & dialects</div>
+        </div>
+        <div class="mod-item">
+          <div class="mod-icon">🔊</div>
+          <div class="mod-name">TTS</div>
+          <div class="mod-stat">36 languages</div>
+        </div>
+        <div class="mod-item">
+          <div class="mod-icon">🖼️</div>
+          <div class="mod-name">Vision</div>
+          <div class="mod-stat">SigLIP2 encoder</div>
+        </div>
+        <div class="mod-item">
+          <div class="mod-icon">🎬</div>
+          <div class="mod-name">Video</div>
+          <div class="mod-stat">400s @ 720P, 1FPS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column 2: Technical Upgrades + ARIA -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span class="icon">⬆️</span> 5 Key Technical Upgrades</div>
+      <div class="upgrade-item">
+        <div class="upgrade-num">1</div>
+        <div class="upgrade-text"><strong>Hybrid-Attention MoE</strong> — Both Thinker and Talker adopt HybridMoE; Gated Delta Net reduces KV-cache I/O for long audio-video sequences</div>
+      </div>
+      <div class="upgrade-item">
+        <div class="upgrade-num">2</div>
+        <div class="upgrade-text"><strong>256K Context Window</strong> — 10+ hours audio, 400s 720P video at 1FPS; explicit timestamp tokens for robust temporal alignment</div>
+      </div>
+      <div class="upgrade-item">
+        <div class="upgrade-num">3</div>
+        <div class="upgrade-text"><strong>Multi-codebook Codec</strong> — Single-frame, immediate speech synthesis via RVQ representation + MTP module</div>
+      </div>
+      <div class="upgrade-item">
+        <div class="upgrade-num">4</div>
+        <div class="upgrade-text"><strong>ARIA Alignment</strong> — Adaptive Rate Interleave Alignment replaces dual-channel; unified single-stream text+speech generation</div>
+      </div>
+      <div class="upgrade-item">
+        <div class="upgrade-num">5</div>
+        <div class="upgrade-text"><strong>Expanded Multilingual</strong> — 113 languages for ASR, 36 for TTS; 3.5:3.5:3 Chinese/English/Multilingual data ratio</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🎵</span> ARIA: Adaptive Rate Interleave Alignment</div>
+      <p style="font-size:12px;">ARIA solves the instability caused by <strong>mismatched tokenization rates</strong> between text and speech tokens, which previously caused skipped words, wrong pronunciations, and number rendering errors.</p>
+
+      <div class="formula-box">
+        $$\forall \text{prefix } p: \quad \frac{\text{cumul. speech tokens in } p}{\text{cumul. text tokens in } p} \leq r_{\text{global}}$$
+      </div>
+
+      <p style="font-size:12px;">Where \(r_{\text{global}}\) is the item-level global speech-to-text ratio. This <strong>adaptive rate constraint</strong> enforces monotonic interleaving without MFA alignment or fixed rates.</p>
+
+      <hr class="section-divider">
+
+      <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:6px;">Dual-channel → Unified Stream</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:6px 10px; font-size:11px; color:#1e3a8a; text-align:center; flex:1;">Qwen3-Omni<br><strong>Dual-channel</strong><br>(text track || speech track)</div>
+        <div style="font-size:20px; color:#3b82f6;">→</div>
+        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:6px 10px; font-size:11px; color:#14532d; text-align:center; flex:1;">Qwen3.5-Omni<br><strong>ARIA: Single-stream</strong><br>T S T T S T S S T…</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📡</span> Streaming Latency</div>
+      <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:8px;">First-Packet Latency (ms) — Audio Input</div>
+      <div class="latency-box">
+        <div class="lat-item">
+          <div class="lat-conc">Flash 1x</div>
+          <div class="lat-val">235</div>
+          <div class="lat-ms">ms</div>
+        </div>
+        <div class="lat-item">
+          <div class="lat-conc">Flash 4x</div>
+          <div class="lat-val">298</div>
+          <div class="lat-ms">ms</div>
+        </div>
+        <div class="lat-item">
+          <div class="lat-conc">Flash 8x</div>
+          <div class="lat-val">352</div>
+          <div class="lat-ms">ms</div>
+        </div>
+        <div class="lat-item">
+          <div class="lat-conc">Plus 1x</div>
+          <div class="lat-val">435</div>
+          <div class="lat-ms">ms</div>
+        </div>
+        <div class="lat-item">
+          <div class="lat-conc">Plus 4x</div>
+          <div class="lat-val">619</div>
+          <div class="lat-ms">ms</div>
+        </div>
+        <div class="lat-item">
+          <div class="lat-conc">Plus 8x</div>
+          <div class="lat-val">955</div>
+          <div class="lat-ms">ms</div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:#6b7280;">Stable latency under concurrency pressure; Gated Delta Net reduces KV-cache overhead for long audio-video sequences.</p>
+    </div>
+  </div>
+
+  <!-- Column 3: Capabilities + Results -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span class="icon">✨</span> 3 Major New Capabilities</div>
+
+      <div class="capability-card">
+        <div class="cap-title">🎬 Controllable Audio-Visual Captioning</div>
+        <div class="cap-desc">Screenplay-level structured captions: automatic segmentation, timestamp annotation, character descriptions, speech-visual relationship modeling</div>
+      </div>
+
+      <div class="capability-card">
+        <div class="cap-title">🎤 Comprehensive Real-Time Interaction</div>
+        <div class="cap-desc">Semantic interruption via native turn-taking · End-to-end voice control (volume, speed, emotion) · Zero-shot voice cloning from user samples</div>
+      </div>
+
+      <div class="capability-card green">
+        <div class="cap-title">🎯 Audio-Visual Vibe Coding (Emergent)</div>
+        <div class="cap-desc">Directly generates executable code from audio-visual instructions. No external orchestration needed — the model observes real-time queries and produces runnable programs.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span> Performance Results</div>
+      <p style="font-size:12px; margin-bottom:6px;">Across 215 audio & audio-visual benchmarks:</p>
+
+      <div style="background:#eff6ff; border-radius:8px; padding:12px; margin:8px 0;">
+        <div style="font-size:12px; font-weight:700; color:#1e3a8a; margin-bottom:6px;">Qwen3.5-Omni-Plus vs. Gemini-3.1 Pro</div>
+        <div style="display:flex; gap:6px; align-items:center; font-size:11px;">
+          <div style="flex:1; text-align:center; background:white; border-radius:6px; padding:8px; border:1px solid #bfdbfe;">
+            <div style="font-weight:700; color:#3b82f6; font-size:15px;">SURPASSES</div>
+            <div style="color:#374151;">on audio understanding,<br>reasoning, recognition,<br>translation, dialogue</div>
+          </div>
+          <div style="flex:1; text-align:center; background:white; border-radius:6px; padding:8px; border:1px solid #86efac;">
+            <div style="font-weight:700; color:#16a34a; font-size:15px;">MATCHES</div>
+            <div style="color:#374151;">audio-visual understanding<br>overall</div>
+          </div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Model</th><th>Score</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>WER (Seed-TTS test-en)</td><td style="text-align:left;">Qwen3.5-Omni-Plus</td><td class="best">1.26</td></tr>
+          <tr><td>Benchmarks (SOTA)</td><td style="text-align:left;">Plus variant</td><td class="best">215/215</td></tr>
+          <tr><td>Context Length</td><td style="text-align:left;">Qwen3.5-Omni</td><td class="best">256K</td></tr>
+          <tr><td>AuT Training Data</td><td style="text-align:left;">AuT encoder</td><td class="best">40M hrs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span> Research Insights</div>
+      <div class="insight-box">
+        <div class="insight-title">For GUI Agent Research</div>
+        Audio-Visual Vibe Coding shows multimodal agents can jump directly from AV perception to executable code — implies GUI agents may eventually accept voice+screen input and output actions without intermediate text reasoning.
+      </div>
+      <div class="insight-box" style="margin-top:8px;">
+        <div class="insight-title">ARIA for Multi-modal Generation</div>
+        The adaptive rate constraint technique is applicable wherever two parallel generation streams (e.g., text+action tokens in agents) need synchronized but differently-paced outputs.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🏷️</span> Key Tags</div>
+      <div>
+        <span class="tag">Omni Model</span>
+        <span class="tag">ARIA</span>
+        <span class="tag">Hybrid MoE</span>
+        <span class="tag">256K Context</span>
+        <span class="tag">Vibe Coding</span>
+        <span class="tag">Streaming TTS</span>
+        <span class="tag">Voice Cloning</span>
+        <span class="tag">AuT Encoder</span>
+        <span class="tag">Turn-Taking</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom strip -->
+<div class="bottom-strip">
+  <div class="takeaway">
+    <div class="takeaway-num">1</div>
+    <div class="takeaway-text"><strong>ARIA eliminates dual-channel instability.</strong> Adaptive rate interleaving unifies text+speech into a single monotonic stream, fixing word-skipping and pronunciation errors.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">2</div>
+    <div class="takeaway-text"><strong>256K context enables ultra-long multimodal tasks.</strong> 10+ hours of audio or 400 seconds of 720P video in a single context window with explicit timestamp anchoring.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">3</div>
+    <div class="takeaway-text"><strong>Audio-Visual Vibe Coding is emergent.</strong> The model autonomously generates executable code from audio-visual inputs without external scaffolding — a new agentic capability.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">4</div>
+    <div class="takeaway-text"><strong>235ms first-packet latency enables real-time interaction.</strong> Chunked prefill + Gated Delta Net + streaming ConvNet codec enables production-grade voice agent deployment.</div>
+  </div>
+</div>
+
+</body>
+</html>

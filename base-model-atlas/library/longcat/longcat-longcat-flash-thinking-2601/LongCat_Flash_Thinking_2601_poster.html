@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Thinking-2601 — Research Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #f8fafc; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.5) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.25; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .authors { font-size: .84rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(217,119,6,.35); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #d6d3d1; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid #e2e8f0 }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800 }
+.c-amber h2 { color: #92400e }
+.c-orange h2 { color: #9a3412 }
+.c-brown h2 { color: #451a03 }
+.c-green h2 { color: #065f46 }
+
+p.body { font-size: .78rem; color: #374151; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: #fffbeb; border-left: 3px solid #d97706 }
+.g2 { background: #fef3c7; border-left: 3px solid #f59e0b }
+.g3 { background: #fff7ed; border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #92400e }
+.g2 .title { color: #78350f }
+.g3 .title { color: #9a3412 }
+.gap-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* TRICK BOX */
+.trick-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: #fffbeb; border: 1px solid #e2e8f0; margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #64748b; font-style: italic; background: #f8fafc }
+
+/* FORMULA BOX */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #92400e; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: .68rem }
+.rtable td.left { text-align: left; font-weight: 600 }
+.rtable .cat td { background: #fef3c7; font-weight: 700; font-size: .66rem; color: #92400e; text-align: left }
+.rtable .best td { background: #fffbeb; font-weight: 800 }
+.rtable .best td.dv { color: #d97706; font-size: .78rem }
+.rtable .ours td { background: #fffbeb; font-weight: 800; color: #78350f }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: #fffbeb; border-radius: 8px; border: 1px solid #fde68a }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #92400e; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #374151; line-height: 1.45 }
+
+/* ABLATION CARDS */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #1e293b; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #d97706 }
+.abl-card .adesc { font-size: .64rem; color: #6b7280 }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #451a03; display: grid; grid-template-columns: repeat(4,1fr); gap: 0 }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(255,255,255,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #a8a29e; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #d6d3d1; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 12px 0; padding: 8px 14px; background: #fef3c7; border: 1px solid rgba(217,119,6,.3); border-radius: 8px; font-size: .82rem }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #e2e8f0; text-decoration: none; background: rgba(15,23,42,.82); border: 1px solid rgba(148,163,184,.35); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.22); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="LongCat_Flash_Thinking_2601_poster.html">EN</a><a href="LongCat_Flash_Thinking_2601_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #92400e;">Source:</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2601_LongCat_Flash_Thinking_2601%2FLongCat-Flash-Thinking-2601-Technical-Report" style="text-decoration: none; color: #78350f;">LongCat-Flash-Thinking-2601 Note</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2601.16725" target="_blank" style="text-decoration: none; color: #78350f;">arXiv:2601.16725</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2601.16725 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <h1>LongCat-Flash-Thinking-2601: <span>Agentic Reasoning at 1M Context</span></h1>
+    <div class="authors">Meituan LongCat Team</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">1M</div><div class="sub">context length<br>ZigZag attn</div></div>
+    <div class="score-box"><div class="num">32K+</div><div class="sub">environments<br>20+ domains</div></div>
+    <div class="score-box"><div class="num">+7.2</div><div class="sub">VitaBench-Noise<br>w/ noise training</div></div>
+    <div class="score-box"><div class="num">100</div><div class="sub">AIME-25 heavy<br>mode</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Motivation: Agentic RL Challenges -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>Motivation: From "Can It Think" to "Can It Agent"</h2></div>
+  <p class="body">The 2509 version solved "teaching the base model to think", with the main battlefield being math + tool-augmented reasoning. Running that in production revealed three real-world gaps: (1) <strong>no off-the-shelf environments for agentic tasks</strong> — traditional reasoning is environment-free, but agentic search/tool use requires the model to decide when and how to interact; (2) <strong>trained agents aren't robust</strong> — models that score 88 on clean benchmarks drop to &lt;60 on real user traffic (ambiguous instructions, flaky tools); (3) <strong>single-pass thinking hits a ceiling</strong> — once intrinsic reasoning approaches its limit, longer CoT yields diminishing returns; test-time scaling must grow depth and width simultaneously.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_framework.png" alt="RL framework" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: RL framework overview — env scaling + robust RL + heavy mode</i><br><small>src/assets/rl_framework.png</small></div>'">
+    <div class="fig-cap">Figure 1: RL Framework overview (env scaling + robust RL + heavy mode)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Core Framing: Intrinsic Reasoning → Environment Interaction</div>
+      <p>The paper defines agentic reasoning as "solving complex problems via adaptive interaction with external environments" — explicitly shifting the breakthrough direction from "longer thinking traces" to "environment interaction". This is the 2026 agentic-pivot framing.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Three Pieces of Infrastructure (The Real Contributions)</div>
+      <p>The model itself (560B / 27B activated) is unchanged from 2509; benchmark gains come from <strong>Environment Scaling</strong> + <strong>Robust RL with noise</strong> + <strong>Heavy Thinking Mode</strong> — confirming that once base scale is large enough, agent capabilities' marginal gains come from environment diversity × RL stability × inference parallelism.</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">G1: Automated Environment-Graph Expansion</div>
+      <p>Domain spec → 60+ tool auto-synthesis → BFS dependency check → executable tool chain → fallback ensures ≥20 tools. Successfully expanded to 20+ domains and 10K+ environments.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">G2: Robust RL with Noise Injection</div>
+      <p>Explicit decomposition of instruction noise + tool noise, then curriculum-injected — training with noise barely drops clean-benchmark scores (sometimes slightly raises them) while gaining +5~7 on noisy benchmarks.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">G3: Heavy Thinking Mode</div>
+      <p>Parallel reasoning (width expansion) + summary-model reflection (depth expansion) + context memory module + dedicated RL stage for the summary phase. AIME-25 heavy mode reaches a clean 100.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Environment Scaling + Robust RL -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Environment Scaling + Robust RL</h2></div>
+  <p class="body">Environment Scaling is the most critical engineering breakthrough — it turns the "tool graph" into an automated expansion-and-verification closed loop. "Just add more tools" sounds easy, but uncontrolled expansion breaks cross-tool database consistency: correct trajectories get marked wrong, injecting <strong>biased negative rewards</strong> — strictly worse than no reward. <strong>BFS dependency check + ≥20-tool fallback</strong> is what makes the pipeline scale to 32K environments.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/env_scaling.png" alt="environment scaling pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: Environment Scaling Pipeline — Domain → tool graph → BFS chain → expansion</i><br><small>src/assets/env_scaling.png</small></div>'">
+    <div class="fig-cap">Figure 2: Environment Scaling Pipeline (domain → tool graph → BFS expansion)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Domain → Tool Graph → Executable Chain</div>
+      <p>For each domain (airline / retail / telecom), LLM synthesizes 60+ tools + schema + implementation; unit tests + debugging agent validate with &gt;95% success. Build a tool-dependency graph; BFS-expansion samples executable chain $s_1$; whether to add $s_2$ is governed by $p = f(c, g, |\mathcal{D}_n|)$.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Three-Way Hybrid Data Synthesis (Mid-Training)</div>
+      <p>Text-driven (mine workflows from tutorials) / environment-grounded (Python env, reverse-synthesize user simulator) / planning-oriented (decomposition + multi-candidate decision steps). 32K→128K→256K staged, 500B + 40B tokens. Pass@k on τ²-Bench with "Enhanced" recipe significantly exceeds baseline at high k.</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Robust RL: Noise-Injection Strategy</div>
+    $$\mathcal{L}_{\text{Robust}} \;=\; \mathcal{L}_{\text{RL}} \;+\; \lambda \cdot \mathbb{E}_{x \sim \pi_{\text{noise}}}\big[\,\ell\big(\pi_\theta(y|x),\;\pi_{\text{clean}}(y|x)\big)\,\big]$$
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/agentic_training_reward.png" alt="agentic training reward" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: agentic training reward — noise-injected training curves</i><br><small>src/assets/agentic_training_reward.png</small></div>'">
+    <div class="fig-cap">Figure 3: Agentic Training Reward (Robust RL noise-injection curves)</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Dataset</th><th>ColdStart</th><th>w/o Noise</th><th>w/ Noise</th><th>Δ</th></tr>
+    <tr><td class="left">VitaBench (Avg@4)</td><td>10.0</td><td>28.6</td><td>29.3</td><td>+0.7</td></tr>
+    <tr class="ours"><td class="left">VitaBench-Noise (Avg@4)</td><td>6.3</td><td>13.3</td><td class="dv">20.5</td><td class="dv">+7.2</td></tr>
+    <tr><td class="left">τ²-Bench (Avg@4)</td><td>78.8</td><td>87.1</td><td>88.2</td><td>+1.1</td></tr>
+    <tr class="ours"><td class="left">τ²-Bench-Noise (Avg@4)</td><td>58.8</td><td>62.2</td><td class="dv">67.1</td><td class="dv">+4.9</td></tr>
+  </table>
+</div>
+
+<!-- COLUMN 3: Heavy Mode + 1M Context + ZigZag -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>Heavy Mode + 1M Context + Experimental Results</h2></div>
+  <p class="body">Heavy Thinking Mode scales depth and width in parallel: thinking model generates N candidate trajectories (width) → summary model reflects and aggregates (depth). Key insight: <strong>"generating multiple candidates" and "reflecting to choose among candidates" are separable capabilities</strong> — train the summary stage with its own RL stage. AIME-25 heavy reaches 100; BrowseComp-ZH 77.7 ranks open-source #1.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/heavy_mode.png" alt="heavy mode" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: Heavy Mode — parallel reasoning → summary → aggregate</i><br><small>src/assets/heavy_mode.png</small></div>'">
+    <div class="fig-cap">Figure 4: Heavy Mode (parallel reasoning + summary-model aggregate)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/zigzag_attn_efficiency_prefill_report.png" alt="zigzag attention prefill" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: ZigZag Attention prefill acceleration — 50% layers swapped to SSA enables 1M context</i><br><small>src/assets/zigzag_attn_efficiency_prefill_report.png</small></div>'">
+    <div class="fig-cap">Figure 5: ZigZag Attention prefill speedup (50% layers → SSA, 1.5× inference, supports 1M tokens)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/agentic_benchmark_curves.png" alt="agentic benchmark curves" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: agentic benchmark training curves — BrowseComp / τ²-Bench / VitaBench</i><br><small>src/assets/agentic_benchmark_curves.png</small></div>'">
+    <div class="fig-cap">Figure 6: Agentic benchmark training curves (BrowseComp / τ²-Bench / VitaBench)</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>DS-V3.2</th><th>Kimi-K2</th><th>GLM-4.7</th><th>LongCat</th><th>Heavy</th></tr>
+    <tr class="cat"><td colspan="6">Math w/ Tools (Avg@16/4)</td></tr>
+    <tr class="ours"><td class="left">AIME-25</td><td>93.5</td><td>99.1</td><td>95.3</td><td>99.6</td><td class="dv">100.0</td></tr>
+    <tr class="ours"><td class="left">IMO-AnswerBench</td><td>77.7</td><td>78.7</td><td>84.0</td><td>78.6</td><td class="dv">86.8</td></tr>
+    <tr class="ours"><td class="left">AMO-Bench CH</td><td>52.0</td><td>51.8</td><td>35.1</td><td>56.8</td><td class="dv">67.5</td></tr>
+    <tr class="cat"><td colspan="6">Agentic Search (Pass@1)</td></tr>
+    <tr class="ours"><td class="left">BrowseComp</td><td>67.6</td><td>60.2</td><td>67.5</td><td class="dv">73.1</td><td>—</td></tr>
+    <tr class="ours"><td class="left">BrowseComp-ZH</td><td>65.0</td><td>62.3</td><td>66.6</td><td class="dv">77.7</td><td>—</td></tr>
+    <tr class="ours"><td class="left">RWSearch</td><td>74.0</td><td>63.0</td><td>69.0</td><td class="dv">79.5</td><td>—</td></tr>
+    <tr class="cat"><td colspan="6">Agentic Tool Use</td></tr>
+    <tr class="ours"><td class="left">τ²-Avg</td><td>80.6</td><td>74.3</td><td>87.4</td><td class="dv">88.2</td><td>—</td></tr>
+    <tr class="ours"><td class="left">τ²-Noise</td><td>64.1</td><td>63.1</td><td>66.0</td><td class="dv">67.1</td><td>—</td></tr>
+    <tr class="ours"><td class="left">Random Complex</td><td>32.5</td><td>29.7</td><td>25.3</td><td class="dv">35.8</td><td>—</td></tr>
+  </table>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">BrowseComp</div>
+      <div class="adelta">73.1</div>
+      <div class="adesc">open-source #1 + +16.5 after context management</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">AIME-25 heavy</div>
+      <div class="adelta">100.0</div>
+      <div class="adesc">heavy mode maxed out (tied #1, incl. closed-source)</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Env Scaling Parallel</div>
+    <p>Domain → tool graph → BFS dependency-checked expansion. 20+ domains, 10K+ environments, 32K concurrency. <span class="hl">Verifiability-preserving expansion</span> is what makes scaling work.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② Robust w/ Noise</div>
+    <p>Explicit decomposition of instruction noise + tool noise, curriculum-injected. Clean benchmarks barely drop; noisy benchmarks gain <span class="hl">+5~7</span> (VitaBench-Noise +7.2, τ²-Noise +4.9).</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ Heavy Mode Deeper</div>
+    <p>Parallel reasoning (width) + summary-model reflection (depth) + dedicated RL stage. <span class="hl">AIME-25 hits 100</span>; BrowseComp-ZH 77.7 ranks open-source #1.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ ZigZag for 1M</div>
+    <p>Mid-training 50% layers swapped to SSA (Sliding Sparse Attention), <span class="hl">1.5× inference speedup</span>, performance preserved, supports 1M-token context.</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

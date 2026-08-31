@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash — Research Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.18); border: 1px solid #e7e5e4 }
+
+/* HEADER — reasoning amber gradient (English variant on light bg) */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .sub-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #fef3c7; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid #fde68a; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #fcd34d; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid #e7e5e4 }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #78350f }
+.c-amber h2 { color: #92400e }
+.c-orange h2 { color: #9a3412 }
+.c-brown h2 { color: #78350f }
+.c-green h2 { color: #065f46 }
+
+p.body { font-size: .78rem; color: #44403c; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (light) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.07); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.07); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.07); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #92400e }
+.g2 .title { color: #b45309 }
+.g3 .title { color: #9a3412 }
+.gap-box p { font-size: .72rem; color: #44403c; line-height: 1.45 }
+
+/* TRICK BOX (light) */
+.trick-box { background: rgba(5,150,105,.06); border: 1px solid rgba(5,150,105,.25); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #44403c; line-height: 1.45 }
+
+/* FIGURE (light) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.04); border: 1px solid #e7e5e4; margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(254,243,199,.4) }
+
+/* FORMULA BOX (light) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.05); border: 1px solid #fcd34d; border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #92400e; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (light) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fef3c7; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid #e7e5e4; text-align: center; font-size: .68rem; color: #44403c }
+.rtable td.left { text-align: left; font-weight: 600; color: #1c1917 }
+.rtable .cat td { background: rgba(217,119,6,.08); font-weight: 700; font-size: .66rem; color: #92400e; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.18); font-weight: 800; color: #78350f }
+.rtable .best td.dv { color: #b45309; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (light) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.04); border-radius: 8px; border: 1px solid #fde68a }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #92400e; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #44403c; line-height: 1.45 }
+
+/* ABLATION CARDS (light) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(254,243,199,.4); border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #1c1917; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #b45309 }
+.abl-card .adesc { font-size: .64rem; color: #78716c }
+
+/* BOTTOM STRIP (light) */
+.bottom-strip { background: #fef3c7; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid #d97706 }
+.bstrip { padding: 14px 18px; border-right: 1px solid #fcd34d }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78350f; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #57534e; line-height: 1.45 }
+.bstrip .hl { color: #b45309; font-weight: 700 }
+
+/* BACKLINKS (light) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid #fcd34d; border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #b45309 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #57534e; text-decoration: none; background: rgba(255,255,255,.95); border: 1px solid #d6d3d1; border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.15); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #b45309; border-color: #b45309 }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #1c1917 !important }
+mjx-container svg, mjx-container svg * { fill: #1c1917 !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="LongCat_Flash_poster.html">EN</a><a href="LongCat_Flash_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78350f;">Source note:</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2509_LongCat_Flash%2FLongCat-Flash-Technical-Report" style="text-decoration: none;">LongCat-Flash note</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2509.01322" target="_blank" style="text-decoration: none;">arXiv:2509.01322</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2509.01322 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="sub-title">LongCat-Flash: a 560B MoE foundation model built for low-cost inference</div>
+    <h1>LongCat-Flash Technical Report <span>— Zero-Comp Experts &amp; ScMoE</span></h1>
+    <div class="authors">Meituan LongCat Team</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">560B</div><div class="sub">total params</div></div>
+    <div class="score-box"><div class="num">27B</div><div class="sub">avg activated<br>18.6B – 31.3B dynamic</div></div>
+    <div class="score-box"><div class="num">8.4%</div><div class="sub">comm overhead<br>down from 25.3%</div></div>
+    <div class="score-box"><div class="num">50%</div><div class="sub">TPOT reduction<br>vs. DeepSeek-V3</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Architecture overview + Zero-Comp Experts -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>Architecture Overview + Zero-Comp Experts</h2></div>
+  <p class="body">LongCat-Flash is a 28-layer MoE base with <strong>512 FFN experts + 256 zero-computation experts</strong>, TopK=12 per token, average activation <strong>27B</strong> (range 18.6B – 31.3B). Paired with MLA, ScMoE, Variance Alignment, Hidden z-loss, and Adam ε=1e-16 — a full stability suite. Mid-training pushes STEM+code share to 70%, preparing for downstream agent post-training.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/inference-architecture.png" alt="inference architecture" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: inference architecture overview</i><br><small>src/assets/inference-architecture.png</small></div>'">
+    <div class="fig-cap">Fig 1: LongCat-Flash inference architecture (MLA + ScMoE + SBO 4-stage pipeline)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Zero-Comp Experts: dynamic compute budget</div>
+      <p>Beyond 512 FFN experts, add <strong>256 identity experts</strong> — input returns directly, zero compute cost. Router does TopK=12 over all 768 experts, <strong>actual FFN count varies with token context importance</strong>. Function words / digits / punctuation → zero experts; deep-layer tokens → allocated by difficulty.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">PID controller keeps budget on target</div>
+      <p>A <strong>PID controller on expert bias</strong> regulates global average activation, converging to the target budget. After ~20B training tokens the average stays stable (fluctuation < 1%) but std holds at ~3 — proving the model really does "decide per-token".</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Zero-Comp Routing</div>
+    $$K_{\text{eff}}(t) = \#\{\text{FFN experts selected for token } t\}, \quad \mathbb{E}[K_{\text{eff}}] \rightarrow 12$$
+  </div>
+</div>
+
+<!-- COLUMN 2: MLA + ScMoE + Stability -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>MLA + ScMoE + Training Stability</h2></div>
+  <p class="body">MLA (Multi-Latent Attention) follows DeepSeek-V2's low-rank KV compression; ScMoE extends the team's ICCV'24 work; the Variance Alignment suite fixes the "small-scale design breaks at large scale" problem. This combined stack converges 560B stably in 30 days over 20T tokens.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/overlapped_scmoe.png" alt="overlapped ScMoE" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: ScMoE cross-layer shortcut overlap</i><br><small>src/assets/overlapped_scmoe.png</small></div>'">
+    <div class="fig-cap">Fig 2: ScMoE cross-layer shortcut — dense FFN and all-to-all fully overlap</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">ScMoE: cross-layer shortcut for longer overlap</div>
+      <p>Pull a shortcut from the <strong>previous layer's dense FFN output</strong> directly into the current MoE layer, so dense FFN compute fully overlaps with the current layer's all-to-all dispatch/combine. Stronger than shared-expert: shared-expert can only use a small window for overlap, ScMoE uses the entire dense FFN compute window.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Evidence: comm 25.3% → 8.4%</div>
+      <p>Loss curves at 2.4B / 3B / 15B nearly coincide (<strong>quality-neutral</strong>) while comm time share drops from <strong>25.3% to 8.4%</strong>. Combined with inference-side <strong>SBO 4-stage pipeline</strong> (MLA / Dense FFN / MoE GEMM / all-to-all overlap), TPOT vs. DS-V3 TBO drops ~50%.</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">MLA Scale-Correction</div>
+    $$\alpha_q = \sqrt{\frac{d_{\text{model}}}{d_q}}, \quad \alpha_{kv} = \sqrt{\frac{d_{\text{model}}}{d_{kv}}}$$
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/mla_scale_comparison.png" alt="MLA scale comparison" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: MLA scale comparison</i><br><small>src/assets/mla_scale_comparison.png</small></div>'">
+    <div class="fig-cap">Fig 3: MLA variance correction across model scales</div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Variance Alignment: $\alpha_q,\alpha_{kv}$</div>
+      <p>Multiply $c_t^Q$ and $c_t^{KV}$ by $\sqrt{d_{\text{model}}/d_q}$ and $\sqrt{d_{\text{model}}/d_{kv}}$ to compensate MLA low-rank decomposition's variance mismatch.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Fine-grained expert: $\gamma=m$</div>
+      <p>Fine-grained segmentation scales variance down by $m^2$ (gating + hidden-dim reduction), so multiply expert output by $\gamma=m$ to restore variance.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Adam ε = 1e-16</div>
+      <p>Conventional 1e-5 dominates the gradient second moment under large model + small init + large batch — training collapses. 1e-16 is the on-switch for stability.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: Experimental Results + Inference -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>Experiments: On Par with DS-V3 / Kimi-K2</h2></div>
+  <p class="body">At <strong>27B activated</strong> (10B less than DS-V3.1, 5B less than Kimi-K2), LongCat-Flash is <strong>on par or better</strong> on most reasoning / math / code items, while delivering 100 TPS/user on H800 at $0.7 / 1M output tokens.</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>DS-V3.1<br>37B act.</th><th>Kimi-K2<br>32B act.</th><th class="dv">LongCat<br>27B act.</th></tr>
+    <tr class="cat"><td colspan="4">Knowledge / General</td></tr>
+    <tr><td class="left">MMLU</td><td>87.46</td><td>87.47</td><td>87.05</td></tr>
+    <tr><td class="left">MMLU-Pro</td><td>59.29</td><td>68.36</td><td class="dv">70.32</td></tr>
+    <tr><td class="left">BBH</td><td>89.46</td><td>89.19</td><td class="dv">90.54</td></tr>
+    <tr class="cat"><td colspan="4">Reasoning / Math</td></tr>
+    <tr><td class="left">GPQA</td><td>47.16</td><td>45.89</td><td class="dv">51.09</td></tr>
+    <tr><td class="left">SuperGPQA</td><td>—</td><td>44.70</td><td class="dv">52.03</td></tr>
+    <tr><td class="left">MATH</td><td>65.38</td><td>66.74</td><td class="dv">69.28</td></tr>
+    <tr class="cat"><td colspan="4">Code</td></tr>
+    <tr><td class="left">MultiPL-E</td><td>62.00</td><td>59.22</td><td class="dv">69.25</td></tr>
+    <tr><td class="left">CRUXEval-O</td><td>71.25</td><td>68.75</td><td class="dv">75.88</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/loss.png" alt="loss curve" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: loss curve</i><br><small>src/assets/loss.png</small></div>'">
+    <div class="fig-cap">Fig 4: LongCat-Flash pretraining loss (30 days / 20T tokens)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/avg_topk_layer8.png" alt="avg topk layer 8" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: layer 8 active expert count</i><br><small>src/assets/avg_topk_layer8.png</small></div>'">
+    <div class="fig-cap">Fig 5: Layer-8 active expert count over training (std ~3, mean stable)</div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">H800 TPS/user</div>
+      <div class="adelta">100.5</div>
+      <div class="adesc">Low-latency mode vs. DS-V3 20-22 (5× speedup)</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Inference cost</div>
+      <div class="adelta">$0.7</div>
+      <div class="adesc">Per 1M output tokens — key for agent / high-concurrency</div>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Base Model matches or beats larger activated models</div>
+    <p>Despite 10B fewer activated params than DS-V3.1 and 5B fewer than Kimi-K2, LongCat-Flash <strong>leads by large margins</strong> on MMLU-Pro / SuperGPQA / CRUXEval. Combined with $0.7 / M tokens inference cost, the agent / high-concurrency story is the headline.</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Zero-Comp Experts</div>
+    <p>512 FFN + <span class="hl">256 identity experts</span>, PID controller pins avg activation = 27B. Easy tokens auto-route to zero experts — <span class="hl">dynamic compute budget</span>.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② ScMoE cross-layer shortcut</div>
+    <p>Shortcut from dense FFN into current MoE lets comm <span class="hl">fully overlap</span> with dense FFN. Comm drops 25.3% → <span class="hl">8.4%</span>.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ MLA efficient attention</div>
+    <p>Low-rank KV + <span class="hl">scale-correction</span> ($\alpha_q,\alpha_{kv}$) compensates variance mismatch. MLA remains quality-neutral at 560B scale.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ Variance Alignment stability</div>
+    <p>Variance Alignment + Hidden z-loss + <span class="hl">Adam ε=1e-16</span> + Model Growth (14→28 layer stack). Each trick has a clear failure-mode diagnosis.</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

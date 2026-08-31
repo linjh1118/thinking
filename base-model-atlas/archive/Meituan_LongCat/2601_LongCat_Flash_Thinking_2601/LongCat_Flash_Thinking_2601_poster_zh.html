@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Thinking-2601 — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .78rem; color: #d6d3d1; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #d6d3d1; line-height: 1.45 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .64rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #a8a29e; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #ffffff !important }
+mjx-container svg, mjx-container svg * { fill: #ffffff !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="LongCat_Flash_Thinking_2601_poster.html">EN</a><a class="active" href="LongCat_Flash_Thinking_2601_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2601_LongCat_Flash_Thinking_2601%2FLongCat-Flash-Thinking-2601-Technical-Report" style="text-decoration: none;">LongCat-Flash-Thinking-2601 笔记</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2601.16725" target="_blank" style="text-decoration: none;">arXiv:2601.16725</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2601.16725 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="zh-title">LongCat-Flash-Thinking-2601：agentic reasoning 升级版（1M context + Heavy Mode）</div>
+    <h1>LongCat-Flash-Thinking-2601 Technical Report: <span>Agentic Reasoning at Scale</span></h1>
+    <div class="authors">Meituan LongCat Team（美团 LongCat 团队）</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">1M</div><div class="sub">context length<br>ZigZag attn</div></div>
+    <div class="score-box"><div class="num">32K+</div><div class="sub">environments<br>20+ domains</div></div>
+    <div class="score-box"><div class="num">+7.2</div><div class="sub">VitaBench-Noise<br>w/ noise training</div></div>
+    <div class="score-box"><div class="num">100</div><div class="sub">AIME-25 heavy<br>mode</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 动机：agentic RL 挑战 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>动机：从"会不会 think"到"能不能 agent"</h2></div>
+  <p class="body">2509 版本解决了"让 base model 学会 thinking"，主战场是数学 + tool-augmented。但跑下来发现三个真实世界的 gap：(1) <strong>agentic 任务没现成环境</strong>——传统 reasoning 是 environment-free 的纯语言推演，但 agentic search / tool use 需要主动决定"何时、如何与环境交互"；(2) <strong>训练出来的 agent 不鲁棒</strong>——干净 benchmark 88 分部署到真实用户场景（用户表达模糊、工具偶发失败）就掉到 60 分以下；(3) <strong>single-pass thinking 撞天花板</strong>——intrinsic reasoning 接近极限时单条 CoT 加长收益递减，必须 test time 同时扩 depth + width。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_framework.png" alt="RL framework" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：RL framework 总览 — env scaling + robust RL + heavy mode 三件套</i><br><small>src/assets/rl_framework.png</small></div>'">
+    <div class="fig-cap">图 1：RL Framework 总览（环境扩展 + Robust RL + Heavy Mode 三件套）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心 framing：intrinsic reasoning → environment interaction</div>
+      <p>论文把 agentic reasoning 定义为"通过与外部环境的自适应交互解决复杂问题"——明确把突破方向从"thinking trace 加长"切换到"环境交互"。这是 2026 年 agentic 转向的核心 framing。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">三件基础设施（真正的贡献）</div>
+      <p>模型本身（560B / 27B activated）和 2509 没变；benchmark 提升来自 <strong>Environment Scaling</strong> + <strong>Robust RL with noise</strong> + <strong>Heavy Thinking Mode</strong> 三件配套——印证 base scale 到一定体量后，agent 能力边际收益主要来自环境多样性 × RL 稳定性 × 推理并行。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">G1：环境图自动化扩张</div>
+      <p>Domain spec → 60+ tool 自动合成 → BFS 依赖检查 → executable tool chain → fallback 保证 ≥20 tool。成功扩张到 20+ domain、1万+ 环境。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">G2：Robust RL 噪声注入</div>
+      <p>把 instruction noise + tool noise 显式拆解，curriculum 渐进注入——加 noise 训在干净 benchmark 几乎不掉点（甚至略升），但在 noisy benchmark 上 +5~7 分。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">G3：Heavy Thinking Mode</div>
+      <p>parallel reasoning（扩 width）+ summary model reflection（扩 depth）+ context memory module + 额外 RL stage 训 summary 阶段。AIME-25 heavy 直接打满 100。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Environment Scaling + Robust RL -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Environment Scaling + Robust RL</h2></div>
+  <p class="body">Environment Scaling 是这套 pipeline 最核心的工程突破——把"工具图"做成自动化扩张 + 可验证的闭环。"加新 tool 就行"听起来简单，但 uncontrolled 加 tool 会让 cross-tool database 失一致，正确 trajectory 也会被判失败 → 注入负 reward 是 biased 的，比没 reward 还糟。<strong>BFS 依赖检查 + 至少 20 tool fallback</strong>是 pipeline 能 scale 到 32K 环境的关键。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/env_scaling.png" alt="environment scaling pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Environment Scaling Pipeline — Domain → tool graph → BFS chain → expansion</i><br><small>src/assets/env_scaling.png</small></div>'">
+    <div class="fig-cap">图 2：Environment Scaling Pipeline（domain → tool graph → BFS 扩张）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Domain → Tool Graph → Executable Chain</div>
+      <p>给定 domain（如 airline / retail / telecom），LLM 合成 60+ tool + schema + 实现，unit test + debugging agent 验证成功率 &gt;95%。建 tool dependency graph，BFS 扩张采 executable chain $s_1$，决定是否加 $s_2$ 由 $p = f(c, g, |\mathcal{D}_n|)$ 控制。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">三路 hybrid data synthesis（mid-training）</div>
+      <p>text-driven（教程挖 workflow）/ environment-grounded（Python 环境反向合成）/ planning-oriented（decomposition + decision-step 多候选）。32K→128K→256K 分级，500B + 40B tokens。pass@k 在 τ²-Bench 上"Enhanced"在大 k 显著高于 baseline。</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Robust RL：Noise Injection Strategy</div>
+    $$\mathcal{L}_{\text{Robust}} \;=\; \mathcal{L}_{\text{RL}} \;+\; \lambda \cdot \mathbb{E}_{x \sim \pi_{\text{noise}}}\big[\,\ell\big(\pi_\theta(y|x),\;\pi_{\text{clean}}(y|x)\big)\,\big]$$
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/agentic_training_reward.png" alt="agentic training reward" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：agentic training reward — noise 注入后的训练曲线</i><br><small>src/assets/agentic_training_reward.png</small></div>'">
+    <div class="fig-cap">图 3：Agentic Training Reward（Robust RL noise 训练曲线）</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Dataset</th><th>ColdStart</th><th>w/o Noise</th><th>w/ Noise</th><th>Δ</th></tr>
+    <tr><td class="left">VitaBench (Avg@4)</td><td>10.0</td><td>28.6</td><td>29.3</td><td>+0.7</td></tr>
+    <tr class="ours"><td class="left">VitaBench-Noise (Avg@4)</td><td>6.3</td><td>13.3</td><td class="dv">20.5</td><td class="dv">+7.2</td></tr>
+    <tr><td class="left">τ²-Bench (Avg@4)</td><td>78.8</td><td>87.1</td><td>88.2</td><td>+1.1</td></tr>
+    <tr class="ours"><td class="left">τ²-Bench-Noise (Avg@4)</td><td>58.8</td><td>62.2</td><td class="dv">67.1</td><td class="dv">+4.9</td></tr>
+  </table>
+</div>
+
+<!-- COLUMN 3: Heavy Mode + 1M context + ZigZag -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>Heavy Mode + 1M Context + 实验结果</h2></div>
+  <p class="body">Heavy Thinking Mode 同时扩 depth × width：thinking model 并行生成 N 条 candidate trajectory（扩 width）→ summary model 反思并 aggregate（扩 depth）。关键设计：<strong>"生成多个候选"和"在多个候选间反思选择"是两个可分离的能力</strong>——单独为 summary 阶段做 RL。AIME-25 heavy 直接打满 100，BrowseComp-ZH 77.7 开源第一。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/heavy_mode.png" alt="heavy mode" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Heavy Mode — parallel reasoning → summary → aggregate</i><br><small>src/assets/heavy_mode.png</small></div>'">
+    <div class="fig-cap">图 4：Heavy Mode（parallel reasoning + summary model aggregate）</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/zigzag_attn_efficiency_prefill_report.png" alt="zigzag attention prefill" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：ZigZag Attention prefill 加速曲线 — 50% 层换 SSA 支持 1M context</i><br><small>src/assets/zigzag_attn_efficiency_prefill_report.png</small></div>'">
+    <div class="fig-cap">图 5：ZigZag Attention prefill 加速（50% 层换 SSA，1.5× 推理加速，支持 1M tokens）</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/agentic_benchmark_curves.png" alt="agentic benchmark curves" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：agentic benchmark 训练曲线 — BrowseComp / τ²-Bench / VitaBench</i><br><small>src/assets/agentic_benchmark_curves.png</small></div>'">
+    <div class="fig-cap">图 6：Agentic Benchmark 训练曲线（BrowseComp / τ²-Bench / VitaBench）</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>DS-V3.2</th><th>Kimi-K2</th><th>GLM-4.7</th><th>LongCat</th><th>Heavy</th></tr>
+    <tr class="cat"><td colspan="6">Math w/ Tools (Avg@16/4)</td></tr>
+    <tr class="ours"><td class="left">AIME-25</td><td>93.5</td><td>99.1</td><td>95.3</td><td>99.6</td><td class="dv">100.0</td></tr>
+    <tr class="ours"><td class="left">IMO-AnswerBench</td><td>77.7</td><td>78.7</td><td>84.0</td><td>78.6</td><td class="dv">86.8</td></tr>
+    <tr class="ours"><td class="left">AMO-Bench CH</td><td>52.0</td><td>51.8</td><td>35.1</td><td>56.8</td><td class="dv">67.5</td></tr>
+    <tr class="cat"><td colspan="6">Agentic Search (Pass@1)</td></tr>
+    <tr class="ours"><td class="left">BrowseComp</td><td>67.6</td><td>60.2</td><td>67.5</td><td class="dv">73.1</td><td>—</td></tr>
+    <tr class="ours"><td class="left">BrowseComp-ZH</td><td>65.0</td><td>62.3</td><td>66.6</td><td class="dv">77.7</td><td>—</td></tr>
+    <tr class="ours"><td class="left">RWSearch</td><td>74.0</td><td>63.0</td><td>69.0</td><td class="dv">79.5</td><td>—</td></tr>
+    <tr class="cat"><td colspan="6">Agentic Tool Use</td></tr>
+    <tr class="ours"><td class="left">τ²-Avg</td><td>80.6</td><td>74.3</td><td>87.4</td><td class="dv">88.2</td><td>—</td></tr>
+    <tr class="ours"><td class="left">τ²-Noise</td><td>64.1</td><td>63.1</td><td>66.0</td><td class="dv">67.1</td><td>—</td></tr>
+    <tr class="ours"><td class="left">Random Complex</td><td>32.5</td><td>29.7</td><td>25.3</td><td class="dv">35.8</td><td>—</td></tr>
+  </table>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">BrowseComp</div>
+      <div class="adelta">73.1</div>
+      <div class="adesc">开源第一 + context management 后 +16.5</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">AIME-25 heavy</div>
+      <div class="adelta">100.0</div>
+      <div class="adesc">heavy mode 打满（并列第一，含闭源）</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Env Scaling 并行</div>
+    <p>Domain → tool graph → BFS dependency-checked expansion。20+ domain、1万+ 环境、3.2万并发，<span class="hl">可验证的 verifiability-preserving expansion</span> 是 scale 的关键。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② Robust w/ Noise</div>
+    <p>instruction noise + tool noise 显式拆解，curriculum 注入。干净 benchmark 几乎不掉点，noisy benchmark <span class="hl">+5~7 分</span>（VitaBench-Noise +7.2、τ²-Noise +4.9）。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ Heavy Mode 更深</div>
+    <p>parallel reasoning 扩 width + summary model reflection 扩 depth + 单独 RL stage。<span class="hl">AIME-25 直接 100</span>，BrowseComp-ZH 77.7 开源第一。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ ZigZag 加速 1M</div>
+    <p>mid-training 阶段 50% 层换 SSA（Sliding Sparse Attention），<span class="hl">1.5× 推理加速</span>，性能保持，支持 1M tokens context。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

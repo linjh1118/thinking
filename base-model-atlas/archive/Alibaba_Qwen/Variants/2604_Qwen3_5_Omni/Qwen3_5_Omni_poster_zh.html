@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen3.5-Omni — 全模态原生智能体</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; color: #d6d3d1; font-size: 14px; }
+  .poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; margin: 20px auto; }
+
+  /* Header */
+  .header { background: linear-gradient(120deg, #0c4a6e 0%, #0284c7 50%, #38bdf8 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+  .header-left h1 { font-size: 2.1rem; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 6px; }
+  .header-left .subtitle { font-size: 1.0rem; color: rgba(255,255,255,0.88); font-weight: 500; }
+  .header-left .authors { font-size: .78rem; color: rgba(255,255,255,0.7); margin-top: 6px; }
+  .header-right { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 14px; text-align: center; min-width: 110px; }
+  .score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1; }
+  .score-box .sub { font-size: .62rem; color: rgba(255,255,255,0.75); margin-top: 4px; line-height: 1.3; }
+
+  /* Main Grid */
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .col { padding: 20px 22px; border-right: 1px solid rgba(168,162,158,.15); }
+  .col:last-child { border-right: none; }
+
+  /* Section Headers */
+  .sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #f5f5f4; }
+
+  /* Content Boxes */
+  .g1 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+  .g2 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+  .g3 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+  .g4 { background: rgba(59,130,246,.08); border-left: 3px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+  .g5 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+  .g6 { background: rgba(5,150,105,.08); border-left: 3px solid #059669; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+
+  .box-title { font-size: .78rem; font-weight: 800; margin-bottom: 5px; }
+  .g1 .box-title { color: #f87171; }
+  .g2 .box-title { color: #fb923c; }
+  .g3 .box-title { color: #fbbf24; }
+  .g4 .box-title { color: #60a5fa; }
+  .g5 .box-title { color: #a78bfa; }
+  .g6 .box-title { color: #34d399; }
+
+  .box-text { font-size: .76rem; color: #a8a29e; line-height: 1.5; }
+  .box-text strong { color: #d6d3d1; }
+
+  /* Key Value Pairs */
+  .kv-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(168,162,158,.1); font-size: .76rem; }
+  .kv-row:last-child { border-bottom: none; }
+  .kv-key { color: #78716c; }
+  .kv-val { color: #fde68a; font-weight: 700; }
+
+  /* Table */
+  .rtable { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 8px 0; }
+  .rtable th { background: rgba(2,132,199,.3); color: #fff; padding: 5px 6px; text-align: center; font-weight: 700; border: 1px solid rgba(56,189,248,.2); }
+  .rtable td { padding: 4px 6px; text-align: center; border: 1px solid rgba(168,162,158,.12); color: #a8a29e; }
+  .rtable .ours td { background: rgba(253,230,138,.08); color: #fde68a; font-weight: 700; }
+
+  /* Trick Box */
+  .trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .trick-title { font-size: .68rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .trick-text { font-size: .74rem; color: #a8a29e; line-height: 1.45; }
+
+  /* Bottom Strip */
+  .bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(168,162,158,.2); }
+  .bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.12); }
+  .bstrip:last-child { border-right: none; }
+  .bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+  .bval { font-size: .78rem; color: #d6d3d1; line-height: 1.4; }
+  .bval .hl { color: #fbbf24; font-weight: 700; }
+
+  /* Backlinks */
+  .backlinks { margin: 16px 48px 20px; padding: 10px 16px; background: rgba(2,132,199,.08); border: 1px solid rgba(2,132,199,.2); border-radius: 8px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .backlinks a { color: #38bdf8; text-decoration: none; font-size: .82rem; }
+  .backlinks a:hover { text-decoration: underline; }
+  .backlinks .tag { font-size: .72rem; color: #78716c; }
+
+  /* Flow steps */
+  .flow-steps { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+  .flow-step { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(2,132,199,.06); border-radius: 6px; border: 1px solid rgba(56,189,248,.15); }
+  .flow-step .num { width: 20px; height: 20px; border-radius: 50%; background: #0284c7; color: #fff; font-size: .68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .flow-step .text { font-size: .74rem; color: #a8a29e; line-height: 1.4; }
+  .flow-step .text strong { color: #d6d3d1; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Qwen3.5-Omni</h1>
+      <div class="subtitle">全模态原生智能体 — 语音 × 视觉 × 文本联合推理</div>
+      <div class="authors">通义实验室 · 阿里云 · arXiv 2604.15804</div>
+    </div>
+    <div class="header-right">
+      <div class="score-box">
+        <div class="num">215</div>
+        <div class="sub">Benchmark<br>SOTA</div>
+      </div>
+      <div class="score-box">
+        <div class="num">256K</div>
+        <div class="sub">上下文长度<br>Token</div>
+      </div>
+      <div class="score-box">
+        <div class="num">10h+</div>
+        <div class="sub">音频理解<br>时长</div>
+      </div>
+      <div class="score-box">
+        <div class="num">ARIA</div>
+        <div class="sub">流式语音<br>对齐技术</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    <!-- Column 1: Problem & Architecture -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#dc2626;">1</div>
+        <h2>问题与动机</h2>
+      </div>
+      <div class="g1">
+        <div class="box-title">全模态原生智能体的必要性</div>
+        <div class="box-text">
+          人类与世界的交互本质上是<strong>多模态的</strong>：视觉、听觉、语言协同感知，通过文本、语音、工具调用进行响应。现有模型多停留在被动感知-响应范式，缺乏可扩展的智能体行为、实时交互和跨模态推理能力。
+        </div>
+      </div>
+      <div class="g2">
+        <div class="box-title">Qwen3.5-Omni 的定位</div>
+        <div class="box-text">
+          原生全模态 LLM，支持<strong>文本、图像、音频、视听</strong>联合理解与生成。设计为<strong>原生智能体模型</strong>：不仅感知和推理跨模态信息，还能自主调用 WebSearch、FunctionCall、流式语音输出，实现实时流式交互。
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#ea580c;">2</div>
+        <h2>架构设计</h2>
+      </div>
+      <div class="g3">
+        <div class="box-title">Thinker-Talker 架构</div>
+        <div class="box-text">
+          <strong>Thinker</strong>：接收视觉和音频信号，生成文本 Token<br>
+          <strong>Talker</strong>：基于 Thinker 的高阶表征，生成流式语音 Token<br><br>
+          关键升级：Thinker 和 Talker 均采用 <strong>Hybrid MoE</strong> 设计，显著提升推理效率。
+        </div>
+      </div>
+      <div class="g4">
+        <div class="box-title">五大技术升级</div>
+        <div class="box-text">
+          <strong>① MoE 架构</strong>：Hybrid MoE + GDN 模块降低长序列 KV-cache I/O<br>
+          <strong>② 256K 上下文</strong>：支持 10+ 小时音频，400 秒 720P 视频<br>
+          <strong>③ 多码本表征</strong>：RVQ + MTP 模块实现单帧即时语音合成<br>
+          <strong>④ ARIA 技术</strong>：流式解码中文本-语音动态对齐<br>
+          <strong>⑤ 多语言扩展</strong>：113 种语言 ASR，36 种语言 TTS
+        </div>
+      </div>
+      <div class="trick-box">
+        <div class="trick-title">ARIA — Adaptive Rate Interleave Alignment</div>
+        <div class="trick-text">
+          替代 Qwen3-Omni 的双通道生成范式，统一为单通道交错生成。引入单调交错约束：生成序列前缀的累积语音-文本 Token 比率不超过对应项级全局比率。解决跳词、发音错误、数字渲染歧义等问题。
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2: Key Capabilities & Method -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#d97706;">3</div>
+        <h2>三大新能力</h2>
+      </div>
+      <div class="g3">
+        <div class="box-title">① 可控视听描述</div>
+        <div class="box-text">
+          生成<strong>可控、详细、结构化</strong>描述，包括自动分段、时间戳标注、角色描述及其与音频的关系。支持剧本级细粒度描述。
+        </div>
+      </div>
+      <div class="g4">
+        <div class="box-title">② 实时交互能力</div>
+        <div class="box-text">
+          • <strong>语义打断</strong>：原生轮次意图识别<br>
+          • <strong>端到端语音控制</strong>：音量、语速、情感<br>
+          • <strong>语音克隆</strong>：从用户样本零样本克隆
+        </div>
+      </div>
+      <div class="g5">
+        <div class="box-title">③ 原生多模态智能体行为</div>
+        <div class="box-text">
+          <strong>Audio-Visual Vibe Coding</strong>：从视听指令直接生成可执行代码，无需外部编排。模型自主进行 WebSearch、复杂 FunctionCall 调用，实现实时查询响应。
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#059669;">4</div>
+        <h2>核心技术细节</h2>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">音频编码器</span>
+        <span class="kv-val">AuT (Audio Transformer)</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">训练数据</span>
+        <span class="kv-val">4000 万小时音频-文本对</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">音频 Token 率</span>
+        <span class="kv-val">6.25 Hz (每帧 ≈ 160ms)</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">视觉编码器</span>
+        <span class="kv-val">SigLIP2</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">语音 Token 表征</span>
+        <span class="kv-val">RVQ (残差矢量量化)</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">流式推理</span>
+        <span class="kv-val">Chunk-wise Prefill</span>
+      </div>
+
+      <div class="g6" style="margin-top:12px;">
+        <div class="box-title">延迟性能（首包延迟 ms）</div>
+        <div class="box-text">
+          <table class="rtable" style="margin:8px 0 0;">
+            <tr><th>并发数</th><th>Flash 音频</th><th>Plus 音频</th></tr>
+            <tr class="ours"><td>1 Conc.</td><td>235ms</td><td>435ms</td></tr>
+            <tr><td>4 Conc.</td><td>298ms</td><td>619ms</td></tr>
+            <tr><td>8 Conc.</td><td>352ms</td><td>955ms</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 3: Experiments -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#7c3aed;">5</div>
+        <h2>实验结果</h2>
+      </div>
+      <div class="g5">
+        <div class="box-title">语音生成 — Zero-shot TTS (WER ↓)</div>
+        <div class="box-text">
+          <table class="rtable">
+            <tr><th>模型</th><th>test-zh</th><th>test-en</th></tr>
+            <tr><td>CosyVoice 3</td><td>0.71</td><td>1.45</td></tr>
+            <tr class="ours"><td>Qwen3.5-Omni-Plus</td><td>0.99</td><td><strong>1.26</strong></td></tr>
+            <tr><td>Qwen3-Omni-30B</td><td>1.07</td><td>1.39</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="g6">
+        <div class="box-title">多语言语音生成 WER 对比</div>
+        <div class="box-text">
+          <table class="rtable">
+            <tr><th>语言</th><th>Qwen3.5-Plus</th><th>MiniMax</th><th>ElevenLabs</th></tr>
+            <tr class="ours"><td>中文</td><td>0.695</td><td>2.252</td><td>16.026</td></tr>
+            <tr class="ours"><td>英文</td><td>0.631</td><td>2.164</td><td>0.756</td></tr>
+            <tr class="ours"><td>日文</td><td>3.479</td><td>3.519</td><td>10.046</td></tr>
+            <tr class="ours"><td>韩文</td><td>1.458</td><td>1.747</td><td>1.865</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="box-title">跨语言语音生成（错误率 ↓）</div>
+        <div class="box-text">
+          <table class="rtable">
+            <tr><th>方向</th><th>Qwen3.5-Plus</th><th>Qwen3-Omni</th><th>CosyVoice3</th></tr>
+            <tr class="ours"><td>zh→ko</td><td><strong>4.03</strong></td><td>5.13</td><td>14.4</td></tr>
+            <tr class="ours"><td>zh→en</td><td><strong>2.18</strong></td><td>2.76</td><td>2.98</td></tr>
+            <tr class="ours"><td>ko→en</td><td><strong>2.51</strong></td><td>3.34</td><td>4.19</td></tr>
+            <tr class="ours"><td>en→ko</td><td><strong>3.72</strong></td><td>4.96</td><td>5.87</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="trick-box">
+        <div class="trick-title">关键发现</div>
+        <div class="trick-text">
+          Qwen3.5-Omni-Plus 在 12 个跨语言方向中 10 个取得最佳性能。zh→ko 相对 CosyVoice3 降低 <strong>72%</strong> 错误率。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Strip -->
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">核心技术</div>
+      <div class="bval">Thinker-Talker + <span class="hl">Hybrid MoE</span> + ARIA 流式对齐</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">模型规模</div>
+      <div class="bval">Plus / Flash 双版本，<span class="hl">256K</span> 上下文</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">性能领先</div>
+      <div class="bval">215 基准 SOTA，超越 <span class="hl">Gemini-3.1 Pro</span></div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">杀手级能力</div>
+      <div class="bval">Audio-Visual Vibe Coding：视听指令直出代码</div>
+    </div>
+  </div>
+
+  <!-- Backlinks -->
+  <div class="backlinks">
+    <span class="tag">📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2604_Qwen3_5_Omni%2FQwen3-5-Omni-Streaming-Omni-Agent">Qwen3-5-Omni-Streaming-Omni-Agent</a>
+    <span class="tag"> | arXiv：</span>
+    <a href="https://arxiv.org/abs/2604.15804" target="_blank">2604.15804</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>GLM-TTS Poster — Production-Level Speech Synthesis</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f8fafc;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: #1c1917;
+    padding: 32px 24px;
+  }
+  .poster-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  /* ── BACKLINKS ── */
+  .backlinks {
+    margin: 0 0 14px 0;
+    padding: 8px 14px;
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(220,38,38,0.15);
+    border-radius: 8px;
+    font-size: 0.82em;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .backlinks a {
+    color: #dc2626;
+    text-decoration: none;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+  .bl-label { color: #64748b; }
+
+  /* ── POSTER CARD ── */
+  .poster {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    border: 1px solid #e7e5e4;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #f97316 100%);
+    padding: 28px 40px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .header-left { flex: 1; }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+  }
+  .zh-title {
+    font-size: 2.05em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+  .en-title {
+    font-size: 1.0em;
+    color: rgba(255,255,255,0.88);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .venue-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.78em;
+    color: #fff;
+    margin-top: 8px;
+  }
+  .arxiv-link {
+    color: #fde68a;
+    text-decoration: none;
+    font-size: 0.82em;
+  }
+  .arxiv-link:hover { text-decoration: underline; }
+  .author-line {
+    margin-top: 8px;
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .score-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .score-box {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .score-box .num {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-box .lbl {
+    font-size: 0.68em;
+    color: rgba(255,255,255,0.78);
+    margin-top: 3px;
+  }
+
+  /* ── 3-COL GRID ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 0;
+  }
+  .col {
+    padding: 24px 28px;
+    border-right: 1px solid #e7e5e4;
+  }
+  .col:last-child { border-right: none; }
+
+  .col-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .col-num {
+    background: linear-gradient(135deg, #dc2626, #f97316);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.75em;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .col-title {
+    font-size: 1.0em;
+    font-weight: 700;
+    color: #dc2626;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── FIGURE BOX ── */
+  .fig-box {
+    background: rgba(220,38,38,0.04);
+    border: 1px solid rgba(220,38,38,0.12);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-cap {
+    font-size: 0.72em;
+    color: #78716c;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size: 0.72em;
+    font-weight: 700;
+    color: #c2410c;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .sec-label:first-child { margin-top: 0; }
+
+  /* ── TEXT ── */
+  p, li {
+    font-size: 0.82em;
+    line-height: 1.65;
+    color: #1c1917;
+  }
+  ul { padding-left: 16px; margin: 6px 0; }
+  li { margin-bottom: 4px; }
+
+  /* ── CHALLENGE CARDS ── */
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .challenge-card {
+    background: rgba(220,38,38,0.05);
+    border: 1px solid rgba(220,38,38,0.14);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.75em;
+    line-height: 1.5;
+    color: #1c1917;
+  }
+  .challenge-card strong { color: #dc2626; display: block; margin-bottom: 2px; }
+
+  /* ── METHOD LIST ── */
+  .method-item {
+    background: rgba(220,38,38,0.03);
+    border-left: 3px solid #dc2626;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+  .method-item .method-title {
+    font-weight: 700;
+    color: #9a3412;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+  }
+  .method-item .method-desc {
+    font-size: 0.75em;
+    color: #57534e;
+    line-height: 1.5;
+  }
+
+  /* ── TABLE ── */
+  .rtable-wrap { margin-bottom: 14px; overflow-x: auto; }
+  table.rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72em;
+  }
+  table.rtable th {
+    background: #7f1d1d;
+    color: #fff;
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 700;
+  }
+  table.rtable td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e7e5e4;
+    color: #1c1917;
+  }
+  table.rtable tr:last-child td { border-bottom: none; }
+  table.rtable tr:hover td { background: rgba(220,38,38,0.04); }
+  .highlight-row td { background: rgba(220,38,38,0.08) !important; font-weight: 600; color: #dc2626; }
+
+  /* ── BOTTOM STRIP ── */
+  .bottom-strip {
+    background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+    padding: 20px 40px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .takeaway {
+    flex: 1;
+    min-width: 180px;
+  }
+  .takeaway .tk-num {
+    font-size: 1.4em;
+    font-weight: 900;
+    color: rgba(255,255,255,0.25);
+    line-height: 1;
+  }
+  .takeaway .tk-text {
+    font-size: 0.8em;
+    color: rgba(255,255,255,0.92);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+
+  /* ── SUB TITLE ── */
+  .sub-title {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #9a3412;
+    margin: 12px 0 4px;
+    border-bottom: 1px solid rgba(220,38,38,0.12);
+    padding-bottom: 4px;
+  }
+  .sub-title:first-child { margin-top: 0; }
+
+  /* ── REWARD BADGE ── */
+  .reward-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 10px;
+  }
+  .reward-tag {
+    background: rgba(220,38,38,0.1);
+    border: 1px solid rgba(220,38,38,0.28);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.72em;
+    color: #dc2626;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="poster-wrap">
+
+  <!-- BACKLINKS -->
+  <div class="backlinks">
+    <span class="bl-label">Source:</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FZhipu_GLM%2F2512_GLM_TTS%2FGLM-TTS-Production-Level-Speech-Synthesis">GLM-TTS Technical Report</a>
+    <span class="bl-label">arXiv:</span>
+    <a class="arxiv-link" href="https://arxiv.org/abs/2512.14291" target="_blank">2512.14291</a>
+    <span class="bl-label">GitHub:</span>
+    <a class="arxiv-link" href="https://github.com/zai-org/GLM-TTS" target="_blank">zai-org/GLM-TTS</a>
+    <span class="bl-label">Demo:</span>
+    <a class="arxiv-link" href="https://audio.z.ai/" target="_blank">audio.z.ai</a>
+  </div>
+
+  <!-- POSTER -->
+  <div class="poster">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <div class="zh-title">GLM-TTS</div>
+        <div class="en-title">Production-Level Speech Synthesis with GRPO Multi-Reward RL</div>
+        <div style="margin-top:10px;">
+          <span class="venue-badge">arXiv 2025</span>
+          <span style="margin-left:8px;color:rgba(255,255,255,0.7);font-size:0.8em;">Zhipu AI · Tsinghua University</span>
+        </div>
+        <div class="author-line">Cui, Yang, Li, Tian, Ma, Zhang, Chen, Yang, Huang, Cheng, Zhou, Yu, Gu, Tang</div>
+      </div>
+      <div class="header-right">
+        <div class="score-boxes">
+          <div class="score-box">
+            <div class="num">100k</div>
+            <div class="lbl">Training Hours</div>
+          </div>
+          <div class="score-box">
+            <div class="num">1.5B</div>
+            <div class="lbl">Model Params</div>
+          </div>
+          <div class="score-box">
+            <div class="num">0.89%</div>
+            <div class="lbl">RL CER↓</div>
+          </div>
+          <div class="score-box">
+            <div class="num">15%</div>
+            <div class="lbl">LoRA Params</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN 3-COL GRID -->
+    <div class="main-grid">
+
+      <!-- COL 1: Problem & Motivation -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">1</div>
+          <div class="col-title">Problem &amp; Motivation</div>
+        </div>
+
+        <div class="sec-label">// CORE CHALLENGES</div>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <strong>Data Efficiency</strong>
+            High-quality voice cloning requires large-scale training data and long reference recordings
+          </div>
+          <div class="challenge-card">
+            <strong>Emotional Expressiveness</strong>
+            Most models rely on explicit emotion labels, limiting expressiveness
+          </div>
+          <div class="challenge-card">
+            <strong>Pronunciation Accuracy</strong>
+            Polyphone, rare characters, and dialect pronunciation errors (especially in Chinese)
+          </div>
+          <div class="challenge-card">
+            <strong>RL Exploration</strong>
+            RL in TTS suffers from difficult reward design and training instability
+          </div>
+        </div>
+
+        <div class="sec-label">// KEY INSIGHT</div>
+        <p style="font-size:0.8em;color:#57534e;line-height:1.6;">
+          Using only <strong style="color:#9a3412">100k hours</strong> of training data (vs CosyVoice3's 1M hours), GLM-TTS achieves SOTA on open-source benchmarks through a <strong style="color:#9a3412">two-stage architecture</strong> and <strong style="color:#9a3412">GRPO multi-reward RL</strong>. LoRA voice customization requires only <strong style="color:#9a3412">15% parameters + 1 hour</strong> of single-speaker audio.
+        </p>
+
+        <div class="fig-box" style="margin-top:14px;">
+          <img src="src/assets/pipeline.png" alt="GLM-TTS Pipeline" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">Two-stage generation: Text-to-Token AR → Token-to-Waveform Diffusion</div>
+        </div>
+      </div>
+
+      <!-- COL 2: Core Methods -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">2</div>
+          <div class="col-title">Core Methods</div>
+        </div>
+
+        <div class="sec-label">// SPEECH TOKENIZER (Whisper-VQ-based)</div>
+        <div class="method-item">
+          <div class="method-title">Token Rate Optimization</div>
+          <div class="method-desc">12.5Hz → 25Hz, vocab: 16k → 32k. Reduces high-speed articulation glitches, improves naturalness of laughter/breathing</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Pitch Estimator (PE) Module</div>
+          <div class="method-desc">Improves pitch modeling precision and prosody alignment between cloned TTS and reference audio</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Non-Causal Architecture</div>
+          <div class="method-desc">Removes block attention and causal convolutions, improving ASR and PE module accuracy</div>
+        </div>
+
+        <div class="fig-box" style="margin-top:10px;">
+          <img src="src/assets/architecture.png" alt="Architecture" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">Speech Tokenizer + Text Tokenizer + AR Generation + Diffusion</div>
+        </div>
+
+        <div class="sec-label">// GRPO MULTI-REWARD RL</div>
+        <div class="reward-tags">
+          <span class="reward-tag">CER</span>
+          <span class="reward-tag">SIM</span>
+          <span class="reward-tag">Emotion</span>
+          <span class="reward-tag">Laughter</span>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Multi-Dimensional Regularized Rewards</div>
+          <div class="method-desc">Hierarchical processing: individual reward regularization → weighted fusion → overall regularization</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Dynamic Resampling</div>
+          <div class="method-desc">Auto resamples (up to 3 times) when batch reward homogenizes, preventing gradient vanishing</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Adaptive Gradient Clipping (Clip-Higher)</div>
+          <div class="method-desc">ε_high and ε_low dynamically adjust — early strict prevention of reward hacking, later relaxation to encourage exploration</div>
+        </div>
+
+        <div class="sub-title">Phoneme-in Pronunciation Control</div>
+        <p style="font-size:0.75em;color:#57534e;margin-bottom:6px;">Standard characters replaced with phoneme at 20% probability; polyphone/rare chars retain original text but receive phoneme sequence via G2P. PER: 13.23% → 5.14%</p>
+
+        <div class="sub-title">Vocos2D Vocoder</div>
+        <p style="font-size:0.75em;color:#57534e;">2D convolution for frequency sub-bands; removes Multi-Period Discriminator; adds Discriminator Augmentation</p>
+      </div>
+
+      <!-- COL 3: Experimental Results -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">3</div>
+          <div class="col-title">Experimental Results</div>
+        </div>
+
+        <div class="sec-label">// SEED-TTS-EVAL BENCHMARK</div>
+        <div class="rtable-wrap">
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>CER↓</th>
+                <th>SIM↑</th>
+                <th>WER↓</th>
+                <th>SIM_en↑</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MiniMax-Speech</td>
+                <td>0.83</td>
+                <td>78.3</td>
+                <td>1.65</td>
+                <td>69.2</td>
+              </tr>
+              <tr>
+                <td>Seed-TTS</td>
+                <td>1.12</td>
+                <td>79.6</td>
+                <td>2.25</td>
+                <td>76.2</td>
+              </tr>
+              <tr>
+                <td>CosyVoice3</td>
+                <td>1.16</td>
+                <td>78.0</td>
+                <td>2.02</td>
+                <td>71.8</td>
+              </tr>
+              <tr>
+                <td>GLM-TTS</td>
+                <td>1.03</td>
+                <td>76.1</td>
+                <td>2.23</td>
+                <td>67.2</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>GLM-TTS_RL</td>
+                <td>0.89</td>
+                <td>76.4</td>
+                <td>1.91</td>
+                <td>68.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.72em;color:#78716c;margin-bottom:14px;">GLM-TTS_RL: CER=0.89% near-optimal, top-tier among 1.5B open-source models</p>
+
+        <div class="sec-label">// VICOS2D VS VICOS</div>
+        <div class="rtable-wrap">
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>GT</th>
+                <th>Vocos</th>
+                <th>Vocos2D</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NISQA↑</td>
+                <td>3.47</td>
+                <td>3.16</td>
+                <td style="color:#15803d;font-weight:700;">3.40</td>
+              </tr>
+              <tr>
+                <td>UTMOS↑</td>
+                <td>2.11</td>
+                <td>1.87</td>
+                <td style="color:#15803d;font-weight:700;">1.91</td>
+              </tr>
+              <tr>
+                <td>MOS↑</td>
+                <td>4.77</td>
+                <td>3.58</td>
+                <td style="color:#15803d;font-weight:700;">4.16</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="fig-box">
+          <img src="src/assets/glmtts_rl.png" alt="GRPO RL Training" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">GRPO Multi-Reward RL Training Curves</div>
+        </div>
+
+        <div class="sec-label">// PHONEME-IN ABLATION</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:10px 14px;text-align:center;flex:1;">
+            <div style="font-size:1.3em;font-weight:800;color:#dc2626;">13.23%</div>
+            <div style="font-size:0.68em;color:#78716c;">Baseline PER</div>
+          </div>
+          <div style="color:#c2410c;font-size:1.2em;">→</div>
+          <div style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:10px 14px;text-align:center;flex:1;">
+            <div style="font-size:1.3em;font-weight:800;color:#15803d;">5.14%</div>
+            <div style="font-size:0.68em;color:#78716c;">Phoneme-in PER</div>
+          </div>
+        </div>
+
+        <div class="sub-title">LoRA Voice Customization</div>
+        <p style="font-size:0.75em;color:#57534e;margin-bottom:4px;">Minimum 1 hour single-speaker audio, only 15% parameters tuned (≈ full fine-tuning effect). 0.3%-5% parameter tuning has limited effect; 15% is the stable production threshold.</p>
+      </div>
+
+    </div><!-- /main-grid -->
+
+    <!-- BOTTOM STRIP -->
+    <div class="bottom-strip">
+      <div class="takeaway">
+        <div class="tk-num">01</div>
+        <div class="tk-text"><strong>GRPO Multi-Reward RL</strong> is viable for TTS: Clip-Higher + dynamic resampling + adaptive gradient clipping solve the core pain points of training instability and reward hacking</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">02</div>
+        <div class="tk-text"><strong>Data Efficiency</strong>: 100k hours vs 1M+ hours achieves equivalent quality, showing data cleaning/quality matters more than quantity</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">03</div>
+        <div class="tk-text"><strong>Phoneme-in Mechanism</strong>: Valuable for vertical scenarios requiring precise pronunciation control (education/medical/finance), implemented via 20% probability replacement + offline routing</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">04</div>
+        <div class="tk-text"><strong>Paralinguistic RL</strong>: Using ASR transcript emptiness as positive reward signal is an elegant approach for handling laughter/breathing/non-text content</div>
+      </div>
+    </div>
+
+  </div><!-- /poster -->
+</div><!-- /poster-wrap -->
+</body>
+</html>

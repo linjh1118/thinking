@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>GLM-TTS Poster — Production-Level Speech Synthesis</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0c0a09;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: #d6d3d1;
+    padding: 32px 24px;
+  }
+  .poster-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  /* ── BACKLINKS ── */
+  .backlinks {
+    margin: 0 0 14px 0;
+    padding: 8px 14px;
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(220,38,38,0.15);
+    border-radius: 8px;
+    font-size: 0.82em;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .backlinks a {
+    color: #f87171;
+    text-decoration: none;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+  .bl-label { color: #78716c; }
+
+  /* ── POSTER CARD ── */
+  .poster {
+    background: #1c1917;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #f97316 100%);
+    padding: 28px 40px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .header-left { flex: 1; }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+  }
+  .zh-title {
+    font-size: 2.05em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .en-title {
+    font-size: 1.0em;
+    color: rgba(255,255,255,0.85);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .venue-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.78em;
+    color: #fff;
+    margin-top: 8px;
+  }
+  .arxiv-link {
+    color: #fde68a;
+    text-decoration: none;
+    font-size: 0.82em;
+  }
+  .arxiv-link:hover { text-decoration: underline; }
+
+  .score-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .score-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .score-box .num {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-box .lbl {
+    font-size: 0.68em;
+    color: rgba(255,255,255,0.75);
+    margin-top: 3px;
+  }
+
+  /* ── 3-COL GRID ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 0;
+  }
+  .col {
+    padding: 24px 28px;
+    border-right: 1px solid rgba(220,38,38,0.1);
+  }
+  .col:last-child { border-right: none; }
+
+  .col-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .col-num {
+    background: linear-gradient(135deg, #dc2626, #f97316);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.75em;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .col-title {
+    font-size: 1.0em;
+    font-weight: 700;
+    color: #f87171;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── FIGURE BOX ── */
+  .fig-box {
+    background: rgba(220,38,38,0.06);
+    border: 1px solid rgba(220,38,38,0.12);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-cap {
+    font-size: 0.72em;
+    color: #78716c;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size: 0.72em;
+    font-weight: 700;
+    color: #f97316;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .sec-label:first-child { margin-top: 0; }
+
+  /* ── TEXT ── */
+  p, li {
+    font-size: 0.82em;
+    line-height: 1.65;
+    color: #d6d3d1;
+  }
+  ul { padding-left: 16px; margin: 6px 0; }
+  li { margin-bottom: 4px; }
+
+  /* ── CHALLENGE CARDS ── */
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .challenge-card {
+    background: rgba(220,38,38,0.07);
+    border: 1px solid rgba(220,38,38,0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.75em;
+    line-height: 1.5;
+    color: #d6d3d1;
+  }
+  .challenge-card strong { color: #fca5a5; display: block; margin-bottom: 2px; }
+
+  /* ── METHOD LIST ── */
+  .method-item {
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid #dc2626;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+  .method-item .method-title {
+    font-weight: 700;
+    color: #fde68a;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+  }
+  .method-item .method-desc {
+    font-size: 0.75em;
+    color: #a8a29e;
+    line-height: 1.5;
+  }
+
+  /* ── TABLE ── */
+  .rtable-wrap { margin-bottom: 14px; overflow-x: auto; }
+  table.rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72em;
+  }
+  table.rtable th {
+    background: #7f1d1d;
+    color: #fff;
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 700;
+  }
+  table.rtable td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(220,38,38,0.08);
+    color: #d6d3d1;
+  }
+  table.rtable tr:last-child td { border-bottom: none; }
+  table.rtable tr:hover td { background: rgba(220,38,38,0.04); }
+  .highlight-row td { background: rgba(220,38,38,0.08) !important; font-weight: 600; color: #fca5a5; }
+
+  /* ── BOTTOM STRIP ── */
+  .bottom-strip {
+    background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+    padding: 20px 40px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .takeaway {
+    flex: 1;
+    min-width: 180px;
+  }
+  .takeaway .tk-num {
+    font-size: 1.4em;
+    font-weight: 900;
+    color: rgba(255,255,255,0.25);
+    line-height: 1;
+  }
+  .takeaway .tk-text {
+    font-size: 0.8em;
+    color: rgba(255,255,255,0.92);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+
+  /* ── SUB SECTION TITLE ── */
+  .sub-title {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #fde68a;
+    margin: 12px 0 4px;
+    border-bottom: 1px solid rgba(220,38,38,0.15);
+    padding-bottom: 4px;
+  }
+  .sub-title:first-child { margin-top: 0; }
+
+  /* ── REWARD BADGE ── */
+  .reward-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 10px;
+  }
+  .reward-tag {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid rgba(220,38,38,0.3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.72em;
+    color: #fca5a5;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="poster-wrap">
+
+  <!-- BACKLINKS -->
+  <div class="backlinks">
+    <span class="bl-label">📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FZhipu_GLM%2F2512_GLM_TTS%2FGLM-TTS-Production-Level-Speech-Synthesis">GLM-TTS Technical Report</a>
+    <span class="bl-label">｜arXiv：</span>
+    <a class="arxiv-link" href="https://arxiv.org/abs/2512.14291" target="_blank">2512.14291</a>
+    <span class="bl-label">｜GitHub：</span>
+    <a class="arxiv-link" href="https://github.com/zai-org/GLM-TTS" target="_blank">zai-org/GLM-TTS</a>
+    <span class="bl-label">｜Demo：</span>
+    <a class="arxiv-link" href="https://audio.z.ai/" target="_blank">audio.z.ai</a>
+  </div>
+
+  <!-- POSTER -->
+  <div class="poster">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <div class="zh-title">GLM-TTS：生产级语音合成系统</div>
+        <div class="en-title">GLM-TTS: Production-Level Speech Synthesis with GRPO Multi-Reward RL</div>
+        <div style="margin-top:10px;">
+          <span class="venue-badge">arXiv 2025</span>
+          <span style="margin-left:8px;color:rgba(255,255,255,0.7);font-size:0.8em;">智谱 AI · 清华大学</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.78em;color:rgba(255,255,255,0.65);">
+          Cui, Yang, Li, Tian, Ma, Zhang, Chen, Yang, Huang, Cheng, Zhou, Yu, Gu, Tang
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="score-boxes">
+          <div class="score-box">
+            <div class="num">100k</div>
+            <div class="lbl">训练小时数</div>
+          </div>
+          <div class="score-box">
+            <div class="num">1.5B</div>
+            <div class="lbl">模型参数</div>
+          </div>
+          <div class="score-box">
+            <div class="num">0.89%</div>
+            <div class="lbl">RL 后 CER↓</div>
+          </div>
+          <div class="score-box">
+            <div class="num">15%</div>
+            <div class="lbl">LoRA 参数量</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN 3-COL GRID -->
+    <div class="main-grid">
+
+      <!-- COL 1: 问题与背景 -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">1</div>
+          <div class="col-title">问题与动机</div>
+        </div>
+
+        <div class="sec-label">// CORE CHALLENGES</div>
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <strong>数据效率</strong>
+            高质量 voice cloning 需要大规模训练数据和长参考录音
+          </div>
+          <div class="challenge-card">
+            <strong>情感表现</strong>
+            大多数模型依赖显式情感标签，表现力受限
+          </div>
+          <div class="challenge-card">
+            <strong>发音精度</strong>
+            多音字、罕见字、方言发音精度不足（尤其中文）
+          </div>
+          <div class="challenge-card">
+            <strong>RL 探索</strong>
+            RL 在 TTS 中 reward 设计难 + 训练不稳定
+          </div>
+        </div>
+
+        <div class="sec-label">// KEY INSIGHT</div>
+        <p style="font-size:0.8em;color:#a8a29e;line-height:1.6;">
+          仅用 <strong style="color:#fde68a">100k 小时</strong>训练数据（vs CosyVoice3 的 1M 小时），通过<strong style="color:#fde68a">两阶段架构</strong>和<strong style="color:#fde68a">GRPO 多 reward RL</strong>在开源 benchmark 上达到 SOTA，LoRA 声音定制只需 <strong style="color:#fde68a">15% 参数 + 1 小时</strong>单说话人音频。
+        </p>
+
+        <div class="fig-box" style="margin-top:14px;">
+          <img src="src/assets/pipeline.png" alt="GLM-TTS Pipeline" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">两阶段生成架构：Text-to-Token AR → Token-to-Waveform Diffusion</div>
+        </div>
+      </div>
+
+      <!-- COL 2: 核心方法 -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">2</div>
+          <div class="col-title">核心方法</div>
+        </div>
+
+        <div class="sec-label">// SPEECH TOKENIZER (基于 Whisper-VQ)</div>
+        <div class="method-item">
+          <div class="method-title">Token 率优化</div>
+          <div class="method-desc">12.5Hz → 25Hz，vocab: 16k → 32k，减少高速发音 glitch，改善笑声/呼吸等副语言特征</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Pitch Estimator Module</div>
+          <div class="method-desc">提升 pitch 建模精度，改善克隆 TTS 与参考音频的韵律对齐</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">Non-Causal Architecture</div>
+          <div class="method-desc">移除 block attention 和因果卷积，提升 ASR 和 PE 模块精度</div>
+        </div>
+
+        <div class="fig-box" style="margin-top:10px;">
+          <img src="src/assets/architecture.png" alt="Architecture" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">Speech Tokenizer + Text Tokenizer + AR 生成 + Diffusion</div>
+        </div>
+
+        <div class="sec-label">// GRPO MULTI-REWARD RL</div>
+        <div class="reward-tags">
+          <span class="reward-tag">CER</span>
+          <span class="reward-tag">SIM</span>
+          <span class="reward-tag">Emotion</span>
+          <span class="reward-tag">Laughter</span>
+        </div>
+        <div class="method-item">
+          <div class="method-title">多维正则化奖励机制</div>
+          <div class="method-desc">分层处理：individual reward regularization → weighted fusion → overall regularization</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">动态采样</div>
+          <div class="method-desc">当 batch reward 同质化时自动重采样（最多 3 次），避免梯度消失</div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">自适应梯度裁剪 (Clip-Higher)</div>
+          <div class="method-desc">ε_high 和 ε_low 随训练步动态调整——早期严格防止 reward hacking，后期放松鼓励探索</div>
+        </div>
+
+        <div class="sub-title">Phoneme-in 发音控制</div>
+        <p style="font-size:0.75em;color:#a8a29e;margin-bottom:6px;">标准字符 20% 概率替换为 phoneme；多音字/罕见字保留原文本但通过 G2P 提供 phoneme sequence。PER: 13.23% → 5.14%</p>
+
+        <div class="sub-title">Vocos2D Vocoder</div>
+        <p style="font-size:0.75em;color:#a8a29e;">2D 卷积处理频率子带；去掉 Multi-Period Discriminator；加 Discriminator Augmentation</p>
+      </div>
+
+      <!-- COL 3: 实验结果 -->
+      <div class="col">
+        <div class="col-header">
+          <div class="col-num">3</div>
+          <div class="col-title">实验结果</div>
+        </div>
+
+        <div class="sec-label">// SEED-TTS-EVAL BENCHMARK</div>
+        <div class="rtable-wrap">
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>CER↓</th>
+                <th>SIM↑</th>
+                <th>WER↓</th>
+                <th>SIM_en↑</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MiniMax-Speech</td>
+                <td>0.83</td>
+                <td>78.3</td>
+                <td>1.65</td>
+                <td>69.2</td>
+              </tr>
+              <tr>
+                <td>Seed-TTS</td>
+                <td>1.12</td>
+                <td>79.6</td>
+                <td>2.25</td>
+                <td>76.2</td>
+              </tr>
+              <tr>
+                <td>CosyVoice3</td>
+                <td>1.16</td>
+                <td>78.0</td>
+                <td>2.02</td>
+                <td>71.8</td>
+              </tr>
+              <tr>
+                <td>GLM-TTS</td>
+                <td>1.03</td>
+                <td>76.1</td>
+                <td>2.23</td>
+                <td>67.2</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>GLM-TTS_RL</td>
+                <td>0.89</td>
+                <td>76.4</td>
+                <td>1.91</td>
+                <td>68.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.72em;color:#78716c;margin-bottom:14px;">GLM-TTS_RL: CER=0.89% 接近最优，1.5B 开源模型 top-tier</p>
+
+        <div class="sec-label">// VICOS2D VS VICOS</div>
+        <div class="rtable-wrap">
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>GT</th>
+                <th>Vocos</th>
+                <th>Vocos2D</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NISQA↑</td>
+                <td>3.47</td>
+                <td>3.16</td>
+                <td style="color:#86efac;font-weight:700;">3.40</td>
+              </tr>
+              <tr>
+                <td>UTMOS↑</td>
+                <td>2.11</td>
+                <td>1.87</td>
+                <td style="color:#86efac;font-weight:700;">1.91</td>
+              </tr>
+              <tr>
+                <td>MOS↑</td>
+                <td>4.77</td>
+                <td>3.58</td>
+                <td style="color:#86efac;font-weight:700;">4.16</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="fig-box">
+          <img src="src/assets/glmtts_rl.png" alt="GRPO RL Training" onerror="this.parentElement.style.display='none'">
+          <div class="fig-cap">GRPO 多 Reward RL 训练曲线</div>
+        </div>
+
+        <div class="sec-label">// PHONEME-IN 消融</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:10px 14px;text-align:center;flex:1;">
+            <div style="font-size:1.3em;font-weight:800;color:#fca5a5;">13.23%</div>
+            <div style="font-size:0.68em;color:#78716c;">Baseline PER</div>
+          </div>
+          <div style="color:#f97316;font-size:1.2em;">→</div>
+          <div style="background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);border-radius:8px;padding:10px 14px;text-align:center;flex:1;">
+            <div style="font-size:1.3em;font-weight:800;color:#86efac;">5.14%</div>
+            <div style="font-size:0.68em;color:#78716c;">Phoneme-in PER</div>
+          </div>
+        </div>
+
+        <div class="sub-title">LoRA 声音定制</div>
+        <p style="font-size:0.75em;color:#a8a29e;margin-bottom:4px;">最低 1 小时单说话人音频，只调 15% 参数（≈全量微调效果）。0.3%-5% 参数量效果有限，15% 是稳定 production 门槛。</p>
+      </div>
+
+    </div><!-- /main-grid -->
+
+    <!-- BOTTOM STRIP -->
+    <div class="bottom-strip">
+      <div class="takeaway">
+        <div class="tk-num">01</div>
+        <div class="tk-text"><strong>GRPO 多 Reward RL</strong>在 TTS 可行：Clip-Higher + 动态采样 + 自适应梯度裁剪三合一，解决了 TTS RL 训练不稳定和 reward hacking 的核心痛点</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">02</div>
+        <div class="tk-text"><strong>数据效率</strong>：100k 小时 vs 1M+ 小时达到同等质量，说明数据清洗/质量比数量更重要</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">03</div>
+        <div class="tk-text"><strong>Phoneme-in 机制</strong>：对需要精确发音控制的垂直场景（教育/医疗/金融）很有价值，用 20% 概率替换 + 离线路由即可实现</div>
+      </div>
+      <div class="takeaway">
+        <div class="tk-num">04</div>
+        <div class="tk-text"><strong>副语言特征 RL</strong>：将 ASR 转写为空作为正 reward signal，是处理笑声/呼吸等非文本内容的聪明做法</div>
+      </div>
+    </div>
+
+  </div><!-- /poster -->
+</div><!-- /poster-wrap -->
+</body>
+</html>

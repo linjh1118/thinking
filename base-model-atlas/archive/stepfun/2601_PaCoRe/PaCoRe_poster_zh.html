@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PaCoRe - Parallel Coordinated Reasoning</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #0c0a09;
+    color: #d6d3d1;
+    padding: 20px;
+  }
+  .poster {
+    width: 1400px;
+    margin: 0 auto;
+    background: #1c1917;
+    border-radius: 16px;
+    box-shadow: 0 12px 80px rgba(0,0,0,.7);
+    overflow: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%);
+    color: #fff;
+    padding: 28px 48px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+  }
+  .header-left .venue-tag {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    margin-bottom: 10px;
+  }
+  .header-left h1 {
+    font-size: 1.85rem;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+  .header-left .subtitle {
+    font-size: .82rem;
+    color: rgba(255,255,255,.85);
+    line-height: 1.5;
+  }
+  .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .score-box {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 110px;
+  }
+  .score-box .num {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fef3c7;
+    line-height: 1;
+  }
+  .score-box .label {
+    font-size: .62rem;
+    color: rgba(255,255,255,.8);
+    margin-top: 4px;
+    font-weight: 600;
+    letter-spacing: .03em;
+  }
+  .score-box .sub {
+    font-size: .6rem;
+    color: rgba(255,255,255,.6);
+    margin-top: 2px;
+  }
+
+  /* ===== BACKLINKS ===== */
+  .backlinks {
+    margin: 0 48px;
+    padding: 8px 14px;
+    background: rgba(217,119,6,.08);
+    border: 1px solid rgba(217,119,6,.2);
+    border-radius: 8px;
+    font-size: .82rem;
+    margin-top: 16px;
+  }
+  .backlinks a {
+    color: #fbbf24;
+    text-decoration: none;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+
+  /* ===== MAIN GRID ===== */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: 16px;
+  }
+  .col {
+    padding: 20px 22px;
+    border-right: 1px solid rgba(168,162,158,.12);
+  }
+  .col:last-child { border-right: none; }
+
+  /* ===== SECTION HEAD ===== */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sec-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .72rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .sec-head h2 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #f5f5f4;
+  }
+
+  /* ===== COLORED BOXES ===== */
+  .g1 { background: rgba(146,64,14,.12); border-left: 3px solid #b45309; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .g2 { background: rgba(217,119,6,.1); border-left: 3px solid #d97706; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .g3 { background: rgba(249,115,22,.1); border-left: 3px solid #f97316; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .g4 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .g5 { background: rgba(5,150,105,.08); border-left: 3px solid #059669; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+
+  .box-title {
+    font-size: .68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+  .g1 .box-title { color: #fcd34d; }
+  .g2 .box-title { color: #fbbf24; }
+  .g3 .box-title { color: #fb923c; }
+  .g4 .box-title { color: #f87171; }
+  .g5 .box-title { color: #6ee7b7; }
+
+  .box-body {
+    font-size: .76rem;
+    color: #a8a29e;
+    line-height: 1.55;
+  }
+  .box-body strong { color: #e7e5e4; }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    background: rgba(146,64,14,.08);
+    border: 1px solid rgba(146,64,14,.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .72rem;
+    color: #d6d3d1;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .flow-row:last-child { margin-bottom: 0; }
+  .flow-node {
+    background: rgba(217,119,6,.2);
+    border: 1px solid rgba(217,119,6,.4);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: .68rem;
+    font-weight: 700;
+    color: #fde68a;
+    white-space: nowrap;
+  }
+  .flow-arrow {
+    color: #78716c;
+    font-size: .8rem;
+  }
+  .flow-label {
+    font-size: .62rem;
+    color: #78716c;
+    width: 100%;
+    padding-left: 2px;
+    margin-top: 2px;
+  }
+
+  /* ===== RESULT TABLE ===== */
+  .rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .66rem;
+    margin: 8px 0;
+  }
+  .rtable th {
+    color: #92400e;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: .6rem;
+    font-weight: 800;
+    background: rgba(146,64,14,.08);
+    border-bottom: 2px solid rgba(146,64,14,.3);
+  }
+  .rtable td {
+    padding: 4px 5px;
+    text-align: center;
+    color: #a8a29e;
+    border-bottom: 1px solid rgba(168,162,158,.08);
+  }
+  .rtable .row-head {
+    text-align: left;
+    color: #a8a29e;
+    font-weight: 600;
+    padding-left: 6px;
+  }
+  .rtable .ours td {
+    background: rgba(253,230,138,.06);
+    font-weight: 800;
+    color: #fde68a;
+  }
+  .rtable .ours .row-head {
+    color: #fde68a;
+  }
+  .rtable .best td {
+    color: #6ee7b7;
+    font-weight: 700;
+  }
+  .ttc-note {
+    font-size: .58rem;
+    color: #78716c;
+    margin-top: 3px;
+  }
+
+  /* ===== INSIGHT BOX ===== */
+  .insight-box {
+    background: rgba(5,150,105,.08);
+    border: 1px solid rgba(110,231,183,.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .insight-title {
+    font-size: .66rem;
+    font-weight: 800;
+    color: #6ee7b7;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+  }
+  .insight-item {
+    font-size: .72rem;
+    color: #a8a29e;
+    margin-bottom: 5px;
+    line-height: 1.45;
+    display: flex;
+    gap: 5px;
+  }
+  .insight-item::before {
+    content: "▸";
+    color: #34d399;
+    flex-shrink: 0;
+  }
+  .insight-item:last-child { margin-bottom: 0; }
+
+  /* ===== BOTTOM STRIP ===== */
+  .bottom-strip {
+    background: #1c1917;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid rgba(168,162,158,.15);
+    margin-top: 4px;
+  }
+  .bstrip {
+    padding: 16px 24px;
+    border-right: 1px solid rgba(168,162,158,.1);
+  }
+  .bstrip:last-child { border-right: none; }
+  .bstrip .bhead {
+    font-size: .62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #78716c;
+    margin-bottom: 5px;
+  }
+  .bstrip .bval {
+    font-size: .76rem;
+    color: #e7e5e4;
+    line-height: 1.4;
+  }
+  .bstrip .hl { color: #fbbf24; font-weight: 700; }
+
+  /* ===== TLDR CARD ===== */
+  .tldr-card {
+    background: rgba(146,64,14,.12);
+    border: 1px solid rgba(217,119,6,.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+  .tldr-label {
+    font-size: .62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #fbbf24;
+    margin-bottom: 6px;
+  }
+  .tldr-text {
+    font-size: .78rem;
+    color: #e7e5e4;
+    line-height: 1.55;
+  }
+
+  /* ===== METHOD STAGES ===== */
+  .stage-list { margin: 8px 0; }
+  .stage-item {
+    position: relative;
+    padding: 8px 8px 8px 38px;
+    margin-bottom: 8px;
+    background: rgba(146,64,14,.06);
+    border-radius: 8px;
+    border: 1px solid rgba(253,230,138,.08);
+  }
+  .stage-item::before {
+    content: counter(stage);
+    counter-increment: stage;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #d97706;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-item .stitle {
+    font-size: .74rem;
+    font-weight: 700;
+    color: #fde68a;
+    margin-bottom: 2px;
+  }
+  .stage-item .sdesc {
+    font-size: .68rem;
+    color: #a8a29e;
+    line-height: 1.4;
+  }
+
+  /* table wrapper */
+  .table-wrap { overflow-x: auto; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="venue-tag">arXiv 2601.05593 · StepFun / ByteDance</div>
+      <h1>PaCoRe: Parallel Coordinated Reasoning</h1>
+      <div class="subtitle">
+        Scaling Test-Time Compute Beyond Context Limits via Message-Passing Architecture
+      </div>
+      <div class="subtitle" style="margin-top:6px;font-size:.72rem;opacity:.8">
+        Jingcheng Hu, Yinmin Zhang, Shijie Shang et al.
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="score-box">
+        <div class="num">94.5%</div>
+        <div class="label">HMMT 2025</div>
+        <div class="sub">8B PaCoRe</div>
+      </div>
+      <div class="score-box">
+        <div class="num">93.2%</div>
+        <div class="label">GPT-5</div>
+        <div class="sub">baseline</div>
+      </div>
+      <div class="score-box">
+        <div class="num">~2M</div>
+        <div class="label">有效 TTC</div>
+        <div class="sub">tokens/problem</div>
+      </div>
+      <div class="score-box">
+        <div class="num">8B</div>
+        <div class="label">模型规模</div>
+        <div class="sub">Qwen3-8B</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKLINKS -->
+  <div class="backlinks" style="margin: 14px 48px 0;">
+    <span style="color:#78716c;">📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2601_PaCoRe%2FPaCoRe">PaCoRe.md</a>
+    &nbsp;|&nbsp;
+    <a href="https://arxiv.org/abs/2601.05593" target="_blank">arXiv 2601.05593</a>
+  </div>
+
+  <!-- MAIN 3-COLUMN GRID -->
+  <div class="main-grid" style="padding: 0 48px 0; margin-top: 14px;">
+
+    <!-- COLUMN 1: Problem + Method -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="sec-num" style="background:#92400e;">1</div>
+        <h2>问题与动机</h2>
+      </div>
+
+      <div class="tldr-card">
+        <div class="tldr-label">TL;DR</div>
+        <div class="tldr-text">
+          PaCoRe 通过多轮并行协调推理，将测试时计算（TTC）从固定上下文窗口约束中解耦——并行扩展推理轨迹，将每轮完整轨迹压缩为结论消息（Message Compaction），实现 ~2M token 有效 TTC，8B 模型 HMMT 2025 达 94.5%，超越 GPT-5。
+        </div>
+      </div>
+
+      <div class="g1">
+        <div class="box-title">核心矛盾</div>
+        <div class="box-body">
+          标准链式推理（CoT）将所有中间状态压缩在单条扩展链中，<strong>推理量严格耦合上下文窗口容量</strong>——窗口填满，推理必须停止，TTC 无法继续 scaling。
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="box-title">推理孤立主义</div>
+        <div class="box-body">
+          Vanilla 模型即使收到并行分支的丰富信息，也会忽略上下文、从头独立解题——这被称为 <strong>Reasoning Solipsism</strong>，导致并行 TTC 被浪费。
+        </div>
+      </div>
+
+      <div class="g4">
+        <div class="box-title">传统方案局限</div>
+        <div class="box-body">
+          Self-Consistency（多数投票）在复杂解结构（代码/定理证明）上迅速饱和，<strong>@256 时 HMMT 仅 84.7%</strong>，Apex 恒为 0.0%。
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="sec-num" style="background:#d97706;">2</div>
+        <h2>PaCoRe 推理流程</h2>
+      </div>
+
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <span class="flow-node">问题 x</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">Round 1: K₁=32 并行轨迹</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">压缩为 M₁</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-node">M₁ 消息集</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">Round 2: K₂=4 并行轨迹</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">压缩为 M₂</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-node">M₂ 消息集</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">Final Round: K=1</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node">答案 y</span>
+        </div>
+        <div class="flow-label">有效 TTC = Σ_r Σ_i |ω_r^(i)|，但每轮输入仅 |x| + |M_{r-1}|，上下文成本几乎恒定</div>
+      </div>
+
+      <div class="g3">
+        <div class="box-title">消息压缩 (Message Compaction)</div>
+        <div class="box-body">
+          压缩函数 <strong>C(ω) = 最终结论段</strong>（丢弃中间推导步骤），确保输入长度始终 fits 上下文窗口，而有效 TTC 可 scaling 到数百万 token。
+        </div>
+      </div>
+
+      <div class="g5">
+        <div class="box-title">两阶段课程训练</div>
+        <div class="box-body">
+          <strong>Stage 1</strong>（250 iters）：筛选低消息集准确率样本，强迫模型学综合<br>
+          <strong>Stage 2</strong>（450 iters）：筛选 0 &lt; synthesis_acc &lt; 1 的样本，聚焦综合能力
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMN 2: Training + Key Insights -->
+    <div class="col">
+
+      <div class="sec-head">
+        <div class="sec-num" style="background:#d97706;">3</div>
+        <h2>训练配方</h2>
+      </div>
+
+      <div class="g1">
+        <div class="box-title">SFT 数据</div>
+        <div class="box-body">
+          10.2M samples / 59.5B tokens，涵盖数学、代码、科学、软件工程、工具调用、逻辑推理、创意写作等领域。使用预定义规则过滤低质量数据 + N-gram 去污染（N=64）。
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="box-title">RLVR 训练</div>
+        <div class="box-body">
+          500k prompts，每步 sample 256 prompts × 16 responses。使用 <strong>off-policy PPO + GAE</strong>（γ=1, λ=1），actor lr=2e-6，critic lr=5e-6，Truncated IS ratio (C=8)，共 200 iterations。
+        </div>
+      </div>
+
+      <div class="g3">
+        <div class="box-title">推理配置三档</div>
+        <div class="box-body">
+          <table style="width:100%;font-size:.68rem;color:#a8a29e;margin-top:4px;">
+            <tr><td style="padding:2px 4px;"><strong style="color:#fde68a">Low</strong></td><td style="padding:2px 4px;">K=[4]</td><td style="padding:2px 4px;">~250k TTC</td></tr>
+            <tr><td style="padding:2px 4px;"><strong style="color:#fde68a">Medium</strong></td><td style="padding:2px 4px;">K=[16]</td><td style="padding:2px 4px;">~900k TTC</td></tr>
+            <tr><td style="padding:2px 4px;"><strong style="color:#fde68a">High</strong></td><td style="padding:2px 4px;">K=[32,4]</td><td style="padding:2px 4px;">~2M TTC</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="sec-num" style="background:#f97316;">4</div>
+        <h2>核心设计洞察</h2>
+      </div>
+
+      <div class="insight-box">
+        <div class="insight-title">Key Insights</div>
+        <div class="insight-item">并行协调推理比序贯 scaling 更高效：同等 TTC 时，PaCoRe 远优于 sequential reasoning</div>
+        <div class="insight-item">无消息压缩时，performance 在 TTC scaling 后退化并受限于上下文长度</div>
+        <div class="insight-item">Cross-checking 语言标记在训练中稳步增加，证明模型真正学会协调而非简单聚合</div>
+        <div class="insight-item">Emergent Correctness Rate（全部错误输入下仍生成正确答案）持续上升，说明元认知重建能力</div>
+        <div class="insight-item">消息集大小训练策略：|M|~U(8,16) 效果最佳（HMMT 85.2, LCB 65.1）</div>
+      </div>
+
+      <div class="g5" style="margin-top:8px;">
+        <div class="box-title">SWE-Verified 泛化</div>
+        <div class="box-body">
+          PaCoRe-8B (low) = <strong style="color:#6ee7b7">34.0%</strong> vs RLVR-8B = 29.8%，无需任务专项微调即实现跨领域迁移。
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMN 3: Results -->
+    <div class="col">
+
+      <div class="sec-head">
+        <div class="sec-num" style="background:#b45309;">5</div>
+        <h2>实验结果</h2>
+      </div>
+
+      <div class="tldr-card">
+        <div class="tldr-label">Key Result</div>
+        <div class="tldr-text">
+          8B 模型 HMMT 2025 达 <strong style="color:#fbbf24">94.5%</strong>，超越 GPT-5 的 93.2%，通过 scaling 有效 TTC 到 ~200 万 token 实现。
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="rtable">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>AIME<br>2025</th>
+              <th>HMMT<br>2025</th>
+              <th>IMO<br>AnsBench</th>
+              <th>Apex</th>
+              <th>LCB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-head">GPT-5</td>
+              <td>93.5</td><td>93.2</td><td>72.9</td><td>1.0</td><td>83.5</td>
+            </tr>
+            <tr>
+              <td class="row-head">Kimi-K2-Thinking</td>
+              <td>95.3</td><td>86.5</td><td>76.5</td><td>0.8</td><td>79.2</td>
+            </tr>
+            <tr>
+              <td class="row-head">Qwen3-235B-Thinking</td>
+              <td>91.6</td><td>82.3</td><td>71.7</td><td>3.3</td><td>74.5</td>
+            </tr>
+            <tr>
+              <td class="row-head">DeepSeek-V3.1</td>
+              <td>90.2</td><td>86.1</td><td>63.0</td><td>1.4</td><td>74.9</td>
+            </tr>
+            <tr>
+              <td class="row-head">RLVR-8B (baseline)</td>
+              <td>84.1</td><td>75.4</td><td>64.6</td><td>0.0</td><td>70.6</td>
+            </tr>
+            <tr class="ours">
+              <td class="row-head">PaCoRe-8B (Low) K=[4]</td>
+              <td>89.7</td><td>88.1</td><td>76.1</td><td>0.7</td><td>75.8</td>
+            </tr>
+            <tr class="ours">
+              <td class="row-head">PaCoRe-8B (Med) K=[16]</td>
+              <td>92.5</td><td>92.9</td><td>77.3</td><td>1.4</td><td>76.7</td>
+            </tr>
+            <tr class="ours best">
+              <td class="row-head">PaCoRe-8B (High) K=[32,4]</td>
+              <td>93.7</td><td class="best-cell" style="color:#6ee7b7;font-weight:700;">94.5</td><td>78.4</td><td>2.3</td><td>78.2</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="ttc-note">* LCB = LiveCodeBench; IMO AnsBench = IMO AnswerBench; 数字为准确率(%)，无括号为 pass@1</div>
+      </div>
+
+      <div class="g4" style="margin-top:8px;">
+        <div class="box-title">PaCoRe vs Self-Consistency</div>
+        <div class="box-body">
+          <table class="rtable" style="margin:4px 0;">
+            <tr><th></th><th>TTC</th><th>HMMT</th><th>AIME</th></tr>
+            <tr><td class="row-head">SC @64</td><td>3.1M</td><td>85.1</td><td>89.5</td></tr>
+            <tr><td class="row-head">SC @256</td><td>12.4M</td><td>84.7</td><td>90.0</td></tr>
+            <tr class="ours"><td class="row-head">PaCoRe High</td><td>1.8M</td><td style="color:#6ee7b7;font-weight:700;">94.5</td><td style="color:#fde68a;font-weight:700;">93.7</td></tr>
+          </table>
+          <div style="font-size:.66rem;color:#78716c;">PaCoRe 用更少 TTC（1.8M vs 12.4M）达到更高准确率——高效利用测试时计算。</div>
+        </div>
+      </div>
+
+      <div class="g5" style="margin-top:8px;">
+        <div class="box-title">Ablation: K₂ (第二轮宽度)</div>
+        <div class="box-body">
+          <table class="rtable" style="margin:4px 0;">
+            <tr><th>K₂</th><th>HMMT 2025</th><th>LCB</th></tr>
+            <tr><td class="row-head">2</td><td>94.0</td><td>77.4</td></tr>
+            <tr class="ours"><td class="row-head">4 (Best)</td><td>94.6</td><td>78.4</td></tr>
+            <tr><td class="row-head">8</td><td>94.0</td><td>77.5</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">核心创新</div>
+      <div class="bval">多轮并行协调推理 + 消息压缩，解耦 <span class="hl">TTC 与上下文窗口</span></div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">关键数字</div>
+      <div class="bval">8B 模型 HMMT 2025 = <span class="hl">94.5%</span>（GPT-5: 93.2%），有效 TTC ~<span class="hl">2M tokens</span></div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">训练方法</div>
+      <div class="bval">大规模 Outcome-based RL，诱导游荡 <span class="hl">Synthesis</span> 能力，抛弃简单聚合</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">核心洞察</div>
+      <div class="bval"><span class="hl">Reasoning Solipsism</span> 是并行 TTC 最大敌人；消息压缩是 scaling TTC 的关键</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

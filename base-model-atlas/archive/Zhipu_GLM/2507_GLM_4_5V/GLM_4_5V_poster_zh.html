@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLM-4.5V / GLM-4.1V-Thinking：可扩展多模态推理 — 中文海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — red/coral gradient */
+.header { background: linear-gradient(120deg, #7f1d1d 0%, #dc2626 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fde68a; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(220,38,38,.4); border: 1px solid #f87171; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-red .nc { background: #dc2626 }
+.c-orange .nc { background: #ea580c }
+.c-amber .nc { background: #d97706 }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; }
+.c-red h2 { color: #fca5a5 }
+.c-orange h2 { color: #fdba74 }
+.c-amber h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626 }
+.g2 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.g3 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fca5a5 }
+.g2 .title { color: #fdba74 }
+.g3 .title { color: #fde68a }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(220,38,38,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #7f1d1d; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(220,38,38,.1); font-weight: 700; font-size: .66rem; color: #fca5a5; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(220,38,38,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #dc2626; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fca5a5; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* PIPELINE FLOW */
+.pipeline-flow { display: flex; gap: 6px; align-items: center; margin: 10px 0; flex-wrap: wrap }
+.pipe-step { background: rgba(220,38,38,.1); border: 1px solid rgba(220,38,38,.3); border-radius: 6px; padding: 8px 10px; text-align: center; min-width: 90px }
+.pipe-step .pname { font-size: .72rem; font-weight: 700; color: #fca5a5 }
+.pipe-step .pdesc { font-size: .6rem; color: #a8a29e; margin-top: 2px }
+.pipe-arrow { color: #dc2626; font-size: 1.2rem; font-weight: bold }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(220,38,38,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(220,38,38,.06); border: 1px solid rgba(220,38,38,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="GLM_4_5V_poster.html">EN</a><a class="active" href="GLM_4_5V_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FZhipu_GLM%2F2507_GLM_4_5V%2FGLM-4.5V-Multimodal-Reasoning-RLCS" style="text-decoration: none;">GLM-4.5V Multimodal Reasoning RLCS</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2507.01006" target="_blank" style="text-decoration: none;">arXiv:2507.01006</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2507.01006 &nbsp;|&nbsp; Zhipu AI / Tsinghua</span>
+    <div class="zh-title">GLM-4.5V：可扩展多模态推理，42 个 benchmark 开源 SOTA</div>
+    <h1>GLM-4.5V / GLM-4.1V-Thinking: <span>Scalable Multimodal Reasoning via RLCS</span></h1>
+    <div class="authors">GLM-V Team &nbsp;|&nbsp; Wenyi Hong, Xiaotao Gu, Jie Tang, et al. &nbsp;|&nbsp; Zhipu AI &amp; Tsinghua</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">42</div><div class="sub">开源 SOTA<br>benchmarks</div></div>
+    <div class="score-box"><div class="num">29/42</div><div class="sub">GLM-4.1V-9B<br>超越 Qwen2.5-VL-72B</div></div>
+    <div class="score-box"><div class="num">22</div><div class="sub">可比 Gemini<br>2.5-Flash</div></div>
+    <div class="score-box"><div class="num">106B-A12B</div><div class="sub">旗舰 MoE<br>12B 激活参数</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题与动机 -->
+<div class="col">
+  <div class="sec-head c-red"><div class="nc">1</div><h2>问题与动机</h2></div>
+  <p class="body">多模态任务（STEM、视频、GUI Agent、OCR 等）对 VLM 推理能力要求已远超简单视觉感知，现有开源社区缺乏能在广泛场景一致超越同尺寸非-thinking 模型的多模态推理模型。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心挑战</div>
+      <p>如何将 LLM 端 Scalable RL 的成功范式迁移到 VLM 端，实现跨领域推理能力的系统性提升？</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">任务覆盖</div>
+      <p>STEM 推理 &nbsp;|&nbsp; 视频理解 &nbsp;|&nbsp; GUI Agent &nbsp;|&nbsp; OCR 文档解析 &nbsp;|&nbsp; 图表理解 &nbsp;|&nbsp; 视觉定位</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">核心洞察</div>
+      <p>RLCS（课程采样强化学习）根据模型当前能力动态筛选最 informative 样本，是 RL 在 VLM 端成功的核心工程 trick。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/intro_new.png" alt="GLM-4.5V 模型概览" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">图 1：GLM-4.5V / GLM-4.1V-Thinking 模型概览</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 核心方法 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>训练管线与 RLCS</h2></div>
+
+  <div class="pipeline-flow">
+    <div class="pipe-step">
+      <div class="pname">Pretrain</div>
+      <div class="pdesc">视觉基础预训练</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pname">SFT</div>
+      <div class="pdesc">Cold-start 统一格式</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pname">RLCS</div>
+      <div class="pdesc">课程采样强化学习</div>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">视觉基础预训练</div>
+      <p>大规模图文对 + 交错图文学术语料 + 文档图表 + 教学视频 + 合成图像 grounding 数据。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">SFT Cold-Start</div>
+      <p>跨领域 domain-specific SFT 数据集，教会模型标准化格式的推理过程。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">RLCS — 核心创新</div>
+      <p>离线+在线难度评估，pass@k 打分，优先采样中间难度样本；Ratio EMA 维持训练稳定性。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">核心训练 Tricks</div>
+    <p>Force Answering（强制截断输出答案）&nbsp;|&nbsp; 去掉 KL Loss（VLM 的 KL 上升更快）&nbsp;|&nbsp; Clip-Higher（防 entropy collapse）&nbsp;|&nbsp; top-p=1（避免乱码）&nbsp;|&nbsp; Per-sample loss（比 per-token 更稳定）</p>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/glm-4v-thinking.png" alt="GLM-4V Thinking 架构" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">图 2：GLM-4.1V-Thinking 架构示意</div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验结果与关键发现</h2></div>
+
+  <p class="body">在 42 个 public benchmark 上全面超越同尺寸开源模型，在 22 个 benchmark 上可比/超越 Gemini-2.5-Flash。</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>GLM-4.5V-Thinking</th><th>Qwen2.5-VL-72B</th></tr>
+    <tr class="cat"><td colspan="3">核心对比</td></tr>
+    <tr><td class="left">MMBench v1.1</td><td class="best">88.2</td><td>—</td></tr>
+    <tr><td class="left">MMStar</td><td class="best">75.3</td><td>70.8</td></tr>
+    <tr><td class="left">MathVista</td><td class="best">SOTA</td><td>74.8</td></tr>
+    <tr class="ours"><td class="left">GLM-4.1V-9B vs Qwen2.5-VL-72B</td><td colspan="2" style="text-align:center;color:#fde68a">29/42 benchmark 胜出</td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">跨领域迁移</div>
+      <p>在一个领域训练会 boost 其他领域性能，GUI Agent 数据（OCR+视觉定位+逻辑推理）是最强跨领域 transfer 信号。</p>
+    </div>
+    <div class="gap-box g1">
+      <div class="title">基础设施</div>
+      <p>Sequence Packing + Gradient Accumulation（32K context）&nbsp;|&nbsp; Load Balancing across DP Ranks&nbsp;|&nbsp; intra-rank 优化半减 F/B 时间。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/cross_domain_heatmap.png" alt="跨领域热力图" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">图 3：跨领域 RL 迁移热力图</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心结论 1</div>
+    <p><span class="hl">RLCS 课程采样是关键</span>：不是简单混合多领域数据，而是根据模型当前能力动态筛选最 informative 样本。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 2</div>
+    <p><span class="hl">去 KL Loss</span>：VLM 的 KL 散度上升更快，加 KL loss 会限制能力，与 LLM RL 不同。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 3</div>
+    <p><span class="hl">GUI 数据迁移强</span>：OCR/STEM 数据可辅助 GUI Agent 训练，跨领域迁移比预期更广泛。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 4</div>
+    <p><span class="hl">9B 打 72B</span>：GLM-4.1V-9B 在 29 个 benchmark 上超越 Qwen2.5-VL-72B，小模型でも 大效果。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

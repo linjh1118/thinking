@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen-Scope — SAE 可解释性工具套件</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; color: #d6d3d1; font-size: 14px; }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; margin: 20px auto; }
+
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 50%, #a855f7 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.header-left h1 { font-size: 2.1rem; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 6px; }
+.header-left .subtitle { font-size: 1.0rem; color: rgba(255,255,255,0.88); font-weight: 500; }
+.header-left .authors { font-size: .78rem; color: rgba(255,255,255,0.7); margin-top: 6px; }
+.header-right { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 14px; text-align: center; min-width: 110px; }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #e9d5ff; line-height: 1; }
+.score-box .sub { font-size: .62rem; color: rgba(255,255,255,0.75); margin-top: 4px; line-height: 1.3; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 20px 22px; border-right: 1px solid rgba(168,162,158,.15); }
+.col:last-child { border-right: none; }
+
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #f5f5f4; }
+
+.g1 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+.g2 { background: rgba(139,92,246,.08); border-left: 3px solid #8b5cf6; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+.g3 { background: rgba(168,85,247,.08); border-left: 3px solid #a855f7; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+.g4 { background: rgba(14,165,233,.08); border-left: 3px solid #0ea5e9; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+.g5 { background: rgba(5,150,105,.08); border-left: 3px solid #059669; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 10px; }
+
+.box-title { font-size: .78rem; font-weight: 800; margin-bottom: 5px; }
+.g1 .box-title { color: #c4b5fd; }
+.g2 .box-title { color: #d8b4fe; }
+.g3 .box-title { color: #e9d5ff; }
+.g4 .box-title { color: #7dd3fc; }
+.g5 .box-title { color: #34d399; }
+
+.box-text { font-size: .76rem; color: #a8a29e; line-height: 1.5; }
+.box-text strong { color: #d6d3d1; }
+
+.kv-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(168,162,158,.1); font-size: .76rem; }
+.kv-row:last-child { border-bottom: none; }
+.kv-key { color: #78716c; }
+.kv-val { color: #e9d5ff; font-weight: 700; }
+
+.rtable { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 8px 0; }
+.rtable th { background: rgba(76,29,149,.5); color: #e9d5ff; padding: 5px 6px; text-align: center; font-weight: 700; border: 1px solid rgba(124,58,237,.3); }
+.rtable td { padding: 4px 6px; text-align: center; border: 1px solid rgba(168,162,158,.12); color: #a8a29e; }
+.rtable .ours td { background: rgba(192,132,252,.08); color: #e9d5ff; font-weight: 700; }
+
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.trick-title { font-size: .68rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.trick-text { font-size: .74rem; color: #a8a29e; line-height: 1.45; }
+
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(139,92,246,.3); }
+.bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.12); }
+.bstrip:last-child { border-right: none; }
+.bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bval { font-size: .78rem; color: #d6d3d1; line-height: 1.4; }
+.bval .hl { color: #a855f7; font-weight: 700; }
+
+.backlinks { margin: 16px 48px 20px; padding: 10px 16px; background: rgba(124,58,237,.08); border: 1px solid rgba(124,58,237,.2); border-radius: 8px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.backlinks a { color: #a855f7; text-decoration: none; font-size: .82rem; }
+.backlinks a:hover { text-decoration: underline; }
+.backlinks .tag { font-size: .72rem; color: #78716c; }
+
+.flow-steps { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.flow-step { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(124,58,237,.06); border-radius: 6px; border: 1px solid rgba(192,132,252,.1); }
+.flow-step .num { width: 20px; height: 20px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.flow-step .text { font-size: .74rem; color: #a8a29e; line-height: 1.4; }
+.flow-step .text strong { color: #d6d3d1; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="backlinks" style="margin: 16px 48px 0;">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2605_Qwen_Scope%2Fmeta">Qwen-Scope 技术报告</a>
+    &nbsp;|&nbsp;
+    <a href="https://arxiv.org/abs/2605.11887" target="_blank">arXiv:2605.11887</a>
+    &nbsp;|&nbsp;
+    <a href="https://github.com/QwenLM" target="_blank">GitHub</a>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>Qwen-Scope</h1>
+      <div class="subtitle">稀疏自编码器 — 从事后分析到模型开发的实用接口</div>
+      <div class="authors">通义实验室 · 阿里云 · arXiv 2605.11887</div>
+    </div>
+    <div class="header-right">
+      <div class="score-box">
+        <div class="num">14</div>
+        <div class="sub">SAE 组</div>
+      </div>
+      <div class="score-box">
+        <div class="num">7</div>
+        <div class="sub">模型变体</div>
+      </div>
+      <div class="score-box">
+        <div class="num">0.85</div>
+        <div class="sub">Spearman ρ</div>
+      </div>
+      <div class="score-box">
+        <div class="num">75.5%</div>
+        <div class="sub">Partial Pearson</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#7c3aed;">1</div>
+        <h2>问题与动机</h2>
+      </div>
+      <div class="g1">
+        <div class="box-title">LLM 的不透明性问题</div>
+        <div class="box-text">
+          大语言模型能力强大，但内部决策过程不透明，限制了我们检查、控制和系统改进模型的能力。
+        </div>
+      </div>
+      <div class="g2">
+        <div class="box-title">SAE 的潜力</div>
+        <div class="box-text">
+          稀疏自编码器（SAE）将模型激活分解为可解释的稀疏特征。当前 SAE 工作流仍主要将特征视为<strong>事后分析对象</strong>，与实际模型开发流程脱节。
+        </div>
+      </div>
+      <div class="g3">
+        <div class="box-title">Qwen-Scope 核心观点</div>
+        <div class="box-text">
+          可解释性应超越描述，成为<strong>控制、审计和改进 LLM 的实用接口</strong>。
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#8b5cf6;">2</div>
+        <h2>SAE 套件覆盖</h2>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">Dense 模型</span>
+        <span class="kv-val">Qwen3-1.7B/8B, Qwen3.5-2B/9B/27B</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">MoE 模型</span>
+        <span class="kv-val">Qwen3-30B-A3B, Qwen3.5-35B-A3B</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">SAE 宽度</span>
+        <span class="kv-val">32K / 64K / 80K / 128K</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">稀疏度</span>
+        <span class="kv-val">Top-50 / Top-100</span>
+      </div>
+      <div class="kv-row">
+        <span class="kv-key">扩展因子</span>
+        <span class="kv-val">Dense 16× / MoE 64×</span>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#a855f7;">3</div>
+        <h2>四大应用方向</h2>
+      </div>
+
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="num">①</div>
+          <div class="text"><strong>Steering</strong>：通过特征方向控制语言、概念和偏好，无需修改模型权重</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">②</div>
+          <div class="text"><strong>Evaluation</strong>：激活特征作为基准冗余和能力覆盖的表征级代理</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">③</div>
+          <div class="text"><strong>数据分类</strong>：SAE 特征支持多语言毒性分类和安全导向数据合成</div>
+        </div>
+        <div class="flow-step">
+          <div class="num">④</div>
+          <div class="text"><strong>Post-training</strong>：SAE 派生信号融入 SFT 和 RL 目标，减少代码切换和重复</div>
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#0ea5e9;">4</div>
+        <h2>核心发现：特征冗余</h2>
+      </div>
+      <div class="g4">
+        <div class="box-title">特征冗余指标 ρ ≈ 0.85</div>
+        <div class="box-text">
+          在 17 个基准、26 个预训练检查点上，特征冗余与性能冗余的 Spearman 相关系数达到 <strong>ρ ≈ 0.85</strong>。无需模型评估即可估算基准冗余。
+        </div>
+      </div>
+      <div class="trick-box">
+        <div class="trick-title">关键发现</div>
+        <div class="trick-text">
+          GSM8K 被 MATH 覆盖 63% 特征（反向仅 10%）。代码基准（EvalPlus, MBPP, MultiPL-E）形成紧密聚类。
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#059669;">5</div>
+        <h2>实验结果</h2>
+      </div>
+
+      <div class="g3">
+        <div class="box-title">特征冗余 vs 性能冗余（17 基准）</div>
+        <div class="box-text">Spearman ρ ≈ 0.85，验证特征冗余可作为性能冗余的无评估代理指标。</div>
+      </div>
+
+      <div class="g5">
+        <div class="box-title">基准相似性分析（控制 MMLU 后）</div>
+        <table class="rtable">
+          <tr><th>相关性</th><th>直接</th><th>控制 MMLU</th></tr>
+          <tr class="ours"><td>Pearson</td><td>68.4%</td><td>75.5%</td></tr>
+          <tr class="ours"><td>Spearman</td><td>60.7%</td><td>71.3%</td></tr>
+        </table>
+      </div>
+
+      <div class="g1">
+        <div class="box-title">评估套件设计建议</div>
+        <div class="box-text">
+          • GSM8K 可从 MATH 推断（63% 覆盖），低重叠基准应保留<br>
+          • 代码基准形成紧密聚类，可合并<br>
+          • 广泛知识基准（MMLU-Pro）覆盖专项基准（TheoremQA 56-68%）
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">研究启发</div>
+        <div class="trick-text">
+          特征重叠分析可指导评估套件设计：无需模型评估即可判断基准是否冗余。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">开源规模</div>
+      <div class="bval"><span class="hl">14 组 SAE</span> 覆盖 Dense + MoE</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">评估效率</div>
+      <div class="bval">特征冗余 <span class="hl">ρ ≈ 0.85</span> 代理性能冗余</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">应用范围</div>
+      <div class="bval"><span class="hl">四大方向</span>：Steering/评估/合成/优化</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">核心洞察</div>
+      <div class="bval">SAE 是<span class="hl">实用接口</span>而非事后工具</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

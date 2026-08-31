@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUI Exploration Lab Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; }
+
+.header { background: linear-gradient(120deg, #1e3a8a 0%, #3b82f6 40%, #60a5fa 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hl { display: flex; flex-direction: column; gap: 6px; }
+.hl h1 { font-size: 1.55rem; font-weight: 900; color: #fff; line-height: 1.2; }
+.hl .sub { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+.hl .authors { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.score-row { display: flex; gap: 10px; }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 110px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; }
+.score-box .sub { font-size: .6rem; color: rgba(255,255,255,.7); margin-top: 2px; line-height: 1.2; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.col:last-child { border-right: none; }
+
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.h1 .nc { background: #2563eb; }
+.h2 .nc { background: #3b82f6; }
+.h3 .nc { background: #60a5fa; }
+.sec-head h2 { font-size: .95rem; font-weight: 800; color: #d6d3d1; }
+
+.box { background: rgba(37,99,235,.07); border: 1px solid rgba(37,99,235,.2); border-left: 3px solid #2563eb; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box2 { background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.2); border-left: 3px solid #3b82f6; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box h3 { font-size: .78rem; font-weight: 800; color: #93c5fd; margin-bottom: 4px; }
+.box p, .box2 p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.stage-list { margin: 8px 0; }
+.stage-item { position: relative; padding: 7px 8px 7px 36px; margin-bottom: 5px; background: rgba(59,130,246,.05); border-radius: 7px; border: 1px solid rgba(59,130,246,.12); }
+.stage-item::before { content: attr(data-n); position: absolute; left: 8px; top: 7px; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; color: #fff; font-size: .65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.stage-item .stitle { font-size: .72rem; font-weight: 700; color: #93c5fd; }
+.stage-item p { font-size: .68rem; color: #a8a29e; margin-top: 2px; }
+
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0; }
+.rtable th { color: #fff; padding: 6px 8px; text-align: center; font-weight: 700; background: rgba(37,99,235,.3); }
+.rtable td { padding: 5px 7px; text-align: center; border-bottom: 1px solid rgba(168,162,158,.07); color: #d6d3d1; font-size: .68rem; }
+.rtable .ours td { background: rgba(253,230,138,.08); color: #fde68a; font-weight: 800; }
+.rtable .best td { background: rgba(34,197,94,.1); color: #86efac; font-weight: 800; }
+
+.insight { background: rgba(147,197,253,.07); border: 1px solid rgba(147,197,253,.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+.insight h3 { font-size: .7rem; font-weight: 800; color: #93c5fd; margin-bottom: 4px; }
+.insight p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(168,162,158,.15); padding: 16px 48px; gap: 16px; }
+.bstrip { border-right: 1px solid rgba(168,162,158,.08); padding-right: 16px; }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip .hl { color: #fbbf24; font-weight: 800; font-size: .88rem; }
+.bstrip p { font-size: .7rem; color: #a8a29e; line-height: 1.4; }
+
+.backlinks { margin: 16px 48px 0; padding: 8px 14px; background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.2); border-radius: 8px; font-size: .8rem; }
+.backlinks a { color: #93c5fd; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.badge-bar { padding: 6px 48px; background: rgba(37,99,235,.05); border-bottom: 1px solid rgba(37,99,235,.1); }
+.badge-bar span { font-size: .68rem; color: #93c5fd; background: rgba(37,99,235,.15); border: 1px solid rgba(37,99,235,.25); border-radius: 4px; padding: 2px 8px; font-weight: 700; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="badge-bar">
+    <span>arXiv: 2512.02423</span>
+    <span>GUI Agent</span>
+    <span>RL</span>
+    <span>Simulation</span>
+    <span>Navigation</span>
+  </div>
+  <div class="header">
+    <div class="hl">
+      <h1>GUI Exploration Lab</h1>
+      <div class="sub">Enhancing Screen Navigation in Agents via Multi-Turn Reinforcement Learning</div>
+      <div class="authors">Haolong Yan, Yeqing Shen, Xin Huang, et al. · StepFun AI · 2025</div>
+    </div>
+    <div class="score-row">
+      <div class="score-box"><div class="num">63.25%</div><div class="sub">OOD Overall</div></div>
+      <div class="score-box"><div class="num">25.16%</div><div class="sub">Pass@5 AndroidWorld</div></div>
+      <div class="score-box"><div class="num">72.03%</div><div class="sub">Real-world Avg</div></div>
+      <div class="score-box"><div class="num">+13.7%</div><div class="sub">ST-RL vs SFT OOD</div></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="col">
+      <div class="sec-head h1"><div class="nc">1</div><h2>Problem & Environment</h2></div>
+      <div class="box">
+        <h3>GUI 导航的核心挑战</h3>
+        <p>当前瓶颈已从 grounding（选图标）转移到 screen navigation（理解导航图、点击正确图标到达目标页面）。</p>
+      </div>
+      <div class="box2">
+        <h3>GE-Lab 仿真引擎</h3>
+        <p>• 树状导航图：节点=页面，边=跳转</p>
+        <p>• 合成图标：随机命名防作弊</p>
+        <p>• 完全可观测：元数据支持低成本轨迹合成</p>
+      </div>
+      <div class="insight">
+        <h3>💡 仿真 → 真实迁移</h3>
+        <p>GE-Lab 训练的 agent 在真实世界 benchmark（ScreenSpot、AndroidWorld）上同样表现最优。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h2"><div class="nc">2</div><h2>Method: Three-Stage RL</h2></div>
+      <div class="stage-list">
+        <div class="stage-item" data-n="①">
+          <div class="stitle">SFT — 记忆基础</div>
+          <p>Edge + Path 数据，ID: 98.89%，但 OOD: 55.45%</p>
+        </div>
+        <div class="stage-item" data-n="②">
+          <div class="stitle">ST-RL — 单步纠正</div>
+          <p>GRPO + 4-component reward，OOD 提升至 63.06%</p>
+        </div>
+        <div class="stage-item" data-n="③">
+          <div class="stitle">MT-RL — 多轮探索</div>
+          <p>A2B reward + 回溯机制，Pass@5 25.16%（最高）</p>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Reward Hacking 对策</h3>
+        <p>减少 action space 多样性，让模型专注于 click 动作而非 premature complete。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h3"><div class="nc">3</div><h2>Results</h2></div>
+      <table class="rtable">
+        <tr><th>Model</th><th>ID</th><th>OOD</th><th>P@1</th><th>P@5</th></tr>
+        <tr><td>SFT</td><td>98.89</td><td>55.45</td><td>14.30</td><td>20.86</td></tr>
+        <tr class="ours"><td>ST-RL</td><td>97.63</td><td>63.06</td><td>17.22</td><td>22.34</td></tr>
+        <tr class="best"><td>MT-RL</td><td>67.33</td><td>63.25</td><td>17.47</td><td>25.16</td></tr>
+      </table>
+      <div class="insight">
+        <h3>💡 SFT 过度损害 RL</h3>
+        <p>早期 SFT epoch 初始化 RL 达到最高 reward。过多 SFT → plasticity 丧失。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 MT-RL ID 低但泛化强</h3>
+        <p>MT-RL 在 ID 上低于 ST-RL，但在交互 benchmark 上最优。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1</div>
+      <div class="hl">三阶段范式标准</div>
+      <p>SFT 记忆基础 → ST-RL 泛化 → MT-RL 探索，可能成为 Agent 训练的标准范式</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2</div>
+      <div class="hl">SFT 要适度</div>
+      <p>保留多样性避免 plasticity 丧失，early SFT epoch 初始化 RL 效果最佳</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3</div>
+      <div class="hl">仿真设计决定研究质量</div>
+      <p>随机图标命名防止模型作弊，透明元数据使精确 reward 成为可能</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4</div>
+      <div class="hl">MT-RL 最接近真实场景</div>
+      <p>交互训练比大量单轮 sampling 更高效，72.03% 真实世界平均分验证</p>
+    </div>
+  </div>
+
+  <div class="backlinks">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2512_GUI_Exploration_Lab%2FGUI_Exploration_Lab">GUI_Exploration_Lab.md</a>
+    · arXiv: <a href="https://arxiv.org/abs/2512.02423">2512.02423</a>
+  </div>
+</div>
+</body>
+</html>

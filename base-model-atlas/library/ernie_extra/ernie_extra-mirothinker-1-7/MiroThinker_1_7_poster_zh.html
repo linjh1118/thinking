@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiroThinker-1.7 & H1 — 中文研究海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — purple gradient */
+.header { background: linear-gradient(120deg, #2e1065 0%, #5b21b6 40%, #7c3aed 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #e9d5ff }
+.header-left .zh-title { font-size: 1.1rem; color: #c4b5fd; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(124,58,237,.4); border: 1px solid #a78bfa; color: #e9d5ff; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #c4b5fd; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-purple .nc { background: #7c3aed }
+.c-violet .nc { background: #8b5cf6 }
+.c-indigo .nc { background: #4f46e5 }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #e9d5ff }
+.c-purple h2 { color: #ddd6fe }
+.c-violet h2 { color: #c4b5fd }
+.c-indigo h2 { color: #a5b4fc }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed }
+.g2 { background: rgba(139,92,246,.08); border-left: 3px solid #8b5cf6 }
+.g3 { background: rgba(79,70,229,.08); border-left: 3px solid #4f46e5 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #ddd6fe }
+.g2 .title { color: #c4b5fd }
+.g3 .title { color: #a5b4fc }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(124,58,237,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #2e1065; color: #e9d5ff; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(124,58,237,.1); font-weight: 700; font-size: .66rem; color: #ddd6fe; text-align: left }
+.rtable .ours td { background: rgba(233,213,255,.06); font-weight: 800; color: #e9d5ff }
+.rtable .best td.dv { color: #c4b5fd; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(124,58,237,.06); border-radius: 8px; border: 1px solid rgba(233,213,255,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #ddd6fe; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* COMPONENT BOX (dark) */
+.comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 }
+.comp-item { background: rgba(124,58,237,.06); border: 1px solid rgba(233,213,255,.1); border-radius: 8px; padding: 10px 12px; text-align: center }
+.comp-item .cicon { font-size: 1.2rem; margin-bottom: 4px }
+.comp-item .clabel { font-size: .72rem; font-weight: 700; color: #c4b5fd }
+.comp-item .cdesc { font-size: .66rem; color: #a8a29e; margin-top: 2px }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(124,58,237,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #c4b5fd; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(124,58,237,.06); border: 1px solid rgba(124,58,237,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #c4b5fd }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #c4b5fd; border-color: rgba(196,181,253,.55) }
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="MiroThinker_1_7_poster.html">EN</a><a class="active" href="MiroThinker_1_7_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMiroMind%2F2603_MiroThinker_1_7%2FMiroThinker-17-H1-Towards-Heavy-Duty-Research-Agents" style="text-decoration: none;">MiroThinker-1.7 & H1: Heavy-Duty Research Agents</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.15726" target="_blank" style="text-decoration: none;">arXiv:2603.15726</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.15726 &nbsp;|&nbsp; MiroMind AI</span>
+    <div class="zh-title">MiroThinker-1.7 & H1：通过验证实现重型 Research Agent</div>
+    <h1>MiroThinker-1.7 & H1: <span>Verification-Enhanced</span> Heavy-Duty Research Agents</h1>
+    <div class="authors">MiroMind Team &nbsp;|&nbsp; S. Bai, L. Bing, L. Lei et al.</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">88.2</div><div class="sub">BrowseComp<br>第一</div></div>
+    <div class="score-box"><div class="num">88.5</div><div class="sub">GAIA<br>比 GPT-5 高 12.1</div></div>
+    <div class="score-box"><div class="num">256K</div><div class="sub">Context<br>Window</div></div>
+    <div class="score-box"><div class="num">300</div><div class="sub">工具调用<br>每任务上限</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 验证架构 -->
+<div class="col">
+  <div class="sec-head c-purple"><div class="nc">1</div><h2>核心问题：重型 Research Agent 的挑战</h2></div>
+  <p class="body">复杂长程推理面临三大挑战：交互步骤可靠性（错误级联传播）、整体推理一致性（需要连贯证据链）、heavy-duty 能力要求（open-web research、scientific reasoning、financial analysis）。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心创新：将验证嵌入推理</div>
+      <p>与单纯拉长 reasoning chain 不同，Verification Agent 将<strong>验证直接嵌入推理过程</strong>——Local Verification 评估中间步骤，Global Verification 审计整体轨迹。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figs/framework.png" alt="MiroThinker 系统架构">
+    <div class="fig-cap">图 1：MiroThinker 系统架构 —— Verification 嵌入推理</div>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-item">
+      <div class="cicon">🔍</div>
+      <div class="clabel">Local Verification</div>
+      <div class="cdesc">评估中间推理步骤，即时修正错误结论</div>
+    </div>
+    <div class="comp-item">
+      <div class="cicon">🌐</div>
+      <div class="clabel">Global Verification</div>
+      <div class="cdesc">审计整体轨迹，确保证据链连贯性</div>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-violet"><div class="nc">2</div><h2>MiroThinker-1.7: Agentic Mid-Training</h2></div>
+
+  <p class="body">强调三大核心能力：<strong>结构化规划</strong>（Structured Planning）、<strong>上下文推理</strong>（Contextual Reasoning）、<strong>工具交互</strong>（Tool Interaction）。</p>
+
+  <div class="fig-box">
+    <img src="src/figs/training_pipeline.png" alt="训练流程">
+    <div class="fig-cap">图 2：Agentic Mid-Training 流程</div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Structured Planning</div>
+      <p>分解复杂任务为可执行的子步骤，建立清晰的执行路径和依赖关系。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Contextual Reasoning</div>
+      <p>在长上下文中保持推理连贯性，有效利用中间结果和外部信息。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Tool Interaction</div>
+      <p>熟练使用搜索、代码执行、文件操作等工具，支持 300 次工具调用/任务。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">有效交互 Scaling</div>
+    <p>应扩展 <b>effective interaction</b>，而非 interaction count 本身。每一步都需要强 atomic capability：规划、推理、工具执行。</p>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验结果与分析</h2></div>
+
+  <p class="body">在 <strong>BrowseComp</strong>（信息检索）、<strong>GAIA</strong>（通用 AI 助手）、<strong>HLE</strong>（长程推理）等基准上评测。MiroThinker-H1 在多个任务上达到 SOTA。</p>
+
+  <div class="fig-box">
+    <img src="src/figs/miro_benchmarks.png" alt="Benchmark 结果">
+    <div class="fig-cap">图 3：主流 Research Agent 基准评测结果</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>BrowseComp</th><th>GAIA</th><th>HLE</th></tr>
+    <tr class="cat"><td colspan="4">商业模型</td></tr>
+    <tr><td class="left">GPT-5-high</td><td>—</td><td>76.4</td><td>35.2</td></tr>
+    <tr class="cat"><td colspan="4">开源模型</td></tr>
+    <tr><td class="left">MiroThinker-1.7 (mini)</td><td>—</td><td>84.3</td><td>—</td></tr>
+    <tr class="ours"><td class="left"><b>MiroThinker-1.7</b></td><td><b>86.1</b></td><td><b>86.9</b></td><td><b>38.5</b></td></tr>
+    <tr class="ours"><td class="left"><b>MiroThinker-H1</b></td><td><b>88.2</b></td><td><b>88.5</b></td><td><b>—</b></td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">核心发现</div>
+      <p>MiroThinker-H1 在 GAIA 上比 GPT-5-high 高 <b>+12.1</b>，在 BrowseComp 上达到 <b>88.2</b>（第一）。开源版本 MiroThinker-1.7 也展现了强大竞争力。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/figs/performance_vs_turns.png" alt="性能 vs 工具调用">
+    <div class="fig-cap">图 4：性能随工具调用次数变化</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">核心洞察</div>
+    <p>Research Agent 的关键不是更多搜索，而是把<strong>验证内嵌进推理过程</strong>。Verification 是连接规划与执行的桥梁。</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心结论 1</div>
+    <p><span class="hl">Verification-Centric</span>：将验证嵌入推理过程，而非仅在最后检查结果。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 2</div>
+    <p><span class="hl">Local + Global</span>：分层验证架构，兼顾中间步骤和整体轨迹质量。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 3</div>
+    <p><span class="hl">Heavy-Duty Research</span>：支持 300 次工具调用/任务，处理复杂真实世界研究流程。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心结论 4</div>
+    <p><span class="hl">有效交互</span>：扩展 effective interaction 而非 interaction count，每步需要强 atomic capability。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

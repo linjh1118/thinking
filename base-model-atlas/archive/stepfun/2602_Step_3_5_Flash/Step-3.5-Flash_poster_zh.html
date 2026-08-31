@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step 3.5 Flash — Research Poster</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #0c0a09;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.poster {
+  width: 1400px;
+  margin: 0 auto;
+  background: #1c1917;
+  border-radius: 12px;
+  box-shadow: 0 8px 60px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 40%, #0891b2 100%);
+  color: #fff;
+  padding: 28px 48px 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 20px;
+}
+
+.hd-left .venue-badge {
+  display: inline-block;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 10px;
+}
+
+.hd-left h1 {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.hd-left .subtitle {
+  font-size: .82rem;
+  color: rgba(255,255,255,.72);
+  font-weight: 400;
+}
+
+.hd-left .authors {
+  font-size: .68rem;
+  color: rgba(255,255,255,.6);
+  margin-top: 8px;
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.hd-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.score-box {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 10px 16px;
+  text-align: center;
+  min-width: 120px;
+}
+.score-box .num {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #fde68a;
+  line-height: 1.1;
+}
+.score-box .sub {
+  font-size: .62rem;
+  color: rgba(255,255,255,.6);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+.score-box .label {
+  font-size: .65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  margin-bottom: 2px;
+}
+
+/* ===== SCORE ROW ===== */
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: rgba(76,29,149,.25);
+  border-top: 1px solid rgba(124,58,237,.2);
+  border-bottom: 1px solid rgba(124,58,237,.2);
+}
+
+.sr-item {
+  padding: 14px 20px;
+  text-align: center;
+  border-right: 1px solid rgba(124,58,237,.15);
+}
+.sr-item:last-child { border-right: none; }
+
+.sr-item .srn {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fde68a;
+}
+.sr-item .srl {
+  font-size: .62rem;
+  color: rgba(255,255,255,.55);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.sr-item .srd {
+  font-size: .58rem;
+  color: rgba(255,255,255,.35);
+  margin-top: 2px;
+}
+
+/* ===== MAIN GRID ===== */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.col {
+  padding: 22px 20px;
+  border-right: 1px solid rgba(168,162,158,.12);
+}
+.col:last-child { border-right: none; }
+
+/* ===== SECTION HEAD ===== */
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sec-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sec-head h2 {
+  font-size: .95rem;
+  font-weight: 800;
+  color: #e7e5e4;
+}
+
+/* ===== BOXES ===== */
+.g1 { background: rgba(220,38,38,.07); border-left: 3px solid #dc2626; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g2 { background: rgba(234,88,12,.07); border-left: 3px solid #ea580c; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g3 { background: rgba(217,119,6,.07); border-left: 3px solid #d97706; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g4 { background: rgba(67,56,202,.07); border-left: 3px solid #4338ca; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g5 { background: rgba(124,58,237,.07); border-left: 3px solid #7c3aed; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g6 { background: rgba(5,150,105,.07); border-left: 3px solid #059669; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.g7 { background: rgba(8,145,178,.07); border-left: 3px solid #0891b2; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+
+.box-title {
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.g1 .box-title { color: #fca5a5; }
+.g2 .box-title { color: #fdba74; }
+.g3 .box-title { color: #fde68a; }
+.g4 .box-title { color: #a5b4fc; }
+.g5 .box-title { color: #c4b5fd; }
+.g6 .box-title { color: #6ee7b7; }
+.g7 .box-title { color: #67e8f9; }
+
+.box-text {
+  font-size: .72rem;
+  color: #d6d3d1;
+  line-height: 1.6;
+}
+
+.box-text strong { color: #fde68a; }
+.box-text em { color: #a78bfa; font-style: normal; }
+
+/* ===== PARAM TABLE ===== */
+.param-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.param-item {
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.15);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.param-item .pi-label {
+  font-size: .58rem;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.param-item .pi-val {
+  font-size: .88rem;
+  font-weight: 800;
+  color: #fde68a;
+  margin-top: 2px;
+}
+
+/* ===== RESULT TABLE ===== */
+.rtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .68rem;
+  margin: 8px 0;
+}
+.rtable th {
+  color: #fff;
+  padding: 5px 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: .6rem;
+  background: rgba(76,29,149,.5);
+  border-bottom: 1px solid rgba(124,58,237,.3);
+}
+.rtable th:first-child { text-align: left; }
+.rtable td {
+  padding: 4px 6px;
+  text-align: center;
+  color: #a8a29e;
+  border-bottom: 1px solid rgba(168,162,158,.06);
+}
+.rtable td:first-child {
+  text-align: left;
+  color: #d6d3d1;
+  font-size: .64rem;
+}
+.rtable .ours { background: rgba(253,230,138,.06); color: #fde68a; font-weight: 800; }
+.rtable .best { color: #6ee7b7; font-weight: 800; }
+.rtable .dim { color: rgba(255,255,255,.3); }
+
+/* ===== STEP LIST ===== */
+.stage-list { margin: 8px 0; counter-reset: stage; }
+.stage-item {
+  position: relative;
+  padding: 8px 10px 8px 38px;
+  margin-bottom: 6px;
+  background: rgba(124,58,237,.05);
+  border: 1px solid rgba(124,58,237,.12);
+  border-radius: 8px;
+}
+.stage-item::before {
+  content: counter(stage);
+  counter-increment: stage;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #0891b2);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stage-item .stitle {
+  font-size: .74rem;
+  font-weight: 700;
+  color: #e7e5e4;
+  margin-bottom: 2px;
+}
+.stage-item .sdesc {
+  font-size: .64rem;
+  color: #a8a29e;
+  line-height: 1.5;
+}
+
+/* ===== TRICK BOX ===== */
+.trick-box {
+  background: rgba(5,150,105,.08);
+  border: 1px solid rgba(110,231,183,.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.trick-box .trick-title {
+  font-size: .65rem;
+  font-weight: 800;
+  color: #6ee7b7;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 4px;
+}
+.trick-box .trick-text {
+  font-size: .68rem;
+  color: #a8a29e;
+  line-height: 1.55;
+}
+
+/* ===== BOTTOM STRIP ===== */
+.bottom-strip {
+  background: #1c1917;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid rgba(124,58,237,.25);
+}
+
+.bstrip {
+  padding: 16px 20px;
+  border-right: 1px solid rgba(168,162,158,.1);
+}
+.bstrip:last-child { border-right: none; }
+
+.bhead {
+  font-size: .62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #78716c;
+  margin-bottom: 6px;
+}
+.btext {
+  font-size: .7rem;
+  color: #d6d3d1;
+  line-height: 1.5;
+}
+.btext .hl { color: #fde68a; font-weight: 800; }
+
+/* ===== BACKLINKS ===== */
+.backlinks {
+  margin: 0 48px 20px;
+  padding: 10px 16px;
+  background: rgba(124,58,237,.06);
+  border: 1px solid rgba(124,58,237,.18);
+  border-radius: 8px;
+  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.backlinks .bl-label {
+  color: #78716c;
+  font-size: .75rem;
+  flex-shrink: 0;
+}
+.backlinks a {
+  color: #c4b5fd;
+  text-decoration: none;
+  font-size: .78rem;
+}
+.backlinks a:hover { text-decoration: underline; }
+
+/* ===== SECTION COLORS ===== */
+.s1 .sec-num { background: linear-gradient(135deg, #dc2626, #7c3aed); }
+.s2 .sec-num { background: linear-gradient(135deg, #ea580c, #d97706); }
+.s3 .sec-num { background: linear-gradient(135deg, #7c3aed, #0891b2); }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hd-left">
+    <div class="venue-badge">arXiv 2602.10604 · StepFun · 2026</div>
+    <h1>Step 3.5 Flash: Open Frontier-Level Intelligence<br>with 11B Active Parameters</h1>
+    <div class="subtitle">稀疏 MoE + 混合注意力 + 可扩展 RL，重新定义 Agentic 智能的效率边界</div>
+    <div class="authors">Ailin Huang, Ang Li, Aobo Kong, Bin Wang, et al. (ByteDance StepFun)</div>
+  </div>
+  <div class="hd-right">
+    <div class="score-box">
+      <div class="label">Activated Params</div>
+      <div class="num">11B</div>
+      <div class="sub">out of 196B total</div>
+    </div>
+    <div class="score-box">
+      <div class="label">Inference Speed</div>
+      <div class="num">~170</div>
+      <div class="sub">tokens/s on Hopper GPU</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCORE ROW -->
+<div class="score-row">
+  <div class="sr-item">
+    <div class="srn">97.3%</div>
+    <div class="srl">AIME 2025</div>
+    <div class="srd">Vanilla inference, top-tier reasoning</div>
+  </div>
+  <div class="sr-item">
+    <div class="srn">86.4%</div>
+    <div class="srl">LiveCodeBench-v6</div>
+    <div class="srd">Codeforces 2024.08–2025.05</div>
+  </div>
+  <div class="sr-item">
+    <div class="srn">88.2%</div>
+    <div class="srl">tau²-Bench</div>
+    <div class="srd">General tool-use capability</div>
+  </div>
+  <div class="sr-item">
+    <div class="srn">51.0%</div>
+    <div class="srl">Terminal-Bench 2.0</div>
+    <div class="srd">Real-world terminal agent tasks</div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+  <!-- COL 1: Problem + Architecture -->
+  <div class="col">
+
+    <div class="sec-head s1">
+      <div class="sec-num">1</div>
+      <h2>问题与架构</h2>
+    </div>
+
+    <div class="g1">
+      <div class="box-title">核心问题</div>
+      <div class="box-text">
+        开源模型在复杂推理和 Agentic 任务上落后于闭源前沿，且长上下文部署面临严重效率瓶颈。如何在 <strong>11B 激活参数</strong>约束下实现前沿级推理能力？
+      </div>
+    </div>
+
+    <div class="g5">
+      <div class="box-title">Architecture — 196B MoE / 11B Active</div>
+      <div class="box-text">
+        <strong>45 Transformer 层</strong>（3 dense + 42 MoE）<br>
+        <strong>288 experts + 1 shared</strong>，top-8 路由<br>
+        <strong>3:1 SWA:Full 混合注意力</strong>（S3F1）<br>
+        <strong>MTP-3</strong>：3 个 Dense SWA 多 token 预测块
+      </div>
+    </div>
+
+    <div class="param-grid">
+      <div class="param-item">
+        <div class="pi-label">Total Params</div>
+        <div class="pi-val">196B</div>
+      </div>
+      <div class="param-item">
+        <div class="pi-label">Active / Token</div>
+        <div class="pi-val">11B</div>
+      </div>
+      <div class="param-item">
+        <div class="pi-label">SWA Window</div>
+        <div class="pi-val">512</div>
+      </div>
+      <div class="param-item">
+        <div class="pi-label">KV Heads (GQA)</div>
+        <div class="pi-val">8</div>
+      </div>
+      <div class="param-item">
+        <div class="pi-label">MTP Blocks</div>
+        <div class="pi-val">3</div>
+      </div>
+      <div class="param-item">
+        <div class="pi-label">Context Length</div>
+        <div class="pi-val">256K</div>
+      </div>
+    </div>
+
+    <div class="g7">
+      <div class="box-title">Head-wise Gated Attention</div>
+      <div class="box-text">
+        引入输入依赖的 <em>sink token</em> 机制，将 SWA query heads 从 64 扩展到 96。几乎不增加延迟（IO-bound 区域），却显著弥合了 hybrid attention 与全注意力的性能差距。
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COL 2: Training + RL -->
+  <div class="col">
+
+    <div class="sec-head s2">
+      <div class="sec-num">2</div>
+      <h2>训练与 RL 框架</h2>
+    </div>
+
+    <div class="g2">
+      <div class="box-title">Pretraining Stability</div>
+      <div class="box-text">
+        <strong>Muon 优化器</strong>：比 Adam 更准确稳定<br>
+        <strong>激活裁剪</strong>：解决 SwiGLU + Muon 组合下的 logit 爆炸<br>
+        <strong>17.2T tokens</strong> 训练，仅 <strong>1 次短暂 loss spike</strong>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="box-title">Unified SFT Foundation</div>
+      <div class="box-text">
+        871k samples / 7.23B tokens，覆盖 Math、Code、STEM、Logic、Tool-use、Search Agent、Long Context 等领域。难度感知过滤 + 策略性平衡。
+      </div>
+    </div>
+
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="stitle">Expert Model Construction</div>
+        <div class="sdesc">领域特定 RL（Math/Code/Agent）生成专家轨迹</div>
+      </div>
+      <div class="stage-item">
+        <div class="stitle">Self-Distillation</div>
+        <div class="sdesc">拒绝采样消除不良模式，集中专家知识到单一学生模型</div>
+      </div>
+      <div class="stage-item">
+        <div class="stitle">Scalable RL (MIS-PO)</div>
+        <div class="sdesc">大规模 off-policy RL，梯度方差显著降低</div>
+      </div>
+    </div>
+
+    <div class="trick-box">
+      <div class="trick-title">MIS-PO: 离散过滤替代连续加权</div>
+      <div class="trick-text">
+        在 token 级别和轨迹级别同时应用二元掩码（[0.5,2] / [0.996,1.001]），将离策略样本直接丢弃而非连续重加权。梯度噪声大幅降低，MoE 大规模 RL 训练稳定可扩展。
+      </div>
+    </div>
+
+    <div class="g6">
+      <div class="box-title">Reward System</div>
+      <div class="box-text">
+        <strong>RLVR</strong>：STEM 用 verifier model，Code 用沙箱执行<br>
+        <strong>GenRM + MetaRM</strong>：Pairwise 偏好 + 虚假推理惩罚<br>
+        <strong>Agent Reward</strong>：搜索实体匹配 + 研究报告 rubric judgment
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COL 3: Results -->
+  <div class="col">
+
+    <div class="sec-head s3">
+      <div class="sec-num">3</div>
+      <h2>实验结果</h2>
+    </div>
+
+    <div class="g5">
+      <div class="box-title">Reasoning Benchmarks</div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>S3.5 Flash</th>
+            <th>PaCoRe</th>
+            <th>Best Open</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AIME 2025</td>
+            <td class="ours">97.3</td>
+            <td>99.9</td>
+            <td>96.1 <span class="dim">(K2.5)</span></td>
+          </tr>
+          <tr>
+            <td>IMO-AnswerBench</td>
+            <td class="ours">85.4</td>
+            <td>88.8</td>
+            <td>86.3 <span class="dim">(GPT-5.2)</span></td>
+          </tr>
+          <tr>
+            <td>LiveCodeBench-v6</td>
+            <td class="ours">86.4</td>
+            <td>88.9</td>
+            <td class="best">90.7</td>
+          </tr>
+          <tr>
+            <td>HMMT 2025 Feb.</td>
+            <td class="ours">98.4</td>
+            <td class="best">100.0</td>
+            <td>97.5 <span class="dim">(Gemini 3.0)</span></td>
+          </tr>
+          <tr>
+            <td>GPQA-Diamond</td>
+            <td class="ours">83.5</td>
+            <td>85.0</td>
+            <td class="best">91.9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="g6">
+      <div class="box-title">Code & Agent Benchmarks</div>
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>S3.5 Flash</th>
+            <th>Best Open</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SWE-Bench Verified</td>
+            <td class="ours">74.4</td>
+            <td>76.8 <span class="dim">(K2.5)</span></td>
+          </tr>
+          <tr>
+            <td>Terminal-Bench 2.0</td>
+            <td class="ours">51.0</td>
+            <td class="best">59.3</td>
+          </tr>
+          <tr>
+            <td>BrowseComp (Ctx)</td>
+            <td class="ours">69.0</td>
+            <td class="best">74.9</td>
+          </tr>
+          <tr>
+            <td>GAIA</td>
+            <td class="ours best">84.5</td>
+            <td>76.6 <span class="dim">(Gemini 3.0)</span></td>
+          </tr>
+          <tr>
+            <td>tau²-Bench</td>
+            <td class="ours">88.2</td>
+            <td class="best">92.5</td>
+          </tr>
+          <tr>
+            <td>ResearchRubrics</td>
+            <td class="ours best">65.3</td>
+            <td>62.0 <span class="dim">(GLM-4.7)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="g4">
+      <div class="box-title">Efficiency: 196B vs 671B+ Models</div>
+      <div class="box-text">
+        在 <strong>SimpleQA</strong> 上以 196B 总参数量（1/3 于 DeepSeek V3.2 的 671B）超越后者（31.6 vs 27.0）。在 <strong>BBH</strong> (88.2) 上与 1043B 的 Kimi K2 Base (88.7) 仅差 0.5。
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">Key Contribution 1</div>
+    <div class="btext"><span class="hl">MIS-PO</span>：将 Metropolis Independence Sampling 引入 RL，以离散二元掩码替代连续重要性加权，在 MoE 大规模 off-policy 训练中实现稳定收敛。</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Contribution 2</div>
+    <div class="btext"><span class="hl">S3F1 + Head-wise Gating</span>：3:1 滑动窗口/全注意力混合布局 + 输入依赖 sink token，在几乎零额外延迟下弥合 hybrid attention 性能差距。</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Contribution 3</div>
+    <div class="btext"><span class="hl">效率边界重定义</span>：11B 激活参数达到前沿级推理（IMO-AnswerBench 85.4%，LiveCodeBench 86.4%），OpenRouter 上 ~170 tokens/s 推理速度。</div>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Contribution 4</div>
+    <div class="btext"><span class="hl">PaCoRe Test-time Scaling</span>：并行协调推理将 AIME 2025 从 97.3% 提升至 99.9%，HMMT 2025 Feb. 达到 100.0%。</div>
+  </div>
+</div>
+
+<!-- BACKLINKS -->
+<div class="backlinks">
+  <span class="bl-label">📚 源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2602_Step_3_5_Flash%2FStep-3.5-Flash">Step-3.5-Flash.md</a>
+  <a href="https://arxiv.org/abs/2602.10604" target="_blank">arXiv 2602.10604</a>
+</div>
+
+</div>
+</body>
+</html>

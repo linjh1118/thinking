@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StepFun-Prover Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; }
+
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 40%, #a78bfa 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hl { display: flex; flex-direction: column; gap: 6px; }
+.hl h1 { font-size: 1.7rem; font-weight: 900; color: #fff; line-height: 1.2; }
+.hl .sub { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+.hl .authors { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.score-row { display: flex; gap: 10px; }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 110px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; }
+.score-box .sub { font-size: .6rem; color: rgba(255,255,255,.7); margin-top: 2px; line-height: 1.2; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.col:last-child { border-right: none; }
+
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.h1 .nc { background: #7c3aed; }
+.h2 .nc { background: #a78bfa; }
+.h3 .nc { background: #c4b5fd; }
+.sec-head h2 { font-size: .95rem; font-weight: 800; color: #d6d3d1; }
+
+.box { background: rgba(124,58,237,.07); border: 1px solid rgba(124,58,237,.2); border-left: 3px solid #7c3aed; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box2 { background: rgba(167,139,250,.07); border: 1px solid rgba(167,139,250,.2); border-left: 3px solid #a78bfa; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box h3 { font-size: .78rem; font-weight: 800; color: #c4b5fd; margin-bottom: 4px; }
+.box p, .box2 p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.pipeline { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.pipe-stage { background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3); border-radius: 6px; padding: 6px 10px; font-size: .7rem; color: #c4b5fd; font-weight: 700; }
+.pipe-arrow { color: #78716c; font-size: .9rem; }
+
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0; }
+.rtable th { color: #fff; padding: 6px 8px; text-align: center; font-weight: 700; background: rgba(124,58,237,.3); }
+.rtable td { padding: 6px 8px; text-align: center; border-bottom: 1px solid rgba(168,162,158,.07); color: #d6d3d1; }
+.rtable .ours td { background: rgba(253,230,138,.08); color: #fde68a; font-weight: 800; }
+.rtable .best td { background: rgba(34,197,94,.1); color: #86efac; font-weight: 800; }
+
+.insight { background: rgba(196,181,253,.07); border: 1px solid rgba(196,181,253,.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+.insight h3 { font-size: .7rem; font-weight: 800; color: #c4b5fd; margin-bottom: 4px; }
+.insight p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.step-list { margin: 8px 0; }
+.step-item { position: relative; padding: 7px 8px 7px 36px; margin-bottom: 5px; background: rgba(124,58,237,.05); border-radius: 7px; border: 1px solid rgba(124,58,237,.12); }
+.step-item::before { content: attr(data-n); position: absolute; left: 8px; top: 7px; width: 20px; height: 20px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.step-item .stitle { font-size: .72rem; font-weight: 700; color: #c4b5fd; }
+.step-item p { font-size: .68rem; color: #a8a29e; margin-top: 2px; }
+
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(168,162,158,.15); padding: 16px 48px; gap: 16px; }
+.bstrip { border-right: 1px solid rgba(168,162,158,.08); padding-right: 16px; }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip .hl { color: #fbbf24; font-weight: 800; font-size: .88rem; }
+.bstrip p { font-size: .7rem; color: #a8a29e; line-height: 1.4; }
+
+.backlinks { margin: 16px 48px 0; padding: 8px 14px; background: rgba(124,58,237,.08); border: 1px solid rgba(124,58,237,.2); border-radius: 8px; font-size: .8rem; }
+.backlinks a { color: #a78bfa; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.badge-bar { padding: 6px 48px; background: rgba(124,58,237,.05); border-bottom: 1px solid rgba(124,58,237,.1); }
+.badge-bar span { font-size: .68rem; color: #c4b5fd; background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.25); border-radius: 4px; padding: 2px 8px; font-weight: 700; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="badge-bar">
+    <span>arXiv: 2507.20199</span>
+    <span>RL</span>
+    <span>Theorem Proving</span>
+    <span>Lean 4</span>
+    <span>Tool Integration</span>
+  </div>
+  <div class="header">
+    <div class="hl">
+      <h1>StepFun-Prover Preview</h1>
+      <div class="sub">Tool-Integrated Reasoning for Formal Theorem Proving</div>
+      <div class="authors">Shijie Shang, Ruosi Wan, Yue Peng, Yutong Wu, et al. · StepFun AI · 2025</div>
+    </div>
+    <div class="score-row">
+      <div class="score-box"><div class="num">70.0%</div><div class="sub">Pass@1 (miniF2F)</div></div>
+      <div class="score-box"><div class="num">32B</div><div class="sub">Model Size</div></div>
+      <div class="score-box"><div class="num">10x</div><div class="sub">RL 加速<br>(Lean4-RS)</div></div>
+      <div class="score-box"><div class="num">+4%</div><div class="sub">超越 Kimina-72B</div></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="col">
+      <div class="sec-head h1"><div class="nc">1</div><h2>Problem & Insight</h2></div>
+      <div class="box">
+        <h3>Sample 效率极低</h3>
+        <p>现有方法 scaling 32→64 次 sampling 仅提升 3-4% accuracy，存在系统性错误模式。</p>
+      </div>
+      <div class="box2">
+        <h3>根因分析</h3>
+        <p>传统方法无法利用 Lean 4 反馈，采用人类预定义的固定推理模式，导致重复错误。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 核心问题</h3>
+        <p>形式定理证明器能否自我进化出合适的思考模式、与形式验证器交互、高效推导证明？</p>
+      </div>
+      <div class="insight">
+        <h3>💡 答案</h3>
+        <p>让模型自主决定何时停止使用 Lean 4 REPL，减少无效 sampling，像人类一样边想边验证。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h2"><div class="nc">2</div><h2>Method: Tool-Integrated RL</h2></div>
+      <div class="box">
+        <h3>训练流水线</h3>
+        <div class="pipeline">
+          <div class="pipe-stage">① SFT cold-start</div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-stage">② 动态数据过滤</div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-stage">③ GRPO RL</div>
+        </div>
+        <p style="margin-top:6px;font-size:.7rem;color:#a8a29e">模型在生成答案前交织：自然语言推理 / Lean 4 代码 / REPL 反馈</p>
+      </div>
+      <div class="box">
+        <h3>动态数据过滤</h3>
+        <p>在 RL 训练循环内过滤数据：去除成功率为 0 或 1 的题目，保留 (0,1) 的高价值题目。</p>
+      </div>
+      <div class="box">
+        <h3>Lean4-RS 优化</h3>
+        <p>Redis Producer-Broker-Consumer 模式，1000+ 并发进程，10x 加速多轮 RL 训练。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h3"><div class="nc">3</div><h2>Results</h2></div>
+      <table class="rtable">
+        <tr><th>Model</th><th>Size</th><th>Pass@1</th></tr>
+        <tr><td>DeepSeek-Prover-V2</td><td>7B</td><td>58.6%</td></tr>
+        <tr><td>DeepSeek-Prover-V2</td><td>671B</td><td>61.9%</td></tr>
+        <tr><td>Kimina-Prover</td><td>72B</td><td>63.9%</td></tr>
+        <tr class="ours"><td>StepFun-Prover</td><td>7B</td><td>66.0%</td></tr>
+        <tr class="best"><td>StepFun-Prover</td><td>32B</td><td>70.0%</td></tr>
+      </table>
+      <div class="insight">
+        <h3>💡 Gen Length Scaling</h3>
+        <p>4K→20K tokens 带来 58.3%→70.0% 提升，说明多轮交互比大量 sampling 更高效。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 7B > 671B</h3>
+        <p>不是参数量的胜利，是工具集成推理范式的胜利。32B 超越所有 671B 模型。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1</div>
+      <div class="hl">多轮交互 > 大量 Sampling</div>
+      <p>REPL 交互分布显示：很多正确证明通过多轮反馈后得到，而非一次性生成</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2</div>
+      <div class="hl">动态过滤 > 静态过滤</div>
+      <p>In-RL filtering 能找到对当前模型偏难但可提升的题目，比预先过滤更有效</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3</div>
+      <div class="hl">Infra 决定算法可行性</div>
+      <p>Lean4-RS 10x 加速使 multi-turn RL 从不可行变为可行</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4</div>
+      <div class="hl">Cold-start SFT 关键</div>
+      <p>没有 SFT 建立基础交互模式，RL 难以学到正确的 REPL 使用规范</p>
+    </div>
+  </div>
+
+  <div class="backlinks">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2507_StepFun_Prover%2FStepFun_Prover">StepFun_Prover.md</a>
+    · arXiv: <a href="https://arxiv.org/abs/2507.20199">2507.20199</a>
+  </div>
+</div>
+</body>
+</html>

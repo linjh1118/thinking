@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1400">
+    <title>Seed2.0 Model Card — Agent Foundation Model</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0c0a09;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; padding: 40px 20px;
+        }
+        .poster {
+            width: 1400px;
+            background: #1c1917;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0,0,0,.5);
+        }
+        .header {
+            background: linear-gradient(135deg, #0f4c3a 0%, #059669 50%, #34d399 100%);
+            padding: 36px 48px;
+            display: flex; align-items: center; gap: 36px;
+        }
+        .header-text { flex: 1; }
+        .header h1 {
+            font-size: 2.6em; font-weight: 800; color: #fff;
+            letter-spacing: -.5px; line-height: 1.15;
+        }
+        .header .subtitle {
+            font-size: 1.15em; color: rgba(255,255,255,.85);
+            margin-top: 10px; font-weight: 500;
+        }
+        .header .venue {
+            font-size: .88em; color: rgba(255,255,255,.7);
+            margin-top: 6px;
+        }
+        .score-boxes {
+            display: flex; gap: 16px; flex-shrink: 0;
+        }
+        .score-box {
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 12px; padding: 16px 20px;
+            text-align: center; min-width: 110px;
+        }
+        .score-box .num {
+            font-size: 1.7em; font-weight: 800; color: #fff;
+        }
+        .score-box .label {
+            font-size: .75em; color: rgba(255,255,255,.8);
+            margin-top: 4px; font-weight: 500;
+        }
+        .backlinks {
+            margin: 20px 48px 0;
+            padding: 10px 16px;
+            background: rgba(5,150,105,.06);
+            border: 1px solid rgba(5,150,105,.15);
+            border-radius: 8px;
+            font-size: .82em;
+        }
+        .backlinks a {
+            color: #34d399; text-decoration: none;
+        }
+        .backlinks a:hover { text-decoration: underline; }
+        .main-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 0;
+        }
+        .col {
+            padding: 28px 32px;
+            border-right: 1px solid rgba(255,255,255,.06);
+        }
+        .col:last-child { border-right: none; }
+        .col-header {
+            font-size: .72em; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; margin-bottom: 16px;
+            padding-bottom: 10px; border-bottom: 2px solid;
+        }
+        .col-1 .col-header { color: #d97706; border-color: #d97706; }
+        .col-2 .col-header { color: #ea580c; border-color: #ea580c; }
+        .col-3 .col-header { color: #059669; border-color: #059669; }
+        .col h3 {
+            font-size: 1.05em; font-weight: 700; color: #e2e8f0;
+            margin: 18px 0 8px;
+        }
+        .col p, .col li {
+            font-size: .88em; color: #a1a1aa; line-height: 1.65;
+        }
+        .col ul { padding-left: 18px; margin: 8px 0; }
+        .col li { margin-bottom: 6px; }
+        .fig-box {
+            background: rgba(5,150,105,.06);
+            border: 1px solid rgba(5,150,105,.12);
+            border-radius: 10px; padding: 16px;
+            margin-top: 16px; text-align: center;
+        }
+        .fig-box img {
+            max-width: 100%; border-radius: 6px;
+        }
+        .fig-box .caption {
+            font-size: .78em; color: #71717a; margin-top: 8px;
+        }
+        .rtable {
+            width: 100%; border-collapse: collapse;
+            margin-top: 14px; font-size: .82em;
+        }
+        .rtable th {
+            background: #0f4c3a; color: #fff;
+            padding: 9px 12px; text-align: left;
+            font-weight: 600;
+        }
+        .rtable td {
+            padding: 8px 12px; color: #a1a1aa;
+            border-bottom: 1px solid rgba(255,255,255,.05);
+        }
+        .rtable tr:last-child td { border-bottom: none; }
+        .highlight-box {
+            background: rgba(5,150,105,.08);
+            border-left: 3px solid #059669;
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px; margin: 14px 0;
+            font-size: .85em; color: #a1a1aa; line-height: 1.6;
+        }
+        .bottom-strip {
+            background: linear-gradient(135deg, #0f4c3a 0%, #059669 100%);
+            padding: 24px 48px;
+            display: flex; gap: 32px; justify-content: center;
+        }
+        .takeaway {
+            flex: 1; max-width: 280px;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 10px; padding: 14px 18px;
+        }
+        .takeaway .num {
+            font-size: .7em; font-weight: 700; letter-spacing: 1px;
+            color: rgba(255,255,255,.6); text-transform: uppercase;
+        }
+        .takeaway p {
+            font-size: .85em; color: #fff; margin-top: 4px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+<div class="poster">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-text">
+            <h1>Seed2.0 Model Card</h1>
+            <div class="subtitle">Agent Foundation Model — ByteDance</div>
+            <div class="venue">Bytedance Seed Team · 2026 · Model Card</div>
+        </div>
+        <div class="score-boxes">
+            <div class="score-box">
+                <div class="num">Agent</div>
+                <div class="label">First</div>
+            </div>
+            <div class="score-box">
+                <div class="num">Multi</div>
+                <div class="label">Modal</div>
+            </div>
+            <div class="score-box">
+                <div class="num">Tool</div>
+                <div class="label">Use</div>
+            </div>
+            <div class="score-box">
+                <div class="num">5</div>
+                <div class="label">Rating</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backlinks -->
+    <div class="backlinks">
+        <span style="color: #71717a;">📚 源文档：</span>
+        <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FByteDance_Seed%2F2605_Seed2_0_Model_Card%2FSeed2.0-Model-Card-Agent-Foundation-Model">Seed2.0-Model-Card-Agent-Foundation-Model.md</a>
+        &nbsp;|&nbsp;
+        <span style="color: #71717a;">🏠 官网：</span>
+        <a href="https://www.minimaxi.com/" target="_blank">MiniMax</a>
+    </div>
+
+    <!-- Main 3-Column Grid -->
+    <div class="main-grid">
+        <!-- Column 1: Problem & Background -->
+        <div class="col col-1">
+            <div class="col-header">问题与背景</div>
+
+            <h3>Agent Foundation Model vs General Foundation Model</h3>
+            <table class="rtable">
+                <thead>
+                    <tr>
+                        <th>维度</th>
+                        <th>General Foundation Model</th>
+                        <th>Agent Foundation Model</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>训练目标</td>
+                        <td>对话、问答、摘要</td>
+                        <td>工具使用、多步推理、环境交互</td>
+                    </tr>
+                    <tr>
+                        <td>预训练数据</td>
+                        <td>网页、书籍、代码</td>
+                        <td>Agent 轨迹、环境反馈</td>
+                    </tr>
+                    <tr>
+                        <td>评测重点</td>
+                        <td>MMLU, HumanEval</td>
+                        <td>GAIA, SWE-bench, GUI tasks</td>
+                    </tr>
+                    <tr>
+                        <td>下游适配</td>
+                        <td>SFT/RM/RLHF</td>
+                        <td>更少微调即可做 agent</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>研究动机</h3>
+            <div class="highlight-box">
+                Seed2.0 定位为 Agent 场景的基础模型（类似 LLM 作为对话基础模型）。核心设计强调 "Agent-first"，不仅具备基础能力，还在预训练阶段就针对 agentic 场景进行优化，为下游 agent 任务提供更强的 base。
+            </div>
+        </div>
+
+        <!-- Column 2: Method -->
+        <div class="col col-2">
+            <div class="col-header">核心方法</div>
+
+            <h3>Agent2.0 核心能力</h3>
+            <ul>
+                <li><strong>Computer Use</strong><br/>操作系统操作能力</li>
+                <li><strong>Software Engineering</strong><br/>代码编写和调试</li>
+                <li><strong>Research</strong><br/>信息检索和综合</li>
+                <li><strong>Multimodal Agent</strong><br/>视觉理解和操作</li>
+            </ul>
+
+            <h3>设计理念</h3>
+            <div class="highlight-box">
+                "Agent-first" 理念：在预训练阶段就针对 agentic 场景进行优化，而非仅在 post-training 阶段做 RLHF/SFT。这可能比 post-training 更高效。
+            </div>
+
+            <div class="fig-box">
+                <img src="src/assets/Seed2.0_Model_Card.png" alt="Seed2.0 Model Card">
+                <div class="caption">Seed2.0 Model Card — Agent Foundation Model from ByteDance</div>
+            </div>
+        </div>
+
+        <!-- Column 3: Results -->
+        <div class="col col-3">
+            <div class="col-header">实验结果与启发</div>
+
+            <h3>核心洞察</h3>
+            <div class="highlight-box">
+                <ol style="padding-left: 16px; line-height: 1.8;">
+                    <li>Agent Foundation Model 概念对 GUI Agent 研究有启示——需要专门针对 agentic 场景优化的 base model</li>
+                    <li>预训练阶段就考虑 agentic 能力，可能比 post-training 更高效</li>
+                    <li>期待看到 Seed2.0 的完整技术报告，了解其预训练 recipe</li>
+                </ol>
+            </div>
+
+            <h3>关键数据点</h3>
+            <table class="rtable">
+                <thead>
+                    <tr>
+                        <th>能力维度</th>
+                        <th>评测基准</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Computer Use</td>
+                        <td>OS 操作任务</td>
+                    </tr>
+                    <tr>
+                        <td>Software Engineering</td>
+                        <td>SWE-bench</td>
+                    </tr>
+                    <tr>
+                        <td>Research</td>
+                        <td>GAIA</td>
+                    </tr>
+                    <tr>
+                        <td>Multimodal Agent</td>
+                        <td>GUI tasks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="bottom-strip">
+        <div class="takeaway">
+            <div class="num">Takeaway 1</div>
+            <p>Agent Foundation Model 是 GUI Agent 研究的下一个方向——需要专门针对 agentic 场景优化的 base model</p>
+        </div>
+        <div class="takeaway">
+            <div class="num">Takeaway 2</div>
+            <p>预训练阶段就考虑 agentic 能力，可能比 post-training 更高效</p>
+        </div>
+        <div class="takeaway">
+            <div class="num">Takeaway 3</div>
+            <p>Seed2.0 展现了 ByteDance 在 Agent 基础模型上的布局，期待完整技术报告</p>
+        </div>
+        <div class="takeaway">
+            <div class="num">Takeaway 4</div>
+            <p>多模态理解 + 工具使用 是 Agent Foundation Model 的核心竞争力</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

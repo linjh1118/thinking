@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMax-M1 — Research Poster</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+  .poster{width:1400px;margin:24px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.35)}
+  .header{background:linear-gradient(120deg,#065f46 0%,#10b981 40%,#34d399 100%);padding:40px 56px 36px;position:relative}
+  .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#065f46,#34d399,#10b981)}
+  .backlinks{margin:12px 56px 0;padding:10px 16px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:8px;font-size:.82em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .backlinks a{color:#b45309;text-decoration:none}
+  .backlinks a:hover{text-decoration:underline}
+  .backlinks .bl-sep{color:rgba(180,83,9,.4)}
+  h1{font-size:2.05em;font-weight:800;color:#fff;letter-spacing:.5px;line-height:1.25;margin-bottom:10px;text-shadow:0 2px 12px rgba(0,0,0,.2)}
+  .subtitle{font-size:1.1em;color:rgba(255,255,255,.9);margin-bottom:20px;font-weight:400}
+  .meta-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .meta-chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:.82em;color:#fff;font-weight:500}
+  .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+  .score-box{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:14px 18px;text-align:center;backdrop-filter:blur(6px)}
+  .score-box .label{font-size:.72em;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+  .score-box .num{font-size:1.75em;font-weight:800;color:#fef9c3;line-height:1.1}
+  .score-box .unit{font-size:.7em;color:rgba(255,255,255,.7);margin-top:2px}
+  .main{padding:32px 56px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .sec-head{margin-bottom:16px}
+  .sec-head h2{font-size:.95em;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding-bottom:8px;border-bottom:2px solid #059669;color:#059669}
+  .prob-box{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .prob-box p{font-size:.88em;line-height:1.6;color:#065f46}
+  .g1,.g2,.g3,.g4{border-left:3px solid;background:#f0fdf4;border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px}
+  .g1{border-color:#dc2626}
+  .g2{border-color:#ea580c}
+  .g3{border-color:#059669}
+  .g4{border-color:#10b981}
+  .g1 p,.g2 p,.g3 p,.g4 p{font-size:.85em;line-height:1.55;color:#1e293b}
+  .g-label{font-weight:700;font-size:.78em;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+  .g1 .g-label{color:#991b1b}
+  .g2 .g-label{color:#9a3412}
+  .g3 .g-label{color:#065f46}
+  .g4 .g-label{color:#047857}
+  .fig-box{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:10px;padding:10px;text-align:center;margin-top:12px}
+  .fig-box img{max-width:100%;border-radius:6px;display:block;margin:0 auto}
+  .fig-cap{font-size:.72em;color:#64748b;text-align:center;margin-top:6px}
+  .trick-box{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+  .trick-title{font-size:.82em;font-weight:700;margin-bottom:6px;color:#059669}
+  .trick-box p{font-size:.84em;line-height:1.55;color:#334155}
+  .formula{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:10px 14px;font-family:'Courier New',monospace;font-size:.8em;color:#065f46;margin:8px 0;line-height:1.6;overflow-x:auto}
+  .stage-item{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:8px;padding:10px 14px;margin-bottom:6px}
+  .stage-item p{font-size:.82em;line-height:1.5;color:#334155}
+  .stage-item strong{color:#059669}
+  .rtable{width:100%;border-collapse:collapse;font-size:.8em;margin-top:10px}
+  .rtable th{background:#065f46;color:#fff;padding:8px 12px;text-align:left;font-weight:600}
+  .rtable td{padding:7px 12px;border-bottom:1px solid #e2e8f0;color:#1e293b}
+  .rtable tr:last-child td{border-bottom:none}
+  .rtable .highlight{color:#059669;font-weight:600}
+  .callout{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:10px;padding:12px 16px;margin-top:12px}
+  .callout p{font-size:.82em;line-height:1.6;color:#065f46}
+  .highlight-text{color:#d97706;font-weight:600}
+  .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .tag{background:#ecfdf5;border:1px solid #6ee7b7;border-radius:12px;padding:2px 10px;font-size:.72em;color:#059669}
+  .bottom-strip{background:#065f46;border-top:1px solid rgba(255,255,255,.15);padding:20px 56px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
+  .takeaway{display:flex;align-items:flex-start;gap:10px;max-width:300px}
+  .takeaway-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(255,255,255,.2);border-radius:50%;font-size:.72em;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+  .takeaway p{font-size:.82em;line-height:1.5;color:rgba(255,255,255,.9)}
+  .takeaway strong{color:#fff}
+  .layer-visual{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .layer-la{background:#059669;color:#fff;border-radius:4px;padding:4px 8px;font-size:.72em;font-weight:600}
+  .layer-sa{background:#1e40af;color:#fff;border-radius:4px;padding:4px 8px;font-size:.72em;font-weight:600}
+  @media(max-width:1450px){.poster{width:100%;margin:0;border-radius:0}.main{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- BACKLINKS -->
+  <div class="backlinks">
+    <span style="color:#78716c;">📚 Source：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMiniMax%2F2506_MiniMax_M1%2FMiniMax-M1-Scaling-Test-Time-Compute-Lightning-Attention">MiniMax-M1 Note</a>
+    <span class="bl-sep">|</span>
+    <a href="https://arxiv.org/abs/2506.13585">arXiv 2506.13585</a>
+    <span class="bl-sep">|</span>
+    <a href="https://github.com/MiniMax-AI/MiniMax-M1">GitHub</a>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention</h1>
+    <div class="subtitle">Lightning Attention Hybrid Architecture · CISPO Algorithm · Native 1M Context</div>
+    <div class="meta-row">
+      <span class="meta-chip">arXiv 2506.13585</span>
+      <span class="meta-chip">MiniMax</span>
+      <span class="meta-chip">2025</span>
+      <span class="meta-chip">Lightning Attention</span>
+      <span class="meta-chip">CISPO</span>
+    </div>
+    <div class="score-grid">
+      <div class="score-box">
+        <div class="label">Total Params</div>
+        <div class="num">456B</div>
+        <div class="unit">45.9B activated</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Training Cost</div>
+        <div class="num">$0.53M</div>
+        <div class="unit">512 H800 · 3 weeks</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Context Window</div>
+        <div class="num">1M</div>
+        <div class="unit">input tokens</div>
+      </div>
+      <div class="score-box">
+        <div class="label">Output Tokens</div>
+        <div class="num">80K</div>
+        <div class="unit">streaming</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COLUMN -->
+  <div class="main">
+
+    <!-- COLUMN 1: Problem & Background -->
+    <div>
+      <div class="sec-head"><h2>Problem &amp; Background</h2></div>
+
+      <div class="prob-box">
+        <p>Large reasoning models (LRMs) like o1 and DeepSeek-R1 achieve remarkable success through large-scale RL test-time compute scaling, but traditional Transformer softmax attention has a <strong>quadratic complexity bottleneck</strong>, limiting efficient scaling of long reasoning chains.</p>
+      </div>
+
+      <div class="g1">
+        <div class="g-label">Pain Point 1: Efficiency</div>
+        <p>FLOPs cost of long reasoning chains is too high. At 100K tokens, DeepSeek R1 requires <strong>4×</strong> more FLOPs than M1.</p>
+      </div>
+      <div class="g2">
+        <div class="g-label">Pain Point 2: Context Limit</div>
+        <p>Existing open-source LRMs have too small context windows (typically 32K-128K), unable to handle ultra-long tasks.</p>
+      </div>
+      <div class="g3">
+        <div class="g-label">Pain Point 3: RL Training Efficiency</div>
+        <p>Computational cost and stability issues when scaling RL training; token-level clipping discards critical low-probability tokens.</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/figure1_bars.png" alt="FLOPs comparison" style="max-height:160px;">
+        <div class="fig-cap">Figure 1: Inference FLOPs comparison (M1 vs DeepSeek R1)</div>
+      </div>
+
+      <div class="callout">
+        <p><strong>Core Insight:</strong> M1 validates that Lightning Attention + CISPO can significantly reduce inference and RL training costs.</p>
+      </div>
+    </div>
+
+    <!-- COLUMN 2: Method -->
+    <div>
+      <div class="sec-head"><h2>Core Method</h2></div>
+
+      <div class="trick-box">
+        <div class="trick-title">1. Lightning Attention Hybrid Architecture</div>
+        <p>Based on MiniMax-Text-01: every 7 Lightning Attention TransNormer blocks followed by 1 softmax attention Transformer block. At 100K tokens, only requires <strong>25%</strong> of DeepSeek R1 FLOPs.</p>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">2. CISPO Algorithm</div>
+        <p>Clipped IS-weight Policy Optimization — clips <strong>importance sampling weights</strong> rather than token updates, preserving gradient contributions from ALL tokens. Achieves same performance as DAPO with only <strong>50%</strong> of training steps.</p>
+      </div>
+
+      <div class="formula">CISPO Core Formula:\nr̂_{i,t}(θ) = clip(r_{i,t}(θ), 1-ε^{IS}_{low}, 1+ε^{IS}_{high})</div>
+
+      <div class="trick-box">
+        <div class="trick-title">3. RL Training Engineering Challenges</div>
+        <p><strong>Issue 1:</strong> LM head activation too large → FP32 LM output head<br><strong>Issue 2:</strong> Gradient span large (1e-18~1e-5) → β1=0.9, β2=0.95, eps=1e-15<br><strong>Issue 3:</strong> Repetition → early stop at prob &gt;0.99 for 3000 consecutive tokens</p>
+      </div>
+
+      <div class="layer-visual">
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-la">LA</span>
+        <span class="layer-sa">SA</span>
+        <span style="font-size:.75em;color:#64748b;margin-left:4px;">× repeat</span>
+      </div>
+
+      <div class="stage-item">
+        <p><strong>RL Data Curriculum:</strong></p>
+        <p>· Math reasoning: ~50K competition-level problems (pass@10 between 0-0.9)<br>
+        · Logic: 41 task types, ~53K samples (SynLogic framework)<br>
+        · Programming: 30K competition problems<br>
+        · Software Engineering: SWE-bench sandbox execution<br>
+        · General domain: 25K complex samples (GenRM reward model)</p>
+      </div>
+
+      <div class="stage-item">
+        <p><strong>Long Thought Scaling (40K → 80K):</strong></p>
+        <p>Curriculum window expansion: 40K → 48K → 56K → 64K → 72K → 80K<br>
+        Negative samples growing faster than positives → early stopping + sample-level loss normalization + reduced gradient clipping threshold</p>
+      </div>
+    </div>
+
+    <!-- COLUMN 3: Results -->
+    <div>
+      <div class="sec-head"><h2>Key Results</h2></div>
+
+      <table class="rtable">
+        <thead>
+          <tr><th>Benchmark</th><th>M1-80K</th><th>DS-R1</th><th>Qwen3</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AIME 2024</td><td class="highlight">86.0</td><td>91.4</td><td>85.7</td></tr>
+          <tr><td>SWE-bench Verified</td><td>56.0</td><td class="highlight">57.6</td><td>34.4</td></tr>
+          <tr><td>OpenAI-MRCR (1M)</td><td class="highlight">56.2</td><td>—</td><td>—</td></tr>
+          <tr><td>TAU-bench (airline)</td><td class="highlight">62.0</td><td>53.5</td><td>34.7</td></tr>
+        </tbody>
+      </table>
+
+      <div class="fig-box" style="margin-top:14px;">
+        <img src="src/assets/figure5_scaling_dual_axis_aime25.png" alt="AIME 2025 scaling" style="max-height:140px;">
+        <div class="fig-cap">Figure 2: AIME 2025 test-time compute scaling curve</div>
+      </div>
+
+      <div class="g4">
+        <div class="g-label">Core Advantage Areas</div>
+        <p><strong>Long context:</strong> Far exceeds all open-source models, even surpassing o3 and Claude 4 Opus<br>
+        <strong>Tool use:</strong> TAU-bench surpasses Gemini 2.5 Pro<br>
+        <strong>Software Engineering:</strong> Second only to DeepSeek-R1-0528</p>
+      </div>
+
+      <div class="callout">
+        <p><strong>Efficiency Advantages:</strong><br>
+        · 100K token generation: only <span class="highlight-text">25%</span> of DeepSeek R1 FLOPs<br>
+        · RL training cost: <span class="highlight-text">$0.53M</span> (512 H800 GPU, 3 weeks)<br>
+        · CISPO vs DAPO: <span class="highlight-text">50%</span> training steps for same performance</p>
+      </div>
+
+      <div class="tag-list" style="margin-top:14px;">
+        <span class="tag">Lightning Attention</span>
+        <span class="tag">CISPO</span>
+        <span class="tag">Hybrid MoE</span>
+        <span class="tag">1M Context</span>
+        <span class="tag">Test-Time Compute</span>
+        <span class="tag">RL Training</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="takeaway">
+      <div class="takeaway-num">1</div>
+      <p><strong>Lightning Attention Hybrid:</strong> 7 Lightning Attention blocks + 1 softmax attention, near-linear FLOPs scaling, 25% of DeepSeek R1 FLOPs at 100K tokens</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">2</div>
+      <p><strong>CISPO Algorithm:</strong> Clips IS weights instead of token updates, preserving gradients for all tokens including rare critical ones (Wait, However, Aha), 50% training steps vs DAPO</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">3</div>
+      <p><strong>1M Input + 80K Output:</strong> Native ultra-long context, OpenAI-MRCR (1M) 56.2 beats o3 and Claude 4 Opus; TAU-bench tool use surpasses Gemini 2.5 Pro</p>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">4</div>
+      <p><strong>$0.53M Low-Cost RL:</strong> 512 H800 GPUs in 3 weeks; CISPO significantly reduces training iterations, validating efficient test-time compute scaling paradigm</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

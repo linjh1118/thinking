@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Omni — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .78rem; color: #d6d3d1; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.g4 { background: rgba(120,53,15,.08); border-left: 3px solid #78350f }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.g4 .title { color: #fde68a }
+.gap-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #d6d3d1; line-height: 1.45 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .64rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #a8a29e; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #ffffff !important }
+mjx-container svg, mjx-container svg * { fill: #ffffff !important }
+
+/* DATA INLINE */
+.data-payload { display: none }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="LongCat_Flash_Omni_poster.html">EN</a><a class="active" href="LongCat_Flash_Omni_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- DATA INLINE JSON -->
+<script type="application/json" class="data-payload">
+{
+  "paper": {
+    "title_en": "LongCat-Flash-Omni Technical Report",
+    "title_zh": "LongCat-Flash-Omni：560B 全模态实时音视频交互大模型",
+    "authors": "Meituan LongCat Team",
+    "arxiv": "2511.00279",
+    "year": 2025,
+    "venue": "arXiv"
+  },
+  "score_boxes": [
+    {"num": "560B", "sub": "MoE 全参<br>激活 27B 平均"},
+    {"num": "<100ms", "sub": "端到端首包<br>实时音视频"},
+    {"num": "1.37", "sub": "实时交互分<br>开源 SOTA"},
+    {"num": "3×600M", "sub": "ViT + Encoder<br>+ Decoder 轻量外挂"}
+  ],
+  "architecture_modules": [
+    {"name": "LongCat-ViT", "params": "637M", "config": "Patch 14, hidden 1280, 32 层, 2D-RoPE, native resolution encoding, 2× pixel-unshuffle"},
+    {"name": "Audio Encoder", "params": "~600M", "config": "Fbank 80-dim, Pre-FFN 8× downsample (80ms/frame), FSMN 替换 self-attention, 最后 6 层 one-frame look-ahead, CTC 训练"},
+    {"name": "Audio Decoder", "params": "~600M", "config": "LSTM+Conv+causal transposed conv, look-ahead 仅 3 帧 (≈180ms), GAN 训练, 直接 Code2Wav 不用 diffusion"},
+    {"name": "LLM Backbone", "params": "560B (激活 27B)", "config": "继承 LongCat-Flash ScMoE + zero-computation experts + MLA，原封不动"}
+  ],
+  "training_stages": [
+    {"stage": "Stage 0", "title": "Text Pre-Training", "data": "~16T tokens", "point": "复用 LongCat-Flash 流程；constant LR；逐步加 STEM/code 比例"},
+    {"stage": "Stage 1", "title": "Text-Speech CPT", "data": "5.1T tokens", "point": "text:audio=2:1；4 个 audio prediction head；4-codebook discrete token 输入"},
+    {"stage": "Stage 2", "title": "Multimodal CPT", "data": "3T+ tokens", "point": "加 vision (text:audio:vision=2:1:1)；ViT 从 LongCat-ViT 初始化；vision loss 权重 0.25"},
+    {"stage": "Stage 3", "title": "Multimodal Annealing", "data": "0.33T tokens", "point": "加 video caption/QA + OCR/grounding/GUI；PPL-gap signal 自动调采样"},
+    {"stage": "Stage 4", "title": "Context-Length Extension", "data": "8K→32K→128K", "point": "RoPE base 1M→5M→10M；保持 text:vision:speech=2:1:1"},
+    {"stage": "Stage 5", "title": "Audio Encoder Alignment", "data": "LLM 冻结", "point": "用 continuous feature 替代 discrete token；CTC loss；恢复 fine-grained 声学细节"}
+  ],
+  "real_time_scores": [
+    {"model": "Doubao", "score": 1.92, "ci": "[1.85, 1.98]"},
+    {"model": "GPT-4o", "score": 1.79, "ci": "[1.72, 1.85]"},
+    {"model": "LongCat-Flash-Omni", "score": 1.37, "ci": "[1.30, 1.44]", "ours": true},
+    {"model": "iFlytek Spark", "score": 1.25, "ci": "[1.18, 1.32]"},
+    {"model": "StepFun", "score": 1.22, "ci": "[1.15, 1.28]"},
+    {"model": "ChatGLM", "score": 0.99, "ci": "[0.93, 1.05]"},
+    {"model": "Qwen2.5-Omni", "score": 0.96, "ci": "[0.89, 1.02]"},
+    {"model": "Qwen3-Omni", "score": 0.81, "ci": "[0.75, 0.87]"}
+  ],
+  "omni_benchmarks": [
+    {"bench": "OmniBench", "ours": 61.38, "g25p": 66.80, "g25f": 54.99, "q3": 58.41, "q25": 48.16},
+    {"bench": "WorldSense", "ours": 60.89, "g25p": 63.96, "g25f": 58.72, "q3": 52.01, "q25": 46.69},
+    {"bench": "DailyOmni", "ours": 82.38, "g25p": 80.61, "g25f": 80.78, "q3": 69.33, "q25": 47.45},
+    {"bench": "UNO-Bench", "ours": 49.90, "g25p": 64.48, "g25f": 54.30, "q3": 42.10, "q25": 32.60}
+  ],
+  "text_base_preserved": [
+    {"bench": "MMLU", "ours": 86.81, "flash": 87.05, "ds31": 87.46, "k2": 87.47},
+    {"bench": "MMLU-Pro", "ours": 69.05, "flash": 70.32, "ds31": 59.29, "k2": 68.36},
+    {"bench": "GPQA", "ours": 51.76, "flash": 51.09, "ds31": 47.16, "k2": 45.89, "best": true},
+    {"bench": "SuperGPQA", "ours": 54.71, "flash": 54.19, "ds31": null, "k2": 44.70, "best": true},
+    {"bench": "MATH", "ours": 66.80, "flash": 64.82, "ds31": 61.56, "k2": 66.74, "best": true},
+    {"bench": "MultiPL-E", "ours": 70.76, "flash": 69.25, "ds31": 62.00, "k2": 59.22, "best": true}
+  ],
+  "audio_asr": [
+    {"bench": "LibriSpeech test-clean", "ours": 1.57, "q3": "—", "q25": "—"},
+    {"bench": "LibriSpeech test-other", "ours": 4.01, "q3": "—", "q25": "—"},
+    {"bench": "AISHELL-1", "ours": 0.63, "q3": "—", "q25": "—", "best": true},
+    {"bench": "CommonVoice15-zh", "ours": 4.98, "q3": 4.31, "q25": "—"},
+    {"bench": "VoiceBench IFEval", "ours": 77.99, "q3": "—", "q25": "—", "best": true},
+    {"bench": "AdvBench", "ours": 100, "q3": "—", "q25": "—", "best": true}
+  ],
+  "qualitative_dimensions": [
+    {"dim": "Paralinguistic Understanding", "ours": 91.5, "best_model": "Doubao", "best_score": 88.0, "ours_best": true},
+    {"dim": "Memory Capability", "ours": 94.5, "best_model": "Doubao", "best_score": 98.0},
+    {"dim": "Relevance", "ours": 54.5, "best_model": "Doubao", "best_score": 66.5},
+    {"dim": "Real-timeness", "ours": 49.5, "best_model": "GPT-4o", "best_score": 71.5},
+    {"dim": "Human-likeness", "ours": 62.5, "best_model": "Doubao", "best_score": 93.5},
+    {"dim": "Accuracy", "ours": 36.0, "best_model": "Doubao", "best_score": 65.0}
+  ]
+}
+</script>
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2511_LongCat_Flash_Omni%2FLongCat-Flash-Omni-Technical-Report" style="text-decoration: none;">LongCat-Flash-Omni 笔记</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2511.00279" target="_blank" style="text-decoration: none;">arXiv:2511.00279</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Omni" target="_blank" style="text-decoration: none;">HuggingFace</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://github.com/meituan-longcat/LongCat-Flash-Omni" target="_blank" style="text-decoration: none;">GitHub</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2511.00279 &nbsp;|&nbsp; Meituan LongCat Team &nbsp;|&nbsp; 2025.11</span>
+    <div class="zh-title">LongCat-Flash-Omni：560B 全模态实时音视频大模型</div>
+    <h1>LongCat-Flash-Omni Technical Report <span>— 560B MoE + Encoder-Decoder 拼接路线</span></h1>
+    <div class="authors">Meituan LongCat Team &nbsp;(全作者列表见 arXiv:2511.00279)</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">560B</div><div class="sub">MoE 全参<br>激活 27B 平均</div></div>
+    <div class="score-box"><div class="num">&lt;100ms</div><div class="sub">端到端首包<br>实时音视频交互</div></div>
+    <div class="score-box"><div class="num">1.37</div><div class="sub">实时交互分<br>开源 SOTA</div></div>
+    <div class="score-box"><div class="num">3×600M</div><div class="sub">ViT+Encoder<br>+Decoder 轻量挂载</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 整体架构 + Audio Encoder -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与架构：560B 上做实时全模态交互</h2></div>
+  <p class="body">Omni-model real-time interaction 面对四个相互牵制的难题：<strong>cross-modal heterogeneity</strong>（text/speech/image/video 结构差异巨大）、<strong>unified offline + streaming</strong>（算法需求完全不同）、<strong>millisecond-level latency</strong>（560B 推理本身就是工程奇迹）、<strong>training efficiency</strong>（FSDP 在 560B 上不实用，pipeline bubble 被异构性放大）。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/architecture.png" alt="整体架构" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：LongCat-Flash-Omni 整体架构（560B LLM + ViT 637M + Audio Encoder/Decoder）</i><br><small>src/assets/architecture.png</small></div>'">
+    <div class="fig-cap">图 1：整体架构 — 三个轻量外挂模块 + LongCat-Flash LLM backbone</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心哲学：Encoder-Decoder 拼接式 omni</div>
+      <p>保留 LongCat-Flash 的 <strong>ScMoE + zero-computation experts + MLA</strong> 原封不动，<strong>外挂 3 个轻量模块</strong>（ViT 637M + Audio Encoder ~600M + Audio Decoder ~600M），通过 6 阶段 curriculum 实现 early-fusion 而不破坏单模态性能。这是和 [[2603_LongCat_Next|LongCat-Next]] 离散 token 路线的方法论分歧。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">ViT 配置（LongCat-ViT 637M）</div>
+      <p>基于自家 UnivTIT 工作，Patch 14，hidden 1280，32 层，<strong>2D-RoPE</strong>，<strong>native resolution encoding</strong>（patch 范围 576-5832，不强行 resize）+ <strong>2× pixel-unshuffle</strong>，14.6B 样本 contrastive pretraining。避免极端宽高比信息丢失。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">LLM Backbone：继承 LongCat-Flash</div>
+      <p>560B / 27B 激活的 ScMoE，<strong>MLA + zero-computation experts</strong>，per-token 变计算预算。Stage 0 文本预训练 checkpoint 作为 omni 起点，<strong>完全不动 LLM 架构</strong>。这是 LongCat 系列的"基座哲学"。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/audio_encoder.png" alt="Audio Encoder 架构" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Audio Encoder 架构 — FSMN 替换 self-attention 实现受限上下文流式推理</i><br><small>src/assets/audio_encoder.png</small></div>'">
+    <div class="fig-cap">图 2：Audio Encoder — FSMN + CTC 实现流式输入编码</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Audio Encoder 设计：为了 latency 牺牲一切</div>
+    <p>Fbank 80-dim 输入 → Pre-FFN <strong>8× downsample（每帧 80ms）</strong> → FSMN 层替换 self-attention（self-attention KV cache 在长流式音频上是灾难）→ 最后 6 层 <strong>one-frame look-ahead</strong> → CTC loss 训练。Stage 5 用 ASR + audio understanding 数据对齐 continuous feature。</p>
+  </div>
+</div>
+
+<!-- COLUMN 2: Speech LLM + Streaming Pipeline -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Speech LLM + 流式音视频交互</h2></div>
+  <p class="body">Speech LLM 的设计哲学是 <strong>discrete token 用于 LLM 训练，continuous feature 用于输入理解</strong>——两套并行。Audio Codec <strong>4 codebook</strong>：1 个语义 codebook（让 LLM 容易预测）+ 3 个声学 codebook（补音色/情绪/prosody）。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/speech_llm_pattern.png" alt="Speech LLM 模式" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Speech LLM 模式 — 4 codebook 输入，4 个 audio prediction head 输出</i><br><small>src/assets/speech_llm_pattern.png</small></div>'">
+    <div class="fig-cap">图 3：Speech LLM 模式 — discrete token 训练 + 4 个并行 prediction head</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Audio Tokenizer（LongCat-Audio-Codec）</div>
+      <p>16.67 Hz frame rate，把波形切成 <strong>4 codebook discrete token</strong>。Stage 1-4 用 discrete token 输入（训练效率高、next-token prediction 对齐），但发现离散化丢细节，Stage 5 又加 audio encoder 用 continuous feature 重训。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Audio Decoder：GAN + Code2Wav</div>
+      <p>LSTM + Conv + causal transposed conv，<strong>look-ahead 仅 3 帧（≈180ms）</strong>。<strong>不用 diffusion/flow-matching code2mel</strong>（虽然质量更好），因为推理慢；直接 GAN 训练的 Code2Wav 满足低延迟需求。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/streaming_pipeline.png" alt="流式 pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Asynchronous Streaming Pipeline — packet=1s 音频+2 帧视频，VAD 与 prefill overlap</i><br><small>src/assets/streaming_pipeline.png</small></div>'">
+    <div class="fig-cap">图 4：Asynchronous Streaming Pipeline — 端到端 &lt;100ms 首包延迟</div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">机制 1：Streaming Audio-Visual Feature Interleaving</div>
+      <p>离线可直接 <code>concat(audio, video)</code>；流式必须<strong>尽早 prefill</strong>。Chunk-wise 交错格式（每 chunk 1 秒）：<code>&lt;timestamp&gt;: &lt;video&gt; &lt;audio-start&gt; &lt;audio&gt; ...</code>，timestamp 用文本形式 <code>Second{i}</code>。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">机制 2：Sparse-Dense Sampling Strategy</div>
+      <p><strong>用户输入期</strong>：chunk=1s，video 2 FPS（dense）→ 保留信息；<strong>模型回复期</strong>：chunk=2s，video 0.5 FPS（sparse）→ buffer 到下一轮 prepend。模型边回答边"看"视频。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">端到端 Latency &lt;100ms</div>
+      <p>每个 packet = 1s 音频 + 2 帧视频；流式 prefill（边接收边算）；用户停顿期 600-700ms 用于 VAD 端点检测 <strong>和 prefill overlap</strong>；端点检测后 <strong>&lt;100ms 内</strong> 返回首包。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Modality-Decoupled Parallelism（MDP）</div>
+    <p>模态 encoder 用 HSDP，LLM decoder 用 PP+ZeRO-1 DP+CP+EP。<strong>InnerDP</strong> 让模态 encoder DP rank 与 LLM decoder 一一对应。4 阶段执行：Data Loading → Modality Encoder Forward → LLM Fwd+Bwd → Modality Encoder Bwd。多模态训练保持 <strong>&gt;90% text-only throughput</strong>，单 device 内存从 137GB 压到 72GB。</p>
+  </div>
+</div>
+
+<!-- COLUMN 3: 训练 + Benchmark + 定性分析 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>训练 &amp; Benchmark：6 阶段 curriculum + 开源 SOTA</h2></div>
+  <p class="body">全篇最重要的训练设计：按 <strong>"sequence modeling 难度"递进</strong>——text → speech → image → video，逐步加模态，避免一种模态的训练拖垮另一种。<strong>关键经验：先训 speech 再训 image</strong>（反过来会让 speech 能力大幅退化）。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/pretraining_stages.png" alt="预训练阶段" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：6 阶段预训练 curriculum — text → speech → image → video → long-ctx → audio alignment</i><br><small>src/assets/pretraining_stages.png</small></div>'">
+    <div class="fig-cap">图 5：6 阶段 Pre-Training Curriculum — 共 2.5T+ 多模态 tokens</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Stage</th><th>数据</th><th>关键点</th></tr>
+    <tr class="cat"><td colspan="3">6 阶段 Curriculum</td></tr>
+    <tr><td class="left">Stage 0 Text</td><td>~16T</td><td>复用 Flash；constant LR</td></tr>
+    <tr><td class="left">Stage 1 Text-Speech</td><td>5.1T</td><td>4 audio head；4-codebook</td></tr>
+    <tr><td class="left">Stage 2 +Vision</td><td>3T+</td><td>ViT 初始化；vision loss 0.25</td></tr>
+    <tr><td class="left">Stage 3 Annealing</td><td>0.33T</td><td>+video；PPL-gap 调采样</td></tr>
+    <tr><td class="left">Stage 4 Long-ctx</td><td>8K→128K</td><td>RoPE 1M→10M</td></tr>
+    <tr class="ours"><td class="left">Stage 5 Audio Align</td><td>LLM 冻结</td><td>continuous → 恢复声学细节</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/benchmark_overview.png" alt="Benchmark 总览" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：Benchmark 总览 — 跨模态理解 / 实时交互 / 单模态 全面领先开源</i><br><small>src/assets/benchmark_overview.png</small></div>'">
+    <div class="fig-cap">图 6：Benchmark 总览 — OmniBench 61.38 / WorldSense 60.89 / DailyOmni 82.38</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Omni Benchmark</th><th>Ours</th><th>Gemini-2.5-Pro</th><th>Qwen3-Omni</th></tr>
+    <tr><td class="left">OmniBench</td><td class="dv">61.38</td><td>66.80</td><td>58.41</td></tr>
+    <tr><td class="left">WorldSense</td><td class="dv">60.89</td><td>63.96</td><td>52.01</td></tr>
+    <tr><td class="left">DailyOmni</td><td class="dv">82.38</td><td>80.61</td><td>69.33</td></tr>
+    <tr><td class="left">UNO-Bench</td><td>49.90</td><td class="dv">64.48</td><td>42.10</td></tr>
+  </table>
+
+  <table class="rtable">
+    <tr><th class="left">Text Base（多模态不破坏文本能力）</th><th>Ours</th><th>LongCat-Flash</th><th>DeepSeek-V3.1</th></tr>
+    <tr><td class="left">MMLU</td><td>86.81</td><td>87.05</td><td>87.46</td></tr>
+    <tr><td class="left">GPQA</td><td class="dv">51.76</td><td>51.09</td><td>47.16</td></tr>
+    <tr><td class="left">MATH</td><td class="dv">66.80</td><td>64.82</td><td>61.56</td></tr>
+    <tr><td class="left">MultiPL-E</td><td class="dv">70.76</td><td>69.25</td><td>62.00</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/qualitative_analysis.png" alt="定性分析" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：定性分析 — 6 维能力对比开源/闭源 omni 模型</i><br><small>src/assets/qualitative_analysis.png</small></div>'">
+    <div class="fig-cap">图 7：定性分析 — 实时交互 6 维能力（200 个 3 分钟对话，250 用户三标注）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g4">
+      <div class="title">实时交互：开源 SOTA 1.37 / 闭源差距仍在</div>
+      <p>实时交互评分（200 个 3 分钟多轮对话，10 位专业对话员）：Doubao 1.92 / GPT-4o 1.79 / <strong>LongCat-Flash-Omni 1.37（开源 SOTA，比 Qwen3-Omni 高 0.56）</strong> / Qwen3-Omni 0.81。Paralinguistic Understanding 91.5 第一，Human-likeness / Real-timeness 仍是短板。</p>
+    </div>
+    <div class="gap-box g1">
+      <div class="title">Audio ASR 极强</div>
+      <p>LibriSpeech test-clean 1.57 / test-other 4.01，<strong>AISHELL-1 = 0.63（极强）</strong>，CommonVoice15-zh 4.98（弱于 Qwen3-Omni 4.31）。Audio-to-Text Chat：VoiceBench IFEval <strong>77.99（第一）</strong>，AdvBench <strong>100（第一）</strong>。</p>
+    </div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">OmniBench</div>
+      <div class="adelta">61.38</div>
+      <div class="adesc">开源 SOTA；落后 Gemini-2.5-Pro 仅 5.4 分</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">AISHELL-1</div>
+      <div class="adelta">0.63</div>
+      <div class="adesc">中文 ASR 极强，远超同期开源模型</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">DailyOmni</div>
+      <div class="adelta">82.38</div>
+      <div class="adesc">超越 Gemini-2.5-Pro（80.61）和 Flash（80.78）</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Paralinguistic</div>
+      <div class="adelta">91.5</div>
+      <div class="adesc">副语言理解第一（甚至超过 Doubao 88.0）</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Encoder-Decoder 拼接</div>
+    <p>560B MoE 基座原封不动，外挂 <strong>ViT 637M + Audio Encoder/Decoder ~1.2B</strong>。模块可独立优化、bit 级一致性、易部署——拼接派的成熟作品。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② Audio-Visual 实时</div>
+    <p>Chunk-wise 交错 + Sparse-Dense Sampling：用户输入期 1s/2FPS（dense），模型回复期 2s/0.5FPS（sparse）。模型边回答边"看"视频。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ &lt;100ms 首包延迟</div>
+    <p>流式 prefill 与 VAD 端点检测 overlap，端点结束后 <strong>&lt;100ms 返回首包</strong>。560B 规模下做端到端流式音视频，工程奇迹。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ 模块化挂载基座</div>
+    <p>多模态训练后文本能力<strong>不仅没退化，反而微涨</strong>（GPQA +0.67 / MATH +1.98 / MultiPL-E +1.51）。早期融合策略成功的最强证据，easy 复现。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

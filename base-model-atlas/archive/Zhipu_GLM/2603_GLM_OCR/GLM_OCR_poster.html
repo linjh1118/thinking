@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLM-OCR — Research Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — red/coral gradient */
+.header { background: linear-gradient(120deg, #7f1d1d 0%, #dc2626 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fde68a; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(220,38,38,.4); border: 1px solid #f87171; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-red .nc { background: #dc2626 }
+.c-orange .nc { background: #ea580c }
+.c-amber .nc { background: #d97706 }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-red h2 { color: #fca5a5 }
+.c-orange h2 { color: #fdba74 }
+.c-amber h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626 }
+.g2 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.g3 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fca5a5 }
+.g2 .title { color: #fdba74 }
+.g3 .title { color: #fde68a }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(220,38,38,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #7f1d1d; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(220,38,38,.1); font-weight: 700; font-size: .66rem; color: #fca5a5; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(220,38,38,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #dc2626; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fca5a5; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* PIPELINE FLOW */
+.pipeline-flow { display: flex; gap: 6px; align-items: center; margin: 10px 0; flex-wrap: wrap }
+.pipe-step { background: rgba(220,38,38,.1); border: 1px solid rgba(220,38,38,.3); border-radius: 6px; padding: 8px 10px; text-align: center; min-width: 90px }
+.pipe-step .pname { font-size: .72rem; font-weight: 700; color: #fca5a5 }
+.pipe-step .pdesc { font-size: .6rem; color: #a8a29e; margin-top: 2px }
+.pipe-arrow { color: #dc2626; font-size: 1.2rem; font-weight: bold }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(220,38,38,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(220,38,38,.06); border: 1px solid rgba(220,38,38,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="GLM_OCR_poster.html">EN</a><a href="GLM_OCR_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">Source：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FZhipu_GLM%2F2603_GLM_OCR%2FGLM-OCR-Document-Understanding" style="text-decoration: none;">GLM-OCR Technical Report</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.10910" target="_blank" style="text-decoration: none;">arXiv:2603.10910</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.10910 &nbsp;|&nbsp; Zhipu AI / Tsinghua</span>
+    <div class="zh-title">GLM-OCR: Lightweight Document Understanding at Scale</div>
+    <h1>GLM-OCR: <span>Lightweight Document Understanding</span> at Scale</h1>
+    <div class="authors">Zhipu AI &nbsp;|&nbsp; Tsinghua University</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">94.62</div><div class="sub">OmniDocBench<br>#1</div></div>
+    <div class="score-box"><div class="num">0.9B</div><div class="sub">Beats Qwen3-VL-235B<br>and Gemini-3-Pro</div></div>
+    <div class="score-box"><div class="num">50%</div><div class="sub">MTP<br>Throughput Boost</div></div>
+    <div class="score-box"><div class="num">5.2×</div><div class="sub">MTP Inference<br>Tokens/Step</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Problem & Motivation -->
+<div class="col">
+  <div class="sec-head c-red"><div class="nc">1</div><h2>Problem: Large MLLMs Are Overkill for OCR</h2></div>
+  <p class="body">Large MLLMs (235B+) achieve strong document understanding but suffer from prohibitive compute costs. Core insight: <strong>OCR is a structured, locally-deterministic task</strong> — token-by-token autoregressive decoding is unnecessary overkill.</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Key Insight</div>
+      <p>OCR is <b>deterministic, structured, and locally-dependent</b>. MTP (Multi-Token Prediction) can predict multiple tokens in parallel, dramatically improving efficiency.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Task Coverage</div>
+      <p>• Document Parsing<br>
+      • Formula Recognition<br>
+      • Table Extraction<br>
+      • Key Info Extraction (KIE)<br>
+      • Seal Recognition<br>
+      • Multilingual OCR</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/model.png" alt="GLM-OCR Architecture" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">Fig 1: GLM-OCR Model Architecture</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Key Innovation</div>
+    <p>0.9B model (0.4B CogViT + 0.5B GLM) achieves 50% throughput boost via MTP while maintaining SOTA performance.</p>
+  </div>
+</div>
+
+<!-- COLUMN 2: Architecture & Method -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Two-Stage Pipeline + MTP</h2></div>
+
+  <div class="pipeline-flow">
+    <div class="pipe-step">
+      <div class="pname">Layout</div>
+      <div class="pdesc">PP-DocLayout-V3</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pname">Parallel</div>
+      <div class="pdesc">Region Recognition</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pname">Merge</div>
+      <div class="pdesc">Restore Order</div>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">CogViT 0.4B Vision Encoder</div>
+      <p>Large-scale image-text pre-training. MIM + CLIP objectives, ViT distillation.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">GLM 0.5B LLM Decoder</div>
+      <p>Unified generation: Document Parsing and KIE unified as conditional structured generation, output Markdown / JSON.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">MTP: 5.2× tokens/step</div>
+      <p>Train: predict 10 tokens/step. Inference: avg 5.2 tokens/step ≈ 50% throughput boost.</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/omnidocbench_vis.png" alt="OmniDocBench Results" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">Fig 2: OmniDocBench v1.5 Results</div>
+  </div>
+</div>
+
+<!-- COLUMN 3: Results -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>Experimental Results</h2></div>
+
+  <p class="body">Evaluated on OmniDocBench v1.5 and other public benchmarks. GLM-OCR 0.9B surpasses 235B-class models and Gemini-3-Pro.</p>
+
+  <table class="rtable">
+    <tr><th class="left">Model</th><th>Params</th><th>Overall</th></tr>
+    <tr class="cat"><td colspan="3">Comparison Models</td></tr>
+    <tr><td class="left">Qwen3-VL-235B</td><td>235B</td><td>89.15</td></tr>
+    <tr><td class="left">Gemini-3 Pro</td><td>—</td><td>90.33</td></tr>
+    <tr><td class="left">PaddleOCR-VL-1.5</td><td>—</td><td>94.50</td></tr>
+    <tr class="ours"><td class="left"><b>GLM-OCR</b></td><td><b>0.9B</b></td><td class="best"><b>94.62</b></td></tr>
+  </table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">Key Finding: 0.9B beats 235B</div>
+      <p>GLM-OCR achieves 94.62 on OmniDocBench (#1), especially strong on table tasks (Table_TEDS: 93.96).</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/use_case_table.png" alt="Table Recognition Case" onerror="this.parentElement.style.display='none'">
+    <div class="fig-cap">Fig 3: Table Recognition Case</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Core Insight</div>
+    <p>Specialized lightweight model + MTP + two-stage design beats general-purpose large models on structured document tasks. Similar approach applicable to edge-deployed GUI Agents.</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">Key Finding 1</div>
+    <p><span class="hl">0.9B beats 235B</span>: Specialized lightweight model + MTP + two-stage design beats general-purpose models.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Finding 2</div>
+    <p><span class="hl">MTP 5.2× throughput boost</span>: Multi-Token Prediction improves efficiency while maintaining quality.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Finding 3</div>
+    <p><span class="hl">Two-Stage Pipeline</span>: Layout Analysis → Parallel Recognition key for complex layout handling.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Key Finding 4</div>
+    <p><span class="hl">GUI Agent Insight</span>: Similar approach applicable to edge-deployed GUI Agents.</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

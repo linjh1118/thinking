@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen3-TTS — Research Poster</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #1e293b;
+  }
+
+  .poster-wrap { width: 100%; max-width: 1400px; }
+
+  /* ── Backlinks ── */
+  .backlinks {
+    margin: 0 0 12px 0;
+    padding: 8px 14px;
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 8px;
+    font-size: 0.82em;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .backlinks a { color: #3b82f6; text-decoration: none; }
+  .backlinks a:hover { text-decoration: underline; }
+  .backlinks .bl-sep { color: rgba(59,130,246,0.3); }
+
+  /* ── Poster ── */
+  .poster {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  }
+
+  /* ── Header ── */
+  .poster-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 55%, #60a5fa 100%);
+    padding: 28px 36px 24px;
+    position: relative;
+  }
+  .poster-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1e3a8a, #3b82f6, #60a5fa, #1e3a8a);
+  }
+
+  .en-title-main {
+    font-size: 2.1em;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .zh-subtitle {
+    font-size: 1.05em;
+    color: rgba(255,255,255,0.82);
+    font-weight: 400;
+    margin-bottom: 14px;
+    letter-spacing: 0.04em;
+  }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.86em;
+    color: rgba(255,255,255,0.75);
+    flex-wrap: wrap;
+  }
+  .header-meta a { color: rgba(255,255,255,0.95); text-decoration: none; }
+  .header-meta a:hover { text-decoration: underline; }
+
+  /* ── Score Strip ── */
+  .score-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #f1f5f9;
+  }
+  .score-box {
+    padding: 18px 20px;
+    text-align: center;
+    border-right: 1px solid rgba(59,130,246,0.15);
+  }
+  .score-box:last-child { border-right: none; }
+  .score-val { font-size: 1.9em; font-weight: 700; color: #1e3a8a; line-height: 1.1; }
+  .score-label { font-size: 0.72em; color: #64748b; margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ── Main Grid ── */
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+
+  .col {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(59,130,246,0.12);
+  }
+  .col:last-child { border-right: none; }
+
+  .col-title {
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1e3a8a;
+    margin-bottom: 14px;
+    padding-bottom: 7px;
+    border-bottom: 2px solid rgba(30,58,138,0.25);
+  }
+
+  .sec { margin-bottom: 16px; }
+  .sec-title { font-size: 0.84em; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+  .sec-body { font-size: 0.80em; color: #475569; line-height: 1.65; }
+  .sec-body strong { color: #1e293b; font-weight: 600; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+  .chip {
+    background: rgba(59,130,246,0.08);
+    color: #1e3a8a;
+    border: 1px solid rgba(59,130,246,0.22);
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-size: 0.72em;
+    font-weight: 500;
+  }
+
+  /* Table */
+  .rtable { width: 100%; border-collapse: collapse; font-size: 0.76em; margin-top: 6px; }
+  .rtable th { background: #1e3a8a; color: #fff; padding: 6px 9px; text-align: left; font-weight: 600; letter-spacing: 0.04em; }
+  .rtable td { padding: 5px 9px; color: #334155; border-bottom: 1px solid rgba(59,130,246,0.08); }
+  .rtable tr:last-child td { border-bottom: none; }
+  .rtable .best { color: #059669; font-weight: 600; }
+
+  /* Fig box */
+  .fig-box {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.14);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .fig-box img { max-width: 100%; border-radius: 5px; display: block; margin: 0 auto; }
+  .fig-caption { font-size: 0.68em; color: #94a3b8; margin-top: 5px; line-height: 1.4; }
+
+  /* Bottom strip */
+  .takeaway-strip {
+    background: #1e3a8a;
+    border-top: 1px solid rgba(59,130,246,0.12);
+    padding: 16px 36px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .ta-item { flex: 1; min-width: 200px; display: flex; align-items: flex-start; gap: 10px; }
+  .ta-num {
+    background: rgba(59,130,246,0.25);
+    color: #bfdbfe;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72em; font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .ta-text { font-size: 0.80em; color: #bfdbfe; line-height: 1.5; }
+  .ta-text strong { color: #fff; }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid rgba(59,130,246,0.12); }
+    .score-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster-wrap">
+
+  <!-- Backlinks -->
+  <div class="backlinks">
+    <span style="color: #64748b;">📚 Source: </span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2601_Qwen3_TTS%2FQwen3-TTS-Multilingual-Controllable-TTS">Qwen3-TTS Paper Note</a>
+    <span class="bl-sep">|</span>
+    <a href="https://arxiv.org/abs/2601.15621" target="_blank">arXiv:2601.15621</a>
+  </div>
+
+  <div class="poster">
+
+    <!-- Header -->
+    <div class="poster-header">
+      <div class="en-title-main">Qwen3-TTS: Alibaba's Multilingual Controllable Text-to-Speech</div>
+      <div class="zh-subtitle">Qwen3 系列首个 TTS 模型：双码率设计 · 多码本预测 · 超低延迟流式合成</div>
+      <div class="header-meta">
+        <span>📄 arXiv: <a href="https://arxiv.org/abs/2601.15621" target="_blank">2601.15621</a></span>
+        <span>🏷️ Multilingual TTS · Emotional Prosody · Streaming</span>
+        <span>📅 2026</span>
+      </div>
+    </div>
+
+    <!-- Score Strip -->
+    <div class="score-strip">
+      <div class="score-box">
+        <div class="score-val">1.24</div>
+        <div class="score-label">Seed-TTS WER (SOTA)</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val">97ms</div>
+        <div class="score-label">First-Packet Latency</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val">5M+ hrs</div>
+        <div class="score-label">Training Data</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val">12Hz / 25Hz</div>
+        <div class="score-label">Dual Tokenizer Variants</div>
+      </div>
+    </div>
+
+    <!-- Main 3-column Grid -->
+    <div class="main-grid">
+
+      <!-- Col 1: Problem & Background -->
+      <div class="col">
+        <div class="col-title">Problem &amp; Motivation</div>
+
+        <div class="sec">
+          <div class="sec-title">Core Challenges</div>
+          <div class="sec-body">
+            Modern TTS systems must simultaneously excel across four dimensions:
+          </div>
+          <div class="chip-row" style="margin-top:6px;">
+            <span class="chip">Stability (text alignment)</span>
+            <span class="chip">Controllability (voice attributes)</span>
+            <span class="chip">Naturalness (human-like speech)</span>
+            <span class="chip">Low Latency (streaming)</span>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Qwen3-TTS Goal</div>
+          <div class="sec-body">
+            Build a <strong>unified multilingual TTS model</strong> that satisfies all four requirements simultaneously, based on the <strong>Qwen3 LM backbone</strong> — the first Qwen-series speech synthesis capability.
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Key Capabilities</div>
+          <div class="sec-body">
+            <strong>3-second voice cloning</strong>: reference audio enables instant voice replication<br><br>
+            <strong>Voice Design</strong>: create and control voices via natural language<br><br>
+            <strong>10+ languages</strong>: consistent cross-lingual generation<br><br>
+            <strong>10+ minutes</strong>: fluent long-form speech synthesis<br><br>
+            <strong>97ms first-packet latency</strong>: real-time interaction-grade experience
+          </div>
+        </div>
+
+        <div class="fig-box">
+          <img src=""src/logo/qwen-logo.png" alt="Qwen Logo" onerror="this.style.display='none'">
+          <div class="fig-caption">Qwen3-TTS — Alibaba Qwen Team</div>
+        </div>
+      </div>
+
+      <!-- Col 2: Method -->
+      <div class="col">
+        <div class="col-title">Core Method</div>
+
+        <div class="sec">
+          <div class="sec-title">Model Architecture</div>
+          <div class="sec-body">
+            Based on <strong>Qwen3 LM backbone</strong>, with dual-rate dual-architecture design:
+          </div>
+          <div class="chip-row" style="margin-top:6px;">
+            <span class="chip">25Hz: Single codebook + chunk-wise DiT decoder</span>
+            <span class="chip">12Hz: RVQ multi-codebook + MTP + ConvNet Code2Wav</span>
+          </div>
+          <div class="sec-body" style="margin-top:8px;">
+            <strong>MTP (Multi-Codebook Prediction)</strong>: predicts all RVQ codebook tokens at each time step simultaneously, enabling low-latency streaming speech synthesis from the first codec frame.
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Three-Stage Training Pipeline</div>
+          <div class="sec-body">
+            <strong>S1 General</strong>: 5M+ hours multilingual speech, establishing text→speech monotonic mapping<br><br>
+            <strong>S2 High-Quality</strong>: curated high-quality subset, effectively mitigating hallucinations from noisy data<br><br>
+            <strong>S3 Long-Context</strong>: max length scaled from 8K to 32K, supporting ultra-long speech synthesis
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Post-Training Alignment</div>
+          <div class="sec-body">
+            <strong>DPO</strong>: human preference alignment for naturalness and expressiveness<br><br>
+            <strong>GSPO</strong>: rule-based reward signals improving stability and task consistency<br><br>
+            <strong>Speaker Fine-tuning</strong>: custom voice cloning adaptation per speaker
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Voice Design Capability</div>
+          <div class="sec-body">
+            Create new voices or control existing voice attributes (speed, pitch, emotion) via <strong>natural language descriptions</strong> — no manual parameter tuning needed. Directly applicable to personalized Agent scenarios.
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 3: Results -->
+      <div class="col">
+        <div class="col-title">Experimental Results</div>
+
+        <div class="sec">
+          <div class="sec-title">Speech Reconstruction (LibriSpeech test-clean)</div>
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>PESQ_WB</th>
+                <th>STOI</th>
+                <th>UTMOS</th>
+                <th>SIM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mimi (baseline)</td>
+                <td>2.88</td>
+                <td>0.94</td>
+                <td>3.87</td>
+                <td>0.87</td>
+              </tr>
+              <tr>
+                <td>Qwen3-TTS-Tokenizer-12Hz</td>
+                <td class="best">3.21</td>
+                <td class="best">0.96</td>
+                <td class="best">4.16</td>
+                <td class="best">0.95</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Zero-shot Speech Generation (Seed-TTS test-en WER, lower is better)</div>
+          <div class="sec-body">
+            <span class="chip" style="font-size:0.85em; padding:4px 12px;">Qwen3-TTS-12Hz-1.7B</span>
+            <span style="font-size:1.4em; font-weight:700; color:#059669; margin-left:10px;">1.24</span>
+            <span style="color:#64748b; font-size:0.8em;"> SOTA (beats CosyVoice 3 at 1.45)</span>
+          </div>
+          <div class="sec-body" style="margin-top:6px;">
+            WER 1.24 means Qwen3-TTS achieves the best speech intelligibility on zero-shot voice generation tasks.
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Latency &amp; Inference Efficiency</div>
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>First-Packet</th>
+                <th>RTF (1c)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Qwen3-TTS-12Hz-0.6B</td>
+                <td class="best">97ms</td>
+                <td class="best">0.288</td>
+              </tr>
+              <tr>
+                <td>Qwen3-TTS-12Hz-1.7B</td>
+                <td>101ms</td>
+                <td>0.313</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">Model Size Trade-off</div>
+          <div class="sec-body">
+            0.6B and 1.7B variants: 0.6B is better on latency and RTF; 1.7B is better on quality. Choose based on scenario requirements.
+          </div>
+        </div>
+
+        <div class="fig-box">
+          <img src=""src/logo/modelscope-logo.png" alt="ModelScope" onerror="this.style.display='none'">
+          <div class="fig-caption">ModelScope · GitHub · HuggingFace — Open Source</div>
+        </div>
+      </div>
+
+    </div><!-- /main-grid -->
+
+    <!-- Takeaway Strip -->
+    <div class="takeaway-strip">
+      <div class="ta-item">
+        <div class="ta-num">1</div>
+        <div class="ta-text"><strong>Dual-Rate + MTP Architecture</strong> achieves 97ms first-packet latency for streaming TTS, laying the foundation for real-time voice interaction.</div>
+      </div>
+      <div class="ta-item">
+        <div class="ta-num">2</div>
+        <div class="ta-text"><strong>5M+ Hours Multilingual Data</strong> across three training stages (S1/S2/S3) achieves WER 1.24 SOTA on Seed-TTS.</div>
+      </div>
+      <div class="ta-item">
+        <div class="ta-num">3</div>
+        <div class="ta-text"><strong>Voice Design via Natural Language</strong> creates and controls voices through text descriptions — directly valuable for personalized Agent scenarios.</div>
+      </div>
+      <div class="ta-item">
+        <div class="ta-num">4</div>
+        <div class="ta-text"><strong>3-Second Cloning + 10+ Minute Synthesis</strong> covers the full spectrum from instant interaction to content creation.</div>
+      </div>
+    </div>
+
+  </div><!-- /poster -->
+</div><!-- /poster-wrap -->
+
+</body>
+</html>

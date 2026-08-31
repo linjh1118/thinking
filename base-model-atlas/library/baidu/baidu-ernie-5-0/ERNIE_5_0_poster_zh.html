@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERNIE 5.0 Technical Report — Research Poster</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #0c0a09;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .poster {
+    width: 1400px;
+    background: #1c1917;
+    border-radius: 12px;
+    box-shadow: 0 8px 60px rgba(0,0,0,.6);
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
+  /* Header: 紫蓝渐变 */
+  .header {
+    background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 40%, #0891b2 100%);
+    color: #fff;
+    padding: 28px 48px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 20px;
+  }
+
+  .header-left h1 {
+    font-size: 1.95rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+
+  .header-left .subtitle {
+    font-size: .88rem;
+    opacity: 0.92;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .header-left .authors {
+    font-size: .72rem;
+    opacity: 0.75;
+    margin-top: 8px;
+  }
+
+  .score-boxes {
+    display: flex;
+    gap: 12px;
+  }
+
+  .score-box {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .score-box .num {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fde68a;
+    line-height: 1;
+  }
+
+  .score-box .sub {
+    font-size: .62rem;
+    color: #a8a29e;
+    margin-top: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  /* Main Grid: 3 columns */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .col {
+    padding: 22px 20px;
+    border-right: 1px solid rgba(168,162,158,.15);
+  }
+
+  .col:last-child { border-right: none; }
+
+  /* Section Header */
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .sec-head .nc {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .72rem;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .sec-head h2 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #e7e5e4;
+  }
+
+  /* Key box styles */
+  .g1 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+  .g2 { background: rgba(8,145,178,.08); border-left: 3px solid #0891b2; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+  .g3 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+  .g4 { background: rgba(5,150,105,.08); border-left: 3px solid #059669; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+  .g5 { background: rgba(220,38,38,.08); border-left: 3px solid #dc2626; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+
+  .box-title { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+  .g1 .box-title { color: #a78bfa; }
+  .g2 .box-title { color: #22d3ee; }
+  .g3 .box-title { color: #fbbf24; }
+  .g4 .box-title { color: #34d399; }
+  .g5 .box-title { color: #f87171; }
+
+  .box-content { font-size: .76rem; color: #d6d3d1; line-height: 1.55; }
+  .box-content strong { color: #f5f5f4; }
+
+  /* Trick Box */
+  .trick-box {
+    background: rgba(5,150,105,.08);
+    border: 1px solid rgba(110,231,183,.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+
+  .trick-title {
+    font-size: .68rem;
+    font-weight: 800;
+    color: #6ee7b7;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 5px;
+  }
+
+  .trick-content { font-size: .74rem; color: #d6d3d1; line-height: 1.5; }
+
+  /* Table */
+  .rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .68rem;
+    margin: 8px 0;
+  }
+
+  .rtable th {
+    color: #fff;
+    padding: 5px 4px;
+    text-align: center;
+    font-size: .6rem;
+    font-weight: 700;
+    background: rgba(76,29,149,.4);
+  }
+
+  .rtable td {
+    padding: 4px 4px;
+    text-align: center;
+    color: #a8a29e;
+    border-bottom: 1px solid rgba(168,162,158,.08);
+  }
+
+  .rtable tr:last-child td { border-bottom: none; }
+
+  .rtable .ours td {
+    background: rgba(253,230,138,.06);
+    font-weight: 800;
+    color: #fde68a;
+  }
+
+  .rtable .label {
+    text-align: left;
+    color: #d6d3d1;
+    font-weight: 600;
+  }
+
+  /* Step list */
+  .stage-list {
+    counter-reset: stage;
+    margin: 8px 0;
+  }
+
+  .stage-item {
+    position: relative;
+    padding: 8px 8px 8px 38px;
+    margin-bottom: 6px;
+    background: rgba(124,58,237,.05);
+    border-radius: 8px;
+    border: 1px solid rgba(124,58,237,.15);
+  }
+
+  .stage-item::before {
+    content: counter(stage);
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #7c3aed;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    counter-increment: stage;
+  }
+
+  .stage-item .stitle {
+    font-size: .74rem;
+    font-weight: 700;
+    color: #e7e5e4;
+    margin-bottom: 2px;
+  }
+
+  .stage-item .sdesc {
+    font-size: .68rem;
+    color: #a8a29e;
+    line-height: 1.4;
+  }
+
+  /* Bottom strip */
+  .bottom-strip {
+    background: #0c0a09;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid rgba(168,162,158,.2);
+  }
+
+  .bstrip {
+    padding: 16px 20px;
+    border-right: 1px solid rgba(168,162,158,.15);
+  }
+
+  .bstrip:last-child { border-right: none; }
+
+  .bhead {
+    font-size: .62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #78716c;
+    margin-bottom: 6px;
+  }
+
+  .hl { color: #fbbf24; font-weight: 700; }
+
+  .bdesc {
+    font-size: .72rem;
+    color: #a8a29e;
+    line-height: 1.5;
+  }
+
+  /* Backlinks */
+  .backlinks {
+    margin: 0 48px 24px;
+    padding: 10px 14px;
+    background: rgba(124,58,237,.06);
+    border: 1px solid rgba(124,58,237,.15);
+    border-radius: 8px;
+    font-size: .8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .backlinks a {
+    color: #a78bfa;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .backlinks a:hover { text-decoration: underline; }
+
+  .backlinks .arxiv-link {
+    color: #78716c;
+  }
+
+  .backlinks .sep {
+    color: #44403c;
+    margin: 0 4px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>ERNIE 5.0 — Unified Multimodal Foundation Model</h1>
+      <div class="subtitle">原生自回归统一多模态基座模型 · Ultra-Sparse MoE · Elastic Training · ~2.4T 参数</div>
+      <div class="authors">ERNIE Team, Baidu · COLM 2024 · arXiv:2602.04705</div>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box">
+        <div class="num">2.4T</div>
+        <div class="sub">Parameters</div>
+      </div>
+      <div class="score-box">
+        <div class="num">&lt;3%</div>
+        <div class="sub">MoE Activation</div>
+      </div>
+      <div class="score-box">
+        <div class="num">74.01</div>
+        <div class="sub">SimpleQA</div>
+      </div>
+      <div class="score-box">
+        <div class="num">91.38</div>
+        <div class="sub">VLMAreBlind</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-grid">
+    <!-- Column 1: Problem + Method -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#7c3aed;">1</div>
+        <h2>问题与动机</h2>
+      </div>
+
+      <div class="g5">
+        <div class="box-title">Existing Problems</div>
+        <div class="box-content">
+          <strong>能力跷跷板：</strong>晚期融合方法在提升某模态时牺牲其他模态性能<br>
+          <strong>架构碎片化：</strong>理解用一套架构，生成用另一套，无法深层跨模态融合
+        </div>
+      </div>
+
+      <div class="g1">
+        <div class="box-title">ERNIE 5.0 Goal</div>
+        <div class="box-content">
+          从零开始训练统一的原生多模态模型，所有模态在同一 <strong>Next-Group-of-Tokens Prediction</strong> 目标下共同优化
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:20px;">
+        <div class="nc" style="background:#0891b2;">2</div>
+        <h2>核心架构</h2>
+      </div>
+
+      <div class="g2">
+        <div class="box-title">Modality-Agnostic MoE</div>
+        <div class="box-content">
+          所有模态共享同一个 expert pool，路由决策基于统一 token 表示而非模态 ID。Ultra-sparse 设计：激活率 &lt;3%
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="box-title">Unified Training Objective</div>
+        <div class="box-content">
+          <strong>文本：</strong>Next-Token + Multi-Token Prediction<br>
+          <strong>图像：</strong>Next-Frame-and-Scale (NFSP)<br>
+          <strong>视频：</strong>Next-Frame (时间维度扩展)<br>
+          <strong>音频：</strong>Next-Codec (层级预测)
+        </div>
+      </div>
+
+      <div class="g3">
+        <div class="box-title">视觉理解双路径</div>
+        <div class="box-content">
+          CNN（局部感知）+ ViT（全局语义）→ <strong>Attention-Based Patch Merger</strong> 融合，替代简单 MLP
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2: Elastic Training + RL -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#d97706;">3</div>
+        <h2>Elastic Training</h2>
+      </div>
+
+      <div class="box-content" style="margin-bottom:10px;">
+        一次预训练，产出多个尺寸子模型，无需后压缩
+      </div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">Elastic Depth</div>
+          <div class="sdesc">75% 全深度 + 25% 浅层子网 → 激活不同层数</div>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Elastic Width</div>
+          <div class="sdesc">80% 全部 expert + 20% 子集 → 激活不同 expert 数量</div>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Elastic Sparsity</div>
+          <div class="sdesc">80% 默认 top-k + 20% 更小 k → 激活不同路由稀疏度</div>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">Key Result</div>
+        <div class="trick-content">
+          ERNIE 5.0-Exp-EA<sub>35.8%</sub>：<br>
+          仅用 <strong>53.7% 激活参数</strong> + <strong>35.8% 总参数</strong><br>
+          仍保持接近全模型性能（75.17 vs 75.55 avg）
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">Efficiency Gain</div>
+        <div class="trick-content">
+          推理 top-k 降至 25% → <strong>&gt;15% 解码加速</strong><br>
+          弹性深度训练还有正则化效应，验证 loss 略有下降
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:20px;">
+        <div class="nc" style="background:#059669;">4</div>
+        <h2>Post-Training: U-RL</h2>
+      </div>
+
+      <div class="g4">
+        <div class="box-title">U-RB: Unbiased Replay Buffer</div>
+        <div class="box-content">解决长尾响应导致 GPU 空闲问题，保持无偏数据分布</div>
+      </div>
+
+      <div class="g4">
+        <div class="box-title">MISC + WPSM</div>
+        <div class="box-content">避免熵崩溃：token级IS裁剪 + 已掌握样本屏蔽</div>
+      </div>
+
+      <div class="g4">
+        <div class="box-title">AHRL: Hint-based RL</div>
+        <div class="box-content">极难任务渐进揭示 think skeleton，scaffold 引导探索</div>
+      </div>
+    </div>
+
+    <!-- Column 3: Results -->
+    <div class="col">
+      <div class="sec-head">
+        <div class="nc" style="background:#dc2626;">5</div>
+        <h2>预训练模型对比</h2>
+      </div>
+
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>DS V3.2</th>
+            <th>K2-Base</th>
+            <th>ERNIE 5.0</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label">MMLU-Pro</td>
+            <td>68.27</td>
+            <td>67.19</td>
+            <td style="color:#fde68a;font-weight:800;">75.58</td>
+          </tr>
+          <tr>
+            <td class="label">MATH (CoT)</td>
+            <td>65.70</td>
+            <td>65.90</td>
+            <td style="color:#fde68a;font-weight:800;">73.89</td>
+          </tr>
+          <tr>
+            <td class="label">LiveCodeBench</td>
+            <td>24.90</td>
+            <td>26.30</td>
+            <td style="color:#fde68a;font-weight:800;">31.94</td>
+          </tr>
+          <tr>
+            <td class="label">ChineseSimpleQA</td>
+            <td>74.19</td>
+            <td>78.29</td>
+            <td style="color:#fde68a;font-weight:800;">90.09</td>
+          </tr>
+          <tr>
+            <td class="label">HumanEval+</td>
+            <td>53.99</td>
+            <td>70.73</td>
+            <td style="color:#fde68a;font-weight:800;">80.86</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sec-head" style="margin-top:16px;">
+        <div class="nc" style="background:#7c3aed;">6</div>
+        <h2>Post-trained 对比</h2>
+      </div>
+
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>Gemini 3</th>
+            <th>ERNIE 5.0</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label">SimpleQA</td>
+            <td>69.33</td>
+            <td style="color:#fde68a;font-weight:800;">74.01</td>
+          </tr>
+          <tr>
+            <td class="label">Multi-IF</td>
+            <td>81.15</td>
+            <td style="color:#fde68a;font-weight:800;">85.56</td>
+          </tr>
+          <tr>
+            <td class="label">ACEBench-en</td>
+            <td>80.90</td>
+            <td style="color:#fde68a;font-weight:800;">87.70</td>
+          </tr>
+          <tr>
+            <td class="label">VLMAreBlind</td>
+            <td>80.83</td>
+            <td style="color:#fde68a;font-weight:800;">91.38</td>
+          </tr>
+          <tr>
+            <td class="label">AISHELL-1 ↓</td>
+            <td>3.04</td>
+            <td style="color:#fde68a;font-weight:800;">0.31</td>
+          </tr>
+          <tr>
+            <td class="label">DocVQA</td>
+            <td>90.70</td>
+            <td style="color:#fde68a;font-weight:800;">95.45</td>
+          </tr>
+          <tr>
+            <td class="label">VBench-Semantic</td>
+            <td>82.49</td>
+            <td style="color:#fde68a;font-weight:800;">83.40</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="trick-box" style="margin-top:12px;">
+        <div class="trick-title">核心洞察</div>
+        <div class="trick-content">
+          Modality-Agnostic Routing 自组织：虽无显式模态区分，专家仍展现模态特定激活模式。理解与生成互强化，非相互制约
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Strip -->
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Key Innovation 1</div>
+      <div class="bdesc"><span class="hl">Modality-Agnostic Ultra-Sparse MoE</span><br>所有模态共享 expert pool，激活率 &lt;3%，无需启发式模态分配</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Key Innovation 2</div>
+      <div class="bdesc"><span class="hl">Elastic Training</span><br>一次训练产出多尺寸子模型，灵活部署，无需后压缩</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Key Innovation 3</div>
+      <div class="bdesc"><span class="hl">Unified NGTP Objective</span><br>text/image/video/audio 统一 Next-Group-of-Tokens Prediction</div>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Key Innovation 4</div>
+      <div class="bdesc"><span class="hl">U-RL: Unbiased Multimodal RL</span><br>U-RB + MISC + WPSM + AHRL 解决超稀疏 MoE + 多模态 RL 训练挑战</div>
+    </div>
+  </div>
+
+  <!-- Backlinks -->
+  <div class="backlinks">
+    <span style="color:#a8a29e;">📚 源文档：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FBaidu_ERNIE%2F2602_ERNIE_5_0%2FERNIE-5-0-Technical-Report">ERNIE-5-0-Technical-Report.md</a>
+    <span class="sep">·</span>
+    <a href="https://arxiv.org/abs/2602.04705" class="arxiv-link">arXiv:2602.04705</a>
+    <span class="sep">·</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FBaidu_ERNIE%2FERNIE-Series-Summary">ERNIE Series Summary</a>
+  </div>
+</div>
+</body>
+</html>

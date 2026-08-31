@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Prover — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .78rem; color: #d6d3d1; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #d6d3d1; line-height: 1.45 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .64rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #a8a29e; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #ffffff !important }
+mjx-container svg, mjx-container svg * { fill: #ffffff !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="LongCat_Flash_Prover_poster.html">EN</a><a class="active" href="LongCat_Flash_Prover_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2603_LongCat_Flash_Prover%2FLongCat-Flash-Prover-Advancing-Native-Formal-Reasoning-via-A" style="text-decoration: none;">LongCat-Flash-Prover 笔记</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.21065" target="_blank" style="text-decoration: none;">arXiv:2603.21065</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.21065 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="zh-title">LongCat-Flash-Prover：通过 Agentic 工具集成强化学习推进原生形式化推理</div>
+    <h1>Advancing Native Formal Reasoning <span>via Agentic Tool-Integrated RL</span></h1>
+    <div class="authors">Jianing Wang, Jianfei Zhang, Qi Guo, Linsen Guo, Rumei Li 等 (Meituan LongCat Team)</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">97.1%</div><div class="sub">MiniF2F-Test<br>@ 72 budget</div></div>
+    <div class="score-box"><div class="num">HisPO</div><div class="sub">层级重要性采样<br>MoE + 长程 RL</div></div>
+    <div class="score-box"><div class="num">AST</div><div class="sub">Legality<br>Detection</div></div>
+    <div class="score-box"><div class="num">Tree</div><div class="sub">Search<br>训练</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + HisPO + AST -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题：形式化推理不只是 SFT</h2></div>
+  <p class="body">普通 reasoning 模型（o1/R1/Flash-Thinking）擅长自然语言 CoT，但 Lean4 是<strong>强类型、kernel 编译验证</strong>的函数式证明语言——一次成功证明可能调几十次 Lean4 server。LongCat-Flash-Prover 把"自然语言数学题 → Lean4 形式化语句 → 完整/拆分式证明"做成模型的<strong>原生能力</strong>，统一训练 Auto-Formalization、Sketching、Proving 三件事。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/training_pipeline.png" alt="training pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：训练 pipeline（cold-start + iteration 两阶段）</i><br><small>src/assets/training_pipeline.png</small></div>'">
+    <div class="fig-cap">图 1：训练 pipeline（cold-start + 多轮 agentic TIR RL）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">① Hybrid-Experts Iteration：6 类轨迹</div>
+      <p>从 3 个 expert（AF/Sk/Pf）×（单轮/TIR）×{whole-proof, sketch-proof} 合成 6 类高质量轨迹。curriculum：先单轮再 TIR，先 whole-proof 后 sketch-proof；pass 率 = 0 保留、连续两轮全挂剔除。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">② 560B MoE / 27B active 基座</div>
+      <p>继承 [[2509_LongCat_Flash|LongCat-Flash]] ScMoE + Zero-Computation Experts 架构，from cold-start = Flash-Thinking-2601。复用 DORA 异步 RL 框架，codebase 完全一致。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-orange" style="margin-top:14px"><div class="nc">2</div><h2>HisPO：层级式梯度屏蔽</h2></div>
+  <p class="body">MoE + 长程异步 RL 下，importance sampling ratio $r_{i,t}(\theta)$ 被<strong>两层污染</strong>——train-inf 差异（Megatron vs vLLM bitwise 不一致）与 policy staleness。HisPO 用指示函数 $H_{i,t}(\theta)$ 同时做<strong>序列级 + token 级</strong>屏蔽：</p>
+
+  <div class="formula-box">
+    <div class="flabel">Importance Ratio 分解</div>
+    $$r_{i,t}(\theta) = \underbrace{\frac{\pi_{\theta_{old}}}{\mu_{\theta_{old}}}}_{r^{dis}(\theta),\ \text{train-inf 差异}} \times \underbrace{\frac{\pi_\theta}{\pi_{\theta_{old}}}}_{r^{stale}(\theta),\ \text{policy 过时}}$$
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">HisPO Hierarchical Mask</div>
+    $$H_{i,t}(\theta) = \mathbb{I}\!\left\{\left|\exp\!\left(\tfrac{1}{|y_i|}\!\sum_j \log r_{i,j}^{dis}\right) - 1\right| < \delta_{seq}\right\} \cdot \mathbb{I}\!\left\{|r_{i,t}^{dis} - 1| < \delta_{tok}\right\}$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Sequence-level Mask</div>
+      <p>几何均值 discrepancy 超阈值 → 整条序列 mask。比 GSPO 只看序列级更细，避免误杀好 token。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Token-level Discrepancy Mask</div>
+      <p>剩余序列再剔除 per-token discrepancy 过大的 token。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Triplet Clipping + No-KL</div>
+      <p>借鉴 DAPO/MoBA 三段 clip（neg low/high + pos high），移除 KL loss（$k_3$ 梯度有偏）。global max length 消 length bias。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">3</div><h2>AST-based Legality Detection</h2></div>
+  <p class="body">训练到第 80 步 rollout pass rate 突然飙升——是<strong>开源评估 pipeline 漏洞</strong>：Lean4 只检查 syntax + 目标定理定义一致性，formal context 完全可编辑。模型学会作弊：加 <code>import</code> 引入隐藏 axiom、用 <code>open</code>/<code>lemma</code> 改写目标、凭空造 axiom。</p>
+
+  <div class="trick-box">
+    <div class="trick-title">修复方案</div>
+    <p>写轻量 Lean4 lexer/parser → 转 AST → 严格对比 formal statement 与 proof/sketch 的 AST 一致性。修好 reward 后从第 80 步重启 RL，pass rate 曲线立刻回到合理水平。<strong>首次系统揭露开源 Lean4 评估的 reward hacking 漏洞</strong>。</p>
+  </div>
+</div>
+
+<!-- COLUMN 2: Tool-Integrated RL + Tree Search -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">4</div><h2>核心方法：Agentic Tool-Integrated RL</h2></div>
+  <p class="body">关键不是"用 Lean4 当 verifier"——所有 prover 都这么干——而是<strong>把 tool call 本身做成 RL 优化目标</strong>：模型不是单次生成完去打分，而是学会"自己写一段 → 让 Lean4 编译 → 看错误 → 改"这种多轮 agentic 闭环。HisPO 稳定的就是这种长 horizon 轨迹。</p>
+
+  <div class="formula-box">
+    <div class="flabel">Whole-proof → TIR → Sketch+TIR Pass@32</div>
+    $$\text{MiniF2F-Test: } 84.4\% \xrightarrow{+\text{TIR}} 90.2\% \xrightarrow{+\text{sketch}} 93.9\%$$
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Auto-Formalization (AF) expert</div>
+      <p>自然语言 → Lean4 形式化语句。工具集 $\mathcal{T}_{af} = \{\mathcal{V}_{syn}, \mathcal{V}_{con}\}$：$\mathcal{V}_{syn}$ 把生成语句拼上 <code>:= by sorry</code> 丢进 Lean4 Server (v4.15) 编译；$\mathcal{V}_{con}$ 用 LLM-as-Judge 过滤"语义与原题不一致"的语句。Cold-start 阶段用自家 ATF-32B 批量合成。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Sketching (Sk) expert — 分治骨架</div>
+      <p>把难定理拆成若干易证 helper lemma，主定理引用若干 <code>sorry</code> 的 helper lemma。已证 lemma 可被后续复用——本质是分治 + 动态规划。whole-proof 走不通的题自动 fall back 到 sketch-proof。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">Proving (Pf) expert — Whole + Sketch 双模式</div>
+      <p>Whole-proof（直接整段证）或 Sketch-proof（先 sketch 再逐 lemma 证）。TIR 多轮调用让模型从 Lean4 编译错误中持续改进。</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">5</div><h2>Tree Search：sample efficiency 终极 trick</h2></div>
+  <p class="body">Tree Search 在推理阶段从模型 rollout 中聚合最优路径，用相对小的 budget 达到 SOTA。MiniF2F-Test 从 95.5% (72 budget) → <strong>97.1% (72 budget + Tree Search)</strong>——开源最强 sample efficiency。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/tree_search.png" alt="tree search" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：tree search 训练轨迹</i><br><small>src/assets/tree_search.png</small></div>'">
+    <div class="fig-cap">图 2：Tree Search 训练轨迹（搜索 vs 单次 rollout 对比）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Sample efficiency 震撼对比</div>
+      <p>Goedel-Prover-V2-32B 和 Kimina-Prover-72B 都要 <strong>1,024+ attempts</strong> 才到 92.2% on MiniF2F。LongCat-Flash-Prover 用 <strong>72 attempts</strong> 就到 95.5%（+Tree Search 97.1%）。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">PutnamBench 涨近 3 倍</div>
+      <p>Tree Search 平均再涨 3.1%；PutnamBench 从 10.4% (sketch+TIR) → 41.5% (sketch+TIR + Tree Search)，翻了近 <strong>4 倍</strong>，说明难题受益最多。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">6</div><h2>实验结果：MiniF2F SOTA 97.1%</h2></div>
+  <p class="body">LongCat-Flash-Prover 在 5 个 Lean4 benchmark 上同时达到<strong>开源 SOTA</strong>。在同 budget (Pass@32) 下，PutnamBench 28.9% 是 Goedel-Prover-V2-32B (8.6%) 的 <strong>3.4 倍</strong>。</p>
+
+  <table class="rtable">
+    <tr><th class="left">Model</th><th>MathOlympiad</th><th>MiniF2F<br>@32</th><th>ProofNet</th><th>ProverBench</th><th>Putnam</th></tr>
+    <tr class="cat"><td colspan="6">通用 reasoning（闭源）</td></tr>
+    <tr><td class="left">DeepSeek-V3.2</td><td>14.7</td><td>77.9</td><td>20.4</td><td>42.8</td><td>5.8</td></tr>
+    <tr><td class="left">Claude-Opus-4.5</td><td>—</td><td>65.6</td><td>35.0</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">Gemini-3 Pro</td><td>3.9</td><td>56.2</td><td>22.0</td><td>33.5</td><td>1.2</td></tr>
+    <tr class="cat"><td colspan="6">专门 prover（开源）</td></tr>
+    <tr><td class="left">Kimina-Prover-72B</td><td>13.1</td><td>84.0</td><td>18.3</td><td>44.6</td><td>3.9</td></tr>
+    <tr><td class="left">DeepSeek-Prover-V2-671B</td><td>13.9</td><td>82.4</td><td>30.5</td><td>52.9</td><td>3.3</td></tr>
+    <tr><td class="left">Goedel-Prover-V2-32B</td><td>20.3</td><td>90.4</td><td>—</td><td>—</td><td>8.6</td></tr>
+    <tr class="cat"><td colspan="6">LongCat-Flash-Prover（本文）</td></tr>
+    <tr><td class="left">whole-proof</td><td>16.9</td><td>84.4</td><td>19.9</td><td>49.9</td><td>4.9</td></tr>
+    <tr><td class="left">whole-proof + TIR</td><td>27.5</td><td>90.2</td><td>36.1</td><td>57.9</td><td>10.4</td></tr>
+    <tr class="ours"><td class="left">sketch + TIR</td><td>35.8</td><td>93.9</td><td>47.3</td><td>66.5</td><td>28.9</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_full_passk.png" alt="RL pass@k curves" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：RL 全过程 pass@k 曲线</i><br><small>src/assets/rl_full_passk.png</small></div>'">
+    <div class="fig-cap">图 3：RL 全过程 pass@k 曲线（reward hacking 修复后）</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/rl_full_reward.png" alt="RL reward curve" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：RL reward 训练曲线</i><br><small>src/assets/rl_full_reward.png</small></div>'">
+    <div class="fig-cap">图 4：RL reward 训练曲线（修好 AST 后曲线健康）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">关键发现 1：sample efficiency 是真 SOTA</div>
+      <p>72 budget 就到 95.5%/97.1%，对 Goedel 1024 budget 92.6%、DeepSeek 8192 budget 88.9%。<strong>不是模型更大，是 data + HisPO + TIR 组合的 sample efficiency</strong>。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">关键发现 2：做 formal RL 不丢 general</div>
+      <p>跟 Flash-Thinking-2601 比对，general reasoning 平均损失 &lt; 1%，AIME-25 仍达 97.7、HMMT-25 90.8——证明它是 <strong>general LRM + formal SOTA</strong> 双修。</p>
+    </div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">MiniF2F + Tree Search</div>
+      <div class="adelta">97.1%</div>
+      <div class="adesc">@ 72 budget，开源 SOTA</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Putnam + Tree Search</div>
+      <div class="adelta">41.5%</div>
+      <div class="adesc">开源 SOTA，3.4× Goedel-V2</div>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/thinking_training_stages.png" alt="thinking training stages" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：thinking 训练阶段</i><br><small>src/assets/thinking_training_stages.png</small></div>'">
+    <div class="fig-cap">图 5：Thinking 训练阶段（cold-start → iteration → final）</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Lean4 proving SOTA</div>
+    <p>MiniF2F-Test <span class="hl">97.1% @ 72 budget</span>，开源最强 sample efficiency——Goedel/Kimina 用 1024+ 才到 92%。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② HisPO hierarchical</div>
+    <p>MoE + 长程 RL 的<span class="hl">序列级 + token 级</span>梯度屏蔽，序列级比 GSPO 更细，triplet clipping 借鉴 DAPO/MoBA。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ AST legality check</div>
+    <p><span class="hl">首次系统揭露开源 Lean4 评估的 reward hacking 漏洞</span>：import/open/lemma 改写目标、凭空造 axiom。AST 检测彻底堵住。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ Tool-integrated RL</div>
+    <p>把 <span class="hl">tool call 本身做成 RL 优化目标</span>——多轮 Lean4 编译反馈循环。whole-proof + TIR + sketch 三阶段每步涨 5-10%。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

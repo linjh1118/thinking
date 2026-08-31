@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Agentic Reasoning - Deep Research 开源新标杆</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0c0a09;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #d6d3d1;
+    padding: 24px;
+  }
+  .backlinks {
+    margin: 0 auto 14px auto;
+    max-width: 1400px;
+    padding: 8px 14px;
+    background: rgba(217,119,6,.06);
+    border: 1px solid rgba(217,119,6,.15);
+    border-radius: 8px;
+    font-size: 0.82em;
+  }
+  .backlinks a {
+    color: #a78bfa;
+    text-decoration: none;
+    margin-right: 16px;
+  }
+  .backlinks a:hover { text-decoration: underline; }
+  .poster {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #1c1917;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,.5);
+  }
+  header {
+    background: linear-gradient(135deg, #92400e 0%, #d97706 50%, #f97316 100%);
+    padding: 28px 40px 22px;
+    position: relative;
+  }
+  .venue-badge {
+    display: inline-block;
+    background: rgba(0,0,0,.25);
+    color: #fef3c7;
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: .08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-size: 1.95em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.01em;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  header .subtitle {
+    font-size: 1.05em;
+    color: #fef3c7;
+    font-weight: 400;
+    margin-bottom: 14px;
+  }
+  .scores {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .score-box {
+    background: rgba(0,0,0,.28);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 10px;
+    padding: 10px 18px;
+    text-align: center;
+    min-width: 130px;
+    backdrop-filter: blur(4px);
+  }
+  .score-box .num {
+    font-size: 1.7em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-box .label {
+    font-size: 0.7em;
+    color: #fed7aa;
+    margin-top: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .score-box .sublabel {
+    font-size: 0.62em;
+    color: #fde68a;
+    margin-top: 2px;
+  }
+  .score-box.highlight { border-color: #fbbf24; }
+  .score-box.highlight .num { color: #fef08a; }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .col {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(217,119,6,.1);
+  }
+  .col:last-child { border-right: none; }
+  .col-header {
+    font-size: 0.68em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding: 5px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .col-1 .col-header { background: rgba(217,119,6,.12); color: #fbbf24; }
+  .col-2 .col-header { background: rgba(249,115,22,.12); color: #fb923c; }
+  .col-3 .col-header { background: rgba(5,150,105,.12); color: #34d399; }
+
+  h2 {
+    font-size: 0.92em;
+    font-weight: 700;
+    color: #d97706;
+    margin-bottom: 8px;
+    margin-top: 16px;
+    border-bottom: 1px solid rgba(217,119,6,.15);
+    padding-bottom: 5px;
+  }
+  h2:first-child { margin-top: 0; }
+  p { font-size: 0.82em; line-height: 1.6; color: #a8a29e; margin-bottom: 8px; }
+  ul { font-size: 0.8em; color: #a8a29e; padding-left: 16px; margin-bottom: 8px; }
+  li { margin-bottom: 4px; line-height: 1.5; }
+
+  .fig-box {
+    background: rgba(217,119,6,.06);
+    border: 1px solid rgba(217,119,6,.12);
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-cap {
+    font-size: 0.68em;
+    color: #78716c;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  table.rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75em;
+    margin: 8px 0;
+  }
+  table.rtable th {
+    background: #92400e;
+    color: #fef3c7;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+  }
+  table.rtable td {
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(217,119,6,.08);
+    color: #d6d3d1;
+  }
+  table.rtable tr:nth-child(even) td { background: rgba(217,119,6,.04); }
+  table.rtable .best { color: #34d399; font-weight: 600; }
+  table.rtable .highlight-row td { background: rgba(217,119,6,.1) !important; color: #fbbf24; font-weight: 600; }
+
+  .pipeline-box {
+    background: rgba(217,119,6,.06);
+    border: 1px solid rgba(217,119,6,.12);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    font-family: "Courier New", monospace;
+    font-size: 0.72em;
+    color: #a8a29e;
+    line-height: 1.7;
+  }
+  .pipeline-box .arrow { color: #d97706; }
+  .pipeline-box .step { color: #fbbf24; }
+  .pipeline-box .agent { color: #34d399; }
+
+  .bottom-strip {
+    background: linear-gradient(90deg, #92400e 0%, #d97706 50%, #f97316 100%);
+    padding: 18px 40px;
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+  .takeaway {
+    flex: 1;
+    min-width: 200px;
+    padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,.25);
+  }
+  .takeaway:last-child { border-right: none; }
+  .takeaway .num {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #fef08a;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .takeaway .txt {
+    font-size: 0.75em;
+    color: #fff;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="backlinks">
+  <span style="color:#a8a29e;">📚 源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAcademic%2F2502_Agentic_Reasoning%2FAgentic-Reasoning-A-Streamlined-Framework-for-Enhancing-LLM">Agentic Reasoning 笔记</a>
+  <span style="color:#57534e;margin-left:8px;">|</span>
+  <a href="https://arxiv.org/abs/2502.04644" style="margin-left:8px;">arXiv: 2502.04644</a>
+  <span style="color:#57534e;margin-left:8px;">|</span>
+  <a href="https://github.com/theworldofagents/Agentic-Reasoning" style="margin-left:8px;">GitHub</a>
+</div>
+
+<div class="poster">
+
+<header>
+  <div class="venue-badge">ACL 2025 · arXiv: 2502.04644</div>
+  <h1>Agentic Reasoning: 增强 LLM 推理的简洁框架</h1>
+  <div class="subtitle">Agentic Reasoning: A Streamlined Framework for Enhancing LLM Reasoning</div>
+  <div class="scores">
+    <div class="score-box highlight">
+      <div class="num">23.8%</div>
+      <div class="label">Humanity's Last Exam</div>
+      <div class="sublabel">DeepSeek-R1 + Agentic</div>
+    </div>
+    <div class="score-box">
+      <div class="num">66.13</div>
+      <div class="label">GAIA Avg</div>
+      <div class="sublabel">vs OpenAI DR 67.36</div>
+    </div>
+    <div class="score-box">
+      <div class="num">2.8%</div>
+      <div class="label">与闭源差距</div>
+      <div class="sublabel">Deep Research</div>
+    </div>
+    <div class="score-box">
+      <div class="num">72%</div>
+      <div class="label">狼人杀胜率</div>
+      <div class="sublabel">Mind-Map 增强</div>
+    </div>
+  </div>
+</header>
+
+<div class="body-grid">
+
+  <!-- Column 1: Problem & Background -->
+  <div class="col col-1">
+    <span class="col-header">问题与动机</span>
+
+    <h2>推理的局限性</h2>
+    <ul>
+      <li><strong>结构化领域</strong>（数学/代码）：outcome 可验证，RL 效果好</li>
+      <li><strong>非结构化领域</strong>（社会科学、伦理、经验性）：形式化推理不适用，需要事实验证</li>
+    </ul>
+
+    <h2>Deep Research 核心需求</h2>
+    <ul>
+      <li>广泛研究（Extensive research）</li>
+      <li>重复验证（Repeated verification）</li>
+      <li>信息检索（Information retrieval）</li>
+      <li>计算分析（Computational analysis）</li>
+      <li>组织复杂逻辑关系</li>
+    </ul>
+
+    <div class="fig-box">
+      <img src="src/assets/main_figure.png" alt="Main Figure">
+      <div class="fig-cap">Agentic Reasoning Pipeline 概览</div>
+    </div>
+
+    <h2>Tool Quality > Tool Quantity</h2>
+    <p>Ablation 实验证明：不是工具越多越好，而是需要互补的工具组合。</p>
+    <table class="rtable">
+      <tr><th>Toolbox</th><th>GPQA</th></tr>
+      <tr><td>HuggingFace (7 tools)</td><td>下降</td></tr>
+      <tr><td>LangChain (109 tools)</td><td>显著下降</td></tr>
+      <tr><td class="best">Web+MindMap+Coding</td><td class="best">最佳</td></tr>
+    </table>
+  </div>
+
+  <!-- Column 2: Core Method -->
+  <div class="col col-2">
+    <span class="col-header">核心方法</span>
+
+    <h2>Agentic Reasoning Pipeline</h2>
+    <div class="pipeline-box">
+      <div>User Query</div>
+      <div class="arrow">↓</div>
+      <div class="step"> Reasoning LLM (DeepSeek-R1)</div>
+      <div style="padding-left:1em;">
+        <div class="arrow">├─</div> <span class="agent">&lt;web-search&gt;</span> → Web-Search Agent<br>
+        <div class="arrow">├─</div> <span class="agent">&lt;coding&gt;</span> → Coding Agent<br>
+        <div class="arrow">└─</div> <span class="agent">&lt;mind-map&gt;</span> → Mind-Map Agent
+      </div>
+      <div class="arrow">↓</div>
+      <div>Final Answer <span style="color:#78716c;">(with evidence chain)</span></div>
+    </div>
+
+    <h2>Web-Search Agent</h2>
+    <p>四组件 pipeline：</p>
+    <ul>
+      <li><strong>Query Breakdown</strong>：原始 query + Mind-Map context 重写为搜索优化 query</li>
+      <li><strong>Search Service</strong>：Bing 搜索，返回 top 20 相关页面</li>
+      <li><strong>Re-ranking</strong>：Cohere Rerank 3.5 按相关性排序</li>
+      <li><strong>RAG</strong>：提取 insights，合成最终 snippet</li>
+    </ul>
+
+    <h2>Mind-Map Agent（关键创新）</h2>
+    <p>知识图谱构建：LLM 从推理链提取实体 + 识别语义关系 + 社区聚类（Louvain）+ 摘要生成。</p>
+    <div class="fig-box">
+      <img src="src/assets/mind_map_long_reason.png" alt="Mind-Map Agent">
+      <div class="fig-cap">Mind-Map Agent 长推理链示例</div>
+    </div>
+    <p><strong>两大功能</strong>：</p>
+    <ul>
+      <li><strong>Context Provision</strong>：为外部工具提供结构化推理上下文</li>
+      <li><strong>Memory Retrieval</strong>：长推理链中不确定时查询 Mind-Map</li>
+    </ul>
+
+    <h2>Coding Agent</h2>
+    <p>设计决策：<strong>不</strong>用 reasoning model 直接生成代码，而是委托给 specialized coding LLM（Claude-3.5-sonnet）。</p>
+    <ul>
+      <li>Reasoning model 保持专注于核心推理</li>
+      <li>更长的连贯推理链</li>
+      <li>Claude 更擅长 coding tasks</li>
+    </ul>
+  </div>
+
+  <!-- Column 3: Results -->
+  <div class="col col-3">
+    <span class="col-header">实验结果</span>
+
+    <h2>Humanity's Last Exam</h2>
+    <table class="rtable">
+      <tr><th>Model</th><th>Accuracy</th></tr>
+      <tr><td>GPT-4o</td><td>3.3%</td></tr>
+      <tr><td>OpenAI o1</td><td>9.1%</td></tr>
+      <tr><td>DeepSeek-R1</td><td>9.4%</td></tr>
+      <tr><td>OpenAI o3-mini (high)</td><td>13.0%</td></tr>
+      <tr><td class="best">Agentic Reasoning w/ R1</td><td class="best">23.8%</td></tr>
+      <tr><td>Perplexity DR</td><td>21.1%</td></tr>
+      <tr><td>OpenAI DR</td><td>26.6%</td></tr>
+    </table>
+    <p style="color:#34d399;font-size:.75em;margin-top:6px;">→ 与 OpenAI Deep Research 差距仅 <strong>2.8%</strong></p>
+
+    <h2>GAIA Benchmark</h2>
+    <table class="rtable">
+      <tr><th>Level</th><th>Agentic</th><th>OpenAI DR</th></tr>
+      <tr><td>Level 1</td><td>74.36</td><td>74.29</td></tr>
+      <tr><td>Level 2</td><td>69.21</td><td>69.06</td></tr>
+      <tr><td>Level 3</td><td>45.46</td><td>47.60</td></tr>
+      <tr class="highlight-row"><td>Avg</td><td class="best">66.13</td><td>67.36</td></tr>
+    </table>
+
+    <h2>Deep Research 人类评估</h2>
+    <table class="rtable">
+      <tr><th>Method</th><th>Interest</th><th>Org</th><th>Rel</th><th>Cov</th></tr>
+      <tr><td>Gemini-DR</td><td>2.7</td><td>2.5</td><td>2.3</td><td>3.0</td></tr>
+      <tr><td>STORM</td><td>2.9</td><td>3.2</td><td>2.9</td><td>3.7</td></tr>
+      <tr class="highlight-row"><td>Ours</td><td class="best">3.7</td><td class="best">4.6</td><td class="best">4.2</td><td class="best">4.1</td></tr>
+    </table>
+
+    <div class="fig-box">
+      <img src="src/assets/med_ex.png" alt="Medical Example">
+      <div class="fig-cap">医疗案例：复杂诊断推理过程</div>
+    </div>
+
+    <div class="fig-box">
+      <img src="src/assets/tricky.png" alt="Tricky Cases">
+      <div class="fig-cap">刁钻问题：外科医生是谁？</div>
+    </div>
+
+    <div class="fig-box">
+      <img src="src/assets/werewolf.png" alt="Werewolf Game">
+      <div class="fig-cap">狼人杀：72% 胜率 vs 36% 无 Mind-Map</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-strip">
+  <div class="takeaway">
+    <div class="num">1</div>
+    <div class="txt">Mind-Map Agent 是关键创新，为长推理链提供结构化记忆与上下文</div>
+  </div>
+  <div class="takeaway">
+    <div class="num">2</div>
+    <div class="txt">工具协同效应：三个工具组合 > 任意两个组合</div>
+  </div>
+  <div class="takeaway">
+    <div class="num">3</div>
+    <div class="txt">Deep Research 开源差距缩小至 2.8%，开源模型可通过 Agentic 增强接近闭源</div>
+  </div>
+  <div class="takeaway">
+    <div class="num">4</div>
+    <div class="txt">GUI Agent 可借鉴：复杂状态历史需要结构化记忆是关键</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

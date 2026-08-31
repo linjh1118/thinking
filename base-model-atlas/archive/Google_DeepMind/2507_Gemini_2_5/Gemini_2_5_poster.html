@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemini 2.5 — Research Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #f8fafc;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #1e293b;
+  padding: 20px;
+}
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display:flex; gap:8px; }
+.lang-switch a { color:#1e293b; text-decoration:none; background:rgba(248,250,252,.9); border:1px solid rgba(100,116,139,.35); border-radius:999px; padding:8px 12px; font-size:12px; font-weight:800; }
+.lang-switch a.active { color:#1e3a8a; border-color:rgba(30,58,138,.55); }
+.poster { width: min(1400px, calc(100vw - 40px)); margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,.12); }
+.backlinks {
+  margin: 12px 16px;
+  padding: 8px 14px;
+  background: rgba(30,58,138,0.06);
+  border: 1px solid rgba(30,58,138,0.12);
+  border-radius: 8px;
+  font-size: 0.82em;
+}
+.backlinks a { color: #1e3a8a; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.header {
+  background: linear-gradient(120deg, #1e3a8a 0%, #3b82f6 40%, #60a5fa 100%);
+  padding: 32px 40px 26px;
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+}
+.header-main { flex: 1; }
+.venue-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 0.75em;
+  color: #dbeafe;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+h1 { font-size: 1.85em; font-weight: 800; color: #ffffff; line-height: 1.25; margin-bottom: 10px; }
+.subtitle { font-size: 0.95em; color: #dbeafe; line-height: 1.5; }
+.meta { margin-top: 8px; color: #bfdbfe; font-size: 0.78em; }
+.badges { display: grid; grid-template-columns: repeat(2, minmax(100px, 1fr)); gap: 10px; }
+.badge {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+}
+.badge .num { font-size: 1.65em; font-weight: 900; color: #ffffff; line-height: 1; }
+.badge .lbl { margin-top: 4px; font-size: 0.68em; color: #dbeafe; line-height: 1.3; }
+.main-grid { display: grid; grid-template-columns: repeat(3, 1fr); background: #f1f5f9; }
+.col { background: #ffffff; padding: 22px 20px; border-right: 1px solid #e2e8f0; }
+.col:last-child { border-right: none; }
+.section-title {
+  font-size: 0.78em; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #1e3a8a; border-bottom: 2px solid #3b82f6;
+  padding-bottom: 5px; margin-bottom: 12px;
+}
+.card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 15px;
+  margin-bottom: 12px;
+}
+.card-blue { border-top: 3px solid #3b82f6; }
+.card-orange { border-top: 3px solid #ea580c; }
+.card-green { border-top: 3px solid #059669; }
+.card-red { border-top: 3px solid #dc2626; }
+h2 {
+  font-size: 0.78em; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #1e3a8a; margin-bottom: 10px;
+}
+.card-orange h2 { color: #c2410c; }
+.card-green h2 { color: #047857; }
+.card-red h2 { color: #b91c1c; }
+p { font-size: 0.82em; color: #334155; line-height: 1.6; margin-bottom: 7px; }
+p:last-child { margin-bottom: 0; }
+ul { list-style: none; padding: 0; }
+ul li {
+  font-size: 0.8em; color: #334155; line-height: 1.55;
+  padding: 4px 0 4px 14px; position: relative;
+  border-bottom: 1px solid #f1f5f9;
+}
+ul li:last-child { border-bottom: none; }
+ul li::before { content: '▸'; position: absolute; left: 0; color: #3b82f6; font-size: 0.75em; top: 4px; }
+ul.orange li::before { color: #ea580c; }
+ul.green li::before { color: #059669; }
+.highlight-box {
+  background: rgba(59,130,246,0.07);
+  border-left: 3px solid #3b82f6;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 13px;
+  margin: 8px 0;
+  font-size: 0.8em; color: #1e3a8a; line-height: 1.5;
+}
+.highlight-box.orange { background: rgba(234,88,12,0.07); border-left-color: #ea580c; color: #9a3412; }
+.highlight-box.green { background: rgba(5,150,105,0.07); border-left-color: #059669; color: #065f46; }
+.highlight-box.red { background: rgba(220,38,38,0.07); border-left-color: #dc2626; color: #991b1b; }
+.rtable { width: 100%; border-collapse: collapse; font-size: 0.76em; margin-top: 6px; }
+.rtable th { background: #1e3a8a; color: #ffffff; padding: 6px 9px; text-align: left; font-weight: 600; }
+.rtable td { padding: 5px 9px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+.rtable tr:last-child td { border-bottom: none; }
+.rtable .score { color: #047857; font-weight: 700; }
+.rtable .delta { color: #059669; }
+.fig-box {
+  background: rgba(59,130,246,0.05);
+  border-radius: 8px; padding: 12px;
+  text-align: center; margin: 8px 0;
+}
+.fig-box img { max-width: 100%; border-radius: 6px; display: block; margin: 0 auto; }
+.fig-cap { font-size: 0.7em; color: #64748b; margin-top: 5px; text-align: center; }
+.model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 8px; }
+.model-card {
+  background: rgba(59,130,246,0.06);
+  border-radius: 8px; padding: 8px 10px;
+  border: 1px solid rgba(59,130,246,0.15);
+}
+.model-card .name { font-size: 0.8em; color: #1e3a8a; font-weight: 600; }
+.model-card .desc { font-size: 0.72em; color: #64748b; margin-top: 2px; line-height: 1.4; }
+.tag-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+.tag {
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 20px;
+  padding: 2px 9px;
+  font-size: 0.7em; color: #1e3a8a;
+}
+.bottom-strip {
+  background: #1e3a8a;
+  padding: 18px 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.takeaway {
+  padding: 12px 18px;
+  border-right: 1px solid rgba(255,255,255,0.15);
+  color: #dbeafe;
+}
+.takeaway:last-child { border-right: none; }
+.takeaway-num {
+  font-size: 1.05em; font-weight: 800;
+  color: #60a5fa; line-height: 1; margin-bottom: 4px;
+}
+.takeaway-text { font-size: 0.78em; line-height: 1.5; opacity: 0.9; }
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="Gemini_2_5_poster.html">EN</a><a href="Gemini_2_5_poster_zh.html">中文</a></div>
+<div class="poster">
+
+  <div class="backlinks">
+    <span style="color:#64748b;">📚 Source：</span>
+    <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FGoogle_DeepMind%2F2507_Gemini_2_5%2FGemini-2.5-Advanced-Reasoning-Multimodality">Gemini 2.5: Advanced Reasoning...</a>
+    <span style="color:#94a3b8;margin:0 6px;">|</span>
+    <span style="color:#64748b;">📄 Paper：</span>
+    <a href="https://arxiv.org/abs/2507.06261" style="color:#1e3a8a;" target="_blank">arXiv 2507.06261</a>
+  </div>
+
+  <div class="header">
+    <div class="header-main">
+      <div class="venue-badge">Google DeepMind · arXiv 2507.06261 · 2025</div>
+      <h1>Gemini 2.5: Advanced Reasoning &amp; Multimodality</h1>
+      <div class="subtitle">Pushing the Frontier with Advanced Reasoning, Multimodality, Long Context, and Next Generation Agentic Capabilities</div>
+      <div class="meta">Gemini Team, Google</div>
+    </div>
+    <div class="badges">
+      <div class="badge"><div class="num">88.0%</div><div class="lbl">AIME 2025 Math<br>Gemini 2.5 Pro</div></div>
+      <div class="badge"><div class="num">86.4%</div><div class="lbl">GPQA Diamond<br>Reasoning</div></div>
+      <div class="badge"><div class="num">82.2%</div><div class="lbl">Aider Polyglot<br>Coding SOTA</div></div>
+      <div class="badge"><div class="num">1M+</div><div class="lbl">Context Tokens<br>Long Context</div></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- Column 1 -->
+    <div class="col">
+      <div class="section-title">Model Family &amp; Motivation</div>
+
+      <div class="card card-blue">
+        <h2>Core Vision</h2>
+        <div class="highlight-box">
+          Gemini 2.5 unifies RL-trained Thinking with native multimodality and 1M+ token long context — covering the full Pareto frontier from daily tasks to complex coding.
+        </div>
+        <p>Gemini 1.5 established long context (1M tokens) and native multimodality, but had limited reasoning. Gemini 2.5's core goal: trade extra computation for higher accuracy at inference time.</p>
+      </div>
+
+      <div class="card card-blue">
+        <h2>Model Architecture</h2>
+        <ul>
+          <li><strong>Sparse MoE</strong> — Sparse Mixture-of-Experts Transformer</li>
+          <li><strong>Native Multimodal</strong> — unified text, visual, audio inputs</li>
+          <li><strong>Long Context</strong> — 1M token context window</li>
+          <li><strong>Distillation</strong> — k-sparse approximation for Flash &amp; smaller models</li>
+        </ul>
+      </div>
+
+      <div class="card card-blue">
+        <h2>Thinking Mechanism</h2>
+        <p>Trained with RL, spending tens of thousands of forward-pass steps "thinking" before answering.</p>
+        <ul>
+          <li><strong>Dynamic Thinking Budget</strong> — user-controllable thinking token allocation</li>
+          <li><strong>Consistent Scaling</strong> — more thinking → higher accuracy</li>
+          <li><strong>Multimodal Integration</strong> — thinking works across images, video, audio</li>
+          <li><strong>Agentic</strong> — thinking interleaves with Google Search tool calls</li>
+        </ul>
+      </div>
+
+      <div class="card card-blue">
+        <h2>Gemini Model Family</h2>
+        <div class="model-grid">
+          <div class="model-card">
+            <div class="name">2.5 Pro</div>
+            <div class="desc">Strongest reasoning &amp; coding · Dynamic Thinking · 1M in · 64K out</div>
+          </div>
+          <div class="model-card">
+            <div class="name">2.5 Flash</div>
+            <div class="desc">Best cost-efficiency · Dynamic Thinking · 1M in · 64K out</div>
+          </div>
+          <div class="model-card">
+            <div class="name">2.0 Flash</div>
+            <div class="desc">Fast daily tasks · Thinking · 1M in · 8K out</div>
+          </div>
+          <div class="model-card">
+            <div class="name">2.0 Flash-Lite</div>
+            <div class="desc">Lowest cost · No Thinking · 1M in · 8K out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="col">
+      <div class="section-title">Key Breakthroughs &amp; Scaling</div>
+
+      <div class="card card-orange">
+        <h2>Thinking Budget Scaling</h2>
+        <div class="fig-box">
+          <img src="src/assets/gemini_benchmark_thinking_budget_length.png" alt="Thinking Budget Scaling">
+          <div class="fig-cap">AIME 2025 accuracy vs. thinking budget length (tokens)</div>
+        </div>
+        <div class="highlight-box orange">
+          AIME 2025: 29.7% → <strong>88.0%</strong> (full budget) — Thinking Budget consistently improves accuracy
+        </div>
+      </div>
+
+      <div class="card card-orange">
+        <h2>Key Breakthroughs</h2>
+        <ul class="orange">
+          <li><strong>Long Context + Reasoning</strong> — processes 3-hour video content end-to-end</li>
+          <li><strong>Multimodal + Tools</strong> — native audio/video understanding + Google Search</li>
+          <li><strong>Code + Reasoning</strong> — emergent abilities on codebase-level tasks</li>
+          <li><strong>Inference Scaling</strong> — Thinking Budget trades compute for accuracy</li>
+          <li><strong>1M Token Context</strong> — entire code repositories as a single input</li>
+        </ul>
+      </div>
+
+      <div class="card card-orange">
+        <h2>Thinking Comparison</h2>
+        <div class="fig-box">
+          <img src="src/assets/gemini_thinking_comparison.png" alt="Thinking Comparison">
+          <div class="fig-cap">Gemini 2.5 thinking process visualization</div>
+        </div>
+      </div>
+
+      <div class="card card-orange">
+        <h2>Long Context Comparison</h2>
+        <table class="rtable">
+          <thead><tr><th>Model</th><th>Max Input</th><th>Max Output</th></tr></thead>
+          <tbody>
+            <tr><td>Gemini 2.5 Pro</td><td class="score">1M</td><td>64K</td></tr>
+            <tr><td>Claude 4 Opus</td><td>200K</td><td>32K</td></tr>
+            <tr><td>GPT-4o</td><td>128K</td><td>16K</td></tr>
+            <tr><td>DeepSeek-R1</td><td>128K</td><td>64K</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="col">
+      <div class="section-title">Benchmark Results</div>
+
+      <div class="card card-green">
+        <h2>Gemini 2.5 Pro vs 1.5 Pro</h2>
+        <table class="rtable">
+          <thead><tr><th>Capability</th><th>Benchmark</th><th>2.5 Pro</th><th>Delta</th></tr></thead>
+          <tbody>
+            <tr><td>Code</td><td>LiveCodeBench</td><td class="score">74.2%</td><td class="delta">+44.5</td></tr>
+            <tr><td>Code</td><td>Aider Polyglot</td><td class="score">82.2%</td><td class="delta">+65.3</td></tr>
+            <tr><td>Code</td><td>SWE-bench Verified</td><td class="score">67.2%</td><td class="delta">+33.0</td></tr>
+            <tr><td>Math</td><td>AIME 2025</td><td class="score">88.0%</td><td class="delta">+70.5</td></tr>
+            <tr><td>Reasoning</td><td>GPQA Diamond</td><td class="score">86.4%</td><td class="delta">+28.3</td></tr>
+            <tr><td>Factuality</td><td>SimpleQA</td><td class="score">54.0%</td><td class="delta">+29.1</td></tr>
+            <tr><td>Long-context</td><td>LOFT 1M</td><td class="score">69.8%</td><td class="delta">+22.7</td></tr>
+            <tr><td>Image</td><td>MMMU</td><td class="score">82.0%</td><td class="delta">+14.3</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card card-green">
+        <h2>Video &amp; Multimodal Understanding</h2>
+        <div class="highlight-box green">
+          VideoMME (audio + visual + subtitles): <strong>86.9%</strong> — state-of-the-art
+        </div>
+        <p>Gemini 2.5 natively processes 3-hour video content, setting a new benchmark for video understanding.</p>
+      </div>
+
+      <div class="card card-green">
+        <h2>Research Takeaways</h2>
+        <ul class="green">
+          <li><strong>Inference Compute Scaling</strong> — Thinking Budget reliably improves accuracy</li>
+          <li><strong>Multimodal + Thinking</strong> — fusion is the next frontier for GUI agents</li>
+          <li><strong>1M Context</strong> — enables whole-codebase understanding</li>
+          <li><strong>Tool + Thinking</strong> — foundation for complex multi-step agentic tasks</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag">Thinking RL</span>
+          <span class="tag">Multimodal</span>
+          <span class="tag">1M Context</span>
+          <span class="tag">Agentic</span>
+        </div>
+      </div>
+
+      <div class="card card-red">
+        <h2>Key Insight</h2>
+        <div class="highlight-box red">
+          <strong>Thinking + Multimodal fusion</strong> is the trend. Gemini 2.5 demonstrates RL-trained Thinking deeply integrated with native multimodality and 1M-token context, enabling <strong>codebase-level GUI agents</strong> and <strong>complex agentic workflows</strong>.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-strip">
+    <div class="takeaway">
+      <div class="takeaway-num">1</div>
+      <div class="takeaway-text"><strong>Thinking + MM Fusion</strong> — RL-trained thinking deeply integrated with native audio/video understanding opens a new paradigm for multimodal agents</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">2</div>
+      <div class="takeaway-text"><strong>Inference Compute Scaling</strong> — AIME 2025: 29.7% → 88.0%. Reasoning resource allocation becomes a controllable accuracy dial at inference time</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">3</div>
+      <div class="takeaway-text"><strong>1M Token Context</strong> — entire code repository / 3-hour video end-to-end processing capability</div>
+    </div>
+    <div class="takeaway">
+      <div class="takeaway-num">4</div>
+      <div class="takeaway-text"><strong>Code + Reasoning Emergence</strong> — SWE-bench 67.2%, Aider 82.2%. Codebase-level understanding emerges at scale from deep reasoning + multimodality</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

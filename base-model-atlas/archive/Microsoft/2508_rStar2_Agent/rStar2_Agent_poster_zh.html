@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>rStar2-Agent — Agentic Reasoning with GRPO-RoC (中文版)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0c0a09;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px;
+    min-height: 100vh;
+  }
+  .poster {
+    width: 1400px;
+    background: #1c1917;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #0891b2 100%);
+    padding: 36px 52px 30px;
+  }
+  .backlink-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .backlink {
+    background: rgba(124,58,237,0.18);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #e9d5ff;
+    text-decoration: none;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    backdrop-filter: blur(4px);
+  }
+  .backlink:hover { background: rgba(124,58,237,0.32); }
+  .header-title {
+    font-size: 2.6em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-sub {
+    font-size: 1.0em;
+    color: rgba(255,255,255,0.82);
+    margin-top: 8px;
+    font-weight: 400;
+  }
+  .arxiv-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.28);
+    color: #fff;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.83em;
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  /* SCORE BOXES */
+  .scores {
+    display: flex;
+    padding: 0 52px;
+    background: linear-gradient(90deg, #4c1d95 0%, #7c3aed 100%);
+  }
+  .score-box {
+    flex: 1;
+    padding: 20px 16px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .score-box:last-child { border-right: none; }
+  .score-val { font-size: 2em; font-weight: 800; color: #fff; line-height: 1; }
+  .score-label { font-size: 0.73em; color: rgba(255,255,255,0.72); margin-top: 5px; font-weight: 500; }
+
+  /* MAIN GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .col { padding: 28px 30px; border-right: 1px solid rgba(255,255,255,0.06); }
+  .col:last-child { border-right: none; }
+
+  /* SECTION HEADERS */
+  .sec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .sec-num {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.82em;
+    padding: 3px 12px;
+    border-radius: 20px;
+  }
+  .sec-title { font-size: 1.08em; font-weight: 700; color: #e9d5ff; letter-spacing: 0.3px; }
+
+  /* FIG BOX */
+  .fig-box {
+    background: rgba(124,58,237,0.06);
+    border: 1px solid rgba(124,58,237,0.16);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .fig-box img { width: 100%; border-radius: 6px; display: block; }
+  .fig-cap { font-size: 0.74em; color: rgba(255,255,255,0.42); text-align: center; margin-top: 7px; }
+
+  /* TEXT */
+  p, li { color: #d6d3d1; font-size: 0.865em; line-height: 1.65; margin-bottom: 8px; }
+  ul { padding-left: 18px; }
+  li { margin-bottom: 5px; }
+
+  /* TAG ROW */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .tag {
+    background: rgba(124,58,237,0.18);
+    border: 1px solid rgba(124,58,237,0.35);
+    color: #c4b5fd;
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 0.76em;
+    font-weight: 600;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.22);
+    border-radius: 8px;
+    padding: 13px 15px;
+    margin-bottom: 13px;
+  }
+  .hl-title { color: #e9d5ff; font-weight: 700; font-size: 0.88em; margin-bottom: 7px; }
+
+  /* STAGE ITEM */
+  .stage-item {
+    background: rgba(124,58,237,0.06);
+    border: 1px solid rgba(124,58,237,0.14);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .stage-title { color: #c4b5fd; font-weight: 700; font-size: 0.875em; margin-bottom: 6px; }
+
+  /* RESULT TABLE */
+  .rtable { width: 100%; border-collapse: collapse; font-size: 0.8em; margin-bottom: 14px; }
+  .rtable th { background: #4c1d95; color: #fff; padding: 8px 10px; text-align: center; font-weight: 700; }
+  .rtable td { padding: 8px 10px; text-align: center; color: #d6d3d1; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rtable tr:last-child td { border-bottom: none; }
+  .best { color: #c4b5fd; font-weight: 700; }
+  .model-name { text-align: left; color: #a8a29e; }
+
+  /* BOTTOM STRIP */
+  .bottom-strip {
+    background: linear-gradient(90deg, #4c1d95 0%, #7c3aed 50%, #0891b2 100%);
+    padding: 22px 52px;
+  }
+  .takeaway-row { display: flex; }
+  .takeaway { flex: 1; padding: 0 20px 0 0; }
+  .takeaway:first-child { padding-left: 0; }
+  .takeaway-label { font-size: 0.68em; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .takeaway-text { font-size: 0.87em; color: #fff; font-weight: 600; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="backlink-bar">
+      <a class="backlink" href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMicrosoft%2F2508_rStar2_Agent%2FrStar2-Agent-Agentic-Reasoning-Technical-Report">📄 Obsidian 笔记</a>
+      <a class="backlink" href="https://arxiv.org/abs/2508.20722">🔬 arXiv: 2508.20722</a>
+      <a class="backlink" href="https://github.com/microsoft/rStar">🐙 GitHub</a>
+    </div>
+    <div class="header-title">rStar2-Agent</div>
+    <div class="header-sub">Self-play Reasoning Agent Framework &nbsp;|&nbsp; Microsoft Research</div>
+    <div class="arxiv-badge">arXiv 2508.20722 &nbsp;|&nbsp; Agentic RL &nbsp;|&nbsp; GRPO-RoC</div>
+  </div>
+
+  <!-- SCORE BOXES -->
+  <div class="scores">
+    <div class="score-box">
+      <div class="score-val">80.6%</div>
+      <div class="score-label">AIME24 &nbsp;(14B, 510 steps)</div>
+    </div>
+    <div class="score-box">
+      <div class="score-val">69.8%</div>
+      <div class="score-label">AIME25 &nbsp;(14B, 510 steps)</div>
+    </div>
+    <div class="score-box">
+      <div class="score-val">52.7%</div>
+      <div class="score-label">HMMT25</div>
+    </div>
+    <div class="score-box">
+      <div class="score-val">14B</div>
+      <div class="score-label">Params &nbsp;(vs DeepSeek-R1 671B)</div>
+    </div>
+    <div class="score-box">
+      <div class="score-val">510</div>
+      <div class="score-label">RL Steps &nbsp;(64 MI300X GPUs)</div>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COLUMN GRID -->
+  <div class="main-grid">
+
+    <!-- COL 1: Problem & Motivation -->
+    <div class="col">
+      <div class="sec-header">
+        <span class="sec-num">01</span>
+        <span class="sec-title">问题与动机</span>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">Agentic RL</span>
+        <span class="tag">Self-play</span>
+        <span class="tag">GRPO</span>
+        <span class="tag">Code Tool</span>
+      </div>
+
+      <p style="color:#a8a29e;font-size:0.865em;margin-bottom:14px;">
+        Agentic RL 面临三大核心挑战：高 Rollout 计算成本、Coding Tool 环境噪声、有限资源下的训练效率。
+      </p>
+
+      <div class="highlight-box">
+        <div class="hl-title">Agentic RL 三大挑战</div>
+        <ul style="padding-left:16px;">
+          <li><strong>High Rollout Costs</strong>：Agent 任务需多次环境交互，GPU 消耗巨大</li>
+          <li><strong>Environment Noises</strong>：Coding Tool 固有噪声影响训练稳定性</li>
+          <li><strong>训练效率</strong>：如何在有限资源下高效 RL</li>
+        </ul>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/rollout1.png" alt="Self-play Rollout Pipeline">
+        <div class="fig-cap">Figure 1: Self-play Rollout Pipeline Overview</div>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/rlinfra3.png" alt="RL Infrastructure">
+        <div class="fig-cap">Figure 2: 64 MI300X GPUs 高吞吐量 RL Infrastructure</div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="hl-title">关键发现</div>
+        <p>从 <strong>Non-reasoning SFT</strong>（非思维模型）起步，通过 <strong>Multi-RL Stages</strong>（多阶段强化学习），以最少计算成本获得高级认知能力。</p>
+      </div>
+    </div>
+
+    <!-- COL 2: Core Method -->
+    <div class="col">
+      <div class="sec-header">
+        <span class="sec-num">02</span>
+        <span class="sec-title">核心方法</span>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">GRPO-RoC</span>
+        <span class="tag">Resample-on-Correct</span>
+        <span class="tag">Multi-turn</span>
+        <span class="tag">Self-play</span>
+      </div>
+
+      <div class="stage-item">
+        <div class="stage-title">GRPO-RoC 算法核心</div>
+        <p><strong>Resample-on-Correct Rollout Strategy</strong>：当 Rollout 产生正确结果时，重新采样多个轨迹，增加正样本多样性，提高训练稳定性。</p>
+        <ul style="padding-left:16px;margin-top:6px;">
+          <li>解决 Coding Tool 环境固有噪声问题</li>
+          <li>扩大正确轨迹的多样性信号</li>
+          <li>提升 RL 训练稳定性</li>
+        </ul>
+      </div>
+
+      <div class="stage-item">
+        <div class="stage-title">训练流程</div>
+        <ul style="padding-left:16px;">
+          <li><strong>Step 1</strong>：Non-reasoning SFT（不用 Thinking Model）</li>
+          <li><strong>Step 2</strong>：GRPO-RoC 多阶段强化学习</li>
+          <li><strong>Step 3</strong>：Cognitive Behaviors 涌现</li>
+        </ul>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/prompt5.png" alt="Multi-turn Reasoning Prompt">
+        <div class="fig-cap">Figure 3: Multi-turn Reasoning Prompt 示例</div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="hl-title">Cognitive Behaviors 涌现</div>
+        <ul style="padding-left:16px;">
+          <li>使用 Python Coding Tools 前 <strong>仔细思考</strong></li>
+          <li>对代码执行反馈进行 <strong>反思</strong></li>
+          <li>自主探索、验证、<strong>精炼中间步骤</strong></li>
+        </ul>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/cotexample7.png" alt="CoT Example">
+        <div class="fig-cap">Figure 4: Chain-of-Thought Reasoning with Code Execution</div>
+      </div>
+    </div>
+
+    <!-- COL 3: Results -->
+    <div class="col">
+      <div class="sec-header">
+        <span class="sec-num">03</span>
+        <span class="sec-title">实验结果</span>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">AIME24</span>
+        <span class="tag">AIME25</span>
+        <span class="tag">HMMT25</span>
+        <span class="tag">SOTA</span>
+      </div>
+
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>AIME24</th>
+            <th>AIME25</th>
+            <th>HMMT25</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name">OpenAI o3-mini (medium)</td>
+            <td>79.6</td>
+            <td>77.0</td>
+            <td>53.0</td>
+          </tr>
+          <tr>
+            <td class="model-name">DeepSeek-R1 (671B)</td>
+            <td>79.8</td>
+            <td>70.0</td>
+            <td>44.4</td>
+          </tr>
+          <tr>
+            <td class="model-name">Claude-Opus-4.0 (Think)</td>
+            <td>76.0</td>
+            <td>69.2</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="model-name">QWQ-32B</td>
+            <td>79.5</td>
+            <td>65.8</td>
+            <td>47.5</td>
+          </tr>
+          <tr>
+            <td class="model-name" style="color:#c4b5fd;font-weight:700;">rStar2-14B (Ours)</td>
+            <td class="best">80.6</td>
+            <td class="best">69.8</td>
+            <td class="best">52.7</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box">
+        <div class="hl-title">核心成就</div>
+        <ul style="padding-left:16px;">
+          <li><strong>仅 510 RL Steps</strong>，仅 <strong>14B 参数</strong></li>
+          <li>超越 <strong>671B DeepSeek-R1</strong></li>
+          <li>64 MI300X GPUs，高吞吐量 Python Code Execution</li>
+        </ul>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/case1.png" alt="Case Study 1">
+        <div class="fig-cap">Figure 5: Case Study — Math Reasoning Trajectory</div>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/case2.png" alt="Case Study 2">
+        <div class="fig-cap">Figure 6: Case Study — Code Execution Feedback Loop</div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="hl-title">对 Agentic RL 的启发</div>
+        <ul style="padding-left:16px;">
+          <li>GRPO-RoC Resample-on-Correct 对 GUI Agent RL 有直接参考价值</li>
+          <li>Non-reasoning SFT → Multi-RL 训练范式是关键</li>
+          <li>14B 模型达到 SOTA 说明训练 Recipe 同样重要</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="takeaway-row">
+      <div class="takeaway">
+        <div class="takeaway-label">Key Innovation</div>
+        <div class="takeaway-text">GRPO-RoC: Resample-on-Correct rollout 解决 Coding Tool 噪声问题</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-label">Efficiency</div>
+        <div class="takeaway-text">仅 510 RL steps + 14B 参数超越 671B DeepSeek-R1</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-label">Training Recipe</div>
+        <div class="takeaway-text">Non-reasoning SFT → Multi-RL Stages 涌现高级认知能力</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-label">Broader Impact</div>
+        <div class="takeaway-text">对齐、科学推理、Agentic Tool-use 跨领域泛化能力</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /poster -->
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLM-4.5 ARC Foundation Models — 中文海报</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0c0a09;
+    color: #d6d3d1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  .poster-wrap {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── Backlinks ── */
+  .backlinks {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .backlink-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 20px;
+    font-size: 0.78em;
+    color: #fca5a5;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .backlink-item:hover { background: rgba(220, 38, 38, 0.18); }
+
+  /* ── Poster Card ── */
+  .poster {
+    background: #1c1917;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 32px 64px rgba(0,0,0,0.6);
+  }
+
+  /* ── Header ── */
+  .poster-header {
+    background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 55%, #f97316 100%);
+    padding: 36px 48px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .header-left { flex: 1; }
+  .header-right { text-align: right; }
+
+  .header-venue {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  h1 {
+    font-size: 2.1em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .header-subtitle {
+    font-size: 1.0em;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.92);
+    font-weight: 500;
+  }
+  .meta-chip span { color: #fde68a; font-weight: 700; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .score-box {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 110px;
+  }
+  .score-val {
+    font-size: 1.45em;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+  .score-label {
+    font-size: 0.68em;
+    color: rgba(255,255,255,0.75);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* ── Body ── */
+  .poster-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    padding: 28px 28px 32px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .col:last-child { border-right: none; }
+
+  .section-label {
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .col1 .section-label { background: rgba(220,38,38,0.15); color: #fca5a5; }
+  .col2 .section-label { background: rgba(249,115,22,0.15); color: #fdba74; }
+  .col3 .section-label { background: rgba(34,197,94,0.12); color: #86efac; }
+
+  .col h2 {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #f5f5f4;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  /* ── Figure Box ── */
+  .fig-box {
+    background: rgba(220, 38, 38, 0.06);
+    border: 1px solid rgba(220, 38, 38, 0.12);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .fig-box img {
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+  }
+  .fig-caption {
+    font-size: 0.7em;
+    color: #a8a29e;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  .col p {
+    font-size: 0.82em;
+    color: #a8a29e;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+  .col p strong { color: #d6d3d1; font-weight: 600; }
+
+  /* ── Architecture Diagram ── */
+  .arch-box {
+    background: rgba(220, 38, 38, 0.06);
+    border: 1px solid rgba(220, 38, 38, 0.12);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .arch-title {
+    font-size: 0.72em;
+    color: #fca5a5;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    font-size: 0.72em;
+    color: #d6d3d1;
+  }
+  .arch-step {
+    background: rgba(220,38,38,0.15);
+    border: 1px solid rgba(220,38,38,0.25);
+    border-radius: 6px;
+    padding: 4px 9px;
+    color: #fca5a5;
+    font-weight: 600;
+  }
+  .arch-arrow { color: #78716c; font-size: 1em; }
+
+  /* ── Stage Items ── */
+  .stage-item {
+    background: rgba(220, 38, 38, 0.05);
+    border: 1px solid rgba(220, 38, 38, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .stage-title {
+    font-size: 0.78em;
+    font-weight: 700;
+    color: #fca5a5;
+    margin-bottom: 4px;
+  }
+  .stage-desc {
+    font-size: 0.74em;
+    color: #a8a29e;
+    line-height: 1.6;
+  }
+
+  /* ── Result Cards ── */
+  .result-card {
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.14);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .result-card h3 {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #86efac;
+    margin-bottom: 10px;
+  }
+
+  .rtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72em;
+    margin-bottom: 8px;
+  }
+  .rtable th {
+    background: #7f1d1d;
+    color: #fde68a;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .rtable td {
+    padding: 5px 8px;
+    color: #d6d3d1;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .rtable tr:last-child td { border-bottom: none; }
+  .rtable .best { color: #86efac; font-weight: 700; }
+
+  .winrate-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.74em;
+  }
+  .wr-label { color: #a8a29e; width: 120px; flex-shrink: 0; }
+  .wr-track {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 7px;
+    overflow: hidden;
+    display: flex;
+  }
+  .wr-win { background: #22c55e; height: 100%; }
+  .wr-tie { background: #78716c; height: 100%; }
+  .wr-loss { background: rgba(255,255,255,0.1); height: 100%; }
+  .wr-pct { color: #d6d3d1; width: 36px; text-align: right; }
+
+  .highlight-num {
+    font-size: 1.6em;
+    font-weight: 800;
+    color: #f97316;
+    line-height: 1;
+  }
+
+  /* ── Bottom Strip ── */
+  .poster-bottom {
+    background: linear-gradient(90deg, #7f1d1d 0%, #dc2626 50%, #f97316 100%);
+    padding: 20px 48px;
+    display: flex;
+    gap: 0;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  .takeaway {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+    padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+  .takeaway:last-child { border-right: none; }
+  .takeaway-num {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #fde68a;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .takeaway-text {
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  @media (max-width: 900px) {
+    .poster-body { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .poster-header { flex-direction: column; align-items: flex-start; }
+    .header-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="poster-wrap">
+
+  <!-- Backlinks -->
+  <div class="backlinks">
+    <a class="backlink-item" href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FZhipu_GLM%2F2508_GLM_4_5%2FGLM-4.5-ARC-Foundation-Models">
+      📄 论文笔记
+    </a>
+    <a class="backlink-item" href="https://arxiv.org/abs/2508.06471" target="_blank">
+      🔬 arXiv 2508.06471
+    </a>
+    <a class="backlink-item" href="https://github.com/zai-org/GLM-4.5" target="_blank">
+      ⚙️ GitHub
+    </a>
+  </div>
+
+  <div class="poster">
+
+    <!-- Header -->
+    <div class="poster-header">
+      <div class="header-left">
+        <div class="header-venue">arXiv 2508.06471 · 智谱 AI · 2025</div>
+        <h1>GLM-4.5: Agentic, Reasoning and Coding (ARC) Foundation Models</h1>
+        <div class="header-subtitle">下一代超强国产开源大模型 · 355B MoE · 32B 激活 · 支持 Thinking + Direct 双模式</div>
+        <div class="header-meta">
+          <div class="meta-chip">MoE <span>355B</span> / <span>32B</span> 激活</div>
+          <div class="meta-chip">上下文 <span>128K</span></div>
+          <div class="meta-chip">预训练 <span>23T</span> tokens</div>
+          <div class="meta-chip">开源</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="score-grid">
+          <div class="score-box">
+            <div class="score-val">70.1%</div>
+            <div class="score-label">TAU-Bench Agentic</div>
+          </div>
+          <div class="score-box">
+            <div class="score-val">91.0%</div>
+            <div class="score-label">AIME 24 Math</div>
+          </div>
+          <div class="score-box">
+            <div class="score-val">64.2%</div>
+            <div class="score-label">SWE-bench Verified</div>
+          </div>
+          <div class="score-box">
+            <div class="score-val">90.6%</div>
+            <div class="score-label">Tool Call 成功率</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="poster-body">
+
+      <!-- Col 1: Problem & Background -->
+      <div class="col col1">
+        <div class="section-label">问题与背景</div>
+
+        <div class="fig-box">
+          <img src="src/assets/arc_benchmark.png" alt="ARC Benchmark" onerror="this.style.display='none'">
+          <div class="fig-caption">GLM-4.5 在 ARC 类任务上与闭源旗舰模型对比</div>
+        </div>
+
+        <h2>核心挑战</h2>
+        <p>当前顶级 LLM（o3、Claude Opus 4、Gemini 2.5 Pro）在 ARC 任务上已展示强大能力，但<strong>闭源 + 高昂推理成本</strong>限制研究社区跟进。</p>
+        <p><strong>核心问题：如何在远少参数下（355B vs 671B+）实现同等的 Agentic / Reasoning / Coding 能力？</strong></p>
+
+        <div class="stage-item">
+          <div class="stage-title">核心创新</div>
+          <div class="stage-desc">更深 MoE（增加 depth，减少 width）在推理 benchmark 上优于更宽模型；自蒸馏统一多 Expert 能力为单一 hybrid model</div>
+        </div>
+
+        <div class="arch-box">
+          <div class="arch-title">Architecture</div>
+          <div class="arch-flow">
+            <span class="arch-step">MoE</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-step">Sigmoid Gates</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-step">Loss-free Balance</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-step">QK-Norm</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-step">MTP Layer</span>
+          </div>
+        </div>
+
+        <p style="margin-top:6px;"><strong>预训练 23T tokens</strong>：Web（Nemotron-CC 质量分桶）+ 多语言（Fineweb-2）+ Code（FIM）+ Math &amp; Science</p>
+
+      </div>
+
+      <!-- Col 2: Method -->
+      <div class="col col2">
+        <div class="section-label">核心方法</div>
+
+        <div class="fig-box">
+          <img src="src/assets/multi_stage_rl.png" alt="Multi-Stage RL" onerror="this.style.display='none'">
+          <div class="fig-caption">Post-Training 四阶段流程</div>
+        </div>
+
+        <h2>Post-Training: Expert Model Iteration</h2>
+
+        <div class="stage-item">
+          <div class="stage-title">Stage 1: Expert Training</div>
+          <div class="stage-desc">三个独立 Expert Model（Reasoning / Agent / General chat），各自 SFT cold-start + RL</div>
+        </div>
+
+        <div class="stage-item">
+          <div class="stage-title">Stage 2: Unified Training</div>
+          <div class="stage-desc">自蒸馏将多 Expert 能力整合为单一 hybrid model，同时支持 thinking 和 direct response 模式</div>
+        </div>
+
+        <div class="fig-box">
+          <img src="src/assets/curriculum_rl.png" alt="Curriculum RL" onerror="this.style.display='none'">
+          <div class="fig-caption">难度课程两阶段设计</div>
+        </div>
+
+        <h2>Reasoning RL</h2>
+        <div class="stage-item">
+          <div class="stage-title">难度课程两阶段</div>
+          <div class="stage-desc">第二阶段直接切换到极难题目（pass@8=0, pass@512&gt;0），持续提升而非渐进增加难度</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-title">Token-weighted Mean Loss</div>
+          <div class="stage-desc">对 code RL 比 sequence-mean loss 收敛更快，抑制"base case"重复生成</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-title">64K Output Length 单阶段 RL</div>
+          <div class="stage-desc">直接训练 64K 输出更好，引入短阶段会让模型"unlearn"长上下文能力</div>
+        </div>
+
+        <h2>Agentic RL</h2>
+        <div class="stage-item">
+          <div class="stage-title">BrowseComp + SWE</div>
+          <div class="stage-desc">知识图谱多跳推理 + GitHub PR/issue 分布式沙箱测试</div>
+        </div>
+        <div class="stage-item">
+          <div class="stage-title">Iterative Self-distillation</div>
+          <div class="stage-desc">RL提升 → self-distillation → 再RL，逐阶段提升</div>
+        </div>
+
+      </div>
+
+      <!-- Col 3: Results -->
+      <div class="col col3">
+        <div class="section-label">实验结果</div>
+
+        <div class="result-card">
+          <h3>ARC 核心任务</h3>
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Benchmark</th>
+                <th>GLM-4.5</th>
+                <th>o3</th>
+                <th>Claude 4</th>
+                <th>Gemini 2.5P</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TAU-Bench</td>
+                <td class="best">70.1</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>AIME 24</td>
+                <td class="best">91.0</td>
+                <td>90.3</td>
+                <td>75.7</td>
+                <td>88.7</td>
+              </tr>
+              <tr>
+                <td>SWE-bench V.</td>
+                <td>64.2</td>
+                <td>69.1</td>
+                <td>67.8</td>
+                <td>49.0</td>
+              </tr>
+              <tr>
+                <td>MMLU-Pro</td>
+                <td>84.6</td>
+                <td>85.3</td>
+                <td>87.3</td>
+                <td>86.2</td>
+              </tr>
+              <tr>
+                <td>BFCL V3</td>
+                <td class="best">77.8</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-card">
+          <h3>Coding Agent CC-Bench</h3>
+          <div class="winrate-bar">
+            <div class="wr-label">vs Claude Sonnet 4</div>
+            <div class="wr-track">
+              <div class="wr-win" style="width:40.4%"></div>
+              <div class="wr-tie" style="width:9.6%"></div>
+              <div class="wr-loss" style="width:50%"></div>
+            </div>
+            <div class="wr-pct">40.4% win</div>
+          </div>
+          <div class="winrate-bar">
+            <div class="wr-label">vs Kimi K2</div>
+            <div class="wr-track">
+              <div class="wr-win" style="width:53.9%"></div>
+              <div class="wr-tie" style="width:17.3%"></div>
+              <div class="wr-loss" style="width:28.8%"></div>
+            </div>
+            <div class="wr-pct">53.9% win</div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:12px; align-items:center;">
+            <div class="highlight-num">90.6%</div>
+            <div style="font-size:0.74em; color:#a8a29e;">Tool Calling 成功率<br><span style="color:#86efac; font-weight:600;">所有模型中最高</span></div>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <h3>翻译能力</h3>
+          <table class="rtable">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Score (0-3)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GLM-4.5</td>
+                <td class="best">1.71</td>
+              </tr>
+              <tr>
+                <td>Seed-X</td>
+                <td>0.65</td>
+              </tr>
+              <tr>
+                <td>Qwen-MT-plus</td>
+                <td>0.38</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.72em; color:#86efac; margin-top:6px;">超越专用 MT 模型</p>
+        </div>
+
+        <div class="fig-box">
+          <img src="src/assets/coding_agents_successrate.png" alt="Coding Agents" onerror="this.style.display='none'">
+          <div class="fig-caption">Coding Agent 任务表现</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="poster-bottom">
+      <div class="takeaway">
+        <div class="takeaway-num">01</div>
+        <div class="takeaway-text">更深 MoE 比更宽模型更利于推理任务，depth 是推理能力的核心驱动力</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">02</div>
+        <div class="takeaway-text">Hybrid thinking 模式（thinking + direct）是平衡深度推理和效率的正确方向</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">03</div>
+        <div class="takeaway-text">难度课程第二阶段直接上极难题（pass@8=0, pass@512&gt;0）比渐进增加难度更有效</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">04</div>
+        <div class="takeaway-text">90.6% tool calling 成功率说明 GLM-4.5 的 function calling 能力已达 SOTA</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

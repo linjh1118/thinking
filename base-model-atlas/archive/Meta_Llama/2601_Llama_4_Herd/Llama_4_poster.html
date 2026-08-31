@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llama 4: The Llama 4 Herd of Models</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background:#f8fafc; color:#1e293b; width: 1400px; margin: 0 auto; }
+
+.header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+  color: white; padding: 36px 48px 28px; position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 320px; height: 320px; background: rgba(255,255,255,0.08); border-radius: 50%;
+}
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.header-left { flex: 1; }
+.venue-badge {
+  display: inline-block; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; margin-bottom: 12px; text-transform: uppercase;
+}
+.paper-title { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+.paper-authors { font-size: 13px; opacity: 0.9; margin-bottom: 6px; }
+.paper-venue { font-size: 12px; opacity: 0.75; }
+.metric-box {
+  background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 12px; padding: 14px 18px; min-width: 150px; text-align: center;
+  backdrop-filter: blur(8px); margin-left: 10px; flex-shrink: 0;
+}
+.metric-box .metric-value { font-size: 28px; font-weight: 900; line-height: 1; color: #fde68a; }
+.metric-box .metric-label { font-size: 10px; opacity: 0.95; margin-top: 4px; font-weight: 600; color: #dbeafe; }
+.metric-box .metric-sub { font-size: 9px; opacity: 0.8; margin-top: 2px; color: #bfdbfe; }
+.header-tagline { margin-top: 16px; font-size: 14px; opacity: 0.92; font-style: italic; color: #dbeafe; }
+
+.backlink {
+  background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.18);
+  border-radius: 8px; padding: 7px 16px; margin: 10px 48px 0;
+  font-size: 12px; color: #64748b;
+}
+.backlink a { color: #2563eb; text-decoration: none; font-weight: 500; }
+.backlink a:hover { text-decoration: underline; }
+
+.main-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+  padding: 20px 24px 8px;
+}
+.col { display: flex; flex-direction: column; gap: 16px; }
+
+.card {
+  background: white; border-radius: 12px; padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;
+}
+.card-title {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #1e3a8a; margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 2px solid #dbeafe;
+  display: flex; align-items: center; gap: 6px;
+}
+p { font-size: 13px; line-height: 1.65; color: #374151; margin-bottom: 8px; }
+p:last-child { margin-bottom: 0; }
+
+.model-cards { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+.model-card {
+  border-radius: 10px; padding: 14px; border: 1.5px solid;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.model-card.scout { background: #eff6ff; border-color: #93c5fd; }
+.model-card.maverick { background: #eef2ff; border-color: #a5b4fc; }
+.model-card.behemoth { background: #f5f3ff; border-color: #c4b5fd; }
+.model-icon { font-size: 28px; flex-shrink: 0; }
+.model-info { flex: 1; }
+.model-name { font-size: 14px; font-weight: 800; color: #172554; }
+.model-spec { font-size: 11px; color: #6b7280; margin-top: 2px; }
+.model-highlight { font-size: 12px; color: #1d4ed8; font-weight: 600; margin-top:4px; }
+
+.fig-box {
+  background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15); border-radius: 10px;
+  padding: 14px; margin: 10px 0;
+}
+.fig-box-title { font-size: 11px; font-weight: 700; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.fig-box-content { font-size: 12px; color: #374151; line-height: 1.6; }
+
+table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin: 8px 0; }
+th {
+  background: #1e3a8a; color: white; padding: 7px 8px;
+  text-align: center; font-size: 10.5px; font-weight: 600;
+}
+td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #374151; }
+tr:nth-child(even) td { background: rgba(59,130,246,0.04); }
+tr.highlight td { background: #bfdbfe; font-weight: 700; color: #172554; }
+.best { color: #2563eb; font-weight: 700; }
+
+.pipeline-step {
+  display: flex; align-items: flex-start; gap: 10px; margin: 6px 0;
+  padding: 8px 10px; background: #f8fafc; border-left: 3px solid #3b82f6;
+  border-radius: 0 6px 6px 0;
+}
+.step-num {
+  background: #3b82f6; color: white; border-radius: 50%;
+  width: 20px; height: 20px; min-width:20px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.step-text { font-size: 12px; line-height: 1.5; color: #374151; }
+.step-text strong { color: #1e3a8a; }
+
+.insight-box {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px;
+  margin: 8px 0; font-size: 12px; line-height: 1.6; color: #172554;
+}
+.insight-box .insight-title { font-weight: 700; margin-bottom: 4px; color: #1e3a8a; }
+
+.tag {
+  display: inline-block; background: #eff6ff; border: 1px solid #93c5fd;
+  border-radius: 12px; padding: 3px 10px; font-size: 11px; font-weight: 600;
+  color: #2563eb; margin: 2px;
+}
+
+.section-divider { border: none; border-top: 1px dashed #93c5fd; margin: 10px 0; }
+
+.perf-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.perf-label { font-size: 11px; color: #374151; width: 120px; flex-shrink: 0; }
+.perf-track { flex: 1; background: #e2e8f0; border-radius: 4px; height: 18px; }
+.perf-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #1e3a8a, #60a5fa); }
+.perf-value { font-size: 11px; font-weight: 700; color: #1e3a8a; width: 52px; text-align: right; }
+
+.context-box {
+  display: flex; gap: 10px; align-items: center; padding: 12px;
+  background: #1e3a8a; border-radius: 10px; margin: 10px 0;
+}
+.context-icon { font-size: 32px; }
+.context-info { color: white; }
+.context-val { font-size: 26px; font-weight: 900; line-height: 1; }
+.context-label { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+
+.bottom-strip {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  color: white; padding: 24px 32px; margin-top: 8px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;
+}
+.takeaway { display: flex; gap: 12px; align-items: flex-start; }
+.takeaway-num {
+  background: rgba(255,255,255,0.2); border-radius: 50%;
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+.takeaway-text { font-size: 12px; line-height: 1.55; opacity: 0.95; }
+.takeaway-text strong { opacity: 1; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <div class="venue-badge">Meta AI · April 2025</div>
+      <div class="paper-title">The Llama 4 Herd of Models:<br>Scout, Maverick &amp; Behemoth</div>
+      <div class="paper-authors">Meta FAIR &amp; Meta GenAI Teams</div>
+      <div class="paper-venue">Open-Weight Multimodal MoE Family</div>
+    </div>
+    <div style="display:flex; gap:8px; flex-shrink:0; margin-left:20px;">
+      <div class="metric-box">
+        <div class="metric-value">10M</div>
+        <div class="metric-label">Context Window</div>
+        <div class="metric-sub">Scout — world's longest</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">288B</div>
+        <div class="metric-label">Active Params</div>
+        <div class="metric-sub">Behemoth — largest open MoE</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">17B</div>
+        <div class="metric-label">Active Params</div>
+        <div class="metric-sub">Scout &amp; Maverick</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-tagline">
+    Meta's first natively multimodal MoE family — Scout (10M context), Maverick (frontier performance), Behemoth (teacher) — trained on text + images jointly from scratch
+  </div>
+</div>
+
+<!-- Backlink -->
+<div class="backlink">
+  &#128218; Note: Llama 4 is a Meta release (not a standard arxiv paper). No LaTeX source available.
+  &nbsp;|&nbsp; <a href="https://ai.meta.com/llama" target="_blank">ai.meta.com/llama</a>
+</div>
+
+<!-- Main Grid -->
+<div class="main-grid">
+
+  <!-- Column 1: Model Family + Context -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span>&#129429;</span> The Llama 4 Herd</div>
+      <div class="model-cards">
+        <div class="model-card scout">
+          <div class="model-icon">&#128039;</div>
+          <div class="model-info">
+            <div class="model-name">Llama 4 Scout</div>
+            <div class="model-spec">17B active / 109B total &middot; 16 experts</div>
+            <div class="model-highlight">10M token context window &middot; Single-GPU deployable</div>
+          </div>
+        </div>
+        <div class="model-card maverick">
+          <div class="model-icon">&#128640;</div>
+          <div class="model-info">
+            <div class="model-name">Llama 4 Maverick</div>
+            <div class="model-spec">17B active / 400B total &middot; 128 experts</div>
+            <div class="model-highlight">Frontier performance &middot; Beats GPT-4o on most benchmarks</div>
+          </div>
+        </div>
+        <div class="model-card behemoth">
+          <div class="model-icon">&#127939;</div>
+          <div class="model-info">
+            <div class="model-name">Llama 4 Behemoth</div>
+            <div class="model-spec">288B active / ~2T total &middot; still training</div>
+            <div class="model-highlight">Teacher model &middot; Surpasses GPT-4.1 &amp; Gemini 2.0 Ultra</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#128218;</span> 10M Token Context Window</div>
+      <div class="context-box">
+        <div class="context-icon">&#128218;</div>
+        <div class="context-info">
+          <div class="context-val">10,000,000</div>
+          <div class="context-label">tokens — Scout's native context window</div>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">&bull;</div>
+        <div class="step-text">Full codebase comprehension in a single pass</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">&bull;</div>
+        <div class="step-text">Entire books or legal documents in context</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">&bull;</div>
+        <div class="step-text">Long-horizon agentic task trajectories</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">&bull;</div>
+        <div class="step-text">Extremely long video/audio understanding</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">&bull;</div>
+        <div class="step-text">Single GPU deployable with int4 quantization</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#127775;</span> Key Design Principles</div>
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Native Multimodal</strong> — Text + image trained jointly from scratch, not retrofitted</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>MoE Efficiency</strong> — Sparse MoE across all models; fewer active params, same output quality</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Open Weights</strong> — Scout and Maverick released open-weight for research</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Knowledge Distillation</strong> — Behemoth distills into Scout/Maverick</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column 2: Architecture & Training -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span>&#128737;</span> MoE Architecture</div>
+      <div class="fig-box">
+        <div class="fig-box-title">Interleaved Dense + MoE Layers</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin:6px 0;">
+          <div style="background:#1e3a8a; color:white; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:600;">Input Tokens</div>
+          <div style="font-size:16px; color:#3b82f6;">&rarr;</div>
+          <div style="background:#3b82f6; color:white; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:600;">Token Embedding</div>
+        </div>
+        <div style="text-align:center; font-size:11px; color:#6b7280; margin:4px 0;">&darr; interleaved layers &darr;</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+          <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:600; color:#1e3a8a;">Dense Attn Layer</div>
+          <div style="font-size:14px; color:#3b82f6;">+</div>
+          <div style="background:#3b82f6; color:white; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:600;">MoE FFN Layer</div>
+        </div>
+        <div style="text-align:center; font-size:11px; color:#6b7280; margin:4px 0;">&darr; top-K expert routing &darr;</div>
+        <div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:center;">
+          <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:4px; padding:3px 8px; font-size:10px; color:#1e3a8a;">Expert 1</div>
+          <div style="background:#3b82f6; color:white; border-radius:4px; padding:3px 8px; font-size:10px;">Active</div>
+          <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:4px; padding:3px 8px; font-size:10px; color:#1e3a8a;">Expert 3</div>
+          <div style="background:#3b82f6; color:white; border-radius:4px; padding:3px 8px; font-size:10px;">Active</div>
+          <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:4px; padding:3px 8px; font-size:10px; color:#1e3a8a;">Expert 5</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:10px 0;">
+        <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:16px; font-weight:800; color:#1e3a8a;">16</div>
+          <div style="font-size:10px; color:#6b7280;">Experts (Scout)</div>
+        </div>
+        <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:16px; font-weight:800; color:#1e3a8a;">128</div>
+          <div style="font-size:10px; color:#6b7280;">Experts (Maverick)</div>
+        </div>
+      </div>
+      <p style="font-size:12px;">Sparse activation: each token routes to only a few experts, dramatically reducing compute cost while preserving output quality.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#128065;</span> Native Multimodal Training</div>
+      <p>Unlike previous Llama models that added vision post-hoc, Llama 4 trains on <strong>text and images jointly from the beginning</strong> using a unified transformer architecture.</p>
+
+      <div class="fig-box">
+        <div class="fig-box-title">Early Fusion — Key Differentiator</div>
+        <div style="font-size:12px; color:#374151; line-height:1.6;">
+          Images and text are fused at the input layer into a unified sequence, rather than using a separate vision encoder with cross-attention. This early fusion enables deeply aligned multimodal representations from the start of pre-training.
+        </div>
+        <div style="margin-top:8px; font-size:11px; color:#6b7280; line-height:1.5;">
+          &bull; MetaCLIP-based visual encoder<br>
+          &bull; Interleaved image-text pre-training<br>
+          &bull; Variable-resolution image support<br>
+          &bull; Multi-image understanding in single context
+        </div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">Why Native Multimodal Matters</div>
+        Joint training allows the model to develop grounded representations where visual and textual concepts are natively aligned, enabling superior visual reasoning vs. post-hoc fusion.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#127891;</span> Training: Behemoth &rarr; Scout/Maverick</div>
+      <p style="font-size:12px;">Behemoth serves as a <strong>teacher model</strong> for distilling capabilities into Scout and Maverick, enabling smaller models to acquire complex reasoning beyond their parameter count.</p>
+
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Pre-training</strong> — Joint text + image pre-training on massive multimodal corpus</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Distillation</strong> — Behemoth teacher &rarr; Scout/Maverick students</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Post-training</strong> — SFT + RLHF for instruction following + safety</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Long-context Training</strong> — Scout extends to 10M token context via iRoPE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column 3: Results + Innovations -->
+  <div class="col">
+    <div class="card">
+      <div class="card-title"><span>&#128202;</span> Benchmark Performance</div>
+
+      <table>
+        <thead>
+          <tr><th>Benchmark</th><th>GPT-4o</th><th>Gemini 2.0</th><th>Maverick</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="text-align:left;">MMLU</td><td>87.2</td><td>89.4</td><td class="best">91.4</td></tr>
+          <tr><td style="text-align:left;">HumanEval</td><td>90.2</td><td>85.1</td><td class="best">93.7</td></tr>
+          <tr><td style="text-align:left;">MATH</td><td>76.6</td><td>82.0</td><td class="best">85.1</td></tr>
+          <tr><td style="text-align:left;">GPQA</td><td>53.6</td><td>62.1</td><td class="best">69.8</td></tr>
+          <tr><td style="text-align:left;">DocVQA</td><td>92.8</td><td>94.1</td><td class="best">94.9</td></tr>
+          <tr><td style="text-align:left;">VQAv2</td><td>85.7</td><td>86.5</td><td class="best">89.2</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px; color:#6b7280;">Maverick surpasses GPT-4o across most benchmarks with equivalent compute budget</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#9889;</span> Scout: Efficiency Champion</div>
+
+      <div class="perf-row">
+        <div class="perf-label">Context Length</div>
+        <div class="perf-track"><div class="perf-fill" style="width:100%"></div></div>
+        <div class="perf-value">10M tok</div>
+      </div>
+      <div class="perf-row">
+        <div class="perf-label">Active Params</div>
+        <div class="perf-track"><div class="perf-fill" style="width:20%"></div></div>
+        <div class="perf-value">17B / 109B</div>
+      </div>
+      <div class="perf-row">
+        <div class="perf-label">Expert Count</div>
+        <div class="perf-track"><div class="perf-fill" style="width:18%"></div></div>
+        <div class="perf-value">16 total</div>
+      </div>
+
+      <div class="insight-box" style="margin-top:10px;">
+        <div class="insight-title">Single-GPU Deployment</div>
+        Scout (17B active) fits on a single GPU with int4 quantization while maintaining 10M context — making long-context multimodal inference practical outside data centers.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#128272;</span> Key Innovations</div>
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>iRoPE</strong> — Interleaved Rotary Position Embedding enabling 10M context extrapolation</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>MetaP initialization</strong> — Hyperparameter transfer across scales for stable training</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>FP8 training</strong> — Mixed-precision training enabling efficient large-scale MoE</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Early fusion</strong> — Image/text unified in same sequence; no separate vision tower</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>&#128203;</span> Key Tags</div>
+      <div>
+        <span class="tag">MoE</span>
+        <span class="tag">Native Multimodal</span>
+        <span class="tag">10M Context</span>
+        <span class="tag">Open Weights</span>
+        <span class="tag">Distillation</span>
+        <span class="tag">iRoPE</span>
+        <span class="tag">FP8 Training</span>
+        <span class="tag">Early Fusion</span>
+        <span class="tag">Scout &middot; Maverick &middot; Behemoth</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom strip -->
+<div class="bottom-strip">
+  <div class="takeaway">
+    <div class="takeaway-num">1</div>
+    <div class="takeaway-text"><strong>Native multimodal MoE from the ground up.</strong> Llama 4 is the first Llama family built with joint text+image training, not vision-augmented after the fact.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">2</div>
+    <div class="takeaway-text"><strong>Scout achieves 10M token context.</strong> Enabled by iRoPE, this breaks the practical barrier for full-codebase, full-document, and long-horizon agentic tasks.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">3</div>
+    <div class="takeaway-text"><strong>Maverick surpasses GPT-4o with 17B active params.</strong> MoE efficiency lets a fraction of parameters match or beat much larger dense models on diverse benchmarks.</div>
+  </div>
+  <div class="takeaway">
+    <div class="takeaway-num">4</div>
+    <div class="takeaway-text"><strong>Behemoth as teacher model.</strong> The 288B Behemoth distills frontier capabilities into open-weight Scout and Maverick, democratizing access to top-tier reasoning.</div>
+  </div>
+</div>
+
+</body>
+</html>

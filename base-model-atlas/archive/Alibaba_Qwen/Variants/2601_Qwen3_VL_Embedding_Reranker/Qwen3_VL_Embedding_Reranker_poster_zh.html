@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen3-VL-Embedding & Reranker — 多模态检索与排序</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; margin: 0; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; margin: 0 auto; overflow: hidden; }
+.header { background: linear-gradient(120deg, #1e3a8a 0%, #3b82f6 40%, #60a5fa 100%); color: #fff; padding: 20px 48px 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.hl { color: #bfdbfe; }
+.hdr-left h1 { margin: 0 0 6px; font-size: 2.0rem; font-weight: 900; letter-spacing: -.02em; }
+.hdr-left h1 .sub { font-size: 1.3rem; font-weight: 700; opacity: .9; }
+.hdr-left .venue { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 5px 14px; font-size: .75rem; font-weight: 700; margin-bottom: 10px; }
+.hdr-left .subtitle { font-size: .88rem; opacity: .85; margin: 0; max-width: 700px; line-height: 1.45; }
+.score-boxes { display: flex; gap: 10px; flex-shrink: 0; }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #bfdbfe; line-height: 1; }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 4px; }
+.main { display: grid; grid-template-columns: 300px 1fr 340px; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col3 { border-right: none }
+.sec-head { margin: 0 0 14px; }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #bfdbfe; margin: 0; text-transform: uppercase; letter-spacing: .04em; }
+.sec-head .divider { height: 2px; background: linear-gradient(90deg, #3b82f6, transparent); margin-top: 6px; border-radius: 1px; }
+.gap-box { border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.g1 { background: rgba(59,130,246,.08); border-left: 3px solid #3b82f6; }
+.g2 { background: rgba(99,102,241,.08); border-left: 3px solid #6366f1; }
+.g3 { background: rgba(14,165,233,.08); border-left: 3px solid #0ea5e9; }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 4px; }
+.g1 .title { color: #93c5fd; }
+.g2 .title { color: #a5b4fc; }
+.g3 .title { color: #7dd3fc; }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.55; margin: 0; }
+.gap-box p + p { margin-top: 6px; }
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.5; margin: 0; }
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(59,130,246,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0; }
+.fig-box img { width: 100%; display: block; }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8); }
+.stage-list { counter-reset: stage; }
+.stage-item { background: rgba(59,130,246,.06); border: 1px solid rgba(96,165,250,.1); border-radius: 8px; padding: 8px 8px 8px 38px; margin-bottom: 6px; position: relative; }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #3b82f6; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; counter-increment: stage; }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #bfdbfe; margin-bottom: 3px; }
+.stage-item p { font-size: .7rem; color: #a8a29e; margin: 0; line-height: 1.5; }
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0; }
+.rtable th { background: #1e3a8a; color: #bfdbfe; padding: 6px 8px; text-align: left; font-weight: 700; }
+.rtable td { padding: 5px 8px; color: #d6d3d1; border-bottom: 1px solid rgba(168,162,158,.1); }
+.rtable .ours td { background: rgba(96,165,250,.06); font-weight: 800; color: #bfdbfe; }
+.rtable .model-name { font-weight: 700; color: #60a5fa; }
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(59,130,246,.3); }
+.bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip p { font-size: .72rem; color: #d6d3d1; margin: 0; line-height: 1.5; }
+.bstrip .hl { color: #60a5fa; font-weight: 700; }
+.backlinks { margin: 0 48px 0; padding: 12px 16px; background: rgba(59,130,246,.06); border: 1px solid rgba(59,130,246,.15); border-radius: 8px; font-size: .78rem; color: #a8a29e; text-align: center; }
+.backlinks a { color: #60a5fa; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.col3 .gap-box { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="backlinks" style="margin: 16px 48px 0;">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2601_Qwen3_VL_Embedding_Reranker%2Fmeta">Qwen3-VL-Embedding & Reranker</a>
+    &nbsp;|&nbsp;
+    <a href="https://arxiv.org/abs/2601.04720" target="_blank">arXiv:2601.04720</a>
+    &nbsp;|&nbsp;
+    <a href="https://github.com/QwenLM" target="_blank">GitHub</a>
+  </div>
+
+  <div class="header">
+    <div class="hdr-left">
+      <h1><span class="sub">Qwen3-VL-Embedding & </span>Reranker</h1>
+      <div class="venue">arXiv:2601.04720 · 2026 · 阿里通义实验室</div>
+      <p class="subtitle">统一的多模态检索与排序框架，将文本、图像、文档、视频映射到统一表示空间，在 MMEB-V2 上实现 77.8 分。</p>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box">
+        <div class="num">77.8</div>
+        <div class="sub">MMEB-V2 8B</div>
+      </div>
+      <div class="score-box">
+        <div class="num">79.2</div>
+        <div class="sub">Reranker Avg</div>
+      </div>
+      <div class="score-box">
+        <div class="num">30+</div>
+        <div class="sub">支持语言</div>
+      </div>
+      <div class="score-box">
+        <div class="num">2B/8B</div>
+        <div class="sub">模型规格</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="col">
+      <div class="sec-head">
+        <h2>问题与动机</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g1">
+        <div class="title">核心能力</div>
+        <p>将多模态内容（文本、图像、文档图像、视频）映射到统一表示空间，实现端到端的高精度多模态搜索。</p>
+      </div>
+
+      <div class="gap-box g2">
+        <div class="title">关键技术</div>
+        <p>Embedding 模型：多阶段训练 + Matryoshka 表示学习 + 量化感知训练</p>
+        <p>Reranker 模型：交叉编码器架构 + 交叉注意力机制</p>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">模型规格</div>
+        <p>Embedding: 2B 和 8B</p>
+        <p>Reranker: 2B 和 8B</p>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 核心创新</div>
+        <p>1. 多模态对比预训练 + 重排序模型蒸馏</p>
+        <p style="margin-top:4px">2. 支持 Matryoshka 表示学习，可灵活选择嵌入维度</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head">
+        <h2>架构与训练</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="fig-box">
+        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Architecture">
+        <div class="fig-cap">Figure: Qwen3-VL-Embedding 架构 — 双编码器 + 交叉编码器</div>
+      </div>
+
+      <div class="fig-box">
+        <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Training Pipeline">
+        <div class="fig-cap">Figure: 多阶段训练流程 — 对比预训练 → 多任务微调 → 蒸馏与合并</div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 训练策略</div>
+        <p><strong>Stage 1</strong>: 大规模对比预训练</p>
+        <p><strong>Stage 2</strong>: 多任务对比学习 + SFT</p>
+        <p><strong>Stage 3</strong>: 重排序蒸馏 + 模型合并</p>
+      </div>
+    </div>
+
+    <div class="col col3">
+      <div class="sec-head">
+        <h2>实验结果</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">MMEB-V2 多模态基准</div>
+        <p>Qwen3-VL-Embedding-8B: <span class="hl">77.8</span> Overall</p>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Model</th><th>Overall</th></tr>
+        <tr><td>RzenEmbed-8B</td><td>72.9</td></tr>
+        <tr><td>Seed-1.6-1215</td><td>76.9</td></tr>
+        <tr class="ours"><td class="model-name">Qwen3-VL-Embedding-8B</td><td>77.8</td></tr>
+      </table>
+
+      <div class="gap-box g2">
+        <div class="title">Reranker 性能</div>
+        <p>Qwen3-VL-Reranker-8B: <span class="hl">79.2</span> Avg</p>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Model</th><th>Avg</th></tr>
+        <tr><td>Qwen3-VL-Embedding-2B</td><td>73.4</td></tr>
+        <tr class="ours"><td class="model-name">Qwen3-VL-Reranker-8B</td><td>79.2</td></tr>
+      </table>
+
+      <div class="gap-box g1">
+        <div class="title">多语言能力</div>
+        <p>继承 Qwen3-VL 的 30+ 语言支持</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">MMEB-V2 领先</div>
+      <p><span class="hl">77.8 Overall</span>：在多模态嵌入基准上超越 Seed 等顶级模型</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">重排序增强</div>
+      <p><span class="hl">79.2 Reranker Avg</span>：交叉注意力机制提供精细化相关性估计</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">灵活部署</div>
+      <p><span class="hl">Matryoshka RL</span>：支持可变嵌入维度，降低存储开销</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">多模态统一</div>
+      <p><span class="hl">文本+图像+文档+视频</span>：统一表示空间支持端到端检索</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

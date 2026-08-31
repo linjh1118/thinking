@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Lite — Research Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.18); border: 1px solid #e7e5e4 }
+
+/* HEADER — reasoning amber gradient (English variant on light bg) */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.4rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .sub-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #fef3c7; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid #fde68a; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fde68a; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #fcd34d; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid #e7e5e4 }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #78350f }
+.c-amber h2 { color: #92400e }
+.c-orange h2 { color: #9a3412 }
+.c-brown h2 { color: #78350f }
+.c-green h2 { color: #065f46 }
+
+p.body { font-size: .78rem; color: #44403c; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (light) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.07); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.07); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.07); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #92400e }
+.g2 .title { color: #b45309 }
+.g3 .title { color: #9a3412 }
+.gap-box p { font-size: .72rem; color: #44403c; line-height: 1.45 }
+
+/* TRICK BOX (light) */
+.trick-box { background: rgba(5,150,105,.06); border: 1px solid rgba(5,150,105,.25); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #44403c; line-height: 1.45 }
+
+/* FIGURE (light) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.04); border: 1px solid #e7e5e4; margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(254,243,199,.4) }
+
+/* FORMULA BOX (light) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.05); border: 1px solid #fcd34d; border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #92400e; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (light) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fef3c7; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid #e7e5e4; text-align: center; font-size: .68rem; color: #44403c }
+.rtable td.left { text-align: left; font-weight: 600; color: #1c1917 }
+.rtable .cat td { background: rgba(217,119,6,.08); font-weight: 700; font-size: .66rem; color: #92400e; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.18); font-weight: 800; color: #78350f }
+.rtable .best td.dv { color: #b45309; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (light) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.04); border-radius: 8px; border: 1px solid #fde68a }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #92400e; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #44403c; line-height: 1.45 }
+
+/* ABLATION CARDS (light) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(254,243,199,.4); border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #1c1917; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #b45309 }
+.abl-card .adesc { font-size: .64rem; color: #78716c }
+
+/* BOTTOM STRIP (light) */
+.bottom-strip { background: #fef3c7; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid #d97706 }
+.bstrip { padding: 14px 18px; border-right: 1px solid #fcd34d }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78350f; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #57534e; line-height: 1.45 }
+.bstrip .hl { color: #b45309; font-weight: 700 }
+
+/* BACKLINKS (light) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid #fcd34d; border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #b45309 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #57534e; text-decoration: none; background: rgba(255,255,255,.95); border: 1px solid #d6d3d1; border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.15); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #b45309; border-color: #b45309 }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #1c1917 !important }
+mjx-container svg, mjx-container svg * { fill: #1c1917 !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="LongCat_Flash_Lite_poster.html">EN</a><a href="LongCat_Flash_Lite_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78350f;">Source note:</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2601_LongCat_Flash_Lite%2FScaling-Embeddings-Outperforms-Scaling-Experts-in-Language-M" style="text-decoration: none;">LongCat-Flash-Lite note</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2601.21204" target="_blank" style="text-decoration: none;">arXiv:2601.21204</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2601.21204 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="sub-title">Scaling Embeddings &gt; Scaling Experts: an alternative route for small-base models</div>
+    <h1>Scaling Embeddings Outperforms Scaling Experts <span>— LongCat-Flash-Lite</span></h1>
+    <div class="authors">Hong Liu, Jiaqi Zhang, Chao Wang, Xing Hu, Linkun Lyu, Jiaqi Sun, Xurui Yang, Bo Wang, Fengcun Li, Yulei Qian, Lingtong Si, Yerui Sun, Rumei Li, Peng Pei, Yuchen Xie, Xunliang Cai (Meituan LongCat)</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">68.5B</div><div class="sub">total params<br>31.4B (46%) = N-gram Emb</div></div>
+    <div class="score-box"><div class="num">3B</div><div class="sub">avg activated<br>2.9B – 4.5B dynamic</div></div>
+    <div class="score-box"><div class="num">NE &gt; MoE</div><div class="sub">scaling advantage<br>small-base regime</div></div>
+    <div class="score-box"><div class="num">≤10B</div><div class="sub">applicable regime<br>small-base sweet spot</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Small-base motivation + N-gram Embedding concept -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>Small-Base Motivation + N-gram Embedding</h2></div>
+  <p class="body">The conventional wisdom: MoE is the only path to scaling sparsity. But the embedding layer is an <strong>overlooked sparsity dimension orthogonal to MoE</strong> — its lookup is $O(1)$, so parameter count can scale freely with almost no compute / comm overhead. This paper systematically proves: in the right regime, putting params into embeddings beats putting them into experts.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/NE-overview.png" alt="N-gram Embedding overview" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: N-gram Embedding overview</i><br><small>src/assets/NE-overview.png</small></div>'">
+    <div class="fig-cap">Fig 1: N-gram Embedding overview (Over-Encoding architecture)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">The counter-intuitive core finding</div>
+      <p>Once MoE expert count <strong>passes its sweet spot</strong> into the saturation regime, instead of adding more experts, allocate params to N-gram Embedding. Under <strong>wide models + moderate depth</strong> (≤40 shortcut layers) small-base regime, NE gives a better Pareto frontier.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Over-Encoding design cleverness</div>
+      <p>Each n-gram embedding is split into $K$ sub-tables, hidden size scaled down by $\frac{1}{(N-1)K}$, with $W_{n,k}$ projecting back to original space. <strong>Total param count is independent of $N, K$</strong> (sub-table dim scales inversely), so hash collisions can be mitigated without growing the parameter budget.</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">N-gram Embedding (Eq.1)</div>
+    $$e_i = \frac{1}{N}\Big(E_0(t_i) + \sum_{n=2}^{N} E_n(\mathcal{H}_n(t_{i-n+1}, \dots, t_i))\Big)$$
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Polynomial Rolling Hash (Eq.2)</div>
+    $$\mathcal{H}_n = \Big(\sum_{j=0}^{n-1} t_{i-j} \cdot V_0^j\Big) \,\%\, V_n$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Principle ①: introduce NE only past sweet spot</div>
+      <p>In low-sparsity regimes, NE cannot compete with more experts. NE only opens an advantage window after expert count passes the sweet spot.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Principle ②: NE share ≤ 50%</div>
+      <p>U-shaped curve: past a certain ratio, NE is worse than MoE. Intersection is around ratio = 20.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Principle ③④: vocab + N, K choice</div>
+      <p>Vocab size off the base-vocab integer multiple (avoid 2-gram hash collisions); $N \in [3,5]$, $K \geq 2$ is hyperparameter-insensitive.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Scaling experiments comparison -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Scaling Experiments: When does NE beat MoE?</h2></div>
+  <p class="body">Three controlled scaling experiments (280M / 790M / 1.3B activated) systematically compare NE vs. MoE baseline compute-loss curves. Key conclusion: <strong>the wider the model and the shallower the depth, the larger NE's advantage window</strong>.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/scaling-1B_n.png" alt="scaling 1B" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: 1.3B activated scaling</i><br><small>src/assets/scaling-1B_n.png</small></div>'">
+    <div class="fig-cap">Fig 2: 1.3B activated NE vs. MoE scaling (still leads at ratio = 50)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Expert-count sweet-spot effect</div>
+      <p>MoE gives large gains in low-sparsity regimes, but log-linear decay in high-sparsity. Low-ratio NE &lt; MoE baseline; high-ratio NE &gt; MoE baseline.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Width effect: wider models widen NE's window</div>
+      <p><strong>280M activated</strong>: NE loses to MoE above ratio 30. <strong>790M</strong>: only the English val set loses. <strong>1.3B</strong>: NE still wins at ratio 50 — wider models, wider NE advantage.</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">Depth effect: NE advantage shrinks past 40 layers</div>
+      <p>At 1.3B, NE advantage is clear at 20 layers but shrinks at 40 (pre-norm residual signal decay). NE works in ≤40 shortcut layers (80 regular layers).</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/scaling-500M_n.png" alt="scaling 500M" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: 500M activated scaling</i><br><small>src/assets/scaling-500M_n.png</small></div>'">
+    <div class="fig-cap">Fig 3: 500M activated NE vs. MoE scaling (mid-width regime)</div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Compute-Loss Frontier</div>
+    $$L(N, C) = a \cdot C^{-b}, \quad \text{Pareto: } \min_N L(N) \text{ s.t. } C(N) = C_0$$
+  </div>
+</div>
+
+<!-- COLUMN 3: Experimental results + Embedding Amplification -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>Results: 3B Activated Beats 80B Rivals</h2></div>
+  <p class="body">LongCat-Flash-Lite (68.5B total, 3B activated) <strong>dominates by wide margins</strong> on agentic / coding: τ²-Telecom 72.8 vs. Qwen3-Next 13.2 (5.5×), SWE-Bench 54.4 vs. Gemini 2.5 Flash-Lite 41.3. Validates the "allocation strategy &gt; parameter count" small-base thesis.</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>Vanilla@1.3T<br>68.5B MoE</th><th class="dv">Flash-Lite@1.3T<br>31.4B NE</th><th>Δ</th></tr>
+    <tr class="cat"><td colspan="4">Reasoning / Knowledge</td></tr>
+    <tr><td class="left">MMLU</td><td class="dv">64.81</td><td>64.01</td><td>-0.80</td></tr>
+    <tr><td class="left">MMLU-Pro</td><td>34.43</td><td class="dv">35.89</td><td>+1.46</td></tr>
+    <tr><td class="left">BBH</td><td>38.54</td><td class="dv">43.67</td><td>+5.13</td></tr>
+    <tr><td class="left">GPQA</td><td>25.37</td><td class="dv">29.66</td><td>+4.29</td></tr>
+    <tr><td class="left">DROP</td><td>47.92</td><td class="dv">52.43</td><td>+4.51</td></tr>
+    <tr class="cat"><td colspan="4">Code / Chinese</td></tr>
+    <tr><td class="left">HumanEval+</td><td>28.66</td><td class="dv">31.10</td><td>+2.44</td></tr>
+    <tr><td class="left">BigCodeBench</td><td>33.42</td><td class="dv">36.05</td><td>+2.63</td></tr>
+    <tr><td class="left">CEval</td><td>64.09</td><td class="dv">67.21</td><td>+3.12</td></tr>
+    <tr><td class="left">CMMLU</td><td>67.08</td><td class="dv">69.55</td><td>+2.47</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/lm_loss_n.png" alt="lm loss curve" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: LM loss curve</i><br><small>src/assets/lm_loss_n.png</small></div>'">
+    <div class="fig-cap">Fig 4: LongCat-Flash-Lite LM loss curve (NE + amplification stable training)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/throughput_n_final_f.png" alt="throughput" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Fig: inference throughput</i><br><small>src/assets/throughput_n_final_f.png</small></div>'">
+    <div class="fig-cap">Fig 5: Inference throughput vs. batch / sequence length</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Embedding Amplification: an invisible but fatal switch</div>
+    <p>Under default init, attention output's L2 norm is ~10× larger than the embedding branch's identity path, drowning the embedding signal in the residual stream. <strong>Scaling Factor</strong> (×$\sqrt{D}$) or <strong>Normalization</strong> (LN before residual merge) repairs it — training loss drops 0.02 across both validation sets.</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">τ²-Telecom</div>
+      <div class="adelta">72.8</div>
+      <div class="adesc">vs. Qwen3-Next 13.2 (5.5× lead)</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">SWE-Bench</div>
+      <div class="adelta">54.4</div>
+      <div class="adesc">vs. Gemini Flash-Lite 41.3 (agentic coding)</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Embedding &gt; Experts (small-base)</div>
+    <p>Once MoE is past its sweet spot, <span class="hl">putting params into N-gram Embedding wins</span> — embedding lookup is $O(1)$, zero comm overhead.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② N-gram discretization</div>
+    <p><span class="hl">Over-Encoding</span> (Eq.3) splits each n-gram into $K$ sub-tables, hidden dim scaled by $\frac{1}{(N-1)K}$. <span class="hl">Param count independent of $N, K$</span>.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ Compute-efficient scaling</div>
+    <p>Wider models widen NE's window; <span class="hl">depth ≤ 40 shortcut layers</span> keeps the advantage. A 2D Pareto space (expert × embedding) replaces the 1D expert-only view.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ 3B activated is enough</div>
+    <p>Lite activates <span class="hl">2.9B – 4.5B</span>, beating 80B-class rivals on agentic / coding. Total param count ≠ intelligence — allocation strategy is.</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

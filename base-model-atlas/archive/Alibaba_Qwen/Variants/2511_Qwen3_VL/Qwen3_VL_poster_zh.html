@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen3-VL — 最强视觉-语言模型</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; margin: 0; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; margin: 0 auto; overflow: hidden; }
+.header { background: linear-gradient(120deg, #1e3a8a 0%, #3730a3 40%, #6366f1 100%); color: #fff; padding: 20px 48px 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.hl { color: #bfdbfe; }
+.hdr-left h1 { margin: 0 0 6px; font-size: 2.0rem; font-weight: 900; letter-spacing: -.02em; }
+.hdr-left h1 .sub { font-size: 1.3rem; font-weight: 700; opacity: .9; }
+.hdr-left .venue { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 5px 14px; font-size: .75rem; font-weight: 700; margin-bottom: 10px; }
+.hdr-left .subtitle { font-size: .88rem; opacity: .85; margin: 0; max-width: 720px; line-height: 1.45; }
+.score-boxes { display: flex; gap: 10px; flex-shrink: 0; }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #bfdbfe; line-height: 1; }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 4px; }
+.main { display: grid; grid-template-columns: 300px 1fr 360px; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col3 { border-right: none }
+.sec-head { margin: 0 0 14px; }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #bfdbfe; margin: 0; text-transform: uppercase; letter-spacing: .04em; }
+.sec-head .divider { height: 2px; background: linear-gradient(90deg, #6366f1, transparent); margin-top: 6px; border-radius: 1px; }
+.gap-box { border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.g1 { background: rgba(99,102,241,.08); border-left: 3px solid #6366f1; }
+.g2 { background: rgba(59,130,246,.08); border-left: 3px solid #3b82f6; }
+.g3 { background: rgba(14,165,233,.08); border-left: 3px solid #0ea5e9; }
+.g4 { background: rgba(124,58,237,.08); border-left: 3px solid #7c3aed; }
+.g5 { background: rgba(5,150,105,.08); border-left: 3px solid #059669; }
+.g6 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706; }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 4px; }
+.g1 .title { color: #a5b4fc; }
+.g2 .title { color: #93c5fd; }
+.g3 .title { color: #7dd3fc; }
+.g4 .title { color: #c4b5fd; }
+.g5 .title { color: #6ee7b7; }
+.g6 .title { color: #fcd34d; }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.55; margin: 0; }
+.gap-box p + p { margin-top: 6px; }
+.gap-box em { font-size: .68rem; color: #a8a29e; display: block; margin-top: 2px; }
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.5; margin: 0; }
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(99,102,241,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0; }
+.fig-box img { width: 100%; display: block; }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8); }
+.stage-list { counter-reset: stage; }
+.stage-item { background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.1); border-radius: 8px; padding: 8px 8px 8px 38px; margin-bottom: 6px; position: relative; }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #6366f1; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; counter-increment: stage; }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #a5b4fc; margin-bottom: 3px; }
+.stage-item p { font-size: .7rem; color: #a8a29e; margin: 0; line-height: 1.5; }
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0; }
+.rtable th { background: #1e3a8a; color: #bfdbfe; padding: 5px 6px; text-align: center; font-weight: 700; font-size: .66rem; }
+.rtable th:first-child { text-align: left; }
+.rtable td { padding: 4px 6px; color: #d6d3d1; border-bottom: 1px solid rgba(168,162,158,.1); text-align: center; }
+.rtable td:first-child { text-align: left; font-weight: 600; }
+.rtable .ours td { background: rgba(99,102,241,.06); font-weight: 800; color: #a5b4fc; }
+.rtable .model-name { font-weight: 700; color: #60a5fa; }
+.badge { display: inline-block; background: rgba(99,102,241,.2); border: 1px solid rgba(99,102,241,.4); border-radius: 4px; padding: 1px 4px; font-size: .6rem; color: #a5b4fc; margin-left: 3px; }
+.badge.gold { background: rgba(251,191,36,.15); border-color: rgba(251,191,36,.4); color: #fcd34d; }
+.badge.silver { background: rgba(156,163,175,.1); border-color: rgba(156,163,175,.3); color: #9ca3af; }
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(99,102,241,.3); }
+.bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip p { font-size: .72rem; color: #d6d3d1; margin: 0; line-height: 1.5; }
+.bstrip .hl { color: #a5b4fc; font-weight: 700; }
+.backlinks { margin: 0 48px 0; padding: 12px 16px; background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.15); border-radius: 8px; font-size: .78rem; color: #a8a29e; text-align: center; }
+.backlinks a { color: #6366f1; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.col3 .gap-box { margin-bottom: 8px; }
+.mode-tag { display: inline-block; background: rgba(99,102,241,.25); border: 1px solid rgba(99,102,241,.5); border-radius: 4px; padding: 1px 5px; font-size: .62rem; color: #a5b4fc; font-weight: 700; margin-bottom: 4px; }
+.mode-tag.thinking { background: rgba(217,119,6,.2); border-color: rgba(217,119,6,.4); color: #fcd34d; }
+.mode-tag.instruct { background: rgba(5,150,105,.2); border-color: rgba(5,150,105,.4); color: #6ee7b7; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="backlinks" style="margin: 16px 48px 0;">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2511_Qwen3_VL%2Fmeta">Qwen3-VL Technical Report</a>
+    &nbsp;|&nbsp;
+    <a href="https://arxiv.org/abs/2511.21631" target="_blank">arXiv:2511.21631</a>
+    &nbsp;|&nbsp;
+    <a href="https://github.com/QwenLM" target="_blank">GitHub</a>
+  </div>
+
+  <div class="header">
+    <div class="hdr-left">
+      <h1><span class="sub">Qwen3-</span>VL — 最强视觉-语言模型</h1>
+      <div class="venue">arXiv:2511.21631 · 2025 · 阿里通义实验室</div>
+      <p class="subtitle">基于 Qwen3 纯文本骨干的 VLM，支持 Dual-mode（Thinking + Instruct）、256K 超长上下文、39 语言 OCR，在文档理解、Math、Agent 等多个维度达到 SOTA，235B MoE 模型可与 Gemini 2.5 Pro 竞争。</p>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box">
+        <div class="num">920</div>
+        <div class="sub">OCRBench</div>
+      </div>
+      <div class="score-box">
+        <div class="num">97.1</div>
+        <div class="sub">DocVQA (Instruct)</div>
+      </div>
+      <div class="score-box">
+        <div class="num">92.1</div>
+        <div class="sub">RefCOCO-avg</div>
+      </div>
+      <div class="score-box">
+        <div class="num">68.3</div>
+        <div class="sub">OSWorldG</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="col">
+      <div class="sec-head">
+        <h2>问题与动机</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g1">
+        <div class="title">核心挑战</div>
+        <p>现有 VLM 在纯文本任务上弱于纯文本骨干；长上下文视觉理解能力不足；多语言 OCR 与 GUI Agent 能力有限</p>
+      </div>
+
+      <div class="gap-box g2">
+        <div class="title">核心贡献</div>
+        <p><strong>1. Dual-mode</strong>：同一个模型支持 Thinking（慢思考）和 Instruct（快速响应）两种模式</p>
+        <p><strong>2. 超长上下文</strong>：原生 256K token，支持文本+图像+视频交错输入</p>
+        <p><strong>3. 39 语言 OCR</strong>：覆盖中英日韩等 39 种语言的文档理解</p>
+        <p><strong>4. GUI Agent</strong>：OSWorldG 68.3，ScreenSpot Pro 62.0，开源最高</p>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">模型规格（5 款）</div>
+        <p><strong>密集模型</strong>：2B / 4B / 8B / 32B</p>
+        <p><strong>MoE 模型</strong>：30B-A3B / 235B-A22B</p>
+        <p><em>骨干：Qwen3 15B / 3B / 7B / 57B-A14B</em></p>
+        <p><em>视觉：SigLIP-2 SO400M / 400M / 14B</em></p>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 三大架构升级</div>
+        <p><strong>Interleaved MRoPE</strong>：时空建模增强，处理视频和交错的图像-文本</p>
+        <p><strong>DeepStack</strong>：多级 ViT 特征注入 LLM 前三层，增强视觉感知</p>
+        <p><strong>Text Timestamp</strong>：&lt;3.0s&gt; 格式文本时间戳，支持视频时序定位</p>
+      </div>
+
+      <div class="gap-box g5">
+        <div class="title">39 语言 OCR 覆盖</div>
+        <p>拉丁、西里尔、希腊、阿拉伯、梵文、中日韩等文字体系</p>
+        <p>OCRBench_v2_zh: <span class="hl">61.8</span> &nbsp; CC-OCR: <span class="hl">82.2</span></p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head">
+        <h2>核心方法</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="fig-box">
+        <img src=""src/figures/qwen3vl_head.png" alt="Model Architecture">
+        <div class="fig-cap">Figure: Qwen3-VL 架构 — SigLIP-2 视觉编码器 + Qwen3 LLM + DeepStack 特征融合</div>
+      </div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">预训练四阶段</div>
+          <p>S0: Merger 对齐 (67B tokens) → S1: 多模态预训练 (~1T tokens) → S2: 长上下文 (32K, ~1T tokens) → S3: 超长上下文 (256K, 100B tokens)</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">后训练三阶段</div>
+          <p>SFT (长 CoT 数据) → 强到弱蒸馏 (将大模型能力迁移到小模型) → RL (推理 RL + 通用 RL)</p>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 关键训练技术</div>
+        <p><strong>Dual-mode</strong>：Thinking 模式使用长 CoT 数据进行 SFT；Instruct 模式是标准快速响应</p>
+        <p><strong>强到弱蒸馏</strong>：将 235B MoE 的 thinking 能力蒸馏到 30B/32B 密集模型</p>
+        <p><strong>密集 + MoE 统一</strong>：235B MoE 与 32B 密集模型共享相同的架构设计</p>
+      </div>
+
+      <div class="gap-box g4">
+        <div class="title">Video 理解关键设计</div>
+        <p><strong>Interleaved MRoPE</strong>：t/h/w 三维均匀分布在高低频带，平衡频谱表征</p>
+        <p><strong>Text Timestamp</strong>：每个视频帧附时间戳 &lt;X.X seconds&gt;，支持时序推理</p>
+        <p><strong>密集时序标注</strong>：大规模密集视频 caption 数据用于训练</p>
+      </div>
+    </div>
+
+    <div class="col col3">
+      <div class="sec-head">
+        <h2>实验结果 (235B-A22B)</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g6">
+        <div class="title">STEM / 数学推理</div>
+        <span class="mode-tag thinking">thinking</span>
+        <span class="mode-tag instruct">instruct</span>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Benchmark</th><th>think</th><th>inst</th><th>Gm2.5</th><th>GPT-5</th></tr>
+        <tr class="ours"><td>MMMU</td><td>80.6</td><td>78.7</td><td>81.7</td><td>74.4</td></tr>
+        <tr class="ours"><td>MMMU-Pro</td><td>69.3</td><td>68.1</td><td>71.2</td><td>62.7</td></tr>
+        <tr class="ours"><td>MathVista-mini</td><td>85.8</td><td>84.9</td><td>77.7</td><td>50.9</td></tr>
+        <tr class="ours"><td>MathVision</td><td>74.6</td><td>66.5</td><td>66.0</td><td>45.8</td></tr>
+        <tr class="ours"><td>DynaMath</td><td>82.8</td><td>79.4</td><td>78.5</td><td>74.0</td></tr>
+        <tr class="ours"><td>Math-VR</td><td>66.8</td><td>65.0</td><td>54.3</td><td>21.7</td></tr>
+        <tr class="ours"><td>LogicVista</td><td>72.2</td><td>65.8</td><td>68.7</td><td>46.3</td></tr>
+      </table>
+
+      <div class="gap-box g2">
+        <div class="title">文档理解 (Instruct)</div>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Benchmark</th><th>Qwen3</th><th>Gm2.5</th><th>GPT-5</th></tr>
+        <tr class="ours"><td>DocVQA<sub>test</sub></td><td>97.1</td><td>94.0</td><td>89.6</td></tr>
+        <tr class="ours"><td>InfoVQA<sub>test</sub></td><td>89.2</td><td>82.9</td><td>69.9</td></tr>
+        <tr class="ours"><td>ChartQA<sub>test</sub></td><td>90.3</td><td>62.6</td><td>59.1</td></tr>
+        <tr class="ours"><td>OCRBench</td><td>920</td><td>872</td><td>787</td></tr>
+        <tr class="ours"><td>OCRBench_v2_zh</td><td>61.8</td><td>53.1</td><td>37.7</td></tr>
+        <tr class="ours"><td>CC-OCR</td><td>82.2</td><td>76.8</td><td>66.1</td></tr>
+      </table>
+
+      <div class="gap-box g3">
+        <div class="title">Grounding / Agent</div>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Benchmark</th><th>Qwen3</th><th>Gm2.5</th></tr>
+        <tr class="ours"><td>RefCOCO-avg</td><td>92.1</td><td>-</td></tr>
+        <tr class="ours"><td>CountBench</td><td>93.7</td><td>91.7</td></tr>
+        <tr class="ours"><td>OSWorldG <span class="badge gold">开源最高</span></td><td>68.3</td><td>45.2</td></tr>
+        <tr class="ours"><td>ScreenSpot Pro</td><td>62.0</td><td>-</td></tr>
+        <tr class="ours"><td>AndroidWorld</td><td>63.7</td><td>-</td></tr>
+      </table>
+
+      <div class="gap-box g4">
+        <div class="title">视频理解</div>
+      </div>
+
+      <table class="rtable">
+        <tr><th>Benchmark</th><th>Qwen3</th><th>Gm2.5</th></tr>
+        <tr class="ours"><td>MVBench</td><td>76.5</td><td>65.8</td></tr>
+        <tr class="ours"><td>MLVU<sub>MAvg</sub></td><td>84.3</td><td>81.2</td></tr>
+        <tr class="ours"><td>Charades-STA</td><td>64.8</td><td>-</td></tr>
+        <tr class="ours"><td>VideoMMMU</td><td>74.7</td><td>79.4</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">开源最强 Agent</div>
+      <p><span class="hl">OSWorldG 68.3</span>：大幅领先 Gemini 2.5 Pro（45.2），ScreenSpot Pro 62.0</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">文档理解领先</div>
+      <p><span class="hl">DocVQA 97.1 / OCRBench 920</span>：超越 GPT-5 和 Gemini 2.5</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Dual-mode 创新</div>
+      <p><span class="hl">Thinking + Instruct</span>：同一个模型支持慢思考推理和快速响应</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">39 语言 OCR</div>
+      <p><span class="hl">中英日韩等</span>：OCRBench_v2_zh 61.8，CC-OCR 82.2</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

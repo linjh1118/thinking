@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Next — Research Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #f8fafc; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.5) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.25; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .authors { font-size: .84rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(217,119,6,.35); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #d6d3d1; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid #e2e8f0 }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800 }
+.c-amber h2 { color: #92400e }
+.c-orange h2 { color: #9a3412 }
+.c-brown h2 { color: #451a03 }
+.c-green h2 { color: #065f46 }
+
+p.body { font-size: .78rem; color: #374151; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: #fffbeb; border-left: 3px solid #d97706 }
+.g2 { background: #fef3c7; border-left: 3px solid #f59e0b }
+.g3 { background: #fff7ed; border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #92400e }
+.g2 .title { color: #78350f }
+.g3 .title { color: #9a3412 }
+.gap-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* TRICK BOX */
+.trick-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #374151; line-height: 1.45 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: #fffbeb; border: 1px solid #e2e8f0; margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #64748b; font-style: italic; background: #f8fafc }
+
+/* FORMULA BOX */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #92400e; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid #e5e7eb; text-align: center; font-size: .68rem }
+.rtable td.left { text-align: left; font-weight: 600 }
+.rtable .cat td { background: #fef3c7; font-weight: 700; font-size: .66rem; color: #92400e; text-align: left }
+.rtable .best td { background: #fffbeb; font-weight: 800 }
+.rtable .best td.dv { color: #d97706; font-size: .78rem }
+.rtable .ours td { background: #fffbeb; font-weight: 800; color: #78350f }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: #fffbeb; border-radius: 8px; border: 1px solid #fde68a }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #92400e; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #374151; line-height: 1.45 }
+
+/* ABLATION CARDS */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #1f2937; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #d97706 }
+.abl-card .adesc { font-size: .64rem; color: #6b7280 }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #fff7ed; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid #fb923c }
+.bstrip { padding: 14px 18px; border-right: 1px solid #fde68a }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #92400e; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #4b5563; line-height: 1.45 }
+.bstrip .hl { color: #d97706; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #d97706 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #64748b; text-decoration: none; background: rgba(255,255,255,.95); border: 1px solid #cbd5e1; border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #d97706; border-color: rgba(217,119,6,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #1f2937 !important }
+mjx-container svg, mjx-container svg * { fill: #1f2937 !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="LongCat_Next_poster.html">EN</a><a href="LongCat_Next_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #92400e;">Source:</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2603_LongCat_Next%2FLongCat-Next-Lexicalizing-Modalities-as-Discrete-Tokens" style="text-decoration: none;">LongCat-Next Note</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2603.27538" target="_blank" style="text-decoration: none;">arXiv:2603.27538</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2603.27538 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <h1>Lexicalizing Modalities <span>as Discrete Tokens</span></h1>
+    <div class="authors">Meituan LongCat Team</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">DiNA</div><div class="sub">Discrete Native<br>Autoregressive</div></div>
+    <div class="score-box"><div class="num">dNaViT</div><div class="sub">Any-resolution<br>8-stage RVQ</div></div>
+    <div class="score-box"><div class="num">Shared</div><div class="sub">Codebook<br>text/vis/audio</div></div>
+    <div class="score-box"><div class="num">Next</div><div class="sub">Gen Bet<br>vs Flash-Omni</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Problem + DiNA + dNaViT -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>Paradigm: Beyond Concatenated Any-to-Any</h2></div>
+  <p class="body">The root issue with current multimodal systems is <strong>language-plus-auxiliary</strong> — vision/audio are bolted on as plug-ins and projected into LLM space via continuous embeddings. Three pain points: (1) <strong>architectural fragmentation</strong> (each modality has its own encoder + projection + modality-specific design); (2) <strong>understanding-vs-generation conflict</strong> (CLIP/SigLIP encoders vs VAE/VQ-VAE encoders cannot be reconciled); (3) <strong>infrastructure unfriendly</strong> (continuous features need modality-aware paths).</p>
+
+  <div class="fig-box">
+    <img src="src/assets/dnavit.png" alt="dNaViT architecture" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: dNaViT architecture (SAE + 8-stage RVQ)</i><br><small>src/assets/dnavit.png</small></div>'">
+    <div class="fig-cap">Fig 1: dNaViT architecture (SAE + 8-stage RVQ for any-resolution image tokenization)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">DiNA: Discrete Native Autoregressive</div>
+      <p><strong>Lexicalize text / vision / audio into discrete tokens</strong>, modeling all modalities on a single decoder-only MoE with one unified NTP objective. Architecture collapses to decoder-only + tokenizer/detokenizer pairs; understanding and generation become two conditionings of the same NTP.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">No Modality-Specific Inductive Bias</div>
+      <p>Disables 3D RoPE, bidirectional attention, modality-aware MoE — <strong>all tokens share one modality-agnostic path</strong>. Per-expert avg tokens: 507 (text-only) → 584 (multi-modal, +15% capacity utilization); some experts self-specialize as "visual" or "audio".</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-orange" style="margin-top:14px"><div class="nc">2</div><h2>dNaViT: Any-Resolution Discrete Vision</h2></div>
+  <p class="body"><strong>dNaViT = Discrete Native-resolution Vision Transformer</strong> — encodes arbitrary-resolution images into hierarchical discrete tokens, with a detokenizer for round-trip reconstruction. Vision discretization's core challenge is a dual bottleneck: encoder semantic capacity + continuous-to-discrete quantization loss.</p>
+
+  <div class="formula-box">
+    <div class="flabel">Semantic Completeness Criterion</div>
+    $$\mathcal{P}(A \mid z, \mathcal{Q}) \approx \mathcal{P}(A \mid I, \mathcal{Q})$$
+  </div>
+  <div class="formula-box">
+    <div class="flabel">Residual Accumulation Structure</div>
+    $$\mathbf{z}_p = \mathbf{x}_0 + \sum_{l=1}^{L} \mathcal{F}_l(\mathbf{x}_{l-1})$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">SAE Encoder (Semantic-Aligned)</div>
+      <p>Picks Qwen2.5-ViT (28× spatial compression) as pre-quantization SAE — large-scale vision-language training already ensures semantic completeness. Direct reuse, no SAE-from-scratch cost.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">8-Stage RVQ Discretization</div>
+      <p>Each level uses EMA-updated codebook (not gradient descent); Laplace smoothing for numerical stability; inactive entries ($N_k<1$) re-initialized from current batch to maintain codebook utilization.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Native Resolution + Variable-Length</div>
+      <p>Pack-n-Pack sequence-based modeling; different resolutions flattened into one sequence with variable-length FlashAttention. Max seq len 8192, max resolution 1736×1736.</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">De-tokenization (Decoupled Training)</div>
+      <p>400M ViT pixel decoder + Flow-matching refiner (init from OmniGen2) for high-frequency detail. Trained after codebook freeze; recovers spatial patch sequence via learnable MLP patch un-merger.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Audio + Reconstruction -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">3</div><h2>Audio Tokenizer: 12.5 Hz RVQ</h2></div>
+  <p class="body">Audio encoder uses Whisper-large-v3 (frozen init, then trained); <strong>8-stage RVQ</strong> with codebook sizes 8k/4k/2k/1k/1k/1k/1k/1k at <strong>12.5 Hz frame rate</strong>. Training data ~2.5M hours (20M hours web audio cleaned to 3.2M + 1.2M synthetic + 0.4M task-specific). Key design: borrow Qwen3-1.7B as frozen LLM supervisor to align with text space — then <strong>discard after distillation</strong>.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/audio_tokenizer.png" alt="audio tokenizer" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: audio tokenizer training pipeline</i><br><small>src/assets/audio_tokenizer.png</small></div>'">
+    <div class="fig-cap">Fig 2: Audio Tokenizer (Whisper + 8-stage RVQ + LLM supervision)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Internal Linguistic Guidance</div>
+      <p>Following Moshi, audio generation is modeled as <strong>text-guided audio modality</strong>. Parallel (text/audio sync, audio delayed N steps) and Serial (text first, then audio, single-modality per step) become two extremes of a unified framework — each text-audio segment's delay <strong>sampled randomly</strong> from 1 to text length.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">3-Stage Audio Training</div>
+      <p>decoder warm-up → semantic-acoustic joint (enable RVQ) → decoder fine-tune (DiT 24kHz).</p>
+    </div>
+  </div>
+
+  <div class="sec-head c-brown" style="margin-top:14px"><div class="nc">4</div><h2>Image Reconstruction: Residual Implicit Pathway</h2></div>
+  <p class="body">A surprising finding: <strong>SAE's residual architecture inherently preserves a low-level signal propagation pathway</strong>. Identity mappings prevent early-layer fine-grained signals from being overwritten by high-level semantics; signals accumulate progressively into $\mathbf{z}_p$. So even without explicit reconstruction supervision, SAE retains substantial reconstruction ability.</p>
+
+  <div class="fig-box">
+    <img src="src/assets/image_rec.png" alt="image reconstruction" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: image reconstruction (encoder comparison)</i><br><small>src/assets/image_rec.png</small></div>'">
+    <div class="fig-cap">Fig 3: Image reconstruction comparison (different frozen encoders)</div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Quantization Loss</div>
+    $$\mathcal{L}_{\text{quant}} = \lambda_c \mathcal{L}_{\text{commit}} + \lambda_s \mathcal{L}_{\text{semantic}}$$
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/reconstruction.png" alt="reconstruction metrics" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: reconstruction metrics</i><br><small>src/assets/reconstruction.png</small></div>'">
+    <div class="fig-cap">Fig 4: Reconstruction quality (PSNR / SSIM / rFID)</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Key Counter-Intuitive Finding</div>
+    <p>Random-initialized ViT-B/16 has the <strong>best reconstruction quality</strong> (PSNR 30.52), beating QwenViT (PSNR 18.16) and ResNet50 (20.88). This proves <strong>residual structure itself</strong> — not learned semantics — is the main source of recoverability.</p>
+  </div>
+</div>
+
+<!-- COLUMN 3: Experiments -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">5</div><h2>Results: Discrete ≠ Performance Ceiling</h2></div>
+  <p class="body">LongCat-Next (A3B, 68.5B total / 3B avg active) reaches SOTA-tier on both visual understanding and generation — <strong>surpassing the specialized Qwen3-VL-A3B on MathVista / MathVision</strong>.</p>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>LongCat<br>-Next</th><th>Qwen3<br>-Omni</th><th>Qwen3<br>-VL</th><th>Gemini2.5<br>-Flash-Lite</th></tr>
+    <tr class="cat"><td colspan="5">Visual Understanding</td></tr>
+    <tr><td class="left">MMMU-Pro</td><td>60.3</td><td>57.0</td><td>60.4</td><td><strong>64.1</strong></td></tr>
+    <tr><td class="left">MMMU-val</td><td>70.6</td><td>69.1</td><td><strong>74.2</strong></td><td>74.9</td></tr>
+    <tr class="ours"><td class="left">MathVista-mini</td><td class="dv">83.1</td><td>75.9</td><td>80.1</td><td>78.2</td></tr>
+    <tr class="ours"><td class="left">MathVision</td><td class="dv">64.7</td><td>56.3</td><td>60.2</td><td>61.9</td></tr>
+    <tr class="ours"><td class="left">VisuLogic</td><td class="dv">29.4</td><td>20.0</td><td>23.0</td><td>26.1</td></tr>
+    <tr><td class="left">CharXiv-RQ</td><td>60.1</td><td>42.8</td><td>48.9</td><td>60.0</td></tr>
+    <tr class="cat"><td colspan="5">Visual Generation</td></tr>
+    <tr><td class="left">GenEval</td><td>84.44</td><td>87.00</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">DPG</td><td>84.66</td><td>88.32</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">LongText-EN</td><td class="dv">93.15</td><td>94.30</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">LongText-ZH</td><td class="dv">89.08</td><td>94.60</td><td>—</td><td>—</td></tr>
+    <tr><td class="left">WISE</td><td>57.00</td><td>63.00</td><td>—</td><td>—</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/longcat-next-benchmark-charts-2026-03-26.png" alt="benchmark charts" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: LongCat-Next benchmark panorama</i><br><small>src/assets/longcat-next-benchmark-charts-2026-03-26.png</small></div>'">
+    <div class="fig-cap">Fig 5: LongCat-Next benchmark panorama (und + gen + audio + text)</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Key Finding 1: Discrete Catches Up to Continuous</div>
+      <p>Short training: discrete trails continuous (OCRBench 598 vs 779). At <strong>300B tokens they nearly tie</strong> (844 vs 858); MathVista: 74.0 vs 75.0.</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Key Finding 2: Unified Doesn't Hurt Pure Text</div>
+      <p>SWE-Bench <strong>43.00</strong>, Tau2-Telecom <strong>62.06</strong> — both well ahead of Kimi-Linear / Qwen3-Next / Qwen3-Omni. <strong>Token-level unification introduces no optimization trade-off</strong>.</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/actor_entropy_v2.png" alt="actor entropy" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: understanding RL actor entropy</i><br><small>src/assets/actor_entropy_v2.png</small></div>'">
+    <div class="fig-cap">Fig 6: Understanding RL actor entropy (sequence-level filter suppresses explosion)</div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">T2I RL (GenEval)</div>
+      <div class="adelta">+7.5%</div>
+      <div class="adesc">counting boosted most; multi-dim reward</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Und RL (MathVision)</div>
+      <div class="adelta">+4.24</div>
+      <div class="adesc">49.28 → 53.52; entropy filter required</div>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/case_rewards.png" alt="case rewards" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: case study rewards</i><br><small>src/assets/case_rewards.png</small></div>'">
+    <div class="fig-cap">Fig 7: Case study rewards (T2I visual quality)</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/geneval_reward.png" alt="geneval reward" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: GenEval multi-dim reward</i><br><small>src/assets/geneval_reward.png</small></div>'">
+    <div class="fig-cap">Fig 8: GenEval multi-dim reward training curves</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/ocr_math_equal.png" alt="OCR math" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#92400e;font-size:.8rem;&quot;><i>Figure: OCR / math rewards</i><br><small>src/assets/ocr_math_equal.png</small></div>'">
+    <div class="fig-cap">Fig 9: OCR / Math multimodal reward curves</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Discrete Token Unification</div>
+    <p>text / vision / audio <span class="hl">all lexicalized into discrete tokens</span>; single decoder-only MoE + single NTP objective unifies understanding and generation.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② DiNA + dNaViT</div>
+    <p>DiNA = Discrete Native Autoregressive; dNaViT = SAE + <span class="hl">8-stage RVQ any-resolution discrete vision</span>, max 1736×1736.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ Shared Codebook</div>
+    <p>Visual 8×16384, audio 8k/4k/2k/... <span class="hl">all randomly initialized and co-trained</span> with language tokens; t-SNE shows interwoven distribution.</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ Next-Gen Paradigm</div>
+    <p>vs Flash-Omni's concatenation → <span class="hl">native discrete unification</span>. Understanding doesn't hurt generation; generation aids understanding (Unified loss 0.02 lower than Pure-Gen).</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

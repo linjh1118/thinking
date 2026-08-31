@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StepFun-Formalizer Poster</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); overflow: hidden; }
+
+.header { background: linear-gradient(120deg, #7f1d1d 0%, #dc2626 40%, #f97316 100%); padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hl { display: flex; flex-direction: column; gap: 6px; }
+.hl h1 { font-size: 1.6rem; font-weight: 900; color: #fff; line-height: 1.2; }
+.hl .sub { font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+.hl .authors { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.score-row { display: flex; gap: 10px; }
+.score-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 110px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; }
+.score-box .sub { font-size: .6rem; color: rgba(255,255,255,.7); margin-top: 2px; line-height: 1.2; }
+
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.col:last-child { border-right: none; }
+
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.h1 .nc { background: #dc2626; }
+.h2 .nc { background: #f97316; }
+.h3 .nc { background: #fbbf24; color: #1c1917; }
+.sec-head h2 { font-size: .95rem; font-weight: 800; color: #d6d3d1; }
+
+.box { background: rgba(220,38,38,.07); border: 1px solid rgba(220,38,38,.2); border-left: 3px solid #dc2626; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box2 { background: rgba(249,115,22,.07); border: 1px solid rgba(249,115,22,.2); border-left: 3px solid #f97316; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.box h3 { font-size: .78rem; font-weight: 800; color: #fca5a5; margin-bottom: 4px; }
+.box p, .box2 p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.pipeline { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin: 8px 0; }
+.pipe-stage { background: rgba(220,38,38,.15); border: 1px solid rgba(220,38,38,.3); border-radius: 6px; padding: 5px 9px; font-size: .68rem; color: #fca5a5; font-weight: 700; }
+
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0; }
+.rtable th { color: #fff; padding: 6px 8px; text-align: center; font-weight: 700; background: rgba(220,38,38,.3); }
+.rtable td { padding: 5px 7px; text-align: center; border-bottom: 1px solid rgba(168,162,158,.07); color: #d6d3d1; font-size: .68rem; }
+.rtable .ours td { background: rgba(253,230,138,.08); color: #fde68a; font-weight: 800; }
+.rtable .best td { background: rgba(34,197,94,.1); color: #86efac; font-weight: 800; }
+
+.insight { background: rgba(252,165,165,.07); border: 1px solid rgba(252,165,165,.2); border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+.insight h3 { font-size: .7rem; font-weight: 800; color: #fca5a5; margin-bottom: 4px; }
+.insight p { font-size: .75rem; color: #d6d3d1; line-height: 1.5; }
+
+.comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.comp-card { background: rgba(220,38,38,.05); border: 1px solid rgba(220,38,38,.15); border-radius: 8px; padding: 8px 10px; }
+.comp-card h4 { font-size: .72rem; font-weight: 800; color: #fca5a5; margin-bottom: 4px; }
+.comp-card p { font-size: .7rem; color: #d6d3d1; line-height: 1.4; }
+
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(168,162,158,.15); padding: 16px 48px; gap: 16px; }
+.bstrip { border-right: 1px solid rgba(168,162,158,.08); padding-right: 16px; }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip .hl { color: #fbbf24; font-weight: 800; font-size: .88rem; }
+.bstrip p { font-size: .7rem; color: #a8a29e; line-height: 1.4; }
+
+.backlinks { margin: 16px 48px 0; padding: 8px 14px; background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.2); border-radius: 8px; font-size: .8rem; }
+.backlinks a { color: #fca5a5; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.badge-bar { padding: 6px 48px; background: rgba(220,38,38,.05); border-bottom: 1px solid rgba(220,38,38,.1); }
+.badge-bar span { font-size: .68rem; color: #fca5a5; background: rgba(220,38,38,.15); border: 1px solid rgba(220,38,38,.25); border-radius: 4px; padding: 2px 8px; font-weight: 700; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="badge-bar">
+    <span>arXiv: 2508.04440</span>
+    <span>Autoformalization</span>
+    <span>Math AI</span>
+    <span>RLVR</span>
+    <span>Lean 4</span>
+  </div>
+  <div class="header">
+    <div class="hl">
+      <h1>StepFun-Formalizer</h1>
+      <div class="sub">Knowledge-Reasoning Fusion for Autoformalization</div>
+      <div class="authors">Yutong Wu, Di Huang, Ruosi Wan, Yue Peng, Shijie Shang, et al. · StepFun AI · 2025</div>
+    </div>
+    <div class="score-row">
+      <div class="score-box"><div class="num">40.5%</div><div class="sub">BEq@1 FormalMATH-Lite</div></div>
+      <div class="score-box"><div class="num">26.7%</div><div class="sub">BEq@1 ProverBench</div></div>
+      <div class="score-box"><div class="num">32B</div><div class="sub">Model Size</div></div>
+      <div class="score-box"><div class="num">+8.6%</div><div class="sub">可证明率提升</div></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="col">
+      <div class="sec-head h1"><div class="nc">1</div><h2>Problem: Two Core Gaps</h2></div>
+      <div class="box">
+        <h3>① 形式语言知识缺失</h3>
+        <p>通用 LLM 在 formal corpus 稀缺，不知道 Euler totient function 在 Lean 4 中如何定义。</p>
+      </div>
+      <div class="box2">
+        <h3>② 对齐推理能力弱</h3>
+        <p>无法理解自然语言问题的实际意图；informal→formal 之间的隐式信息（如类型注解）无法显式化。</p>
+      </div>
+      <div class="comp-grid">
+        <div class="comp-card">
+          <h4>通用模型问题</h4>
+          <p>知识不足，语法错误多（如 Claude4-thinking）</p>
+        </div>
+        <div class="comp-card">
+          <h4>专用模型问题</h4>
+          <p>场景覆盖窄，推理能力弱（如 KMAuto）</p>
+        </div>
+      </div>
+      <div class="insight">
+        <h3>💡 解决思路</h3>
+        <p>双数据集策略：知识数据 + 推理数据，分别补充两个能力短板。</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h2"><div class="nc">2</div><h2>Method: ThinkingF Pipeline</h2></div>
+      <div class="box">
+        <h3>数据合成</h3>
+        <p>• <strong style="color:#fde68a">知识数据</strong>：KMAuto 蒸馏 NL→Lean pairs，majority voting + LLM judge 筛选</p>
+        <p>• <strong style="color:#fde68a">推理数据</strong>：专家模板引导 Claude 合成 reasoning 轨迹（problem decomposition + object mapping）</p>
+      </div>
+      <div class="box">
+        <h3>两阶段 SFT</h3>
+        <div class="pipeline">
+          <div class="pipe-stage">Stage 1</div>
+          <div class="pipe-stage">知识融合</div>
+          <div class="pipe-stage">→</div>
+          <div class="pipe-stage">Stage 2</div>
+          <div class="pipe-stage">推理能力</div>
+        </div>
+        <p style="margin-top:6px;font-size:.7rem;color:#a8a29e">推理轨迹包裹在 &lt;think&gt;&lt;/think&gt; 中</p>
+      </div>
+      <div class="box">
+        <h3>GRPO RLVR</h3>
+        <p>Reward = BEq 等价验证（generated ↔ ground-truth）<br>Rollout temperature 1.0，350 steps (32B)</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head h3"><div class="nc">3</div><h2>Results</h2></div>
+      <table class="rtable">
+        <tr><th>Model</th><th>FM-Lite</th><th>P-Bench</th></tr>
+        <tr><td>Claude4-thinking</td><td>34.0</td><td>18.4</td></tr>
+        <tr><td>DeepSeek-R1</td><td>29.1</td><td>17.1</td></tr>
+        <tr><td>KMAuto-7B</td><td>38.2</td><td>17.4</td></tr>
+        <tr class="ours"><td>Formalizer-7B</td><td>39.6</td><td>24.0</td></tr>
+        <tr class="best"><td>Formalizer-32B</td><td>40.5</td><td>26.7</td></tr>
+      </table>
+      <div class="insight">
+        <h3>💡 推理数据 > 知识数据</h3>
+        <p>移除推理数据后 BEq@16 大幅下降——推理能力决定性能上限。</p>
+      </div>
+      <div class="insight">
+        <h3>💡 7B > 671B 通用模型</h3>
+        <p>专用训练 > 模型 scale。7B 超越所有 671B 通用模型。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1</div>
+      <div class="hl">专家模板 > 直接蒸馏</div>
+      <p>直接蒸馏 Claude4 的 reasoning 会导致性能下降，因为通用推理模型倾向于"解题"而非"形式化"</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2</div>
+      <div class="hl">BEq 验证是可行 Reward</div>
+      <p>形式化等价的数学性质使精确验证成为可能，无需 LLM-as-judge</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3</div>
+      <div class="hl">End-to-End 效果显著</div>
+      <p>Formalizer 生成的 statements 比 KMAuto 可证明率高 8.6%</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4</div>
+      <div class="hl">数据质量 > 数据量</div>
+      <p>Majority voting + LLM judge 筛选确保知识数据质量；专家模板确保推理数据质量</p>
+    </div>
+  </div>
+
+  <div class="backlinks">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2Fstepfun%2F2508_StepFun_Formalizer%2FStepFun_Formalizer">StepFun_Formalizer.md</a>
+    · arXiv: <a href="https://arxiv.org/abs/2508.04440">2508.04440</a>
+  </div>
+</div>
+</body>
+</html>

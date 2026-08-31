@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongCat-Flash-Thinking — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — reasoning amber gradient */
+.header { background: linear-gradient(120deg, #92400e 0%, #d97706 40%, #f97316 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.0rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .8rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .78rem; color: #d6d3d1; line-height: 1.55; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.45 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.rtable th { background: #92400e; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .7rem; color: #d6d3d1; line-height: 1.45 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .64rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .74rem; color: #a8a29e; line-height: 1.45 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem; margin-top: 12px; margin-bottom: 0 }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* MathJax */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+mjx-container, mjx-container * { color: #ffffff !important }
+mjx-container svg, mjx-container svg * { fill: #ffffff !important }
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="LongCat_Flash_Thinking_poster.html">EN</a><a class="active" href="LongCat_Flash_Thinking_poster_zh.html">中文</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FMeituan_LongCat%2F2509_LongCat_Flash_Thinking%2FIntroducing-LongCat-Flash-Thinking-A-Technical-Report" style="text-decoration: none;">LongCat-Flash-Thinking 笔记</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2509.18883" target="_blank" style="text-decoration: none;">arXiv:2509.18883</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2509.18883 &nbsp;|&nbsp; Meituan LongCat Team</span>
+    <div class="zh-title">LongCat-Flash-Thinking：560B MoE 上的 reasoning 激活</div>
+    <h1>Introducing LongCat-Flash-Thinking: <span>A Technical Report</span></h1>
+    <div class="authors">Meituan LongCat Team（美团 LongCat 团队）</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">560B</div><div class="sub">总参数 / 27B activated<br>MoE 基座</div></div>
+    <div class="score-box"><div class="num">3×</div><div class="sub">DORA 异步 RL<br>vs. 同步训练</div></div>
+    <div class="score-box"><div class="num">−64.5%</div><div class="sub">AIME-25 token<br>19,653 → 6,965</div></div>
+    <div class="score-box"><div class="num">67.6</div><div class="sub">MiniF2F pass@1<br>开源 SOTA</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 动机 + cold-start pipeline -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>动机：从 non-thinking 基座到 reasoning model</h2></div>
+  <p class="body">LongCat-Flash（560B/27B MoE）提供了硬件友好的高吞吐基座，但有三个被论文明确点名的局限：(1) <strong>长 CoT pattern 稀缺</strong>——通用预训练语料里 reasoning trace 极少，直接 SFT+RL 模型只能产生浅层 homogeneous reasoning；(2) <strong>大规模 MoE RL 极难稳定</strong>——同步训练被最长输出拖死，异步又有 staleness + numerical gap 双重 drift；(3) <strong>mixed-domain RL 的 negative transfer</strong>——STEM/Code/Agentic 三域 response length 分布差异巨大（Figure domain_train_length_dis 直接画出），混训 batch 内 distribution shift 剧烈。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/cold_start_data_pipeline.png" alt="cold-start data pipeline" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：cold-start 数据 pipeline</i><br><small>src/assets/cold_start_data_pipeline.png</small></div>'">
+    <div class="fig-cap">图 1：Cold-Start 数据 pipeline（mid-training → reasoning SFT）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Cold-Start Step 1: Mid-Training Reasoning Enhancement</div>
+      <p>在 Flash 560B 上加大 reasoning-intensive 数据占比。消融显示 AIME-24 pass@1 <strong>+27.7%</strong>、pass@64/128 显著放大——证明 mid-training 真的"撑开 reasoning boundary"，给后续 RL 留出挖潜空间。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Cold-Start Step 2: Reasoning-Oriented SFT</div>
+      <p>三条独立流水线：(a) General reasoning rejection sampling；(b) <strong>Lean4 ATP expert iteration</strong>（MiniF2F 67.6 pass@1 的来源）；(c) <strong>Dual-path agentic selection</strong>：$v_x = s_{\text{w/. tool}}(x) - s_{\text{w/o. tool}}(x) > \tau$，过滤"假需求" query。</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Tool-Necessity Value（Dual-Path Selection）</div>
+    $$v_x \;=\; s_{\text{w/. tool}}(x) \;-\; s_{\text{w/o. tool}}(x)$$
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Step ① Statement Formalization</div>
+      <p>8B autoformalizer 把自然语言题翻译成 Lean4 statement，两阶段过滤（syntax + semantic）保编译/语义都干净。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Step ② Cold-Start Prover Training</div>
+      <p>model-based synthesis 给每个 (statement, proof) 补 thinking → (statement, thinking, proof) 三元组 SFT。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Step ③ Expert Iteration</div>
+      <p>当前 prover 攻击未解 statement → 新成功证明入 dataset → 同步合成 thinking → 重训 prover，固定轮次自改进。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: Domain-Parallel RL + DORA -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>Domain-Parallel RL + DORA 异步系统</h2></div>
+  <p class="body">混合域 RL 在 MoE async 场景下尤其不稳——batch 内 distribution shift 叠加 policy staleness。这篇论文的核心方法创新是<strong>「分域训 → 融合 → 通用 RL」</strong>三步，再加上 DORA 异步 rollout 系统，让 560B MoE 跑得起近 20% pre-training compute 的 RL 投入。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Domain-Parallel：三域独立 RL</div>
+      <p>STEM (64K, curriculum) / Code (48K→56K→64K 渐进) / Agentic (48K, 结构化 tool-call format reward) 三个 expert 独立训；每个域独立 query curation（STEM 排 multi-part，Code 标准化 test case，Agentic 聚焦"必须工具"题）。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Model Fusion：TIES + DARE + SCE</div>
+      <p>对每个 expert 算 task vector $\tau_i = \theta^i_{\text{RL}} - \theta_{\text{SFT}}$，三步融合：(1) <strong>Normalization</strong> 平衡三域贡献；(2) <strong>DARE dropout</strong> prune redundant 参数；(3) <strong>SCE erase</strong> 擦除 minority-direction 更新。最终单模型接近 Pareto-optimal。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">General RL：防通用能力退化</div>
+      <p>fusion 后再做一轮 creative writing / instruction following / safety 数据的通用 RL，防止融合后通用能力 / 安全性坍塌。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/fused_model_result.png" alt="fused model result" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：融合模型在三 expert 各域 benchmark 上逼近 Pareto-optimal</i><br><small>src/assets/fused_model_result.png</small></div>'">
+    <div class="fig-cap">图 2：融合模型在三 expert 各域 benchmark 上的结果</div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">DORA：Dynamic ORchestration for Asynchronous rollout</div>
+    <p>两组设备（Standalone Generator + Elastic Role）+ Streaming Rollout + 多版本 actor（staleness=2 demo）+ Elastic Colocation + PD disaggregation。<strong>同步训练 &gt;3× speedup</strong>，rollout 加速 1.5×（host-side kernel launch 优化）。最终在数万张卡上跑 RL，compute 投入占 pre-training 20%。</p>
+  </div>
+
+  <div class="formula-box">
+    <div class="flabel">Reward Model Accuracies (人工标注集)</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Reward Model</th><th>Accuracy</th><th>vs. Rule</th></tr>
+    <tr><td class="left">Rule-based</td><td>80.9%</td><td>baseline</td></tr>
+    <tr><td class="left">Non-Reasoning GenRM</td><td>94.0%</td><td>+13.1</td></tr>
+    <tr class="ours"><td class="left">Reasoning GenRM (Ours)</td><td class="dv">98.8%</td><td class="dv">+17.9</td></tr>
+  </table>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验结果：reasoning SOTA + token 效率</h2></div>
+  <p class="body">在 27B activated 的设定下，LongCat-Flash-Thinking 在数学 / 代码 / agent / formal proving / safety 多项达开源 SOTA。<strong>三个最显著的领先区</strong>：MiniF2F formal proving 全面碾压开源对手、Sudoku-Bench / ARC-AGI 等抽象推理远超开源对手、Safety 四子项三项第一。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/reasoning_boundary.png" alt="reasoning boundary" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：mid-training reasoning boundary — AIME-24 / BeyondAIME / LCB 上 pass@k 全面提升</i><br><small>src/assets/reasoning_boundary.png</small></div>'">
+    <div class="fig-cap">图 3：Reasoning Boundary — mid-training 把 reasoning boundary 撑开到 pass@128</div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/longcat_flash_think_benchmark.png" alt="LongCat benchmark" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：LongCat-Flash-Thinking 全 benchmark 总览</i><br><small>src/assets/longcat_flash_think_benchmark.png</small></div>'">
+    <div class="fig-cap">图 4：LongCat-Flash-Thinking 全 benchmark 总览（vs. DS-V3.1 / Qwen3-235B / GLM-4.5）</div>
+  </div>
+
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>LongCat</th><th>DS-V3.1</th><th>Qwen3</th><th>GPT-5</th></tr>
+    <tr class="cat"><td colspan="5">Math (Avg@32)</td></tr>
+    <tr><td class="left">AIME-24</td><td>93.3</td><td>93.9</td><td>93.9</td><td>—</td></tr>
+    <tr><td class="left">AIME-25</td><td>90.6</td><td>—</td><td>92.5</td><td>94.6</td></tr>
+    <tr><td class="left">HMMT-25</td><td>83.7</td><td>—</td><td>—</td><td>84.8</td></tr>
+    <tr><td class="left">MATH-500</td><td>99.2</td><td>—</td><td>99.6</td><td>99.2</td></tr>
+    <tr class="cat"><td colspan="5">Coding / Agentic</td></tr>
+    <tr><td class="left">LCB 24.08-25.05</td><td class="dv">79.4</td><td>—</td><td>—</td><td>80.6</td></tr>
+    <tr><td class="left">ARC-AGI</td><td>50.3</td><td>—</td><td>—</td><td>59.0</td></tr>
+    <tr><td class="left">SWE-Bench</td><td>59.4</td><td>—</td><td>—</td><td>74.9</td></tr>
+    <tr class="cat"><td colspan="5">Formal ATP (MiniF2F pass@1)</td></tr>
+    <tr class="ours"><td class="left">MiniF2F pass@1</td><td class="dv">67.6</td><td>49.6</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">MiniF2F pass@8</td><td class="dv">79.4</td><td>74.4</td><td>—</td><td>—</td></tr>
+    <tr class="ours"><td class="left">MiniF2F pass@32</td><td class="dv">81.6</td><td>79.5</td><td>—</td><td>—</td></tr>
+  </table>
+
+  <div class="fig-box">
+    <img src="src/assets/token_efficiency0922.png" alt="token efficiency on AIME-25" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#fcd34d;font-size:.8rem;&quot;><i>图：AIME-25 token efficiency — tool use 让 token 从 19,653 → 6,965</i><br><small>src/assets/token_efficiency0922.png</small></div>'">
+    <div class="fig-cap">图 5：Agentic Token Efficiency — AIME-25 tool use 让 token 从 19,653 → 6,965（−64.5%）</div>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">MiniF2F pass@1</div>
+      <div class="adelta">+18.0</div>
+      <div class="adesc">vs. DeepSeek-V3.1（49.6）开源最大领先</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">AIME-25 token</div>
+      <div class="adelta">−64.5%</div>
+      <div class="adesc">tool use 把推理 offload 到工具，精度不掉</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">① Domain-Parallel</div>
+    <p>STEM / Code / Agentic 三域独立 RL，避免 mixed-domain 的 negative transfer。融合后单模型接近 Pareto-optimal，<span class="hl">训 N 个 expert 部署 1 个</span>。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">② DORA Async</div>
+    <p>Streaming Rollout + 多版本 actor + Elastic Colocation。<span class="hl">3× 加速 vs. 同步训练</span>，跑在数万张卡上，RL 投入占 pre-training 20%。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">③ Cold-Start Key</div>
+    <p>Mid-training reasoning enhance（AIME-24 pass@1 +27.7%）+ Lean4 ATP expert iteration（MiniF2F +18pp）+ dual-path agent selection。<span class="hl">cold-start 决定 RL 上限</span>。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">④ Token-Efficient CoT</div>
+    <p>Agentic system 不一定要靠"模型自己想得更长"。把推理 offload 到工具反而更省——<span class="hl">AIME-25 token −64.5%</span>，精度不降。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+</body>
+</html>

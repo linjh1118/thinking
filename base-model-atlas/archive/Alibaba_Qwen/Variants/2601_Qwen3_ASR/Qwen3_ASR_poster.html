@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen3-ASR Technical Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 24px 16px;
+  }
+  .poster {
+    width: 1400px; background: #fff;
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+  }
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    padding: 28px 40px 24px;
+    position: relative;
+  }
+  .backlink {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: rgba(255,255,255,0.9); font-size: 0.78em;
+    text-decoration: none; margin-bottom: 14px;
+    background: rgba(59,130,246,0.06); padding: 4px 10px;
+    border-radius: 20px; border: 1px solid rgba(59,130,246,0.2);
+    transition: background 0.2s;
+  }
+  .backlink:hover { background: rgba(59,130,246,0.12); }
+  .backlink svg { width: 14px; height: 14px; }
+  .header-title { color: #fff; }
+  .header-title h1 { font-size: 2.1em; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+  .header-title .subtitle { font-size: 1.05em; color: rgba(255,255,255,0.9); font-weight: 400; margin-bottom: 18px; }
+  .scores { display: flex; gap: 14px; flex-wrap: wrap; }
+  .score-box {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 10px; padding: 12px 18px;
+    text-align: center; min-width: 120px;
+  }
+  .score-box .num { font-size: 1.7em; font-weight: 800; color: #fff; line-height: 1; }
+  .score-box .label { font-size: 0.72em; color: rgba(255,255,255,0.9); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .body { padding: 28px 36px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
+  .col { display: flex; flex-direction: column; gap: 18px; }
+  .fig-box {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 12px; padding: 18px;
+  }
+  .fig-title {
+    font-size: 0.7em; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #1e3a8a;
+    margin-bottom: 12px; font-weight: 700;
+  }
+  h3 {
+    font-size: 1.05em; font-weight: 700;
+    color: #1e3a8a; margin-bottom: 10px;
+    padding-bottom: 7px; border-bottom: 2px solid rgba(30,58,138,0.2);
+  }
+  p, li { font-size: 0.88em; color: #334155; line-height: 1.65; }
+  ul { padding-left: 18px; }
+  li { margin-bottom: 5px; }
+  .highlight-box {
+    background: rgba(30,58,138,0.06);
+    border: 1px solid rgba(30,58,138,0.2);
+    border-radius: 8px; padding: 12px 14px;
+    margin-top: 8px;
+  }
+  .highlight-box p { color: #1e3a8a; font-size: 0.86em; }
+  .tab { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 8px; padding: 12px 14px; }
+  .tab h4 { font-size: 0.82em; color: #92400e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tab p, .tab li { font-size: 0.84em; color: #334155; }
+  .orange-box { background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2); border-radius: 8px; padding: 12px 14px; }
+  .orange-box h4 { font-size: 0.82em; color: #c2410c; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .green-box { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 12px 14px; }
+  .green-box h4 { font-size: 0.82em; color: #047857; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.82em; }
+  th { background: #1e3a8a; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 7px 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  tr:last-child td { border-bottom: none; }
+  .fig-img { width: 100%; border-radius: 8px; margin-top: 10px; display: block; }
+  .bottom-strip {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    padding: 22px 40px;
+  }
+  .takeaways { display: flex; gap: 16px; flex-wrap: wrap; }
+  .takeaway {
+    flex: 1; min-width: 200px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .takeaway-num { font-size: 1.5em; font-weight: 800; color: #fff; }
+  .takeaway-text { font-size: 0.82em; color: rgba(255,255,255,0.95); margin-top: 4px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="header">
+    <a class="backlink" href="https://arxiv.org/abs/2601.21337">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93s3.06-7.44 7-7.93v15.86zm2-15.86c1.03.13 2 .45 2.87.93H13v-.93zM13 7h5.24c.25.31.48.65.68 1H13V7zm0 3h6.74c.08.33.15.66.19 1H13v-1zm0 3h6.93c-.04.34-.11.67-.19 1H13v-1zm0 3h5.92c-.2.35-.43.69-.68 1H13v-1zm0 3h2.87c-.87.48-1.84.8-2.87.93V19z"/></svg>
+      arXiv: 2601.21337
+    </a>
+    <a class="backlink" href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2601_Qwen3_ASR%2FQwen3-ASR-Multilingual-ASR-With-Forced-Aligner" style="margin-left:8px;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+      Paper Note
+    </a>
+    <div class="header-title">
+      <h1>Qwen3-ASR</h1>
+      <div class="subtitle">Multilingual ASR with Forced Aligner Based on LALM Paradigm</div>
+    </div>
+    <div class="scores">
+      <div class="score-box"><div class="num">52</div><div class="label">Languages/Dialects</div></div>
+      <div class="score-box"><div class="num">20min</div><div class="label">Max Audio Length</div></div>
+      <div class="score-box"><div class="num">1.63</div><div class="label">LibriSpeech WER</div></div>
+      <div class="score-box"><div class="num">0.064</div><div class="label">RTF (0.6B)</div></div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="fig-box">
+        <div class="fig-title">01 — Problem & Motivation</div>
+        <h3>Background</h3>
+        <p>Traditional ASR systems struggle with:</p>
+        <ul>
+          <li>Long-form audio (minutes to tens of minutes)</li>
+          <li>Noisy environments</li>
+          <li>Multilingual/dialectal coverage</li>
+          <li>Timestamp prediction accuracy</li>
+        </ul>
+        <div class="highlight-box">
+          <p><strong>LALM Paradigm</strong>: Leverages LLM language modeling and world knowledge to solve these challenges naturally</p>
+        </div>
+      </div>
+      <div class="tab">
+        <h4>Core Contributions</h4>
+        <ul>
+          <li>First to introduce LLM into Forced Alignment</li>
+          <li>Flexible timestamp prediction at any granularity</li>
+          <li>Unified alignment for 11 languages</li>
+        </ul>
+      </div>
+      <div class="fig-box">
+        <div class="fig-title">Key Capabilities</div>
+        <h3>Features</h3>
+        <ul>
+          <li><strong>52 languages/dialects</strong>: 30 languages + 22 Chinese dialects</li>
+          <li><strong>Long audio</strong>: Up to 20 minutes per utterance</li>
+          <li><strong>Streaming/offline</strong>: Unified inference framework</li>
+          <li><strong>Singing recognition</strong>: Full songs with background music</li>
+          <li><strong>Contextual Biasing</strong>: Free-form context injection</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="fig-box">
+        <div class="fig-title">02 — Core Method</div>
+        <h3>Model Architecture</h3>
+        <p>Built on <strong>Qwen3-Omni</strong> base model:</p>
+        <ul>
+          <li><strong>AuT Audio Encoder</strong>: AED architecture, 8x downsampling, 12.5Hz token rate</li>
+          <li><strong>Dynamic Attention Window</strong>: 1-8 seconds adjustable</li>
+          <li><strong>Qwen3-ASR-1.7B</strong>: Qwen3-1.7B + 300M AuT encoder</li>
+          <li><strong>Qwen3-ASR-0.6B</strong>: Qwen3-0.6B + 180M AuT encoder</li>
+        </ul>
+      </div>
+      <div class="orange-box">
+        <h4>Training Strategy</h4>
+        <ul>
+          <li><strong>AuT Pretraining</strong>: ~40M hours pseudo-labeled ASR data</li>
+          <li><strong>Omni Pretraining</strong>: Multimodal training, 3T tokens</li>
+          <li><strong>ASR SFT</strong>: Style transfer, unified format</li>
+          <li><strong>ASR RL (GSPO)</strong>: 50k utterances</li>
+        </ul>
+      </div>
+      <div class="tab">
+        <h4>ForcedAligner Innovation</h4>
+        <ul>
+          <li><strong>Slot-filling</strong>: Insert [time] tokens into transcript</li>
+          <li><strong>Causal Training</strong>: No shift, ensures timestamp slot alignment</li>
+          <li><strong>NAR Decoding</strong>: Non-autoregressive, predict all timestamps simultaneously</li>
+          <li><strong>MFA Distillation</strong>: Distilled from Montreal Forced Aligner</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="fig-box">
+        <div class="fig-title">03 — Experimental Results</div>
+        <h3>ASR Performance</h3>
+        <table>
+          <tr><th>Dataset</th><th>GPT-4o</th><th>Whisper-L</th><th>Qwen3-1.7B</th></tr>
+          <tr><td>LibriSpeech (clean)</td><td>1.39</td><td>1.51</td><td style="color:#047857;font-weight:700">1.63</td></tr>
+          <tr><td>GigaSpeech</td><td>9.37</td><td>9.76</td><td style="color:#047857;font-weight:700">8.45</td></tr>
+          <tr><td>WenetSpeech (meeting)</td><td>14.43</td><td>9.86</td><td style="color:#047857;font-weight:700">4.97</td></tr>
+          <tr><td>AISHELL-2-test</td><td>4.24</td><td>5.06</td><td style="color:#047857;font-weight:700">2.71</td></tr>
+        </table>
+        <p style="font-size:0.78em;color:#64748b;margin-top:8px;">WER (%); Lower is better</p>
+      </div>
+      <div class="green-box">
+        <h4>Inference Efficiency</h4>
+        <table>
+          <tr><th>Model</th><th>TTFT</th><th>RTF</th><th>Throughput</th></tr>
+          <tr><td>Qwen3-ASR-0.6B</td><td>3210ms</td><td>0.064</td><td style="color:#047857;font-weight:700">2000</td></tr>
+          <tr><td>Qwen3-ASR-1.7B</td><td>3392ms</td><td>0.105</td><td>1219</td></tr>
+        </table>
+        <p style="font-size:0.78em;color:#64748b;margin-top:8px;">Concurrency 128; TTFT=Time to First Token; RTF=Real-Time Factor; Throughput=audio-hours/GPU-hour</p>
+      </div>
+      <div class="fig-box">
+        <h3>ForcedAligner Accuracy</h3>
+        <p>Relative reduction vs Montreal Forced Aligner (MFA):</p>
+        <div style="display:flex;gap:12px;margin-top:10px;">
+          <div style="flex:1;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.6em;font-weight:800;color:#047857;">67-77%</div>
+            <div style="font-size:0.72em;color:#334155;margin-top:4px;">Cumulative Avg Offset Reduction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="takeaway-num">1</div>
+        <div class="takeaway-text">LALM paradigm provides reference for general-purpose speech agents, supporting ASR, TTS, and voice dialogue</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">2</div>
+        <div class="takeaway-text">Sub-1B ASR models achieve performance comparable to proprietary APIs, valuable for edge deployment</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">3</div>
+        <div class="takeaway-text">Forced Alignment + LLM can auto-generate speech-text alignment data for training speech agents</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">4</div>
+        <div class="takeaway-text">Qwen3-ASR significantly outperforms existing methods in meeting scenarios (WenetSpeech), WER only 4.97%</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
