@@ -14,7 +14,7 @@ updated: 2026-08-31
 # MedXIAOHE — Medical MLLM Overview
 
 > [!tldr]
-> MedXIAOHE 不是 Seed 通用主干的新正代，而是字节小荷医疗团队构建医疗多模态大模型的完整 recipe；在谱系中应归入 **ByteDance · Seed → Medical** 支线。
+> MedXIAOHE 收录在 **ByteDance · Seed** 模型时间线中；这里概括其数据、训练与评测方法。
 
 ## 定位
 
@@ -32,7 +32,7 @@ MedXIAOHE 面向医疗多模态理解和长报告生成，重点不是单一 ben
 ## 证据边界
 
 - 技术报告：[https://arxiv.org/abs/2602.12705](https://arxiv.org/abs/2602.12705)
-- 归属口径：团队为 ByteDance XiaoHe Medical AI；Atlas 按字节 Seed 研究生态收录为医疗支线，不把它误写成 Seed2.x 通用基模。
+- 归属口径：Atlas 将其作为 ByteDance · Seed 生态中的一个普通模型节点收录。
 
 ## 导航
 

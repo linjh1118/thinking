@@ -253,7 +253,6 @@ VARIANT_FAMILIES = {
     ],
     "seed": [
         {"name":"Vision / Omni","models":"Seed1.5-VL · Seed1.5-Thinking · Seed2.0","source":"https://github.com/ByteDance-Seed/Seed1.5-VL"},
-        {"name":"Medical","models":"MedXIAOHE","source":"https://arxiv.org/abs/2602.12705"},
         {"name":"Code / Open","models":"Seed-Coder · Seed-OSS · Seed-Prover","source":"https://github.com/ByteDance-Seed"},
         {"name":"Any-to-any","models":"BAGEL","source":"https://github.com/ByteDance-Seed/Bagel"},
         {"name":"Speech","models":"Seed-TTS","source":"https://seed.bytedance.com/en/"},
@@ -283,18 +282,17 @@ VARIANT_FAMILIES = {
     ],
 }
 
-# Specialist leaves that must also be visible on a team's main horizontal line.
-# They remain marked as variants so the atlas does not misstate them as a new
-# general-purpose generation.
+# Additional named models that should be visible on a team's horizontal line.
 PINNED_TIMELINE_VARIANTS = {
     "seed": [
         {
             "date": "2602",
             "name": "MedXIAOHE",
-            "summary": "医疗支线｜字节小荷医疗团队的医疗多模态模型与训练 recipe。",
+            "summary": "ByteDance · Seed 生态中的多模态模型，提供完整的数据与训练 recipe。",
             "source": "https://arxiv.org/abs/2602.12705",
             "folder": "Variants/2602_MedXIAOHE",
-            "label": "医疗支线",
+            "lineageType": "mainline",
+            "label": "Seed 模型",
         }
     ]
 }
@@ -418,9 +416,7 @@ updated: 2026-08-31
 - 当前旗舰详见 [[{folder}/{note.stem}|{model}]]。
 ''', encoding="utf-8")
 
-    # MedXIAOHE is a specialist medical MLLM from ByteDance XiaoHe Medical AI.
-    # It belongs under the Seed ecosystem's medical branch, not the Seed 2.0
-    # general-purpose generation timeline.
+    # Keep MedXIAOHE as an ordinary named model in the Seed ecosystem.
     med_dir = SOURCE / "ByteDance_Seed/Variants/2602_MedXIAOHE"
     med_src = med_dir / "src"
     med_src.mkdir(parents=True, exist_ok=True)
@@ -432,7 +428,7 @@ updated: 2026-08-31
             "# MedXIAOHE — Official Source\n\n"
             f"- Technical report: {med_url}\n"
             "- Team: ByteDance XiaoHe Medical AI\n"
-            "- Atlas placement: ByteDance · Seed / Medical variant\n"
+            "- Atlas placement: ByteDance · Seed\n"
             "- Retrieved: 2026-08-31\n",
             encoding="utf-8",
         )
@@ -453,7 +449,7 @@ updated: 2026-08-31
 # MedXIAOHE — Medical MLLM Overview
 
 > [!tldr]
-> MedXIAOHE 不是 Seed 通用主干的新正代，而是字节小荷医疗团队构建医疗多模态大模型的完整 recipe；在谱系中应归入 **ByteDance · Seed → Medical** 支线。
+> MedXIAOHE 收录在 **ByteDance · Seed** 模型时间线中；这里概括其数据、训练与评测方法。
 
 ## 定位
 
@@ -471,7 +467,7 @@ MedXIAOHE 面向医疗多模态理解和长报告生成，重点不是单一 ben
 ## 证据边界
 
 - 技术报告：[{med_url}]({med_url})
-- 归属口径：团队为 ByteDance XiaoHe Medical AI；Atlas 按字节 Seed 研究生态收录为医疗支线，不把它误写成 Seed2.x 通用基模。
+- 归属口径：Atlas 将其作为 ByteDance · Seed 生态中的一个普通模型节点收录。
 
 ## 导航
 
@@ -480,7 +476,7 @@ MedXIAOHE 面向医疗多模态理解和长报告生成，重点不是单一 ben
 ''', encoding="utf-8")
     if not med_poster.exists():
         med_poster.write_text(render_poster(
-            "MedXIAOHE", "ByteDance · Seed / Medical",
+            "MedXIAOHE", "ByteDance · Seed",
             "医疗多模态训练 recipe：数据治理、偏好准则、证据约束推理与低幻觉长报告生成。",
             med_url, med_note.name,
         ), encoding="utf-8")
@@ -517,7 +513,7 @@ updated: 2026-08-31
 - **GLM**：已有 4.5V、TTS、OCR，但应把 CogVLM/CodeGeeX/CogView/CogVideoX/AutoGLM 作为历史支系写入地图。
 - **Kimi**：已有 VL、K2、Linear、K2.5；缺口主要是 Kimi-Audio、Kimi-Dev 与 Kimina-Prover。
 - **Qwen**：本地 Variants 覆盖最完整；需要保持 Coder、VL/VLA、Omni/ASR/TTS、Image、Retrieval 与 Guard 的分支关系。
-- **Seed**：除 Seed1.8/2.0 外，必须补 Seed1.5-VL、Seed-OSS/Code、BAGEL、Seed-TTS、Seedream/Seedance、Seed3D，以及 **MedXIAOHE 医疗支线**。
+- **Seed**：除 Seed1.8/2.0 外，必须补 Seed1.5-VL、Seed-OSS/Code、BAGEL、Seed-TTS、Seedream/Seedance、Seed3D 与 MedXIAOHE。
 - **GPT**：除 GPT 正代，还要单列 o-series、Codex、gpt-oss、Realtime/Audio、Image/Cyber；这些不应伪装成 GPT 主干新代。
 - **Claude**：Haiku/Sonnet/Opus 是能力—成本层；extended thinking、computer use 是能力支线，Claude Code 是产品/agent，不是独立基模。
 - **Gemini**：Pro/Flash/Flash-Lite/Nano 是服务层；Deep Think、Computer Use、Audio/Live、Image/Omni、Robotics 是支线；Gemma 是同团队开放 sibling family。
@@ -889,6 +885,15 @@ def render_index(teams: list[dict], records: list[dict]) -> str:
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="全球基模团队与主干模型时间树，可进入模型 overview、Poster、渲染笔记与 Top 8 支线审计。"><title>Base Model Atlas · 全球基模谱系</title><style>{CSS}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Thinking · Research Atlas</div><div class="toplinks"><a class="ghost" href="base-model-atlas/top8-tree.html">Top 8 综述树</a><a class="ghost" href="base-model-atlas/branch-audit.html">支线审计</a><a class="ghost" href="base-model-atlas/library.html">Poster / 笔记资料馆</a><a class="ghost" href="index.html">返回 Thinking 首页</a></div></header><section class="hero"><div><div class="kicker">Foundation Model Evolution · 2018—2026</div><h1>全球基模<br>谱系树</h1><p>每一条分支是一支基模团队。最新模型固定在最左侧，无需横向拖动；向右拖动是在回溯更早的代际。点击叶子进入 Overview，再继续阅读 Obsidian 风格笔记、Poster 与一手来源。</p></div><div class="stats"><div class="stat"><b>{len(teams)}</b><span>基模团队</span></div><div class="stat"><b>{len(records)}</b><span>可点击模型节点</span></div><div class="stat"><b>{sum(1 for r in records if r.get('note'))}</b><span>主树渲染笔记</span></div><div class="stat"><b>{sum(len(r.get('posters',[])) for r in records)}</b><span>主树已链接 Poster</span></div></div></section><div class="controls"><input class="search" id="search" placeholder="搜索团队、模型、MedXIAOHE 或支线…"><button class="chip active" data-region="all">全部</button><button class="chip" data-region="国内">国内团队</button><button class="chip" data-region="海外">海外团队</button></div><div class="legend"><span><i style="background:#70d9ff"></i>最新 ← 左 · 右 → 更早</span><span><i style="background:#7cf2c8"></i>圆点：主干正代</span><span><i style="background:#ff7fb7;border-radius:2px"></i>菱形：固定支线叶</span></div><main class="tree" id="tree"></main><p class="footnote">编辑口径：主时间线覆盖通用基模正代与改变范式的关键节点；对阅读导航重要的专项模型可作为菱形支线叶直接挂在线上。Top 8 已做独立审计；全部 Markdown 发布时自动渲染为可读 HTML。更新时间：2026-08-31。</p></div><script>const DATA={data};const TEAM_ORDER={json.dumps([t['id'] for t in teams])};const TEAM_META={json.dumps({t['id']:{k:t[k] for k in ('name','region','color','thesis')} for t in teams},ensure_ascii=False)};const TOP8=new Set(['deepseek','zhipu','kimi','qwen','seed','openai','anthropic','google']);let region='all';const tree=document.querySelector('#tree');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();tree.innerHTML=TEAM_ORDER.map(id=>{{const meta=TEAM_META[id];const base=DATA.filter(x=>x.team===id).filter(x=>region==='all'||x.region===region);const variants=base[0]?.variants||[];const variantText=variants.map(v=>v.name+' '+v.models).join(' ').toLowerCase();const rows=!q||variantText.includes(q)?base:base.filter(x=>[x.name,x.teamName,x.summary,x.thesis].join(' ').toLowerCase().includes(q));if(!rows.length)return '';const branchChips=variants.map(v=>`<a class="variant" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');return `<section class="branch ${{TOP8.has(id)?'top8':''}}" style="--team:${{meta.color}}"><div class="team"><small>${{meta.region}} · ${{rows.length}} nodes ${{TOP8.has(id)?'· TOP 8':''}}</small><h2>${{meta.name}}</h2><p>${{meta.thesis}}</p></div><div class="modelarea"><div class="timeline">${{rows.map(x=>`<a class="leaf ${{x.lineageType==='variant'?'branch-leaf':''}}" href="base-model-atlas/model.html?id=${{encodeURIComponent(x.slug)}}" title="${{x.summary}}"><time>${{x.date}}</time><b>${{x.name}}</b><span class="status">${{x.lineageType==='variant'?x.lineageLabel+' · ':''}}${{x.note?'渲染笔记 ':''}}${{x.posters?.length?'· Poster':''}}</span></a>`).join('')}}</div>${{branchChips?`<div class="variants">${{branchChips}}</div>`:''}}</div></section>`}}).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');region=b.dataset.region;draw()}});draw();</script></body></html>'''
 
 
+def neutralize_single_model_emphasis(page: str) -> str:
+    """Keep individually requested models visible without turning them into UI callouts."""
+    return (page
+        .replace("搜索团队、模型、MedXIAOHE 或支线…", "搜索团队、模型或支线…")
+        .replace('<span><i style="background:#ff7fb7;border-radius:2px"></i>菱形：固定支线叶</span>', "")
+        .replace("；对阅读导航重要的专项模型可作为菱形支线叶直接挂在线上", "")
+        .replace('<span style="color:#ff9fc8">粉色叶：MedXIAOHE · Seed Medical</span>', ""))
+
+
 def render_library(entries: list[dict]) -> str:
     data = json.dumps(entries, ensure_ascii=False).replace("</", "<\\/")
     return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="BrainHao Base Model Poster 与笔记资料馆"><title>Base Model Library · Poster / 笔记</title><style>{CSS}.library-head{{max-width:900px;margin:45px 0}}.library-head h1{{font-size:clamp(48px,7vw,88px);letter-spacing:-.06em;line-height:.95;margin:15px 0}}.gridlib{{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}}.doc{{display:block;text-decoration:none;color:inherit;padding:18px;border-radius:17px;border:1px solid var(--line);background:#111724}}.doc:hover{{border-color:#6f86ba;transform:translateY(-1px)}}.doc small{{color:#7e8da7}}.doc b{{display:block;margin:8px 0;line-height:1.35}}.badge{{display:inline-block;font-size:10px;padding:4px 7px;border-radius:999px;background:#24304a;color:#c9d5eb}}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Base Model Library</div><div class="toplinks"><a class="ghost" href="top8-tree.html">Top 8 综述树</a><a class="ghost" href="branch-audit.html">支线审计</a><a class="ghost" href="../base_model_atlas.html">返回谱系树</a></div></header><section class="library-head"><div class="kicker">Synced Research Archive</div><h1>Poster / 笔记<br>资料馆</h1><p class="lead2">主干与支线材料统一归档。Markdown 已预渲染为 Obsidian 风格 HTML：支持 callout、表格、代码、图片和可解析的 wikilink，同时保留原始 Markdown 便于追溯。</p></section><div class="controls"><input class="search" id="search" placeholder="搜索资料…"><button class="chip active" data-kind="all">全部</button><button class="chip" data-kind="Poster">Poster</button><button class="chip" data-kind="Note">渲染笔记</button></div><main class="gridlib" id="grid"></main></div><script>const DATA={data};let kind='all';const grid=document.querySelector('#grid');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();grid.innerHTML=DATA.filter(x=>kind==='all'||x.kind===kind).filter(x=>!q||[x.title,x.team,x.kind].join(' ').toLowerCase().includes(q)).map(x=>`<a class="doc" href="${{x.path}}"><small>${{x.team}}</small><b>${{x.title}}</b><span class="badge">${{x.kind==='Note'?'HTML 笔记':x.kind}}</span></a>`).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');kind=b.dataset.kind;draw()}});draw();</script></body></html>'''
@@ -911,7 +916,7 @@ def render_branch_audit(teams: list[dict]) -> str:
         team = next(t for t in teams if t["id"] == tid)
         mainline = "".join(f'<span>{html.escape(name)}</span>' for _,name,_,_ in sorted(team["models"], key=lambda x:x[0], reverse=True))
         branches = "".join(f'<a href="{html.escape(b["source"], quote=True)}" target="_blank" rel="noopener"><b>{html.escape(b["name"])}</b><small>{html.escape(b["models"])}</small></a>' for b in VARIANT_FAMILIES[tid])
-        extra = '<a class="med" href="archive/ByteDance_Seed/Variants/2602_MedXIAOHE/MedXIAOHE.html">阅读 MedXIAOHE 渲染笔记 →</a>' if tid == "seed" else ""
+        extra = ""
         cards.append(f'<article class="audit-card" style="--team:{team["color"]}"><header><div><small>{team["region"]} TOP</small><h2>{html.escape(team["name"])}</h2></div><b>{len(team["models"])} 主干 · {len(VARIANT_FAMILIES[tid])} 支线</b></header><h3>主干 · 最新优先</h3><div class="mainline">{mainline}</div><h3>专项 / 模态支线</h3><div class="branch-list">{branches}</div>{extra}</article>')
     return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 支线审计 · Base Model Atlas</title><style>{CSS}.audit-hero{{max-width:960px;margin:50px 0}}.audit-hero h1{{font-size:clamp(48px,8vw,96px);line-height:.92;letter-spacing:-.06em;margin:15px 0 25px}}.audit-hero p{{color:#aebbd2;font-size:19px;line-height:1.7}}.audit-grid{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}}.audit-card{{border:1px solid #2a344a;border-top:4px solid var(--team);border-radius:22px;background:#101622;padding:22px}}.audit-card header{{display:flex;align-items:start;justify-content:space-between;gap:20px}}.audit-card header> b{{font-size:11px;color:#8190a8}}.audit-card h2{{margin:5px 0 20px;font-size:27px}}.audit-card h3{{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#78869e;margin:18px 0 10px}}.mainline{{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px}}.mainline span{{white-space:nowrap;border-radius:999px;background:#192234;padding:7px 10px;font-size:11px}}.branch-list{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}.branch-list a{{text-decoration:none;color:inherit;border:1px solid #2c374c;border-radius:13px;padding:11px;background:#0d121c}}.branch-list b,.branch-list small{{display:block}}.branch-list b{{color:var(--team);font-size:12px;margin-bottom:5px}}.branch-list small{{color:#8996aa;line-height:1.45}}.med{{display:inline-block;margin-top:16px;color:#ffc0da;text-decoration:none}}@media(max-width:800px){{.audit-grid{{grid-template-columns:1fr}}.branch-list{{grid-template-columns:1fr}}}}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Top 8 Branch Audit</div><div class="toplinks"><a class="ghost" href="top8-tree.html">看综述树</a><a class="ghost" href="../base_model_atlas.html">返回谱系</a></div></header><section class="audit-hero"><div class="kicker">Mainline ≠ Variants</div><h1>八大团队<br>支线审计</h1><p>国内 DeepSeek、GLM、Kimi、Qwen、Seed；海外 GPT、Claude、Gemini。每张卡片把通用主干和专项分支拆开，解决“资料有了，但谱系关系看不出来”的问题。</p></section><main class="audit-grid">{''.join(cards)}</main></div></body></html>'''
 
@@ -925,11 +930,10 @@ def render_top8_tree(teams: list[dict]) -> str:
             {"date":x["date"],"name":x["name"]} for x in PINNED_TIMELINE_VARIANTS.get(tid, [])
         ]
         latest = sorted(timeline, key=lambda x:x["date"], reverse=True)[:5]
-        generations = "".join(f'<a class="{"med-leaf" if item["name"] == "MedXIAOHE" else ""}" href="model.html?id={tid}-{slugify(item["name"])}"><time>{pretty_date(item["date"])}</time><b>{html.escape(item["name"])}</b></a>' for item in latest)
+        generations = "".join(f'<a href="model.html?id={tid}-{slugify(item["name"])}"><time>{pretty_date(item["date"])}</time><b>{html.escape(item["name"])}</b></a>' for item in latest)
         branches = []
         for branch in VARIANT_FAMILIES[tid]:
-            special = " med-leaf" if "MedXIAOHE" in branch["models"] else ""
-            branches.append(f'<span class="twig{special}"><b>{html.escape(branch["name"])}</b>{html.escape(branch["models"])}</span>')
+            branches.append(f'<span class="twig"><b>{html.escape(branch["name"])}</b>{html.escape(branch["models"])}</span>')
         return f'<article class="team-box" style="--team:{team["color"]}"><header><span>{team["region"]}</span><h3>{html.escape(team["name"])}</h3></header><div class="gen">{generations}</div><div class="twigs">{"".join(branches)}</div></article>'
     return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 Foundation Model Tree</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#f7f8f4;color:#14233d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-image:linear-gradient(#dce3eb66 1px,transparent 1px),linear-gradient(90deg,#dce3eb66 1px,transparent 1px);background-size:48px 48px}}.page{{width:min(1500px,100%);margin:auto;padding:28px 34px 60px}}.nav{{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase}}.nav a{{color:#294f88;text-decoration:none;border:1px solid #b9c7d9;padding:9px 13px;border-radius:999px;background:#fff}}h1{{font-size:clamp(36px,6vw,78px);letter-spacing:-.055em;line-height:.94;text-align:center;margin:36px 0 12px}}.sub{{text-align:center;color:#5e6d81;margin-bottom:34px}}.root{{width:min(780px,90%);margin:0 auto 30px;padding:20px 26px;text-align:center;border-radius:18px;background:#122744;color:white;box-shadow:0 12px 28px #0f274329}}.root b{{display:block;font-size:24px}}.root span{{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#b9d3f4}}.forest{{display:grid;grid-template-columns:5fr 3fr;gap:24px;align-items:start}}.grove{{position:relative;border:2px solid var(--group);border-radius:24px;padding:82px 16px 16px;background:color-mix(in srgb,var(--group),white 94%)}}.grove:before{{content:"";position:absolute;left:50%;top:-32px;width:2px;height:32px;background:#7890ad}}.grove-title{{position:absolute;left:-2px;right:-2px;top:-2px;padding:22px 24px;border-radius:22px 22px 0 0;background:var(--group);color:white;display:flex;justify-content:space-between;align-items:center}}.grove-title b{{font-size:18px}}.grove-title span{{font-size:11px;opacity:.85}}.domestic{{--group:#1768c5}}.overseas{{--group:#128675}}.teams{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}.domestic .team-box:first-child{{grid-column:span 2}}.overseas .teams{{grid-template-columns:1fr}}.team-box{{background:#fff;border:1px solid #c9d4e2;border-top:5px solid var(--team);border-radius:16px;padding:14px;min-width:0}}.team-box header{{display:flex;align-items:center;gap:10px;margin-bottom:10px}}.team-box header span{{font-size:9px;letter-spacing:.13em;color:#7b8797}}.team-box h3{{margin:0;font-size:18px}}.gen{{display:flex;gap:6px;overflow-x:auto;padding:2px 0 9px}}.gen a{{min-width:108px;text-decoration:none;color:#14233d;padding:8px;border-radius:10px;background:#f1f5f9;border:1px solid #d9e1ea}}.gen time,.gen b{{display:block}}.gen time{{font-size:9px;color:#7b8797}}.gen b{{font-size:11px;margin-top:3px}}.twigs{{display:flex;gap:5px;flex-wrap:wrap;padding-top:9px;border-top:1px solid #dfe5ec}}.twig{{font-size:9px;line-height:1.35;color:#657186;background:#f8fafc;border:1px solid #dce3eb;padding:6px 7px;border-radius:8px}}.twig b{{color:#31445f;margin-right:4px}}.med-leaf{{background:#fff0f6;border-color:#ed9ec0;color:#9c315e;box-shadow:0 0 0 2px #fff inset}}.med-leaf b{{color:#c2185b}}.legend{{margin-top:20px;padding:15px 18px;background:#122744;color:#d7e1ee;border-radius:15px;display:flex;gap:24px;justify-content:center;font-size:11px}}@media(max-width:1000px){{.forest{{grid-template-columns:1fr}}.grove:before{{display:none}}}}@media(max-width:650px){{.page{{padding:20px 12px}}.teams{{grid-template-columns:1fr}}.domestic .team-box:first-child{{grid-column:auto}}}}
@@ -943,11 +947,15 @@ def main() -> None:
     targets = note_targets()
     sync_library(records, targets)
     archive_entries = sync_archive(targets)
-    (THINKING / "base_model_atlas.html").write_text(render_index(teams, records), encoding="utf-8")
+    (THINKING / "base_model_atlas.html").write_text(
+        neutralize_single_model_emphasis(render_index(teams, records)), encoding="utf-8"
+    )
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
     (ATLAS / "branch-audit.html").write_text(render_branch_audit(teams), encoding="utf-8")
-    (ATLAS / "top8-tree.html").write_text(render_top8_tree(teams), encoding="utf-8")
+    (ATLAS / "top8-tree.html").write_text(
+        neutralize_single_model_emphasis(render_top8_tree(teams)), encoding="utf-8"
+    )
     (ATLAS / "models.json").write_text(json.dumps([{k:v for k,v in r.items() if not k.startswith('_')} for r in records], ensure_ascii=False, indent=2), encoding="utf-8")
     linked_notes = sum(1 for r in records if r.get("note"))
     linked_posters = sum(len(r.get("posters", [])) for r in records)
