@@ -12,20 +12,25 @@ retrieved: 2026-09-01
 
 - 官方入口：[deepseek-ai/collections](https://huggingface.co/deepseek-ai/collections)
 - Collection 数：**19**
-- 官方模型仓库数：**65**
-- 已归档原始 model card：**59**
+- 官方模型仓库数：**70**
+- 已归档原始 model card：**64**
 - 官方仓库无 model card：**6**（清单中显式标注，不以 API 文档冒充）
 - 归档规则：同一正代的 Base / Chat / Lite / 参数尺寸共享 family 目录；不会伪装成新的正代。
 
 ## DeepSeek-V4
 
 - Collection: [deepseek-ai/deepseek-v4-69ea2d6001aafa84d4d6f6f9](https://huggingface.co/collections/deepseek-ai/deepseek-v4-69ea2d6001aafa84d4d6f6f9)
-- 官方模型仓库：**4**
+- 官方模型仓库：**9**
 
   - [deepseek-ai/DeepSeek-V4-Flash-Base](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Base) → **官方仓库没有 README/model card**
   - [deepseek-ai/DeepSeek-V4-Flash](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Flash.md`
   - [deepseek-ai/DeepSeek-V4-Pro-Base](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-Base) → **官方仓库没有 README/model card**
   - [deepseek-ai/DeepSeek-V4-Pro](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Pro.md`
+  - [deepseek-ai/DeepSeek-V4-Flash-DSpark](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-DSpark/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Flash-DSpark.md`
+  - [deepseek-ai/DeepSeek-V4-Pro-DSpark](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-DSpark/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Pro-DSpark.md`
+  - [deepseek-ai/DeepSeek-V4-Flash-0731](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Flash-0731.md`
+  - [deepseek-ai/DeepSeek-V4-Pro-0813](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Pro-0813.md`
+  - [deepseek-ai/DeepSeek-V4-Flash-Vision-Exp](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md) → `DeepSeek_AI/2604_deepseek_v4/src/huggingface_model_cards/DeepSeek-V4-Flash-Vision-Exp.md`
 
 ## DeepSpec
 
@@ -195,4 +200,3 @@ retrieved: 2026-09-01
   - [deepseek-ai/DeepSeek-R1-Zero](https://huggingface.co/deepseek-ai/DeepSeek-R1-Zero/raw/main/README.md) → `DeepSeek_AI/2501_deepseek_r1/src/huggingface_model_cards/DeepSeek-R1-Zero.md`
   - [deepseek-ai/DeepSeek-R1-Distill-Llama-70B](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B/raw/main/README.md) → `DeepSeek_AI/2501_deepseek_r1/src/huggingface_model_cards/DeepSeek-R1-Distill-Llama-70B.md`
   - [deepseek-ai/DeepSeek-R1-Distill-Qwen-32B](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-32B/raw/main/README.md) → `DeepSeek_AI/2501_deepseek_r1/src/huggingface_model_cards/DeepSeek-R1-Distill-Qwen-32B.md`
-

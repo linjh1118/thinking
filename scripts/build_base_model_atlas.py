@@ -152,7 +152,7 @@ TEAMS = [
         ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp"],
         ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Terminus"],
         ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2"],
-        ["2604","DeepSeek-V4","V4-Pro / V4-Flash 家族正式部署并原生适配 agent API。","https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"]]},
+        ["260424","DeepSeek-V4","V4-Pro / V4-Flash family Preview 首次公开；后续正式 checkpoint 与部署发行物沿同一家族演进。","https://huggingface.co/collections/deepseek-ai/deepseek-v4"]]},
     {"id":"baidu","dir":"Baidu_ERNIE","name":"Baidu · ERNIE","region":"国内","color":"#55d6ce","thesis":"知识增强预训练演进到统一多模态 MoE 与异步 agentic RL。","models":[
         ["1904","ERNIE","entity/phrase masking 注入知识。","https://arxiv.org/abs/1904.09223"],
         ["1907","ERNIE 2.0","continual multi-task pretraining。","https://arxiv.org/abs/1907.12412"],
@@ -241,7 +241,7 @@ TEAM_PRIORITY = [
 # 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
-    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash"),
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash-Base", "DeepSeek-V4-Flash", "DeepSeek-V4-Pro-Base", "DeepSeek-V4-Pro", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
     "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.5-Air", "GLM-4.6", "GLM-4.7", "GLM-4.7-Flash", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3", "GLM-5.3-Flash"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
@@ -321,16 +321,104 @@ VARIANT_FAMILIES = {
 PINNED_TIMELINE_VARIANTS = {
     "deepseek": [
         {
-            "date": "2604",
+            "date": "260424",
+            "name": "DeepSeek-V4-Flash-Base",
+            "summary": "V4-Flash 的 284B/13B 预训练基座，FP8 Mixed、1M context；官方仓库未提供 README/model card。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Base",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Flash-Base.md",
+            "assetPosters": ["deepseek_v4_flash_base_poster_zh.html"],
+            "lineageType": "mainline",
+            "label": "V4 Base checkpoint",
+        },
+        {
+            "date": "260424",
             "name": "DeepSeek-V4-Flash",
-            "summary": "DeepSeek-V4 的高效率同代模型：284B 总参数、13B 激活参数，原生支持 1M context。",
+            "summary": "V4-Flash Preview：284B/13B、1M context，是独立训练的高效率同代 checkpoint。",
             "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
             "folder": "2604_deepseek_v4",
             "assetNote": "DeepSeek-V4-Flash.md",
             "assetPosters": ["deepseek_v4_flash_poster_zh.html"],
             "lineageType": "mainline",
-            "label": "V4 同代模型",
-        }
+            "label": "V4 Preview checkpoint",
+        },
+        {
+            "date": "260424",
+            "name": "DeepSeek-V4-Pro-Base",
+            "summary": "V4-Pro 的 1.6T/49B 预训练基座，FP8 Mixed、1M context；官方仓库未提供 README/model card。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-Base",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Pro-Base.md",
+            "assetPosters": ["deepseek_v4_pro_base_poster_zh.html"],
+            "lineageType": "mainline",
+            "label": "V4 Base checkpoint",
+        },
+        {
+            "date": "260424",
+            "name": "DeepSeek-V4-Pro",
+            "summary": "V4-Pro Preview：1.6T/49B、1M context，面向高容量 reasoning 与 agent workload。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Pro.md",
+            "assetPosters": ["deepseek_v4_pro_poster_zh.html"],
+            "lineageType": "mainline",
+            "label": "V4 Preview checkpoint",
+        },
+        {
+            "date": "260627",
+            "name": "DeepSeek-V4-Flash-DSpark",
+            "summary": "V4-Flash checkpoint 加 DSpark speculative decoding module；官方明确说明它不是新模型。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-DSpark",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Flash-DSpark.md",
+            "assetPosters": ["deepseek_v4_flash_dspark_poster_zh.html"],
+            "lineageType": "variant",
+            "label": "V4 · 推测解码",
+        },
+        {
+            "date": "260627",
+            "name": "DeepSeek-V4-Pro-DSpark",
+            "summary": "V4-Pro checkpoint 加 DSpark speculative decoding module；官方明确说明它不是新模型。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-DSpark",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Pro-DSpark.md",
+            "assetPosters": ["deepseek_v4_pro_dspark_poster_zh.html"],
+            "lineageType": "variant",
+            "label": "V4 · 推测解码",
+        },
+        {
+            "date": "260731",
+            "name": "DeepSeek-V4-Flash-0731",
+            "summary": "正式替代 Flash Preview 的 agent 增强 checkpoint，内置 DSpark，并支持 low/high/max reasoning effort。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Flash-0731.md",
+            "assetPosters": ["deepseek_v4_flash_0731_poster_zh.html"],
+            "lineageType": "mainline",
+            "label": "V4 release checkpoint",
+        },
+        {
+            "date": "260813",
+            "name": "DeepSeek-V4-Pro-0813",
+            "summary": "正式替代 Pro Preview 的生产 agent checkpoint，内置 DSpark，并支持 low/high/max reasoning effort。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Pro-0813.md",
+            "assetPosters": ["deepseek_v4_pro_0813_poster_zh.html"],
+            "lineageType": "mainline",
+            "label": "V4 release checkpoint",
+        },
+        {
+            "date": "260831",
+            "name": "DeepSeek-V4-Flash-Vision-Exp",
+            "summary": "V4 family 首个实验多模态 checkpoint：在 Flash 上加入视觉模块，强化多模态 agent 能力。",
+            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
+            "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Flash-Vision-Exp.md",
+            "assetPosters": ["deepseek_v4_flash_vision_exp_poster_zh.html"],
+            "lineageType": "variant",
+            "label": "V4 · 多模态实验",
+        },
     ],
     "zhipu": [
         {
@@ -1407,7 +1495,12 @@ NOTE_CSS = r'''
 '''
 
 
-def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Path]) -> dict | None:
+def sync_source_archive(
+    model_root: Path,
+    dest_root: Path,
+    targets: dict[str, Path],
+    include_relative: set[Path] | None = None,
+) -> dict | None:
     """Publish a model's auditable first-party archive and a readable index."""
     source_root = model_root / "src"
     if not source_root.is_dir():
@@ -1416,7 +1509,10 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
     destination_root.mkdir(parents=True, exist_ok=True)
     rows = []
     source_docs = []
-    for source in sorted((p for p in source_root.rglob("*") if p.is_file()), key=lambda p: str(p).lower()):
+    sources = (p for p in source_root.rglob("*") if p.is_file())
+    if include_relative is not None:
+        sources = (p for p in sources if p.relative_to(source_root) in include_relative)
+    for source in sorted(sources, key=lambda p: str(p).lower()):
         rel = source.relative_to(source_root)
         destination = destination_root / rel
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -1437,7 +1533,8 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
             f'<td>{html.escape(kind)}</td><td>{source.stat().st_size:,} B</td></tr>'
         )
         selectable_model_card = rel.parts and rel.parts[0] == "huggingface_model_cards"
-        if (rel.parent == Path(".") or selectable_model_card) and source.name != "Official Source.md":
+        selectable_repo_metadata = rel.parts and rel.parts[0] == "huggingface_repository_metadata"
+        if (rel.parent == Path(".") or selectable_model_card or selectable_repo_metadata) and source.name != "Official Source.md":
             if source.name == "hf_model_card.md":
                 label = "Hugging Face Model Card · 官方主卡"
             elif selectable_model_card:
@@ -1463,6 +1560,13 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
                     "label": f"{label} · 原始 HTML",
                     "path": str(published.relative_to(ATLAS)),
                     "kind": "raw-html",
+                    "name": source.name,
+                })
+            elif source.suffix.lower() == ".json" and selectable_repo_metadata:
+                source_docs.append({
+                    "label": f"HF · {source.stem} · 官方仓库元数据",
+                    "path": str(published.relative_to(ATLAS)),
+                    "kind": "hf-repository-metadata",
                     "name": source.name,
                 })
     if not rows:
@@ -1525,18 +1629,34 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
         if record["team"] == "deepseek":
-            source_archive = sync_source_archive(model_root, dest_root, targets)
+            compact_v4_source = None
+            if record["name"].startswith("DeepSeek-V4") and record["name"] not in {"DeepSeek-V4", "DeepSeek-V4-Flash"}:
+                source_name = f"{record['name']}.md"
+                source_rel = Path("huggingface_model_cards") / source_name
+                if not (model_root / "src" / source_rel).is_file():
+                    source_rel = Path("huggingface_repository_metadata") / f"{record['name']}.json"
+                compact_v4_source = {
+                    source_rel,
+                    Path("hf_collection_manifest.json"),
+                    Path("retrieval_manifest.json"),
+                }
+            source_archive = sync_source_archive(
+                model_root,
+                dest_root,
+                targets,
+                include_relative=compact_v4_source,
+            )
             if source_archive:
                 record["sources"] = source_archive["index"]
                 record["sourceReader"] = source_archive["reader"]
                 record["sourceDocs"] = source_archive["docs"]
-                if record["name"] == "DeepSeek-V4-Flash":
-                    flash_docs = [
+                if record["name"].startswith("DeepSeek-V4"):
+                    matching_docs = [
                         doc for doc in record["sourceDocs"]
-                        if doc["name"] == "DeepSeek-V4-Flash.md"
+                        if doc["name"] in {f"{record['name']}.md", f"{record['name']}.json"}
                     ]
-                    if flash_docs:
-                        preferred = flash_docs[0]
+                    if matching_docs:
+                        preferred = matching_docs[0]
                         record["sourceReader"] = preferred["path"]
                         record["sourceDocs"] = [preferred] + [
                             doc for doc in record["sourceDocs"] if doc is not preferred
@@ -1832,6 +1952,7 @@ def render_top8_tree(teams: list[dict]) -> str:
         team = next(t for t in teams if t["id"] == tid)
         timeline = [{"date":d,"name":n} for d,n,_,_ in team["models"]] + [
             {"date":x["date"],"name":x["name"]} for x in PINNED_TIMELINE_VARIANTS.get(tid, [])
+            if x.get("lineageType") == "mainline"
         ]
         latest = sorted(timeline, key=lambda x:x["date"], reverse=True)[:5]
         generations = "".join(f'<a href="model.html?id={tid}-{slugify(item["name"])}"><time>{pretty_date(item["date"])}</time><b>{html.escape(item["name"])}</b></a>' for item in latest)

@@ -21,7 +21,7 @@ updated: 2026-08-31
 
 ## 谱系定位
 
-- 发布时间：**2026-04**
+- 发布时间：**2026-04-24**（Preview family 首次公开）
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
 - 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro)
@@ -73,6 +73,8 @@ Flash 预训练约 32T tokens，Pro 约 33T。post-training 先分别培养数�
 - [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
 - [[src/hf_model_card.md|hf_model_card.md]]
 - [[src/huggingface_model_cards|huggingface_model_cards/]]
+- [[src/hf_collection_raw.json|DeepSeek-V4 官方 collection 原始 JSON]]
+- [[src/huggingface_repository_metadata|Base 仓库原始元数据/]]
 - [[src/official_flash_model_card.md|official_flash_model_card.md]]
 - [[src/official_ga_release.html|official_ga_release.html]]
 - [[src/official_ga_release.md|official_ga_release.md]]

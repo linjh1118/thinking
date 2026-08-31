@@ -18,6 +18,7 @@ updated: 2026-09-01
 
 | 维度 | DeepSeek-V4-Flash |
 |---|---|
+| 首次公开 | **2026-04-24**（Preview） |
 | Family | DeepSeek-V4 |
 | 参数 | 284B total / 13B activated |
 | 预训练 | 约 32T tokens |
@@ -52,4 +53,3 @@ V4 family 将 Compressed Sparse Attention 与 Highly Compressed Attention 组合
 - [DeepSeek-V4-Flash · Hugging Face](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash)
 - [[src/huggingface_model_cards/DeepSeek-V4-Flash|本地原始 HF model card]]
 - [[DeepSeek-V4|V4 family 总览]]
-
