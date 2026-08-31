@@ -1136,6 +1136,13 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
     text = html.escape(text, quote=False)
     text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: hold(f'<img src="{html.escape(m.group(2), quote=True)}" alt="{html.escape(m.group(1), quote=True)}">'), text)
     text = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", lambda m: hold(f'<a href="{html.escape(m.group(2), quote=True)}" target="_blank" rel="noopener">{m.group(1)}</a>'), text)
+    def local_link(m: re.Match[str]) -> str:
+        label, href = m.group(1), html.unescape(m.group(2)).strip()
+        if Path(href.split("#", 1)[0]).suffix.lower() == ".md":
+            path, marker, anchor = href.partition("#")
+            href = path + ".html" + (marker + anchor if marker else "")
+        return hold(f'<a href="{html.escape(href, quote=True)}">{label}</a>')
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", local_link, text)
 
     def wiki(m: re.Match[str]) -> str:
         raw = html.unescape(m.group(1))
@@ -1145,6 +1152,19 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
         resolved = targets.get(target) or targets.get(Path(target).name)
         if resolved:
             href = os.path.relpath(resolved, destination.parent).replace(os.sep, "/")
+            return hold(f'<a class="wikilink" href="{html.escape(href, quote=True)}">{html.escape(label)}</a>')
+        if target.startswith("src/") and "/deepseek/" in destination.as_posix():
+            source_target = Path(target)
+            if source_target.suffix.lower() == ".md":
+                href = str(source_target) + ".html"
+            elif source_target.suffix:
+                href = str(source_target)
+            else:
+                href = "Sources.html#" + slugify(source_target.name)
+            return hold(f'<a class="wikilink" href="{html.escape(href, quote=True)}">{html.escape(label)}</a>')
+        if target.startswith("Topics/13_base_model/") and target.endswith(".html"):
+            archive_target = ATLAS / "archive" / Path(target).relative_to("Topics/13_base_model")
+            href = os.path.relpath(archive_target, destination.parent).replace(os.sep, "/")
             return hold(f'<a class="wikilink" href="{html.escape(href, quote=True)}">{html.escape(label)}</a>')
         return hold(f'<span class="wikilink unresolved">{html.escape(label)}</span>')
 
@@ -1256,6 +1276,43 @@ NOTE_CSS = r'''
 '''
 
 
+def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Path]) -> str | None:
+    """Publish a model's auditable first-party archive and a readable index."""
+    source_root = model_root / "src"
+    if not source_root.is_dir():
+        return None
+    destination_root = dest_root / "src"
+    destination_root.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for source in sorted((p for p in source_root.rglob("*") if p.is_file()), key=lambda p: str(p).lower()):
+        rel = source.relative_to(source_root)
+        destination = destination_root / rel
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        published = destination
+        kind = source.suffix.lower().lstrip(".") or "file"
+        if source.suffix.lower() == ".md":
+            published = Path(str(destination) + ".html")
+            stale_render = destination.with_suffix(".html")
+            raw_html_peer = source.with_suffix(".html")
+            if stale_render != published and stale_render.exists() and not raw_html_peer.is_file():
+                stale_render.unlink()
+            render_markdown(source, published, targets)
+            kind = "markdown · rendered"
+        href = quote(os.path.relpath(published, dest_root).replace(os.sep, "/"), safe="/#?=&")
+        rows.append(
+            f'<tr id="{slugify(rel.parent.name or rel.stem)}"><td><a href="{html.escape(href, quote=True)}">{html.escape(str(rel))}</a></td>'
+            f'<td>{html.escape(kind)}</td><td>{source.stat().st_size:,} B</td></tr>'
+        )
+    if not rows:
+        return None
+    index = dest_root / "Sources.html"
+    index.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek 一手资料包</title><style>
+*{{box-sizing:border-box}}body{{margin:0;background:#07111c;color:#eaf4ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:34px}}main{{max-width:1120px;margin:auto}}a{{color:#7dd3fc;text-decoration:none}}.back{{display:inline-block;margin-bottom:28px}}h1{{font-size:clamp(40px,7vw,74px);letter-spacing:-.05em;margin:0 0 12px}}.lead{{color:#9db2c3;line-height:1.7;max-width:820px}}.box{{margin-top:30px;overflow:auto;border:1px solid #20415a;border-radius:18px;background:#0b1b29}}table{{border-collapse:collapse;width:100%;font-size:13px}}th,td{{padding:13px 16px;border-bottom:1px solid #18374c;text-align:left;vertical-align:top}}th{{color:#78d7ec;background:#0d2435;position:sticky;top:0}}tr:last-child td{{border:0}}code{{color:#a7c5d8}}@media(max-width:700px){{body{{padding:20px 12px}}}}
+</style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的 DeepSeek 官方网页、模型卡、技术报告与可获得的论文源码。原始文件保留不改写；Markdown 另提供阅读版 HTML。来源 URL、抓取日期、字节数与 SHA-256 见 <a href="src/retrieval_manifest.json">retrieval_manifest.json</a>。</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
+    return str(index.relative_to(ATLAS))
+
+
 def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
     # Publish incrementally.  The library is a long-lived public archive: a
     # narrower audit (for example, mainline-only) must not erase previously
@@ -1277,9 +1334,17 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
             dest = dest_root / poster.name
             # Do not downgrade an already-published, hand-designed poster with
             # an auto-generated fallback that happens to share its filename.
-            if not dest.exists():
+            source_text = poster.read_text(encoding="utf-8", errors="ignore")
+            dest_text = dest.read_text(encoding="utf-8", errors="ignore") if dest.exists() else ""
+            source_is_fallback = "Base Model Atlas 补齐页" in source_text
+            dest_is_fallback = "Base Model Atlas 补齐页" in dest_text
+            if not dest.exists() or dest_is_fallback or (not source_is_fallback and poster.stat().st_size > dest.stat().st_size):
                 copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
+        if record["team"] == "deepseek":
+            sources = sync_source_archive(model_root, dest_root, targets)
+            if sources:
+                record["sources"] = sources
 
 
 def validate_top8_mainline_contract(records: list[dict]) -> None:
@@ -1473,7 +1538,7 @@ DETAIL_CSS = CSS + r'''
 
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
 
 
 def render_branch_audit(teams: list[dict]) -> str:
