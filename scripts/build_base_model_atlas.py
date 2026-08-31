@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -204,6 +205,84 @@ TEAMS = [
         ["2603","MiroThinker 1.7","local/global verification agent。","https://arxiv.org/abs/2603.15726"]]},
 ]
 
+# Editorial order: the five domestic teams requested by the reader come first,
+# followed by the remaining domestic teams, then the overseas top three and the
+# rest of the international landscape.  Filtering keeps this same relative
+# order, so the domestic view always starts DeepSeek → GLM → Kimi → Qwen → Seed.
+TEAM_PRIORITY = [
+    "deepseek", "zhipu", "kimi", "qwen", "seed",
+    "minimax", "mimo", "longcat", "stepfun", "baidu", "hunyuan", "ernie_extra",
+    "openai", "anthropic", "google",
+    "meta", "xai", "mistral", "microsoft", "amazon", "nvidia", "cohere", "ibm",
+]
+
+# Top-8 branch audit.  Mainline generations stay in TEAMS; these are specialist
+# or modality branches, and are therefore shown as branch chips instead of being
+# mixed into the generation timeline.  “models” names canonical representative
+# releases rather than every parameter/API snapshot.
+VARIANT_FAMILIES = {
+    "deepseek": [
+        {"name":"Reasoning","models":"R1-Zero · R1 · R1-Distill · V3.2-Speciale","source":"https://github.com/deepseek-ai/DeepSeek-R1"},
+        {"name":"Code","models":"DeepSeek-Coder · Coder-V2","source":"https://github.com/deepseek-ai/DeepSeek-Coder-V2"},
+        {"name":"Math / Prover","models":"DeepSeekMath · Prover V1/V1.5/V2","source":"https://github.com/deepseek-ai/DeepSeek-Prover-V2"},
+        {"name":"Vision / Omni","models":"DeepSeek-VL/VL2 · Janus/Janus-Pro","source":"https://github.com/deepseek-ai/Janus"},
+        {"name":"Document","models":"DeepSeek-OCR · OCR2","source":"https://github.com/deepseek-ai/DeepSeek-OCR"},
+    ],
+    "zhipu": [
+        {"name":"Vision","models":"GLM-4V · 4.5V · 4.6V · 5V · CogVLM","source":"https://docs.z.ai/guides/overview/overview"},
+        {"name":"Code","models":"CodeGeeX · CodeGeeX4","source":"https://github.com/THUDM/CodeGeeX4"},
+        {"name":"Speech","models":"GLM-4-Voice · GLM-TTS","source":"https://github.com/THUDM/GLM-4-Voice"},
+        {"name":"Document","models":"GLM-OCR","source":"https://docs.z.ai/guides/overview/overview"},
+        {"name":"Image / Video","models":"CogView · CogVideoX","source":"https://github.com/THUDM/CogVideo"},
+        {"name":"Agent","models":"AutoGLM · Phone / Computer Use","source":"https://github.com/THUDM/AutoGLM"},
+    ],
+    "kimi": [
+        {"name":"Vision","models":"Kimi-VL · K1.5 · K2.5","source":"https://github.com/MoonshotAI/Kimi-VL"},
+        {"name":"Audio","models":"Kimi-Audio","source":"https://github.com/MoonshotAI/Kimi-Audio"},
+        {"name":"Code","models":"Kimi-Dev","source":"https://github.com/MoonshotAI/Kimi-Dev"},
+        {"name":"Formal Reasoning","models":"Kimina-Prover","source":"https://github.com/MoonshotAI/Kimina-Prover-Preview"},
+        {"name":"Efficient Attention","models":"MoBA · Kimi Linear","source":"https://github.com/MoonshotAI/Kimi-Linear"},
+    ],
+    "qwen": [
+        {"name":"Code","models":"Qwen-Coder · Qwen3-Coder · Coder-Next","source":"https://qwenlm.github.io/blog/qwen3-coder/"},
+        {"name":"Vision","models":"Qwen-VL · Qwen3-VL · VL-Seg · VLA","source":"https://github.com/QwenLM/Qwen3-VL"},
+        {"name":"Omni / Speech","models":"Qwen3-Omni · ASR · TTS","source":"https://github.com/QwenLM/Qwen3-Omni"},
+        {"name":"Image","models":"Qwen-Image · Image 2 · VAE 2","source":"https://github.com/QwenLM/Qwen-Image"},
+        {"name":"Retrieval","models":"Embedding · Reranker · VL-Embedding","source":"https://github.com/QwenLM/Qwen3-Embedding"},
+        {"name":"Safety / Agent","models":"Qwen3Guard · Qwen-Scope","source":"https://github.com/QwenLM/Qwen3Guard"},
+    ],
+    "seed": [
+        {"name":"Vision / Omni","models":"Seed1.5-VL · Seed1.5-Thinking · Seed2.0","source":"https://github.com/ByteDance-Seed/Seed1.5-VL"},
+        {"name":"Medical","models":"MedXIAOHE","source":"https://arxiv.org/abs/2602.12705"},
+        {"name":"Code / Open","models":"Seed-Coder · Seed-OSS · Seed-Prover","source":"https://github.com/ByteDance-Seed"},
+        {"name":"Any-to-any","models":"BAGEL","source":"https://github.com/ByteDance-Seed/Bagel"},
+        {"name":"Speech","models":"Seed-TTS","source":"https://seed.bytedance.com/en/"},
+        {"name":"Image / Video","models":"Seedream · SeedEdit · Seedance","source":"https://seed.bytedance.com/en/"},
+        {"name":"World / Embodied","models":"Seed3D · GR family","source":"https://seed.bytedance.com/en/"},
+    ],
+    "openai": [
+        {"name":"Reasoning","models":"o1 · o3 · o4-mini","source":"https://developers.openai.com/api/docs/models"},
+        {"name":"Coding","models":"GPT-5-Codex · 5.1-Codex-Max · 5.2/5.3-Codex","source":"https://developers.openai.com/api/docs/models/gpt-5.3-codex"},
+        {"name":"Open weights","models":"gpt-oss-20b · gpt-oss-120b","source":"https://developers.openai.com/api/docs/models"},
+        {"name":"Realtime / Audio","models":"GPT-Realtime · Transcribe · TTS","source":"https://developers.openai.com/api/docs/models"},
+        {"name":"Image / Cyber","models":"GPT-Image · GPT-5.6 Cyber / Daybreak","source":"https://developers.openai.com/api/docs/models"},
+    ],
+    "anthropic": [
+        {"name":"Capability tiers","models":"Haiku · Sonnet · Opus","source":"https://docs.anthropic.com/en/docs/about-claude/models/overview"},
+        {"name":"Hybrid Reasoning","models":"Claude 3.7+ extended thinking","source":"https://www.anthropic.com/news/claude-3-7-sonnet"},
+        {"name":"Computer Use","models":"Claude Computer Use","source":"https://www.anthropic.com/news/3-5-models-and-computer-use"},
+        {"name":"Special access","models":"Fable 5 · regulated capability programs","source":"https://www.anthropic.com/news"},
+    ],
+    "google": [
+        {"name":"Serving tiers","models":"Pro · Flash · Flash-Lite · Nano","source":"https://deepmind.google/models/model-cards/"},
+        {"name":"Deep Think / Computer","models":"Deep Think · Computer Use","source":"https://deepmind.google/models/model-cards/"},
+        {"name":"Image / Omni","models":"Flash Image · Gemini Omni","source":"https://deepmind.google/models/"},
+        {"name":"Audio / Live","models":"Flash Audio · Live · Translate · Transcribe","source":"https://deepmind.google/models/model-cards/"},
+        {"name":"Robotics","models":"Robotics · Robotics-ER · On-Device","source":"https://deepmind.google/models/gemini-robotics/"},
+        {"name":"Open sibling","models":"Gemma · CodeGemma · PaliGemma · ShieldGemma","source":"https://deepmind.google/models/model-cards/"},
+    ],
+}
+
 
 LATEST_PACKS = {
     "DeepSeek_AI": ("2608_DeepSeek_V4_Pro", "DeepSeek-V4-Pro", "GA 版本强化 production agent、原生 Responses API 与长时程工具任务。", "https://api-docs.deepseek.com/updates/"),
@@ -323,6 +402,123 @@ updated: 2026-08-31
 - 当前旗舰详见 [[{folder}/{note.stem}|{model}]]。
 ''', encoding="utf-8")
 
+    # MedXIAOHE is a specialist medical MLLM from ByteDance XiaoHe Medical AI.
+    # It belongs under the Seed ecosystem's medical branch, not the Seed 2.0
+    # general-purpose generation timeline.
+    med_dir = SOURCE / "ByteDance_Seed/Variants/2602_MedXIAOHE"
+    med_src = med_dir / "src"
+    med_src.mkdir(parents=True, exist_ok=True)
+    med_note = med_dir / "MedXIAOHE.md"
+    med_poster = med_dir / "MedXIAOHE_poster_zh.html"
+    med_url = "https://arxiv.org/abs/2602.12705"
+    if not (med_src / "Official Source.md").exists():
+        (med_src / "Official Source.md").write_text(
+            "# MedXIAOHE — Official Source\n\n"
+            f"- Technical report: {med_url}\n"
+            "- Team: ByteDance XiaoHe Medical AI\n"
+            "- Atlas placement: ByteDance · Seed / Medical variant\n"
+            "- Retrieved: 2026-08-31\n",
+            encoding="utf-8",
+        )
+    if not med_note.exists():
+        med_note.write_text(f'''---
+title: "MedXIAOHE — Medical MLLM Overview"
+type: model-note
+authors: ["ByteDance XiaoHe Medical AI", "et al."]
+year: 2026
+arxiv: "2602.12705"
+url: "{med_url}"
+tags: [model-note, base-model, seed, medical, multimodal]
+status: read
+created: 2026-08-31
+updated: 2026-08-31
+---
+
+# MedXIAOHE — Medical MLLM Overview
+
+> [!tldr]
+> MedXIAOHE 不是 Seed 通用主干的新正代，而是字节小荷医疗团队构建医疗多模态大模型的完整 recipe；在谱系中应归入 **ByteDance · Seed → Medical** 支线。
+
+## 定位
+
+MedXIAOHE 面向医疗多模态理解和长报告生成，重点不是单一 benchmark 冲分，而是把数据构建、偏好准则、证据约束推理与低幻觉长文本生成串成可复现流程。
+
+## 方法与研究价值
+
+- 通过医疗图文数据治理与多阶段训练建立领域能力。
+- 引入用户偏好 rubric 与 evidence-grounded reasoning，强调真实医疗指令的可用性。
+- 将低幻觉长报告生成视为核心交付，而不是只评短答案准确率。
+
+> [!insight]
+> 对 agent training 的启发是：高风险垂直领域不能只靠通用 RL reward；需要把证据引用、偏好 rubric、长报告结构和幻觉惩罚共同写进 verifier 与训练数据闭环。
+
+## 证据边界
+
+- 技术报告：[{med_url}]({med_url})
+- 归属口径：团队为 ByteDance XiaoHe Medical AI；Atlas 按字节 Seed 研究生态收录为医疗支线，不把它误写成 Seed2.x 通用基模。
+
+## 导航
+
+- [[Topics/13_base_model/Base_Model_Top8_Branch_Audit_2026|Top 8 支线审计]]
+- [[MedXIAOHE_poster_zh|中文 Poster]]
+''', encoding="utf-8")
+    if not med_poster.exists():
+        med_poster.write_text(render_poster(
+            "MedXIAOHE", "ByteDance · Seed / Medical",
+            "医疗多模态训练 recipe：数据治理、偏好准则、证据约束推理与低幻觉长报告生成。",
+            med_url, med_note.name,
+        ), encoding="utf-8")
+
+    audit = SOURCE / "Base_Model_Top8_Branch_Audit_2026.md"
+    rows = []
+    for team_id in ["deepseek", "zhipu", "kimi", "qwen", "seed", "openai", "anthropic", "google"]:
+        team = next(t for t in TEAMS if t["id"] == team_id)
+        branch_text = "；".join(f"**{b['name']}**：{b['models']}" for b in VARIANT_FAMILIES[team_id])
+        rows.append(f"| {team['name']} | {team['models'][-1][1]} | {branch_text} |")
+    audit.write_text(f'''---
+title: "Base Model Top 8 Branch Audit — 2026-08"
+type: insight
+tags: [insight, base-model, coverage, variants, top8]
+source: "[[Topics/13_base_model/Base Model MOC]]"
+created: 2026-08-31
+updated: 2026-08-31
+---
+
+# Base Model Top 8 Branch Audit — 2026-08
+
+> [!tldr]
+> 本审计把国内 Top 5（DeepSeek、GLM、Kimi、Qwen、Seed）和海外 Top 3（GPT、Claude、Gemini）拆成“通用主干正代 + 专项/模态支线”。主干只放跨代旗舰，Coder、Vision、Speech、Robotics、Medical 等单列，避免把 SKU、尺寸和 API snapshot 混成代际。
+
+## 审计总表
+
+| 团队 | 当前主干节点 | 已核对支线 |
+|---|---|---|
+{chr(10).join(rows)}
+
+## 关键补漏判断
+
+- **DeepSeek**：本地此前几乎只有 V4-Pro；谱系不能因此漏掉 R1、Coder、Math/Prover、VL/Janus 与 OCR 支线。
+- **GLM**：已有 4.5V、TTS、OCR，但应把 CogVLM/CodeGeeX/CogView/CogVideoX/AutoGLM 作为历史支系写入地图。
+- **Kimi**：已有 VL、K2、Linear、K2.5；缺口主要是 Kimi-Audio、Kimi-Dev 与 Kimina-Prover。
+- **Qwen**：本地 Variants 覆盖最完整；需要保持 Coder、VL/VLA、Omni/ASR/TTS、Image、Retrieval 与 Guard 的分支关系。
+- **Seed**：除 Seed1.8/2.0 外，必须补 Seed1.5-VL、Seed-OSS/Code、BAGEL、Seed-TTS、Seedream/Seedance、Seed3D，以及 **MedXIAOHE 医疗支线**。
+- **GPT**：除 GPT 正代，还要单列 o-series、Codex、gpt-oss、Realtime/Audio、Image/Cyber；这些不应伪装成 GPT 主干新代。
+- **Claude**：Haiku/Sonnet/Opus 是能力—成本层；extended thinking、computer use 是能力支线，Claude Code 是产品/agent，不是独立基模。
+- **Gemini**：Pro/Flash/Flash-Lite/Nano 是服务层；Deep Think、Computer Use、Audio/Live、Image/Omni、Robotics 是支线；Gemma 是同团队开放 sibling family。
+
+## 一手证据入口
+
+- [OpenAI model catalog](https://developers.openai.com/api/docs/models)
+- [Anthropic system cards](https://www.anthropic.com/system-cards)
+- [Google DeepMind model cards](https://deepmind.google/models/model-cards/)
+- [DeepSeek changelog](https://api-docs.deepseek.com/updates/)
+- [Z.ai model overview](https://docs.z.ai/guides/overview/overview)
+- [Moonshot AI official repositories](https://github.com/MoonshotAI)
+- [Qwen official blog](https://qwenlm.github.io/blog/)
+- [ByteDance Seed official repositories](https://github.com/ByteDance-Seed)
+- [MedXIAOHE technical report]({med_url})
+''', encoding="utf-8")
+
     coverage = SOURCE / "Base_Model_Global_Coverage_2026.md"
     if not coverage.exists():
         rows = "\n".join(
@@ -400,12 +596,12 @@ def discover_assets(team_dir: str, model_name: str, date: str) -> dict:
 def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source_file, destination)
-    if source_file.suffix.lower() != ".html": return
+    if source_file.suffix.lower() not in {".html", ".md"}: return
     content = source_file.read_text(encoding="utf-8", errors="ignore")
     rewritten = content
-    refs = re.findall(r'''(?:src|href)=["']([^"'#?]+)|url\(["']?([^"')]+)''', content, re.I)
+    refs = re.findall(r'''(?:src|href)=["']([^"'#?]+)|url\(["']?([^"')]+)|!\[[^\]]*\]\(([^)#?]+)|!\[\[([^\]|#]+)''', content, re.I)
     for pair in refs:
-        ref = next((x for x in pair if x), "")
+        ref = next((x for x in pair if x), "").strip()
         if not ref or re.match(r"^(?:https?:|data:|javascript:|mailto:)", ref): continue
         candidate = (source_file.parent / ref).resolve()
         try: rel = candidate.relative_to(model_root.resolve())
@@ -426,11 +622,160 @@ def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) 
                 flags=re.I,
             )
             rewritten = re.sub(rf'''href=(["']){escaped}\1''', 'href="#"', rewritten, flags=re.I)
+    # Published notes are rendered beside the originals; poster/note navigation
+    # should always open the HTML reading view rather than raw Markdown.
+    rewritten = re.sub(r'''href=(["'])([^"']+?)\.md(?:#[^"']*)?\1''', r'href=\1\2.html\1', rewritten, flags=re.I)
     if rewritten != content:
         destination.write_text(rewritten, encoding="utf-8")
 
 
-def sync_library(records: list[dict]) -> None:
+def note_targets() -> dict[str, Path]:
+    """Resolve Obsidian wikilinks to their rendered archive HTML page."""
+    targets: dict[str, Path] = {}
+    for note in SOURCE.rglob("*.md"):
+        rel_parts = note.relative_to(SOURCE).parts
+        if "src" in rel_parts or "QA" in rel_parts:
+            continue
+        rel = note.relative_to(SOURCE).with_suffix(".html")
+        target = ATLAS / "archive" / rel
+        keys = {note.stem, str(note.relative_to(SOURCE).with_suffix("")), str(note.relative_to(BRAINHAO).with_suffix(""))}
+        for key in keys:
+            targets.setdefault(key.replace("\\", "/"), target)
+    return targets
+
+
+def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> str:
+    tokens: list[str] = []
+    def hold(value: str) -> str:
+        tokens.append(value)
+        return f"\x00{len(tokens)-1}\x00"
+
+    # Preserve inline code before escaping the remaining prose.
+    text = re.sub(r"`([^`]+)`", lambda m: hold(f"<code>{html.escape(m.group(1))}</code>"), text)
+    text = html.escape(text, quote=False)
+    text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: hold(f'<img src="{html.escape(m.group(2), quote=True)}" alt="{html.escape(m.group(1), quote=True)}">'), text)
+    text = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", lambda m: hold(f'<a href="{html.escape(m.group(2), quote=True)}" target="_blank" rel="noopener">{m.group(1)}</a>'), text)
+
+    def wiki(m: re.Match[str]) -> str:
+        raw = html.unescape(m.group(1))
+        target, _, alias = raw.partition("|")
+        target = target.split("#", 1)[0].strip()
+        label = alias.strip() or Path(target).name
+        resolved = targets.get(target) or targets.get(Path(target).name)
+        if resolved:
+            href = os.path.relpath(resolved, destination.parent).replace(os.sep, "/")
+            return hold(f'<a class="wikilink" href="{html.escape(href, quote=True)}">{html.escape(label)}</a>')
+        return hold(f'<span class="wikilink unresolved">{html.escape(label)}</span>')
+
+    text = re.sub(r"\[\[([^\]]+)\]\]", wiki, text)
+    text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"<em>\1</em>", text)
+    text = re.sub(r"~~([^~]+)~~", r"<del>\1</del>", text)
+    for i, value in enumerate(tokens):
+        text = text.replace(f"\x00{i}\x00", value)
+    return text
+
+
+def render_markdown(source_file: Path, destination: Path, targets: dict[str, Path]) -> None:
+    """Render the practical Obsidian subset used by BrainHao notes."""
+    raw = source_file.read_text(encoding="utf-8", errors="ignore")
+    meta: dict[str, str] = {}
+    if raw.startswith("---\n"):
+        end = raw.find("\n---\n", 4)
+        if end != -1:
+            for line in raw[4:end].splitlines():
+                if ":" in line:
+                    key, value = line.split(":", 1)
+                    meta[key.strip()] = value.strip().strip('"')
+            raw = raw[end + 5:]
+    lines = raw.splitlines()
+    out: list[str] = []
+    toc: list[tuple[int, str, str]] = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not line.strip():
+            i += 1; continue
+        if line.startswith("```"):
+            lang = line[3:].strip()
+            code: list[str] = []
+            i += 1
+            while i < len(lines) and not lines[i].startswith("```"):
+                code.append(lines[i]); i += 1
+            i += 1
+            out.append(f'<pre><div class="code-lang">{html.escape(lang or "code")}</div><code>{html.escape(chr(10).join(code))}</code></pre>')
+            continue
+        hm = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if hm:
+            level = len(hm.group(1)); title = re.sub(r"[*_`]", "", hm.group(2)).strip()
+            anchor = slugify(title)
+            if anchor == "model":
+                anchor = f"section-{len(toc)+1}"
+            used = {a for _,_,a in toc}
+            base_anchor = anchor
+            suffix = 2
+            while anchor in used:
+                anchor = f"{base_anchor}-{suffix}"; suffix += 1
+            toc.append((level, title, anchor))
+            out.append(f'<h{level} id="{anchor}">{render_inline_md(hm.group(2), destination, targets)}</h{level}>')
+            i += 1; continue
+        if line.startswith("> [!"):
+            cm = re.match(r"> \[!([^\]]+)\][+-]?\s*(.*)", line)
+            kind = (cm.group(1) if cm else "note").lower()
+            title = (cm.group(2) if cm and cm.group(2) else kind.upper())
+            body: list[str] = []
+            i += 1
+            while i < len(lines) and (lines[i].startswith(">") or not lines[i].strip()):
+                if lines[i].startswith(">"):
+                    body.append(lines[i][1:].lstrip())
+                i += 1
+            content = " ".join(render_inline_md(x, destination, targets) for x in body if x)
+            out.append(f'<aside class="callout {html.escape(kind)}"><div class="callout-title">{html.escape(title)}</div><div>{content}</div></aside>')
+            continue
+        if line.startswith(">"):
+            body=[]
+            while i < len(lines) and lines[i].startswith(">"):
+                body.append(lines[i][1:].lstrip()); i += 1
+            out.append(f'<blockquote>{"<br>".join(render_inline_md(x,destination,targets) for x in body)}</blockquote>')
+            continue
+        if i + 1 < len(lines) and "|" in line and re.match(r"^\s*\|?\s*:?-{3,}", lines[i+1]):
+            headers=[x.strip() for x in line.strip().strip("|").split("|")]
+            i += 2; rows=[]
+            while i < len(lines) and "|" in lines[i] and lines[i].strip():
+                rows.append([x.strip() for x in lines[i].strip().strip("|").split("|")]); i += 1
+            head="".join(f"<th>{render_inline_md(x,destination,targets)}</th>" for x in headers)
+            body="".join("<tr>"+"".join(f"<td>{render_inline_md(x,destination,targets)}</td>" for x in row)+"</tr>" for row in rows)
+            out.append(f'<div class="table-wrap"><table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+            continue
+        lm = re.match(r"^\s*([-*+] |\d+\. )(.+)$", line)
+        if lm:
+            ordered = lm.group(1)[0].isdigit(); items=[]
+            while i < len(lines):
+                im = re.match(r"^\s*([-*+] |\d+\. )(.+)$", lines[i])
+                if not im or im.group(1)[0].isdigit() != ordered: break
+                items.append(im.group(2)); i += 1
+            tag="ol" if ordered else "ul"
+            out.append(f'<{tag}>'+"".join(f"<li>{render_inline_md(x,destination,targets)}</li>" for x in items)+f'</{tag}>')
+            continue
+        paragraph=[line.strip()]; i += 1
+        while i < len(lines) and lines[i].strip() and not re.match(r"^(#{1,6})\s|^```|^>|^\s*([-*+] |\d+\. )", lines[i]):
+            if i + 1 < len(lines) and "|" in lines[i] and re.match(r"^\s*\|?\s*:?-{3,}", lines[i+1]): break
+            paragraph.append(lines[i].strip()); i += 1
+        out.append(f'<p>{render_inline_md(" ".join(paragraph),destination,targets)}</p>')
+
+    title = meta.get("title") or next((t for level,t,_ in toc if level == 1), source_file.stem)
+    toc_html = "".join(f'<a class="toc-l{level}" href="#{anchor}">{html.escape(text)}</a>' for level,text,anchor in toc if level <= 3)
+    tags = meta.get("tags", "").strip("[]")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style></head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{''.join(out)}</main></div></body></html>''', encoding="utf-8")
+
+
+NOTE_CSS = r'''
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+'''
+
+
+def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
     if LIBRARY.exists(): shutil.rmtree(LIBRARY)
     LIBRARY.mkdir(parents=True)
     for record in records:
@@ -442,14 +787,16 @@ def sync_library(records: list[dict]) -> None:
         if note:
             dest = dest_root / note.name
             copy_file_with_refs(note, dest, model_root)
-            record["note"] = str(dest.relative_to(ATLAS))
+            rendered = dest.with_suffix(".html")
+            render_markdown(note, rendered, targets)
+            record["note"] = str(rendered.relative_to(ATLAS))
         for poster in assets.get("posters", []):
             dest = dest_root / poster.name
             copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
 
 
-def sync_archive() -> list[dict]:
+def sync_archive(targets: dict[str, Path]) -> list[dict]:
     """Publish every non-source note and poster, including variant branches."""
     archive = ATLAS / "archive"
     if archive.exists(): shutil.rmtree(archive)
@@ -465,9 +812,13 @@ def sync_archive() -> list[dict]:
         destination = archive / rel
         model_root = item.parent
         copy_file_with_refs(item, destination, model_root)
+        published = destination
+        if item.suffix.lower() == ".md":
+            published = destination.with_suffix(".html")
+            render_markdown(item, published, targets)
         entries.append({
             "title": item.stem.replace("_", " ").replace("-", " "),
-            "path": str(destination.relative_to(ATLAS)),
+            "path": str(published.relative_to(ATLAS)),
             "team": rel.parts[0] if len(rel.parts) > 1 else "Cross-team",
             "kind": "Poster" if item.suffix.lower() == ".html" else "Note",
         })
@@ -476,34 +827,42 @@ def sync_archive() -> list[dict]:
 
 def build_records() -> tuple[list[dict], list[dict]]:
     records = []
-    for team in TEAMS:
-        for raw_date, name, summary, url in team["models"]:
+    seen_slugs: set[str] = set()
+    ordered_teams = sorted(TEAMS, key=lambda t: TEAM_PRIORITY.index(t["id"]) if t["id"] in TEAM_PRIORITY else 999)
+    for team in ordered_teams:
+        # Newest first: the first screen is current; horizontal movement to the
+        # right becomes a deliberate trip back through earlier generations.
+        for raw_date, name, summary, url in sorted(team["models"], key=lambda m: m[0], reverse=True):
             slug = f"{team['id']}-{slugify(name)}"
+            if slug in seen_slugs:
+                slug = f"{slug}-{raw_date}"
+            seen_slugs.add(slug)
             records.append({
                 "slug":slug,"team":team["id"],"teamName":team["name"],"teamDir":team["dir"],
                 "region":team["region"],"color":team["color"],"date":pretty_date(raw_date),
                 "rawDate":raw_date,"name":name,"summary":summary,"source":url,
                 "sourceType":source_label(url),"thesis":team["thesis"],
+                "variants":VARIANT_FAMILIES.get(team["id"], []),
                 "_assets":discover_assets(team["dir"], name, raw_date),
             })
-    return TEAMS, records
+    return ordered_teams, records
 
 
 CSS = r'''
-:root{--bg:#080b12;--panel:#0f1420;--panel2:#141b2a;--line:#283248;--text:#eef3ff;--muted:#91a0ba;--accent:#8ba7ff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 55% -10%,#24315a66,transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.shell{max-width:1680px;margin:auto;padding:28px clamp(18px,4vw,64px) 70px}.topbar{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:55px}.brand{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#b8c7e4}.ghost{color:#b9c7e3;text-decoration:none;border:1px solid var(--line);padding:10px 14px;border-radius:999px}.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:36px;align-items:end;margin-bottom:34px}.kicker{color:#8fe6ff;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:12px}.hero h1{font-size:clamp(48px,7vw,108px);line-height:.89;letter-spacing:-.065em;margin:15px 0 24px;max-width:980px}.hero p{font-size:clamp(17px,2vw,23px);line-height:1.55;color:#aebbd2;max-width:880px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{border:1px solid var(--line);background:#111724aa;padding:20px;border-radius:18px}.stat b{display:block;font-size:31px;letter-spacing:-.04em}.stat span{color:var(--muted);font-size:13px}.controls{position:sticky;top:0;z-index:5;margin:0 -8px 28px;padding:12px 8px;background:#080b12e8;backdrop-filter:blur(14px);display:flex;gap:10px;flex-wrap:wrap}.search{flex:1;min-width:240px;background:#101622;border:1px solid var(--line);border-radius:14px;padding:13px 16px;color:var(--text);font-size:15px}.chip{border:1px solid var(--line);background:#101622;color:#b9c6dc;border-radius:999px;padding:11px 15px;cursor:pointer}.chip.active{background:#dce6ff;color:#111827}.legend{display:flex;gap:18px;color:var(--muted);font-size:12px;margin:0 0 18px 250px}.legend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}.tree{display:flex;flex-direction:column;gap:14px}.branch{display:grid;grid-template-columns:230px minmax(0,1fr);border:1px solid #242e43;background:linear-gradient(100deg,#121827,#0d121d);border-radius:22px;overflow:hidden}.team{padding:22px;border-right:1px solid var(--line);position:relative}.team:after{content:"";position:absolute;right:-1px;top:50%;width:15px;height:2px;background:var(--team)}.team small{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.team h2{font-size:20px;margin:7px 0 8px}.team p{font-size:12px;color:#8290a8;line-height:1.45;margin:0}.timeline{display:flex;align-items:center;gap:26px;padding:20px 30px;overflow-x:auto;min-height:142px;background-image:linear-gradient(90deg,transparent 0 18px,#35415c 18px calc(100% - 18px),transparent calc(100% - 18px));background-size:100% 2px;background-repeat:no-repeat;background-position:center}.leaf{min-width:148px;max-width:180px;color:inherit;text-decoration:none;position:relative;padding-top:44px}.leaf:before{content:"";position:absolute;top:14px;left:9px;width:15px;height:15px;border-radius:50%;background:var(--team);border:4px solid #111724;box-shadow:0 0 0 1px var(--team),0 0 22px color-mix(in srgb,var(--team),transparent 45%)}.leaf:after{content:"";position:absolute;left:16px;top:29px;width:1px;height:12px;background:var(--team)}.leaf time{font-size:11px;color:#74829a}.leaf b{font-size:14px;display:block;margin-top:5px;line-height:1.25}.leaf .status{display:block;font-size:10px;color:#7f8da3;margin-top:7px}.leaf:hover b{color:var(--team)}.footnote{margin:34px 0 0;color:#7e8aa0;font-size:13px;line-height:1.7}.hidden{display:none!important}
+:root{--bg:#080b12;--panel:#0f1420;--panel2:#141b2a;--line:#283248;--text:#eef3ff;--muted:#91a0ba;--accent:#8ba7ff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 55% -10%,#24315a66,transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.shell{max-width:1680px;margin:auto;padding:28px clamp(18px,4vw,64px) 70px}.topbar{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:55px}.brand{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#b8c7e4}.toplinks{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.ghost{color:#b9c7e3;text-decoration:none;border:1px solid var(--line);padding:10px 14px;border-radius:999px}.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:36px;align-items:end;margin-bottom:34px}.kicker{color:#8fe6ff;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:12px}.hero h1{font-size:clamp(48px,7vw,108px);line-height:.89;letter-spacing:-.065em;margin:15px 0 24px;max-width:980px}.hero p{font-size:clamp(17px,2vw,23px);line-height:1.55;color:#aebbd2;max-width:880px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{border:1px solid var(--line);background:#111724aa;padding:20px;border-radius:18px}.stat b{display:block;font-size:31px;letter-spacing:-.04em}.stat span{color:var(--muted);font-size:13px}.controls{position:sticky;top:0;z-index:5;margin:0 -8px 28px;padding:12px 8px;background:#080b12e8;backdrop-filter:blur(14px);display:flex;gap:10px;flex-wrap:wrap}.search{flex:1;min-width:240px;background:#101622;border:1px solid var(--line);border-radius:14px;padding:13px 16px;color:var(--text);font-size:15px}.chip{border:1px solid var(--line);background:#101622;color:#b9c6dc;border-radius:999px;padding:11px 15px;cursor:pointer}.chip.active{background:#dce6ff;color:#111827}.legend{display:flex;gap:18px;color:var(--muted);font-size:12px;margin:0 0 18px 250px}.legend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}.tree{display:flex;flex-direction:column;gap:14px}.branch{display:grid;grid-template-columns:230px minmax(0,1fr);border:1px solid #242e43;background:linear-gradient(100deg,#121827,#0d121d);border-radius:22px;overflow:hidden}.branch.top8{border-color:color-mix(in srgb,var(--team),#283248 72%)}.team{padding:22px;border-right:1px solid var(--line);position:relative}.team:after{content:"";position:absolute;right:-1px;top:50%;width:15px;height:2px;background:var(--team)}.team small{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.team h2{font-size:20px;margin:7px 0 8px}.team p{font-size:12px;color:#8290a8;line-height:1.45;margin:0}.modelarea{min-width:0}.timeline{display:flex;align-items:center;gap:26px;padding:20px 30px;overflow-x:auto;min-height:142px;background-image:linear-gradient(90deg,transparent 0 18px,#35415c 18px calc(100% - 18px),transparent calc(100% - 18px));background-size:100% 2px;background-repeat:no-repeat;background-position:center}.leaf{min-width:148px;max-width:180px;color:inherit;text-decoration:none;position:relative;padding-top:44px}.leaf:before{content:"";position:absolute;top:14px;left:9px;width:15px;height:15px;border-radius:50%;background:var(--team);border:4px solid #111724;box-shadow:0 0 0 1px var(--team),0 0 22px color-mix(in srgb,var(--team),transparent 45%)}.leaf:after{content:"";position:absolute;left:16px;top:29px;width:1px;height:12px;background:var(--team)}.leaf time{font-size:11px;color:#74829a}.leaf b{font-size:14px;display:block;margin-top:5px;line-height:1.25}.leaf .status{display:block;font-size:10px;color:#7f8da3;margin-top:7px}.leaf:hover b{color:var(--team)}.variants{display:flex;gap:7px;overflow-x:auto;padding:0 30px 18px}.variants:before{content:"支线";font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#657188;padding:7px 5px 0 0}.variant{flex:0 0 auto;color:#aebbd0;text-decoration:none;font-size:11px;padding:6px 9px;border:1px solid #2a354b;border-radius:999px;background:#111824}.variant:hover{color:var(--team);border-color:var(--team)}.footnote{margin:34px 0 0;color:#7e8aa0;font-size:13px;line-height:1.7}.hidden{display:none!important}
 @media(max-width:800px){.hero{grid-template-columns:1fr}.branch{grid-template-columns:1fr}.team{border-right:0;border-bottom:1px solid var(--line)}.team:after{display:none}.legend{margin-left:0}.timeline{padding-left:18px}.topbar{align-items:flex-start}.hero h1{font-size:54px}}
 '''
 
 
 def render_index(teams: list[dict], records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!-- index: Base Model Atlas · 全球基模谱系 | 2026-08-31 | 22 个团队、从老到新的可点击模型思维树与精读资料库 -->
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="全球基模团队与主干模型时间树，可进入模型 overview、Poster 与 BrainHao 笔记。"><title>Base Model Atlas · 全球基模谱系</title><style>{CSS}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Thinking · Research Atlas</div><div><a class="ghost" href="base-model-atlas/library.html">Poster / 笔记资料馆</a> <a class="ghost" href="index.html">返回 Thinking 首页</a></div></header><section class="hero"><div><div class="kicker">Foundation Model Evolution · 2018—2026</div><h1>全球基模<br>谱系树</h1><p>每一条分支是一支基模团队；每片叶子按时间从左到右生长。点击模型进入 Overview，并继续阅读已同步的 Poster、精读笔记与官方一手来源。</p></div><div class="stats"><div class="stat"><b>{len(teams)}</b><span>基模团队</span></div><div class="stat"><b>{len(records)}</b><span>主干模型节点</span></div><div class="stat"><b>{sum(1 for r in records if r.get('note'))}</b><span>主树已链接笔记</span></div><div class="stat"><b>{sum(len(r.get('posters',[])) for r in records)}</b><span>主树已链接 Poster</span></div></div></section><div class="controls"><input class="search" id="search" placeholder="搜索团队、模型或关键技术…"><button class="chip active" data-region="all">全部</button><button class="chip" data-region="国内">国内团队</button><button class="chip" data-region="海外">海外团队</button></div><div class="legend"><span><i style="background:#70d9ff"></i>旧 → 新</span><span><i style="background:#7cf2c8"></i>叶子可点击</span><span>主树不拆 API snapshot / 参数 SKU</span></div><main class="tree" id="tree"></main><p class="footnote">编辑口径：覆盖独立通用基模团队的主干正代与改变范式的关键节点；Coder、Embedding、ASR/TTS、Robotics、Guard 等专项支线不与正代混排。全部既有 Poster / 笔记（含支线）已进入资料馆。没有公开训练细节的闭源模型只陈述官方披露，不做架构猜测。更新时间：2026-08-31。</p></div><script>const DATA={data};const TEAM_ORDER={json.dumps([t['id'] for t in teams])};const TEAM_META={json.dumps({t['id']:{k:t[k] for k in ('name','region','color','thesis')} for t in teams},ensure_ascii=False)};let region='all';const tree=document.querySelector('#tree');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();tree.innerHTML=TEAM_ORDER.map(id=>{{const meta=TEAM_META[id];const rows=DATA.filter(x=>x.team===id).filter(x=>region==='all'||x.region===region).filter(x=>!q||[x.name,x.teamName,x.summary,x.thesis].join(' ').toLowerCase().includes(q));if(!rows.length)return '';return `<section class="branch" style="--team:${{meta.color}}"><div class="team"><small>${{meta.region}} · ${{rows.length}} nodes</small><h2>${{meta.name}}</h2><p>${{meta.thesis}}</p></div><div class="timeline">${{rows.map(x=>`<a class="leaf" href="base-model-atlas/model.html?id=${{encodeURIComponent(x.slug)}}" title="${{x.summary}}"><time>${{x.date}}</time><b>${{x.name}}</b><span class="status">${{x.note?'笔记 ':''}}${{x.posters?.length?'· Poster':''}}</span></a>`).join('')}}</div></section>`}}).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');region=b.dataset.region;draw()}});draw();</script></body></html>'''
+    return f'''<!-- index: Base Model Atlas · 全球基模谱系 | 2026-08-31 | 最新优先的可点击模型思维树、Top 8 支线审计与渲染资料库 -->
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="全球基模团队与主干模型时间树，可进入模型 overview、Poster、渲染笔记与 Top 8 支线审计。"><title>Base Model Atlas · 全球基模谱系</title><style>{CSS}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Thinking · Research Atlas</div><div class="toplinks"><a class="ghost" href="base-model-atlas/top8-tree.html">Top 8 综述树</a><a class="ghost" href="base-model-atlas/branch-audit.html">支线审计</a><a class="ghost" href="base-model-atlas/library.html">Poster / 笔记资料馆</a><a class="ghost" href="index.html">返回 Thinking 首页</a></div></header><section class="hero"><div><div class="kicker">Foundation Model Evolution · 2018—2026</div><h1>全球基模<br>谱系树</h1><p>每一条分支是一支基模团队。最新模型固定在最左侧，无需横向拖动；向右拖动是在回溯更早的代际。点击叶子进入 Overview，再继续阅读 Obsidian 风格笔记、Poster 与一手来源。</p></div><div class="stats"><div class="stat"><b>{len(teams)}</b><span>基模团队</span></div><div class="stat"><b>{len(records)}</b><span>主干模型节点</span></div><div class="stat"><b>{sum(1 for r in records if r.get('note'))}</b><span>主树渲染笔记</span></div><div class="stat"><b>{sum(len(r.get('posters',[])) for r in records)}</b><span>主树已链接 Poster</span></div></div></section><div class="controls"><input class="search" id="search" placeholder="搜索团队、模型、MedXIAOHE 或支线…"><button class="chip active" data-region="all">全部</button><button class="chip" data-region="国内">国内团队</button><button class="chip" data-region="海外">海外团队</button></div><div class="legend"><span><i style="background:#70d9ff"></i>最新 ← 左 · 右 → 更早</span><span><i style="background:#7cf2c8"></i>叶子可点击</span><span>主干代际与专项支线分层展示</span></div><main class="tree" id="tree"></main><p class="footnote">编辑口径：主时间线覆盖通用基模正代与改变范式的关键节点；Coder、Embedding、ASR/TTS、Robotics、Guard、Medical 等进入支线。Top 8 已做独立审计；全部 Markdown 发布时自动渲染为可读 HTML，原始 Markdown 仍保留用于追溯。更新时间：2026-08-31。</p></div><script>const DATA={data};const TEAM_ORDER={json.dumps([t['id'] for t in teams])};const TEAM_META={json.dumps({t['id']:{k:t[k] for k in ('name','region','color','thesis')} for t in teams},ensure_ascii=False)};const TOP8=new Set(['deepseek','zhipu','kimi','qwen','seed','openai','anthropic','google']);let region='all';const tree=document.querySelector('#tree');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();tree.innerHTML=TEAM_ORDER.map(id=>{{const meta=TEAM_META[id];const base=DATA.filter(x=>x.team===id).filter(x=>region==='all'||x.region===region);const variants=base[0]?.variants||[];const variantText=variants.map(v=>v.name+' '+v.models).join(' ').toLowerCase();const rows=!q||variantText.includes(q)?base:base.filter(x=>[x.name,x.teamName,x.summary,x.thesis].join(' ').toLowerCase().includes(q));if(!rows.length)return '';const branchChips=variants.map(v=>`<a class="variant" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');return `<section class="branch ${{TOP8.has(id)?'top8':''}}" style="--team:${{meta.color}}"><div class="team"><small>${{meta.region}} · ${{rows.length}} nodes ${{TOP8.has(id)?'· TOP 8':''}}</small><h2>${{meta.name}}</h2><p>${{meta.thesis}}</p></div><div class="modelarea"><div class="timeline">${{rows.map(x=>`<a class="leaf" href="base-model-atlas/model.html?id=${{encodeURIComponent(x.slug)}}" title="${{x.summary}}"><time>${{x.date}}</time><b>${{x.name}}</b><span class="status">${{x.note?'渲染笔记 ':''}}${{x.posters?.length?'· Poster':''}}</span></a>`).join('')}}</div>${{branchChips?`<div class="variants">${{branchChips}}</div>`:''}}</div></section>`}}).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');region=b.dataset.region;draw()}});draw();</script></body></html>'''
 
 
 def render_library(entries: list[dict]) -> str:
     data = json.dumps(entries, ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="BrainHao Base Model Poster 与笔记资料馆"><title>Base Model Library · Poster / 笔记</title><style>{CSS}.library-head{{max-width:900px;margin:45px 0}}.library-head h1{{font-size:clamp(48px,7vw,88px);letter-spacing:-.06em;line-height:.95;margin:15px 0}}.gridlib{{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}}.doc{{display:block;text-decoration:none;color:inherit;padding:18px;border-radius:17px;border:1px solid var(--line);background:#111724}}.doc:hover{{border-color:#6f86ba;transform:translateY(-1px)}}.doc small{{color:#7e8da7}}.doc b{{display:block;margin:8px 0;line-height:1.35}}.badge{{display:inline-block;font-size:10px;padding:4px 7px;border-radius:999px;background:#24304a;color:#c9d5eb}}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Base Model Library</div><a class="ghost" href="../base_model_atlas.html">返回谱系树</a></header><section class="library-head"><div class="kicker">Synced Research Archive</div><h1>Poster / 笔记<br>资料馆</h1><p class="lead2">主干与支线材料统一归档。搜索团队、模型或文件名，直接打开 Poster 或 Markdown 笔记。</p></section><div class="controls"><input class="search" id="search" placeholder="搜索资料…"><button class="chip active" data-kind="all">全部</button><button class="chip" data-kind="Poster">Poster</button><button class="chip" data-kind="Note">笔记</button></div><main class="gridlib" id="grid"></main></div><script>const DATA={data};let kind='all';const grid=document.querySelector('#grid');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();grid.innerHTML=DATA.filter(x=>kind==='all'||x.kind===kind).filter(x=>!q||[x.title,x.team,x.kind].join(' ').toLowerCase().includes(q)).map(x=>`<a class="doc" href="${{x.path}}"><small>${{x.team}}</small><b>${{x.title}}</b><span class="badge">${{x.kind}}</span></a>`).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');kind=b.dataset.kind;draw()}});draw();</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="BrainHao Base Model Poster 与笔记资料馆"><title>Base Model Library · Poster / 笔记</title><style>{CSS}.library-head{{max-width:900px;margin:45px 0}}.library-head h1{{font-size:clamp(48px,7vw,88px);letter-spacing:-.06em;line-height:.95;margin:15px 0}}.gridlib{{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}}.doc{{display:block;text-decoration:none;color:inherit;padding:18px;border-radius:17px;border:1px solid var(--line);background:#111724}}.doc:hover{{border-color:#6f86ba;transform:translateY(-1px)}}.doc small{{color:#7e8da7}}.doc b{{display:block;margin:8px 0;line-height:1.35}}.badge{{display:inline-block;font-size:10px;padding:4px 7px;border-radius:999px;background:#24304a;color:#c9d5eb}}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Base Model Library</div><div class="toplinks"><a class="ghost" href="top8-tree.html">Top 8 综述树</a><a class="ghost" href="branch-audit.html">支线审计</a><a class="ghost" href="../base_model_atlas.html">返回谱系树</a></div></header><section class="library-head"><div class="kicker">Synced Research Archive</div><h1>Poster / 笔记<br>资料馆</h1><p class="lead2">主干与支线材料统一归档。Markdown 已预渲染为 Obsidian 风格 HTML：支持 callout、表格、代码、图片和可解析的 wikilink，同时保留原始 Markdown 便于追溯。</p></section><div class="controls"><input class="search" id="search" placeholder="搜索资料…"><button class="chip active" data-kind="all">全部</button><button class="chip" data-kind="Poster">Poster</button><button class="chip" data-kind="Note">渲染笔记</button></div><main class="gridlib" id="grid"></main></div><script>const DATA={data};let kind='all';const grid=document.querySelector('#grid');function draw(){{const q=document.querySelector('#search').value.trim().toLowerCase();grid.innerHTML=DATA.filter(x=>kind==='all'||x.kind===kind).filter(x=>!q||[x.title,x.team,x.kind].join(' ').toLowerCase().includes(q)).map(x=>`<a class="doc" href="${{x.path}}"><small>${{x.team}}</small><b>${{x.title}}</b><span class="badge">${{x.kind==='Note'?'HTML 笔记':x.kind}}</span></a>`).join('')}}document.querySelector('#search').addEventListener('input',draw);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');kind=b.dataset.kind;draw()}});draw();</script></body></html>'''
 
 
 DETAIL_CSS = CSS + r'''
@@ -513,18 +872,50 @@ DETAIL_CSS = CSS + r'''
 
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team);const pos=family.findIndex(v=>v.slug===x.slug);const prev=family[pos-1],next=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>'library/'+s;document.querySelector('#app').style.setProperty('--team',x.color);document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>团队主线</b><span>${{x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有可读笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读笔记</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section><section class="section"><h2>前后代</h2><div class="prevnext">${{prev?`<a class="next" href="?id=${{prev.slug}}"><small>← 上一代 · ${{prev.date}}</small><br><b>${{prev.name}}</b></a>`:'<div></div>'}}${{next?`<a class="next" href="?id=${{next.slug}}"><small>下一代 · ${{next.date}} →</small><br><b>${{next.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>团队主线</b><span>${{x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后代 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+
+
+def render_branch_audit(teams: list[dict]) -> str:
+    top_ids = ["deepseek", "zhipu", "kimi", "qwen", "seed", "openai", "anthropic", "google"]
+    cards = []
+    for tid in top_ids:
+        team = next(t for t in teams if t["id"] == tid)
+        mainline = "".join(f'<span>{html.escape(name)}</span>' for _,name,_,_ in sorted(team["models"], key=lambda x:x[0], reverse=True))
+        branches = "".join(f'<a href="{html.escape(b["source"], quote=True)}" target="_blank" rel="noopener"><b>{html.escape(b["name"])}</b><small>{html.escape(b["models"])}</small></a>' for b in VARIANT_FAMILIES[tid])
+        extra = '<a class="med" href="archive/ByteDance_Seed/Variants/2602_MedXIAOHE/MedXIAOHE.html">阅读 MedXIAOHE 渲染笔记 →</a>' if tid == "seed" else ""
+        cards.append(f'<article class="audit-card" style="--team:{team["color"]}"><header><div><small>{team["region"]} TOP</small><h2>{html.escape(team["name"])}</h2></div><b>{len(team["models"])} 主干 · {len(VARIANT_FAMILIES[tid])} 支线</b></header><h3>主干 · 最新优先</h3><div class="mainline">{mainline}</div><h3>专项 / 模态支线</h3><div class="branch-list">{branches}</div>{extra}</article>')
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 支线审计 · Base Model Atlas</title><style>{CSS}.audit-hero{{max-width:960px;margin:50px 0}}.audit-hero h1{{font-size:clamp(48px,8vw,96px);line-height:.92;letter-spacing:-.06em;margin:15px 0 25px}}.audit-hero p{{color:#aebbd2;font-size:19px;line-height:1.7}}.audit-grid{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}}.audit-card{{border:1px solid #2a344a;border-top:4px solid var(--team);border-radius:22px;background:#101622;padding:22px}}.audit-card header{{display:flex;align-items:start;justify-content:space-between;gap:20px}}.audit-card header> b{{font-size:11px;color:#8190a8}}.audit-card h2{{margin:5px 0 20px;font-size:27px}}.audit-card h3{{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#78869e;margin:18px 0 10px}}.mainline{{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px}}.mainline span{{white-space:nowrap;border-radius:999px;background:#192234;padding:7px 10px;font-size:11px}}.branch-list{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}.branch-list a{{text-decoration:none;color:inherit;border:1px solid #2c374c;border-radius:13px;padding:11px;background:#0d121c}}.branch-list b,.branch-list small{{display:block}}.branch-list b{{color:var(--team);font-size:12px;margin-bottom:5px}}.branch-list small{{color:#8996aa;line-height:1.45}}.med{{display:inline-block;margin-top:16px;color:#ffc0da;text-decoration:none}}@media(max-width:800px){{.audit-grid{{grid-template-columns:1fr}}.branch-list{{grid-template-columns:1fr}}}}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Top 8 Branch Audit</div><div class="toplinks"><a class="ghost" href="top8-tree.html">看综述树</a><a class="ghost" href="../base_model_atlas.html">返回谱系</a></div></header><section class="audit-hero"><div class="kicker">Mainline ≠ Variants</div><h1>八大团队<br>支线审计</h1><p>国内 DeepSeek、GLM、Kimi、Qwen、Seed；海外 GPT、Claude、Gemini。每张卡片把通用主干和专项分支拆开，解决“资料有了，但谱系关系看不出来”的问题。</p></section><main class="audit-grid">{''.join(cards)}</main></div></body></html>'''
+
+
+def render_top8_tree(teams: list[dict]) -> str:
+    domestic = ["deepseek", "zhipu", "kimi", "qwen", "seed"]
+    overseas = ["openai", "anthropic", "google"]
+    def team_box(tid: str) -> str:
+        team = next(t for t in teams if t["id"] == tid)
+        latest = sorted(team["models"], key=lambda x:x[0], reverse=True)[:4]
+        generations = "".join(f'<a href="model.html?id={tid}-{slugify(name)}"><time>{pretty_date(date)}</time><b>{html.escape(name)}</b></a>' for date,name,_,_ in latest)
+        branches = []
+        for branch in VARIANT_FAMILIES[tid]:
+            special = " med-leaf" if "MedXIAOHE" in branch["models"] else ""
+            branches.append(f'<span class="twig{special}"><b>{html.escape(branch["name"])}</b>{html.escape(branch["models"])}</span>')
+        return f'<article class="team-box" style="--team:{team["color"]}"><header><span>{team["region"]}</span><h3>{html.escape(team["name"])}</h3></header><div class="gen">{generations}</div><div class="twigs">{"".join(branches)}</div></article>'
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 Foundation Model Tree</title><style>
+*{{box-sizing:border-box}}body{{margin:0;background:#f7f8f4;color:#14233d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-image:linear-gradient(#dce3eb66 1px,transparent 1px),linear-gradient(90deg,#dce3eb66 1px,transparent 1px);background-size:48px 48px}}.page{{width:min(1500px,100%);margin:auto;padding:28px 34px 60px}}.nav{{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase}}.nav a{{color:#294f88;text-decoration:none;border:1px solid #b9c7d9;padding:9px 13px;border-radius:999px;background:#fff}}h1{{font-size:clamp(36px,6vw,78px);letter-spacing:-.055em;line-height:.94;text-align:center;margin:36px 0 12px}}.sub{{text-align:center;color:#5e6d81;margin-bottom:34px}}.root{{width:min(780px,90%);margin:0 auto 30px;padding:20px 26px;text-align:center;border-radius:18px;background:#122744;color:white;box-shadow:0 12px 28px #0f274329}}.root b{{display:block;font-size:24px}}.root span{{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#b9d3f4}}.forest{{display:grid;grid-template-columns:5fr 3fr;gap:24px;align-items:start}}.grove{{position:relative;border:2px solid var(--group);border-radius:24px;padding:82px 16px 16px;background:color-mix(in srgb,var(--group),white 94%)}}.grove:before{{content:"";position:absolute;left:50%;top:-32px;width:2px;height:32px;background:#7890ad}}.grove-title{{position:absolute;left:-2px;right:-2px;top:-2px;padding:22px 24px;border-radius:22px 22px 0 0;background:var(--group);color:white;display:flex;justify-content:space-between;align-items:center}}.grove-title b{{font-size:18px}}.grove-title span{{font-size:11px;opacity:.85}}.domestic{{--group:#1768c5}}.overseas{{--group:#128675}}.teams{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}.domestic .team-box:first-child{{grid-column:span 2}}.overseas .teams{{grid-template-columns:1fr}}.team-box{{background:#fff;border:1px solid #c9d4e2;border-top:5px solid var(--team);border-radius:16px;padding:14px;min-width:0}}.team-box header{{display:flex;align-items:center;gap:10px;margin-bottom:10px}}.team-box header span{{font-size:9px;letter-spacing:.13em;color:#7b8797}}.team-box h3{{margin:0;font-size:18px}}.gen{{display:flex;gap:6px;overflow-x:auto;padding:2px 0 9px}}.gen a{{min-width:108px;text-decoration:none;color:#14233d;padding:8px;border-radius:10px;background:#f1f5f9;border:1px solid #d9e1ea}}.gen time,.gen b{{display:block}}.gen time{{font-size:9px;color:#7b8797}}.gen b{{font-size:11px;margin-top:3px}}.twigs{{display:flex;gap:5px;flex-wrap:wrap;padding-top:9px;border-top:1px solid #dfe5ec}}.twig{{font-size:9px;line-height:1.35;color:#657186;background:#f8fafc;border:1px solid #dce3eb;padding:6px 7px;border-radius:8px}}.twig b{{color:#31445f;margin-right:4px}}.med-leaf{{background:#fff0f6;border-color:#ed9ec0;color:#9c315e;box-shadow:0 0 0 2px #fff inset}}.med-leaf b{{color:#c2185b}}.legend{{margin-top:20px;padding:15px 18px;background:#122744;color:#d7e1ee;border-radius:15px;display:flex;gap:24px;justify-content:center;font-size:11px}}@media(max-width:1000px){{.forest{{grid-template-columns:1fr}}.grove:before{{display:none}}}}@media(max-width:650px){{.page{{padding:20px 12px}}.teams{{grid-template-columns:1fr}}.domestic .team-box:first-child{{grid-column:auto}}}}
+</style></head><body><main class="page"><nav class="nav"><span>BrainHao · Survey Figure 01</span><a href="../base_model_atlas.html">返回交互谱系</a></nav><h1>FRONTIER FOUNDATION<br>MODEL LANDSCAPE</h1><p class="sub">Top 8 labs · main generations + specialist branches · current state at 2026-08-31</p><section class="root"><span>Survey root</span><b>通用主干 × 模态 / 能力支线</b></section><div class="forest"><section class="grove domestic"><div class="grove-title"><b>国内 TOP 5</b><span>DeepSeek → GLM → Kimi → Qwen → Seed</span></div><div class="teams">{''.join(team_box(x) for x in domestic)}</div></section><section class="grove overseas"><div class="grove-title"><b>海外 TOP 3</b><span>GPT · Claude · Gemini</span></div><div class="teams">{''.join(team_box(x) for x in overseas)}</div></section></div><footer class="legend"><span>正代：近四个主干节点，最新在左</span><span>支线：专项模型族，不伪装成正代</span><span style="color:#ff9fc8">粉色叶：MedXIAOHE · Seed Medical</span></footer></main></body></html>'''
 
 
 def main() -> None:
     add_missing_brainhao_packs()
     teams, records = build_records()
     ATLAS.mkdir(exist_ok=True)
-    sync_library(records)
-    archive_entries = sync_archive()
+    targets = note_targets()
+    sync_library(records, targets)
+    archive_entries = sync_archive(targets)
     (THINKING / "base_model_atlas.html").write_text(render_index(teams, records), encoding="utf-8")
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
+    (ATLAS / "branch-audit.html").write_text(render_branch_audit(teams), encoding="utf-8")
+    (ATLAS / "top8-tree.html").write_text(render_top8_tree(teams), encoding="utf-8")
     (ATLAS / "models.json").write_text(json.dumps([{k:v for k,v in r.items() if not k.startswith('_')} for r in records], ensure_ascii=False, indent=2), encoding="utf-8")
     linked_notes = sum(1 for r in records if r.get("note"))
     linked_posters = sum(len(r.get("posters", [])) for r in records)
