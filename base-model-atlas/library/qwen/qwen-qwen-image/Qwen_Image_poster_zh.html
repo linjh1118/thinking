@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen-Image — 中文研究海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — VLM blue gradient */
+.header { background: linear-gradient(120deg, #1e3a8a 0%, #1d4ed8 40%, #3b82f6 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #bfdbfe }
+.header-left .zh-title { font-size: 1.1rem; color: #93c5fd; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #bfdbfe; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(59,130,246,.3); border: 1px solid #60a5fa; color: #bfdbfe; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #93c5fd; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-blue .nc { background: #1d4ed8 }
+.c-lightblue .nc { background: #3b82f6 }
+.c-cyan .nc { background: #0891b2 }
+.c-teal .nc { background: #0d9488 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #93c5fd }
+.c-blue h2 { color: #93c5fd }
+.c-lightblue h2 { color: #bfdbfe }
+.c-cyan h2 { color: #67e8f9 }
+.c-teal h2 { color: #5eead4 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(30,58,138,.3); border-left: 3px solid #3b82f6 }
+.g2 { background: rgba(29,78,216,.25); border-left: 3px solid #60a5fa }
+.g3 { background: rgba(8,145,178,.25); border-left: 3px solid #0891b2 }
+.g4 { background: rgba(13,148,136,.25); border-left: 3px solid #0d9488 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #93c5fd }
+.g2 .title { color: #bfdbfe }
+.g3 .title { color: #67e8f9 }
+.g4 .title { color: #5eead4 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX */
+.trick-box { background: rgba(13,148,136,.1); border: 1px solid rgba(94,234,212,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #5eead4; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(59,130,246,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #1e3a8a; color: #93c5fd; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(30,58,138,.25); font-weight: 700; font-size: .66rem; color: #93c5fd; text-align: left }
+.rtable .ours td { background: rgba(59,130,246,.1); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(30,58,138,.2); border-radius: 8px; border: 1px solid rgba(59,130,246,.15) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #1d4ed8; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #93c5fd; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(59,130,246,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(59,130,246,.06); border: 1px solid rgba(59,130,246,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* AI ARENA TABLE */
+.arena-table { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 6px 0 }
+.arena-table th { background: #1e3a8a; color: #93c5fd; padding: 3px 6px; text-align: center; font-size: .62rem }
+.arena-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .66rem; color: #d6d3d1 }
+.arena-table td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.arena-table .ours td { background: rgba(59,130,246,.12); font-weight: 800; color: #fde68a }
+.arena-table .delta { color: #86efac; font-size: .62rem }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2508_Qwen_Image%2F" style="text-decoration: none;">Qwen-Image — Advanced Text-to-Image and Image Editing with Superior Text Rendering</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2508.02324" target="_blank" style="text-decoration: none;">arXiv:2508.02324</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2508.02324 &nbsp;|&nbsp; 通义实验室，阿里巴巴集团</span>
+    <div class="zh-title">Qwen-Image： Superior Text Rendering 引领的先进文生图与图像编辑</div>
+    <h1>Qwen-Image: Advanced Text-to-Image and Image Editing <span>with Superior Text Rendering</span></h1>
+    <div class="authors">通义实验室，阿里巴巴集团</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">0.91</div><div class="sub">GenEval<br>Overall</div></div>
+    <div class="score-box"><div class="num">7.56</div><div class="sub">GEdit EN<br>Overall Score</div></div>
+    <div class="score-box"><div class="num">#3</div><div class="sub">AI Arena<br>Ranking</div></div>
+    <div class="score-box"><div class="num">119+</div><div class="sub">语言<br>支持数</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 文字渲染能力 -->
+<div class="col">
+  <div class="sec-head c-blue"><div class="nc">1</div><h2>核心问题与文字渲染能力</h2></div>
+  <p class="body">现有文生图模型在<strong>文字渲染</strong>方面存在显著缺陷：拼写错误、字符遗漏、字体扭曲。Qwen-Image 首次在开源模型中实现中英文段落级文字渲染，并在图像编辑中保持语义一致性。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心挑战：文字渲染的三个层次</div>
+      <p>(1) <b>单词级</b>：简单标签、单词牌匾<br>
+      (2) <b>多行段落级</b>：PDF、幻灯片、海报中的大段文字<br>
+      (3) <b>空间布局敏感</b>：多物体场景中文字与几何位置对齐</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">跨 Benchmark 领先性能</div>
+      <p>GenEval 0.91（首个突破 0.9 的开源模型）<br>
+      GEdit 双语（EN: 7.56, CN: 7.52）超越 GPT Image 1<br>
+      AI Arena 开源第一，总榜第三</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src=""src/content/figure_aiarena_scores.png" alt="AI Arena Scores" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#93c5fd;font-size:.8rem;&quot;><i>图：AI Arena Elo 排行榜</i><br><small>src/assets/figure_aiarena_scores.png</small></div>'">
+    <div class="fig-cap">图 1：AI Arena 图像生成 Elo 排行榜（Qwen-Image 开源第一，总榜第三）</div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#93c5fd;margin-top:8px;">文字渲染 Benchmark 结果</p>
+  <table class="rtable">
+    <tr><th class="left">Benchmark</th><th>指标</th><th>结果</th></tr>
+    <tr><td class="left">CVTG-2K (英文)</td><td>Word Accuracy</td><td class="best dv">领先</td></tr>
+    <tr><td class="left">ChineseWord</td><td>字符准确率</td><td class="best dv">最高</td></tr>
+    <tr><td class="left">LongText-Bench (EN)</td><td>Accuracy</td><td>第二</td></tr>
+    <tr><td class="left">LongText-Bench (CN)</td><td>Accuracy</td><td class="best dv">第一</td></tr>
+  </table>
+</div>
+
+<!-- COLUMN 2: 方法架构 -->
+<div class="col">
+  <div class="sec-head c-lightblue"><div class="nc">2</div><h2>方法与训练架构</h2></div>
+  <p class="body">Qwen-Image 基于<strong>双条件 MMDiT 架构</strong>，融合 Qwen-VL 语义特征与 VAE 重建特征，采用课程学习策略实现多层次文字渲染能力。</p>
+
+  <div class="fig-box">
+    <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Model Architecture" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#93c5fd;font-size:.8rem;&quot;><i>图：Qwen-Image 模型架构</i><br><small>src/assets/figure_qwen-image-arch2.png</small></div>'">
+    <div class="fig-cap">图 2：双条件 MMDiT 架构（Qwen-VL 语义 + VAE 重建特征）</div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">阶段一：数据工程</div>
+      <p>大规模收集、标注、过滤、合成增强、类别平衡。构建覆盖中英文、多场景的文字渲染数据集。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">阶段二：课程学习</div>
+      <p>从基础文字渲染 → 段落级 → 布局敏感描述。三阶段由简入难，逐步解锁复杂文字渲染能力。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">阶段三：RL 微调</div>
+      <p>基于 GenEval 反馈的强化学习微调，Qwen-Image-RL 在 Position (+0.11) 和 Attribute (+0.06) 上显著提升。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">Producer-Consumer 分布式训练</div>
+    <p>使用 <b>TensorPipe</b> + <b>Megatron</b> 框架实现高效的分布式预训练，支撑大规模数据吞吐量。</p>
+  </div>
+
+  <div class="fig-box">
+    <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Data Synthesis" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#93c5fd;font-size:.8rem;&quot;><i>图：数据合成策略</i><br><small>src/assets/figure_synthesis.png</small></div>'">
+    <div class="fig-cap">图 3：文字渲染数据合成与增强流程</div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-teal"><div class="nc">3</div><h2>实验结果与分析</h2></div>
+  <p class="body">在 GenEval、GEdit-Bench、AI Arena 等权威 benchmark 上全面评测。Qwen-Image 在开源模型中全面领先，RL 版本更成为首个 GenEval 突破 0.9 的模型。</p>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#93c5fd;">GenEval Benchmark（文字到图像生成）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>Single</th><th>Two</th><th>Count</th><th>Colors</th><th>Position</th><th>Attribute</th><th>Overall</th></tr>
+    <tr class="cat"><td colspan="8">主流模型</td></tr>
+    <tr><td class="left">HiDream-I1-Full</td><td>1.00</td><td>0.98</td><td>0.79</td><td>0.91</td><td>0.60</td><td>0.72</td><td>0.83</td></tr>
+    <tr><td class="left">GPT Image 1 [High]</td><td>0.99</td><td>0.92</td><td>0.85</td><td>0.92</td><td>0.75</td><td>0.61</td><td>0.84</td></tr>
+    <tr><td class="left">Seedream 3.0</td><td>0.99</td><td>0.96</td><td>0.91</td><td>0.93</td><td>0.47</td><td>0.80</td><td>0.84</td></tr>
+    <tr class="ours"><td class="left">Qwen-Image</td><td>0.99</td><td>0.92</td><td>0.89</td><td>0.88</td><td>0.76</td><td>0.77</td><td class="best dv">0.87</td></tr>
+    <tr class="ours"><td class="left">Qwen-Image-RL</td><td class="best dv">1.00</td><td>0.95</td><td class="best dv">0.93</td><td>0.92</td><td class="best dv">0.87</td><td class="best dv">0.83</td><td class="best dv">0.91</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#93c5fd;margin-top:6px;">GEdit-Bench（图像编辑）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>EN G_SC</th><th>EN G_O</th><th>CN G_SC</th><th>CN G_O</th></tr>
+    <tr><td class="left">FLUX.1 Kontext [Pro]</td><td>7.02</td><td>6.56</td><td>1.11</td><td>1.23</td></tr>
+    <tr><td class="left">Step1X-Edit</td><td>7.66</td><td>6.97</td><td>7.20</td><td>6.86</td></tr>
+    <tr><td class="left">GPT Image 1 [High]</td><td>7.85</td><td>7.53</td><td>7.67</td><td>7.30</td></tr>
+    <tr class="ours"><td class="left">Qwen-Image</td><td class="best dv">8.00</td><td class="best dv">7.56</td><td class="best dv">7.82</td><td class="best dv">7.52</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#93c5fd;margin-top:6px;">AI Arena Elo 排行榜</p>
+  <table class="arena-table">
+    <tr><th class="left">排名</th><th>模型</th><th>Elo 差异</th></tr>
+    <tr><td class="left">1</td><td class="left">Imagen 4 Ultra Preview 0606</td><td class="delta">~+30</td></tr>
+    <tr><td class="left">2</td><td class="left">Seedream 3.0</td><td>—</td></tr>
+    <tr class="ours"><td class="left">3</td><td class="left">Qwen-Image（开源第一）</td><td class="delta">基准</td></tr>
+    <tr><td class="left">4</td><td class="left">GPT Image 1 [High]</td><td class="delta">~-30</td></tr>
+    <tr><td class="left">5</td><td class="left">FLUX.1 Kontext [Pro]</td><td class="delta">~-30</td></tr>
+  </table>
+
+  <div class="trick-box">
+    <div class="trick-title">RL 微调的关键突破</div>
+    <p>Qwen-Image-RL 在 GenEval Position 维度从 0.76 提升至 0.87（+0.11），Attribute 从 0.77 提升至 0.83（+0.06），证明 RL 是解锁细粒度可控生成的关键。</p>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心贡献 1</div>
+    <p><span class="hl">最强文字渲染</span>：支持中英文多行文字、段落级渲染、局部文字插入，GenEval 0.91 首个破 0.9 开源模型。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心贡献 2</div>
+    <p><span class="hl">一致性图像编辑</span>：GEdit 双语 leaderboard 第一（EN: 7.56, CN: 7.52），超越 GPT Image 1。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">核心贡献 3</div>
+    <p><span class="hl">开源第一</span>：AI Arena 开源模型排名第一，总榜第三，仅次于 Imagen 4 和 Seedream 3.0。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">技术亮点</div>
+    <p><span class="hl">双条件 MMDiT</span>：Qwen-VL 语义 + VAE 重建特征融合；<span class="hl">课程学习</span>：三阶段由简入难；<span class="hl">Producer-Consumer</span> 分布式训练。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

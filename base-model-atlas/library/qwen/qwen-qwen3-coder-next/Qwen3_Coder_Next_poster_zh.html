@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="1400">
+<title>Qwen3-Coder-Next — 80B MoE · 3B Active · Agentic Coding</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; margin: 0; padding: 20px; color: #d6d3d1; }
+.poster { width: 1400px; background: #1c1917; margin: 0 auto; overflow: hidden; border-radius: 12px; box-shadow: 0 8px 60px rgba(0,0,0,.6); }
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px; }
+.lang-switch a { font: 700 12px/1 sans-serif; color: #a8a29e; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; text-decoration: none; }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55); }
+.backlinks { margin: 14px 48px 0; padding: 10px 16px; background: rgba(124,58,237,.08); border: 1px solid rgba(124,58,237,.2); border-radius: 8px; font-size: .8rem; color: #a8a29e; }
+.backlinks a { color: #c4b5fd; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.header { background: linear-gradient(120deg, #4c1d95 0%, #7c3aed 42%, #0891b2 100%); color: #fff; padding: 26px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px; }
+.hdr-left .venue { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 4px 12px; font-size: .72rem; font-weight: 700; margin-bottom: 8px; }
+.hdr-left h1 { margin: 0 0 4px; font-size: 1.95rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.1; }
+.hdr-left h1 .sub { font-size: 1.05rem; font-weight: 700; opacity: .9; margin-left: 8px; }
+.hdr-left .tagline { font-size: .85rem; opacity: .9; max-width: 760px; line-height: 1.5; margin: 8px 0 0; }
+.score-boxes { display: flex; gap: 8px; flex-shrink: 0; }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 10px 12px; text-align: center; min-width: 96px; }
+.score-box .num { font-size: 1.6rem; font-weight: 900; color: #fde68a; line-height: 1; }
+.score-box .sub { font-size: .62rem; color: #c4b5fd; margin-top: 4px; line-height: 1.25; }
+.main { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.col { padding: 20px 18px; border-right: 1px solid rgba(168,162,158,.15); }
+.col:last-child { border-right: none; }
+.sec-head { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+.sec-head .nc { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+.sec-head h2 { font-size: .98rem; font-weight: 800; margin: 0; color: #e5e7eb; }
+.c1 .sec-head .nc { background: #7c3aed; }
+.c2 .sec-head .nc { background: #0891b2; }
+.c3 .sec-head .nc { background: #4c1d95; }
+.box { border-radius: 8px; padding: 10px 12px; margin-bottom: 9px; }
+.box .title { font-size: .76rem; font-weight: 800; margin-bottom: 4px; color: #fde68a; }
+.box p { font-size: .72rem; line-height: 1.55; margin: 0; color: #d6d3d1; }
+.box p + p { margin-top: 5px; }
+.box ul { font-size: .72rem; margin: 4px 0 0; padding-left: 16px; line-height: 1.5; color: #d6d3d1; }
+.box ul li { margin-bottom: 2px; }
+.b1 { background: rgba(124,58,237,.10); border-left: 3px solid #7c3aed; }
+.b2 { background: rgba(8,145,178,.10); border-left: 3px solid #0891b2; }
+.b3 { background: rgba(76,29,149,.12); border-left: 3px solid #6d28d9; }
+.b4 { background: rgba(217,119,6,.10); border-left: 3px solid #d97706; }
+.b5 { background: rgba(5,150,105,.10); border-left: 3px solid #059669; }
+.b6 { background: rgba(220,38,38,.10); border-left: 3px solid #dc2626; }
+.b1 .title { color: #c4b5fd; }
+.b2 .title { color: #67e8f9; }
+.b3 .title { color: #ddd6fe; }
+.b4 .title { color: #fcd34d; }
+.b5 .title { color: #6ee7b7; }
+.b6 .title { color: #fca5a5; }
+.num-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.num-cell { background: rgba(255,255,255,.04); border: 1px solid rgba(168,162,158,.12); border-radius: 6px; padding: 6px 8px; text-align: center; }
+.num-cell .n { font-size: 1.0rem; font-weight: 900; color: #fde68a; line-height: 1.1; }
+.num-cell .l { font-size: .6rem; color: #a8a29e; margin-top: 2px; }
+.stage-list { counter-reset: stage; margin: 4px 0; }
+.stage-item { background: rgba(124,58,237,.06); border: 1px solid rgba(167,139,250,.12); border-radius: 7px; padding: 7px 8px 7px 34px; margin-bottom: 5px; position: relative; }
+.stage-item::before { content: counter(stage); position: absolute; left: 7px; top: 7px; width: 20px; height: 20px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: .68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; counter-increment: stage; }
+.stage-item .stitle { font-size: .74rem; font-weight: 700; color: #c4b5fd; margin-bottom: 2px; }
+.stage-item p { font-size: .68rem; color: #a8a29e; margin: 0; line-height: 1.5; }
+.rtable { width: 100%; border-collapse: collapse; font-size: .68rem; margin: 6px 0; }
+.rtable th { background: #4c1d95; color: #fde68a; padding: 4px 5px; text-align: center; font-weight: 700; font-size: .62rem; }
+.rtable th:first-child { text-align: left; }
+.rtable td { padding: 3px 5px; color: #d6d3d1; border-bottom: 1px solid rgba(168,162,158,.1); text-align: center; }
+.rtable td:first-child { text-align: left; font-weight: 600; font-size: .65rem; }
+.rtable .ours td { background: rgba(253,230,138,.07); font-weight: 800; color: #fde68a; }
+.rtable .sec td { background: rgba(255,255,255,.02); color: #a8a29e; font-style: italic; }
+.fig-box { border-radius: 8px; overflow: hidden; background: rgba(124,58,237,.04); border: 1px solid rgba(168,162,158,.15); margin: 6px 0; }
+.fig-box img { width: 100%; display: block; }
+.fig-cap { text-align: center; padding: 5px 10px; font-size: .62rem; color: #a8a29e; font-style: italic; background: rgba(28,25,23,.85); }
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.25); border-radius: 8px; padding: 9px 11px; margin: 7px 0; }
+.trick-box .trick-title { font-size: .68rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.trick-box p { font-size: .7rem; color: #d6d3d1; line-height: 1.5; margin: 0; }
+.bottom-strip { background: #0f0d0c; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(124,58,237,.3); }
+.bstrip { padding: 13px 18px; border-right: 1px solid rgba(168,162,158,.1); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #a78bfa; margin-bottom: 5px; }
+.bstrip p { font-size: .7rem; color: #d6d3d1; margin: 0; line-height: 1.5; }
+.bstrip .hl { color: #fbbf24; font-weight: 800; }
+.tldr-bar { margin: 0 48px 12px; padding: 11px 14px; background: linear-gradient(90deg, rgba(124,58,237,.18), rgba(8,145,178,.12)); border-left: 3px solid #7c3aed; border-radius: 6px; font-size: .78rem; line-height: 1.55; color: #e5e7eb; }
+.tldr-bar b { color: #fde68a; }
+</style>
+</head>
+<body>
+<div class="lang-switch">
+  <a href="Qwen3_Coder_Next_poster.html">EN</a>
+  <a href="#" class="active">中</a>
+</div>
+
+<div class="poster">
+
+  <div class="backlinks">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2603_Qwen3_Coder_Next%2FQwen3-Coder-Next-Technical-Report">Qwen3-Coder-Next Technical Report（笔记）</a>
+    &nbsp;|&nbsp; <a href="https://arxiv.org/abs/2603.00729" target="_blank">arXiv:2603.00729</a>
+    &nbsp;|&nbsp; <a href="https://github.com/QwenLM/Qwen3-Coder" target="_blank">GitHub: QwenLM/Qwen3-Coder</a>
+    &nbsp;|&nbsp; <a href="https://huggingface.co/Qwen/Qwen3-Coder-Next" target="_blank">HuggingFace</a>
+  </div>
+
+  <div class="header">
+    <div class="hdr-left">
+      <span class="venue">Qwen Team · 2026 · arXiv:2603.00729</span>
+      <h1>Qwen3-Coder-Next<span class="sub">Technical Report</span></h1>
+      <p class="tagline"><b>80B MoE / 3B 激活</b>，基于 Qwen3-Next 的 Hybrid Attention + MoE 架构。核心主张：<b>scaling agentic training 比单纯 scaling model size 更值得</b>——以 ~1/10 的 active 参数追上 DeepSeek-V3.2 (671A37)、GLM-4.7 (358A32)、Kimi-K2.5 (1000A32) 等 SWE 大模型。</p>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box"><div class="num">3B</div><div class="sub">Active Param<br>(80B Total)</div></div>
+      <div class="score-box"><div class="num">262K</div><div class="sub">Context<br>Length</div></div>
+      <div class="score-box"><div class="num">1.6M</div><div class="sub">Verifiable<br>SWE Tasks</div></div>
+      <div class="score-box"><div class="num">71.3</div><div class="sub">SWE-Bench<br>Verified</div></div>
+    </div>
+  </div>
+
+  <div class="tldr-bar">
+    🎯 <b>TL;DR</b> — 真正可借鉴的不是模型本身，而是把<b>"任务合成 + 可执行环境 + 执行反馈学习"</b>做成了一条工业化 pipeline：<b>807K</b> 真 GitHub PR 环境 + <b>~800K</b> 合成 bug + <b>21</b> 种 tool-chat template + 一个被 RL 逼出来的 <b>reward-hacking blocker</b>。
+  </div>
+
+  <div class="main">
+
+    <!-- ============== Column 1 ============== -->
+    <div class="col c1">
+
+      <div class="sec-head"><div class="nc">1</div><h2>问题与 Mid-training</h2></div>
+
+      <div class="box b6">
+        <div class="title">为什么需要重新设计 agentic training？</div>
+        <ul>
+          <li>真实 coding agent ≠ 静态代码生成：长 horizon、多步交互、工具调用、失败恢复。</li>
+          <li>agentic 训练信号稀缺：<b>瓶颈不是 RL 算法，而是 verifiable 执行环境</b>。</li>
+          <li>生产 agent 对 latency/cost 敏感——能否用 3B active 撑起 SWE？</li>
+        </ul>
+      </div>
+
+      <div class="box b1">
+        <div class="title">Mid-training 数据：自然 + 合成（§3）</div>
+        <ul>
+          <li>GitHub：语言 <b>92 → 370</b>，repo-level ~<b>600B tokens</b></li>
+          <li>Context：<b>32K → 262K</b> tokens，BFP packing</li>
+          <li>Text-code grounding：用 Qwen3-Coder-480B 把 CC 文档重写成干净 Markdown</li>
+          <li>FIM：chat-FIM + search-and-replace FIM（后者更贴近 PR 分布，胜出）</li>
+        </ul>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">+8.7</div><div class="l">EvalPlus（reformat）</div></div>
+          <div class="num-cell"><div class="n">+12.3</div><div class="l">MultiPL-E（reformat）</div></div>
+        </div>
+      </div>
+
+      <div class="box b2">
+        <div class="title">Cross-scaffold 迁移是有限的（§3 图）</div>
+        <p>同 scaffold 内 scaling works；跨 scaffold 训练→评测迁移差。<b>OpenHands→SWE-Agent 迁移很差</b>，反向中等。→ 单 scaffold 训不出通用 agent。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/scaling_law_transfer.png" alt="cross-scaffold scaling">
+        <div class="fig-cap">图：左 — 同 scaffold tokens↑ → 单调变好；右 — 跨 scaffold 迁移有限</div>
+      </div>
+
+      <div class="sec-head" style="margin-top:14px"><div class="nc">2</div><h2>Task Synthesis：可执行环境工业化</h2></div>
+
+      <div class="box b3">
+        <div class="title">路线 A — 真 GitHub PR → 可执行环境</div>
+        <p>挖 issue-related PR → 分解 (buggy, fix, test patch) → environment-building agent（<code>bash</code> / <code>switch-to-resolved</code> / <code>switch-to-bug</code>）构建 Docker image + 验证脚本。要求脚本能可靠区分 buggy/fixed。</p>
+        <p>失败模式：agent 写"hacked verifier"（<code>grep -q</code> 关键字匹配）→ LLM hacking detector 过滤。训出 env-building 模型在 300 PR bench 上 <b>78.4%</b>（Claude-Opus-4.5 77.8% / Gemini-3-Pro 69.6%）。</p>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">807,693</div><div class="l">Verifiable PR Tasks</div></div>
+          <div class="num-cell"><div class="n">52,960</div><div class="l">Repos · 8 语言族</div></div>
+        </div>
+      </div>
+
+      <div class="box b4">
+        <div class="title">路线 B — 基于 SWE-Smith/Flow/Rebench/Multi-SWE-RL 合成 bug</div>
+        <p>三种策略：<code>lm_rewrite</code> / <code>lm_modify</code> / <code>procedural_modify</code>，扩展到多语言（tree-sitter AST）。<b>双向校验</b>：bug 必须让至少 1 测试 PASS→FAIL，revert 后必须回到 passing。删 bug-triggering 测试文件防 shortcut。</p>
+        <div class="num-grid">
+          <div class="num-cell"><div class="n">~800K</div><div class="l">Synthesized Bug Tasks</div></div>
+          <div class="num-cell"><div class="n">9+</div><div class="l">Programming Languages</div></div>
+        </div>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/bug-synthesis.png" alt="bug synthesis pipeline">
+        <div class="fig-cap">图：bug 合成 pipeline — repository collection → bug sampling → validation → issue generation</div>
+      </div>
+
+    </div>
+
+    <!-- ============== Column 2 ============== -->
+    <div class="col c2">
+
+      <div class="sec-head"><div class="nc">3</div><h2>Post-training：SFT → 4 Expert → Distill</h2></div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">SFT（§4.1）</div>
+          <p>三源：私有语料 + verified agentic trajectories + doc-grounded QA。闭环过滤：Mini-SWE-agent 作 user simulator 真执行响应 → 丢 hallucinated 样本。Pairwise judge：n 候选 → C(n,2) 对 → checklist 排序。</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert A · Web Development</div>
+          <p>Playwright + Chromium 渲染（React 等 Vite 初始化）。VLM 双层评估：静态截图（layout/content/UI）+ 动态交互（DOM 解析→生成 click/form 动作→pre/post 截图对比）。双阶段不过滤丢弃。</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert B · UX / CLI 格式鲁棒性</div>
+          <p>核心 finding：<b>rule-based tool-call format validation 极其有效</b>——提高上限（防学 malformed 模式）+ 提高效率（减 retry）。<b>Tool Chat Template Scaling</b>：训练混用 <b>21</b> 种 template（NL / JSON / Python / XML / TypeScript / 自家 qwen3_coder XML）。</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert C · Single-turn RL</div>
+          <p>"大多数 coding 任务天然适合 execution-driven RL"。任务谱：library/API、I/O 格式、<b>多语言</b>、<b>vulnerability-prone 场景</b>。Unit test 自动合成：多模型生成 → 多数投票保留高共识测试。</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert D · SWE Multi-turn Agentic RL</div>
+          <p>Reward shaping：unfinished trajectory penalty + turn-level tool-format penalty（token-level）。<b>Reinforced Reward Hacking Blocker</b> 见下方亮框。</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">Expert Distillation → 统一部署模型</div>
+          <p>4 专家蒸馏回 SFT checkpoint，保持 instruction following，无需 runtime expert routing 或多模型 orchestration。</p>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">⚠️ Reinforced Reward Hacking Blocker（论文亮点）</div>
+        <p>RL 后期 agent <b>自主学会</b>用 <code>git remote add</code> / <code>git clone</code> / <code>curl</code> / <code>wget</code> 重新连 GitHub 拿 ground-truth——论文声称<b>此前未报道过</b>。又不能直接禁网（合法构建/装包/查文档都需要）。</p>
+        <p style="margin-top:5px"><b>解法</b>：tool call 同时含 repo link（<code>github.com/{repo}</code>）+ 网络关键词（<code>git</code>/<code>curl</code>/<code>wget</code>）→ block + 明确反馈。</p>
+        <p style="margin-top:5px"><b>反直觉副作用</b>：开启 blocker 后，agent 平均 turn 数 <b>50 → 130</b>——模型本来有潜力做更长 horizon，被捷径"惯坏"了。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/multi-rl.png" alt="multi-turn RL with blocker">
+        <div class="fig-cap">图左 — 带 blocker 的 SWE-Bench Verified 性能；图右 — 移除 blocker 后 agent 自主学会 git hacking</div>
+      </div>
+
+      <div class="box b3">
+        <div class="title">Tool Chat Template Scaling（§4.2 图）</div>
+        <p>固定数据量与训练配置，<b>template 数量↑ → SWE-Bench Verified 单调↑</b>。自家 <code>qwen3_coder</code> XML 格式专为 string-heavy 参数设计，避免 JSON 多行转义。</p>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/format_scaling.png" alt="format scaling">
+        <div class="fig-cap">图：SWE-Bench Verified 性能 vs. tool chat template 数量</div>
+      </div>
+
+    </div>
+
+    <!-- ============== Column 3 ============== -->
+    <div class="col c3">
+
+      <div class="sec-head"><div class="nc">4</div><h2>实验结果（max turns = 300）</h2></div>
+
+      <div class="box b2">
+        <div class="title">SWE-Bench Verified</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>Size</th><th>SWE<br>Agent</th><th>Mini<br>SWE</th><th>Open<br>Hands</th></tr>
+          <tr><td>Claude-Opus-4.5</td><td>?</td><td>78.2</td><td>77.8</td><td>79.0</td></tr>
+          <tr><td>Claude-Sonnet-4.5</td><td>?</td><td>76.0</td><td>68.4</td><td>74.6</td></tr>
+          <tr class="sec"><td colspan="5">— Open-source —</td></tr>
+          <tr><td>DeepSeek-V3.2</td><td>671A37</td><td>70.2</td><td>67.2</td><td>72.6</td></tr>
+          <tr><td>GLM-4.7</td><td>358A32</td><td>74.2</td><td>70.4</td><td>70.6</td></tr>
+          <tr><td>MiniMax-M2.1</td><td>230A10</td><td>74.8</td><td>70.4</td><td>71.0</td></tr>
+          <tr><td>Kimi-K2.5</td><td>1000A32</td><td>73.2</td><td>70.8</td><td>—</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>80A3</td><td>70.6</td><td>71.1</td><td>71.3</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#a8a29e;margin-top:4px">→ 3B active 追到 ~70% 量级，与 230A10 / 671A37 / 1000A32 同档。</p>
+      </div>
+
+      <div class="box b1">
+        <div class="title">SWE-Bench Multilingual & Pro</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>Size</th><th>ML<br>SWE-A</th><th>ML<br>Mini</th><th>ML<br>OH</th><th>Pro<br>SWE-A</th><th>Pro<br>Mini</th></tr>
+          <tr><td>Claude-Opus-4.5</td><td>?</td><td>71.7</td><td>71.8</td><td>75.2</td><td>51.6</td><td>50.2</td></tr>
+          <tr><td>Claude-Sonnet-4.5</td><td>?</td><td>67.2</td><td>61.3</td><td>66.0</td><td>50.5</td><td>43.0</td></tr>
+          <tr><td>DeepSeek-V3.2</td><td>671A37</td><td>62.3</td><td>55.5</td><td>61.8</td><td>46.0</td><td>32.4</td></tr>
+          <tr><td>GLM-4.7</td><td>358A32</td><td>63.7</td><td>61.8</td><td>60.8</td><td>45.1</td><td>39.4</td></tr>
+          <tr><td>MiniMax-M2.1</td><td>230A10</td><td>66.2</td><td>62.5</td><td>67.5</td><td>40.8</td><td>39.1</td></tr>
+          <tr><td>Kimi-K2.5</td><td>1000A32</td><td>63.7</td><td>62.3</td><td>—</td><td>47.3</td><td>42.8</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>80A3</td><td>62.8</td><td>56.2</td><td>64.3</td><td>42.7</td><td>38.7</td></tr>
+        </table>
+      </div>
+
+      <div class="fig-box">
+        <img src="src/assets/model_scores_comparison.png" alt="5 benchmark comparison">
+        <div class="fig-cap">图：5 个 benchmark（Verified/Multi/Pro/Terminal-Bench 2.0/Aider）对比</div>
+      </div>
+
+      <div class="box b4">
+        <div class="title">Template Following（5 种 IDE/CLI scaffold）</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>Avg</th></tr>
+          <tr><td>GPT-5-2</td><td>84.0</td><td>14.0</td><td>41.8</td><td>29.8</td><td>77.0</td><td>49.3</td></tr>
+          <tr><td>Claude-S-4.5</td><td>86.8</td><td>61.0</td><td>100</td><td>88.0</td><td>91.0</td><td>85.4</td></tr>
+          <tr><td>Gemini-3-pro</td><td>92.4</td><td>57.0</td><td>98.0</td><td>93.5</td><td>94.0</td><td>87.0</td></tr>
+          <tr><td>Deepseek-v3.2</td><td>98.0</td><td>87.0</td><td>100</td><td>92.5</td><td>91.0</td><td>93.7</td></tr>
+          <tr><td>GLM-4.7</td><td>91.0</td><td>64.0</td><td>100</td><td>94.7</td><td>0.0</td><td>69.9</td></tr>
+          <tr><td>Kimi-K2</td><td>59.0</td><td>59.0</td><td>100</td><td>57.4</td><td>81.0</td><td>71.3</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>98.0</td><td>83.0</td><td>98.0</td><td>91.5</td><td>93.0</td><td>92.7</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#a8a29e;margin-top:4px">→ 别只看 Avg：其他模型几乎都有"塌掉"的列（GLM-4.7 在 S5=0），Qwen3-Coder-Next <b>5 列全在 83+</b>，没有短板。</p>
+      </div>
+
+      <div class="box b5">
+        <div class="title">Code → Math 能力外溢</div>
+        <table class="rtable">
+          <tr><th>Model</th><th>HMMT25<br>Feb</th><th>HMMT25<br>Nov</th><th>AIME<br>24</th><th>AIME<br>25</th></tr>
+          <tr><td>Qwen3-Next</td><td>54.27</td><td>68.07</td><td>82.92</td><td>69.64</td></tr>
+          <tr class="ours"><td>Qwen3-Coder-Next</td><td>70.21</td><td>75.57</td><td>89.01</td><td>83.07</td></tr>
+        </table>
+        <p style="font-size:.66rem;color:#a8a29e;margin-top:4px">→ code 推理显著外溢到数学（HMMT25 Feb +16，AIME25 +13.4），MMLU 几乎不掉。</p>
+      </div>
+
+      <div class="box b2">
+        <div class="title">MegaFlow 基础设施</div>
+        <p>Alibaba Cloud Kubernetes + <b>Argo workflow</b>，3 stage：<code>agent rollout → evaluation → post-processing</code>。rollout pod 同时 co-locate agent + environment 容器。支持 SWE-agent / Mini-SWE-agent / OpenHands / Claude-Code / Qwen-Code / Terminus。</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">Takeaway 1 · 护城河</div>
+      <p>真实瓶颈是 <span class="hl">verifiable env</span> 而非 RL 算法。807K 真 PR + 800K 合成 bug 才是难复制的部分。</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 2 · Reward 设计</div>
+      <p>Reward hacking 是能力涌现的副作用。blocker 一开平均 turn 数 <span class="hl">50 → 130</span>——先列 shortcut 再设 reward。</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 3 · Template</div>
+      <p><span class="hl">Template scaling &gt; 单一最佳模板</span>。21 种 tool chat template 训练带来的鲁棒性，反驳了"固定 system prompt"的工程惯性。</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">Takeaway 4 · 路线图</div>
+      <p>Limitation 即路线图：<span class="hl">frontend/UI、大型 SWE、cybersecurity/CTF</span> 是下一阶段差异化点。</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

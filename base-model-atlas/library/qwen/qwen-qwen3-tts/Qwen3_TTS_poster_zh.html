@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1400">
+<title>Qwen3-TTS — 多语言可控语音合成</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0c0a09; margin: 0; padding: 20px; }
+.poster { width: 1400px; background: #1c1917; margin: 0 auto; overflow: hidden; }
+.header { background: linear-gradient(120deg, #0c4a6e 0%, #0284c7 40%, #38bdf8 100%); color: #fff; padding: 20px 48px 28px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.hl { color: #7dd3fc; }
+.hdr-left h1 { margin: 0 0 6px; font-size: 2.0rem; font-weight: 900; letter-spacing: -.02em; }
+.hdr-left h1 .sub { font-size: 1.3rem; font-weight: 700; opacity: .9; }
+.hdr-left .venue { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 5px 14px; font-size: .75rem; font-weight: 700; margin-bottom: 10px; }
+.hdr-left .subtitle { font-size: .88rem; opacity: .85; margin: 0; max-width: 700px; line-height: 1.45; }
+.score-boxes { display: flex; gap: 10px; flex-shrink: 0; }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #7dd3fc; line-height: 1; }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 4px; }
+.main { display: grid; grid-template-columns: 300px 1fr 340px; }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col3 { border-right: none }
+.sec-head { margin: 0 0 14px; }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #7dd3fc; margin: 0; text-transform: uppercase; letter-spacing: .04em; }
+.sec-head .divider { height: 2px; background: linear-gradient(90deg, #0284c7, transparent); margin-top: 6px; border-radius: 1px; }
+.gap-box { border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.g1 { background: rgba(2,132,199,.08); border-left: 3px solid #0284c7; }
+.g2 { background: rgba(14,165,233,.08); border-left: 3px solid #0ea5e9; }
+.g3 { background: rgba(56,189,248,.08); border-left: 3px solid #38bdf8; }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 4px; }
+.g1 .title { color: #7dd3fc; }
+.g2 .title { color: #38bdf8; }
+.g3 .title { color: #bae6fd; }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.55; margin: 0; }
+.gap-box p + p { margin-top: 6px; }
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+.trick-box p { font-size: .72rem; color: #d6d3d1; line-height: 1.5; margin: 0; }
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(2,132,199,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0; }
+.fig-box img { width: 100%; display: block; }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8); }
+.stage-list { counter-reset: stage; }
+.stage-item { background: rgba(2,132,199,.06); border: 1px solid rgba(56,189,248,.1); border-radius: 8px; padding: 8px 8px 8px 38px; margin-bottom: 6px; position: relative; }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #0284c7; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; counter-increment: stage; }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #7dd3fc; margin-bottom: 3px; }
+.stage-item p { font-size: .7rem; color: #a8a29e; margin: 0; line-height: 1.5; }
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0; }
+.rtable th { background: #0c4a6e; color: #7dd3fc; padding: 6px 8px; text-align: left; font-weight: 700; }
+.rtable td { padding: 5px 8px; color: #d6d3d1; border-bottom: 1px solid rgba(168,162,158,.1); }
+.rtable .ours td { background: rgba(56,189,248,.06); font-weight: 800; color: #7dd3fc; }
+.rtable .model-name { font-weight: 700; color: #38bdf8; }
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid rgba(2,132,199,.3); }
+.bstrip { padding: 14px 20px; border-right: 1px solid rgba(168,162,158,.1); }
+.bstrip:last-child { border-right: none; }
+.bstrip .bhead { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px; }
+.bstrip p { font-size: .72rem; color: #d6d3d1; margin: 0; line-height: 1.5; }
+.bstrip .hl { color: #38bdf8; font-weight: 700; }
+.backlinks { margin: 0 48px 0; padding: 12px 16px; background: rgba(2,132,199,.06); border: 1px solid rgba(2,132,199,.15); border-radius: 8px; font-size: .78rem; color: #a8a29e; text-align: center; }
+.backlinks a { color: #38bdf8; text-decoration: none; }
+.backlinks a:hover { text-decoration: underline; }
+.col3 .gap-box { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="backlinks" style="margin: 16px 48px 0;">
+    📚 源文档：<a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2601_Qwen3_TTS%2FQwen3-TTS-Multilingual-Controllable-TTS">Qwen3-TTS 论文笔记</a>
+    &nbsp;|&nbsp;
+    <a href="https://arxiv.org/abs/2601.15621" target="_blank">arXiv:2601.15621</a>
+    &nbsp;|&nbsp;
+    <a href="https://github.com/QwenLM" target="_blank">GitHub</a>
+  </div>
+
+  <div class="header">
+    <div class="hdr-left">
+      <h1><span class="sub">Qwen3-</span>TTS — 多语言可控语音合成</h1>
+      <div class="venue">arXiv:2601.15621 · 2026 · 阿里通义实验室</div>
+      <p class="subtitle">先进的 3 秒语音克隆 + 自然语言声音设计 + 流式语音合成系统，基于 Qwen3 LM 骨干实现 SOTA 性能。</p>
+    </div>
+    <div class="score-boxes">
+      <div class="score-box">
+        <div class="num">97ms</div>
+        <div class="sub">最低首包延迟</div>
+      </div>
+      <div class="score-box">
+        <div class="num">1.24</div>
+        <div class="sub">Seed-TTS WER</div>
+      </div>
+      <div class="score-box">
+        <div class="num">5M+</div>
+        <div class="sub">训练语音小时</div>
+      </div>
+      <div class="score-box">
+        <div class="num">10+</div>
+        <div class="sub">支持语言</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="col">
+      <div class="sec-head">
+        <h2>问题与动机</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g1">
+        <div class="title">核心挑战</div>
+        <p>现代 TTS 系统必须在四个维度同时做到最优：</p>
+        <p>稳定性、可控性、自然度、低延迟</p>
+      </div>
+
+      <div class="gap-box g2">
+        <div class="title">Qwen3-TTS 目标</div>
+        <p>构建同时满足上述要求的统一多语言 TTS 模型，基于 Qwen3 LM 骨干</p>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">关键能力</div>
+        <p><strong>3 秒语音克隆</strong>：参考音频快速克隆</p>
+        <p><strong>Voice Design</strong>：自然语言描述创建声音</p>
+        <p><strong>10+ 语言</strong>：跨语言一致性生成</p>
+        <p><strong>10+ 分钟</strong>：长语音流畅合成</p>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 双码率架构</div>
+        <p><strong>25Hz</strong>: 单码本 + chunk-wise DiT</p>
+        <p><strong>12Hz</strong>: RVQ 多码本 + MTP 模块</p>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sec-head">
+        <h2>核心方法</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="stage-list">
+        <div class="stage-item">
+          <div class="stitle">预训练三阶段</div>
+          <p><strong>S1 通用阶段</strong>：5M+ 小时多语言语音</p>
+          <p><strong>S2 高质量阶段</strong>：精选数据缓解幻觉</p>
+          <p><strong>S3 长上下文阶段</strong>：8K→32K token</p>
+        </div>
+        <div class="stage-item">
+          <div class="stitle">后训练</div>
+          <p><strong>DPO</strong>：人类反馈偏好对齐</p>
+          <p><strong>GSPO</strong>：规则奖励信号</p>
+          <p><strong>Speaker Fine-tuning</strong>：声音克隆定制</p>
+        </div>
+      </div>
+
+      <div class="trick-box">
+        <div class="trick-title">✦ 技术创新</div>
+        <p><strong>MTP (Multi-Codebook Prediction)</strong>：多码本预测实现流式输出</p>
+        <p><strong>双轨表示</strong>：文本+声学 token 沿通道轴拼接</p>
+        <p><strong>Code2Wav</strong>：流式波形解码</p>
+      </div>
+    </div>
+
+    <div class="col col3">
+      <div class="sec-head">
+        <h2>实验结果</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">Zero-shot 语音生成 (WER%)</div>
+      </div>
+
+      <table class="rtable">
+        <tr><th>模型</th><th>test-en</th></tr>
+        <tr><td>Seed-TTS</td><td>1.12</td></tr>
+        <tr><td>CosyVoice 3</td><td>1.45</td></tr>
+        <tr><td class="model-name">Qwen3-TTS-12Hz-1.7B</td><td class="model-name">1.24</td></tr>
+      </table>
+
+      <div class="gap-box g2">
+        <div class="title">语音重建 (LibriSpeech)</div>
+      </div>
+
+      <table class="rtable">
+        <tr><th>模型</th><th>PESQ</th><th>STOI</th><th>SIM</th></tr>
+        <tr><td>Mimi</td><td>2.88</td><td>0.94</td><td>0.87</td></tr>
+        <tr><td class="model-name">Qwen3-TTS-Tokenizer-12Hz</td><td class="model-name">3.21</td><td class="model-name">0.96</td><td class="model-name">0.95</td></tr>
+      </table>
+
+      <div class="gap-box g1">
+        <div class="title">跨语言克隆 (zh→ko WER%)</div>
+        <p>Qwen3-TTS: <span class="hl">4.82</span> vs CosyVoice 3: 14.4</p>
+        <p>相对减少 <span class="hl">66%</span></p>
+      </div>
+
+      <div class="gap-box g3">
+        <div class="title">流式效率 (12Hz-0.6B)</div>
+        <p>首包延迟: <span class="hl">97ms</span></p>
+        <p>RTF: <span class="hl">0.288</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="bstrip">
+      <div class="bhead">流式合成领先</div>
+      <p><span class="hl">97ms 首包延迟</span>：纯因果解码器实现</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">语音克隆 SOTA</div>
+      <p><span class="hl">Seed-TTS WER 1.24</span>：12Hz-1.7B 达到最优</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">跨语言克隆</div>
+      <p><span class="hl">zh→ko 减少 66%</span>：超越 CosyVoice 3</p>
+    </div>
+    <div class="bstrip">
+      <div class="bhead">多语言覆盖</div>
+      <p><span class="hl">10+ 语言</span>：中英日韩等主流语言</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

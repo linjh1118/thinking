@@ -297,6 +297,136 @@ PINNED_TIMELINE_VARIANTS = {
     ]
 }
 
+# Individually addressable Top-8 branch models.  These are model leaves, not
+# marketing-family labels: every item gets its own Overview route and remains
+# grouped under its official capability/modality branch.
+BRANCH_MODEL_NODES = {
+    "deepseek": [
+        ("2501", "DeepSeek-R1-Zero", "Reasoning", "https://github.com/deepseek-ai/DeepSeek-R1"),
+        ("2501", "DeepSeek-R1-Distill", "Reasoning", "https://github.com/deepseek-ai/DeepSeek-R1"),
+        ("2311", "DeepSeek-Coder", "Code", "https://github.com/deepseek-ai/DeepSeek-Coder"),
+        ("2406", "DeepSeek-Coder-V2", "Code", "https://github.com/deepseek-ai/DeepSeek-Coder-V2"),
+        ("2402", "DeepSeekMath", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Math"),
+        ("2408", "DeepSeek-Prover-V1.5", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Prover-V1.5"),
+        ("2504", "DeepSeek-Prover-V2", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Prover-V2"),
+        ("2403", "DeepSeek-VL", "Vision / Omni", "https://github.com/deepseek-ai/DeepSeek-VL"),
+        ("2412", "DeepSeek-VL2", "Vision / Omni", "https://github.com/deepseek-ai/DeepSeek-VL2"),
+        ("2410", "Janus", "Vision / Omni", "https://github.com/deepseek-ai/Janus"),
+        ("2501", "Janus-Pro", "Vision / Omni", "https://github.com/deepseek-ai/Janus"),
+        ("2510", "DeepSeek-OCR", "Document", "https://github.com/deepseek-ai/DeepSeek-OCR"),
+        ("2601", "DeepSeek-OCR2", "Document", "https://github.com/deepseek-ai/DeepSeek-OCR-2"),
+    ],
+    "zhipu": [
+        ("2310", "CogVLM", "Vision", "https://github.com/THUDM/CogVLM"),
+        ("2407", "CogVLM2", "Vision", "https://github.com/THUDM/CogVLM2"),
+        ("2406", "GLM-4V", "Vision", "https://github.com/zai-org/GLM-4"),
+        ("2508", "GLM-4.5V", "Vision", "https://github.com/zai-org/GLM-4.5V"),
+        ("2510", "GLM-4.6V", "Vision", "https://docs.z.ai/guides/overview/overview"),
+        ("2605", "GLM-5V", "Vision", "https://docs.z.ai/guides/overview/overview"),
+        ("2303", "CodeGeeX2", "Code", "https://github.com/THUDM/CodeGeeX2"),
+        ("2407", "CodeGeeX4", "Code", "https://github.com/THUDM/CodeGeeX4"),
+        ("2410", "GLM-4-Voice", "Speech", "https://github.com/THUDM/GLM-4-Voice"),
+        ("2604", "GLM-TTS", "Speech", "https://docs.z.ai/guides/overview/overview"),
+        ("2602", "GLM-OCR", "Document", "https://docs.z.ai/guides/overview/overview"),
+        ("2409", "CogView3", "Image / Video", "https://github.com/THUDM/CogView3"),
+        ("2408", "CogVideoX", "Image / Video", "https://github.com/zai-org/CogVideo"),
+        ("2501", "AutoGLM", "Agent", "https://github.com/THUDM/AutoGLM"),
+    ],
+    "kimi": [
+        ("2504", "Kimi-Audio", "Audio", "https://github.com/MoonshotAI/Kimi-Audio"),
+        ("2506", "Kimi-Dev", "Code", "https://github.com/MoonshotAI/Kimi-Dev"),
+        ("2504", "Kimina-Prover Preview", "Formal Reasoning", "https://github.com/MoonshotAI/Kimina-Prover-Preview"),
+        ("2502", "MoBA", "Efficient Attention", "https://github.com/MoonshotAI/MoBA"),
+    ],
+    "qwen": [
+        ("2308", "CodeQwen", "Code", "https://github.com/QwenLM/CodeQwen1.5"),
+        ("2409", "Qwen2.5-Coder", "Code", "https://github.com/QwenLM/Qwen2.5-Coder"),
+        ("2507", "Qwen3-Coder", "Code", "https://github.com/QwenLM/Qwen3-Coder"),
+        ("2603", "Qwen3-Coder-Next", "Code", "https://github.com/QwenLM/Qwen3-Coder"),
+        ("2308", "Qwen-VL", "Vision", "https://github.com/QwenLM/Qwen-VL"),
+        ("2408", "Qwen2-VL", "Vision", "https://github.com/QwenLM/Qwen2-VL"),
+        ("2501", "Qwen2.5-VL", "Vision", "https://github.com/QwenLM/Qwen2.5-VL"),
+        ("2511", "Qwen3-VL", "Vision", "https://github.com/QwenLM/Qwen3-VL"),
+        ("2605", "Qwen3-VL-Seg", "Vision", "https://github.com/QwenLM/Qwen3-VL"),
+        ("2605", "Qwen-VLA", "Vision", "https://github.com/QwenLM"),
+        ("2312", "Qwen-Audio", "Omni / Speech", "https://github.com/QwenLM/Qwen-Audio"),
+        ("2408", "Qwen2-Audio", "Omni / Speech", "https://github.com/QwenLM/Qwen2-Audio"),
+        ("2509", "Qwen3-Omni", "Omni / Speech", "https://github.com/QwenLM/Qwen3-Omni"),
+        ("2601", "Qwen3-ASR", "Omni / Speech", "https://github.com/QwenLM/Qwen3-ASR"),
+        ("2601", "Qwen3-TTS", "Omni / Speech", "https://github.com/QwenLM/Qwen3-TTS"),
+        ("2508", "Qwen-Image", "Image", "https://github.com/QwenLM/Qwen-Image"),
+        ("2605", "Qwen-Image-2", "Image", "https://github.com/QwenLM/Qwen-Image"),
+        ("2506", "Qwen3-Embedding", "Retrieval", "https://github.com/QwenLM/Qwen3-Embedding"),
+        ("2601", "Qwen3-VL-Embedding", "Retrieval", "https://github.com/QwenLM/Qwen3-VL-Embedding"),
+        ("2510", "Qwen3Guard", "Safety / Agent", "https://github.com/QwenLM/Qwen3Guard"),
+        ("2605", "Qwen-Scope", "Safety / Agent", "https://github.com/QwenLM"),
+    ],
+    "seed": [
+        ("2505", "Seed1.5-VL", "Vision / Omni", "https://github.com/ByteDance-Seed/Seed1.5-VL"),
+        ("2508", "Seed-OSS", "Code / Open", "https://github.com/ByteDance-Seed/seed-oss"),
+        ("2506", "Seed-Coder", "Code / Open", "https://github.com/ByteDance-Seed"),
+        ("2505", "BAGEL", "Any-to-any", "https://github.com/ByteDance-Seed/Bagel"),
+        ("2405", "Seed-TTS", "Speech", "https://seed.bytedance.com/en/"),
+        ("2504", "Seedream 3.0", "Image / Video", "https://seed.bytedance.com/en/"),
+        ("2506", "Seedance 1.0", "Image / Video", "https://seed.bytedance.com/en/"),
+        ("2503", "Seed3D", "World / Embodied", "https://seed.bytedance.com/en/"),
+    ],
+    "openai": [
+        ("2409", "o1", "Reasoning", "https://developers.openai.com/api/docs/models/o1"),
+        ("2501", "o3-mini", "Reasoning", "https://developers.openai.com/api/docs/models/o3-mini"),
+        ("2504", "o3", "Reasoning", "https://developers.openai.com/api/docs/models/o3"),
+        ("2506", "o3-pro", "Reasoning", "https://developers.openai.com/api/docs/models/o3-pro"),
+        ("2504", "o4-mini", "Reasoning", "https://developers.openai.com/api/docs/models/o4-mini"),
+        ("2509", "GPT-5-Codex", "Coding", "https://developers.openai.com/api/docs/models"),
+        ("2511", "GPT-5.1-Codex-Max", "Coding", "https://developers.openai.com/api/docs/models"),
+        ("2512", "GPT-5.2-Codex", "Coding", "https://developers.openai.com/api/docs/models"),
+        ("2602", "GPT-5.3-Codex", "Coding", "https://developers.openai.com/api/docs/models/gpt-5.3-codex"),
+        ("2508", "gpt-oss-20b", "Open weights", "https://openai.com/index/introducing-gpt-oss/"),
+        ("2508", "gpt-oss-120b", "Open weights", "https://openai.com/index/introducing-gpt-oss/"),
+        ("2508", "GPT-Realtime", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Realtime-2.1", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2503", "GPT-4o Transcribe", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2503", "GPT-4o Mini TTS", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2503", "GPT-Image-1", "Image", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Image-2", "Image", "https://developers.openai.com/api/docs/models"),
+    ],
+    "anthropic": [
+        ("2403", "Claude 3 Haiku", "Haiku", "https://www.anthropic.com/news/claude-3-family"),
+        ("2403", "Claude 3 Sonnet", "Sonnet", "https://www.anthropic.com/news/claude-3-family"),
+        ("2403", "Claude 3 Opus", "Opus", "https://www.anthropic.com/news/claude-3-family"),
+        ("2410", "Claude 3.5 Haiku", "Haiku", "https://www.anthropic.com/system-cards"),
+        ("2509", "Claude Sonnet 4.5", "Sonnet", "https://www.anthropic.com/news/claude-sonnet-4-5"),
+        ("2602", "Claude Sonnet 4.6", "Sonnet", "https://www.anthropic.com/system-cards"),
+        ("2510", "Claude Haiku 4.5", "Haiku", "https://www.anthropic.com/news/claude-haiku-4-5"),
+        ("2606", "Claude Fable 5", "Frontier access", "https://www.anthropic.com/system-cards"),
+        ("2606", "Claude Mythos 5", "Frontier access", "https://www.anthropic.com/system-cards"),
+    ],
+    "google": [
+        ("2504", "Gemini 2.0 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2504", "Gemini 2.0 Flash-Lite", "Flash-Lite", "https://deepmind.google/models/model-cards/"),
+        ("2506", "Gemini 2.5 Pro", "Pro", "https://deepmind.google/models/model-cards/"),
+        ("2509", "Gemini 2.5 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2509", "Gemini 2.5 Flash-Lite", "Flash-Lite", "https://deepmind.google/models/model-cards/"),
+        ("2508", "Gemini 2.5 Deep Think", "Deep Think / Computer", "https://deepmind.google/models/model-cards/"),
+        ("2510", "Gemini 2.5 Computer Use", "Deep Think / Computer", "https://deepmind.google/models/model-cards/"),
+        ("2511", "Gemini 3 Pro", "Pro", "https://deepmind.google/models/model-cards/"),
+        ("2512", "Gemini 3 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2511", "Gemini 3 Pro Image", "Image", "https://deepmind.google/models/model-cards/"),
+        ("2602", "Gemini 3.1 Flash Image", "Image", "https://deepmind.google/models/model-cards/"),
+        ("2603", "Gemini 3.1 Flash-Lite", "Flash-Lite", "https://deepmind.google/models/model-cards/"),
+        ("2604", "Gemini 3.1 Flash Audio", "Audio / Live", "https://deepmind.google/models/model-cards/"),
+        ("2605", "Gemini 3.5 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2607", "Gemini 3.5 Flash-Lite", "Flash-Lite", "https://deepmind.google/models/model-cards/"),
+        ("2607", "Gemini 3.6 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2608", "Gemini 3.7 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("2608", "Gemini Omni Flash", "Omni", "https://deepmind.google/models/model-cards/"),
+        ("2507", "Gemini Robotics On-Device", "Robotics", "https://deepmind.google/models/gemini-robotics/"),
+        ("2509", "Gemini Robotics 1.5", "Robotics", "https://deepmind.google/models/gemini-robotics/"),
+        ("2607", "Gemini Robotics-ER 2", "Robotics", "https://deepmind.google/models/model-cards/"),
+        ("2607", "Gemini Robotics On-Device 2", "Robotics", "https://deepmind.google/models/model-cards/"),
+    ],
+}
+
 
 LATEST_PACKS = {
     "DeepSeek_AI": ("2608_DeepSeek_V4_Pro", "DeepSeek-V4-Pro", "GA 版本强化 production agent、原生 Responses API 与长时程工具任务。", "https://api-docs.deepseek.com/updates/"),
@@ -611,6 +741,33 @@ def discover_assets(team_dir: str, model_name: str, date: str, folder: str | Non
     return {"dir": model_dir, "note": notes[0] if notes else None, "posters": posters}
 
 
+def discover_branch_assets(team_dir: str, model_name: str, date: str) -> dict:
+    """Match branch material only when a distinctive model token agrees."""
+    root = SOURCE / team_dir
+    if not root.exists():
+        return {}
+    generic = {"gpt", "glm", "kimi", "qwen", "gemini", "claude", "deepseek", "seed", "model", "preview"}
+    wanted = {x for x in re.split(r"[^a-z0-9]+", model_name.lower()) if len(x) >= 3 and x not in generic}
+    candidates = []
+    dirs = [d for d in root.iterdir() if d.is_dir() and d.name not in {"src", "Variants"}]
+    variants = root / "Variants"
+    if variants.is_dir():
+        dirs.extend(d for d in variants.iterdir() if d.is_dir())
+    for d in dirs:
+        if not d.name.startswith(date):
+            continue
+        present = {x for x in re.split(r"[^a-z0-9]+", d.name.lower()) if len(x) >= 3 and x not in generic}
+        overlap = wanted & present
+        if overlap:
+            candidates.append((len(overlap), -len(d.name), d))
+    if not candidates:
+        return {}
+    model_dir = sorted(candidates, reverse=True)[0][2]
+    notes = sorted(f for f in model_dir.glob("*.md") if f.is_file())
+    posters = sorted(f for f in model_dir.glob("*poster*.html") if f.is_file())
+    return {"dir": model_dir, "note": notes[0] if notes else None, "posters": posters}
+
+
 def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source_file, destination)
@@ -870,6 +1027,23 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
                 "_assets":discover_assets(team["dir"], name, raw_date, item.get("folder")),
             })
+        for raw_date, name, branch_name, url in sorted(
+            BRANCH_MODEL_NODES.get(team["id"], []), key=lambda m: m[0], reverse=True
+        ):
+            slug = f"{team['id']}-{slugify(name)}"
+            if slug in seen_slugs:
+                slug = f"{slug}-{raw_date}"
+            seen_slugs.add(slug)
+            records.append({
+                "slug": slug, "team": team["id"], "teamName": team["name"],
+                "teamDir": team["dir"], "region": team["region"], "color": team["color"],
+                "date": pretty_date(raw_date), "rawDate": raw_date, "name": name,
+                "summary": f"{team['name']} 的 {branch_name} 模型节点。",
+                "source": url, "sourceType": source_label(url), "thesis": team["thesis"],
+                "lineageType": "variant", "lineageLabel": branch_name,
+                "variants": VARIANT_FAMILIES.get(team["id"], []),
+                "_assets": discover_branch_assets(team["dir"], name, raw_date),
+            })
     return ordered_teams, records
 
 
@@ -892,6 +1066,41 @@ def neutralize_single_model_emphasis(page: str) -> str:
         .replace('<span><i style="background:#ff7fb7;border-radius:2px"></i>菱形：固定支线叶</span>', "")
         .replace("；对阅读导航重要的专项模型可作为菱形支线叶直接挂在线上", "")
         .replace('<span style="color:#ff9fc8">粉色叶：MedXIAOHE · Seed Medical</span>', ""))
+
+
+def render_index_complete(teams: list[dict], records: list[dict]) -> str:
+    sections = []
+    for team in teams:
+        family = [r for r in records if r["team"] == team["id"]]
+        mainline = [r for r in family if r["lineageType"] == "mainline"]
+        variants = [r for r in family if r["lineageType"] == "variant"]
+
+        def leaf(r: dict, branch: bool = False) -> str:
+            state = " · ".join(x for x in ["渲染笔记" if r.get("note") else "", "Poster" if r.get("posters") else ""] if x)
+            return (f'<a class="leaf{" branch-leaf" if branch else ""}" '
+                    f'href="base-model-atlas/model.html?id={quote(r["slug"])}" title="{html.escape(r["summary"], quote=True)}">'
+                    f'<time>{r["date"]}</time><b>{html.escape(r["name"])}</b>'
+                    f'<span class="status">{html.escape(state)}</span></a>')
+
+        branch_groups = []
+        for branch_name in dict.fromkeys(r["lineageLabel"] for r in variants):
+            nodes = sorted((r for r in variants if r["lineageLabel"] == branch_name), key=lambda r:r["rawDate"], reverse=True)
+            branch_groups.append(
+                f'<div class="branch-lane"><div class="branch-name">{html.escape(branch_name)}</div>'
+                f'<div class="branch-scroll">{"".join(leaf(r, True) for r in nodes)}</div></div>'
+            )
+        search_text = " ".join([team["name"], team["thesis"]] + [r["name"] + " " + r["lineageLabel"] for r in family]).lower()
+        sections.append(
+            f'<section class="branch {"top8" if team["id"] in BRANCH_MODEL_NODES else ""}" '
+            f'data-region="{team["region"]}" data-search="{html.escape(search_text, quote=True)}" style="--team:{team["color"]}">'
+            f'<div class="team"><small>{team["region"]} · {len(family)} 可点击节点</small><h2>{html.escape(team["name"])}</h2><p>{html.escape(team["thesis"])}</p></div>'
+            f'<div class="modelarea"><div class="lane-title">主线 · 最新在左</div><div class="timeline">{"".join(leaf(r) for r in mainline)}</div>'
+            f'{"".join(branch_groups)}</div></section>'
+        )
+    extra_css = r'''
+.lane-title{padding:14px 30px 0;color:#66758e;font-size:10px;letter-spacing:.13em;text-transform:uppercase}.branch-lane{display:grid;grid-template-columns:120px minmax(0,1fr);border-top:1px solid #202a3d}.branch-name{padding:24px 12px 20px 30px;color:var(--team);font-size:11px;font-weight:750}.branch-scroll{display:flex;gap:24px;overflow-x:auto;padding:10px 28px 15px;min-height:118px}.branch-scroll .leaf{min-width:132px;padding-top:38px}.branch-scroll .leaf:before{top:11px;width:12px;height:12px;border-radius:50%;transform:none;background:var(--team);box-shadow:none}.branch-scroll .leaf:after{top:25px;height:10px}.branch-scroll .leaf b{color:inherit}.branch-scroll .leaf .status{color:#77869e;font-weight:400}.branch.hidden{display:none}@media(max-width:800px){.branch-lane{grid-template-columns:1fr}.branch-name{padding-bottom:0}}
+'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Base Model Atlas · 全球基模谱系</title><style>{CSS}{extra_css}</style></head><body><div class="shell"><header class="topbar"><div class="brand">BrainHao / Thinking · Research Atlas</div><div class="toplinks"><a class="ghost" href="base-model-atlas/top8-tree.html">Top 8 综述树</a><a class="ghost" href="base-model-atlas/branch-audit.html">支线审计</a><a class="ghost" href="base-model-atlas/library.html">Poster / 笔记资料馆</a><a class="ghost" href="index.html">返回 Thinking 首页</a></div></header><section class="hero"><div><div class="kicker">Foundation Model Evolution · 2018—2026</div><h1>全球基模<br>谱系树</h1><p>每支团队先展示通用主线，再展开逐模型支线。所有时间线都以最新模型在左；向右拖动是在回溯更早模型。点击任一叶子进入 Overview。</p></div><div class="stats"><div class="stat"><b>{len(teams)}</b><span>基模团队</span></div><div class="stat"><b>{len(records)}</b><span>可点击模型叶</span></div><div class="stat"><b>{sum(1 for r in records if r.get("note"))}</b><span>渲染笔记</span></div><div class="stat"><b>{sum(len(r.get("posters", [])) for r in records)}</b><span>已链接 Poster</span></div></div></section><div class="controls"><input class="search" id="search" placeholder="搜索团队、模型或支线…"><button class="chip active" data-region="all">全部</button><button class="chip" data-region="国内">国内团队</button><button class="chip" data-region="海外">海外团队</button></div><div class="legend"><span><i style="background:#70d9ff"></i>最新 ← 左 · 右 → 更早</span><span><i style="background:#7cf2c8"></i>每个圆点均可进入 Overview</span></div><main class="tree">{"".join(sections)}</main><p class="footnote">主线与专项/模态支线分层呈现；同一正代的尺寸与 API snapshot 不重复拆叶。更新时间：2026-08-31。</p></div><script>let region='all';const sections=[...document.querySelectorAll('.branch')];function filter(){{const q=document.querySelector('#search').value.trim().toLowerCase();sections.forEach(s=>s.classList.toggle('hidden',(region!=='all'&&s.dataset.region!==region)||(q&&!s.dataset.search.includes(q))))}}document.querySelector('#search').addEventListener('input',filter);document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');region=b.dataset.region;filter()}});</script></body></html>'''
 
 
 def render_library(entries: list[dict]) -> str:
@@ -940,6 +1149,50 @@ def render_top8_tree(teams: list[dict]) -> str:
 </style></head><body><main class="page"><nav class="nav"><span>BrainHao · Survey Figure 01</span><a href="../base_model_atlas.html">返回交互谱系</a></nav><h1>FRONTIER FOUNDATION<br>MODEL LANDSCAPE</h1><p class="sub">Top 8 labs · main generations + specialist branches · current state at 2026-08-31</p><section class="root"><span>Survey root</span><b>通用主干 × 模态 / 能力支线</b></section><div class="forest"><section class="grove domestic"><div class="grove-title"><b>国内 TOP 5</b><span>DeepSeek → GLM → Kimi → Qwen → Seed</span></div><div class="teams">{''.join(team_box(x) for x in domestic)}</div></section><section class="grove overseas"><div class="grove-title"><b>海外 TOP 3</b><span>GPT · Claude · Gemini</span></div><div class="teams">{''.join(team_box(x) for x in overseas)}</div></section></div><footer class="legend"><span>正代：近四个主干节点，最新在左</span><span>支线：专项模型族，不伪装成正代</span><span style="color:#ff9fc8">粉色叶：MedXIAOHE · Seed Medical</span></footer></main></body></html>'''
 
 
+def render_branch_audit_complete(teams: list[dict], records: list[dict]) -> str:
+    cards = []
+    for team in [t for t in teams if t["id"] in BRANCH_MODEL_NODES]:
+        family = [r for r in records if r["team"] == team["id"]]
+        mains = [r for r in family if r["lineageType"] == "mainline"]
+        variants = [r for r in family if r["lineageType"] == "variant"]
+        groups = []
+        for label in dict.fromkeys(r["lineageLabel"] for r in variants):
+            nodes = sorted((r for r in variants if r["lineageLabel"] == label), key=lambda r:r["rawDate"], reverse=True)
+            links = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time>{html.escape(r["name"])}</a>' for r in nodes)
+            groups.append(f'<div class="audit-branch"><b>{html.escape(label)}</b><div>{links}</div></div>')
+        main_links = "".join(f'<a href="model.html?id={quote(r["slug"])}">{html.escape(r["name"])}</a>' for r in mains)
+        cards.append(f'<article style="--team:{team["color"]}"><header><h2>{html.escape(team["name"])}</h2><span>{len(mains)} 主线 · {len(variants)} 支线模型</span></header><div class="audit-main">{main_links}</div>{"".join(groups)}</article>')
+    css = r'''*{box-sizing:border-box}body{margin:0;background:#080b12;color:#edf3ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.page{max-width:1500px;margin:auto;padding:28px clamp(16px,4vw,58px) 70px}.nav{display:flex;justify-content:space-between}.nav a{color:#c5d3ea;text-decoration:none;border:1px solid #34415a;padding:9px 13px;border-radius:999px}h1{font-size:clamp(46px,8vw,92px);line-height:.9;letter-spacing:-.06em;margin:60px 0 16px}.lead{color:#a9b6ca;font-size:18px;max-width:900px;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:38px}article{border:1px solid #29354a;border-top:4px solid var(--team);border-radius:20px;padding:20px;background:#111724}article header{display:flex;justify-content:space-between;gap:15px;align-items:start}h2{margin:0 0 16px}header span{color:#7f8da3;font-size:11px}.audit-main{display:flex;gap:6px;overflow-x:auto;padding-bottom:13px}.audit-main a,.audit-branch a{color:#c9d5e8;text-decoration:none;border:1px solid #2d394e;background:#0d121d;border-radius:999px;padding:7px 10px;white-space:nowrap;font-size:11px}.audit-branch{border-top:1px solid #253045;padding:13px 0 4px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:8px}.audit-branch>b{color:var(--team);font-size:11px}.audit-branch>div{display:flex;gap:6px;overflow-x:auto}.audit-branch time{color:#718099;margin-right:5px}@media(max-width:850px){.grid{grid-template-columns:1fr}.audit-branch{grid-template-columns:1fr}}'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 支线逐模型审计</title><style>{css}</style></head><body><main class="page"><nav class="nav"><span>BrainHao · Evidence Audit</span><a href="../base_model_atlas.html">返回谱系</a></nav><h1>八大团队<br>逐模型支线审计</h1><p class="lead">不再用一条文字概括整条支线：下面每个名称都是独立、可点击的模型叶，并按支线内部时间降序排列。</p><section class="grid">{"".join(cards)}</section></main></body></html>'''
+
+
+def render_top8_tree_complete(teams: list[dict], records: list[dict]) -> str:
+    order = ["deepseek", "zhipu", "kimi", "qwen", "seed", "openai", "anthropic", "google"]
+    boxes = []
+    for tid in order:
+        team = next(t for t in teams if t["id"] == tid)
+        family = [r for r in records if r["team"] == tid]
+        main = [r for r in family if r["lineageType"] == "mainline"]
+        variants = [r for r in family if r["lineageType"] == "variant"]
+        main_nodes = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time><b>{html.escape(r["name"])}</b></a>' for r in main)
+        branches = []
+        for label in dict.fromkeys(r["lineageLabel"] for r in variants):
+            nodes = sorted((r for r in variants if r["lineageLabel"] == label), key=lambda r:r["rawDate"], reverse=True)
+            leaves = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time>{html.escape(r["name"])}</a>' for r in nodes)
+            branches.append(f'<div class="twig"><b>{html.escape(label)}</b><div>{leaves}</div></div>')
+        boxes.append(f'<article class="team-box {"domestic" if team["region"]=="国内" else "overseas"}" style="--team:{team["color"]}"><header><small>{team["region"]}</small><h2>{html.escape(team["name"])}</h2></header><div class="trunk"><strong>MAINLINE</strong><div>{main_nodes}</div></div>{"".join(branches)}</article>')
+    css = r'''*{box-sizing:border-box}body{margin:0;background:#f7f8f4;color:#14233d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-image:linear-gradient(#dce3eb66 1px,transparent 1px),linear-gradient(90deg,#dce3eb66 1px,transparent 1px);background-size:42px 42px}.page{max-width:1580px;margin:auto;padding:28px clamp(14px,3vw,44px) 65px}.nav{display:flex;justify-content:space-between}.nav a{color:#254f86;text-decoration:none;border:1px solid #b8c5d5;padding:9px 13px;border-radius:999px;background:white}h1{text-align:center;font-size:clamp(42px,7vw,86px);letter-spacing:-.06em;line-height:.9;margin:50px 0 12px}.sub{text-align:center;color:#627186;margin-bottom:25px}.root{width:min(760px,90%);margin:0 auto 28px;background:#142d4d;color:white;text-align:center;border-radius:18px;padding:18px}.forest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.team-box{background:white;border:1px solid #cbd5e1;border-top:5px solid var(--team);border-radius:18px;padding:16px;position:relative}.team-box header{display:flex;gap:10px;align-items:baseline}.team-box h2{margin:0 0 12px}.team-box small{color:#7b8797}.trunk,.twig{display:grid;grid-template-columns:105px minmax(0,1fr);gap:8px;padding:10px 0;border-top:1px solid #dce3eb}.trunk strong,.twig>b{font-size:10px;color:var(--team);letter-spacing:.08em}.trunk>div,.twig>div{display:flex;gap:5px;overflow-x:auto}.trunk a,.twig a{min-width:max-content;text-decoration:none;color:#243750;border:1px solid #d5dee9;border-radius:9px;padding:7px 9px;background:#f8fafc;font-size:10px}.trunk a time{display:block;color:#7c8898;margin-bottom:3px}.twig a time{color:#8a96a5;margin-right:5px}.domestic{box-shadow:inset 4px 0 #1768c511}.overseas{box-shadow:inset 4px 0 #12867511}@media(max-width:900px){.forest{grid-template-columns:1fr}.trunk,.twig{grid-template-columns:1fr}}'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 Foundation Model Survey Tree</title><style>{css}</style></head><body><main class="page"><nav class="nav"><span>BrainHao · Survey Tree</span><a href="../base_model_atlas.html">返回交互谱系</a></nav><h1>FRONTIER FOUNDATION<br>MODEL SURVEY TREE</h1><p class="sub">国内 Top 5：DeepSeek → GLM → Kimi → Qwen → Seed · 海外 Top 3：GPT → Claude → Gemini</p><div class="root">Foundation Models · 主线与逐模型支线 · 左新右旧</div><section class="forest">{"".join(boxes)}</section></main></body></html>'''
+
+
+def write_legacy_compatibility() -> None:
+    redirect = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../../base_model_atlas.html"><link rel="canonical" href="../../base_model_atlas.html"><title>正在打开新版 Base Model Atlas</title></head><body><p><a href="../../base_model_atlas.html">打开新版 Base Model Atlas</a></p><script>location.replace('../../base_model_atlas.html')</script></body></html>'''
+    for name in ("13_base_model_汇总.html", "13_base_model_汇总_v2.html"):
+        (ATLAS / "archive" / name).write_text(redirect, encoding="utf-8")
+    not_found = r'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>正在修复旧链接</title></head><body><p id="m">正在跳转到可读 HTML…</p><script>let p=location.pathname;p=p.replace('/base-model-atlas/library/library/','/base-model-atlas/library/').replace(/\.md$/i,'.html');if(p!==location.pathname)location.replace(p+location.search+location.hash);else document.querySelector('#m').innerHTML='<a href="/thinking/base_model_atlas.html">返回 Base Model Atlas</a>';</script></body></html>'''
+    (THINKING / "404.html").write_text(not_found, encoding="utf-8")
+
+
 def main() -> None:
     add_missing_brainhao_packs()
     teams, records = build_records()
@@ -947,15 +1200,12 @@ def main() -> None:
     targets = note_targets()
     sync_library(records, targets)
     archive_entries = sync_archive(targets)
-    (THINKING / "base_model_atlas.html").write_text(
-        neutralize_single_model_emphasis(render_index(teams, records)), encoding="utf-8"
-    )
+    (THINKING / "base_model_atlas.html").write_text(render_index_complete(teams, records), encoding="utf-8")
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
-    (ATLAS / "branch-audit.html").write_text(render_branch_audit(teams), encoding="utf-8")
-    (ATLAS / "top8-tree.html").write_text(
-        neutralize_single_model_emphasis(render_top8_tree(teams)), encoding="utf-8"
-    )
+    (ATLAS / "branch-audit.html").write_text(render_branch_audit_complete(teams, records), encoding="utf-8")
+    (ATLAS / "top8-tree.html").write_text(render_top8_tree_complete(teams, records), encoding="utf-8")
+    write_legacy_compatibility()
     (ATLAS / "models.json").write_text(json.dumps([{k:v for k,v in r.items() if not k.startswith('_')} for r in records], ensure_ascii=False, indent=2), encoding="utf-8")
     linked_notes = sum(1 for r in records if r.get("note"))
     linked_posters = sum(len(r.get("posters", [])) for r in records)

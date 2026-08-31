@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen3-Omni — 中文研究海报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — Speech/streaming blue gradient */
+.header { background: linear-gradient(120deg, #0c4a6e 0%, #0284c7 40%, #38bdf8 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #bae6fd }
+.header-left .zh-title { font-size: 1.1rem; color: #7dd3fc; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(2,132,199,.4); border: 1px solid #38bdf8; color: #bae6fd; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #bae6fd; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-blue .nc { background: #0284c7 }
+.c-sky .nc { background: #0369a1 }
+.c-teal .nc { background: #0e7490 }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; }
+.c-blue h2 { color: #7dd3fc }
+.c-sky h2 { color: #bae6fd }
+.c-teal h2 { color: #67e8f9 }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(2,132,199,.08); border-left: 3px solid #0284c7 }
+.g2 { background: rgba(14,165,233,.08); border-left: 3px solid #0ea5e9 }
+.g3 { background: rgba(56,189,248,.08); border-left: 3px solid #38bdf8 }
+.g4 { background: rgba(5,150,105,.08); border-left: 3px solid #059669 }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #7dd3fc }
+.g2 .title { color: #bae6fd }
+.g3 .title { color: #e0f2fe }
+.g4 .title { color: #6ee7b7 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(2,132,199,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* RESULTS TABLE */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #0c4a6e; color: #e0f2fe; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(2,132,199,.1); font-weight: 700; font-size: .66rem; color: #7dd3fc; text-align: left }
+.rtable .ours td { background: rgba(186,230,253,.06); font-weight: 800; color: #bae6fd }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(2,132,199,.06); border-radius: 8px; border: 1px solid rgba(186,230,253,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #0284c7; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #7dd3fc; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* BOTTOM STRIP */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(2,132,199,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #38bdf8; font-weight: 700 }
+
+/* BACKLINKS */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(2,132,199,.06); border: 1px solid rgba(2,132,199,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #38bdf8 }
+
+/* SPEC CARDS */
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 }
+.spec-card { background: rgba(2,132,199,.06); border: 1px solid rgba(168,162,158,.12); border-radius: 8px; padding: 8px 10px; text-align: center }
+.spec-card .sname { font-size: .68rem; color: #a8a29e; margin-bottom: 2px }
+.spec-card .sval { font-size: .92rem; font-weight: 800; color: #7dd3fc }
+.spec-card .sunit { font-size: .6rem; color: #78716c }
+
+/* LANGUAGE TABLE */
+.lang-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin: 8px 0 }
+.lang-card { background: rgba(14,165,233,.06); border: 1px solid rgba(168,162,158,.1); border-radius: 6px; padding: 6px 8px; text-align: center }
+.lang-card .lcount { font-size: 1.1rem; font-weight: 800; color: #38bdf8 }
+.lang-card .ltype { font-size: .62rem; color: #a8a29e }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F2509_Qwen3_Omni%2FQwen3-Omni-Thinker-Talker-Architecture" style="text-decoration: none;">Qwen3-Omni: Thinker-Talker Architecture for Real-Time Multimodal Understanding and Generation</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://arxiv.org/abs/2509.17765" target="_blank" style="text-decoration: none;">arXiv:2509.17765</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">arXiv 2509.17765 &nbsp;|&nbsp; 通义实验室，阿里巴巴集团</span>
+    <div class="zh-title">Qwen3-Omni：实时多模态理解与生成的 Thinker-Talker 架构</div>
+    <h1>Qwen3-Omni: Thinker-Talker Architecture for <span>Real-Time Multimodal</span> Understanding and Generation</h1>
+    <div class="authors">阿里云通义实验室</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">4.62</div><div class="sub">Wenetspeech<br>WER (低越好)</div></div>
+    <div class="score-box"><div class="num">1.39</div><div class="sub">SEED-en<br>WER (低越好)</div></div>
+    <div class="score-box"><div class="num">57.0</div><div class="sub">MMMU-Pro<br>(视觉)</div></div>
+    <div class="score-box"><div class="num">234ms</div><div class="sub">E2E Latency<br>端到端延迟</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: Thinker-Talker 架构 -->
+<div class="col">
+  <div class="sec-head c-blue"><div class="nc">1</div><h2>Thinker-Talker 架构</h2></div>
+  <p class="body">统一处理文本、图像、音频、视频四类模态，通过 <strong style="color:#7dd3fc">解耦的 Thinker-Talker</strong> 实现边想边说的流式交互能力。</p>
+
+  <div class="fig-box">
+    <img src=""src/figures/q3o.png" alt="Qwen3-Omni Architecture" onerror="this.parentElement.innerHTML='<div style=&quot;padding:30px;text-align:center;color:#7dd3fc;font-size:.8rem;&quot;><i>图：Qwen3-Omni Thinker-Talker 架构</i></div>'">
+    <div class="fig-cap">图 1：Qwen3-Omni 整体架构（Thinker 处理多模态理解，Talker 生成流式语音）</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">Thinker — 多模态理解器</div>
+      <p>接收文本/图像/音频/视频输入，输出文本 token 和高层多模态表示。30B MoE（235B 总参，22B 激活），与单模态 Qwen3 文本/VL 模型性能持平。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">Talker — 流式语音生成器</div>
+      <p>接收 Thinker 输出的多模态特征，通过 Multi-Codebook Codec 生成流式语音 token，端到端延迟低至 <strong style="color:#bae6fd">234ms</strong>。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">TM-RoPE — 时间对齐位置编码</div>
+      <p>时间对齐的多模态旋转位置编码，支持任意时长的流式输入，实现文本、视觉、音频时间戳的联合对齐。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">异步并行：Chunked Prefilling</div>
+      <p>Thinker 和 Talker 并行工作，Talker 不再等待 Thinker 的完整输出，实现真正的流式交互。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">MTP 模块：Multi-Token Prediction</div>
+      <p>多 token 预测生成残差码本（rvq.c），增强语音生成质量。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 五大升级 & 模型规格 -->
+<div class="col">
+  <div class="sec-head c-sky"><div class="nc">2</div><h2>五大核心升级</h2></div>
+  <p class="body">相比 Qwen2.5-Omni，Qwen3-Omni 在架构、训练、推理三个层面完成全面升级。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">升级一：Thinker + Talker 均升级为 MoE</div>
+      <p>30B MoE 总架构，235B 总参，22B 激活参数量，兼顾性能与效率。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">升级二：AuT Audio Transformer 编码器</div>
+      <p>从头训练的 Audio Transformer 编码器替代 Whisper，12.5Hz 音频码率，20M 小时监督数据训练。</p>
+    </div>
+    <div class="gap-box g3">
+      <div class="title">升级三：多码本语音表示（Multi-Codebook）</div>
+      <p>RVQ codec 支持 12.5Hz 即时语音合成，单帧延迟极低。</p>
+    </div>
+    <div class="gap-box g1">
+      <div class="title">升级四：MTP 残差码本建模</div>
+      <p>Multi-Token Prediction 模块生成残差码本，提升高保真语音合成质量。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">升级五：12.5 Hz 音频码率</div>
+      <p>音频 token 率从更高降至 12.5Hz，显著降低端到端延迟（最低 234ms）。</p>
+    </div>
+  </div>
+
+  <div class="spec-grid">
+    <div class="spec-card">
+      <div class="sname">模型总参</div>
+      <div class="sval">235B</div>
+      <div class="sunit">总参数量</div>
+    </div>
+    <div class="spec-card">
+      <div class="sname">激活参</div>
+      <div class="sval">22B</div>
+      <div class="sunit">MoE 激活参数</div>
+    </div>
+    <div class="spec-card">
+      <div class="sname">语音码率</div>
+      <div class="sval">12.5</div>
+      <div class="sunit">Hz 音频 token</div>
+    </div>
+    <div class="spec-card">
+      <div class="sname">E2E 延迟</div>
+      <div class="sval">234</div>
+      <div class="sunit">ms 最低延迟</div>
+    </div>
+  </div>
+
+  <div class="lang-grid">
+    <div class="lang-card">
+      <div class="lcount">119</div>
+      <div class="ltype">文本语言</div>
+    </div>
+    <div class="lang-card">
+      <div class="lcount">19</div>
+      <div class="ltype">语音理解</div>
+    </div>
+    <div class="lang-card">
+      <div class="lcount">10</div>
+      <div class="ltype">语音生成</div>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>关键实验结果</h2></div>
+  <p class="body">32/36 benchmarks 取得<strong style="color:#6ee7b7">开源第一</strong>，22/36 达到<strong style="color:#6ee7b7">全部 SOTA</strong>（含闭源）。全模态不降智验证通过。</p>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#7dd3fc;">文本推理能力（Qwen3-Omni-30B-A3B-Instruct vs 对比模型）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>GPQA</th><th>AIME25</th><th>MultiPL-E</th><th>IFEval</th></tr>
+    <tr><td class="left">GPT-4o-0327</td><td>66.9</td><td>26.7</td><td>82.7</td><td>83.9</td></tr>
+    <tr><td class="left">Qwen3-235B-A22B Non-Thinking</td><td>62.9</td><td>24.7</td><td>79.3</td><td>83.2</td></tr>
+    <tr class="ours"><td class="left">Qwen3-Omni-30B-A3B-Instruct</td><td class="dv">70.4</td><td class="dv">65.0</td><td>81.4</td><td>81.0</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#7dd3fc;">语音识别 ASR — WER（越低越好）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>Wenetspeech</th><th>Librispeech<br>clean</th><th>Fleurs-en</th><th>MIR-1K</th></tr>
+    <tr><td class="left">GPT-4o-Transcribe</td><td>14.43</td><td>1.39</td><td>2.94</td><td>9.85</td></tr>
+    <tr><td class="left">Seed-ASR</td><td>4.66</td><td>1.58</td><td>3.40</td><td>6.45</td></tr>
+    <tr class="ours"><td class="left">Qwen3-Omni-Instruct</td><td class="dv">4.62</td><td class="dv">1.22</td><td class="dv">2.72</td><td class="dv">5.90</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#7dd3fc;">语音生成 SEED-TTS — WER（越低越好）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>test-zh</th><th>test-en</th></tr>
+    <tr><td class="left">Seed-TTS-RL</td><td>1.00</td><td>1.94</td></tr>
+    <tr><td class="left">CosyVoice 3</td><td>0.71</td><td>1.45</td></tr>
+    <tr class="ours"><td class="left">Qwen3-Omni</td><td>1.07</td><td class="dv">1.39</td></tr>
+  </table>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#7dd3fc;">视觉理解能力（Qwen3-Omni-Instruct vs Qwen2.5-VL-72B）</p>
+  <table class="rtable">
+    <tr><th class="left">模型</th><th>MMMU-Pro</th><th>MathVista</th><th>ChartQA</th><th>LVBench</th></tr>
+    <tr><td class="left">GPT-4o</td><td>51.9</td><td>63.8</td><td>86.7</td><td>30.8</td></tr>
+    <tr><td class="left">Qwen2.5-VL-72B</td><td>51.1</td><td>74.8</td><td>89.5</td><td>47.3</td></tr>
+    <tr class="ours"><td class="left">Qwen3-Omni-Instruct</td><td class="dv">57.0</td><td class="dv">75.9</td><td>86.8</td><td class="dv">50.2</td></tr>
+  </table>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">核心创新</div>
+    <p><span class="hl">Thinker-Talker 解耦架构</span>实现边想边说的流式交互，234ms 端到端延迟达到实时语音水平。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">模态不降智</div>
+    <p>文本/视觉性能与单模态模型持平，加入音频后文本能力反而<strong style="color:#bae6fd">提升</strong>，22B 激活参数超越更大模型。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">开源 SOTA</div>
+    <p><span class="hl">32/36</span> benchmarks 达到开源第一，<span class="hl">22/36</span> 达到全部 SOTA，覆盖文本/语音/视觉/视频。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">多语言覆盖</div>
+    <p>支持 <span class="hl">119 种文本语言</span>、<span class="hl">19 种语音理解</span>、<span class="hl">10 种语音生成</span>语言。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>
