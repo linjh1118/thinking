@@ -33,19 +33,23 @@ TEAMS = [
         ["2211","GPT-3.5","指令对齐与对话产品化形成规模效应。","https://openai.com/index/chatgpt/"],
         ["2303","GPT-4","多模态与高可靠复杂任务能力跃迁。","https://openai.com/research/gpt-4"],
         ["2405","GPT-4o","原生 omni 交互与低时延统一。","https://openai.com/index/hello-gpt-4o/"],
+        ["2502","GPT-4.5","以更大规模预训练提升世界知识、模式识别与自然交互。","https://openai.com/index/introducing-gpt-4-5/"],
+        ["2504","GPT-4.1","1M context，并强化 coding、instruction following 与长上下文。","https://openai.com/index/gpt-4-1/"],
         ["2508","GPT-5","reasoning、fast path 与工具能力统一。","https://developers.openai.com/api/docs/models/gpt-5"],
         ["2511","GPT-5.1","强化 coding 与 agentic task。","https://developers.openai.com/api/docs/models/gpt-5.1"],
         ["2512","GPT-5.2","面向专业工作的可配置推理旗舰。","https://developers.openai.com/api/docs/models/gpt-5.2"],
         ["2603","GPT-5.4","1.05M context 与 computer use 进入通用旗舰。","https://developers.openai.com/api/docs/models/gpt-5.4"],
         ["2604","GPT-5.5","复杂 coding 与专业工作质量上移。","https://developers.openai.com/api/docs/models/gpt-5.5"],
-        ["2608","GPT-5.6 Sol","Sol / Terra / Luna 分层，旗舰统一到 1.05M context。","https://developers.openai.com/api/docs/models/gpt-5.6-sol"]]},
+        ["2608","GPT-5.6","Sol / Terra / Luna 分层，正代统一到 1.05M context。","https://developers.openai.com/api/docs/models/gpt-5.6-sol"]]},
     {"id":"anthropic","dir":"Anthropic","name":"Anthropic · Claude","region":"海外","color":"#ffb36b","thesis":"以 Constitutional AI、安全评估和长时程 agentic coding 为主轴。","models":[
         ["2303","Claude 1","Constitutional AI 路线首次产品化。","https://www.anthropic.com/news/introducing-claude"],
         ["2307","Claude 2","长上下文与 coding 能力增强。","https://www.anthropic.com/news/claude-2"],
+        ["2311","Claude 2.1","200K context，并降低长文档任务中的错误率。","https://www.anthropic.com/news/claude-2-1"],
         ["2403","Claude 3","Haiku / Sonnet / Opus 能力—成本分层。","https://www.anthropic.com/news/claude-3-family"],
         ["2406","Claude 3.5 Sonnet","coding 与 computer use 成为核心优势。","https://www.anthropic.com/news/claude-3-5-sonnet"],
         ["2502","Claude 3.7 Sonnet","hybrid reasoning 统一快答与 extended thinking。","https://www.anthropic.com/news/claude-3-7-sonnet"],
         ["2505","Claude 4","Opus / Sonnet 进入 agent 与长任务阶段。","https://www.anthropic.com/news/claude-4"],
+        ["2508","Claude Opus 4.1","在 agentic tasks、真实 coding 与 reasoning 上更新 Opus 4。","https://www.anthropic.com/system-cards"],
         ["2511","Claude Opus 4.5","coding、computer use 与自主工作增强。","https://www.anthropic.com/news/claude-opus-4-5"],
         ["2602","Claude Opus 4.6","1M context 与 agent planning 持续增强。","https://www.anthropic.com/news/claude-opus-4-6"],
         ["2604","Claude Opus 4.7","长时程软件工程与自验证进一步提升。","https://www.anthropic.com/news/claude-opus-4-7"],
@@ -59,7 +63,9 @@ TEAMS = [
         ["2503","Gemini 2.5","thinking model 成为主线。","https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"],
         ["2511","Gemini 3","多模态 reasoning 与 agent 工具链升级。","https://deepmind.google/models/gemini/"],
         ["2602","Gemini 3.1 Pro","面向复杂专业任务与长时程 agents。","https://deepmind.google/models/gemini/"],
-        ["2606","Gemini 3.5 Flash","更低成本的前沿 agentic 能力。","https://deepmind.google/models/gemini/"]]},
+        ["2606","Gemini 3.5","3.x 正代在能力、成本与多模态 agent 之间继续扩展。","https://ai.google.dev/gemini-api/docs/models"],
+        ["2607","Gemini 3.6","面向通用 agentic 与多模态任务的 3.x 升级。","https://ai.google.dev/gemini-api/docs/models"],
+        ["2608","Gemini 3.7","当前 3.x 正代，强化 coding、agentic workflow 与可靠多步执行。","https://ai.google.dev/gemini-api/docs/models"]]},
     {"id":"meta","dir":"Meta_Llama","name":"Meta · Llama","region":"海外","color":"#63d5ff","thesis":"开放权重生态从 dense LLM 演进到原生多模态 MoE。","models":[
         ["2302","Llama 1","高质量开放基础模型开启生态。","https://ai.meta.com/blog/large-language-model-llama-meta-ai/"],
         ["2307","Llama 2","开放权重与商业许可扩大采用。","https://ai.meta.com/llama/"],
@@ -126,7 +132,8 @@ TEAMS = [
         ["2505","Qwen3","thinking/non-thinking 单模型统一。","https://qwenlm.github.io/blog/qwen3/"],
         ["2602","Qwen3.5","下一代开放模型架构迭代。","https://github.com/QwenLM/Qwen3"],
         ["2604","Qwen3.6","正代 family 的效率与能力升级。","https://github.com/QwenLM/Qwen3"],
-        ["2608","Qwen3.8","原生多模态、1M context 与内置工具。","https://qwenlm.github.io/"]]},
+        ["2606","Qwen3.7","沿用 hybrid attention 架构并继续推进正代能力。","https://github.com/QwenLM/Qwen3.8-Flash-Next"],
+        ["2608","Qwen3.8","原生多模态、1M context 与内置工具。","https://github.com/QwenLM/Qwen3.8"]]},
     {"id":"deepseek","dir":"DeepSeek_AI","name":"DeepSeek AI","region":"国内","color":"#5aa8ff","thesis":"MLA/MoE 训练效率、开放 reasoning RL 与 agentic tool-use 是三条主轴。","models":[
         ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://github.com/deepseek-ai/DeepSeek-LLM"],
         ["2405","DeepSeek-V2","MLA + DeepSeekMoE 显著降低训练/推理成本。","https://github.com/deepseek-ai/DeepSeek-V2"],
@@ -134,6 +141,8 @@ TEAMS = [
         ["2412","DeepSeek-V3","671B/37B active、14.8T tokens 与 FP8 训练。","https://api-docs.deepseek.com/news/news1226"],
         ["2501","DeepSeek-R1","大规模 RL 与极少标注的开放 reasoning 路线。","https://api-docs.deepseek.com/news/news250120/"],
         ["2508","DeepSeek-V3.1","hybrid inference 与 agent/tool-use 后训练。","https://api-docs.deepseek.com/news/news250821/"],
+        ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://github.com/deepseek-ai/DeepSeek-V3.2-Exp"],
+        ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://api-docs.deepseek.com/news/news250922"],
         ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://api-docs.deepseek.com/news/news251201/"],
         ["2604","DeepSeek-V4","Pro / Flash 分层并原生适配 agent API。","https://api-docs.deepseek.com/updates/"],
         ["2608","DeepSeek-V4 Pro","GA 版本强化 production agent 与 Responses API。","https://api-docs.deepseek.com/updates/"]]},
@@ -154,18 +163,20 @@ TEAMS = [
     {"id":"seed","dir":"ByteDance_Seed","name":"ByteDance · Seed","region":"国内","color":"#ff6ca8","thesis":"从多模态理解走向真实环境 agency 与 computer use。","models":[
         ["2505","Seed1.5","通用多模态与 reasoning 基座。","https://seed.bytedance.com/en/"],
         ["2506","Seed1.6","多模态 family 与产品部署升级。","https://seed.bytedance.com/en/"],
-        ["2603","Seed1.8","真实世界 agent foundation model。","https://seed.bytedance.com/en/"],
-        ["2605","Seed2.0","Computer Use 与 agent foundation model 扩展。","https://seed.bytedance.com/en/"]]},
+        ["2512","Seed1.8","真实世界 agent foundation model。","https://seed.bytedance.com/en/blog/official-release-of-seed1-8-a-generalized-agentic-model"],
+        ["2602","Seed2.0","Computer Use 与 agent foundation model 扩展。","https://seed.bytedance.com/en/blog/seed-2-0-official-launch"],
+        ["2606","Seed2.1","面向真实生产力任务的下一代通用 agent 基座。","https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity"]]},
     {"id":"zhipu","dir":"Zhipu_GLM","name":"Zhipu · GLM","region":"国内","color":"#58e0b5","thesis":"General Language Model 演进为 agentic reasoning/coding 原生基座。","models":[
         ["2210","GLM-130B","双语开放自回归预训练基座。","https://github.com/THUDM/GLM-130B"],
         ["2310","ChatGLM3","对话、代码与工具调用 family。","https://github.com/THUDM/ChatGLM3"],
         ["2401","GLM-4","新一代多模态与 tool-use 基座。","https://www.zhipuai.cn/"],
-        ["2508","GLM-4.5","355B/32B active ARC foundation model。","https://github.com/zai-org/GLM-4.5"],
-        ["2509","GLM-4.7","coding、tool use 与 interleaved reasoning。","https://docs.z.ai/"],
+        ["2507","GLM-4.5","355B/32B active ARC foundation model。","https://github.com/zai-org/GLM-4.5"],
+        ["2509","GLM-4.6","200K 上下文与更强 coding 的通用升级。","https://docs.z.ai/guides/llm/glm-4.6"],
+        ["2512","GLM-4.7","coding、tool use 与 interleaved reasoning。","https://docs.z.ai/"],
         ["2602","GLM-5","面向 agentic engineering 的新正代。","https://docs.z.ai/guides/overview/overview"],
         ["2604","GLM-5.1","long-horizon coding agent。","https://docs.z.ai/guides/overview/overview"],
         ["2606","GLM-5.2","1M context 与长时程 coding。","https://docs.z.ai/guides/overview/overview"],
-        ["2608","GLM-5.3 Flash","原生多模态与成本/速度 Pareto。","https://docs.z.ai/guides/overview/overview"]]},
+        ["2608","GLM-5.3","沿用 5.2 base、以大规模 post-training 强化 coding、cyber 与长时程 agents。","https://docs.z.ai/guides/llm/glm-5.3"]]},
     {"id":"kimi","dir":"Moonshot_Kimi","name":"Moonshot · Kimi","region":"国内","color":"#9f8cff","thesis":"超长上下文底座逐步转向开放 MoE、视觉 agent 与 agent swarm。","models":[
         ["2310","Moonshot v1","长上下文产品化起点。","https://www.moonshot.cn/"],
         ["2501","Kimi k1.5","多模态 reasoning 与 RL scaling。","https://arxiv.org/abs/2501.12599"],
@@ -173,7 +184,8 @@ TEAMS = [
         ["2507","Kimi K2","1T/32B active agentic intelligence。","https://github.com/MoonshotAI/Kimi-K2"],
         ["2510","Kimi Linear","KDA hybrid linear attention 与 1M context。","https://arxiv.org/abs/2510.26692"],
         ["2602","Kimi K2.5","视觉 agent、joint RL 与 Agent Swarm。","https://arxiv.org/abs/2602.02276"],
-        ["2604","Kimi K2.6","开放 coding 与 agentic scaling。","https://huggingface.co/moonshotai"]]},
+        ["2604","Kimi K2.6","开放 coding 与 agentic scaling。","https://huggingface.co/moonshotai"],
+        ["2607","Kimi K3","2.8T/104B-active 原生多模态 agent 基座，1M context。","https://github.com/MoonshotAI/Kimi-K3"]]},
     {"id":"minimax","dir":"MiniMax","name":"MiniMax","region":"国内","color":"#ff8566","thesis":"长上下文 attention 效率与真实环境 agent RL 双线合流。","models":[
         ["2506","MiniMax-M1","Lightning Attention、1M context 与 CISPO。","https://arxiv.org/abs/2506.13585"],
         ["2510","MiniMax-M2","低激活 MoE 与 coding agent。","https://www.minimax.io/news/minimax-m2"],
@@ -302,13 +314,16 @@ PINNED_TIMELINE_VARIANTS = {
 # grouped under its official capability/modality branch.
 BRANCH_MODEL_NODES = {
     "deepseek": [
+        ("2401", "DeepSeekMoE", "Architecture", "https://github.com/deepseek-ai/DeepSeek-MoE"),
         ("2501", "DeepSeek-R1-Zero", "Reasoning", "https://github.com/deepseek-ai/DeepSeek-R1"),
         ("2501", "DeepSeek-R1-Distill", "Reasoning", "https://github.com/deepseek-ai/DeepSeek-R1"),
+        ("2505", "DeepSeek-R1-0528", "Reasoning", "https://github.com/deepseek-ai/DeepSeek-R1"),
         ("2311", "DeepSeek-Coder", "Code", "https://github.com/deepseek-ai/DeepSeek-Coder"),
         ("2406", "DeepSeek-Coder-V2", "Code", "https://github.com/deepseek-ai/DeepSeek-Coder-V2"),
         ("2402", "DeepSeekMath", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Math"),
         ("2408", "DeepSeek-Prover-V1.5", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Prover-V1.5"),
         ("2504", "DeepSeek-Prover-V2", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Prover-V2"),
+        ("2511", "DeepSeek-Math-V2", "Math / Prover", "https://github.com/deepseek-ai/DeepSeek-Math-V2"),
         ("2403", "DeepSeek-VL", "Vision / Omni", "https://github.com/deepseek-ai/DeepSeek-VL"),
         ("2412", "DeepSeek-VL2", "Vision / Omni", "https://github.com/deepseek-ai/DeepSeek-VL2"),
         ("2410", "Janus", "Vision / Omni", "https://github.com/deepseek-ai/Janus"),
@@ -317,28 +332,50 @@ BRANCH_MODEL_NODES = {
         ("2601", "DeepSeek-OCR2", "Document", "https://github.com/deepseek-ai/DeepSeek-OCR-2"),
     ],
     "zhipu": [
+        ("2303", "ChatGLM-6B", "ChatGLM", "https://github.com/zai-org/ChatGLM-6B"),
+        ("2306", "ChatGLM2-6B", "ChatGLM", "https://github.com/zai-org/ChatGLM2-6B"),
+        ("2304", "VisualGLM-6B", "Vision", "https://github.com/zai-org/VisualGLM-6B"),
         ("2310", "CogVLM", "Vision", "https://github.com/THUDM/CogVLM"),
         ("2407", "CogVLM2", "Vision", "https://github.com/THUDM/CogVLM2"),
+        ("2311", "CogAgent", "Vision Agent", "https://github.com/zai-org/CogAgent"),
+        ("2402", "CogCoM", "Vision Agent", "https://github.com/zai-org/CogCoM"),
         ("2406", "GLM-4V", "Vision", "https://github.com/zai-org/GLM-4"),
+        ("2507", "GLM-4.1V-Thinking", "Vision", "https://github.com/zai-org/GLM-V"),
         ("2508", "GLM-4.5V", "Vision", "https://github.com/zai-org/GLM-V"),
         ("2510", "GLM-4.6V", "Vision", "https://docs.z.ai/guides/overview/overview"),
         ("2605", "GLM-5V", "Vision", "https://docs.z.ai/guides/overview/overview"),
-        ("2303", "CodeGeeX2", "Code", "https://github.com/THUDM/CodeGeeX2"),
+        ("2209", "CodeGeeX", "Code", "https://github.com/zai-org/CodeGeeX"),
+        ("2307", "CodeGeeX2", "Code", "https://github.com/THUDM/CodeGeeX2"),
         ("2407", "CodeGeeX4", "Code", "https://github.com/THUDM/CodeGeeX4"),
+        ("2504", "GLM-Z1", "Reasoning", "https://github.com/zai-org/GLM-4"),
         ("2410", "GLM-4-Voice", "Speech", "https://github.com/THUDM/GLM-4-Voice"),
+        ("2512", "GLM-ASR", "Speech", "https://github.com/zai-org/GLM-ASR"),
         ("2604", "GLM-TTS", "Speech", "https://docs.z.ai/guides/overview/overview"),
         ("2602", "GLM-OCR", "Document", "https://docs.z.ai/guides/overview/overview"),
+        ("2105", "CogView", "Image / Video", "https://github.com/zai-org/CogView"),
+        ("2204", "CogView2", "Image / Video", "https://github.com/zai-org/CogView2"),
         ("2409", "CogView3", "Image / Video", "https://github.com/THUDM/CogView3"),
+        ("2409", "CogView4", "Image / Video", "https://github.com/zai-org/CogView4"),
+        ("2205", "CogVideo", "Image / Video", "https://github.com/zai-org/CogVideo"),
         ("2408", "CogVideoX", "Image / Video", "https://github.com/zai-org/CogVideo"),
+        ("2608", "CogVideoX-3", "Image / Video", "https://docs.z.ai/guides/overview/overview"),
+        ("2601", "GLM-Image", "Image / Video", "https://github.com/zai-org/GLM-Image"),
+        ("2411", "GLM-Edge", "Edge", "https://github.com/zai-org/GLM-Edge"),
         ("2501", "AutoGLM", "Agent", "https://github.com/zai-org/Open-AutoGLM"),
+        ("2512", "AutoGLM-Phone", "Agent", "https://github.com/zai-org/Open-AutoGLM"),
     ],
     "kimi": [
+        ("2502", "Moonlight", "Open Pretraining", "https://github.com/MoonshotAI/Moonlight"),
         ("2504", "Kimi-Audio", "Audio", "https://github.com/MoonshotAI/Kimi-Audio"),
         ("2506", "Kimi-Dev", "Code", "https://github.com/MoonshotAI/Kimi-Dev"),
+        ("2506", "Kimi-Researcher", "Research Agent", "https://github.com/MoonshotAI/Kimi-Researcher"),
+        ("2511", "Kimi K2 Thinking", "Reasoning", "https://github.com/MoonshotAI/Kimi-K2"),
         ("2504", "Kimina-Prover Preview", "Formal Reasoning", "https://github.com/MoonshotAI/Kimina-Prover-Preview"),
         ("2502", "MoBA", "Efficient Attention", "https://github.com/MoonshotAI/MoBA"),
     ],
     "qwen": [
+        ("2503", "QwQ-32B", "Reasoning / Math", "https://github.com/QwenLM/QwQ"),
+        ("2409", "Qwen2.5-Math", "Reasoning / Math", "https://github.com/QwenLM/Qwen2.5-Math"),
         ("2308", "CodeQwen", "Code", "https://github.com/QwenLM/CodeQwen1.5"),
         ("2409", "Qwen2.5-Coder", "Code", "https://github.com/QwenLM/Qwen2.5-Coder"),
         ("2507", "Qwen3-Coder", "Code", "https://github.com/QwenLM/Qwen3-Coder"),
@@ -351,25 +388,56 @@ BRANCH_MODEL_NODES = {
         ("2605", "Qwen-VLA", "Vision", "https://github.com/QwenLM"),
         ("2312", "Qwen-Audio", "Omni / Speech", "https://github.com/QwenLM/Qwen-Audio"),
         ("2408", "Qwen2-Audio", "Omni / Speech", "https://github.com/QwenLM/Qwen2-Audio"),
+        ("2503", "Qwen2.5-Omni", "Omni / Speech", "https://github.com/QwenLM/Qwen2.5-Omni"),
         ("2509", "Qwen3-Omni", "Omni / Speech", "https://github.com/QwenLM/Qwen3-Omni"),
         ("2601", "Qwen3-ASR", "Omni / Speech", "https://github.com/QwenLM/Qwen3-ASR"),
         ("2601", "Qwen3-TTS", "Omni / Speech", "https://github.com/QwenLM/Qwen3-TTS"),
         ("2508", "Qwen-Image", "Image", "https://github.com/QwenLM/Qwen-Image"),
+        ("2512", "Qwen-Image-Layered", "Image", "https://github.com/QwenLM/Qwen-Image-Layered"),
         ("2605", "Qwen-Image-2", "Image", "https://github.com/QwenLM/Qwen-Image"),
         ("2506", "Qwen3-Embedding", "Retrieval", "https://github.com/QwenLM/Qwen3-Embedding"),
         ("2601", "Qwen3-VL-Embedding", "Retrieval", "https://github.com/QwenLM/Qwen3-VL-Embedding"),
         ("2510", "Qwen3Guard", "Safety / Agent", "https://github.com/QwenLM/Qwen3Guard"),
+        ("2602", "WebWorld", "Safety / Agent", "https://github.com/QwenLM/WebWorld"),
+        ("2606", "Qwen-AgentWorld", "Safety / Agent", "https://github.com/QwenLM/Qwen-AgentWorld"),
         ("2605", "Qwen-Scope", "Safety / Agent", "https://github.com/QwenLM"),
+        ("2606", "Qwen-RobotManip", "Robotics", "https://github.com/QwenLM/Qwen-RobotManip"),
+        ("2606", "Qwen-RobotNav", "Robotics", "https://github.com/QwenLM/Qwen-RobotNav"),
     ],
     "seed": [
+        ("2504", "Seed-Thinking-v1.5", "Reasoning / Math", "https://github.com/ByteDance-Seed/Seed-Thinking-v1.5"),
+        ("2507", "Seed-Prover", "Reasoning / Math", "https://github.com/ByteDance-Seed/Seed-Prover"),
+        ("2510", "BFS-Prover-V2", "Reasoning / Math", "https://github.com/ByteDance-Seed/BFS-Prover-V2"),
         ("2505", "Seed1.5-VL", "Vision / Omni", "https://github.com/ByteDance-Seed/Seed1.5-VL"),
+        ("2507", "Seed-X-7B", "Multilingual", "https://github.com/ByteDance-Seed/Seed-X-7B"),
         ("2508", "Seed-OSS", "Code / Open", "https://github.com/ByteDance-Seed/seed-oss"),
         ("2506", "Seed-Coder", "Code / Open", "https://github.com/ByteDance-Seed"),
+        ("2601", "Seed Diffusion Preview", "Code / Open", "https://github.com/ByteDance-Seed/Stable-DiffCoder"),
         ("2505", "BAGEL", "Any-to-any", "https://github.com/ByteDance-Seed/Bagel"),
         ("2405", "Seed-TTS", "Speech", "https://seed.bytedance.com/en/"),
+        ("2608", "SeedRealtime", "Speech / Realtime", "https://seed.bytedance.com/en/models/seed_realtime"),
+        ("2608", "Seed Audio 1.0", "Speech / Realtime", "https://seed.bytedance.com/en/models/seed_audio"),
+        ("2608", "Seeduplex", "Speech / Realtime", "https://seed.bytedance.com/en/models/seeduplex"),
+        ("2608", "Seed LiveInterpret 2.0", "Speech / Realtime", "https://seed.bytedance.com/en/models/seed_liveinterpret_2_0"),
+        ("2608", "Seed Realtime Voice", "Speech / Realtime", "https://seed.bytedance.com/en/models/seed_realtime_voice"),
+        ("2608", "Seed-Music", "Speech / Realtime", "https://seed.bytedance.com/en/models/seed_music"),
         ("2504", "Seedream 3.0", "Image / Video", "https://seed.bytedance.com/en/"),
+        ("2509", "Seedream 4.0", "Image / Video", "https://seed.bytedance.com/en/models/seedream_4_0"),
+        ("2512", "Seedream 4.5", "Image / Video", "https://seed.bytedance.com/en/models/seedream_4_5"),
+        ("2608", "Seedream 5.0 Lite", "Image / Video", "https://seed.bytedance.com/en/models/seedream_5_0_lite"),
+        ("2608", "Seedream 5.0 Pro", "Image / Video", "https://seed.bytedance.com/en/models/seedream_5_0_pro"),
+        ("2506", "SeedEdit 3.0", "Image / Video", "https://seed.bytedance.com/en/models/seededit_3_0"),
         ("2506", "Seedance 1.0", "Image / Video", "https://seed.bytedance.com/en/"),
-        ("2503", "Seed3D", "World / Embodied", "https://seed.bytedance.com/en/"),
+        ("2512", "Seedance 1.5 Pro", "Image / Video", "https://seed.bytedance.com/en/models/seedance_1_5_pro"),
+        ("2602", "Seedance 2.0", "Image / Video", "https://seed.bytedance.com/en/models/seedance_2_0"),
+        ("2608", "Seedance 2.5", "Image / Video", "https://seed.bytedance.com/en/models/seedance_2_5"),
+        ("2506", "SeedVR", "Image / Video", "https://github.com/ByteDance-Seed/SeedVR"),
+        ("2503", "Seed3D 1.0", "World / Embodied", "https://seed.bytedance.com/en/models/seed3d"),
+        ("2608", "Seed3D 2.0", "World / Embodied", "https://seed.bytedance.com/en/models/seed3d_2_0"),
+        ("2501", "VideoWorld", "World / Embodied", "https://github.com/ByteDance-Seed/VideoWorld"),
+        ("2608", "Seed GR-3", "Robotics", "https://seed.bytedance.com/en/models/seed_gr_3"),
+        ("2608", "Seed GR-RL", "Robotics", "https://seed.bytedance.com/en/models/seed_gr_rl"),
+        ("2608", "Protenix", "AI for Science", "https://seed.bytedance.com/en/models/protenix"),
     ],
     "openai": [
         ("2409", "o1", "Reasoning", "https://developers.openai.com/api/docs/models/o1"),
@@ -381,11 +449,26 @@ BRANCH_MODEL_NODES = {
         ("2511", "GPT-5.1-Codex-Max", "Coding", "https://developers.openai.com/api/docs/models"),
         ("2512", "GPT-5.2-Codex", "Coding", "https://developers.openai.com/api/docs/models"),
         ("2602", "GPT-5.3-Codex", "Coding", "https://developers.openai.com/api/docs/models/gpt-5.3-codex"),
+        ("2603", "GPT-5.4 Pro", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.4-pro"),
+        ("2603", "GPT-5.4 Mini", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.4-mini"),
+        ("2603", "GPT-5.4 Nano", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.4-nano"),
+        ("2604", "GPT-5.5 Pro", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.5-pro"),
+        ("2608", "GPT-5.6 Terra", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.6-terra"),
+        ("2608", "GPT-5.6 Luna", "GPT tiers", "https://developers.openai.com/api/docs/models/gpt-5.6-luna"),
+        ("2608", "GPT-5.6 Cyber", "Cyber", "https://developers.openai.com/api/docs/models/gpt-5.6-cyber"),
         ("2508", "gpt-oss-20b", "Open weights", "https://openai.com/index/introducing-gpt-oss/"),
         ("2508", "gpt-oss-120b", "Open weights", "https://openai.com/index/introducing-gpt-oss/"),
         ("2508", "GPT-Realtime", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
         ("2608", "GPT-Realtime-2.1", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Realtime-2.1 Mini", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2606", "GPT-Realtime-2", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Realtime-Translate", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2604", "GPT-Realtime-1.5", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
         ("2503", "GPT-4o Transcribe", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Transcribe", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Live-Transcribe", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2608", "GPT-Realtime-Whisper", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
+        ("2503", "GPT-4o Mini Transcribe", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
         ("2503", "GPT-4o Mini TTS", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
         ("2503", "GPT-Image-1", "Image", "https://developers.openai.com/api/docs/models"),
         ("2608", "GPT-Image-2", "Image", "https://developers.openai.com/api/docs/models"),
@@ -395,11 +478,15 @@ BRANCH_MODEL_NODES = {
         ("2403", "Claude 3 Sonnet", "Sonnet", "https://www.anthropic.com/news/claude-3-family"),
         ("2403", "Claude 3 Opus", "Opus", "https://www.anthropic.com/news/claude-3-family"),
         ("2410", "Claude 3.5 Haiku", "Haiku", "https://www.anthropic.com/system-cards"),
+        ("2505", "Claude Sonnet 4", "Sonnet", "https://www.anthropic.com/system-cards"),
+        ("2505", "Claude Opus 4", "Opus", "https://www.anthropic.com/system-cards"),
+        ("2508", "Claude Opus 4.1", "Opus", "https://www.anthropic.com/system-cards"),
         ("2509", "Claude Sonnet 4.5", "Sonnet", "https://www.anthropic.com/news/claude-sonnet-4-5"),
         ("2602", "Claude Sonnet 4.6", "Sonnet", "https://www.anthropic.com/system-cards"),
         ("2510", "Claude Haiku 4.5", "Haiku", "https://www.anthropic.com/news/claude-haiku-4-5"),
         ("2606", "Claude Fable 5", "Frontier access", "https://www.anthropic.com/system-cards"),
         ("2606", "Claude Mythos 5", "Frontier access", "https://www.anthropic.com/system-cards"),
+        ("2604", "Claude Mythos Preview", "Frontier access", "https://www.anthropic.com/system-cards"),
     ],
     "google": [
         ("2504", "Gemini 2.0 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
@@ -420,11 +507,43 @@ BRANCH_MODEL_NODES = {
         ("2607", "Gemini 3.6 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
         ("2608", "Gemini 3.7 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
         ("2608", "Gemini Omni Flash", "Omni", "https://deepmind.google/models/model-cards/"),
+        ("2511", "Nano Banana", "Image", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Nano Banana 2", "Image", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Nano Banana 2 Lite", "Image", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2511", "Nano Banana Pro", "Image", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2512", "Gemini 2.5 Flash Live", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2505", "Gemini 2.5 Flash TTS", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2505", "Gemini 2.5 Pro TTS", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Gemini 3.1 Flash Live", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Gemini 3.1 Flash TTS", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Gemini 3.5 Transcribe", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Gemini 3.5 Live Translate", "Audio / Live", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2604", "Gemini Deep Research", "Agent", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2604", "Gemini Deep Research Max", "Agent", "https://ai.google.dev/gemini-api/docs/models"),
+        ("2608", "Gemini Embedding 2", "Embedding", "https://ai.google.dev/gemini-api/docs/models"),
         ("2507", "Gemini Robotics On-Device", "Robotics", "https://deepmind.google/models/gemini-robotics/"),
         ("2509", "Gemini Robotics 1.5", "Robotics", "https://deepmind.google/models/gemini-robotics/"),
         ("2607", "Gemini Robotics-ER 2", "Robotics", "https://deepmind.google/models/model-cards/"),
+        ("2607", "Gemini Robotics-ER 1.6", "Robotics", "https://ai.google.dev/gemini-api/docs/models"),
         ("2607", "Gemini Robotics On-Device 2", "Robotics", "https://deepmind.google/models/model-cards/"),
     ],
+}
+
+# This release audits only numbered/mainline generations. Keep the previously
+# published branch scope stable instead of expanding it during the mainline fix.
+_ESTABLISHED_BRANCH_MODELS = {
+    "deepseek": {"DeepSeek-R1-Zero", "DeepSeek-R1-Distill", "DeepSeek-Coder", "DeepSeek-Coder-V2", "DeepSeekMath", "DeepSeek-Prover-V1.5", "DeepSeek-Prover-V2", "DeepSeek-VL", "DeepSeek-VL2", "Janus", "Janus-Pro", "DeepSeek-OCR", "DeepSeek-OCR2"},
+    "zhipu": {"CogVLM", "CogVLM2", "GLM-4V", "GLM-4.5V", "GLM-4.6V", "GLM-5V", "CodeGeeX2", "CodeGeeX4", "GLM-4-Voice", "GLM-TTS", "GLM-OCR", "CogView3", "CogVideoX", "AutoGLM"},
+    "kimi": {"Kimi-Audio", "Kimi-Dev", "Kimina-Prover Preview", "MoBA"},
+    "qwen": {"CodeQwen", "Qwen2.5-Coder", "Qwen3-Coder", "Qwen3-Coder-Next", "Qwen-VL", "Qwen2-VL", "Qwen2.5-VL", "Qwen3-VL", "Qwen3-VL-Seg", "Qwen-VLA", "Qwen-Audio", "Qwen2-Audio", "Qwen3-Omni", "Qwen3-ASR", "Qwen3-TTS", "Qwen-Image", "Qwen-Image-2", "Qwen3-Embedding", "Qwen3-VL-Embedding", "Qwen3Guard", "Qwen-Scope"},
+    "seed": {"Seed1.5-VL", "Seed-OSS", "Seed-Coder", "BAGEL", "Seed-TTS", "Seedream 3.0", "Seedance 1.0", "Seed3D"},
+    "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2"},
+    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Sonnet 4.5", "Claude Sonnet 4.6", "Claude Haiku 4.5", "Claude Fable 5", "Claude Mythos 5"},
+    "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Pro", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash", "Gemini 3.5 Flash-Lite", "Gemini 3.6 Flash", "Gemini 3.7 Flash", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
+}
+BRANCH_MODEL_NODES = {
+    team_id: [node for node in nodes if node[1] in _ESTABLISHED_BRANCH_MODELS[team_id]]
+    for team_id, nodes in BRANCH_MODEL_NODES.items()
 }
 
 
@@ -461,7 +580,125 @@ def source_label(url: str) -> str:
     return "Official release"
 
 
+AUDITED_MODEL_FACTS = {
+    "GLM-5.3": "沿用 GLM-5.2 base，以 post-training 把复杂软件工程、长时程 agent 与网络安全能力继续推高；1M context、128K max output。",
+    "GLM-5.3 Flash": "320B 总参数、18B 激活的原生多模态模型；混合稀疏/线性注意力、mHC 与 30T multimodal pretraining。",
+    "Kimi K3": "2.8T 总参数、104B 激活，KDA + Attention Residuals、原生视觉与 1M context，面向长时程 coding 和知识工作。",
+    "Qwen3.8-Flash-Next": "125B 主模型加 51B N-gram embeddings、每 token 激活 6B；QSA、Gated Residual 与 Muon 预演 Qwen4 架构。",
+    "DeepSeek-V3.2-Exp": "在 V3.1-Terminus 上引入 DeepSeek Sparse Attention，是通往下一代架构的公开实验节点。",
+    "DeepSeek-Math-V2": "基于 V3.2-Exp Base 的自验证数学推理模型，把 theorem proving、proof verification 与高难竞赛数学统一。",
+    "Seed2.1": "Seed 官网列出的下一代真实生产力 agent 基座。",
+    "SeedRealtime": "原生音视频全双工 LLM，联合理解音频、视觉与时间信息并进行低时延交互。",
+    "Seed Audio 1.0": "端到端全场景音频生成模型，面向影视级声音创作。",
+    "Seedance 2.5": "面向 30 秒叙事、精确参考控制与强编辑能力的新一代视频生成模型。",
+    "Seedream 5.0 Pro": "带推理能力的多模态图像生成旗舰，面向专业内容创作。",
+    "Seedream 5.0 Lite": "统一多模态图像生成模型，加入深度思考与在线搜索。",
+    "Seed3D 2.0": "第二代 3D 生成基模，重点升级几何精度与材质质量。",
+    "Seed GR-3": "面向长时程灵巧操作、强调泛化性的 vision-language-action 模型。",
+    "GPT-5.6 Terra": "GPT-5.6 的能力—成本平衡层，保留 1.05M context 与统一工具能力。",
+    "GPT-5.6 Luna": "GPT-5.6 的高吞吐低成本层，面向规模化工作负载。",
+    "GPT-5.6 Cyber": "面向授权漏洞研究与安全测试的专业网络安全模型。",
+    "Claude Opus 4.1": "Anthropic system-card 索引中的独立 Opus 更新，不能被 Claude 4 family 标签吞掉。",
+    "Claude Mythos Preview": "Anthropic system-card 索引中的前沿能力预览模型。",
+    "Gemini 3.7 Flash": "Google 当前最新 Flash，面向 coding、agentic workflows 与可靠多步执行。",
+    "Gemini Omni Flash": "带原生音频的视频生成、编辑、关键帧插值与延展模型。",
+    "Gemini Robotics-ER 1.6": "面向物理空间理解、仪表读取和多步机器人任务规划的 embodied reasoning 模型。",
+}
+
+
+def ensure_audited_model_pack(team: dict, date: str, model: str, summary: str, url: str, branch: str | None) -> None:
+    """Create the missing source clip, model note and poster without replacing user work."""
+    folder = f"{date}_{slugify(model).replace('-', '_')}"
+    if branch:
+        assets = discover_branch_assets(team["dir"], model, date)
+        model_dir = assets.get("dir") if assets else SOURCE / team["dir"] / "Variants" / folder
+    else:
+        # Mainline packs use an exact canonical directory. Fuzzy discovery can
+        # otherwise confuse GLM-4.5 with GLM-4.5V or Qwen3 with Qwen3-Coder.
+        model_dir = SOURCE / team["dir"] / folder
+    model_dir.mkdir(parents=True, exist_ok=True)
+    src = model_dir / "src"
+    src.mkdir(parents=True, exist_ok=True)
+
+    fact = AUDITED_MODEL_FACTS.get(model, summary)
+    source_clip = src / "Official Source.md"
+    if not source_clip.exists():
+        source_clip.write_text(
+            f"# {model} — Official Source\n\n"
+            f"- Official URL: {url}\n"
+            f"- Publisher: {team['name']}\n"
+            f"- Atlas release month: {pretty_date(date)}\n"
+            f"- Retrieved: 2026-08-31\n\n"
+            "## Verified claim snapshot\n\n"
+            f"{fact}\n\n"
+            "> This local clip records only claims attributable to the linked first-party source. "
+            "Parameter counts or training details that are not public are intentionally left unstated.\n",
+            encoding="utf-8",
+        )
+
+    existing_notes = sorted(model_dir.glob("*.md"))
+    note = existing_notes[0] if existing_notes else model_dir / f"{model.replace(' ', '-').replace('/', '-')}.md"
+    if not note.exists():
+        branch_line = f"{branch} 支线" if branch else "主干正代"
+        note.write_text(f'''---
+title: "{model} — Model Overview"
+type: model-note
+year: {2000 + int(date[:2])}
+url: "{url}"
+tags: [model-note, base-model, {slugify(team['id'])}]
+status: read
+created: 2026-08-31
+updated: 2026-08-31
+---
+
+# {model} — Model Overview
+
+> [!tldr]
+> {fact}
+
+## 谱系定位
+
+- 团队：**{team['name']}**
+- 时间：**{pretty_date(date)}**
+- Atlas 归类：**{branch_line}**
+- 一手证据：[{source_label(url)}]({url})
+
+## 核心变化
+
+{fact}
+
+这个节点单独收录，是因为官方把它作为可独立识别的模型 / family 发布；同一 family 内的参数尺寸、服务档位和 dated API snapshot 不再重复拆叶子。
+
+## 阅读判断
+
+- 与前代比较时，优先看架构、数据、post-training 与工具环境四类变化。
+- 官方未披露的参数、训练数据和消融不作推断。
+- 若该节点是专项模型，应沿团队主干理解其能力迁移，而不是把它误写成新的通用正代。
+
+## 一手资料
+
+- [{url}]({url})
+- [[src/Official Source|本地官方来源摘录]]
+
+## 导航
+
+- [[Topics/13_base_model/Base_Model_Top8_Branch_Audit_2026|Top 8 支线审计]]
+''', encoding="utf-8")
+
+    posters = sorted(model_dir.glob("*poster*.html"))
+    if not posters:
+        poster = model_dir / f"{slugify(model).replace('-', '_')}_poster_zh.html"
+        poster.write_text(render_poster(model, team["name"], fact, url, note.name), encoding="utf-8")
+
+
 def add_missing_brainhao_packs() -> None:
+    # Mainline audit: every visible numbered/mainline leaf has a local source
+    # clip, note and poster before it is copied into the public atlas library.
+    for team_id in ["deepseek", "zhipu", "kimi", "qwen", "seed", "openai", "anthropic", "google"]:
+        team = next(t for t in TEAMS if t["id"] == team_id)
+        for date, model, summary, url in team["models"]:
+            ensure_audited_model_pack(team, date, model, summary, url, None)
+
     for team_dir, (folder, model, summary, url) in LATEST_PACKS.items():
         team = SOURCE / team_dir
         target = team / folder
@@ -741,6 +978,19 @@ def discover_assets(team_dir: str, model_name: str, date: str, folder: str | Non
     return {"dir": model_dir, "note": notes[0] if notes else None, "posters": posters}
 
 
+def discover_mainline_assets(team_dir: str, model_name: str, date: str, folder: str | None = None) -> dict:
+    """Prefer the exact canonical generation folder before fuzzy legacy matching."""
+    if folder:
+        return discover_assets(team_dir, model_name, date, folder)
+    canonical = f"{date}_{slugify(model_name).replace('-', '_')}"
+    exact = SOURCE / team_dir / canonical
+    if exact.is_dir():
+        notes = sorted(f for f in exact.glob("*.md") if f.is_file())
+        posters = sorted(f for f in exact.glob("*poster*.html") if f.is_file())
+        return {"dir": exact, "note": notes[0] if notes else None, "posters": posters}
+    return discover_assets(team_dir, model_name, date)
+
+
 def discover_branch_assets(team_dir: str, model_name: str, date: str) -> dict:
     """Match branch material only when a distinctive model token agrees."""
     root = SOURCE / team_dir
@@ -951,8 +1201,10 @@ NOTE_CSS = r'''
 
 
 def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
-    if LIBRARY.exists(): shutil.rmtree(LIBRARY)
-    LIBRARY.mkdir(parents=True)
+    # Publish incrementally.  The library is a long-lived public archive: a
+    # narrower audit (for example, mainline-only) must not erase previously
+    # published deep notes, posters, or their image assets.
+    LIBRARY.mkdir(parents=True, exist_ok=True)
     for record in records:
         assets = record.get("_assets") or {}
         model_root = assets.get("dir")
@@ -967,15 +1219,19 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
             record["note"] = str(rendered.relative_to(ATLAS))
         for poster in assets.get("posters", []):
             dest = dest_root / poster.name
-            copy_file_with_refs(poster, dest, model_root)
+            # Do not downgrade an already-published, hand-designed poster with
+            # an auto-generated fallback that happens to share its filename.
+            if not dest.exists():
+                copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
 
 
 def sync_archive(targets: dict[str, Path]) -> list[dict]:
     """Publish every non-source note and poster, including variant branches."""
     archive = ATLAS / "archive"
-    if archive.exists(): shutil.rmtree(archive)
-    archive.mkdir(parents=True)
+    # Keep historical routes stable when the current source inventory is
+    # narrower than an earlier publish.
+    archive.mkdir(parents=True, exist_ok=True)
     entries = []
     files = sorted(
         list(SOURCE.rglob("*.md")) + list(SOURCE.rglob("*poster*.html")),
@@ -1025,7 +1281,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "lineageType":item.get("lineageType", "variant"),
                 "lineageLabel":item.get("label", "专项支线"),
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
-                "_assets":discover_assets(team["dir"], name, raw_date, item.get("folder")),
+                "_assets":discover_mainline_assets(team["dir"], name, raw_date, item.get("folder")),
             })
         for raw_date, name, branch_name, url in sorted(
             BRANCH_MODEL_NODES.get(team["id"], []), key=lambda m: m[0], reverse=True
@@ -1121,7 +1377,7 @@ DETAIL_CSS = CSS + r'''
 
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2"><a class="button primary" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
 
 
 def render_branch_audit(teams: list[dict]) -> str:
@@ -1179,16 +1435,10 @@ def render_top8_tree_complete(teams: list[dict], records: list[dict]) -> str:
         team = next(t for t in teams if t["id"] == tid)
         family = [r for r in records if r["team"] == tid]
         main = [r for r in family if r["lineageType"] == "mainline"]
-        variants = [r for r in family if r["lineageType"] == "variant"]
         main_nodes = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time><b>{html.escape(r["name"])}</b></a>' for r in main)
-        branches = []
-        for label in dict.fromkeys(r["lineageLabel"] for r in variants):
-            nodes = sorted((r for r in variants if r["lineageLabel"] == label), key=lambda r:r["rawDate"], reverse=True)
-            leaves = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time>{html.escape(r["name"])}</a>' for r in nodes)
-            branches.append(f'<div class="twig"><b>{html.escape(label)}</b><div>{leaves}</div></div>')
-        boxes.append(f'<article class="team-box {"domestic" if team["region"]=="国内" else "overseas"}" style="--team:{team["color"]}"><header><small>{team["region"]}</small><h2>{html.escape(team["name"])}</h2></header><div class="trunk"><strong>MAINLINE</strong><div>{main_nodes}</div></div>{"".join(branches)}</article>')
+        boxes.append(f'<article class="team-box {"domestic" if team["region"]=="国内" else "overseas"}" style="--team:{team["color"]}"><header><small>{team["region"]}</small><h2>{html.escape(team["name"])}</h2></header><div class="trunk"><strong>MAINLINE</strong><div>{main_nodes}</div></div></article>')
     css = r'''*{box-sizing:border-box}body{margin:0;background:#f7f8f4;color:#14233d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-image:linear-gradient(#dce3eb66 1px,transparent 1px),linear-gradient(90deg,#dce3eb66 1px,transparent 1px);background-size:42px 42px}.page{max-width:1580px;margin:auto;padding:28px clamp(14px,3vw,44px) 65px}.nav{display:flex;justify-content:space-between}.nav a{color:#254f86;text-decoration:none;border:1px solid #b8c5d5;padding:9px 13px;border-radius:999px;background:white}h1{text-align:center;font-size:clamp(42px,7vw,86px);letter-spacing:-.06em;line-height:.9;margin:50px 0 12px}.sub{text-align:center;color:#627186;margin-bottom:25px}.root{width:min(760px,90%);margin:0 auto 28px;background:#142d4d;color:white;text-align:center;border-radius:18px;padding:18px}.forest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.team-box{background:white;border:1px solid #cbd5e1;border-top:5px solid var(--team);border-radius:18px;padding:16px;position:relative}.team-box header{display:flex;gap:10px;align-items:baseline}.team-box h2{margin:0 0 12px}.team-box small{color:#7b8797}.trunk,.twig{display:grid;grid-template-columns:105px minmax(0,1fr);gap:8px;padding:10px 0;border-top:1px solid #dce3eb}.trunk strong,.twig>b{font-size:10px;color:var(--team);letter-spacing:.08em}.trunk>div,.twig>div{display:flex;gap:5px;overflow-x:auto}.trunk a,.twig a{min-width:max-content;text-decoration:none;color:#243750;border:1px solid #d5dee9;border-radius:9px;padding:7px 9px;background:#f8fafc;font-size:10px}.trunk a time{display:block;color:#7c8898;margin-bottom:3px}.twig a time{color:#8a96a5;margin-right:5px}.domestic{box-shadow:inset 4px 0 #1768c511}.overseas{box-shadow:inset 4px 0 #12867511}@media(max-width:900px){.forest{grid-template-columns:1fr}.trunk,.twig{grid-template-columns:1fr}}'''
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 Foundation Model Survey Tree</title><style>{css}</style></head><body><main class="page"><nav class="nav"><span>BrainHao · Survey Tree</span><a href="../base_model_atlas.html">返回交互谱系</a></nav><h1>FRONTIER FOUNDATION<br>MODEL SURVEY TREE</h1><p class="sub">国内 Top 5：DeepSeek → GLM → Kimi → Qwen → Seed · 海外 Top 3：GPT → Claude → Gemini</p><div class="root">Foundation Models · 主线与逐模型支线 · 左新右旧</div><section class="forest">{"".join(boxes)}</section></main></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Top 8 Foundation Model Survey Tree</title><style>{css}</style></head><body><main class="page"><nav class="nav"><span>BrainHao · Survey Tree</span><a href="../base_model_atlas.html">返回交互谱系</a></nav><h1>FRONTIER FOUNDATION<br>MODEL SURVEY TREE</h1><p class="sub">国内 Top 5：DeepSeek → GLM → Kimi → Qwen → Seed · 海外 Top 3：GPT → Claude → Gemini</p><div class="root">Foundation Models · 只看正代 · 左新右旧</div><section class="forest">{"".join(boxes)}</section></main></body></html>'''
 
 
 def write_legacy_compatibility() -> None:
