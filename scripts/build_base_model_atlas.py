@@ -242,7 +242,7 @@ TEAM_PRIORITY = [
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
     "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash"),
-    "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.6", "GLM-4.7", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3"),
+    "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.5-Air", "GLM-4.6", "GLM-4.7", "GLM-4.7-Flash", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3", "GLM-5.3-Flash"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
     "seed": ("Seed1.5", "Seed1.6", "Seed1.8", "Seed2.0", "MedXIAOHE", "Seed2.1"),
@@ -329,6 +329,35 @@ PINNED_TIMELINE_VARIANTS = {
             "lineageType": "mainline",
             "label": "V4 同代模型",
         }
+    ],
+    "zhipu": [
+        {
+            "date": "2507",
+            "name": "GLM-4.5-Air",
+            "summary": "GLM-4.5 的高效率同代模型：106B 总参数、12B 激活参数，保留混合推理、coding 与 agent 能力。",
+            "source": "https://huggingface.co/zai-org/GLM-4.5-Air",
+            "folder": "2508_GLM_4_5",
+            "lineageType": "mainline",
+            "label": "GLM-4.5 同代模型",
+        },
+        {
+            "date": "2601",
+            "name": "GLM-4.7-Flash",
+            "summary": "GLM-4.7 的轻量同代模型：30B-A3B MoE，面向本地部署、coding 与 agentic tasks。",
+            "source": "https://huggingface.co/zai-org/GLM-4.7-Flash",
+            "folder": "2512_glm_4_7",
+            "lineageType": "mainline",
+            "label": "GLM-4.7 同代模型",
+        },
+        {
+            "date": "2608",
+            "name": "GLM-5.3-Flash",
+            "summary": "GLM-5.3 的高效率同代模型：320B 总参数、18B 激活参数，原生多模态并采用混合稀疏/线性注意力。",
+            "source": "https://huggingface.co/zai-org/GLM-5.3-Flash",
+            "folder": "2608_GLM_5_3_Flash",
+            "lineageType": "mainline",
+            "label": "GLM-5.3 同代模型",
+        },
     ],
     "seed": [
         {
