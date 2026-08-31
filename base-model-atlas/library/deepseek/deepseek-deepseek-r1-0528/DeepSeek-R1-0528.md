@@ -4,7 +4,7 @@ type: model-note
 authors: ["DeepSeek-AI"]
 year: 2025
 venue: "Official release / model card"
-url: "https://api-docs.deepseek.com/news/news250528/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -23,7 +23,7 @@ updated: 2026-08-31
 - 发布时间：**2025-05**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news250528/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-R1-0528)
 
 0528 的主要变化是把更多 post-training compute 转成更深的测试时推理，并补上 function calling、JSON 与 vibe coding，令 R1 从研究模型靠近工具模型。
 
@@ -69,6 +69,7 @@ AIME 平均推理长度从约 12K 增到 23K tokens，体现 inference-time comp
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_model_card.md|hf_model_card.md]]
 - [[src/official_model_card.md|official_model_card.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

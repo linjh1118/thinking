@@ -4,7 +4,7 @@ type: model-note
 authors: ["DeepSeek-AI"]
 year: 2025
 venue: "Official release / model card"
-url: "https://api-docs.deepseek.com/news/news250821/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V3.1"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -23,7 +23,7 @@ updated: 2026-08-31
 - 发布时间：**2025-08**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news250821/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V3.1)
 
 V3.1 把 V3 与 R1 两条线重新合并：单模型支持 Think/Non-Think，并第一次把 code/search agent 的多轮工具调用放到主模型定位中心。
 
@@ -69,6 +69,9 @@ post-training 同时优化混合推理与多步 agent。deepseek-chat 映射非�
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_model_card.md|official_model_card.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

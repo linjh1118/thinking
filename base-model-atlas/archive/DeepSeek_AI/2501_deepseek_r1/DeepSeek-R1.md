@@ -5,7 +5,7 @@ authors: ["DeepSeek-AI"]
 year: 2025
 venue: "arXiv + official release"
 arxiv: "2501.12948"
-url: "https://api-docs.deepseek.com/news/news250120/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-R1"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -24,7 +24,7 @@ updated: 2026-08-31
 - 发布时间：**2025-01**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news250120/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-R1)
 
 R1 的贡献是把 reasoning 从“模仿长 CoT”改写为“在可靠 verifier 上用大规模 RL 诱导搜索、反思与自校验，再用冷启动和通用对齐修正可读性”。
 
@@ -70,6 +70,9 @@ R1 当时不能原生使用搜索/计算器等工具；纯 RL 输出存在语言
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_readme.md|official_readme.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

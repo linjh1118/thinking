@@ -4,7 +4,7 @@ type: model-note
 authors: ["DeepSeek-AI"]
 year: 2024
 venue: "Official release / model card"
-url: "https://api-docs.deepseek.com/news/news0905/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V2.5"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -23,7 +23,7 @@ updated: 2026-08-31
 - 发布时间：**2024-09**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news0905/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V2.5)
 
 V2.5 不是新架构，而是把通用 Chat 与 Coder 两条权重线合并成一个可服务的统一 checkpoint。
 
@@ -69,6 +69,9 @@ V2.5 不是新架构，而是把通用 Chat 与 Coder 两条权重线合并成�
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_model_card.md|official_model_card.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

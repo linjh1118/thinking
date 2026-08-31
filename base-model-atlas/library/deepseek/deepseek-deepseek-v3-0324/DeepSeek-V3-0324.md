@@ -4,7 +4,7 @@ type: model-note
 authors: ["DeepSeek-AI"]
 year: 2025
 venue: "Official release / model card"
-url: "https://api-docs.deepseek.com/news/news250325/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V3-0324"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -23,7 +23,7 @@ updated: 2026-08-31
 - 发布时间：**2025-03**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news250325/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V3-0324)
 
 0324 是 V3 的关键 post-training checkpoint：没有换架构，却大幅抬高推理、前端、中文写作与函数调用，是“同底座能力迁移”的清晰样本。
 
@@ -69,6 +69,9 @@ updated: 2026-08-31
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_model_card.md|official_model_card.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

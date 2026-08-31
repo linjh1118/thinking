@@ -5,7 +5,7 @@ authors: ["DeepSeek-AI"]
 year: 2024
 venue: "arXiv + official release"
 arxiv: "2405.04434"
-url: "https://github.com/deepseek-ai/DeepSeek-V2"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V2"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -24,7 +24,7 @@ updated: 2026-08-31
 - 发布时间：**2024-05**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://github.com/deepseek-ai/DeepSeek-V2)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V2)
 
 V2 确立了 DeepSeek 的技术身份：MLA 解决 KV cache，DeepSeekMoE 解决激活计算，能力增长第一次与成本下降同时发生。
 
@@ -69,6 +69,9 @@ MoE 的专家并行与路由使部署复杂度上升；官方开源实现也提�
 
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_readme.md|official_readme.md]]
 - [[src/paper|paper/]]
 - [[src/retrieval_manifest.json|retrieval_manifest.json]]

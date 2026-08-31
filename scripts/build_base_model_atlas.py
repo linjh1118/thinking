@@ -140,19 +140,19 @@ TEAMS = [
         ["2606","Qwen3.7","沿用 hybrid attention 架构并继续推进正代能力。","https://github.com/QwenLM/Qwen3.8-Flash-Next"],
         ["2608","Qwen3.8","原生多模态、1M context 与内置工具。","https://github.com/QwenLM/Qwen3.8"]]},
     {"id":"deepseek","dir":"DeepSeek_AI","name":"DeepSeek AI","region":"国内","color":"#5aa8ff","thesis":"MLA/MoE 训练效率、开放 reasoning RL 与 agentic tool-use 是三条主轴。","models":[
-        ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://github.com/deepseek-ai/DeepSeek-LLM"],
-        ["2405","DeepSeek-V2","MLA + DeepSeekMoE 显著降低训练/推理成本。","https://github.com/deepseek-ai/DeepSeek-V2"],
-        ["2409","DeepSeek-V2.5","通用与 coder 模型合并。","https://api-docs.deepseek.com/news/news0905"],
-        ["2412","DeepSeek-V2.5-1210","V2.5 系列最终公开 checkpoint，继续提升数学、代码、写作与角色扮演。","https://api-docs.deepseek.com/news/news1210/"],
-        ["2412","DeepSeek-V3","671B/37B active、14.8T tokens 与 FP8 训练。","https://api-docs.deepseek.com/news/news1226"],
-        ["2501","DeepSeek-R1","大规模 RL 与极少标注的开放 reasoning 路线。","https://api-docs.deepseek.com/news/news250120/"],
-        ["2503","DeepSeek-V3-0324","V3 主部署 checkpoint，显著升级推理、前端、工具调用与中文写作。","https://api-docs.deepseek.com/news/news250325/"],
-        ["2505","DeepSeek-R1-0528","R1 主部署 checkpoint，强化深度推理、前端、工具调用并降低幻觉。","https://api-docs.deepseek.com/news/news250528/"],
-        ["2508","DeepSeek-V3.1","hybrid inference 与 agent/tool-use 后训练。","https://api-docs.deepseek.com/news/news250821/"],
-        ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://github.com/deepseek-ai/DeepSeek-V3.2-Exp"],
-        ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://api-docs.deepseek.com/news/news250922"],
-        ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://api-docs.deepseek.com/news/news251201/"],
-        ["2604","DeepSeek-V4","V4-Pro / V4-Flash 家族正式部署并原生适配 agent API。","https://api-docs.deepseek.com/updates/"]]},
+        ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://huggingface.co/deepseek-ai/deepseek-llm-67b-base"],
+        ["2405","DeepSeek-V2","MLA + DeepSeekMoE 显著降低训练/推理成本。","https://huggingface.co/deepseek-ai/DeepSeek-V2"],
+        ["2409","DeepSeek-V2.5","通用与 coder 模型合并。","https://huggingface.co/deepseek-ai/DeepSeek-V2.5"],
+        ["2412","DeepSeek-V2.5-1210","V2.5 系列最终公开 checkpoint，继续提升数学、代码、写作与角色扮演。","https://huggingface.co/deepseek-ai/DeepSeek-V2.5-1210"],
+        ["2412","DeepSeek-V3","671B/37B active、14.8T tokens 与 FP8 训练。","https://huggingface.co/deepseek-ai/DeepSeek-V3"],
+        ["2501","DeepSeek-R1","大规模 RL 与极少标注的开放 reasoning 路线。","https://huggingface.co/deepseek-ai/DeepSeek-R1"],
+        ["2503","DeepSeek-V3-0324","V3 主部署 checkpoint，显著升级推理、前端、工具调用与中文写作。","https://huggingface.co/deepseek-ai/DeepSeek-V3-0324"],
+        ["2505","DeepSeek-R1-0528","R1 主部署 checkpoint，强化深度推理、前端、工具调用并降低幻觉。","https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"],
+        ["2508","DeepSeek-V3.1","hybrid inference 与 agent/tool-use 后训练。","https://huggingface.co/deepseek-ai/DeepSeek-V3.1"],
+        ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp"],
+        ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Terminus"],
+        ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2"],
+        ["2604","DeepSeek-V4","V4-Pro / V4-Flash 家族正式部署并原生适配 agent API。","https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"]]},
     {"id":"baidu","dir":"Baidu_ERNIE","name":"Baidu · ERNIE","region":"国内","color":"#55d6ce","thesis":"知识增强预训练演进到统一多模态 MoE 与异步 agentic RL。","models":[
         ["1904","ERNIE","entity/phrase masking 注入知识。","https://arxiv.org/abs/1904.09223"],
         ["1907","ERNIE 2.0","continual multi-task pretraining。","https://arxiv.org/abs/1907.12412"],
@@ -1189,6 +1189,45 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                     key, value = line.split(":", 1)
                     meta[key.strip()] = value.strip().strip('"')
             raw = raw[end + 5:]
+    # Hugging Face model cards commonly mix Markdown with centered HTML badge
+    # blocks.  Normalize those blocks before the Obsidian-style renderer so
+    # readers see the actual card instead of escaped <div>/<img> source text.
+    hf_asset_base = ""
+    if "huggingface_model_cards" in source_file.parts:
+        repo = source_file.stem
+        hf_asset_base = f"https://huggingface.co/deepseek-ai/{repo}/resolve/main/"
+    elif source_file.name == "hf_model_card.md":
+        manifest = source_file.parent / "retrieval_manifest.json"
+        if manifest.is_file():
+            try:
+                raw_url = json.loads(manifest.read_text(encoding="utf-8"))["documents"]["hf_model_card.md"]["url"]
+                hf_asset_base = raw_url.replace("/raw/main/README.md", "/resolve/main/")
+            except (KeyError, TypeError, json.JSONDecodeError):
+                pass
+    if hf_asset_base:
+        raw = re.sub(
+            r'(<img\b[^>]*?\bsrc=["\'])(?!https?://|data:|/)([^"\']+)',
+            lambda match: match.group(1) + hf_asset_base + match.group(2),
+            raw,
+            flags=re.I,
+        )
+        raw = re.sub(
+            r'(!\[[^\]]*\]\()(?!https?://|data:|/)([^)]+)',
+            lambda match: match.group(1) + hf_asset_base + match.group(2),
+            raw,
+        )
+    raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S)
+    def html_image(match: re.Match[str]) -> str:
+        attrs = match.group(1)
+        src_match = re.search(r'\bsrc=["\']([^"\']+)', attrs, re.I)
+        if not src_match:
+            return ""
+        alt_match = re.search(r'\balt=["\']([^"\']*)', attrs, re.I)
+        return f"![{alt_match.group(1) if alt_match else ''}]({src_match.group(1)})"
+    raw = re.sub(r"<img\b([^>]*?)/?>", html_image, raw, flags=re.I)
+    raw = re.sub(r"<br\s*/?>", "\n", raw, flags=re.I)
+    raw = re.sub(r"<hr\s*/?>", "\n---\n", raw, flags=re.I)
+    raw = re.sub(r"</?(?:div|p|a|span|details|summary)[^>]*>", "", raw, flags=re.I)
     lines = raw.splitlines()
     out: list[str] = []
     toc: list[tuple[int, str, str]] = []
@@ -1305,13 +1344,19 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
             f'<tr id="{slugify(rel.parent.name or rel.stem)}"><td><a href="{html.escape(href, quote=True)}">{html.escape(str(rel))}</a></td>'
             f'<td>{html.escape(kind)}</td><td>{source.stat().st_size:,} B</td></tr>'
         )
-        if rel.parent == Path(".") and source.name != "Official Source.md":
-            label = source.stem.replace("official_", "").replace("_", " ").title()
+        selectable_model_card = rel.parts and rel.parts[0] == "huggingface_model_cards"
+        if (rel.parent == Path(".") or selectable_model_card) and source.name != "Official Source.md":
+            if source.name == "hf_model_card.md":
+                label = "Hugging Face Model Card · 官方主卡"
+            elif selectable_model_card:
+                label = f"HF · {source.stem}"
+            else:
+                label = source.stem.replace("official_", "").replace("_", " ").title()
             if source.suffix.lower() == ".md":
                 source_docs.append({
-                    "label": f"{label} · 阅读版",
+                    "label": f"{label} · Markdown 阅读版",
                     "path": str(published.relative_to(ATLAS)),
-                    "kind": "readable",
+                    "kind": "hf-model-card" if selectable_model_card or source.name == "hf_model_card.md" else "readable",
                     "name": source.name,
                 })
             elif source.suffix.lower() == ".pdf":
@@ -1335,19 +1380,23 @@ def sync_source_archive(model_root: Path, dest_root: Path, targets: dict[str, Pa
 *{{box-sizing:border-box}}body{{margin:0;background:#07111c;color:#eaf4ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:34px}}main{{max-width:1120px;margin:auto}}a{{color:#7dd3fc;text-decoration:none}}.back{{display:inline-block;margin-bottom:28px}}h1{{font-size:clamp(40px,7vw,74px);letter-spacing:-.05em;margin:0 0 12px}}.lead{{color:#9db2c3;line-height:1.7;max-width:820px}}.box{{margin-top:30px;overflow:auto;border:1px solid #20415a;border-radius:18px;background:#0b1b29}}table{{border-collapse:collapse;width:100%;font-size:13px}}th,td{{padding:13px 16px;border-bottom:1px solid #18374c;text-align:left;vertical-align:top}}th{{color:#78d7ec;background:#0d2435;position:sticky;top:0}}tr:last-child td{{border:0}}code{{color:#a7c5d8}}@media(max-width:700px){{body{{padding:20px 12px}}}}
 </style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的 DeepSeek 官方网页、模型卡、技术报告与可获得的论文源码。原始文件保留不改写；Markdown 另提供阅读版 HTML。来源 URL、抓取日期、字节数与 SHA-256 见 <a href="src/retrieval_manifest.json">retrieval_manifest.json</a>。</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
     priorities = {
-        "official_ga_release.md": 0,
-        "official_release.md": 1,
-        "official_preview_release.md": 2,
-        "official_readme.md": 3,
-        "official_pro_model_card.md": 4,
-        "official_model_card.md": 5,
-        "official_flash_model_card.md": 6,
-        "technical_report.pdf": 7,
+        "hf_model_card.md": 0,
+        "official_pro_model_card.md": 1,
+        "official_model_card.md": 2,
+        "official_flash_model_card.md": 3,
+        "official_readme.md": 4,
+        "technical_report.pdf": 5,
+        "official_ga_release.md": 20,
+        "official_release.md": 21,
+        "official_preview_release.md": 22,
         "official_ga_release.html": 20,
-        "official_release.html": 21,
-        "official_preview_release.html": 22,
+        "official_release.html": 31,
+        "official_preview_release.html": 32,
     }
-    source_docs.sort(key=lambda item: (priorities.get(item["name"], 50), item["label"]))
+    source_docs.sort(key=lambda item: (
+        priorities.get(item["name"], 10 if item["kind"] == "hf-model-card" else 50),
+        item["label"],
+    ))
     return {
         "index": str(index.relative_to(ATLAS)),
         "reader": source_docs[0]["path"] if source_docs else str(index.relative_to(ATLAS)),
@@ -1587,7 +1636,7 @@ DETAIL_CSS = CSS + r'''
 
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2">${{x.sources?`<a class="button primary" href="workspace.html?id=${{encodeURIComponent(x.slug)}}">进入三合一研读台</a>`:''}}<a class="button ${{x.sources?'':'primary'}}" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');const hasWorkspace=Boolean(x.sources&&x.note);document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2">${{hasWorkspace?`<a class="button primary" href="workspace.html?id=${{encodeURIComponent(x.slug)}}">进入三合一研读台</a>`:''}}<a class="button ${{hasWorkspace?'':'primary'}}" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
 
 
 WORKSPACE_CSS = r'''

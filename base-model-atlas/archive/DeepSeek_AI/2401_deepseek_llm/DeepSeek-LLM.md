@@ -5,7 +5,7 @@ authors: ["DeepSeek-AI"]
 year: 2024
 venue: "arXiv + official release"
 arxiv: "2401.02954"
-url: "https://github.com/deepseek-ai/DeepSeek-LLM"
+url: "https://huggingface.co/deepseek-ai/deepseek-llm-67b-base"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -24,7 +24,7 @@ updated: 2026-08-31
 - 发布时间：**2024-01**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://github.com/deepseek-ai/DeepSeek-LLM)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/deepseek-llm-67b-base)
 
 DeepSeek 的真正起点不是某个榜单分数，而是把 scaling law、数据质量与训练系统一起当作可重复的工程问题。
 
@@ -69,6 +69,9 @@ Dense 67B、4K context 已明显过时；部分开放式和中文评测依赖内
 
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_readme.md|official_readme.md]]
 - [[src/paper|paper/]]
 - [[src/retrieval_manifest.json|retrieval_manifest.json]]

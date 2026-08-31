@@ -1,7 +1,7 @@
 ---
 source: "https://api-docs.deepseek.com/news/news250325/"
 publisher: "DeepSeek AI"
-retrieved: 2026-08-31
+retrieved: 2026-09-01
 ---
 
 # DeepSeek-V3-0324 Release

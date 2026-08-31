@@ -5,7 +5,7 @@ authors: ["DeepSeek-AI"]
 year: 2024
 venue: "arXiv + official release"
 arxiv: "2412.19437"
-url: "https://api-docs.deepseek.com/news/news1226/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V3"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -24,7 +24,7 @@ updated: 2026-08-31
 - 发布时间：**2024-12**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news1226/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V3)
 
 V3 把 V2 的稀疏架构扩到 671B，并用 FP8、无辅助损失负载均衡、MTP 与通信重叠证明“大 MoE 也能稳定且经济地训完”。
 
@@ -70,6 +70,9 @@ V3 把 V2 的稀疏架构扩到 671B，并用 FP8、无辅助损失负载均衡�
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_readme.md|official_readme.md]]
 - [[src/official_release.html|official_release.html]]
 - [[src/official_release.md|official_release.md]]

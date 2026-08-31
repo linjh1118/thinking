@@ -5,7 +5,7 @@ authors: ["DeepSeek-AI"]
 year: 2026
 venue: "arXiv + official release"
 arxiv: "2606.19348"
-url: "https://api-docs.deepseek.com/news/news260424/"
+url: "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"
 tags: [model-note, base-model, deepseek, mainline]
 status: read
 rating: 5
@@ -24,7 +24,7 @@ updated: 2026-08-31
 - 发布时间：**2026-04**
 - 团队：**DeepSeek AI**
 - Atlas 口径：**主线正代 / 关键主部署 checkpoint**
-- 官方入口：[一手发布页](https://api-docs.deepseek.com/news/news260424/)
+- 官方入口：[一手发布页](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro)
 
 V4 把 DeepSeek 的效率路线推进到 1M context：Pro/Flash 共用压缩+稀疏混合注意力，并把 agent、长上下文和可变 reasoning effort 作为默认服务形态。
 
@@ -70,6 +70,9 @@ Flash 预训练约 32T tokens，Pro 约 33T。post-training 先分别培养数�
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
 - [[src/assets|assets/]]
+- [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
+- [[src/hf_model_card.md|hf_model_card.md]]
+- [[src/huggingface_model_cards|huggingface_model_cards/]]
 - [[src/official_flash_model_card.md|official_flash_model_card.md]]
 - [[src/official_ga_release.html|official_ga_release.html]]
 - [[src/official_ga_release.md|official_ga_release.md]]
