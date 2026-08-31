@@ -32,13 +32,15 @@ TEAMS = [
         ["2005","GPT-3","few-shot prompting 成为通用接口。","https://arxiv.org/abs/2005.14165"],
         ["2211","GPT-3.5","指令对齐与对话产品化形成规模效应。","https://openai.com/index/chatgpt/"],
         ["2303","GPT-4","多模态与高可靠复杂任务能力跃迁。","https://openai.com/research/gpt-4"],
+        ["2311","GPT-4 Turbo","128K context、更新知识截止时间与更低 API 成本。","https://openai.com/index/new-models-and-developer-products-announced-at-devday/"],
         ["2405","GPT-4o","原生 omni 交互与低时延统一。","https://openai.com/index/hello-gpt-4o/"],
         ["2502","GPT-4.5","以更大规模预训练提升世界知识、模式识别与自然交互。","https://openai.com/index/introducing-gpt-4-5/"],
         ["2504","GPT-4.1","1M context，并强化 coding、instruction following 与长上下文。","https://openai.com/index/gpt-4-1/"],
         ["2508","GPT-5","reasoning、fast path 与工具能力统一。","https://developers.openai.com/api/docs/models/gpt-5"],
         ["2511","GPT-5.1","强化 coding 与 agentic task。","https://developers.openai.com/api/docs/models/gpt-5.1"],
         ["2512","GPT-5.2","面向专业工作的可配置推理旗舰。","https://developers.openai.com/api/docs/models/gpt-5.2"],
-        ["2603","GPT-5.4","1.05M context 与 computer use 进入通用旗舰。","https://developers.openai.com/api/docs/models/gpt-5.4"],
+        ["2603","GPT-5.4","统一 reasoning、coding、工具与专业工作流。","https://developers.openai.com/api/docs/models/gpt-5.4"],
+        ["2603","GPT-5.3","ChatGPT Instant 正代更新，强化日常问答、搜索与对话质量。","https://developers.openai.com/api/docs/models/gpt-5.3-chat-latest"],
         ["2604","GPT-5.5","复杂 coding 与专业工作质量上移。","https://developers.openai.com/api/docs/models/gpt-5.5"],
         ["2608","GPT-5.6","Sol / Terra / Luna 分层，正代统一到 1.05M context。","https://developers.openai.com/api/docs/models/gpt-5.6-sol"]]},
     {"id":"anthropic","dir":"Anthropic","name":"Anthropic · Claude","region":"海外","color":"#ffb36b","thesis":"以 Constitutional AI、安全评估和长时程 agentic coding 为主轴。","models":[
@@ -50,7 +52,9 @@ TEAMS = [
         ["2502","Claude 3.7 Sonnet","hybrid reasoning 统一快答与 extended thinking。","https://www.anthropic.com/news/claude-3-7-sonnet"],
         ["2505","Claude 4","Opus / Sonnet 进入 agent 与长任务阶段。","https://www.anthropic.com/news/claude-4"],
         ["2508","Claude Opus 4.1","在 agentic tasks、真实 coding 与 reasoning 上更新 Opus 4。","https://www.anthropic.com/system-cards"],
+        ["2509","Claude Sonnet 4.5","coding、computer use 与长时程 agent 能力成为 Sonnet 主力。","https://www.anthropic.com/news/claude-sonnet-4-5"],
         ["2511","Claude Opus 4.5","coding、computer use 与自主工作增强。","https://www.anthropic.com/news/claude-opus-4-5"],
+        ["2602","Claude Sonnet 4.6","coding、computer use、长上下文与 agent planning 的 Sonnet 升级。","https://www.anthropic.com/news/claude-sonnet-4-6"],
         ["2602","Claude Opus 4.6","1M context 与 agent planning 持续增强。","https://www.anthropic.com/news/claude-opus-4-6"],
         ["2604","Claude Opus 4.7","长时程软件工程与自验证进一步提升。","https://www.anthropic.com/news/claude-opus-4-7"],
         ["2605","Claude Opus 4.8","更可靠的判断、工具效率与诚实性。","https://www.anthropic.com/news/claude-opus-4-8"],
@@ -58,14 +62,14 @@ TEAMS = [
         ["2607","Claude Opus 5","面向长时程 agents 的 Opus 代际跃迁。","https://www.anthropic.com/news/claude-opus-5"]]},
     {"id":"google","dir":"Google_DeepMind","name":"Google DeepMind · Gemini","region":"海外","color":"#78a8ff","thesis":"原生多模态、超长上下文与推理/工具生态合流。","models":[
         ["2312","Gemini 1.0","Ultra / Pro / Nano 原生多模态分层。","https://deepmind.google/technologies/gemini/"],
-        ["2402","Gemini 1.5","MoE 与百万 token context。","https://blog.google/technology/ai/google-gemini-next-generation-model-february-2024/"],
+        ["2402","Gemini 1.5 Pro","MoE 与百万 token context。","https://blog.google/innovation-and-ai/products/google-gemini-next-generation-model-february-2024/"],
         ["2412","Gemini 2.0","agentic era、原生工具与实时交互。","https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/"],
-        ["2503","Gemini 2.5","thinking model 成为主线。","https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"],
-        ["2511","Gemini 3","多模态 reasoning 与 agent 工具链升级。","https://deepmind.google/models/gemini/"],
-        ["2602","Gemini 3.1 Pro","面向复杂专业任务与长时程 agents。","https://deepmind.google/models/gemini/"],
-        ["2606","Gemini 3.5","3.x 正代在能力、成本与多模态 agent 之间继续扩展。","https://ai.google.dev/gemini-api/docs/models"],
-        ["2607","Gemini 3.6","面向通用 agentic 与多模态任务的 3.x 升级。","https://ai.google.dev/gemini-api/docs/models"],
-        ["2608","Gemini 3.7","当前 3.x 正代，强化 coding、agentic workflow 与可靠多步执行。","https://ai.google.dev/gemini-api/docs/models"]]},
+        ["2503","Gemini 2.5 Pro","thinking model 成为主线。","https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"],
+        ["2511","Gemini 3 Pro","多模态 reasoning 与 agent 工具链升级。","https://deepmind.google/models/gemini/"],
+        ["2602","Gemini 3.1 Pro","面向复杂专业任务与长时程 agents。","https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-pro/"],
+        ["2605","Gemini 3.5 Flash","3.x 正代在速度、成本与多模态 agent 之间继续扩展。","https://ai.google.dev/gemini-api/docs/models"],
+        ["2607","Gemini 3.6 Flash","面向通用 agentic 与多模态任务的 3.x 升级。","https://ai.google.dev/gemini-api/docs/models"],
+        ["2608","Gemini 3.7 Flash","当前 3.x 正代，强化 coding、agentic workflow 与可靠多步执行。","https://ai.google.dev/gemini-api/docs/latest-model"]]},
     {"id":"meta","dir":"Meta_Llama","name":"Meta · Llama","region":"海外","color":"#63d5ff","thesis":"开放权重生态从 dense LLM 演进到原生多模态 MoE。","models":[
         ["2302","Llama 1","高质量开放基础模型开启生态。","https://ai.meta.com/blog/large-language-model-llama-meta-ai/"],
         ["2307","Llama 2","开放权重与商业许可扩大采用。","https://ai.meta.com/llama/"],
@@ -130,6 +134,7 @@ TEAMS = [
         ["2406","Qwen2","多语言、GQA 与长上下文升级。","https://qwenlm.github.io/blog/qwen2/"],
         ["2409","Qwen2.5","大规模 family 与 coder/math 支线成熟。","https://qwenlm.github.io/blog/qwen2.5/"],
         ["2505","Qwen3","thinking/non-thinking 单模型统一。","https://qwenlm.github.io/blog/qwen3/"],
+        ["2509","Qwen3-Next","以超稀疏 MoE 和 hybrid attention 预演 Qwen3.5 架构。","https://qwen.ai/blog?id=qwen3-next"],
         ["2602","Qwen3.5","下一代开放模型架构迭代。","https://github.com/QwenLM/Qwen3"],
         ["2604","Qwen3.6","正代 family 的效率与能力升级。","https://github.com/QwenLM/Qwen3"],
         ["2606","Qwen3.7","沿用 hybrid attention 架构并继续推进正代能力。","https://github.com/QwenLM/Qwen3.8-Flash-Next"],
@@ -138,14 +143,16 @@ TEAMS = [
         ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://github.com/deepseek-ai/DeepSeek-LLM"],
         ["2405","DeepSeek-V2","MLA + DeepSeekMoE 显著降低训练/推理成本。","https://github.com/deepseek-ai/DeepSeek-V2"],
         ["2409","DeepSeek-V2.5","通用与 coder 模型合并。","https://api-docs.deepseek.com/news/news0905"],
+        ["2412","DeepSeek-V2.5-1210","V2.5 系列最终公开 checkpoint，继续提升数学、代码、写作与角色扮演。","https://api-docs.deepseek.com/news/news1210/"],
         ["2412","DeepSeek-V3","671B/37B active、14.8T tokens 与 FP8 训练。","https://api-docs.deepseek.com/news/news1226"],
         ["2501","DeepSeek-R1","大规模 RL 与极少标注的开放 reasoning 路线。","https://api-docs.deepseek.com/news/news250120/"],
+        ["2503","DeepSeek-V3-0324","V3 主部署 checkpoint，显著升级推理、前端、工具调用与中文写作。","https://api-docs.deepseek.com/news/news250325/"],
+        ["2505","DeepSeek-R1-0528","R1 主部署 checkpoint，强化深度推理、前端、工具调用并降低幻觉。","https://api-docs.deepseek.com/news/news250528/"],
         ["2508","DeepSeek-V3.1","hybrid inference 与 agent/tool-use 后训练。","https://api-docs.deepseek.com/news/news250821/"],
         ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://github.com/deepseek-ai/DeepSeek-V3.2-Exp"],
         ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://api-docs.deepseek.com/news/news250922"],
         ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://api-docs.deepseek.com/news/news251201/"],
-        ["2604","DeepSeek-V4","Pro / Flash 分层并原生适配 agent API。","https://api-docs.deepseek.com/updates/"],
-        ["2608","DeepSeek-V4 Pro","GA 版本强化 production agent 与 Responses API。","https://api-docs.deepseek.com/updates/"]]},
+        ["2604","DeepSeek-V4","V4-Pro / V4-Flash 家族正式部署并原生适配 agent API。","https://api-docs.deepseek.com/updates/"]]},
     {"id":"baidu","dir":"Baidu_ERNIE","name":"Baidu · ERNIE","region":"国内","color":"#55d6ce","thesis":"知识增强预训练演进到统一多模态 MoE 与异步 agentic RL。","models":[
         ["1904","ERNIE","entity/phrase masking 注入知识。","https://arxiv.org/abs/1904.09223"],
         ["1907","ERNIE 2.0","continual multi-task pretraining。","https://arxiv.org/abs/1907.12412"],
@@ -168,6 +175,8 @@ TEAMS = [
         ["2606","Seed2.1","面向真实生产力任务的下一代通用 agent 基座。","https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity"]]},
     {"id":"zhipu","dir":"Zhipu_GLM","name":"Zhipu · GLM","region":"国内","color":"#58e0b5","thesis":"General Language Model 演进为 agentic reasoning/coding 原生基座。","models":[
         ["2210","GLM-130B","双语开放自回归预训练基座。","https://github.com/THUDM/GLM-130B"],
+        ["2303","ChatGLM","首代中英双语对话 GLM，将系列带入广泛开源使用。","https://github.com/zai-org/ChatGLM-6B"],
+        ["2306","ChatGLM2","1.4T 双语 tokens、32K context 与更高效 MQA 推理。","https://github.com/zai-org/ChatGLM2-6B"],
         ["2310","ChatGLM3","对话、代码与工具调用 family。","https://github.com/THUDM/ChatGLM3"],
         ["2401","GLM-4","新一代多模态与 tool-use 基座。","https://www.zhipuai.cn/"],
         ["2507","GLM-4.5","355B/32B active ARC foundation model。","https://github.com/zai-org/GLM-4.5"],
@@ -180,10 +189,10 @@ TEAMS = [
     {"id":"kimi","dir":"Moonshot_Kimi","name":"Moonshot · Kimi","region":"国内","color":"#9f8cff","thesis":"超长上下文底座逐步转向开放 MoE、视觉 agent 与 agent swarm。","models":[
         ["2310","Moonshot v1","长上下文产品化起点。","https://www.moonshot.cn/"],
         ["2501","Kimi k1.5","多模态 reasoning 与 RL scaling。","https://arxiv.org/abs/2501.12599"],
-        ["2504","Kimi-VL","低激活 MoE 视觉语言模型。","https://github.com/MoonshotAI/Kimi-VL"],
         ["2507","Kimi K2","1T/32B active agentic intelligence。","https://github.com/MoonshotAI/Kimi-K2"],
-        ["2510","Kimi Linear","KDA hybrid linear attention 与 1M context。","https://arxiv.org/abs/2510.26692"],
-        ["2602","Kimi K2.5","视觉 agent、joint RL 与 Agent Swarm。","https://arxiv.org/abs/2602.02276"],
+        ["2509","Kimi K2-Instruct-0905","K2 主 checkpoint 更新，强化 agentic coding、前端与上下文能力。","https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905"],
+        ["2511","Kimi K2 Thinking","K2 正式 reasoning 更新，扩展通用推理与工具任务能力。","https://www.kimi.com/en/blog/kimi-k2-thinking"],
+        ["2601","Kimi K2.5","视觉 agent、joint RL 与 Agent Swarm。","https://www.kimi.com/en/blog/kimi-k2-5"],
         ["2604","Kimi K2.6","开放 coding 与 agentic scaling。","https://huggingface.co/moonshotai"],
         ["2607","Kimi K3","2.8T/104B-active 原生多模态 agent 基座，1M context。","https://github.com/MoonshotAI/Kimi-K3"]]},
     {"id":"minimax","dir":"MiniMax","name":"MiniMax","region":"国内","color":"#ff8566","thesis":"长上下文 attention 效率与真实环境 agent RL 双线合流。","models":[
@@ -227,6 +236,20 @@ TEAM_PRIORITY = [
     "openai", "anthropic", "google",
     "meta", "xai", "mistral", "microsoft", "amazon", "nvidia", "cohere", "ibm",
 ]
+
+# Independently reviewed against the eight teams' official release histories on
+# 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
+# branch promotion, and silent renames fail the build instead of reaching Pages.
+TOP8_MAINLINE_CONTRACT = {
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4"),
+    "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.6", "GLM-4.7", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3"),
+    "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
+    "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
+    "seed": ("Seed1.5", "Seed1.6", "Seed1.8", "Seed2.0", "MedXIAOHE", "Seed2.1"),
+    "openai": ("GPT-1", "GPT-2", "GPT-3", "GPT-3.5", "GPT-4", "GPT-4 Turbo", "GPT-4o", "GPT-4.5", "GPT-4.1", "GPT-5", "GPT-5.1", "GPT-5.2", "GPT-5.3", "GPT-5.4", "GPT-5.5", "GPT-5.6"),
+    "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Opus 5"),
+    "google": ("Gemini 1.0", "Gemini 1.5 Pro", "Gemini 2.0", "Gemini 2.5 Pro", "Gemini 3 Pro", "Gemini 3.1 Pro", "Gemini 3.5 Flash", "Gemini 3.6 Flash", "Gemini 3.7 Flash"),
+}
 
 # Top-8 branch audit.  Mainline generations stay in TEAMS; these are specialist
 # or modality branches, and are therefore shown as branch chips instead of being
@@ -538,8 +561,8 @@ _ESTABLISHED_BRANCH_MODELS = {
     "qwen": {"CodeQwen", "Qwen2.5-Coder", "Qwen3-Coder", "Qwen3-Coder-Next", "Qwen-VL", "Qwen2-VL", "Qwen2.5-VL", "Qwen3-VL", "Qwen3-VL-Seg", "Qwen-VLA", "Qwen-Audio", "Qwen2-Audio", "Qwen3-Omni", "Qwen3-ASR", "Qwen3-TTS", "Qwen-Image", "Qwen-Image-2", "Qwen3-Embedding", "Qwen3-VL-Embedding", "Qwen3Guard", "Qwen-Scope"},
     "seed": {"Seed1.5-VL", "Seed-OSS", "Seed-Coder", "BAGEL", "Seed-TTS", "Seedream 3.0", "Seedance 1.0", "Seed3D"},
     "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2"},
-    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Sonnet 4.5", "Claude Sonnet 4.6", "Claude Haiku 4.5", "Claude Fable 5", "Claude Mythos 5"},
-    "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Pro", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash", "Gemini 3.5 Flash-Lite", "Gemini 3.6 Flash", "Gemini 3.7 Flash", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
+    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Fable 5", "Claude Mythos 5"},
+    "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash-Lite", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
 }
 BRANCH_MODEL_NODES = {
     team_id: [node for node in nodes if node[1] in _ESTABLISHED_BRANCH_MODELS[team_id]]
@@ -548,7 +571,6 @@ BRANCH_MODEL_NODES = {
 
 
 LATEST_PACKS = {
-    "DeepSeek_AI": ("2608_DeepSeek_V4_Pro", "DeepSeek-V4-Pro", "GA 版本强化 production agent、原生 Responses API 与长时程工具任务。", "https://api-docs.deepseek.com/updates/"),
     "xAI_Grok": ("2608_Grok_4_6", "Grok 4.6", "聚焦长时程 agents、交互式工作与视觉产物。", "https://x.ai/news/grok-4-6"),
     "Mistral_AI": ("2512_Mistral_Large_3", "Mistral Large 3", "开放权重、通用、多模态与多语言旗舰。", "https://mistral.ai/models/"),
     "Tencent_Hunyuan": ("2506_Hunyuan_A13B", "Hunyuan-A13B", "80B 总参数、13B 激活的开放 hybrid-reasoning MoE，预训练 20T tokens。", "https://github.com/Tencent-Hunyuan/Hunyuan-A13B"),
@@ -581,9 +603,21 @@ def source_label(url: str) -> str:
 
 
 AUDITED_MODEL_FACTS = {
+    "DeepSeek-V2.5-1210": "V2.5 系列最终公开 checkpoint；官方明确记录数学、代码、写作与角色扮演继续提升。",
+    "DeepSeek-V3-0324": "替换线上 deepseek-chat 的 V3 主 checkpoint，显著增强推理、前端、工具调用、中文写作与搜索。",
+    "DeepSeek-R1-0528": "替换线上 deepseek-reasoner 的 R1 主 checkpoint；投入更多后训练算力，并新增函数调用与 JSON 输出。",
+    "ChatGLM": "首代中英双语对话 GLM，6.2B 参数，是 ChatGLM 系列公开演进的起点。",
+    "ChatGLM2": "第二代 ChatGLM，以 1.4T 双语 tokens、32K context 和 MQA 改善能力与推理效率。",
     "GLM-5.3": "沿用 GLM-5.2 base，以 post-training 把复杂软件工程、长时程 agent 与网络安全能力继续推高；1M context、128K max output。",
     "GLM-5.3 Flash": "320B 总参数、18B 激活的原生多模态模型；混合稀疏/线性注意力、mHC 与 30T multimodal pretraining。",
     "Kimi K3": "2.8T 总参数、104B 激活，KDA + Attention Residuals、原生视觉与 1M context，面向长时程 coding 和知识工作。",
+    "Kimi K2-Instruct-0905": "K2 的官方主 checkpoint 更新，提升 agentic coding、前端、上下文与工具任务表现。",
+    "Kimi K2 Thinking": "K2 的正式 reasoning 更新，官方单独发布并接入通用推理与工具任务。",
+    "Qwen3-Next": "80B/3B-active 超稀疏 MoE，以 Gated DeltaNet + Gated Attention 的 hybrid 架构预演 Qwen3.5。",
+    "GPT-4 Turbo": "GPT-4 主系列的重要正式升级：128K context、更新知识截止时间，并显著降低 API 成本。",
+    "GPT-5.3": "ChatGPT Instant 正代更新，官方模型目录保留独立 GPT-5.3 Chat 页面。",
+    "Claude Sonnet 4.5": "2025-09 正式发布的 Sonnet 主模型，强化 coding、computer use 与长时程 agents。",
+    "Claude Sonnet 4.6": "2026-02 正式发布的 Sonnet 主模型，升级 coding、computer use、长上下文和 agent planning。",
     "Qwen3.8-Flash-Next": "125B 主模型加 51B N-gram embeddings、每 token 激活 6B；QSA、Gated Residual 与 Muon 预演 Qwen4 架构。",
     "DeepSeek-V3.2-Exp": "在 V3.1-Terminus 上引入 DeepSeek Sparse Attention，是通往下一代架构的公开实验节点。",
     "DeepSeek-Math-V2": "基于 V3.2-Exp Base 的自验证数学推理模型，把 theorem proving、proof verification 与高难竞赛数学统一。",
@@ -606,6 +640,27 @@ AUDITED_MODEL_FACTS = {
 }
 
 
+def find_existing_mainline_dir(team_dir: str, date: str, model_name: str) -> Path | None:
+    """Find the canonical pack, tolerating a corrected release month.
+
+    Rich paper packs are sometimes filed by arXiv month rather than product
+    release month.  Reuse that unique pack instead of creating a thin duplicate.
+    """
+    root = SOURCE / team_dir
+    suffix = slugify(model_name).replace("-", "_").lower()
+    canonical = root / f"{date}_{suffix}"
+    if canonical.is_dir():
+        return canonical
+    if not root.is_dir():
+        return None
+    matches = []
+    for candidate in root.iterdir():
+        match = re.match(r"^\d{4}_(.+)$", candidate.name)
+        if candidate.is_dir() and match and match.group(1).lower() == suffix:
+            matches.append(candidate)
+    return matches[0] if len(matches) == 1 else None
+
+
 def ensure_audited_model_pack(team: dict, date: str, model: str, summary: str, url: str, branch: str | None) -> None:
     """Create the missing source clip, model note and poster without replacing user work."""
     folder = f"{date}_{slugify(model).replace('-', '_')}"
@@ -615,7 +670,7 @@ def ensure_audited_model_pack(team: dict, date: str, model: str, summary: str, u
     else:
         # Mainline packs use an exact canonical directory. Fuzzy discovery can
         # otherwise confuse GLM-4.5 with GLM-4.5V or Qwen3 with Qwen3-Coder.
-        model_dir = SOURCE / team["dir"] / folder
+        model_dir = find_existing_mainline_dir(team["dir"], date, model) or SOURCE / team["dir"] / folder
     model_dir.mkdir(parents=True, exist_ok=True)
     src = model_dir / "src"
     src.mkdir(parents=True, exist_ok=True)
@@ -982,13 +1037,14 @@ def discover_mainline_assets(team_dir: str, model_name: str, date: str, folder: 
     """Prefer the exact canonical generation folder before fuzzy legacy matching."""
     if folder:
         return discover_assets(team_dir, model_name, date, folder)
-    canonical = f"{date}_{slugify(model_name).replace('-', '_')}"
-    exact = SOURCE / team_dir / canonical
+    exact = find_existing_mainline_dir(team_dir, date, model_name)
+    if exact is None:
+        return discover_assets(team_dir, model_name, date)
     if exact.is_dir():
         notes = sorted(f for f in exact.glob("*.md") if f.is_file())
         posters = sorted(f for f in exact.glob("*poster*.html") if f.is_file())
         return {"dir": exact, "note": notes[0] if notes else None, "posters": posters}
-    return discover_assets(team_dir, model_name, date)
+    return {}
 
 
 def discover_branch_assets(team_dir: str, model_name: str, date: str) -> dict:
@@ -1224,6 +1280,46 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
             if not dest.exists():
                 copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
+
+
+def validate_top8_mainline_contract(records: list[dict]) -> None:
+    """Refuse to publish an incomplete or broken Top-8 mainline atlas."""
+    errors: list[str] = []
+    all_slugs = [record["slug"] for record in records]
+    if len(all_slugs) != len(set(all_slugs)):
+        errors.append("duplicate model slugs")
+
+    for team_id, expected_oldest_first in TOP8_MAINLINE_CONTRACT.items():
+        mainline = [
+            record for record in records
+            if record["team"] == team_id and record["lineageType"] == "mainline"
+        ]
+        actual_newest_first = [record["name"] for record in mainline]
+        if sorted(actual_newest_first) != sorted(expected_oldest_first):
+            missing = [name for name in expected_oldest_first if name not in actual_newest_first]
+            unexpected = [name for name in actual_newest_first if name not in expected_oldest_first]
+            errors.append(
+                f"{team_id}: mainline mismatch; missing={missing}, "
+                f"unexpected={unexpected}, actual={actual_newest_first}"
+            )
+
+        dates = [record["rawDate"] for record in mainline]
+        if dates != sorted(dates, reverse=True):
+            errors.append(f"{team_id}: timeline is not newest-first: {dates}")
+
+        for record in mainline:
+            prefix = f"{team_id}/{record['name']}"
+            if not record.get("source"):
+                errors.append(f"{prefix}: missing official source")
+            note = record.get("note")
+            if not note or not (ATLAS / note).is_file():
+                errors.append(f"{prefix}: missing rendered note")
+            posters = record.get("posters") or []
+            if not posters or not all((ATLAS / poster).is_file() for poster in posters):
+                errors.append(f"{prefix}: missing published poster")
+
+    if errors:
+        raise RuntimeError("Top-8 mainline contract failed:\n- " + "\n- ".join(errors))
 
 
 def sync_archive(targets: dict[str, Path]) -> list[dict]:
@@ -1474,6 +1570,7 @@ def main() -> None:
     ATLAS.mkdir(exist_ok=True)
     targets = note_targets()
     sync_library(records, targets)
+    validate_top8_mainline_contract(records)
     archive_entries = sync_archive(targets)
     (THINKING / "base_model_atlas.html").write_text(render_index_complete(teams, records), encoding="utf-8")
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
