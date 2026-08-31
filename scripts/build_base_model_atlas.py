@@ -162,10 +162,10 @@ TEAMS = [
         ["2401","GLM-4","新一代多模态与 tool-use 基座。","https://www.zhipuai.cn/"],
         ["2508","GLM-4.5","355B/32B active ARC foundation model。","https://github.com/zai-org/GLM-4.5"],
         ["2509","GLM-4.7","coding、tool use 与 interleaved reasoning。","https://docs.z.ai/"],
-        ["2602","GLM-5","面向 agentic engineering 的新正代。","https://z.ai/blog"],
-        ["2604","GLM-5.1","long-horizon coding agent。","https://z.ai/blog"],
-        ["2606","GLM-5.2","1M context 与长时程 coding。","https://z.ai/blog"],
-        ["2608","GLM-5.3 Flash","原生多模态与成本/速度 Pareto。","https://z.ai/blog"]]},
+        ["2602","GLM-5","面向 agentic engineering 的新正代。","https://docs.z.ai/guides/overview/overview"],
+        ["2604","GLM-5.1","long-horizon coding agent。","https://docs.z.ai/guides/overview/overview"],
+        ["2606","GLM-5.2","1M context 与长时程 coding。","https://docs.z.ai/guides/overview/overview"],
+        ["2608","GLM-5.3 Flash","原生多模态与成本/速度 Pareto。","https://docs.z.ai/guides/overview/overview"]]},
     {"id":"kimi","dir":"Moonshot_Kimi","name":"Moonshot · Kimi","region":"国内","color":"#9f8cff","thesis":"超长上下文底座逐步转向开放 MoE、视觉 agent 与 agent swarm。","models":[
         ["2310","Moonshot v1","长上下文产品化起点。","https://www.moonshot.cn/"],
         ["2501","Kimi k1.5","多模态 reasoning 与 RL scaling。","https://arxiv.org/abs/2501.12599"],
@@ -234,7 +234,7 @@ VARIANT_FAMILIES = {
         {"name":"Speech","models":"GLM-4-Voice · GLM-TTS","source":"https://github.com/THUDM/GLM-4-Voice"},
         {"name":"Document","models":"GLM-OCR","source":"https://docs.z.ai/guides/overview/overview"},
         {"name":"Image / Video","models":"CogView · CogVideoX","source":"https://github.com/THUDM/CogVideo"},
-        {"name":"Agent","models":"AutoGLM · Phone / Computer Use","source":"https://github.com/THUDM/AutoGLM"},
+        {"name":"Agent","models":"AutoGLM · Phone / Computer Use","source":"https://github.com/zai-org/Open-AutoGLM"},
     ],
     "kimi": [
         {"name":"Vision","models":"Kimi-VL · K1.5 · K2.5","source":"https://github.com/MoonshotAI/Kimi-VL"},
@@ -320,7 +320,7 @@ BRANCH_MODEL_NODES = {
         ("2310", "CogVLM", "Vision", "https://github.com/THUDM/CogVLM"),
         ("2407", "CogVLM2", "Vision", "https://github.com/THUDM/CogVLM2"),
         ("2406", "GLM-4V", "Vision", "https://github.com/zai-org/GLM-4"),
-        ("2508", "GLM-4.5V", "Vision", "https://github.com/zai-org/GLM-4.5V"),
+        ("2508", "GLM-4.5V", "Vision", "https://github.com/zai-org/GLM-V"),
         ("2510", "GLM-4.6V", "Vision", "https://docs.z.ai/guides/overview/overview"),
         ("2605", "GLM-5V", "Vision", "https://docs.z.ai/guides/overview/overview"),
         ("2303", "CodeGeeX2", "Code", "https://github.com/THUDM/CodeGeeX2"),
@@ -330,7 +330,7 @@ BRANCH_MODEL_NODES = {
         ("2602", "GLM-OCR", "Document", "https://docs.z.ai/guides/overview/overview"),
         ("2409", "CogView3", "Image / Video", "https://github.com/THUDM/CogView3"),
         ("2408", "CogVideoX", "Image / Video", "https://github.com/zai-org/CogVideo"),
-        ("2501", "AutoGLM", "Agent", "https://github.com/THUDM/AutoGLM"),
+        ("2501", "AutoGLM", "Agent", "https://github.com/zai-org/Open-AutoGLM"),
     ],
     "kimi": [
         ("2504", "Kimi-Audio", "Audio", "https://github.com/MoonshotAI/Kimi-Audio"),
@@ -1195,6 +1195,25 @@ def write_legacy_compatibility() -> None:
     redirect = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../../base_model_atlas.html"><link rel="canonical" href="../../base_model_atlas.html"><title>正在打开新版 Base Model Atlas</title></head><body><p><a href="../../base_model_atlas.html">打开新版 Base Model Atlas</a></p><script>location.replace('../../base_model_atlas.html')</script></body></html>'''
     for name in ("13_base_model_汇总.html", "13_base_model_汇总_v2.html"):
         (ATLAS / "archive" / name).write_text(redirect, encoding="utf-8")
+    # GitHub Pages assigns MIME types from file extensions, so an HTML payload
+    # saved directly as *.md would still display as plain Markdown.  A directory
+    # named *.md with index.html makes the old URL receive a normal 301-to-slash
+    # followed by a real 200 HTML document.  Build this compatibility route for
+    # every rendered note, not only the one URL that exposed the problem.
+    library_root = ATLAS / "library"
+    legacy_root = library_root / "library"
+    rendered_notes = [
+        page for page in library_root.rglob("*.html")
+        if legacy_root not in page.parents and page.with_suffix(".md").is_file()
+    ]
+    for page in rendered_notes:
+        rel = page.relative_to(library_root)
+        legacy_dir = legacy_root / rel.with_suffix(".md")
+        legacy_dir.mkdir(parents=True, exist_ok=True)
+        base_href = "/thinking/base-model-atlas/library/" + quote(str(rel.parent)) + "/"
+        content = page.read_text(encoding="utf-8")
+        content = content.replace("<head>", f'<head><base href="{base_href}">', 1)
+        (legacy_dir / "index.html").write_text(content, encoding="utf-8")
     not_found = r'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>正在修复旧链接</title></head><body><p id="m">正在跳转到可读 HTML…</p><script>let p=location.pathname;p=p.replace('/base-model-atlas/library/library/','/base-model-atlas/library/').replace(/\.md$/i,'.html');if(p!==location.pathname)location.replace(p+location.search+location.hash);else document.querySelector('#m').innerHTML='<a href="/thinking/base_model_atlas.html">返回 Base Model Atlas</a>';</script></body></html>'''
     (THINKING / "404.html").write_text(not_found, encoding="utf-8")
 
