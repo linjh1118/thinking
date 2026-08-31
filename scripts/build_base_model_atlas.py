@@ -1360,6 +1360,7 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
 def render_markdown(source_file: Path, destination: Path, targets: dict[str, Path]) -> None:
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
+    original_raw = raw
     meta: dict[str, str] = {}
     if raw.startswith("---\n"):
         end = raw.find("\n---\n", 4)
@@ -1486,8 +1487,42 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     title = meta.get("title") or next((t for level,t,_ in toc if level == 1), source_file.stem)
     toc_html = "".join(f'<a class="toc-l{level}" href="#{anchor}">{html.escape(text)}</a>' for level,text,anchor in toc if level <= 3)
     tags = meta.get("tags", "").strip("[]")
+    note_html = ''.join(out)
+    # Older short/image-less model notes must not silently look "finished" in
+    # the public library. Explicitly annotated notes own their status; the
+    # renderer marks the rest until their official sources and figures exist.
+    domestic_focus_dirs = {"DeepSeek_AI", "Zhipu_GLM", "Moonshot_Kimi", "Alibaba_Qwen", "ByteDance_Seed"}
+    is_model_note = (
+        meta.get("type") in {"model-note", "model-family", "paper"}
+        and "src" not in source_file.parts
+        and source_file.is_relative_to(SOURCE)
+        and any(part in domestic_focus_dirs for part in source_file.parts)
+    )
+    # Frontmatter alone is not enough: the reader must see the qualification.
+    has_explicit_status = "资料充分度" in original_raw
+    image_count = len(re.findall(r"!\[[^\]]*\]\([^)]+\)|<img\b", original_raw, flags=re.I))
+    evidence_units = len(re.findall(r"[\u4e00-\u9fff]|[A-Za-z0-9]+", raw))
+    if is_model_note and not has_explicit_status and (image_count == 0 or evidence_units < 1800):
+        missing: list[str] = []
+        if image_count == 0:
+            missing.append("缺少已本地化的官方图片")
+        if evidence_units < 1800:
+            missing.append("现有一手资料归档或逐项精读的证据密度不足")
+        quality_banner = (
+            '<aside class="callout warning quality-warning" style="--accent:#f59e0b;background:#f59e0b14">'
+            '<div class="callout-title" style="color:#fbbf24">质量状态：未达到完整精读标准</div>'
+            f'<div>当前页面尚不能按完整笔记验收：{"；".join(missing)}。'
+            '这不是完整结论页；需要补齐官方 model card / technical report / 发布图，并完成模型特有的架构、训练、评测与证据边界分析后再移除此标记。</div>'
+            '</aside>'
+        )
+        h1_end = note_html.find("</h1>")
+        if h1_end >= 0:
+            h1_end += len("</h1>")
+            note_html = note_html[:h1_end] + quality_banner + note_html[h1_end:]
+        else:
+            note_html = quality_banner + note_html
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style></head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{''.join(out)}</main></div></body></html>''', encoding="utf-8")
+    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style></head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{note_html}</main></div></body></html>''', encoding="utf-8")
 
 
 NOTE_CSS = r'''
