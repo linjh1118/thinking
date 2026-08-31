@@ -1515,6 +1515,52 @@ def sync_archive(targets: dict[str, Path]) -> list[dict]:
     return entries
 
 
+def sync_deepseek_hf_catalog(targets: dict[str, Path]) -> None:
+    """Publish the complete official HF collection inventory, tree-independent."""
+    source_root = SOURCE / "DeepSeek_AI"
+    inventory_path = source_root / "src/huggingface_collections.json"
+    if not inventory_path.is_file():
+        return
+    destination_root = ATLAS / "library/deepseek/hf-collections"
+    destination_root.mkdir(parents=True, exist_ok=True)
+    card_routes: dict[str, str] = {}
+    for card in sorted(source_root.glob("**/src/huggingface_model_cards/*.md")):
+        family = card.parents[2].name
+        destination = destination_root / family / card.name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(card, destination)
+        rendered = Path(str(destination) + ".html")
+        render_markdown(card, rendered, targets)
+        card_routes[card.stem] = str(rendered.relative_to(ATLAS))
+
+    collections = json.loads(inventory_path.read_text(encoding="utf-8"))
+    collection_sections = []
+    repository_count = 0
+    missing_count = 0
+    for collection in collections:
+        items = [item for item in collection.get("items", []) if item.get("type") == "model"]
+        repository_count += len(items)
+        rows = []
+        for item in items:
+            repo = item["id"]
+            name = repo.split("/", 1)[1]
+            route = card_routes.get(name)
+            if route:
+                href = os.path.relpath(ATLAS / route, destination_root).replace(os.sep, "/")
+                rows.append(f'<a class="repo" href="{html.escape(href, quote=True)}"><b>{html.escape(name)}</b><span>README.md · HTML 阅读版</span></a>')
+            else:
+                missing_count += 1
+                rows.append(f'<a class="repo missing" href="https://huggingface.co/{html.escape(repo, quote=True)}" target="_blank" rel="noopener"><b>{html.escape(name)}</b><span>官方仓库无 README / model card</span></a>')
+        collection_sections.append(
+            f'<section><header><div><small>OFFICIAL COLLECTION</small><h2>{html.escape(collection["title"])}</h2></div>'
+            f'<a href="https://huggingface.co/collections/{html.escape(collection["slug"], quote=True)}" target="_blank" rel="noopener">HF Collection ↗</a></header>'
+            f'<div class="repos">{"".join(rows)}</div></section>'
+        )
+    (destination_root / "index.html").write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek · Hugging Face Collections</title><style>
+:root{{--bg:#070b12;--panel:#101722;--line:#29364a;--text:#edf4ff;--muted:#8fa0b8;--cyan:#64dceb}}*{{box-sizing:border-box}}body{{margin:0;background:radial-gradient(circle at 72% -10%,#164e633d,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}}main{{max-width:1320px;margin:auto;padding:36px 24px 90px}}nav{{display:flex;justify-content:space-between}}a{{color:#8be8f4;text-decoration:none}}.hero{{padding:72px 0 48px}}.hero small,section small{{color:var(--cyan);font-size:10px;letter-spacing:.16em}}h1{{font-size:clamp(48px,8vw,98px);line-height:.9;letter-spacing:-.06em;margin:14px 0 24px}}.lead{{max-width:830px;color:#b2bfd1;font-size:19px;line-height:1.65}}.stats{{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}}.stat{{padding:12px 16px;border:1px solid var(--line);border-radius:999px;background:#101722}}.stat b{{font-size:20px;margin-right:6px}}section{{margin-top:18px;border:1px solid var(--line);border-radius:22px;background:#0d141f;overflow:hidden}}section header{{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 22px;border-bottom:1px solid var(--line)}}h2{{margin:5px 0 0;font-size:22px}}.repos{{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--line)}}.repo{{display:block;padding:16px 18px;background:#0d141f;color:var(--text)}}.repo:hover{{background:#142131}}.repo b{{display:block;font-size:13px;overflow-wrap:anywhere}}.repo span{{display:block;margin-top:7px;color:var(--muted);font-size:11px}}.repo.missing{{background:#24161a}}.repo.missing span{{color:#f3a6ac}}@media(max-width:700px){{section header{{align-items:flex-start;flex-direction:column}}}}
+</style></head><body><main><nav><a href="../../../base_model_atlas.html">← 返回谱系树</a><a href="https://huggingface.co/deepseek-ai/collections" target="_blank" rel="noopener">官方 Collections ↗</a></nav><div class="hero"><small>DEEPSEEK · COMPLETE HF INVENTORY</small><h1>Hugging Face<br>Model Cards</h1><p class="lead">这里按 DeepSeek 官方 collections 逐项对账。API 只用于获得仓库清单；正文全部来自各模型仓库原始 README.md，并预渲染为可读 HTML。同代的 Base / Chat / Lite / Distill 仍归在一个 family，不冒充新正代。</p><div class="stats"><span class="stat"><b>{len(collections)}</b> collections</span><span class="stat"><b>{repository_count}</b> 官方模型仓库</span><span class="stat"><b>{len(card_routes)}</b> 原始 model cards</span><span class="stat"><b>{missing_count}</b> 仓库无卡</span></div></div>{''.join(collection_sections)}</main></body></html>''', encoding="utf-8")
+
+
 def build_records() -> tuple[list[dict], list[dict]]:
     records = []
     seen_slugs: set[str] = set()
@@ -1754,9 +1800,15 @@ def main() -> None:
     ATLAS.mkdir(exist_ok=True)
     targets = note_targets()
     sync_library(records, targets)
+    sync_deepseek_hf_catalog(targets)
     validate_top8_mainline_contract(records)
     archive_entries = sync_archive(targets)
-    (THINKING / "base_model_atlas.html").write_text(render_index_complete(teams, records), encoding="utf-8")
+    index_page = render_index_complete(teams, records).replace(
+        '<div class="toplinks">',
+        '<div class="toplinks"><a class="ghost" href="base-model-atlas/library/deepseek/hf-collections/index.html">DeepSeek HF 全集</a>',
+        1,
+    )
+    (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
     (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
     (ATLAS / "workspace.html").write_text(render_workspace(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
