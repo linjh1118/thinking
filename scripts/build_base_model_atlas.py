@@ -185,7 +185,7 @@ TEAMS = [
         ["2602","GLM-5","面向 agentic engineering 的新正代。","https://docs.z.ai/guides/overview/overview"],
         ["2604","GLM-5.1","long-horizon coding agent。","https://docs.z.ai/guides/overview/overview"],
         ["2606","GLM-5.2","1M context 与长时程 coding。","https://docs.z.ai/guides/overview/overview"],
-        ["2608","GLM-5.3","沿用 5.2 base、以大规模 post-training 强化 coding、cyber 与长时程 agents。","https://docs.z.ai/guides/llm/glm-5.3"]]},
+        ["260814","GLM-5.3","沿用 5.2 base、以大规模 post-training 强化 coding、cyber 与长时程 agents。","https://z.ai/blog/glm-5.3"]]},
     {"id":"kimi","dir":"Moonshot_Kimi","name":"Moonshot · Kimi","region":"国内","color":"#9f8cff","thesis":"超长上下文底座逐步转向开放 MoE、视觉 agent 与 agent swarm。","models":[
         ["2310","Moonshot v1","长上下文产品化起点。","https://www.moonshot.cn/"],
         ["2501","Kimi k1.5","多模态 reasoning 与 RL scaling。","https://arxiv.org/abs/2501.12599"],
@@ -326,6 +326,8 @@ PINNED_TIMELINE_VARIANTS = {
             "summary": "DeepSeek-V4 的高效率同代模型：284B 总参数、13B 激活参数，原生支持 1M context。",
             "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
             "folder": "2604_deepseek_v4",
+            "assetNote": "DeepSeek-V4-Flash.md",
+            "assetPosters": ["deepseek_v4_flash_poster_zh.html"],
             "lineageType": "mainline",
             "label": "V4 同代模型",
         }
@@ -337,6 +339,8 @@ PINNED_TIMELINE_VARIANTS = {
             "summary": "GLM-4.5 的高效率同代模型：106B 总参数、12B 激活参数，保留混合推理、coding 与 agent 能力。",
             "source": "https://huggingface.co/zai-org/GLM-4.5-Air",
             "folder": "2508_GLM_4_5",
+            "assetNote": "GLM-4.5-Air.md",
+            "assetPosters": ["glm_4_5_air_poster_zh.html"],
             "lineageType": "mainline",
             "label": "GLM-4.5 同代模型",
         },
@@ -346,15 +350,19 @@ PINNED_TIMELINE_VARIANTS = {
             "summary": "GLM-4.7 的轻量同代模型：30B-A3B MoE，面向本地部署、coding 与 agentic tasks。",
             "source": "https://huggingface.co/zai-org/GLM-4.7-Flash",
             "folder": "2512_glm_4_7",
+            "assetNote": "GLM-4.7-Flash.md",
+            "assetPosters": ["glm_4_7_flash_poster_zh.html"],
             "lineageType": "mainline",
             "label": "GLM-4.7 同代模型",
         },
         {
-            "date": "2608",
+            "date": "260826",
             "name": "GLM-5.3-Flash",
             "summary": "GLM-5.3 的高效率同代模型：320B 总参数、18B 激活参数，原生多模态并采用混合稀疏/线性注意力。",
             "source": "https://huggingface.co/zai-org/GLM-5.3-Flash",
             "folder": "2608_GLM_5_3_Flash",
+            "assetNote": "GLM-5.3-Flash.md",
+            "assetPosters": ["glm_5_3_flash_poster_zh.html"],
             "lineageType": "mainline",
             "label": "GLM-5.3 同代模型",
         },
@@ -370,6 +378,24 @@ PINNED_TIMELINE_VARIANTS = {
             "label": "Seed 模型",
         }
     ]
+}
+
+# Family folders may contain a dedicated note/poster for a sibling SKU.  Keep
+# the generic family leaf on its own assets after those sibling files are added.
+MODEL_ASSET_OVERRIDES = {
+    "DeepSeek-V4": {
+        "assetNote": "DeepSeek-V4.md",
+        "assetPosters": ["deepseek_v4_poster_zh.html"],
+    },
+    "GLM-4.5": {
+        "folder": "2508_GLM_4_5",
+        "assetNote": "GLM-4.5-ARC-Foundation-Models.md",
+        "assetPosters": ["GLM_4_5_poster.html", "GLM_4_5_poster_zh.html"],
+    },
+    "GLM-4.7": {
+        "assetNote": "GLM-4.7.md",
+        "assetPosters": ["glm_4_7_poster_zh.html"],
+    },
 }
 
 # Individually addressable Top-8 branch models.  These are model leaves, not
@@ -631,7 +657,11 @@ def slugify(value: str) -> str:
 
 
 def pretty_date(raw: str) -> str:
-    return f"20{raw[:2]}-{raw[2:]}" if len(raw) == 4 else raw
+    if len(raw) == 4:
+        return f"20{raw[:2]}-{raw[2:]}"
+    if len(raw) == 6:
+        return f"20{raw[:2]}-{raw[2:4]}-{raw[4:]}"
+    return raw
 
 
 def source_label(url: str) -> str:
@@ -1085,6 +1115,28 @@ def discover_mainline_assets(team_dir: str, model_name: str, date: str, folder: 
         posters = sorted(f for f in exact.glob("*poster*.html") if f.is_file())
         return {"dir": exact, "note": notes[0] if notes else None, "posters": posters}
     return {}
+
+
+def apply_asset_overrides(assets: dict, model_name: str, item: dict) -> dict:
+    """Select model-specific files when several sibling SKUs share one family folder."""
+    model_dir = assets.get("dir")
+    if not model_dir:
+        return assets
+    override = {**MODEL_ASSET_OVERRIDES.get(model_name, {}), **item}
+    note_name = override.get("assetNote")
+    poster_names = override.get("assetPosters")
+    if note_name:
+        note = model_dir / note_name
+        if not note.is_file():
+            raise FileNotFoundError(f"Missing pinned note for {model_name}: {note}")
+        assets["note"] = note
+    if poster_names:
+        posters = [model_dir / name for name in poster_names]
+        missing = [str(poster) for poster in posters if not poster.is_file()]
+        if missing:
+            raise FileNotFoundError(f"Missing pinned poster for {model_name}: {missing}")
+        assets["posters"] = posters
+    return assets
 
 
 def discover_branch_assets(team_dir: str, model_name: str, date: str) -> dict:
@@ -1625,6 +1677,12 @@ def build_records() -> tuple[list[dict], list[dict]]:
         ] + PINNED_TIMELINE_VARIANTS.get(team["id"], [])
         for item in sorted(timeline, key=lambda m: m["date"], reverse=True):
             raw_date, name, summary, url = item["date"], item["name"], item["summary"], item["source"]
+            asset_folder = item.get("folder") or MODEL_ASSET_OVERRIDES.get(name, {}).get("folder")
+            assets = apply_asset_overrides(
+                discover_mainline_assets(team["dir"], name, raw_date, asset_folder),
+                name,
+                item,
+            )
             slug = f"{team['id']}-{slugify(name)}"
             if slug in seen_slugs:
                 slug = f"{slug}-{raw_date}"
@@ -1637,7 +1695,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "lineageType":item.get("lineageType", "variant"),
                 "lineageLabel":item.get("label", "专项支线"),
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
-                "_assets":discover_mainline_assets(team["dir"], name, raw_date, item.get("folder")),
+                "_assets": assets,
             })
         for raw_date, name, branch_name, url in sorted(
             BRANCH_MODEL_NODES.get(team["id"], []), key=lambda m: m[0], reverse=True

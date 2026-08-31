@@ -2,7 +2,7 @@
 title: "GLM-5.3 — Model Overview"
 type: model-note
 year: 2026
-url: "https://docs.z.ai/guides/llm/glm-5.3"
+url: "https://z.ai/blog/glm-5.3"
 tags: [model-note, base-model, zhipu]
 status: read
 created: 2026-08-31
@@ -17,9 +17,9 @@ updated: 2026-08-31
 ## 谱系定位
 
 - 团队：**Zhipu · GLM**
-- 时间：**2026-08**
+- 时间：**2026-08-14**
 - Atlas 归类：**主干正代**
-- 一手证据：[Official docs](https://docs.z.ai/guides/llm/glm-5.3)
+- 一手证据：[Z.ai 官方发布](https://z.ai/blog/glm-5.3)
 
 ## 核心变化
 
@@ -35,7 +35,7 @@ updated: 2026-08-31
 
 ## 一手资料
 
-- [https://docs.z.ai/guides/llm/glm-5.3](https://docs.z.ai/guides/llm/glm-5.3)
+- [GLM-5.3: Frontier Coding with Emergent Cyber Capabilities](https://z.ai/blog/glm-5.3)
 - [[src/Official Source|本地官方来源摘录]]
 
 ## 导航
