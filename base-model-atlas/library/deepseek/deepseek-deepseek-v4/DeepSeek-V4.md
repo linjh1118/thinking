@@ -12,12 +12,18 @@ rating: 5
 topic: "13_base_model"
 created: 2026-08-31
 updated: 2026-08-31
+source_sufficiency: sufficient
 ---
 
 # DeepSeek-V4 — DeepSeek 主线精读
 
 > [!tldr]
-> V4 把 DeepSeek 的效率路线推进到 1M context：Pro/Flash 共用压缩+稀疏混合注意力，并把 agent、长上下文和可变 reasoning effort 作为默认服务形态。
+> **V4 把 DeepSeek 的效率路线推进到 1M context：Pro/Flash 共用 CSA + HCA 混合注意力，并把 agent、长上下文、可变 reasoning effort 与低比特部署作为一个系统问题。** 四月 Preview、七月 Flash-0731、八月 Pro-0813 是同一正代内不同 checkpoint，不能把它们的发布时间和分数混在一起。
+
+![DeepSeek-V4 官方规格总览](src/assets/official_preview_release_01.png)
+
+> [!success] 资料充分度：完整
+> Family 层有官方 technical report 源码、HF model cards、Preview/正式发布页、完整 benchmark 与本地化图片，本页达到完整综述标准。各发行物的材料边界在对应独立笔记中说明。
 
 ## 谱系定位
 
@@ -37,6 +43,8 @@ V4 把 DeepSeek 的效率路线推进到 1M context：Pro/Flash 共用压缩+稀
 | 32T+ | 预训练 tokens |
 | 1M | 原生 context |
 
+![DeepSeek-V4 官方综合性能图](src/assets/official_preview_release_02.png)
+
 > [!note]
 > 表中数字只采用本目录 `src/` 保存的官方发布页、模型卡或技术报告；内部榜单和服务价格只用于理解发布语境，不外推为独立复现实验。
 
@@ -55,6 +63,20 @@ Flash 预训练约 32T tokens，Pro 约 33T。post-training 先分别培养数�
 - V4-Pro 八月 GA 继续强化生产 agent，并保持模型名不变；因此 GA 归入同一 V4 family，而不是另造一代。
 
 这里最重要的不是把不同年份的 benchmark 横向拼成排行榜，而是识别同一团队相邻 checkpoint 的变量：架构、预训练规模、post-training、推理预算、工具环境和服务接口分别改变了什么。
+
+![DeepSeek-V4 正式 checkpoint 官方 benchmark](src/assets/official_ga_release_01.png)
+
+## 官方 collection 的九个发行物怎样归类
+
+| 类型 | 发行物 | Atlas 位置 | 是否独立能力 checkpoint |
+|---|---|---|---|
+| Base | [[DeepSeek-V4-Flash-Base]] / [[DeepSeek-V4-Pro-Base]] | 主线 family 的训练起点 | 是，但不是 Chat/Agent 模型 |
+| Preview | [[DeepSeek-V4-Flash]] / [[DeepSeek-V4-Pro]] | 四月主线 | 是 |
+| 正式更新 | [[DeepSeek-V4-Flash-0731]] / [[DeepSeek-V4-Pro-0813]] | 七月、八月主线 | 是，分别替代 Preview |
+| 推测解码 | [[DeepSeek-V4-Flash-DSpark]] / [[DeepSeek-V4-Pro-DSpark]] | 默认折叠的 serving 支线 | 否，同 checkpoint + module |
+| 多模态实验 | [[DeepSeek-V4-Flash-Vision-Exp]] | 默认折叠的视觉支线 | 是，experimental |
+
+这个分类同时满足两件事：官方 collection 不漏项；主干时间线也不会被同一 checkpoint 的 DSpark 打乱。
 
 ## 对 Agent Training 的启发
 
