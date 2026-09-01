@@ -3,8 +3,8 @@ title: "MiniMax M3: Frontier Coding, 1M Context, Native Multimodality"
 type: model-note
 authors: ["MiniMax"]
 year: 2026
-venue: Official Blog
-arxiv:
+venue: Official Blog + MSA Technical Report
+arxiv: "2606.13392"
 doi:
 url: "https://www.minimax.io/blog/minimax-m3"
 tags: [model-note, minimax, coding-agent, multimodal, long-context, sparse-attention]
@@ -23,7 +23,7 @@ MiniMax M3 是 M2 系列之后的一次架构级换代：它把 **frontier codin
 ![MiniMax M3 官方能力总览](src/assets/m3-benchmark.jpeg)
 
 > [!note]
-> M3 权重和 Hugging Face model card 已公开；但截至本次更新，官方仍没有发布可独立核对训练细节与完整消融的 technical report。因此本页达到“详细 Tech Blog + Model Card”整理标准，不冒充论文精读；未公开的参数分解、训练数据配比和 RL recipe 均明确留白。
+> M3 权重、Hugging Face Model Card 与 **MSA Technical Report（arXiv:2606.13392）** 均已公开。需要区分的是：这份报告深入验证的是 MiniMax Sparse Attention，并在 109B/6B-active 的原生多模态实验模型上给出训练与消融；它不是 428B/23B-active M3 的完整端到端技术报告。因此本页可以对 MSA 做论文级核对，但 M3 的完整数据配比、后训练/RL recipe 与逐项消融仍明确留白。
 
 ## 问题与动机
 
@@ -56,6 +56,23 @@ M3 的核心架构变化是 **MiniMax Sparse Attention (MSA)**。官方给出的
 | 官方速度宣称 | prefill >9x，decode >15x |
 
 我觉得这里最值得关注的是“硬件友好”这点：博客说 MSA 的 block 读取是连续内存访问，且每个 block 只读一次，在 M3 的 head configuration 下 arithmetic intensity 更好。这说明 MiniMax 不是只在算法图上做稀疏，而是在算子和 serving 侧一起做了工程闭环。
+
+#### MSA 报告给出的可复核机制与实验
+
+技术报告把 MSA 拆成两个明确分支：**Index Branch** 用每个 GQA group 独立的轻量 query head 与共享 index key head对全上下文做 block-level Top-k；**Main Branch** 只对选中的 KV blocks 执行精确 softmax attention。Indexer 不直接吃语言模型损失，而是用 Main Branch 的组平均注意力分布作为 teacher，通过 KL loss 对齐，并配合 gradient detach、40B-token indexer warmup 与强制 local block 避免早期随机路由和局部信息丢失。
+
+报告的受控实验不是完整 M3，而是一个 **41 层、109B 总参数、6B 激活、128 experts、Top-4、原生多模态** 的 MoE：
+
+| 报告实验项 | 设定 / 结果 |
+|---|---|
+| 稀疏预算 | block size 128，Top-16 blocks，即每个 query/GQA group 最多看 2,048 个 KV tokens |
+| 训练路线 | MSA-PT 从零训练 3T tokens；MSA-CPT 从 2.6T-token full-attention checkpoint 转换，再训练 400B tokens |
+| Indexer warmup | 两条路线均使用 40B tokens 的 full-attention 对齐阶段 |
+| 1M attention FLOPs | 相对同配置 GQA 降低 28.4× |
+| H800 实测 | prefill 14.2×，decode 7.6× |
+| 128K 长上下文 | HELMET overall 45.93 vs Full 46.53；RULER overall 72.12 vs Full 72.00 |
+
+这组证据比发布博客更有价值的地方是，它同时覆盖了“能不能稳定训”“稀疏后能力是否掉”“理论 FLOPs 是否变成墙钟收益”三件事；但不能把 109B 实验模型的结构数字直接当成 M3 的完整结构参数。
 
 ### 2. Native Multimodality：从 Step 0 混合模态训练
 
@@ -147,11 +164,12 @@ M2 系列的核心是“mini activations + agentic RL + self-evolution”；M3 �
 | 代表能力 | coding / office / search / self-evolution | frontier coding / computer use / multimodal agent |
 | 上下文 | 约 192K/204.8K | 1M |
 | 训练强调 | real-world environments, composite reward | interactive user simulator, interleaved multimodal data |
-| 开源状态 | M2 系列已开源/技术报告已出 | 官方称 technical report 和 weights 10 天内发布 |
+| 开源状态 | M2 系列已开源/技术报告已出 | 权重、Model Card 与 MSA Technical Report 已公开；完整 M3 训练报告未公开 |
 
 ## 相关资料
 
 - [HF Model Card 本地原文](src/HF%20Model%20Card.md)
+- [MSA Technical Report](https://arxiv.org/abs/2606.13392) · [本地 LaTeX 主文件](src/tech_report/main.tex)
 
 - 官方博客剪藏：[[Topics/13_base_model/MiniMax/2606_MiniMax_M3/src/MiniMax-M3 - Official Blog]]
 - AI Coding Tools 文档：待补剪藏
@@ -162,7 +180,7 @@ M2 系列的核心是“mini activations + agentic RL + self-evolution”；M3 �
 
 ## 待更新
 
-- [ ] 技术报告发布后补充完整架构、训练数据、RL 配方、ablation。
-- [ ] 权重开源后补充 Hugging Face / GitHub 链接和本地部署条件。
+- [ ] 若官方发布完整 M3 end-to-end report，再补全 428B 模型架构、训练数据、RL 配方和逐项消融；当前 MSA 报告只覆盖稀疏注意力机制与 109B 受控实验。
+- [ ] 补充权重部署的显存、并行与量化实测条件。
 - [ ] 等第三方 coding harness 实测出来后，校准官方 benchmark 与真实使用差距。
 - [ ] 单独整理 MSA 与 DeepSeek DSA / NSA / MoBA / Kimi Linear 的架构对比。

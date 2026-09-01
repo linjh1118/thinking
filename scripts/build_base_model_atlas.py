@@ -296,8 +296,9 @@ SEED_OFFICIAL_SOURCES = {
 
 
 # MiniMax's release pages and Hugging Face READMEs are complementary.  The M2
-# checkpoints share the later family technical report, while M3 currently has
-# a detailed release blog/model card but no standalone paper.
+# checkpoints share the later family technical report. M3 additionally links
+# the MSA paper; label it narrowly because it validates sparse attention rather
+# than documenting the complete 428B M3 training recipe end to end.
 MINIMAX_OFFICIAL_SOURCES = {
     "MiniMax-M1": [
         {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M1-80k"},
@@ -326,6 +327,7 @@ MINIMAX_OFFICIAL_SOURCES = {
     "MiniMax-M3": [
         {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M3"},
         {"label": "Tech Blog", "url": "https://www.minimax.io/blog/minimax-m3"},
+        {"label": "Tech Report · MSA", "url": "https://arxiv.org/pdf/2606.13392"},
     ],
 }
 
