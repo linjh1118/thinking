@@ -1,0 +1,27 @@
+\section{Introduction}
+
+
+Recent progress towards Artificial General Intelligence (AGI) is increasingly propelled by two frontiers: advanced reasoning chains and autonomous agentic workflows~\citep{gemini3pro,liu2025deepseek,team2025kimi}, grounded in large-scale Reinforcement Learning (RL).
+Yet building scalable reasoners and agents hits a common critical bottleneck, where long-context modeling must be simultaneously fast and strong.
+
+%fast, cheap, strong
+In this work, we introduce \mimoflash{}, an efficient and cost-effective Large Language Model (LLM) that delivers strong reasoning and agentic performance.
+\mimoflash{} is a 309B-parameter MoE with 15B activated per token. 
+To alleviate the quadratic complexity of full attention, \mimoflash{} adopts a hybrid attention mechanism that interleaves local sliding window and global attention. The sliding window size is 128-token and the hybrid local:global ratio is 5:1, yielding nearly a 6× reduction in KV-cache storage and attention computation for long contexts.
+With the help of learnable attention sink bias~\citep{agarwal2025gpt}, the hybrid architecture maintains strong modeling capability even in long-context scenarios, despite the aggressive sliding window size and hybrid ratio.
+\mimoflash{} also incorporates Multi-Token Prediction (MTP) to enhance training performance and accelerate inference decoding. In particular, MTP has strong potential to boost RL rollout speed, which helps to scale LLMs towards greater intelligence. 
+With a lightweight dense Feed-Forward Network (FFN) and sliding window attention, our MTP block delivers substantial decoding speedups in practice at high acceptance rates.
+
+
+The pre-training recipe of \mimoflash{} largely follows that of \mimo{}~\citep{xia2025mimo}, with several enhancements. Training is conducted using FP8 mixed-precision, enabling efficient large-scale training over 27T tokens. The model is initially pre-trained with a native 32K context and later extended to 256K. The resulting pretrained model, \mimoflash{}-Base, has been evaluated against leading open-source base models such as Kimi-K2-Base~\citep{team2025kimik2} and DeepSeek-V3.2-Exp-Base~\citep{liu2025deepseek}. 
+MiMo-V2-Flash-Base achieves competitive performance across general benchmarks and surpasses peer models on reasoning-focused tasks.
+For long-context retrieval, our hybrid attention architecture achieves nearly 100\% success rates across context lengths from 32K to 256K. On the extreme long-context reasoning benchmark GSM-Infinite~\citep{zhou2025gsm}, MiMo-V2-Flash demonstrates robust performance with minimal degradation when scaling from 16K to 128K.
+
+In post-training, we focus on efficiently scaling RL compute to improve reasoning and agentic capabilities. To this end, \mimoflash{} introduces a novel post-training paradigm termed Multi-Teacher On-Policy Distillation (MOPD). This framework addresses both learning inefficiency and capability imbalance through a three-stage process: (1) general Supervised Fine-Tuning (SFT); (2) specialized RL/SFT to train domain-specific teacher models; (3) MOPD, wherein the student model learns from two complementary signals: dense, token-level rewards from specialized teachers trained across diverse domains, and a verifiable, outcome-based reward. By integrating diverse expert knowledge in this manner, \mimoflash{} simultaneously masters the peak capabilities of domain teachers while benefiting from stable and efficient learning dynamics.
+
+%After MOPD, \mimoflash{} exhibits substantial improvements across reasoning, coding, and agentic benchmarks. 
+\mimoflash{} achieves performance comparable
+to that of Kimi-K2-Thinking and DeepSeek-V3.2-Thinking on most reasoning benchmarks.
+In long-context evaluations such as LongBench V2 and MRCR, \mimoflash{} consistently surpasses larger full-attention models, confirming the robustness of its hybrid SWA architecture. Notably, the model attains 73.4\% on SWE-Bench Verified and 71.7\% on SWE-Bench Multilingual, establishing it as the leading open-source model for software engineering tasks.
+The model weights (with 3-layer MTP weights) are available at 
+\textcolor{xiaomiorange}{\url{https://github.com/XiaomiMiMo/MiMo-V2-Flash}}.

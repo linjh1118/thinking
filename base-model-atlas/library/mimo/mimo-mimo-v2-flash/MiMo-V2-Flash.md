@@ -26,9 +26,15 @@ related:
   - "[[Topics/13_base_model/Xiaomi_MiMo/2604_MiMo_V2_5_Pro/MiMo-V2.5-Pro]]"
   - "[[Topics/13_base_model/Xiaomi_MiMo/2606_MiMo_Series/MiMo-Series-From-7B-Reasoning-Model-to-Omnimodal-Agent-Foundation-Models]]"
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 # MiMo-V2-Flash Technical Report
+
+> [!tldr]
+> MiMo-V2-Flash 把 **309B/15B-active MoE、5:1 Hybrid SWA、MTP 与 Multi-Teacher On-Policy Distillation** 合成一套面向 agent rollout 成本的效率栈。它不是只追求 tokens/s，而是在预训练、后训练和部署三处共同压缩真实 Agent 任务的计算账单。
+
+![MiMo-V2-Flash 后训练总流程](src/assets/post-training.png)
 
 > [!tldr]
 > MiMo-V2-Flash 是 MiMo 系列从 Dense 模型到 MoE 架构的转折点：
@@ -90,6 +96,8 @@ created: 2026-06-11
 - acceptance length 与 next-token cross-entropy 强负相关（R²=0.995）
 
 ### 4. MOPD（Multi-Teacher On-Policy Distillation）
+
+这一步不是离线模仿固定 teacher response，而是让 student 在当前策略上采样，再由多位教师补充不同能力的修正信号；因此它更像“在策略能力集成”，目标是降低多域后训练互相覆盖的问题。
 
 **三阶段流程**：
 

@@ -1,0 +1,165 @@
+\section{Appendix}
+
+
+\subsection{Details of Mid-training}
+\label{appendix:rbe}
+
+% \noindent\paragraph{Data Collection}
+
+% To let the model have better potential to solve more complex reasoning tasks. 
+% Unlike traditional pre-training,
+% on large-scale general documents, 
+% Besides large-scale general documents from traditional pre-training, we also collect more STEM and code-like instruction data, and mix them with the general documents to build the final continual pre-training corpus. 
+% and inject them into the base model to improve its reasoning potential.
+% 改 2025-09-05 liuyang509
+
+
+% We mainly describe the collection of STEM and code-relevant training data.
+% The STEM dataset spanning mathematics, physics, and chemistry, which is built from available open-source Web text, documents, and in-house data. 
+% We also curate a collection of highly difficult, competition-level problems from open-source datasets and proprietary data. We prioritized the acquisition of problems based on their difficulty and type, favoring those that require logical reasoning over those that rely solely on domain-specific knowledge or factual recall.
+
+%\wangjianing{For the data from Webs, we train a small domain classifier by using FastText (cite) to recognize crawled STEM-relevant documents, and carefully extract questions and corresponding answers through a well-designed neural extractor.} 
+%For the data from PDFs, we choose OCR models to recognize document text and perform data clean and extraction.
+% To ensure the answerability of each query, we use our~{\longcatchat} and multiple open-source LLMs to generate responses and filter the accurate query through voting consistency.
+
+% For programming reasoning problems, we gathered historical problems from open online judges (OJ), relevant discussion forums, and publicly available school competition training materials and exercises. Priority was given to programming problems accompanied by test cases, which are essential for screening synthetic answers and supporting reinforcement reward mechanisms.
+% \wangjianing{About general coding generation, and synthetic competition data?}
+
+% For code, we curated diverse instruction data from various competition platforms. To enrich the density of queries, we also follow~\citep{Scaling2024Xin} to synthesize large-scale data to fill the vacuity of long-tailed programming contest knowledge.
+% To maintain the general coding generation ability (code completion, repository-level generation, etc.), we also establish an efficient pipeline to collect high-quality code-related data from public repositories (source code, git issues, PRs), and text-code mixed datasets from technical documentation, tutorials, and coding-intelligence blogs, capturing diverse code-related contexts.
+
+% We also combine URL filtering with fastText classification to curate 
+
+
+
+
+% \noindent\paragraph{Data Curation}
+
+% For the filtering phase, we first combine the approach of heuristic rules with LLM-as-a-Judge to eliminate queries with incomplete statements, inconsistent notation, unclear requirements, and multiple problems.
+% We clean each query by URL filtering, multiple tables filtering, and HTML or XML tags filtering.
+% For the remaining data, we aim to filter the low-quality data. Specifically, we annotate a small-scale classification training dataset to build a neural scorer, which can assign each document a quality score (0-10 scale). 
+% Based upon this score, all data can be grouped into low-, medium-, and high-quality buckets. 
+% Hence, we apply strict filtering to low/medium-quality buckets, while retaining high-quality documents with only outlier removal (e.g., overly short texts). 
+% In addition, we also implement a fine-grained annotation assessing content completeness, fluency, knowledge density, educational value, toxicity, and practical value, discarding documents scoring low on any dimension.
+
+% 修改：2025-09-03
+For the mid-training phase,
+data quality and diversity are crucial for enhancing the reasoning capabilities of models \citep{xi2025samplemix}. During the filtering phase, we employ a combination of heuristic rules and an LLM-as-a-Judge approach to ensure the solvability and difficulty distribution of queries, as well as the quality and correctness of answers.
+
+To guarantee query solvability, rule-based methods such as URL filtering, multiple tables filtering, and HTML/XML tags filtering are applied to eliminate reasoning problems that rely on external information or are inherently unanswerable. For synthetic answers, we first apply rules to remove those with issues such as repetitive generation, truncation, language mixing, or non-compliance with our desired reasoning format.
+To verify answer correctness, we combine model-based and rule-based methods, comparing synthetic responses against gold answers to assess equivalence across various forms and stylistic variations. 
+% \wangjianing{For code-related data, test case pass rates are also examined.} 
+% Ultimately, incorrect answers are filtered out.
+
+For the remaining data, we also emphasize the importance of difficulty distribution and diversity, which significantly impact the model’s long CoT reasoning ability. We annotate a small-scale classification training dataset to construct a neural scorer that assigns a difficulty score to each document. Considering diversity, we do not entirely remove low-difficulty samples but apply appropriate proportional downsampling. For queries with multiple answers, we strive to balance answer sources or synthetic method and impose limits where the number of answers is excessively high.
+
+Ultimately, we follow~{\longcatchat} to perform semantic similarity based data decontamination and duplication by combination of rule-based and nerual-based model.
+
+
+\subsection{Details of SFT}
+\label{appendix:sft}
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.35\linewidth]{figs/sft_distribution.pdf}
+    \caption{The distribution of our curated SFT data. 
+    % \wangjianing{This figure will contain data distribution (pie chart) and feature distribution (bar chart, such as average length, reflection density, etc.). The specific value can be adjusted according to the final version.}
+    }
+    \label{fig:sft_ratio}
+\end{figure}
+
+
+\subsubsection{Details of General Reasoning Data}
+
+
+\noindent\paragraph{STEM} 
+The training data of STEM contains several hundred thousand instances with verifiable answers,
+spanning mathematics, physics, chemistry, biology, and other related science scenarios. 
+The majority of questions are drawn from open-source datasets, public competitions, 
+% in-house competition-level collections, 
+and a few instruction data retrieved from the pre-training corpus.
+
+To ensure data quality and correctness, we implement a multi-stage filtering pipeline. In the initial phase, we utilize the LLM-as-a-Judge method to automatically identify and exclude questions that are not suitable for answering, such as incomplete statements, 
+% proof-based formats, 
+and conceptual queries.
+ % and some or dependencies on external information. 
+Subsequently, for each remaining question, we employ several advanced LRMs to generate candidate responses.
+Thus, we can obtain the voted results, and they can be used to filter the data whose ground truth is inconsistent with the voted results. 
+
+% and perform rejection sampling to ensure correctness.
+% Questions were retained only if at least one model’s output matched the provided reference answer, thereby ensuring answer correctness.
+
+% To further refine the data set
+
+
+
+\noindent\paragraph{Code}
+The code data is mainly collected from open-source competition data. 
+% and multiple Online Judge platforms. 
+% To ensure the quality, 
+We screen out queries with the clear problem description, a set of unit tests with more than 5 test cases, and a judgment script with starter code or function body.
+Specifically, the problem description must contain the question, running cost constraints, and some input-output pairs.
+The unit test is viewed as the argument of the generated code and can be used to validate its correctness by the judgment script.
+
+To avoid problems such as unclear title descriptions, incorrect unit tests, and judgment script errors, 
+we first implement a filtering pipeline to eliminate queries containing garbled content, missing information, or logical errors.
+We then build an in-house code sandbox environment and leverage multiple advanced LRMs to generate candidate codes. The data will be filtered that whose generated codes by all LRMs can not pass all unit tests in our sandbox. 
+% We also use advanced LRMs to calculate the pass rate for each query and eliminate those with a value of 1 or 0.
+To balance diversity, we train a small classifier to tag the specific knowledge points and difficulty for each query, and perform difficulty filtering, ensuring that problems possess an appropriate level of complexity and applicability to real-world algorithmic reasoning.
+
+% and 
+% we train a small model to select queries that are clear, consistent, and correct, with sufficient explanatory detail. 
+
+
+\noindent\paragraph{Logic}
+% Logical reasoning, i.e., deductive, inductive, and abductive, is one of the imperative general reasoning tasks and plays a significant role in human-like decision-making, task-solving, and deep-thinking~\citep{yu2024natural, Jiang2025Do}.
+% We collect a series of widely-considered tasks such as mazes, 24-point, Sudoku, etc.
+% To quantify the difficulty of each instance, we calculate the pass rate metric based on the advanced thinking models, and then eliminate overly simple and difficult data.
+% % Hence, we filter out intractable problems where advanced thinking models failed. 
+% To prevent the model from guessing the answer, we convert the multiple-choice questions into free-form QA.
+Logical reasoning
+% (i.e., deductive, inductive, and abductive)
+is one of the imperative general reasoning tasks and plays a significant role in human-like exploration, backtracking, and deep-thinking~\citep{yu2024natural, Jiang2025Do}. 
+We gather a series of widely-considered logical tasks in terms of deductive, inductive, and abductive. 
+% Zebra Puzzles,Mazes, Sudoku, and ARC-AGI, etc. 
+For each task, we devise a specialized generator to synthesize queries with precisely controllable difficulty automatically. 
+% For example, in Sudoku, the complexity can be modulated by varying the number of blank cells. 
+In that, we can categorize query difficulty into three distinct levels: easy, medium, and hard.
+
+For synthesizing high-quality responses,
+% To obtain high-quality training instances, 
+% we first employ Reinforcement Learning with Verifiable Rewards (RLVR) to train a small model 
+we first train a small model by employing RLVR~\citep{lambert2024tulu} on these logical tasks. 
+% (The implementation details are shown in Appendix). 
+Then, we generate multiple long CoT trajectories for each query by distilling from the trained model.
+The reliable response with the correct answer will be used for the training instances.
+
+% This process is guided by a curriculum learning strategy that dynamically adjusts both the response length and query difficulty. Importantly, logical tasks allow for precise verification of model predictions, which mitigates the risk of reward hacking and contributes to training stability.
+% We then incrementally raise the complexity of queries and the maximum response length until the model performance reaches saturation. 
+
+% Finally, we generate long reasoning traces for logical queries using the small RLVR-trained model. To ensure high-quality responses, we focus exclusively on the most challenging queries, generating multiple responses per query and selecting the optimal one based on our designed metrics (e.g., exploration and reflection counts).
+
+
+\noindent\paragraph{General QA}
+We also consider some general-purpose tasks, such as instruction-following, commonsense knowledge, and safety, etc. 
+% To be elaborated, we randomly sample xx instances from the SFT phase of~{\longcatchat}.
+% To be elaborated, 
+% \wangjianing{
+For instruction-following, we curate both single-turn and multi-turn instruction-following datasets, with varying levels of constraint complexity and quantity. 
+We filter queries that have low semantic quality, and employ a reverse prompt generation strategy~\citep{femepid2024gradual} to guarantee the response satisfy all constraints.
+For commonsense knowledge, we develop three types of general QA datasets: reading comprehension, table-based question answering, and custom-designed tasks. 
+These specific domains can substantially enhance our model's multi-turn dialogue, reasoning, and long context abilities. 
+For safety, we first develop a content safety policy that categorizes queries into more than 40 distinct safety categories across five response types: comply, comply with guideline, soft refuse, soft refuse with guideline, or hard refuse.
+This criterion guides us to train a small model to divide each query into a specific safety category, and to optimize the response by human annotation based on different safety categories.
+In addition, because over-refusal can significantly impact model helpfulness, we also optimize the refusal ability by carefully processing the general-purpose queries.
+% }
+
+% We observed that mixing these general QA data does not harm the existing reasoning performance, but can improve the model's capabilities in general dialogue, knowledge reasoning, and long text.
+
+Except for general QA, furthermore, we assessed the difficulty of the query with the pass rate estimated by advanced LRMs.
+Queries with a pass rate exceeding a predefined threshold were considered too easy and removed, promoting a focus on problems that require substantive reasoning. 
+The final training set was sampled from the filtered pool based on the pass rate distribution, resulting in a high-quality dataset suitable for training reasoning models.
+
+
+% \subsection{Training Details of Prover}
+% \label{appendix:prover}

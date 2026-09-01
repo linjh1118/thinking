@@ -1,0 +1,97 @@
+\begin{table*}[t]
+\setlength{\tabcolsep}{4pt}
+\centering
+\caption{Performance (\%) comparison across multiple benchmarks (Best in \textbf{bold}, best of open-source in \underline{underlined}).$\dagger$ indicates the score is from external reports. $\ddagger$ indicates the score using our heavy mode. $^*$ indicates the w/ tools result is unavailable, and thus the corresponding w/o tools result is reported instead. Regarding BrowseComp, the performance is reported both without and with the context management technique.}
+\label{tab:main_results}
+\resizebox{0.98\textwidth}{!}{
+\begin{tabular}{@{}l| c c c c c c c c@{}}
+\toprule
+\multirow{3}{*}{\textbf{Benchmark}} 
+& \multicolumn{4}{c}{\textit{Open-Weights Reasoning Models}} 
+& \multicolumn{3}{c}{\textit{Closed-Weights Reasoning Models}} 
+& \textit{Ours} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-8} \cmidrule(lr){9-9}
+& DeepSeek-V3.2- & Kimi-K2- & Qwen3-235B-A22B- & GLM-4.7- 
+& Claude-Opus-4.5- & Gemini-3-Pro & GPT-5.2- & \textcolor{mygreen}{LongCat-Flash-} \\
+& Thinking & Thinking & Thinking-2507 & Thinking 
+& Thinking &  & Thinking-xhigh & \textcolor{mygreen}{Thinking-2601} \\
+\midrule
+Architecture & MoE & MoE & MoE & MoE & - & - & - & MoE \\
+\# Total Params & 671B & 1T & 235B & 355B & - & - & - & 560B \\
+\# Activated Params & 37B & 32B & 22B & 32B & - & - & - & 27B \\
+
+% ===================== Mathematical Reasoning w/ Tools =====================
+\midrule
+\rowcolor{mygray}
+\multicolumn{9}{c}{\textit{Mathematical Reasoning w/ Tools}} \\
+AIME-25$_\text{(Avg@16)}$ 
+& 93.5$^*$ & 99.1$^\dagger$ & 92.6$^*$ & 95.3$^*$ & \textbf{100.0} & 99.8 & \textbf{100.0} & \underline{99.6} / \textbf{100.0}$\ddagger$ \\
+HMMT-25$_\text{(Avg@16)}$ 
+& 93.5$^*$ & 95.1$^\dagger$ & 83.9$^*$ & \underline{98.1}$^*$ & 98.6 & \textbf{99.8} & 99.6 & 93.4 / 97.5$\ddagger$ \\
+IMO-AnswerBench$_\text{(Avg@4)}$ 
+& 77.7$^*$ & 78.7$^*$ & 73.0$^*$ & 84.0$^*$ & 82.8 & 86.7 & - & 78.6 / \textbf{86.8}$\ddagger$ \\
+AMO-Bench EN$_\text{(Avg@16)}$ 
+& 51.9$^*$ & 56.0$^*$ & 47.8$^*$ & 62.4$^*$ & 66.0 & \textbf{72.5} & - & 61.6 / \underline{66.0}$\ddagger$ \\
+AMO-Bench CH$_\text{(Avg@16)}$ 
+& 52.0$^*$ & 51.8$^*$ & 28.8$^*$ & 35.1$^*$ & 67.7 & \textbf{74.9} & - & 56.8 / \underline{67.5}$\ddagger$ \\
+
+% ===================== Agentic Search =====================
+\midrule
+\rowcolor{mygray}
+\multicolumn{9}{c}{\textit{Agentic Search}} \\
+BrowseComp$_\text{(Pass@1)}$
+& 51.4$^\dagger$ / 67.6$^\dagger$ & - / 60.2$^\dagger$ & -  & 52.0$^\dagger$ / 67.5$^\dagger$ 
+& -  & -  & \textbf{65.8}$^\dagger$ / - & \underline{56.6} / \textbf{73.1} \\
+BrowseComp-zh$_\text{(Pass@1)}$ 
+& 65.0$^\dagger$ / - & - / 62.3$^\dagger$ & -  & 66.6$^\dagger$ / -
+& -  & -  & -  & \textbf{69.0} / \textbf{77.7} \\
+RW Search$_\text{(Pass@1)}$      
+& 74.0 & 63.0 & 20.5 & 69.0
+& 75.5 & 74.5 & \textbf{82.0} / - & \underline{79.5} \\
+
+% ===================== Agentic Tool Using =====================
+\midrule
+\rowcolor{mygray}
+\multicolumn{9}{c}{\textit{Agentic Tool Using}} \\
+$\tau^2$-Retail$_\text{(Avg@4)}$ & 81.8$^\dagger$ & - & 71.9$^\dagger$ & - & \textbf{88.9}$^\dagger$ & - & 82.0$^\dagger$ & \underline{88.6} \\
+$\tau^2$-Airline$_\text{(Avg@4)}$ & 63.8$^\dagger$ & - & 58.6$^\dagger$ & - & - & - & - & \textbf{76.5} \\
+$\tau^2$-Telecom$_\text{(Avg@4)}$ & 96.2$^\dagger$ & - & 47.3 & - & 98.2$^\dagger$ & - & 98.7$^\dagger$ & \textbf{99.3} \\
+$\tau^2$-Avg$_\text{(Avg@4)}$ & 80.6 & 74.3$^\dagger$ & 59.3 & 87.4$^\dagger$ & 82.4 & \textbf{90.7}$^\dagger$ & 80.6 & \underline{88.2} \\
+% $\tau^2$-Retail-Noise$_\text{(Avg@4)}$ & 42.8 & 48.5 & 45.4 & 46.7 & 43.6 & \textbf{52.2} & \underline{49.5} & 49.1 \\
+% $\tau^2$-Airline-Noise$_\text{(Avg@4)}$ & \underline{64.1} & 59.5 & 47.0 & 63.0 & 61.5 & \textbf{65.0} & 59.0 & 62.5 \\
+% $\tau^2$-Telecom-Noise$_\text{(Avg@4)}$ & 85.5 & 81.4 & 40.6 & \underline{88.2} & 73.0 & 54.8 & 86.6 & \textbf{89.7} \\
+$\tau^2$-Noise$_\text{(Avg@4)}$ & 64.1 & 63.1 & 44.3 & 66.0 & 59.4 & 57.3 & 65.0 & \textbf{67.1} \\
+VitaBench$_\text{(Avg@4)}$ & 24.0 & 12.8 & 14.5 & 18.3 & 28.5 & \textbf{31.5} & 24.3 & \underline{29.3} \\
+VitaBench-Noise$_\text{(Avg@4)}$ & 14.0 & 9.2 & 6.5 & 10.8 & 20.3 & \textbf{20.8} & 19.0 & \underline{20.5} \\
+% Toolathon & 32.4 & 16.6 & 9.2 & 18.5 & - & - & - & - \\
+Random Complex Tasks$_\text{(Avg@4)}$ & 32.5 & 29.7 & 28.3 & 25.3 & 32.6 & 32.5 & 17.2 & \textbf{35.8} \\
+
+% ===================== General =====================
+\midrule
+\rowcolor{mygray}
+\multicolumn{9}{c}{\textit{General QA}} \\
+HLE text-only (w/o tools) & 24.1 & 24.4 & 17.8 & \underline{26.9} & 32.0 & \textbf{40.3} & 34.5$^\dagger$ & 25.2 \\
+GPQA-Diamond$_\text{(Avg@16)}$ & \underline{86.9} & 85.4 & 80.5 & 84.9 & 86.9 & 91.9 & \textbf{92.9} & 80.5 / 85.2$\ddagger$ \\
+
+% ===================== Coding =====================
+\midrule
+\rowcolor{mygray}
+\multicolumn{9}{c}{\textit{Coding}} \\
+LCB (24.08-25.05)$_\text{(Avg@4)}$ & 82.4 & 75.1 & 76.2 & \underline{84.8} & 82.8 & \textbf{88.1} & - & 82.8 \\
+OJBench$_\text{(Pass@1)}$ & 41.8 & 42.3 & 35.6 & \underline{44.6} & 46.7 & \textbf{61.2} & - & 42.2 \\
+OIBench EN$_\text{(Pass@1)}$ & 43.3 & 39.0 & 36.8 & 30.8 & 50.0 & \textbf{58.2} & - & \underline{47.7} \\
+SWE-bench Verified$_\text{(Avg@5)}$ & 73.1 & 71.3 & - & \underline{73.8} & \textbf{80.9} & 76.2 & 80.0 & 70.0 \\
+
+
+% % ===================== Safety =====================
+% \midrule
+% \rowcolor{mygray}
+% \multicolumn{9}{c}{\textit{Safety}} \\
+% Harmful        & - & - & - & - & - & - & - & - \\
+% Criminal       & - & - & - & - & - & - & - & - \\
+% Misinformation & - & - & - & - & - & - & - & - \\
+% Privacy        & - & - & - & - & - & - & - & - \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

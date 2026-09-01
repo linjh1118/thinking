@@ -1,0 +1,136 @@
+    \documentclass[11pt, a4paper, logo, copyright, nonumbering]{xiaomi}
+
+\usepackage[authoryear, sort&compress, round]{natbib}
+\usepackage{dblfloatfix}
+\usepackage{ulem}
+\usepackage{caption}
+\usepackage{dramatist}
+\usepackage{xspace}
+\usepackage{pifont} % http://ctan.org/pkg/pifont
+\usepackage{multirow}
+\usepackage{tcolorbox}
+\usepackage{xltabular}
+\usepackage{longtable}
+\usepackage{hyperref}
+\interfootnotelinepenalty=10000
+\usepackage{wrapfig}
+% \usepackage{graphicxfont}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{lineno}
+\usepackage{multirow}
+\usepackage{adjustbox}
+
+\usepackage[bottom]{footmisc}
+
+\usepackage{CJKutf8}
+%\usepackage{subfigure}
+\usepackage{setspace}
+\usepackage{makecell}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{multicol} % contributors
+
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+\bibliographystyle{abbrvnat}
+
+\newcommand{\mimo}{MiMo-7B}
+\newcommand{\mimobase}{MiMo-7B-Base}
+\newcommand{\mimozero}{MiMo-7B-RL-Zero}
+\newcommand{\mimorl}{MiMo-7B-RL}
+\newcommand{\rlsys}{Seamless Rollout Engine}
+\newcommand{\rone}{Deepseek-R1}
+\newcommand{\codereward}{test difficulty driven reward}
+
+\newcommand{\mimoflash}{MiMo-V2-Flash}
+
+\newcommand{\red}[1]{{\color{red}{#1}}}
+\newcommand{\shijie}[1]{\textcolor{red}{shijie: #1}}
+\newcommand{\lilei}[1]{\textcolor{orange}{#1 -lilei}}
+\newcommand{\yizhao}[1]{\textcolor{red}{yizhao: #1}}
+
+\definecolor{xiaomiorange}{HTML}{FF6901}
+
+\title{\centering \mimoflash{} Technical Report}
+
+\author{
+ LLM-Core Xiaomi
+}
+
+
+\begin{abstract}
+
+We present \mimoflash{}, a Mixture-of-Experts (MoE) model with 309B total parameters and 15B active parameters, designed for fast, strong reasoning and agentic capabilities. %\lilei{open-source instead of present}
+\mimoflash{} adopts a hybrid attention architecture that interleaves \textbf{Sliding Window Attention (SWA)} with global attention, with a 128-token sliding window under a 5:1 hybrid ratio. %\lilei{remove aggressive}
+The model is pre-trained on 27 trillion tokens with \textbf{Multi-Token Prediction (MTP)}, employing a native 32k context length and subsequently extended to 256k.
+To efficiently scale post-training compute, \mimoflash{} introduces a novel \textbf{Multi-Teacher On-Policy Distillation (MOPD)} paradigm. 
+In this framework, domain-specialized teachers (e.g., trained via large-scale reinforcement learning) provide dense and token-level reward, enabling the student model to perfectly master teacher expertise. 
+MiMo-V2-Flash rivals top-tier open-weight models such as DeepSeek-V3.2 and Kimi-K2, despite using only $1/2$ and $1/3$ of their total parameters, respectively.
+During inference, by repurposing MTP as a draft model for speculative decoding, \mimoflash{} achieves up to 3.6 acceptance length and 2.6$\times$ decoding speedup with three MTP layers.
+We open-source both the model weights and the three-layer MTP weights to foster open research and community collaboration.
+
+\end{abstract}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{figure*}[h] % 'figure*' spans both columns
+    \centering
+    \includegraphics[width=1\linewidth]{figures/teaser.pdf}
+    \caption{Benchmark performance of MiMo-V2-Flash.}
+    \label{fig:teaser}
+\end{figure*}
+
+
+\newpage
+
+\begin{spacing}{0.9}
+\tableofcontents
+\end{spacing}
+
+\newpage
+
+\input{1-intro}
+
+\input{2-model_arch}
+
+\input{3-pretrain}
+
+\input{4-posttrain}
+
+\input{5-infra}
+
+
+\section{Conclusion, Limitation, and Future Work}
+
+
+\mimoflash{} achieves strong reasoning and agentic capabilities, along with fast inference speed, through its hybrid Sliding Window Attention architecture, lightweight Multi-Token Prediction, and the MOPD post-training paradigm. With these strengths, \mimoflash{} rivals larger open-weight models like DeepSeek-V3.2 and Kimi-K2.
+However, a clear gap remains to the strongest closed-weight models, which we aim to narrow by scaling model size and training compute.
+Additionally, our current architectural exploration remains preliminary, with limited analysis of design trade-offs.
+Future work will focus on designing more robust and efficient, agentic-oriented model architectures.
+Furthermore, we plan to scale the compute for the iterative co-evolution of teachers and students in MOPD to fully unlock its potential.
+
+\bibliography{reference}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+
+\newpage
+
+\input{author}
+
+
+\input{6-appendix}
+
+\end{document}
+
+

@@ -1,0 +1,216 @@
+\documentclass{article}
+
+\usepackage{wrapfig}
+\usepackage{CJKutf8} % add by wjn
+\usepackage{tabularx} % add by wjn
+\usepackage{longcat_style}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{newunicodechar}
+\newunicodechar{，}{,}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{xcolor}
+\usepackage{svg} % allow inclusion of SVG images % add by wjn
+\hypersetup{
+    colorlinks=true,      % 用文字颜色代替边框
+    linkcolor=blue,      % 链接文字颜色（白字）
+    urlcolor=blue,       % URL 文字颜色
+    citecolor=blue,      % 引用文字颜色
+    linkbordercolor=blue, % 链接背景色（实际是边框，需配合 colorlinks=false）
+    urlbordercolor=blue,
+    citebordercolor=blue,
+    % 以下选项实现蓝底效果（需配合 xcolor 宏包）
+    pdfborderstyle={/S/U/W 1}, % 下划线样式（可选）
+}
+
+\usepackage{xurl}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+\usepackage{amsmath}
+\usepackage{amssymb} % for \lesssim, added by qianyulei
+\usepackage{xspace}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{subcaption} 
+\usepackage{makecell}
+\usepackage{hyperref, cleveref}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+\setlist[description]{leftmargin=*}
+% global definition of varibles
+\newcommand{\longcatthink}{LongCat-Flash-Thinking\xspace}
+
+\newcommand{\longcatbase}{LongCat-Flash-Base\xspace}
+
+\newcommand{\longcatchat}{LongCat-Flash-Chat\xspace}
+
+\newcommand{\NPU}{accelerator\xspace}
+
+\newcommand{\CUBE}{tensor\xspace}
+
+\newcommand{\VEC}{vector\xspace}
+
+\newcommand{\AICORE}{tensor\xspace}
+
+% global definition of user
+\newcommand{\wangjianing}[1]{\textcolor{red}{~\textbf{wangjianing}:~#1}}
+
+\newcommand{\zanghongyu}[1]{\textcolor{yellow}{~\textbf{zhy}:~#1}}
+
+\usepackage{colortbl}
+\definecolor{mygray}{gray}{.88}
+\definecolor{mycyan}{cmyk}{.15,0,0,0}
+\definecolor{mycyan2}{cmyk}{.85,0,0,0}
+
+% \definecolor{mygreen}{rgb}{0.18, 0.54, 0.34}
+\definecolor{mygreen}{rgb}{0.19, 0.79, 0.02}
+\definecolor{midnightgreen}{rgb}{0.0, 0.29, 0.33}
+\newcommand{\cx}[1]{\textcolor{midnightgreen}{\bf\small [#1 --cx]}}
+\newcommand{\placeholder}[1]{\textcolor{blue}{~\textbf{placeholder}:~#1}}
+
+
+\title{Introducing \longcatthink: A Technical Report}
+
+%\date{September 9, 1985}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+\author{ Meituan LongCat Team \\
+	\texttt{longcat-team@meituan.com} \\
+}
+	%% examples of more authors
+	% \And
+	% \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Elias D.~Striatum} \\
+	% Department of Electrical Engineering\\
+	% Mount-Sheikh University\\
+	% Santa Narimana, Levand \\
+	% \texttt{stariate@ee.mount-sheikh.edu} \\
+	%% \AND
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+% }
+
+% Uncomment to remove the date
+%\date{}
+
+% Uncomment to override  the `A preprint' in the header
+% \renewcommand{\headeright}{}
+% \renewcommand{\undertitle}{}
+\renewcommand{\headeright}{\raisebox{-0.2\height}{\includegraphics[height=1.8em]{figs/longcat-logo-full.pdf}}}
+% \renewcommand{\shorttitle}{\longcatthink Technical Report}
+\renewcommand{\shorttitle}{Introducing \longcatthink: A Technical Report}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+
+% \hypersetup{
+% pdftitle={Longcat Technical Report},
+% pdfsubject={q-bio.NC, q-bio.QM},
+% pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
+% pdfkeywords={First keyword, Second keyword, More},
+% }
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present~{\longcatthink}, an efficient $560$-billion-parameter open-source Mixture-of-Experts (MoE) reasoning model.
+Its advanced capabilities are cultivated through a meticulously crafted training process, beginning with long Chain-of-Thought (CoT) data cold-start and culminating in large-scale Reinforcement Learning (RL). We first employ a well-designed cold-start training strategy, which significantly enhances the reasoning potential and equips the model with specialized skills in both formal and agentic reasoning.
+Then, a core innovation is our domain-parallel training scheme, which decouples optimization across distinct domains (e.g., STEM, Code, Agentic) and subsequently fuses the resulting expert models into a single, nearly Pareto-optimal model.
+This entire process is powered by our Dynamic ORchestration for Asynchronous rollout (DORA) system, a large-scale RL framework that delivers a greater than threefold training speedup over synchronous methods on tens of thousands of accelerators. 
+As a result, {\longcatthink} achieves state-of-the-art performance among open-source models on a suite of complex reasoning tasks.
+The model exhibits exceptional efficiency in agentic reasoning, reducing average token consumption by $64.5\%$ (from $19,653$ to $6,965$) on AIME-25, without degrading task accuracy.
+% The model's capabilities are also uniquely broad, incorporating specialized skills in both formal and agentic reasoning.
+We release {\longcatthink} to promote further advances in reasoning systems and agentic AI research.
+
+\textbf{LongCat Chat}: \href{https://longcat.ai}{https://longcat.ai} \\
+\textbf{Huggingface}: \href{https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking}{https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking}\\
+\textbf{Github}: \href{https://github.com/meituan-longcat/LongCat-Flash-Thinking}{https://github.com/meituan-longcat/LongCat-Flash-Thinking}\\
+\end{abstract}
+
+
+\begin{figure}[hb]
+\centerline{\includegraphics[width=\linewidth]{figs/longcat_flash_think_benchmark}}
+\caption{\small
+The comparison of average performance on reasoning benchmarks. The four models on the left are open-weight LLMs, while the others are closed-weight LLMs. 
+}
+\vspace{-.3cm}
+\label{fig:qualitative_example}
+\end{figure}
+
+
+%%%% 目录
+% \clearpage
+% \tableofcontents
+% \clearpage
+%%%%
+
+\newpage
+
+\input{sections/introduction}
+
+% \input{sections/data}
+
+
+\section{Long CoT Cold-Start Training}
+We conduct long CoT cold-start training and large-scale RL based on the~{\longcatbase} model \citep{meituan2025longcat_flash_chat}, equipping it with advanced reasoning capabilities.
+Benefit from the zero-computation experts~\citep{jin2024moe++} and shortcut-connected MoE structure~\citep{cai2024shortcut}, {\longcatthink} achieves large efficiency advantages compared to models of comparable performance.
+In this section, we concentrate on augmenting the long CoT reasoning capability~\citep{wei2022chain} of our base model through a multi-stage curriculum learning approach. We first introduce a mid-training phase, during which the base model learns from diverse reasoning data to enhance its \textit{fundamental reasoning capabilities} and \textit{potential for RL}. Subsequently, we incorporate a compact SFT phase. In addition to high-quality general reasoning data, we specifically expose the model to \textit{formal reasoning} and \textit{agentic reasoning} capabilities, both of which are designed to effectively enhance the reasoning performance.
+The overview of the cold-start data curation pipeline is shown in Figure~\ref{fig:cold_start_data_pipeline}.
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=\linewidth]{figs/cold_start_data_pipeline}}
+% \vspace{-.25cm}
+\caption{\small
+The data curation pipeline for cold-start training.
+}
+% \vspace{-.3cm}
+\label{fig:cold_start_data_pipeline}
+\end{figure}
+
+\input{sections/cpt}
+
+\input{sections/sft}
+
+\input{sections/rl}
+
+\input{sections/evaluations}
+
+% \input{sections/related_works}
+
+\input{sections/conclusion}
+
+\newpage
+
+\input{sections/contributions}
+
+\newpage
+
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\newpage
+\appendix
+\input{sections/appendix}
+
+\end{document}

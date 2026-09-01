@@ -11,11 +11,14 @@ topic: "13_base_model"
 status: read
 rating: 4
 created: 2026-05-30
+updated: 2026-09-01
 ---
 
 # TL;DR
 
 MiniMax-M1 是首个开源的大规模 hybrid-attention 推理模型，通过 Lightning Attention（线性注意力 IO-aware 实现）实现高效的测试时计算扩展，支持 1M 输入和 80K 输出 tokens，训练成本仅 $0.53M（512 H800 GPU，3周）。
+
+![MiniMax-M1 在长推理与长上下文上的总体比较](src/assets/figure1_bars.png)
 
 ## 问题与动机
 
@@ -30,12 +33,16 @@ MiniMax-M1 是首个开源的大规模 hybrid-attention 推理模型，通过 Li
 ### 1. Lightning Attention 混合架构
 
 MiniMax-M1 基于 MiniMax-Text-01，采用 hybrid MoE + Lightning Attention 架构：
+
+![Lightning Attention 的计算扩展曲线](src/assets/figure2_computation_scaling.png)
 - **总参数量**：456B，激活 45.9B，32 experts
 - **Attention 设计**：每 7 个 Lightning Attention 的 TransNormer blocks 后接 1 个 softmax attention 的 Transformer block
 - **理论优势**：推理 FLOPs 接近线性扩展（100K tokens 时仅需 DeepSeek R1 25% 的 FLOPs）
 - **原生上下文**：支持 1M tokens 输入（DeepSeek R1 的 8 倍）
 
 ### 2. CISPO 算法（Clipped IS-weight Policy Optimization）
+
+![不同精度与训练配置的稳定性比较](src/assets/precision_comparison_v2.png)
 
 CISPO 是 M1 提出的核心 RL 算法创新，核心洞察是：**token 级别的裁剪会导致关键的低概率 tokens（如 "Wait", "However", "Aha"）被永久丢弃**。
 

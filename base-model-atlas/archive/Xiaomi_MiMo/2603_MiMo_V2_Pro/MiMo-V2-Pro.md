@@ -1,23 +1,30 @@
 ---
 title: "MiMo-V2-Pro: Agentic Foundation Model with 1T Parameters and 1M Context"
+type: model-note
 authors: ["Xiaomi MiMo Team"]
 year: 2026
 venue: Official Blog
 arxiv: ""
 doi: ""
 url: "https://mimo.xiaomi.com/mimo-v2-pro"
-tags: [paper, agentic, moe, long-context, coding, claw, xiaomi]
+tags: [model-note, agentic, moe, long-context, coding, claw, xiaomi]
 topic: "13_base_model"
 status: read
 rating: 4
 related: ["[[Topics/13_base_model/Xiaomi_MiMo/2601_MiMo_V2_Flash/MiMo-V2-Flash]]", "[[Topics/13_base_model/Xiaomi_MiMo/2603_MiMo_V2_Omni/MiMo-V2-Omni]]", "[[Topics/13_base_model/Base Model MOC]]"]
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 # MiMo-V2-Pro
 
 > [!tldr]
 > MiMo-V2-Pro 是小米 V2 系列的 **Pro 版本**，>1T 总参 / 42B 激活参数量级，Hybrid SWA ratio 从 V2-Flash 的 5:1 提升到 **7:1**，支持 **1M token 上下文**。核心定位：**OpenClaw 等 agent scaffold 的原生大脑**，在 ClawEval（61.5）和 PinchBench（81.0）上达到全球前三，接近 Claude Opus 4.6。
+
+![MiMo-V2-Pro 官方 Agent 能力比较](src/assets/aaindex.png)
+
+> [!warning]
+> 本模型官方目前只公开 Tech Blog，没有独立 Technical Report 或开放权重 model card。所以下文可以达到“发布资料深读”标准，但达不到完整论文精读标准：精确训练 token、数据混合、RL 算法、消融和训练算力均不能从现有一手资料中恢复。
 
 ---
 

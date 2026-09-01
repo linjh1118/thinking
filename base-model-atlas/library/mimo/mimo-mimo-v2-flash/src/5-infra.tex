@@ -1,0 +1,53 @@
+\section{MTP Speedup}
+\label{sec:mtp}
+
+\subsection{MTP Acceptance Length}
+We analyze the relationship between the model's predictive uncertainty measured by next
+token cross-entropy and the efficiency of the Multi-Token Prediction (MTP) module. As illustrated in Figure~\ref{fig:entropy_vs_accept_length}, we evaluate the average acceptance length with 3 MTP layers across diverse benchmarks, ranging from code generation (e.g., WebDev, LiveCodeBench) to complex reasoning tasks (e.g., AIME25, MMLU Pro). 
+
+\begin{figure*}[t!]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/entropy_vs_accept_length.pdf}
+    \caption{The correlation between next token cross-entropy and Average Accept Length across different datasets. The orange dashed line represents the best-fit curve ($R^2=0.995$).}
+    \label{fig:entropy_vs_accept_length}
+\end{figure*}
+
+The results reveal a strong inverse correlation: lower entropy contexts (such as WebDev) allow for significantly longer acceptance sequences, reaching approximately 3.6 tokens. Conversely, tasks with higher intrinsic uncertainty (e.g., MMLU Pro) exhibit shorter acceptance lengths due to increased prediction divergence. This behavior is accurately modeled by a log-transformed fit ($y = 4(1 - 0.58x^{0.58})$) with an $R^2$ of $0.995$, suggesting that next token cross-entropy is a primary determinant of MTP throughput.
+
+
+
+
+
+\subsection{MTP Inference Speedup}
+
+We measure the decoding speedup of \mimoflash{} with 3-layer MTP across varying batch sizes (per node) and accept lengths, using 16K input and 1K output lengths. 
+%
+The results in Table~\ref{tab:mtp_speedup} demonstrate that MTP consistently outperforms the baseline without additional hardware costs.
+%
+Notably, the speedup scales linearly with accept length.
+%
+Under different batch sizes, MTP exhibits varying speedup, which depends on the corresponding computation and I/O demands as well as kernel efficiency.
+%
+In practice, researchers and engineers should tune both batch size and MTP layers based on hardware roofline models to optimize the speed-cost trade-off.
+
+\begin{table}[t!]
+\small
+    \centering
+    \begin{tabular}{c|c|cccccc}
+        \toprule
+        % \textbf{Batch Size} & \textbf{2.8} & \textbf{3.0} & \textbf{3.2} & \textbf{3.4} & \textbf{3.6} & \textbf{3.8} \\
+         & & \multicolumn{6}{c}{\textbf{Acceptance Length}} \\
+        \multirow{-2}{*}{\textbf{Batch Size}} & \multirow{-2}{*}{\textbf{w/o MTP}} & \textbf{2.8} & \textbf{3.0} & \textbf{3.2} & \textbf{3.4} & \textbf{3.6} & \textbf{3.8} \\
+        \midrule
+        32 & 1.00$\times$ & 1.86$\times$ & 1.99$\times$ & 2.12$\times$ & 2.25$\times$ & 2.39$\times$ & 2.52$\times$ \\
+        48 & 1.00$\times$ & 1.82$\times$ & 1.95$\times$ & 2.08$\times$ & 2.21$\times$ & 2.34$\times$ & 2.47$\times$ \\
+        64 & 1.00$\times$ & 1.97$\times$ & 2.11$\times$ & 2.25$\times$ & 2.39$\times$ & 2.53$\times$ & 2.67$\times$ \\
+        96 & 1.00$\times$ & 1.99$\times$ & 2.13$\times$ & 2.28$\times$ & 2.42$\times$ & 2.56$\times$ & 2.70$\times$ \\
+        128 & 1.00$\times$ & 1.82$\times$ & 1.94$\times$ & 2.07$\times$ & 2.20$\times$ & 2.33$\times$ & 2.46$\times$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Decoding speedup of \mimoflash{} with 3-layer MTP v.s. without MTP across batch sizes (per node) and acceptance lengths, under 16K input and 1K output lengths.}
+    \label{tab:mtp_speedup}
+    
+\end{table}
+

@@ -13,10 +13,13 @@ rating: 4
 topic: "13_base_model/Meituan_LongCat"
 related: []
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > 美团 LongCat 系列的起点：560B MoE / 平均激活 27B 的 **non-thinking foundation model**，靠两个核心架构创新——**Zero-Computation Experts**（动态计算预算）和 **Shortcut-Connected MoE (ScMoE)**（跨层 shortcut 拉长 communication-computation overlap）——在 30 天内训完 20T tokens，H800 推理达 100 TPS、$0.7/M tokens。它的真正价值不是绝对精度第一（和 DeepSeek-V3.1、Kimi-K2 同档），而是 **同等性能下显著更低的推理成本**，这是 agent / 高并发场景的关键卖点。
+
+![LongCat-Flash 的 ScMoE 通信计算重叠](src/assets/overlapped_scmoe.png)
 
 ## 1. 问题与动机
 
@@ -30,6 +33,8 @@ created: 2026-07-01
 ## 2. 核心架构创新
 
 ### 2.1 Zero-Computation Experts（动态计算预算）
+
+![不同 token 的动态专家激活分布](src/assets/avg_topk_layer8.png)
 
 在 N 个正常 FFN 专家之外，再加 Z 个 **identity 专家**——输入直接当输出返回，零计算成本。
 

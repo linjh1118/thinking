@@ -1,0 +1,158 @@
+
+\subsection{RL Infrastructures}
+
+
+We develop the \rlsys{} and enhance vLLM’s robustness to enable efficient dynamic-sampling-based RL training.
+%
+We construct our RL system based on verl~\citep{sheng2024hybridflow}, an open-source RL training library.
+%
+The library uses Ray~\citep{moritz2018ray} to manage computation and communication, implementing the rollout and training phases in Ray Actors and exchanging training data through Ray Objects.
+%
+Although verl supports flexible implementations of various RL algorithms, it suffers from GPU idle time during both rollout and reward computation phases.
+%
+Due to the skewness in response lengths, we observe that most GPUs remain idle while waiting for a few long-sequence rollout workers, resulting in wasted computational resources and a slow training process.
+%
+Several prior works have identified this issue and proposed system-level solutions~\citep{zhong2024rlhfuse,team2025kimi,seed2025seed}. 
+%
+However, most of these solutions rely on asynchronous training, which modifies the underlying algorithm and introduces staleness in long-sequence responses.
+%
+Rule-based reward computation is also time-consuming, particularly for code data, leading to idle periods for valuable GPU resources.
+%
+Our use of dynamic sampling, while improving sample efficiency, exacerbates GPU idle time, and leads to wasted examples during multi-turn rollouts.
+%
+To simultaneously optimize GPU utilization and reduce sample waste, we develop the \rlsys{}, opportunistically filling sample batches into rollout while performing asynchronous reward computation.
+%
+Our system builds on the vLLM inference engine~\citep{kwon2023efficient}, and we collaborate with the open-source community to enhance the robustness of vLLM's ``external launch'' mode within the verl framework. 
+%
+Additionally, we implement MTP in vLLM to support both \mimo{} and \mimorl{}.
+%
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.82\linewidth]{figures/seamless_rollout.pdf}
+    \caption{An overview of the \rlsys{} for \mimorl{}.}
+    \label{fig:rlinfra}
+\end{figure}
+
+
+\subsubsection{\rlsys{}}
+
+\rlsys{} optimizes GPU utilization in rollout workers through efficient task scheduling, minimizing idle time during continuous operation.
+%
+The engine consists of the following components: (a) continuous rollout, (b) asynchronous reward computation, and (c) early termination.
+%
+It achieves a $2.29\times$ speedup in training and a $1.96\times$ speedup in validation.
+
+\paragraph{Continuous Rollout}
+%
+The core of \rlsys{} lies in proactively handling completed rollout tasks and initiating new rollouts.
+%
+Unlike naive dynamic sampling implementations that delay reward computation until all rollout workers complete, \rlsys{} eliminates synchronization barriers between generation and reward phases.
+%
+It actively monitors completed workers, immediately computes their rewards, and triggers new rollouts on demand.
+%
+After computing rewards, we update the number of valid samples and the current step's pass-rate statistics, then launch new rollout tasks if active tasks are insufficient to meet training demands based on these statistics.
+%
+As illustrated in Figure~\ref{fig:rlinfra}, the \rlsys{} initiates a new task upon completing rollout tasks \ding{174}\ding{175}\ding{172}\ding{177} to meet demand, whereas after finishing tasks \ding{173}\ding{176}\ding{178}, it predicts that ongoing tasks are sufficient and thus schedules no additional ones.
+
+
+\paragraph{Asynchronous Reward Computation}
+%
+While reward computation for math data is rapid, judging code-related data incurs significant overhead, leading to prolonged GPU idle time. 
+%
+Additionally, the sequential nature of naive reward computation fails to utilize the multiprocessing capabilities of modern processing units. 
+%
+To resolve these issues, we employ Ray to launch asynchronous reward computation, which facilitates concurrent management of rollout and reward tasks.
+%
+Upon task completion, the system dynamically forwards rollout outputs for reward evaluation or aggregates results to update the sample state, as shown in Figure~\ref{fig:rlinfra}.
+%
+Dedicated servers are allocated for code-specific reward computation to prevent bottlenecks in the rollout pipeline. 
+%
+
+
+\paragraph{Early Termination}
+%
+When the number of valid samples exceeds the required training batch size, careful management of ongoing tasks becomes essential. 
+%
+Abrupt termination of ongoing tasks tends to suppress the generation of long-sequence responses, which could destabilize RL training dynamics. 
+%
+A straightforward solution involves waiting for all active tasks to complete before randomly sampling required batch from the outputs. 
+%
+However, this approach may extend waiting times if a long-sequence rollout initiates near the end of the dynamic sampling phase. 
+%
+To mitigate this delay while preserving data distribution integrity, we implement a first-in-first-out selection strategy.
+%
+We terminate ongoing tasks only if the valid sample count meets the batch requirement and all tasks initiated prior to these selected samples have completed.
+%
+In Figure~\ref{fig:rlinfra}, the last rollout is aborted since earlier samples already reach the required batch size.
+
+\input{tables/rlinfra_train}
+
+\paragraph{Experimental Analysis}
+%
+We randomly choose a 5-step training trace to evaluate the performance of \rlsys{}.
+%
+The experiment is conducted on 256 H20 GPUs, and the results are presented in Table~\ref{tab:rlinfra:train}.
+%
+``Overall Speedup'' measures end-to-end RL training efficiency; ``Rollout Speedup'' shows the acceleration of rollout and reward tasks; ``Normalized GPU Idle Time'' reflects the total idle GPU hours.
+%
+The above metrics are normalized with respect to the naive dynamic sampling implementation.
+%
+``GPU Idle Ratio'' quantifies the average proportion of GPU inactivity during rollout and reward computation; ``Sample Waste Ratio'' represents the ratio of excess valid samples generated relative to the required batch size.
+%
+In \rlsys{}, aborted tasks are considered in GPU idle time.
+%
+
+All three components contribute to faster dynamic sampling and smaller GPU idle time.
+%
+Though the experiment without dynamic sampling can achieve higher throughput, it incurs significant sample inefficiency due to numerous zero-gradient training samples.
+%
+These zero-gradient samples not only diminishes the effective training batch size, but also risk destabilizing the training dynamics of the RL algorithm.
+%
+Given an average sample pass rate of 41\% within this 5-step experiment, static sampling achieves a sample efficiency similar to naive dynamic sampling; the latter does not train zero-gradient data but incurs wasted samples.
+%
+Equipped with all three components, \rlsys{} achieves a comparable one-step training time compared to static sampling while demonstrating superior sample efficiency.
+%
+The sample pass rate of 41\% leads to a sample waste ratio of 22\% in the naive implementation; in practice, this ratio can be larger in different situations.
+%
+Through continous rollout and dynamic launch scheduling, \rlsys{} reduces the sample waste ratio to around 15\%.
+
+\paragraph{Accelerated Validation}
+%
+During validation, we can directly stream the rollout and reward tasks using \rlsys{}.
+%
+Similar to the naive implementation, currently we set the validation batch size equal to the dataset length and launch all rollout tasks simultaneously.
+%
+Our implementation utilizes asynchronous reward computation, achieving a 1.96$\times$ speedup while reducing idle GPU time to 25\%, as demonstrated in Table~\ref{tab:rlinfra:val}.
+%
+Notably, the experimental results demonstrate \rlsys{}'s potential for static sampling, which also has one-pass rollout and reward computation.
+%
+If the validation dataset is sufficiently large, further acceleration can be achieved by optimizing the batch size for validation and employing continuous rollout.
+
+\input{tables/rlinfra_val}
+
+
+\subsubsection{vLLM-based Inference Engine}
+
+Our RL system employs vLLM~\citep{kwon2023efficient} as the inference engine. 
+%
+To accommodate our model's new features, we have extended the framework with additional functionalities.
+
+\paragraph{MTP Support}
+%
+As described in Section~\ref{sec:pretrain:modelarc}, our models integrate MTP modules to enhance performance. 
+%
+We have implemented and open-sourced MTP support for our models, enabling efficient inference for MTP-equipped architectures.
+
+
+\paragraph{Better Robustness}
+%
+In verl, vLLM is deployed using the \textit{external launch} mode, which may show instability in some scenarios.
+%
+We've enhanced engine robustness to address these issues.
+%
+We clear computed blocks in \textit{prefix caching} during pre-emption to maintain KVCache consistency.
+%
+We disable asynchronous output processing when increasing the number of scheduler steps to ensure compatibility and optimize performance.

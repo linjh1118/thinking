@@ -1,0 +1,18 @@
+
+\section{Reward Hacking of SWE-Bench}
+Consistent with recent findings within the SWE-Bench community, we similarly identify the bug in the official SWE-Bench images where the ground truth commits are not properly deleted. During the RL training, this could lead to reward hacking and inflated evaluation, where the model tends to obtain rewards by peeking at future commits, as shown in Figure~\ref{fig:git_hack0}. To fix this, we update to the newest SWE-Bench image for evaluation. For our self-built training images, we also follow the official SWE-Bench resolution on git hacking, and repeatedly confirm that our model does not exhibit any reward hacking.
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/git_hack_all.pdf}
+    \caption{The tendency of our experiment on Qwen3-32B to exhibit reward hacking during RL training within unprocessed images. We quantify the model's git hacking attempts by counting a set of keywords, such as "\texttt{git log ---all}", within the model's rollout trajectories.}
+    \label{fig:git_hack0}
+\end{figure}
+
+
+
+\section{Context Management}
+\label{sec:context_management}
+
+While fine-tuning and reinforcement learning optimize model parameters $\theta$, context management strategically refines the conditioning context C in $P(y \mid C,\theta)$. Our approach addresses two complementary challenges. For context augmentation, we adopt a Unix-inspired abstraction: tools, documents, and databases are uniformly exposed as files, enabling the model to retrieve information via Bash commands—leveraging its native code-generation capabilities. For context consolidation, we combat the "Lost in the Middle" phenomenon by enforcing aggressive memory compression. When context utilization exceeds a threshold (as low as 30\%), the system prompts the model to summarize, archives the full history to a retrievable memory file, and replaces active context with the summary. Empirically, this yields 5–10\% accuracy gains on Deep Research tasks. Our results align with DeepSeek V3's finding that discarding tool-call history outperforms retention strategies; replicating their aggressive reset protocol, we achieve 58.3 on comparable benchmarks. The core insight is counterintuitive: less context, strategically managed, produces more focused and accurate generation.

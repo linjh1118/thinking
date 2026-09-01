@@ -24,12 +24,15 @@ related:
   - "[[Topics/13_base_model/Xiaomi_MiMo/2511_MiMo_Embodied/MiMo-Embodied]]"
   - "[[Topics/13_base_model/Xiaomi_MiMo/2606_MiMo_Series/MiMo-Series-From-7B-Reasoning-Model-to-Omnimodal-Agent-Foundation-Models]]"
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 # MiMo-VL Technical Report
 
 > [!tldr]
 > MiMo-VL-7B 是第一个把 MiMo-7B-Base 的强文本推理能力迁移到多模态的 VLM。四阶段 curriculum 在 2.4T tokens 上逐步解锁：projector warmup → vision-language alignment → general multimodal → long-context reasoning。MORL（Mixed On-Policy RL）把 RLVR 和 RLHF 融合到统一框架。核心亮点：OSWorld-G 56.1 超越专门 UI agent UI-TARS，OlympiadBench 59.4 超越 72B 模型。
+
+![MiMo-VL 视觉推理案例](src/figures/case/case1.png)
 
 ## 问题与动机
 
@@ -68,6 +71,8 @@ MiMo-7B 证明了小模型可以有强推理能力，但只在纯文本域。核
 - MMMU 平均响应 token 从 680 增长到 2.5K
 
 ### 3. MORL（Mixed On-Policy RL）
+
+![MiMo-VL 的多模态 GUI 与视觉交互案例](src/figures/example/example6.png)
 
 > [!NOTE]
 > MORL 是本文 post-training 的核心创新，把 RLVR 和 RLHF 融合到统一 on-policy RL 框架中，集成在 verl 框架内实现。

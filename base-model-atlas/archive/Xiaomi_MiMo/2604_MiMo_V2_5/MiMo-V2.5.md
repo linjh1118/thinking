@@ -1,23 +1,30 @@
 ---
 title: "MiMo-V2.5: Open-Source Multimodal Agent Foundation Model with 1M Context"
+type: model-note
 authors: ["Xiaomi MiMo Team"]
 year: 2026
 venue: Official Blog / Hugging Face
 arxiv: ""
 doi: ""
 url: "https://mimo.xiaomi.com/mimo-v2-5/"
-tags: [paper, multimodal, agentic, open-source, moe, long-context, xiaomi]
+tags: [model-note, multimodal, agentic, open-source, moe, long-context, xiaomi]
 topic: "13_base_model"
 status: read
 rating: 5
 related: ["[[Topics/13_base_model/Xiaomi_MiMo/2601_MiMo_V2_Flash/MiMo-V2-Flash]]", "[[Topics/13_base_model/Xiaomi_MiMo/2603_MiMo_V2_Pro/MiMo-V2-Pro]]", "[[Topics/13_base_model/Base Model MOC]]"]
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 # MiMo-V2.5
 
 > [!tldr]
 > MiMo-V2.5 是小米 V2 系列的**开源多模态 agent 基座**：310B 总参 / 15B 激活参数，48T tokens 预训练，五阶段训练流程（text pretraining → projector warmup → multimodal pretraining → SFT/agentic post-training → RL/MOPD），支持 1M token 上下文。**全面开源** Base + post-trained 权重于 Hugging Face。核心亮点：在 Coding Agent（71.8 SWE-Bench Verified）、Claw-Eval（65.8）、Video Understanding（83.5 Video-MME）上达到 frontier-level，且 token plan 计费无 multiplier。
+
+![MiMo-V2.5 官方架构](src/assets/architecture.svg)
+
+> [!warning]
+> 本页依据官方 Tech Blog 与 Hugging Face model cards，而不是独立 technical report。官方公开了架构、训练阶段、规模和评测，但没有给出论文级的数据配比、完整训练超参和逐项消融；这些缺口不做推测。
 
 ---
 

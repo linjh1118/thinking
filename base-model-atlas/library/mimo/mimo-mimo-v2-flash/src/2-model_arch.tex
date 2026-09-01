@@ -1,0 +1,197 @@
+\section{\mimoflash{} Model Architecture}
+
+\subsection{Overall Architecture}
+As illustrated in Figure~\ref{fig:model_arch}, \mimoflash{} follows a standard Transformer~\citep{vaswani2017attention} backbone augmented with MoE~\citep{shazeer2017outrageously} and hybrid attention~\citep{gpt3, gemma2, team2025gemma, li2025minimax, qwen3next2025, kda}. 
+\mimoflash{} is mainly composed of repeated hybrid blocks that interleave Local Sliding Window Attention (SWA) and Global Attention (GA).
+It stacks $M = 8$ hybrid blocks, each structured with $N = 5$ consecutive SWA blocks followed by an GA block. 
+The only exception is the very first Transformer block, which uses global attention with a dense Feed-Forward Network (FFN) to stabilize early representation learning. The sliding window size $W$ used in \mimoflash{} is $128$. Both the SWA block and the GA block utilize the sparse MoE FFN. 
+Each MoE layer comprises 256 experts in total, with 8 activated per token, and contains no shared experts.
+
+\mimoflash{} also integrates MTP~\citep{gloeckle2024better, liu2024deepseek, xia2025mimo} to improve model performance (both quality and efficiency). Worth noting, the MTP block uses dense FFN instead of MoE and applies SWA rather than GA, making it lightweight for speculative decoding. The number of parameters for each MTP block is only 0.33B.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/mimo-v2-arch.pdf}
+    \caption{An illustration of \mimoflash{} model architecture. The model comprises $M=8$ Hybrid Blocks, where each Hybrid Block interleaves $N=5$ Sliding Window Attention (SWA) blocks with one Global Attention (GA) block. Both are equipped with a sparse MoE FFN. The only exception is the first block, which uses GA with a dense FFN. The MTP blocks employ SWA and a dense FFN.}
+    \label{fig:model_arch}
+\end{figure}
+
+
+\begin{table}[ht]
+\small
+\centering
+\begin{tabular}{llc}
+\toprule
+\textbf{Block} & \textbf{Configuration} & \textbf{Value} \\
+\midrule
+
+\multirow{7}{*}{\textbf{Main Block}}
+& Layers (Total/SWA/GA)           & $48 / 39 / 9$ \\
+& SWA Heads (Q/KV)                & $64 / 8$ \\
+& Sliding Window Size    & $128$ \\
+& GA Heads (Q/KV)                 & $64 / 4$ \\
+& Head Dimensions (QK/V)          & $192 / 128$ \\
+& Experts (Total/Activated)       & $256 / 8$ \\
+%& \# Parameters per Expert        & $x$B \\
+\midrule
+
+\multirow{4}{*}{\textbf{MTP Block}}
+& SWA Heads (Q/KV)                & $64 / 8$ \\
+& Sliding Window Size    & $128$ \\
+& Head Dimensions (QK/V)          & $192 / 128$ \\
+& \# Parameters            & $0.33$B \\
+
+\bottomrule
+\end{tabular}
+\caption{Detailed model configuration of MiMo-V2-Flash.}
+\label{tab:model_config}
+\end{table}
+
+
+Table \ref{tab:model_config} summarizes detailed configurations of \mimoflash{}. The model consists of 39 SWA layers and 9 GA layers. Both SWA and GA utilize Grouped-Query Attention (GQA)~\citep{ainslie2023gqa}. Specifically,
+SWA has 64 query heads and 8 key-value heads, while GA has 64 query heads and 4 key-value heads. The per-head dimensions are the same for SWA and GA (192 for queries and keys, and 128 for values). Rotary Positional Embedding (RoPE, ~\cite{su2024roformer}) is partially applied to the first 64 dimensions query and key. 
+Following recent best practices, we adopt an FP8 mixed-precision framework similar to DeepSeek-V3~\citep{liu2024deepseek}.
+Specifically, we retain BF16 precision for the attention output projections, as well as for the embedding and output head parameters, while maintaining FP32 precision for the MoE router parameters.
+This mixed-precision configuration improves numerical stability without materially impacting training efficiency or memory footprint.
+
+
+
+
+
+\subsection{Hybrid Sliding Window Attention Architecture}
+
+Sliding window attention~\citep{beltagy2020longformer} restricts each token’s attention scope to a local window rather than the entire sequence, thereby reducing both computational and memory complexity dramatically.
+This naturally motivates hybrid attention architectures that interleave sliding window attention with global attention.
+However, prior work has shown that overly aggressive use of SWA, such as very small sliding window sizes or high SWA:GA ratios, can lead to substantial degradation in model performance~\citep{team2025gemma}, especially in long-context tasks.
+Recently, the introduction of learnable attention sink bias, which allows the model to assign little or no attention to tokens when needed, has substantially enhanced the modeling capacity of SWA-based architectures~\citep{agarwal2025gpt}.
+While the precise theoretical underpinnings of the attention sink mechanism remain an active research area~\citep{xiao2023efficient, attnsink_study, qiu2025gatedattn, sun2024massive}, we empirically observed that learnable attention sinks bias dramatically enhance the performance of hybrid SWA models, matching or even surpassing baselines with fully GA layers.
+
+In \mimoflash{}, our implementation follows the design used in gpt-oss~\citep{agarwal2025gpt}, where a learnable attention sink bias $sink \in \mathbb{R}$ is applied to the denominator of softmax for each attention head. Specifically, let the attention logits between token $i$ and $j$ of one single head be:
+\begin{equation}
+a_{ij} = \frac{q_ik_j^\top}{\sqrt{d}},
+% a_{ij} = \frac{q_i^\top k_j}{\sqrt{d}}, \qquad j = 1, \ldots, n .
+\end{equation}
+where $q_i$ and $k_j$ denote the query of token $i$ and key of token $j$, respectively, and $d$ is the head dimension.  
+The attention weights are then given by:
+\begin{equation}
+s_{ij}
+= \frac{\exp \left( a_{ij} - m_i \right)}
+{\exp \left( sink - m_i \right) + \sum_{j'} \exp \left( a_{ij'} - m_i \right)},
+\end{equation}
+
+\begin{equation}
+m_i = \max \left( \max_j a_{ij}, \; sink \right).
+\end{equation}
+
+Finally, the attention output for query $i$ is obtained as a weighted sum over the values:
+\begin{equation}
+o_i = \sum_{j=1}^{n} s_{ij} v_j.
+\end{equation}
+
+\subsubsection{Model Architecture Experiments}
+%\mimoflash{} pushes the sliding window size to 128 and the SWA:GA hybrid ratio to 5 without sacrificing model performance.
+To validate the effectiveness of our design choice, we conduct exploratory and empirical studies on a 32B dense model, maintaining the query–key dimensions and rotary embedding configurations consistent with those described above.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Model} & MMLU & BBH & TriviaQA & GSM8K & MATH & CMMLU & MBPP \\
+\midrule
+All GA          & 57.3 & 54.7 & 53.2 & 34.2 & 9.5 & 50.3 & 54.7  \\
+Hybrid SWA($W = 128$, w/o sink)  & 54.9 & 52.4 & 52.8 & 36.9 & 8.9 & - & - \\
+Hybrid SWA($W = 128$, w/ sink)    & \textbf{58.3} & \textbf{56.1} & 53.7 & 36.9 & \textbf{10.3} & \textbf{53.3} & \textbf{56.3} \\
+Hybrid SWA($W = 512$, w/ sink)    & \textbf{58.3} & 54.9 & \textbf{54.9} & \textbf{37.9} & 10.0 & 52.3 & 53.2 \\
+\bottomrule
+\end{tabular}
+\caption{General benchmark results for different attention configurations.}
+\label{tab:general_ablation}
+\end{table}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & GSM-Infinite & NoLiMa & RULER-32k & MRCR  \\
+\midrule
+All GA          & 12.3 & 49.7 & \textbf{89.4} & 32.5   \\
+Hybrid SWA($W = 128$, w/ sink)           & \textbf{17.3} & \textbf{51.2} & \textbf{89.4} & \textbf{34.4}   \\
+Hybrid SWA($W = 512$, w/ sink)    & 17.2 & 38.5 & 84.7 & 19.6   \\
+\bottomrule
+\end{tabular}
+\caption{Long-context benchmark results for different attention configurations.}
+\label{tab:longcontext_ablation}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & AIME24/25 & LiveCodebench & GPQA-Diamond & Average \\
+\midrule
+All GA          & 45.5 & 40.0 & 41.7 & 42.4  \\
+Hybrid SWA($W = 128$, w/ sink)           & \textbf{47.1} & \textbf{43.9} & \textbf{48.1} & \textbf{46.3}   \\
+% w/ SWA(512, w/ sink)           & 47.1 & - & 43.7 & 46.3   \\
+\bottomrule
+\end{tabular}
+\caption{Complex reasoning benchmark results for different attention configurations.}
+\label{tab:reasoning_ablation}
+\end{table}
+
+\paragraph{Baselines and Benchmarks} We evaluate four model architecture variants in a comparative setting. These include an all global attention (All GA) baseline, a hybrid SWA model with a 128-token window without attention sinks bias, and two hybrid SWA models augmented with attention sinks bias using window sizes of 128 and 512, respectively.
+All variants share the same training pipeline: pre-training on 250B tokens with an 8,192 sequence length, long context extension to 32,768 over an additional 40B tokens, followed by long-context SFT and reasoning SFT with chain-of-thought supervision.
+We evaluate model variants across benchmarks covering general capability, long-context understanding, and complex reasoning. General-domain results (Table~\ref{tab:general_ablation}) are obtained from pre-trained base models without long-context extension, evaluating general knowledge and reasoning on MMLU~\cite{hendrycks2020measuring}, BBH~\citep{suzgun2022challenging}, TriviaQA~\citep{joshi2017triviaqa}, GSM8K~\citep{cobbe2021training},  MATH~\citep{hendrycks2021measuring}, CMMLU~\citep{li2023cmmlu}, and MBPP~\citep{austin2021program}. Long-context results (Table~\ref{tab:longcontext_ablation}) evaluate long-context–extended base models on GSM-Infinite~\citep{zhou2025gsm}, NoLiMa~\citep{modarressi2025nolima}, and RULER-32k~\citep{hsieh2024ruler}, and long-context SFT models on MRCR~\citep{vodrahalli2024michelangelo}. For GSM-Infinite and Nolima, we construct internal few-shot benchmarks to assess base models under controlled long-context settings. Complex reasoning results (Table~\ref{tab:reasoning_ablation}) evaluate the reasoning SFT models on AIME24\&25~\citep{AIME}, LiveCodeBench~\citep{jain2024livecodebench}, and GPQA-Diamond~\citep{rein2024gpqa}. 
+
+We highlight our key empirical findings below:
+   
+
+\paragraph{Ablation on Attention Sink Bias} As shown in Table~\ref{tab:general_ablation}, hybrid SWA ($W = 128$, w/o sink) suffers noticeable performance degradation across general benchmarks, whereas introducing attention sink bias consistently recovers or improves performance relative to the all-GA baseline. Thus, in our further experiments, we assume that the attention sink bias is applied by default. 
+
+\paragraph{Sliding Window Attention Size} Hybrid SWA ($W = 128$) and Hybrid SWA ($W = 512$) appear to perform similarly on general benchmarks (Table~\ref{tab:general_ablation}). However, after long-context extension and long-context SFT, hybrid SWA ($W = 128$) surpasses the all-GA baseline, whereas SWA ($W = 512$) experiences significant degradation (Table~\ref{tab:longcontext_ablation}). 
+
+\paragraph{Reasoning Ability} As shown in Table~\ref{tab:reasoning_ablation}, hybrid SWA ($W = 128$) surpasses the all-GA baseline across different challenging reasoning benchmarks, showing clear improvements on complex reasoning abilities.
+
+
+\subsubsection{Summary and Discussion}
+Our experiments show that hybrid SWA ($W = 128$) not only outperforms hybrid SWA ($W = 512$) but can also surpass the all-GA baseline, which may seem counterintuitive. We hypothesize that this arises from a combination of better regularization and effective sparsity. Smaller windows force the model to focus on local context, serving as an inductive bias that mitigates overfitting on spurious patterns. Moreover, a tighter window ($W = 128$) compels SWA to model local information while delegating long-range dependencies to the global attention layers, resulting in a clearer division of labor with more accurate and efficient learning. In contrast, a larger window ($W = 512$) can blur this distinction, causing SWA to partially handle long-range dependencies itself, which dilutes the separation between local and global information and leads to suboptimal performance.
+
+We emphasize that these observations and findings are empirical and derived from our specific experimental settings, including model scale, datasets, and training procedures.
+Nonetheless, we hope these observations contribute an additional perspective to the ongoing discussion of efficient attention architectures in the era of reasoning and agentic AI models, and motivate further community-wide investigation into efficient architecture.
+
+
+
+\subsection{Lightweight Multi-Token Prediction (MTP)}
+\subsubsection{Motivation of using MTP}
+Prior work demonstrates that MTP is a powerful training objective that enhances training efficiency and model quality~\citep{gloeckle2024better,liu2024deepseek,xia2025mimo}.
+Beyond these training benefits, we place stronger emphasis on exploiting MTP as a native draft model for self-speculative decoding to deliver real-deployment speedup. 
+In the following, we elaborate on how MTP accelerates inference from two perspectives: general LLM decoding speedup and RL training acceleration.
+
+\paragraph{Accelerating LLM Decoding}
+LLM decoding is inherently memory-bound due to low arithmetic intensity. Batch-level parallelism is commonly used to increase FFN arithmetic intensity but does not benefit attention computation, as each request maintains its own KV cache. In contrast, MTP lifts the arithmetic intensity of both FFN and attention by generating multiple draft tokens, which the main model then verifies in parallel. This approach enables token-level parallelism without increasing KV cache I/O.
+
+\paragraph{Accelerating RL Training}
+MTP acceleration is particularly well-suited for RL training~\citep{miles2025}, where the rollout phase consistently emerges as the dominant bottleneck due to the inference and decoding costs.
+MTP addresses two key challenges in RL training:
+\begin{itemize}
+    \item 
+    \textit{It enables efficient and effective RL with small batches.}
+    Current RL training relies on large-batch, off-policy algorithms to maximize throughput~\citep{schulman2017proximal,zheng2025group,liu2025deepseek}.
+    However, on-policy training is generally more stable and effective, yet its small batches underutilize GPU resources.
+    MTP mitigates this limitation by scaling token-level parallelism instead of batch size, making small-batch, on-policy RL training more practical.
+    \item 
+    \textit{It mitigates GPU idleness from long-tail stragglers.} 
+    As the rollout phase progresses, long-tail stragglers that process long sequences with small batch sizes (often approaching 1) can cause significant GPU idleness~\citep{zhong2025optimizing,gao2025rollpacker}. 
+    In such scenarios, MTP enhances the computational efficiency of both attention and FFN, substantially reducing overall latency.
+\end{itemize}
+
+\subsubsection{Lightweight MTP Design in \mimoflash{}}
+In \mimoflash{}, the MTP block is deliberately kept lightweight to prevent it from becoming a new inference bottleneck. We use a small dense FFN rather than MoE to limit parameter count, and employ SWA instead of Global Attention (GA) to reduce KV cache and attention computation costs.
+During pre-training, only a single MTP head is attached to the model to avoid extra training overhead.
+In post-training, this head is replicated $K$ times to form a $K$-step MTP module, and all heads are jointly trained for multi-step prediction.
+Each head receives the main-model hidden state and token embedding as input, providing richer predictive information.
+Despite its lightweight design, the MTP module remains highly effective and achieves a high acceptance rate.
+Detailed results are presented in Section~\ref{sec:mtp}.

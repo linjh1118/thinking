@@ -1,0 +1,98 @@
+\subsection{Mid-training: Reasoning Capability Enhancement}
+
+While our foundational pre-training yields a model with robust general capabilities~\citep{meituan2025longcat_flash_chat}, we identified a critical limitation on its ability to handle complex reasoning tasks. Although fine-tuning base models followed by RL training has substantially improved the reasoning performance, we observe that these models often produce homogeneous reasoning patterns, which hinder their ability to reflect deeply and obtain correct solutions for challenging problems.
+
+This deficiency is twofold, stemming from the composition of general pre-training corpora. 
+First, while vast, these corpora are heavily weighted toward general text, resulting in an insufficient proportion of data from reasoning-intensive domains such as STEM and coding. 
+Second, and more critically, explicit long CoT patterns, which form the very structure of methodical reasoning, are naturally scarce even within that specialized data. 
+This dual-faceted data gap stunts the model’s intrinsic reasoning potential, creating a significant bottleneck for subsequent fine-tuning stages. 
+
+To overcome this, and inspired by analyses of reasoning boundaries in Large Reasoning Models (LRMs)~\citep{yue2025does}, our approach transforms the standard mid-training phase~\citep{meituan2025longcat_flash_chat} into a carefully balanced curriculum. 
+The objective is to cultivate the model's latent reasoning abilities (effectively "cold-starting" them) without degrading its foundational generalist knowledge, thereby setting a stronger starting point for the subsequent long CoT SFT.
+
+\noindent\paragraph{Training Recipe}
+Our curriculum is built upon a meticulously curated dataset of reasoning-intensive problems across STEM and coding domains. 
+The STEM collection features a diverse range of mathematics, physics, and chemistry problems sourced from academic archives, textbooks, and proprietary data, with a strong emphasis on competition-level challenges. 
+Our curation process prioritizes the problems requiring multi-step logical reasoning over those solvable by simple fact retrieval.
+For algorithmic programming tasks, we aggregated problems from diverse open-source code competition datasets.
+This curated data is then strategically infused into the training corpus. 
+We employ a rigorous quality-control pipeline, using a hybrid of heuristic rules and LLM-as-a-Judge methods for filtering, deduplication, and decontamination.
+Crucially, we carefully adjust the data mixing ratio, balancing the reasoning-intensive data against the original mid-training data. 
+This ensures the model develops foundational reasoning skills without degrading its generalist capabilities.
+The detailed data curation and mixing are provided in Appendix~\ref{appendix:rbe}.
+
+% To let the model have better potential to solve more complex reasoning tasks. 
+% Unlike traditional pre-training,
+% on large-scale general documents, 
+% Besides large-scale general documents from traditional pre-training, we also collect more STEM and code-like instruction data, and mix them with the general documents to build the final continual pre-training corpus. 
+% and inject them into the base model to improve its reasoning potential.
+% 改 2025-09-05 liuyang509
+% Specifically, 
+% % we mainly describe the collection of STEM and code-relevant training data.
+% We compile a diverse set of STEM and coding training datasets, each pertinent to general reasoning scenarios. 
+% The STEM dataset encompasses mathematics, physics, and chemistry problems sourced from Webs, PDFs, and proprietary in-house data. 
+% Furthermore, we carefully curate a selection of competition-level problems to ensure the rigor and depth of our collection.
+% % from 
+% % secondary schools and university subjects 
+% % that are closely related to reasoning. These materials were 
+% % sourced from open-source datasets, public competition websites, and proprietary data. 
+% We prioritized the acquisition of problems based on their difficulty and type, favoring those that require logical reasoning over those relying solely on domain-specific knowledge or factual recall.
+% %\wangjianing{For the data from Webs, we train a small domain classifier by using FastText (cite) to recognize crawled STEM-relevant documents, and carefully extract questions and corresponding answers through a well-designed neural extractor.} 
+% %For the data from PDFs, we choose OCR models to recognize document text and perform data clean and extraction.
+% % To ensure the answerability of each query, we use our~{\longcatchat} and multiple open-source LLMs to generate responses and filter the accurate query through voting consistency.
+% For code-like reasoning problems, we gathered historical problems from open online judges (OJ), relevant discussion forums, and publicly available school competition training materials and exercises. 
+% % Priority was given to programming problems accompanied by test cases, which are essential for screening synthetic answers and supporting reinforcement reward mechanisms.
+% % \wangjianing{About general coding generation, and synthetic competition data?}
+% % For code, we curated diverse instruction data from various competition platforms. To enrich the density of queries, we also follow~\citep{Scaling2024Xin} to synthesize large-scale data to fill the vacuity of long-tailed programming contest knowledge.
+% % To maintain the general coding generation ability (code completion, repository-level generation, etc.), we also establish an efficient pipeline to collect high-quality code-related data from public repositories (source code, git issues, PRs), and text-code mixed datasets from technical documentation, tutorials, and coding-intelligence blogs, capturing diverse code-related contexts.
+% To guarantee the data quality, we employ a combination of heuristic rules and LLM-as-a-Judge approaches to perform data filtering, deduplication, and decontamination.
+% We also emphasize the importance of difficulty distribution and diversity, which significantly impact the model’s long CoT reasoning ability. 
+
+% % \noindent\paragraph{Training Recipe}
+
+% % For the training recipe, 
+% % We follow the same training procedure and configuration as~{\longcatchat} to perform mid-training,
+% We modify the training data of~{\longcatbase} in the mid-training phase.
+% % , i.e., we employ a sequential length-expansion training strategy with context windows of 8K, 32K, and 128K to progressively expand the model’s context length.
+% % At the 32K and 128K stages, which we call mid-training, 
+% We balance the ratio of long CoT and other non-CoT data (e.g., pre-trained corpus, general-purpose data, etc.) to ensure that the model can improve the potential of base reasoning while maintaining general generation capabilities.
+% The implementation details are shown in Appendix~\ref{appendix:rbe}.
+
+
+
+% we continue the previous practice of using larger RoPE base frequencies (5,000,000 for 32K and 10,000,000 for 128K) and longer textual data. Additionally, during these context expansion stages, we further increase the proportion of Long-thinking data and sample from a pre-separated held-out set for each stage to prevent any data point from being used repeatedly.
+
+
+
+\noindent\paragraph{Evaluation}
+Prior to the formal training on the LongCat-Flash-Base~\citep{meituan2025longcat_flash_chat}, we first conducted a preliminary experiment to validate the effectiveness of our reasoning-enhancement mid-training. 
+This pilot study was performed on a small-scale, in-house MoE model that shares an identical architecture.
+We employ a repeated sampling strategy with the $\mathit{pass@k}$~\citep{yue2025does, brown2024large} metric to evaluate the model's reasoning capability.
+To ensure an unbiased estimation of this metric, we follow the methodology proposed by~\citet{chen2021evaluating}.
+%To intuitively demonstrate the performance comparison, we also choose a small in-house MoE base model, and modify the training data in the mid-training phase. 
+%Then, we adopt a repeated sampling strategy with the metric of $\mathit{pass@k}$ to evaluate the reasoning boundary~\citep{yue2025does, brown2024large}.
+%We follow the approach of ~\citep{chen2021evaluating} to estimate the unbiased result.
+% $\mathit{pass@k}$ through repeated sampling.
+Formally, given one query $x$ from a query set $\mathcal{D}$, let the model be $\pi_{\theta}$, where $\theta$ denotes to the parameter, we generate $N$ ($N > 0$) responses as $\{y_i\}_{i=1}^{N}$, where $y_i=\pi_{\theta}(x)$ represents one response.
+Hence, the $\mathit{pass@k}$ is defined as:
+\begin{equation}
+    pass@k := \mathbb{E}_{x_i\sim\mathcal{D}}\bigg[1 - \frac{{N - C_i \choose k}}{{N \choose k}}\bigg],
+\end{equation}
+where $C_i$ ($C_i \leq N$) denotes the number of correct answers.
+
+Figure~\ref{fig:base_model_passk} illustrates our evaluation results on three benchmarks: AIME-24, BeyondAIME, and LiveCodeBench (LCB) (24.08-25.05).
+The results reveal a clear trend: a higher proportion of reasoning-intensive data in mid-training consistently enhances the model's reasoning performance across all metrics, from $\mathit{pass@}\text{1}$ to $\mathit{pass@}\text{128}$. 
+This effect is significant across all sampling complexities, with $\mathit{pass@}\text{1}$ scores improving by $27.7\%$ on AIME-24, $9.3\%$ on BeyondAIME, and $6.5\%$ on LCB.
+Notably, the improvements are even more substantial for higher k-values like $\mathit{pass@}\text{64}$ and $\mathit{pass@}\text{128}$, demonstrating that this approach effectively broadens the model's reasoning boundary. 
+These findings led us to integrate this strategy into our LongCat-Flash-Thinking mid-training process.
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=.95\linewidth]{figs/reasoning_boundary}}
+% \vspace{-.25cm}
+\caption{\small
+The comparison of reasoning capability ($\mathit{pass@k}$). ``Baseline'' represents our in-house small base model, ``Enhanced'' represents the modified small base model after reasoning capability enhancement in the mid-training phase. 
+}
+% \vspace{-.3cm}
+\label{fig:base_model_passk}
+\end{figure}
+

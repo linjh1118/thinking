@@ -1,0 +1,154 @@
+\section{Evaluation}
+We evaluate \mimovl{} across 50 tasks to comprehensively assess its capabilities. Appendix~\ref{sec:eval_bench} lists all the benchmarks adopted in our evaluation. 
+We also assess model performance with an in-house evaluation set. 
+
+
+
+
+
+
+\input{tables/general_task}
+
+\subsection{Evaluation Setting}
+
+
+For image understanding benchmarks, we set the max pixels for the input image to 4096 × 28 × 28 and the maximum generation tokens to 32,768, employing greedy search for decoding. 
+For video benchmarks, videos are sampled at 2 FPS, with a maximum of 256 frames and a total token limit of 16,384.
+For text evaluation benchmarks, we set the max new tokens for generation as 32,768, temperature as 0.6 and top-p as 0.95.
+We adapt the existing framework based on LMMs-Eval~\citep{lmmseval} to better accommodate long-CoT reasoning models. 
+We further optimize the evaluation logic for specific tasks to ensure better evaluation consistency. 
+To facilitate open research, we open-source our evaluation framework with all prompts used.\footnote{\url{https://github.com/XiaomiMiMo/lmms-eval}}
+
+
+\subsection{General Capabilities}
+
+
+Table~\ref{tab:general_updated} presents benchmark results assessing the general capabilities of VLMs. Our \mimovl{} models demonstrate consistently leading performance across a diverse range of vision-language and text benchmarks, establishing new state-of-the-art results among open-source models and even surpassing proprietary counterparts.
+
+Specifically, our \mimovl{} models achieve state-of-the-art results among open-source models. \mimovlsft{} and
+\textbf{(i)} On general vision-language tasks, our models achieve exceptional performance that leads the open-source field. \mimovlsft{} and \mimovlrl{} obtain 64.6\% and 66.7\% on MMMU$_{\mathrm{val}}$ respectively, outperforming much larger models such as Gemma 3 27B. For document and chart understanding, \mimovlrl{} excels with a top open-source score of 56.5\% on CharXiv$_{\mathrm{RQ}}$, significantly exceeding Qwen2.5-VL (42.5\%) by 14.0 points and InternVL3 (37.6\%) by 18.9 points.
+\textbf{(ii)} Our models demonstrate superior video understanding capabilities while maintaining strong textual performance. 
+MiMo-VL-SFT achieves a leading 53.1\% on Video-MMMU, and MiMo-VL-RL obtains an impressive 50.0\% mIoU on Charades-STA. \textbf{(iii)} Compared with \mimo{}, our models maintain decent performance on text-only benchmarks.
+\textbf{(iv)} Remarkably, our MoRL yields comprehensive improvements, with the most impressive gains observed on challenging benchmarks such as VibeEval and CountBench. 
+
+
+
+
+\input{tables/reasoning_task}
+
+
+\subsection{Reasoning Tasks}
+
+Table~\ref{tab:reason_modified_final} presents evaluation results for multimodal and text reasoning benchmarks.
+In multimodal reasoning, both the SFT and RL models significantly outperform all compared open-source baselines across these benchmarks.
+Notably, \mimovlsft{} surpasses much larger models, including Qwen2.5-VL-72B and QVQ-72B-Preview.
+The RL model further improves performance on most reasoning benchmarks.
+For example, \mimovlrl{} boosts accuracy on MathVision from 57.9\% to 60.4\%.
+\mimovl{} models also exhibit impressive reasoning capabilities on pure text benchmarks, even outperforming Qwen2.5-72B.
+These results demonstrate that our multimodal pre-training and post-training recipes effectively endow the model with exceptional visual capabilities and strong text intelligence.
+
+
+
+
+
+\subsection{GUI Tasks}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.98\linewidth]{figures/mimo-gui-v3.pdf}
+    \caption{GUI understanding and grounding results. \mimovlrl{} achieves comparable results with GUI specialized models.}
+    \label{fig:gui_specific}
+\end{figure}
+
+In addition, we demonstrate that \mimovl{} models possess exceptional GUI understanding and grounding capabilities. 
+In Table~\ref{tab:general_updated}, \mimovlrl{} outperforms all other general VLMs compared. In Figure~\ref{fig:gui_specific}, we further compare \mimovlrl{} with GUI-specialized models (UI-TARS-1.0~\citep{qin2025ui}, Aguvis~\citep{xu2024aguvis}, OS-Atlas~\citep{wu2024atlas}) of similar size on GUI Understanding (WebSrc, VisualWebBench) and Grounding (Screenspot, Screenspot-v2, Screenspot-Pro, OSWorld-G) benchmarks. As a general-purpose VLM, MiMo-VL achieves comparable or even superior performance to GUI-specialized models, particularly on the more challenging Screenspot-Pro and OSWorld-G benchmarks.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/elo_rating.pdf}
+    \caption{Elo ratings comparison across VLMs. \mimovlrl{} achieves the highest rating among open-source models, approaching the performance of proprietary alternatives such as Claude 3.7 Sonnet.}
+    \label{fig:elo_rating}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/mimo_7b_sft_training_curves.pdf}
+    \caption{\mimovlsft{} training curves in Stage 4.}
+    \label{fig:mimo_7b_sft_performance}
+\end{figure}
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/mimo_7b_vl_onpolicy_offpolicy_rl_aime24_25.pdf}
+    \caption{On-policy RL and vanilla GRPO shows contrasting scaling behavior: on-policy RL performance continuously improves with more data, while vanilla GRPO reaches a plateau around 20,000 samples.}
+    \label{fig:onpolicyrl}
+\end{figure}
+
+
+
+\subsection{Elo Rating}
+Inspired by ChatbotArena~\citep{zheng2023chatbotarena}, we construct a balanced bilingual (Chinese and English) in-house evaluation dataset comprising real user prompts. This approach assesses user preference beyond traditional benchmark scores, providing insights into practical model performance in real-world scenarios.
+
+Following the methodology of \citep{Chou2024VisionArena2R}, we conduct pairwise comparisons between \mimovl{} and competing models, including leading proprietary models and open-source VLMs ranging from 7B to 72B parameters. We compute Elo ratings based on GPT-4o judgments with style-controlled evaluation protocols. 
+Our evaluation covers a diverse range of visual-linguistic tasks, including multimodal reasoning, image understanding, and GUI interaction scenarios, therefore serving as a good proxy of user preference.
+
+As illustrated in Figure~\ref{fig:elo_rating}, \mimovlrl{} achieves the highest Elo rating among all evaluated open-source VLMs, ranking first across models spanning from 7B to 72B parameters. This demonstrates superior user experience across the evaluation set, with our model's performance closely approaching that of proprietary models such as Claude 3.7 Sonnet. 
+Moreover, MORL brings a boost of 22+ points for the \mimovl{}-SFT.
+These results highlight the competitive capability of our models and validate the effectiveness of our training methodology.
+
+
+
+\section{Discussion}
+
+
+\subsection{Boosting Reasoning Capability in Pre-training}
+Figure~\ref{fig:mimo_7b_sft_performance} shows the performance of \mimovlsft{} during Stage 4, its final pre-training phase. In this stage, substantial volumes of synthetic long-form reasoning data are incorporated, and model performance increases sharply, e.g., +9 on MMMU, +14 on OSWorld-G, and +16 on OlympiadBench. Notably, model performance continuously improves without saturation. 
+These improvements are attributed to an increased depth in the model's reasoning. For instance, on  MMMU, the model's average number of response tokens grows from 680 to 2.5K per question after Stage 4, indicating a more detailed and profound level of reasoning when tackling problems. 
+
+
+
+\subsection{On-Policy RL v.s. Vanilla GRPO}
+
+
+
+
+
+We explore the benefits of on-policy RL v.s. vanilla GRPO with text-only reasoning tasks.
+As illustrated in Figure~\ref{fig:onpolicyrl}, the on-policy algorithm demonstrates a consistent positive correlation between training data volume and performance score. Its learning curve shows no signs of saturation within the observed training window, suggesting potential for further enhancement with additional computational resources and data. 
+Conversely, the vanilla GRPO algorithm initially exhibits higher sample efficiency, achieving robust performance early in training. This advantage, however, is transient. The algorithm's performance generally saturates around 20,000 training samples, beyond which further training yields negligible improvements. 
+
+
+
+
+\input{tables/case1}
+
+\subsection{Interference Between RL Tasks}
+While MORL training enhances performance on nearly all evaluated tasks, achieving stable and simultaneous improvements across diverse task domains remains a significant challenge.
+During training, we observe that reasoning tasks exhibit disparities with visual perception and grounding tasks, such as visual grounding and counting, making it difficult to match the performance of standalone RL on individual tasks.
+
+The potential cause lies in the opposing growth trends of response length: reasoning tasks encourage longer CoT during the RL process, whereas grounding and counting tasks lead to shrinking ones.
+Disparities in task difficulty and the risk of reward hacking may also contribute to this interference.
+We are actively investigating the underlying causes of this phenomenon and seeking solutions to achieve consistent and persistent growth across all tasks.
+
+
+
+
+\section{Case Study}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/gui_case.pdf}
+    \caption{A case demonstrating the agentic capabilities of our model. \mimovl{} successfully navigates a website to add the Xiaomi SU7 to the wishlist, customizing both paint and interior options. All screenshots are of size 1886*1544 (width*height).}
+    \label{fig:gui_case}
+\end{figure}
+
+We present qualitative results in Figure~\ref{fig:case_main} and Appendix~\ref{sec:more_cases}.
+As depicted in the top example in Figure~\ref{fig:case_main}, our model showcases strong plot understanding capabilities, successfully converting an intricate plot into a well-structured markdown table.
+Additionally, we highlight the models' superior reasoning capabilities in STEM tasks.
+In the examples shown in Figure~\ref{fig:case1} and Figure~\ref{fig:case4}, the model effectively addresses multiple STEM questions within a single response.
+Furthermore, our model exhibits strong agentic capabilities.
+As illustrated in Figure~\ref{fig:gui_case}, \mimovl{} successfully navigates a website to add the Xiaomi SU7 to the wishlist, with customized paint and interior options.
+
+
+
+

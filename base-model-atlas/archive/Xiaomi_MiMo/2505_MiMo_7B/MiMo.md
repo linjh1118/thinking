@@ -25,11 +25,15 @@ related:
   - "[[Topics/13_base_model/Xiaomi_MiMo/2601_MiMo_V2_Flash/MiMo-V2-Flash]]"
   - "[[Topics/13_base_model/Xiaomi_MiMo/2606_MiMo_Series/MiMo-Series-From-7B-Reasoning-Model-to-Omnimodal-Agent-Foundation-Models]]"
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 # MiMo: Unlocking the Reasoning Potential of Language Model
 
 > [!tldr]
+> MiMo-7B 的价值不在“小模型也能做题”这一句口号，而在从 **25T-token reasoning-aware pretraining、MTP、难度驱动 reward 到无缝 rollout infra** 建立了一条完整链路；它是后续 MiMo-VL 与 V2 系列的训练方法起点。
+
+![MiMo-7B 在数学与代码任务上的总体表现](src/assets/code-math.png)
 > 小模型也可以有强推理能力。MiMo-7B（7B 参数）在 25T tokens 预训练 + 三阶段 data mixture + MTP 的基础上，通过 130K 可验证 math/code RL 数据 + test-difficulty-driven reward + Seamless Rollout Engine（2.29× 训练加速），在 AIME 2025 上达到 55.4，超越 o1-mini 的 50.7。核心洞察：推理能力的瓶颈不在模型规模，而在预训练数据的 reasoning density 和后训练的 reward 设计。
 
 ## 问题与动机
@@ -43,6 +47,8 @@ created: 2026-06-11
 ## 方法核心思路
 
 ### 1. 预训练：从数据工程开始强化 reasoning potential
+
+![MiMo 的 reasoning 数据难度标尺](src/assets/mimo_ruler.png)
 
 **三阶段 Data Mixture：**
 
@@ -77,6 +83,8 @@ created: 2026-06-11
 **GRPO 算法**：去除 KL loss，动态采样，clip-higher
 
 ### 3. 基础设施：Seamless Rollout Engine
+
+![Seamless Rollout Engine](src/assets/seamless_rollout.png)
 
 GPU idle time 的主要来源：
 - Rollout 和 reward computation 的串行依赖

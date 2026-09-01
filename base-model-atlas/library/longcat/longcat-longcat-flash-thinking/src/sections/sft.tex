@@ -1,0 +1,357 @@
+\subsection{Reasoning-oriented SFT}
+Following the mid-training curriculum, we introduce a reasoning-oriented SFT stage to align the model with high-quality instruction-following patterns and enhance its specialized reasoning capabilities, thereby establishing a strong foundation for subsequent large-scale RL. In addition to general reasoning, we focus on advancing~{\longcatthink} on formal reasoning and agentic reasoning, which can cultivate the model's reasoning ability with formal language and real-world tools, respectively.
+
+\subsubsection{General Reasoning}
+To enhance general reasoning capabilities, we curate a diverse, high-quality training dataset from multiple domains: STEM, code, logic, and general QA. The construction process involves a rigorous pipeline for both prompt curation and response generation, as illustrated in the following. Further details on the data processing for each domain are provided in Appendix~\ref{appendix:sft}.
+
+First, for prompt curation, we implement a multi-stage filtering process. 
+1) Initial Screening: We use an LLM-as-Judge~\citep{zhou2025libra} approach to eliminate low-quality or unanswerable queries, such as incomplete statements. For code-related data, we select problems that feature a clear description, a robust set of at least five unit tests, and an executable judging script. 
+2) Ground-Truth Validation: To verify correctness, a model-based voting mechanism is employed. 
+This involves automatically generating diverse responses to identify and filter out prompts with inconsistent or potentially erroneous ground truths. 
+3) Difficulty Filtering: Except for general QA, we estimate problem difficulty via the pass rate from expert models. 
+Prompts with pass rates above a certain threshold are discarded as too simple. 
+The final prompt set is then sampled from the filtered pool according to the difficulty distribution.
+
+Second, for response generation, we employ a rejection sampling methodology. 
+Candidate responses are synthesized for each prompt, with LongCat-Flash-Chat~\citep{meituan2025longcat_flash_chat} serving as the primary generator. 
+These candidates are then evaluated through a combination of rule-based and model-based judgments to select the highest-quality response for our final training data.
+
+
+
+% \wangjianing{Unlike the conventional training recipe of light-level SFT in some recent works (cite), we focus on heavy-level SFT because we have observed that it can substantially bolster the reasoning boundary and provide an exceptional starting point for RL. This conclusion is also drawn in (cite).
+% }
+
+
+% The key insights of SFT data contain three main components: 1) General Reasoning Improvement, 2) Formal Proving Expansion, and 3) Agentic Capacity Enhancement.
+% We then perform data mixing and ultimately curate 3M training instances comprising STEM, code, logic, agentic, proving, and general tasks.
+
+% such as STEM, code, logic, agentic, proving, knowledge, and alignment.
+
+% \subsubsection{Data Collection}
+% We curate SFT data across six reasoning-intensive domains, ensuring both diversity and verifiability:
+
+% \subsubsection{General Reasoning Improvement Across Diverse Domains}
+% To enhance the general reasoning ability, we collect large-scale high-quality QA data spanning STEM, code, logic, knowledge, and alignment.
+
+
+% \cx{I agree that we would have to be vague in the description on the data front. That said, if we can discuss more on our insights, high level intuitions, and principles we employ in constructing the dataset, that would be more interesting than just state vague descriptions?}
+
+
+
+% To improve the general reasoning ability, we carefully collect SFT data from STEM, code, logic, and general QA tasks.
+
+% \noindent\paragraph{STEM} 
+% For STEM, the training data contains several hundred thousand instances with verifiable answers,
+% spanning mathematics, physics, chemistry, biology, and other related science scenarios. 
+% The majority of questions are drawn from open-source datasets, public competitions, in-house competition-level collections, and a few instruction data retrieved from the pre-training corpus.
+% To ensure data quality and correctness, we implement a multi-stage filtering pipeline. In the initial phase, we utilize the LLM-as-a-Judge method to automatically identify and exclude questions that are not suitable for answering, such as incomplete statements, 
+% % proof-based formats, 
+% and conceptual queries.
+% For code-related data, we screen out queries with the clear problem description, a set of unit tests with more than 5 test cases, and a judgment script with starter code or function body.
+%  % and some or dependencies on external information. 
+% Subsequently, for each remaining question, we employ several advanced LRMs to generate candidate responses.
+% Thus, we can obtain the voted results, and they can be used to filter the data whose ground truth is inconsistent.
+% with the voted results.
+
+
+% and perform rejection sampling to ensure correctness.
+% Questions were retained only if at least one model’s output matched the provided reference answer, thereby ensuring answer correctness.
+
+% To further refine the data set
+
+
+
+% \noindent\paragraph{Code}
+% The code data is mainly collected from open source competition data and multiple Online Judge platforms. 
+% To ensure the quality, 
+% We screen out queries with the clear problem description, a set of unit tests with more than 5 test cases, and a judgment script with starter code or function body.
+% Specifically, the problem description must contain the question, running cost constraints, and some input-output pairs.
+% The unit test is viewed as the argument of the generated code and can be used to validate its correctness by the judgment script.
+% To avoid problems such as unclear title descriptions, incorrect unit tests, and judgment script errors, 
+% we first implement a filtering pipeline to eliminate queries containing garbled content, missing information, or logical errors.
+% We then build an in-house code sandbox environment and leverage multiple advanced LRMs to generate candidate codes. The data will be filtered that whose generated codes by all LRMs can not pass all unit tests in our sandbox. 
+% We also use advanced LRMs to calculate the pass rate for each query and eliminate those with a value of 1 or 0.
+% To balance diversity, we train a small classifier to tag the specific knowledge points and difficulty for each query, and perform difficulty filtering, ensuring that problems possess an appropriate level of complexity and applicability to real-world algorithmic reasoning.
+
+% and 
+% we train a small model to select queries that are clear, consistent, and correct, with sufficient explanatory detail. 
+
+
+% \noindent\paragraph{Logic}
+% Logical reasoning, i.e., deductive, inductive, and abductive, is one of the imperative general reasoning tasks and plays a significant role in human-like decision-making, task-solving, and deep-thinking~\citep{yu2024natural, Jiang2025Do}.
+% We collect a series of widely-considered tasks such as mazes, 24-point, Sudoku, etc.
+% To quantify the difficulty of each instance, we calculate the pass rate metric based on the advanced thinking models, and then eliminate overly simple and difficult data.
+% % Hence, we filter out intractable problems where advanced thinking models failed. 
+% To prevent the model from guessing the answer, we convert the multiple-choice questions into free-form QA.
+
+% Logical reasoning (i.e., deductive, inductive, and abductive) is one of the imperative general reasoning tasks and plays a significant role in human-like exploration, backtracking, and deep-thinking~\citep{yu2024natural, Jiang2025Do}.
+% For logical reasoning, we gather a series of widely-considered logical tasks, which consist of Zebra Puzzles (cite), Mazes (cite), Sudoku (cite), and ARC-AGI (cite), etc. 
+% For each task, we devise a specialized generator to automatically synthesize queries with precisely controllable difficulty. For example, in Sudoku, the complexity can be modulated by varying the number of blank cells. 
+% In that, we can categorize query difficulty into three distinct levels: easy, medium, and hard.
+
+% For synthesizing high-quality responses,
+% To obtain high-quality training instances, 
+% we first employ Reinforcement Learning with Verifiable Rewards (RLVR) to train a small model 
+% we first train a small model by employing RLVR (cite)
+% on these logical tasks (The implementation details are shown in Appendix). 
+% Then, we generate multiple long CoT trajectories for each query by distilling from the trained model.
+% The reliable response with the correct answer will be used for the training instances.
+
+% This process is guided by a curriculum learning strategy that dynamically adjusts both the response length and query difficulty. Importantly, logical tasks allow for precise verification of model predictions, which mitigates the risk of reward hacking and contributes to training stability.
+% We then incrementally raise the complexity of queries and the maximum response length until the model performance reaches saturation. 
+
+% Finally, we generate long reasoning traces for logical queries using the small RLVR-trained model. To ensure high-quality responses, we focus exclusively on the most challenging queries, generating multiple responses per query and selecting the optimal one based on our designed metrics (e.g., exploration and reflection counts).
+
+
+% \noindent\paragraph{General QA}
+% We also consider some general-purpose tasks, such as instruction-following, commonsense knowledge, and safety, etc. 
+% To be elaborated, we randomly sample xx instances from the SFT phase of~{\longcatchat}.
+% To be elaborated, 
+% \wangjianing{
+% For instruction-following, we curate both single-turn and multi-turn instruction-following datasets, with varying levels of constraint complexity and quantity. 
+% We filter queries that have low semantic quality, and employ a reverse prompt generation strategy (cite) to guarantee the response satisfy all constraints.
+% For commonsense knowledge, we develop three types of general QA datasets: reading comprehension, table-based question answering, and custom-designed tasks. 
+% These specific domains can substantially enhance our model's multi-turn dialogue, reasoning, long context abilities, and refusal capabilities. 
+% For safety, we first develop a content safety policy that categorizes queries into more than 40 distinct safety categories across five response types: comply, comply with guideline, soft refuse, soft refuse with guideline, or hard refuse.
+% This criterion guides us to train a small model to divide each query into a specific safety category, and to optimize the response by human annotation based on different safety categories.
+% In addition, because over-refusal can significantly impact model usefulness, we also optimize the refusal ability by carefully processing the general-purpose queries.
+% }
+
+% We observed that mixing these general QA data does not harm the existing reasoning performance, but can improve the model's capabilities in general dialogue, knowledge reasoning, and long text.
+
+% Except for general QA tasks, furthermore, we assess the difficulty of the query with the pass rate estimated by advanced LRMs.
+% Queries with pass rates exceeding a predefined threshold are deemed overly simplistic and subsequently excluded, thereby ensuring that the dataset emphasizes problems requiring substantive reasoning.
+% The final training set is sampled from the filtered pool based on the pass rate distribution, resulting in a high-quality dataset suitable for training reasoning models.
+% For responses, we adopt~{\longcatchat}~\citep{meituan2025longcat_flash_chat} or other advanced LRMs to generate candidate responses and perform rejected sampling through both rule-based and model-based judgment.
+
+
+\subsubsection{Formal Reasoning}
+The recent success of models like Qwen2.5-Math~\citep{yang2024qwen2}, Kimina-Prover~\citep{wang2025kimina}, DeepSeek-Prover~\citep{Xin2025DeepSeek, Ren2025DeepSeek}, and Seed-Prover~\citep{chen2025seedproverdeepbroadreasoning} highlights the immense potential of LRMs to accelerate research in formal reasoning tasks like Automatic Theorem Proving (ATP). 
+To help realize this potential and empower researchers, we introduce significant enhancements to our model's formal reasoning capabilities. 
+Our work aims to provide a robust and versatile foundation upon which the community can build and explore new scientific frontiers.
+To achieve this, we focus on ATP, a representative and challenging task in formal reasoning. 
+We introduce a novel methodology to systematically enhance our model's capabilities in this domain.
+The pipeline is shown in the lower left corner of Figure~\ref{fig:cold_start_data_pipeline}.
+
+% Unlike general reasoning
+% % that expresses the thinking process via natural language, 
+% which articulates the thinking process through natural language,
+% we found that almost all advanced LRMs~\citep{deepseekai2025deepseekv3technicalreport, qwen3_thinking_2507, openai_o1} 
+% still struggle with complex reasoning problems by using formal languages (e.g., Lean4, Isabelle)~\citep{Xin2025DeepSeek, Lin2025Goedel}.
+% neglect formal reasoning capabilities, which still hinders their abilities to solve complex reasoning problems by using formal languages (e.g., Lean4, Isabelle)~\citep{Xin2025DeepSeek, Lin2025Goedel}.
+
+
+% To mitigate this gap, we select automatic theorem proving (ATP) as the representative and challenging tasks, and introduce an innovative recipe designed to expand formal reasoning abilities. 
+% The details are illustrated below.
+% We wish to shepherd the LLM's community towards the development of collaborative improvement for both informal and formal reasoning.
+
+% To address this deficiency, we introduce an innovative framework designed to enhance formal reasoning abilities; the specifics of our approach are detailed below. Our ultimate goal is to guide the LLM community toward fostering collaborative advancements in both informal and formal reasoning domains.
+
+\noindent\paragraph{Task Definition}
+% The purpose of ATP is to generate proof in formal language based on the problem or statement.
+% and the corresponding formal statement $Q_{f}$.
+Formally, the task of ATP is to generate a valid proof $\mathcal{P}$ for a given formal statement.
+The process starts with an informal problem, consisting of a natural language question $x$ and its answer $y$.
+This is the first converted into a formal statement $s = \mathcal{I}_s(x,y)$ by an autoformalizer $\mathcal{I}_s$.
+The model $\pi_{\theta}$ then generates a proof candidate $\mathcal{P} = \pi_{\theta}(s)$. 
+A verifier $\mathcal{V}$ checks the proof, yielding a binary outcome $\mathcal{V}(\mathcal{P}, s) \in \{\text{PASS}, \text{FAIL}\}$.
+Our work focuses on whole-proof generation, where the entire proof is produced in a single turn from the formal statement.
+
+% Formally, given an original natural language question $x$ and the corresponding answer represented $y$, the task of ATP is to generate a valid Lean4 proof snippet that can prove $y$ is the correct answer to $x$, i.e., $P=\pi_{\theta}(\mathcal{I}_s(x, y))\in\{\text{PASS}, \text{FAIL}\}$, where $\mathcal{I}_s$ is the formalizer to translate the prove's goal into the formal statement, $P$ denotes to the proof and the result space is restricted to $\text{PASS}$ and $ \text{FAIL}$.
+% % Most of the previous works~\citep{Xin2025DeepSeek, Ren2025DeepSeek, Lin2025Goedel} solve the ATP task by training a specific prover model that directly complete the formal statement with a placeholder ``:= by sorry''.
+% % In contrast, 
+% In this section, we focus on the whole-proof generation, which is a single-turn pattern that generates the whole proof based on the formal statement.
+% The data curation pipeline is illustrated below:
+
+\noindent\paragraph{Statement Formalization}
+We collect multiple competition-grade mathematical problems 
+% NuminaMath1.5~\citep{li2024numinamath}, AoPS~\footnote{\url{https://artofproblemsolving.com/}.}, CriticLean~\citep{peng2025criticlean}, and BigMath~\citep{albalak2025big}, 
+and perform data deduplication and decontamination.
+% which also contains multiple competition-grade problems.
+% We follow the same processing pipeline in the continual pre-training phase to use semantic similarity to perform data deduplication and decontamination.
+Since the original data only contains natural language problems, we train an 8B-based autoformalizer model to translate each informal statement (containing the original question and answer) into a formal statement.
+We then perform a two-stage filtering process to ensure its correctness:
+1) Syntax Filtering: We follow~\citet{wang2025kimina}'s work to develop the Lean4 Server~\footnote{\url{https://github.com/project-numina/kimina-lean-server}.} (v4.15). Each generated formal statement is concatenated with the placeholder ``:= by sorry'', and compiled through the Lean4 Server. Thus, the statements with syntax errors are removed.
+2) Semantic Filtering: We found that autoformalization can occasionally alter the original problem's meaning.
+%To this end, we use advanced LRMs to eliminate formal statements with inconsistent semantics.
+To address this, we employ a model-based semantic filter to identify and discard formal statements that are inconsistent with their informal counterparts.
+% \begin{itemize}
+%     \item 
+
+%     \item 
+% \end{itemize}
+
+
+% To this end, we construct 500K formal statements.
+
+\noindent\paragraph{Iterative Proof Synthesis}
+Our proof synthesis follows an iterative data enhancement strategy, beginning with a cold-start process and progressively refined through expert iteration.
+For this purpose, we utilize our reasoning-enhanced LongCat-Flash-Base model as the foundation for the prover, which is systematically improved throughout this process.
+% Inspired by expert iteration, 
+%We choose whole-proof generation as our preferred mode because the response pattern is similar to that of general reasoning.
+% We introduce an iterative proof generation pipeline to synthesize a large quantity of reasoning trajectories with valid proofs.
+%Specifically, we choose our LongCat-Flash-Base model after reasoning-enhanced mid-training to train a prover on cold-start instances, and then expand proofs through expert iteration.
+% The details are illustrated in the following:
+The iteration pipeline is: 
+\begin{itemize}
+    \item \textbf{Cold-start Prover Training:} The goal of this phase is to build an initial dataset to train the baseline prover. First, to identify a set of solvable problems, we filter our formal statements by leveraging existing theorem-proving tools. Statements that can be successfully verified are retained, forming our initial set of (statement, proof) pairs. Next, to enrich this data with reasoning steps, we employ a model-based synthesis approach to generate a natural language "thinking process" for each pair. This creates the final training triples of (statement, thinking process, proof), which are then used to perform an initial SFT on our LongCat-Flash-Base model.
+    
+    % Firstly, we use some advanced prover models to generate the proofs for each formal statement, and the formal statement will be filtered if no proofs can pass through the Lean4 server.
+    % We then randomly select a few formal statements and use advanced LRMs to synthesize the thinking process and Lean4 code, obtaining the triple of (formal statement, thinking process, Lean4 code).
+    % Finally, we perform syntax-based rejection sampling and use valid instances to train a weak prover.
+
+    \item \textbf{Expert Iteration:} This phase iteratively expands the dataset and enhances the prover. In each iteration: 1) The current prover attempts to generate proofs for all formal statements that remain unsolved. 2) Newly generated proofs are verified, and the successful (statement, proof) pairs are added to our dataset. 3) These new pairs are then enriched with a synthesized thinking process using the same model-based approach. 4) Finally, we aggregate all curated training triples and retrain the prover from scratch. This self-improvement loop repeats for a fixed number of iterations.
+    
+    % This phase iteratively expands the proof dataset and enhances the prover. In each iteration, we use the current SFT prover to attempt proofs for all formal statements that still lack a valid one.   To extend more proofs, we perform an iterative process. Firstly, we collect the formal statements from the data pool, which have been filtered by rejection sampling in the previous iterations. Secondly, we use the current SFT prover to perform self-distillation, along with rejection sampling. Finally, we aggregate all proof instances and train a new SFT prover from scratch. This process repeats until the upper limit of the number of cycles is reached.
+\end{itemize}
+
+% 1) 
+% The formal statement that contains at least one correct proof verified by Lean4 Server can be viewed as a proofable problem.
+
+% 2) 
+
+Through this iterative process, we curated a substantial corpus of high-quality training instances, each containing a formal statement, a synthesized thinking process, and a verified proof. 
+This dataset was then used to comprehensively enhance the formal theorem-proving capabilities of our~{\longcatthink}.
+%After the expert iteration, we obtain 
+% hundreds of thousands of 
+%multiple training instances with synthesized thinking processes and proofs, which are used to expand the formal proving capability of our~{\longcatthink}. 
+% The training details are shown in Appendix~\ref{appendix:prover}. 
+
+% In the experiment, we found that the mixed training effect of the proof training with other reasoning data was better than that of the thinking data.
+
+
+\subsubsection{Agentic Reasoning}
+
+% \begin{itemize}
+%     \item Agentic Tool Use -shixiaowei
+%     \item Code Interpreter: - chenzhengyu
+% \end{itemize}
+
+% To maximize the agentic capabilities of our Base Agent Model, 
+Agentic reasoning can be embodied with tools use, interpreting, and complex problem solving~\citep{zeng2025glm, openai_o1}.
+% To this end, we introduce a systematic data selection and optimization pipeline specifically designed to enhance agentic reasoning proficiency.
+% through SFT. 
+Existing datasets are often plagued by instances where the model can produce satisfactory answers without actually invoking the tool. 
+Such data provide limited utility for real-world agentic behaviors, as they lack the challenge of leveraging external tools for problem-solving.
+To alleviate this issue, we focus on identifying and retaining high-quality queries that genuinely require tool assistance, thereby fostering the development of robust agentic abilities. 
+% The pipeline comprises the following key stages:
+
+% \noindent\paragraph{Task Definition}
+% The supervised fine-tuning (SFT) stage aims to enhance the agent’s ability to solve queries that genuinely require tool usage. A large portion of existing datasets contains \textit{pseudo-queries}---queries solvable by internal knowledge without tool calls. Such data contributes little to the acquisition of robust tool-use skills.  
+
+% Formally, given an original natural language query $Q$ and the corresponding target answer $A$, the SFT task is to construct a valid tool-use trajectory $T$ such that
+% \[
+% T = \pi_{\theta}(\mathcal{I}_t(Q, A)) \in \{\text{PASS}, \text{FAIL}\},
+% \]
+% where $\mathcal{I}_t$ is a formalizer that maps $(Q, A)$ into a structured tool-use objective, $\pi_{\theta}$ denotes the trajectory generator parameterized by $\theta$, and the result space is restricted to $\text{PASS}$ (a valid trajectory that successfully produces $A$) or $\text{FAIL}$ (an invalid trajectory that cannot). The goal of SFT is thus to maximize the likelihood of $\text{PASS}$ outcomes on high-quality queries requiring genuine tool use.
+
+
+
+% \noindent\paragraph{Query Selection}
+% To curate such high-quality training data, we design a filtering pipeline that evaluates each query in \textit{with-tools} vs \textit{without-tools} settings:
+
+% \begin{itemize}
+%     \item \textbf{Without-tools}: The model answers based only on internal knowledge.
+%     \item \textbf{With-tools}: The model is allowed to call relevant tools.
+% \end{itemize}
+
+% A query is retained only if it demonstrates:
+% \[
+% \text{PassRate}_{\text{w/o}} < \tau_1, \quad
+% \text{PassRate}_{\text{w}} > \tau_2, \quad
+% \Delta\text{PassRate} = \text{PassRate}_{\text{w}} - \text{PassRate}_{\text{w/o}} > \tau_3,
+% \]
+% where $\tau_1, \tau_2, \tau_3$ are predefined thresholds. This contrastive filtering ensures that the final dataset emphasizes cases where tool usage is indispensable.  
+
+% We further adopt a layered strategy:
+% \begin{itemize}
+%     \item \textbf{Strict filtering}: Meets all thresholds to form a core high-quality dataset.
+%     \item \textbf{Relaxed filtering}: Looser thresholds for broader diversity and robustness.
+% \end{itemize}
+
+
+\noindent\paragraph{Required Tool-Use Query Selection}
+
+% \textbf{1. Candidate Query Construction:} 
+% \noindent\paragraph{Candidate Query Construction}
+To curate a dataset of queries that genuinely require tool use, we begin by aggregating candidates from diverse sources, including open-source datasets (e.g., ToolBench~\citep{xu2023tool}, ToolLLM~\citep{qin2023toolllm}) and in-house data, performing standard deduplication and decontamination. 
+We then introduce a novel dual-path evaluation pipeline to assess the ``tool necessity'' for each query. 
+%To obtain truly useful queries for SFT and subsequent agentic RL, we propose a dual-path reasoning approach to estimate the tool-use necessity value of each query. 
+Specifically, for a given query $x\in\mathcal{D}$, we prompt a baseline model to generate $N$ solution trajectories under two distinct settings: one with access to tools $(\mathcal{I}_{\text{w. tool}})$ and one without $(\mathcal{I}_{\text{w/o. tool}})$. 
+This yields two sets of responses:
+% Specifically, given a query $x\in\mathcal{D}$, we design two different templates $\mathcal{I}_{\text{w. tool}}$ and $\mathcal{I}_{\text{w/o. tool}}$ to induce the LLM to generate multiple trajectories with or without tools, respectively. Formally, we can obtain:
+\begin{equation}
+    \mathcal{Y}_{\text{w/. tool}}=\{y_i|y_i=\pi_{\theta}(\mathcal{I}_{\text{w/. tool}}(x))\}_{i=1}^{N}
+    \text{, and }
+    \mathcal{Y}_{\text{w/o. tool}}=\{y_i|y_i=\pi_{\theta}(\mathcal{I}_{\text{w/o. tool}}(x))\}_{i=1}^{N}\text{.}
+\end{equation}
+%where $N$ is the sampling number.
+Next, these responses are evaluated by an LLM-as-a-Judge to calculate the pass rates $s_{\text{w/. tool}}(x)$ and $s_{\text{w/o. tool}}(x)$ for $\mathcal{Y}_{\text{w/. tool}}$ and $\mathcal{Y}_{\text{w/o. tool}}$, respectively.
+The tool-necessity value $v_x$ is then defined as the performance gain from using tools: $v_x = s_{\text{w/. tool}}(x) - s_{\text{w/o. tool}}(x)$.
+A higher $v_x$ signifies that a query is difficult to solve with internal knowledge alone but becomes manageable with tool assistance.
+Suppose that $\tau_1$, $\tau_2$, $\tau_3$ are the pre-defined thresholds, we select queries based on a set of thresholds: $\{x|v_x>\tau_1\land s_{\text{w/. tool}}(x)>\tau_2\land s_{\text{w/o. tool}}(x)<\tau_3, x\in\mathcal{D}\}$, ensuring that our final dataset consists of problems where tools are not just helpful, but indispensable.
+%We then use LLM-as-a-Judge to perform rejected sampling, and obtain the pass rate values $s_{\text{w/. tool}}(x)$ and $s_{\text{w/o. tool}}(x)$ for $\mathcal{Y}_{\text{w/. tool}}$ and $\mathcal{Y}_{\text{w/o. tool}}$, respectively.
+% To estimate the value of each query, we can calculate $v_x = s_{\text{w/. tool}}(x) - s_{\text{w/o. tool}}(x)$.
+% A query with a high $v_x$ indicates that the model performs poorly without the tool, but can be greatly improved after the tool is given. 
+% This shows that the query is highly dependent on the tool and is more suitable for synthesizing a tool-integrated trajectory.
+% Hence, the query will be selected based on the rule: $\{x|v_x>\tau_1\land s_{\text{w/. tool}}(x)>\tau_2\land s_{\text{w/o. tool}}(x)<\tau_3, x\in\mathcal{D}\}$. In this rule, we add three thresholds $\tau_1, \tau_2, \tau_3$ to guarantee that the query is difficult for LLM to answer without tools, and obtain great improvement when tools are provided.
+
+% We aggregate queries from internal data repositories. Initial filtering is performed to ensure format consistency, appropriate complexity, and to remove duplicates and low-quality samples.
+
+% \noindent\paragraph{Dual-Path Evaluation} 
+% Each candidate query is subjected to two evaluation settings:
+% \begin{itemize}
+% \item \textit{No-Tool Response:} The model answers the query using only its internal knowledge, with no access to external tools.
+% \item \textit{Tool-Enabled Response:} The model is provided with access to relevant tools and generates a response that includes the complete tool invocation trajectory.
+% \end{itemize}
+
+% \noindent\paragraph{Automated Scoring and Pass Rate Calculation}
+% Responses from both settings are scored automatically across multiple dimensions—answer accuracy, invocation completeness, and reasoning coherence—using a standardized evaluation framework. The Pass Rate for each setting is defined as the proportion of samples exceeding a quality threshold.
+
+% \noindent\paragraph{Selective Filtering}
+% High-quality queries are selected based on stringent criteria: low Pass Rate in the no-tool setting, high Pass Rate in the tool-enabled setting, and a significant improvement margin between the two. This ensures that retained queries are those for which tool use is essential to achieve satisfactory performance.
+
+% \noindent\paragraph{Trajectory Optimization and Difficulty Stratification}
+\noindent\paragraph{Automatic Trajectories Synthesis}
+After selecting high-value queries, we synthesize corresponding high-quality solution trajectories. 
+% After query selection, we focus on synthesizing high-quality trajectories that guide the LRM on how to effectively use tools to solve such challenging problems.
+To support a wide range of tasks, we first build a versatile environment with diverse tool APIs, including MCP servers and simulated tools for both single and multi-turn interactions.
+For each selected query, we employ a powerful generative model to produce multiple candidate trajectories, spanning from simple tool calls to complex, multi-step workflows. 
+These candidates are then rigorously evaluated by a panel of model-based judges on criteria such as correctness, logical consistency, and completeness of tool use.
+Only trajectories that pass this evaluation are retained.
+The validated trajectories are then standardized into a consistent format, ensuring logical completeness and clarity in reasoning steps.
+Finally, we stratify these trajectories by complexity, based on factors such as the number of tool calls (single vs. multi-turn), dependency structures (sequential vs. parallel), and reasoning depth (e.g., lookup, multi-hop, planning), to facilitate curriculum-based learning and targeted model enhancements.
+
+% Specifically, we assemble diverse tool APIs, MCP servers, and simulated tools, supporting both single-turn and multi-turn tool interactions. This variety ensures broad domain coverage.
+% For each query, we use advanced LLMs to generate candidate trajectories, ranging from simple single-step calls to complex multi-step workflows.
+% We then use multiple LLM judges to evaluate the correctness, logical consistency, and tool-use completeness of each candidate trajectory, and then filter the unsatisfied data.
+% % For the retained trajectories, we standardize its format by considering the consistent format, explicit reasoning explanations, and complete logical chains. 
+% % For each selected query, multiple candidate tool-use trajectories are generated and evaluated, with the optimal trajectory chosen for inclusion. 
+% The retained trajectories are standardized for format and logical completeness compared with general reasoning.
+% Additionally, queries are stratified by complexity, considering factors such as the number of tool invocations (single turn and multi-turn), dependency structures (independent, sequential, or parallel), and reasoning depth (look up, multi-step, or planning) to facilitate curriculum-based training and targeted model improvement.
+
+% By rigorously curating the training data in this manner, our supervised fine-tuning process explicitly enhances the model’s agentic capacity. The resulting dataset not only improves tool-use proficiency but also ensures that the agent develops sophisticated reasoning and planning skills required for solving complex, real-world tasks. This lays a solid foundation for subsequent reinforcement learning and further agentic capability advancement.
+
+% We also mix some general QA data from~{\longcatchat} to keep the ability when solving general tasks. 
+
+\subsubsection{Training Recipe}
+For the SFT stage, we employ a sophisticated data curation strategy to balance the diverse and complex scenarios from our three reasoning-oriented datasets. 
+This strategy included strict data decontamination protocols to ensure zero exposure to test data during training. 
+To further bolster general reasoning, we up-sample data from the STEM and coding domains. 
+In addition, we curate the final training instances based on several response behavior features we defined, such as average response length, reflection density, and query clustering. 
+The objective of this approach is to markedly enhance performance on broad reasoning tasks while preserving proficiency in specialized areas like agentic tool use and formal proof generation. 
+The final data mixing proportions are detailed in Figure~\ref{fig:sft_ratio}.
+
+The SFT is performed on our reasoning-enhanced base model from the mid-training phase. 
+We utilize the AdamW optimizer with a learning rate of $3e\text{-}5$, and train the model for $2$ epochs. 
+To accommodate complex and extended reasoning chains, we set the context length to $48$K tokens.
+
+% In addition, we also further perform rejected fine-tuning (RFT).
+% We rebalanced the SFT data across domains and performed downsampling. 
+% Then, we use the SFT model to self-distillate for the RFT queries and select high-quality responses based on rules or LLM-as-a-Judge. 
+% Introducing self-distillation in the RFT stage allows the model to learn its own reasoning behavior. 
+% In addition to further improving accuracy, it can also tune the model's reasoning process.
+% Therefore, we design multiple response behavior features, including average response length, reflection density, and query clustering, and conducted comprehensive curation to construct RFT data. 
+% During RFT training, we reduced the learning rate to prevent catastrophic forgetting in the model.
+
+% \cx{if will be great if we can have some results showing the benefit of SFT, e.g., in terms of improving pass at k while providing a good starting point for RL with good entropy etc. it will be a contrast of deepseek-r1-zero that shows a good starting point is needed, either via SFT or midtrain. also it echos with observations on QWen being a too strong RL starting point}

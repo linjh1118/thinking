@@ -1,0 +1,1173 @@
+% \usepackage{tcolorbox}
+% \tcbuselibrary{skins, breakable}
+\documentclass{article}
+
+% \usepackage{tcolorbox}
+% \tcbuselibrary{skins, breakable}
+\usepackage{longcat_style}
+\usepackage{adjustbox}
+\usepackage[utf8]{inputenc} %
+\usepackage[T1]{fontenc}    %
+\usepackage{newunicodechar}
+\usepackage{hyperref}       %
+\usepackage{xcolor}
+\usepackage[normalem]{ulem} %
+\hypersetup{
+    colorlinks=true,      %
+    linkcolor=blue,      %
+    urlcolor=blue,       %
+    citecolor=blue,      %
+    linkbordercolor=blue, %
+    urlbordercolor=blue,
+    citebordercolor=blue,
+    pdfborderstyle={/S/U/W 1}, %
+}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption} % 必须提供，用于 \captionof 命令
+
+\usepackage{float}
+\usepackage{url}            %
+\usepackage{booktabs}       %
+\usepackage{amsfonts}       %
+\usepackage{nicefrac}       %
+\usepackage{microtype}      %
+\usepackage{lipsum}		%
+\usepackage{graphicx}
+
+% OCR case部分字体定义
+\usepackage{CJKutf8}
+% % 【核心配置】仅为特定内容定义局部字体，不影响全局
+% % 1. 定义一个名为 \CaseEnglishFont 的局部英文字体 (Times New Roman)
+% \newfontfamily\CaseEnglishFont{Times New Roman}[Ligatures=TeX]
+% % 2. 定义一个名为 \CaseChineseFont 的局部中文字体 (微软雅黑 或 思源黑体)
+% \newCJKfontfamily\CaseChineseFont{Noto Sans CJK SC}
+
+\usepackage{multicol}
+% \usepackage{natbib}
+% \usepackage{doi}
+\usepackage[style=numeric-comp, backend=biber]{biblatex}
+\addbibresource{references.bib}
+\usepackage{amsmath}
+\usepackage{amssymb} %
+\usepackage{xspace}
+% \usepackage[inline]{enumitem}
+\usepackage{enumerate}
+\usepackage{enumitem}
+% \usepackage{wrapfig}
+% \usepackage{tcolorbox}
+% \usepackage{tcolorbox}
+% \tcbuselibrary{skins, breakable}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{subcaption} 
+\usepackage{makecell}
+\usepackage{hyperref, cleveref}
+\usepackage{pifont}
+\usepackage[inkscapelatex=false]{svg}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage[most]{tcolorbox} % 核心宏包
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage[table]{xcolor}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+% 定义 Summary 样式
+\newtcolorbox{summarybox}{
+    colback=blue!5!white,    % 背景颜色 (5% 的蓝色混入白色)
+    colframe=black!75,       % 边框颜色 (75% 的黑色)
+    arc=6pt,                 % 圆角半径
+    boxrule=1pt,             % 边框粗细
+    left=8pt,                % 左边距
+    right=8pt,               % 右边距
+    top=8pt,                 % 上边距
+    bottom=8pt,              % 下边距
+    enhanced,                % 启用高级特性
+    % fontupper=\small,        % 设置框内文字大小
+}
+
+% \setlist[itemize]{leftmargin=*}
+% \setlist[enumerate]{leftmargin=*}
+% \setlist[description]{leftmargin=*}
+
+\newcommand{\longcat}{LongCat-Next\xspace}
+\newcommand{\chip}{accelerators\xspace}
+
+
+
+\usepackage{enumitem}
+\setlist{
+    topsep=2pt,        % 列表整体上下间距
+    itemsep=2pt,       % item之间间距（你要改的重点）
+    parsep=0pt,        % 段落间距
+    partopsep=0pt      % 额外间距
+}
+
+% ---------- Float spacing (最重要) ----------
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}   % 图/表 与正文
+\setlength{\floatsep}{6pt plus 1pt minus 2pt}       % 图/表之间
+\setlength{\intextsep}{8pt plus 1pt minus 2pt}      % 文中浮动体
+
+% ---------- Caption spacing ----------
+\usepackage[skip=4pt]{caption}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{2pt}
+
+
+% ---------- Display math spacing ----------
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
+\setlength{\abovedisplayshortskip}{4pt}
+\setlength{\belowdisplayshortskip}{4pt}
+
+% ---------- List spacing ----------
+\usepackage{enumitem}
+\setlist{topsep=1pt, itemsep=2pt, parsep=0pt, partopsep=0pt}
+
+% ---------- Section spacing ----------
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{10pt}{6pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{3pt}
+
+\newcommand{\kmax}{K}
+
+\newcommand{\blue}[1]{\textcolor{blue}{#1}} %
+
+
+\definecolor{midnightgreen}{rgb}{0.0, 0.29, 0.33}
+
+\title{LongCat-Next: Lexicalizing Modalities as \\ Discrete Tokens}
+
+
+\author{
+\textbf{Meituan LongCat Team}
+}
+
+\renewcommand{\headeright}{\raisebox{-0.2\height}{\includegraphics[height=1.8em]{figs/longcat-logo-full.pdf}}}
+\renewcommand{\shorttitle}{LongCat-Next: Lexicalizing Modalities as Discrete Tokens}
+
+\newcommand{\method}{LongCat-Next: Lexicalizing Modalities as Discrete Tokens}
+
+\begin{document}
+\maketitle
+
+
+
+\begin{abstract}
+
+The prevailing Next-Token Prediction (NTP) paradigm has driven the success of large language models through discrete autoregressive modeling. However, contemporary multimodal systems remain language-centric, often treating non-linguistic modalities as external attachments, leading to fragmented architectures and suboptimal integration.
+To transcend this limitation, we introduce Discrete Native Autoregressive (DiNA), a unified framework that represents multimodal information within a shared discrete space, enabling a consistent and principled autoregressive modeling across modalities.
+A key innovation is the Discrete Native Any-resolution Visual Transformer (dNaViT), which performs tokenization and de-tokenization at arbitrary resolutions, transforming continuous visual signals into hierarchical discrete tokens. Building on this foundation, we develop LongCat-Next, a native multimodal model that processes text, vision, and audio under a single autoregressive objective with minimal modality-specific design.
+As an industrial-strength foundation model, it excels at seeing, painting, and talking within a single framework, achieving strong performance across a wide range of multimodal benchmarks. 
+In particular, LongCat-Next addresses the long-standing performance ceiling of discrete vision modeling on understanding tasks and provides a unified approach to effectively reconcile the conflict between understanding and generation.
+Extensive experiments demonstrate that discrete tokens can universally represent multimodal signals and be deeply internalized within a single embedding space, offering interesting insights into this unified training paradigm.
+As an attempt toward native multimodality, we open-source the LongCat-Next and its tokenizers, hoping to foster further research and development in the community.
+
+\textbf{GitHub}: \href{https://github.com/meituan-longcat/LongCat-Next}{https://github.com/meituan-longcat/LongCat-Next}\\
+\textbf{Hugging Face}: \href{https://huggingface.co/meituan-longcat/LongCat-Next}{https://huggingface.co/meituan-longcat/LongCat-Next}\\
+
+
+\end{abstract}
+
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.76\linewidth]{figs/longcat-next-benchmark-charts-2026-03-26.png}
+    \caption{Benchmark performance of LongCat-Next.}
+    \label{fig:benchmark}
+\end{figure}
+
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+
+
+Large Language Models (LLMs) have converged on the Next Token Prediction (NTP) paradigm \cite{gpt4o,comanici2025gemini25pushingfrontier,yang2025qwen3,meituanlongcatteam2025longcatflashtechnicalreport,team2026kimi,mimoflash}, where intelligence emerges from large-scale discrete autoregressive modeling~\cite{gpt2,gpt3}.
+However, language captures only a limited portion of the rich perceptual information in the real world, which inherently spans multiple modalities, \textit{e.g,} text, vision, and audio.
+Despite this, most prevailing multimodal systems still treat non-linguistic modalities as subordinate, bolt-on components that are loosely coupled with language modeling \cite{llava,wu2025qwenimagetechnicalreport}. 
+This separation holds untapped potential to move beyond prevailing \textit{language-plus-auxiliary} paradigm toward native multimodal modeling.
+
+When multimodality is conceptualized analogously as a native linguistic extension of language, the problem simplifies considerably, where all modalities are represented as interoperable token sequences governed by a single shared autoregressive objective. Despite these conceptual advantages, the field still lacks an industrial-strength training recipe for achieving a genuinely unified multimodal model at scale. At the core lies a fundamental question: how can non-linguistic modalities be effectively represented within a discrete token space? In essence, the pursuit of tokenizing all modalities into a universal interface lies at the heart of multimodal modeling~\cite{wang2024emu3,team2024chameleon}.
+
+
+Since language is naturally expressed through speech, discrete autoregressive modeling has achieved remarkable progress in the audio area~\cite{defossez2024moshi,li2025baichuan,zhang2025mimo}, where discrete audio tokens capture not only text-aligned semantics but also rich paralinguistic information such as emotion, tone, and environmental context. However, extending discrete autoregressive modeling to vision is conceptually straightforward yet practically nontrivial. Unlike words, which are naturally compact and discrete units, visual signals are high-dimensional and continuous. There remains widespread doubt as to whether discrete visual modeling can achieve strong performance in both comprehension and autoregressive generation, as compressing rich visual information into a \textit{finite codebook} inevitably hinders representation capacity.
+
+
+To address this challenge, we identify a fundamental dual bottleneck in discrete visual modeling: (i) capacity of visual representation, and (ii) information loss from discretization. For the former, we emphasize the importance of achieving \textit{semantic completeness} and highlight that a class of Semantic-and-Aligned Encoders (SAE) serves as a strong foundation. Interestingly, we discover that the encoder's residual architecture inherently preserves a latent pathway for low-level signal propagation, even without reconstruction supervision. 
+For the information bottleneck of discretization, we leverage the hierarchical nature of visual signals by modeling the \textit{residual of the residual} via Residual Vector Quantization (RVQ)~\cite{rqvae}, effectively preserving information for both understanding and generation.
+
+
+Building on these insights, we introduce the Discrete Native Resolution Vision Transformer (dNaViT), a unified visual tokenizer designed to function analogously to linguistic tokenizers.
+Through a carefully designed training process, dNaViT can perform paired tokenization and de-tokenization, encoding images into discrete IDs with semantic completeness for understanding, and simultaneously decoding the token sequences back into images for reconstruction and generation, both at arbitrary resolution with up to 28 $\times$ compression ratio.
+By treating multi-level residual tokens as a shared representational currency, dNaViT primarily enables bidirectional mapping between images and discrete IDs.
+During autoregressive modeling, we employ additive encoding over multi-layer tokens and a DepthTransformer for efficient decoding, unlocking an exponential representation space for multi-level tokens, while maintaining the computational efficiency of a single autoregressive step. This design allows vision to be discretized into a unified token space akin to language, achieving an optimal balance between representation fidelity and compression rate.
+
+
+The same design principle holds in audio modeling, where we employ an architecture based on RVQ for discrete representation. Utilizing a Whisper encoder~\cite{radford2023robust} to capture both semantic and paralinguistic features, our audio tokenizer compresses waveforms into discrete tokens at 12.5 Hz. The audio detokenizer uses a paired decoder and a refinement network based on flow matching to achieve high-fidelity reconstruction. For autoregressive audio modeling, we further introduce a unified training paradigm that aligns segment-level text and audio tokens with stochastic delays, enabling both parallel and serial text-guided speech generation. This approach enhances the linguistic quality of speech generation and facilitates seamless adaptation across diverse interaction scenarios.
+
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figs/Overview.pdf}
+    \caption{Overview of the LongCat-Next architecture, designed under a Discrete Native Autoregression (DiNA) paradigm that extends multimodality into a native language-style modeling framework via paired tokenizers.}
+    \vspace{-4pt}
+    \label{fig:overall}
+\end{figure}
+
+
+This work focuses on the fundamental challenge of native multimodality through a design philosophy that prioritizes simplicity, treating vision and audio as intrinsic extensions of language.
+Building on Mixture-of-Experts (MoE) backbone \cite{meituanlongcatteam2025longcatflashtechnicalreport,longcat-flash-lite}, we instantiate this foundation to introduce LongCat-Next, a discrete native multimodal model that unifies language, vision, and audio within a single, cohesive framework, delivering industrial-strength performance and competitive results across diverse multimodal domains. The principal contributions of this work are listed as follows:
+\begin{itemize}
+\item 
+\textbf{Discrete Native Autoregression Paradigm (DiNA).} 
+We introduce DiNA, a unified paradigm that extends next-token prediction from language to native multimodality by representing all modalities within a shared discrete token space. By internalizing diverse modalities into this unified interface, DiNA aligns multimodal modeling with standard decoder-only architectures, enabling a single model to handle text, vision, and audio under a consistent autoregressive objective. Under this paradigm, the core challenge reduces to designing modality-specific tokenizer–detokenizer pairs, turning the model into a unified multi-task learner across modalities. This design preserves architectural simplicity while leveraging the mature training infrastructure of large language models, providing a unified multimodal foundation.
+\item
+\textbf{Discrete Native-Resolution Vision Transformer (dNaViT).} 
+We propose dNaViT, a unified interface that represents visual inputs as discrete ``visual words'', guided by the principle of \emph{semantic completeness} to overcome the capability ceiling of discrete visual modeling. Concretely, we leverage Semantic-and-Aligned Encoders (SAE) to ensure semantically complete representations, and integrate them with Residual Vector Quantization (RVQ) to construct hierarchical discrete tokens that preserve both high-level semantics and fine-grained details. This design enables dynamic tokenization and de-tokenization across resolutions, supporting both any-resolution visual understanding and arbitrary-resolution image reconstruction. Moreover, dNaViT is plug-and-play compatible with existing large language models without performance degradation.
+
+\item
+\textbf{Exceling in Seeing, Painting, and Speaking in a Unified Model.}
+LongCat-Next overcomes the longstanding bottleneck of discrete visual modeling, achieving competitive performance with specialized vision understanding models while maintaining strong any-resolution generative quality, even under a 28× compression ratio.
+Within DiNA, visual understanding and generation are reformulated as two instances of the same predictive process, differing only in their conditional priors (e.g., image tokens for text generation and text tokens for image generation). This unified formulation effectively reconciles the traditionally competing objectives of understanding and generation, significantly mitigating their modeling conflict in practice.
+This unified discrete modeling framework also empowers LongCat-Next with advanced audio comprehension capabilities, low-latency and accurate voice conversation, as well as customizable voice cloning features.
+
+
+\end{itemize}
+
+
+This concise architecture is driven by a design that treats vision and audio as intrinsic extensions of the language-centric autoregressive paradigm, rather than as external attachments. Such native integration gives rise to a naturally unified representation across modalities, where \textit{multimodal signals} are internalized in a manner analogous to \textit{linguistic tokens}, in contrast to loosely coupled hybrid approaches (Fig.~\ref{fig:tsne}).
+
+
+Instantiated on LongCat-Flash-Lite~\cite{longcat-flash-lite} with an A3B (68.5B in total) model size and trained on over 2T tokens, extensive experiments demonstrate that LongCat-Next not only effectively reconciles traditionally competing multimodal objectives, but does so without compromising its foundational language capabilities. 
+As a unified model, LongCat-Next excels at seeing, painting, and talking, breaking the performacne ceiling of discrete visual modeling. As as result, it surpasses existing unified frameworks like Qwen3-Omni, outperforms specialized models such as Qwen3VL-A3B on visual understanding benchmarks, and competes favorably with Flux-dev in high-fidelity image generation, particularly in text rendering.
+In speech-related benchmarks, LongCat-Next outperforms that both omni and speech-specialized models with comparable parameter scales like Gemini 3.1 Flash-Lite preview and MiMo-Audio respectively. These results demonstrate that the natively discrete paradigm is not merely a conceptual alternative, but a scalable, industrial-strength foundation, one that might bring us closer to a truly unified model of generalist multimodal intelligence.
+
+
+
+
+\section{Methodology}
+
+
+
+
+While the discrete autoregressive paradigm has established a mature and scalable ecosystem for language modeling, approaches for other modalities remain fragmented and lack comparable system-level support. Conceptually, if multimodality is viewed as a form of linguistic modeling within a unified discrete framework, abstracting diverse multimodal signals into a shared discrete token space, this framework offers several key advantages, although this analogy primarily serves as a conceptual purpose.
+
+
+In particular, the key advantages are as follows: (1) Architectural Synergy, where multimodal data can leverage the established optimization and scaling infrastructure of Large Language Models (LLMs), ensuring efficient training and deployment; (2) Unification of Understanding and Generation, where a single NTP objective merges discriminative understanding and high-fidelity generation, treating them as two aspects of the same underlying predictive logic; (3) Seamless Cross-Modal Interaction, enabling natural interactions between vision, language, audio, and other modalities without task-specific designs; and (4) Native Data Scaling and Unified Self-Supervision, where a universal discrete space flattens multimodal content into unified token sequences, allowing NTP objective to function as a self-supervised mechanism that learns structural and semantic priors directly from large-scale, uncurated \textit{in-the-wild} data.
+
+
+Despite its conceptual appeal, the field still lacks an industrial-strength training recipe capable of scaling such unified systems. To move beyond conceptual demonstrations toward a production-ready alternative to specialized architectures, such a framework must satisfy the following criteria:
+
+\begin{itemize}
+\item \textbf{Performance Parity and Beyond:} The framework must match or surpass the state-of-the-art performance of specialized models in both comprehension and generation. A generalist paradigm is impractical if a substantial performance gap prevents it from replacing existing specialized systems.
+\item \textbf{Modality Synergy Instead of Compromise:} Extending the model to encompass multimodality must not degrade its foundational language capabilities. Additional modalities should introduce complementary signals that foster cross-modal synergy, rather than creating optimization trade-offs.
+\item \textbf{Infrastructure-Friendly Evolution:} The architecture should remain infrastructure-friendly, enabling a smooth transition from pure language models to native multimodal systems with minimal modality-specific inductive bias, all while preserving compatibility with existing large-scale frameworks.
+\end{itemize}
+
+To satisfy the aforementioned criteria, we design the approach entirely upon a discrete autoregressive foundation. Unlike the prevailing \textit{language-plus-auxiliary} paradigm, we eliminate the need to treat non-linguistic signals as continuous external inputs projected into language model. Instead, we unify the optimization objective itself with next-token prediction, internalizing vision, audio, and language within a single shared token representation. This conceptual unification translates the goals of native multimodality into a unified learning paradigm.
+
+
+
+\subsection{Model Architecture}
+
+
+To instantiate this discrete modeling approach, the system is built upon the LongCat-Flash Mixture-of-Experts (MoE) backbone~\cite{meituanlongcatteam2025longcatflashtechnicalreport,longcat-flash-lite}. As illustrated in Fig. \ref{fig:overall}, we adopt a structural decomposition: modality-specific tokenizer and detokenizer pairs are deployed to handle the conversion between raw signals and discrete IDs. Consequently, the decoder-only backbone remains modality-agnostic and serves as a multi-task learner. This design allows the model to natively execute language, visual understanding and generation, as well as audio comprehension and synthesis within a single predictive pipeline. In this section, we introduce the proposed methodology, with in-depth analysis and implementation details provided in Sec.~\ref{sec:model_analysis} and Sec.~\ref{sec:implementation_details}.
+
+\subsection{Vision Tokenizer}
+\label{sec:visual_tokenizer}
+
+As the saying goes, \textit{a picture is worth a thousand words}. An image captures a vast spectrum of information, ranging from high-level semantic structures to fine-grained textures and visual details. Compressing high-dimensional visual signals into a finite discrete codebook inevitably introduces information loss, often leading to a performance gap between discrete modeling and continuous representations. Consequently, a prevailing view suggests that visual discretization imposes an intrinsic performance ceiling. This challenge is further compounded by the divergence between representations optimized for understanding versus those for generation, making a semantically complete and unified visual interface difficult to achieve.
+ 
+
+To overcome this challenge, we introduce the Discrete Native Vision Transformer (dNaViT). Mirroring the role of language tokenizers, which provide a flexible, near-lossless foundation for unified autoregressive modeling, dNaViT serves as a unified tokenizer for both visual comprehension and generation at any-resolution. We address the limitations of discrete modeling by focusing on two core components: \textit{capacity of visual representation} and \textit{information loss from discretization}. In the following sections, we outline our solutions to ensure that the discrete space achieves the semantic completeness necessary for excelling in both visual understanding and generation.
+
+
+
+\subsubsection{Design Motivation}
+
+
+The success of language modeling is grounded in near-lossless discrete compression via subword tokenization, where language tokenizer encodes semantic content while preserving sufficient structure for faithful reconstruction in a discrete space. Built upon this foundation, the Next-Token Prediction (NTP) paradigm unifies comprehension and generation within a single autoregressive framework by operating directly on these token sequences.
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figs/dnavit_overview.pdf}
+    \caption{Overview of the discrete Native-Resolution Vision Transformer (dNaViT) design.}
+    \vspace{-4pt}
+    \label{fig:overall}
+\end{figure}
+
+
+Unlike words, visual information is inherently dense and continuous. Developing a comparable visual tokenizer, however, is hindered by the substantially higher information density of visual signals. To resolve this, we propose the principle of \textit{semantic completeness}: which requires a unified discrete representation to preserve sufficient information from the original visual signal to support both discriminative understanding and high-fidelity generation.
+
+
+\textbf{Semantic Completeness}: Specifically, the semantic completeness of a discrete representation refers to its ability to serve as an approximately lossless proxy for the original visual signal across a wide range of downstream tasks. Formally, let $I$ denote an input image sampled from the continuous visual manifold $\mathcal{M}$, and let $z = \{idx_1, idx_2, \dots, idx_n\}$ denote the sequence of discrete indices produced by a quantization mapping $Q(\cdot)$. A discrete representation $z$ satisfies semantic completeness if, for any image-centric inquiry $\mathcal{Q}$ associated with task $\mathcal{T}$, the posterior distribution conditioned on $z$ approximates that conditioned on the original image $I$:
+
+\begin{equation}
+\mathcal{P}(A \mid z, \mathcal{Q}) \approx \mathcal{P}(A \mid I, \mathcal{Q}),
+\end{equation}
+
+where $A$ denotes the optimal response or latent output corresponding to the inquiry. This equivalence implies two fundamental properties:
+
+\begin{itemize}
+
+\item \textbf{Discriminative Invariance}: The discretization process should preserve the core semantic attributes of the original image. For tasks ranging from fine-grained recognition to semantic reasoning, the discrete representation $z$ must retain the critical information contained in the raw pixels $I$, ensuring that the quantization process does not degrade downstream discriminative performance.
+
+\item \textbf{Generative Sufficiency}: Given the high redundancy in pixel space, the discrete codes $z$ should capture the essential visual semantics required for faithful image generation. In particular, the de-tokenizer $D(\cdot)$ should be able to reconstruct the structural and textural content of the image ($I' \approx D(z)$). More importantly, $z$ should function as a semantically sufficient descriptor that provides the language model with a compact yet information-preserving representation.
+
+\end{itemize}
+
+
+
+
+Because the tokenizer is typically fixed prior to large-scale autoregressive training, the induced representation capicity becomes the key factor determining the model’s performance ceiling.
+Existing approaches generally fall into three categories: (i) Low-level Reconstructive Models (e.g., VAEs~\cite{kingma2013auto}, VQ-VAEs~\cite{van2017neural}), which have been successfully scaled in works like EMU series~\cite{wang2024emu3,cui2025emu3}, Chameleon~\cite{team2024chameleon}, LWM~\cite{liu2024world} and VILA-U~\cite{wu2024vila} to achieve exceptional pixel-level fidelity but struggle with high-level conceptual reasoning; (ii) Self-supervised Semantic Encoders (e.g., DINOv2~\cite{oquab2023dinov2}, SigLIP~\cite{zhai2023sigmoid}), which are widely adopted to capture structural or contrastive features in various works~\cite{jiao2025unitoken,fan2025unified,zou2025omnimamba,deng2025emergingpropertiesunifiedmultimodal}, exemplified by Janus series~\cite{wu2025janus,chen2025janus}, yet lack the explicit semantic grounding needed for generative reconstruction; and (iii) Encoder-free raw-pixel tokenization, which is championed by methods like EVE series~\cite{diao2024unveiling,diao2025evev2} and NEO~\cite{diao2025pixels} for offering simplicity and scalability, but suffers from pixel redundancy. In this section, we highlight another class of representations with significant potential that remains largely underexplored: \textit{Semantic-and-Aligned Encoders} (SAE). 
+They provide a strong foundation for unified discrete visual modeling by enabling semantically rich representations that can support both visual understanding and generation.
+
+
+
+
+\subsubsection{Semantic-and-Aligned Encoder (SAE)} 
+
+
+We argue that language-aligned semantic encoders are particularly well-suited as the pre-quantization space, due to their large-scale language-grounded supervision over diverse image-centric tasks. This endows the representation with two key properties: (i) \textit{semantic richness}, capturing both high-level concepts and fine-grained visual details (e.g., textual details), and (ii) \textit{affinity with language models}, enabling seamless integration into a unified discrete token space.
+Formally, we define SAE as a mapping $\mathbf{z_p} = \mathcal{E}_{\text{sae}}(I)$ that projects an image $I$ into a pre-quantization representation $z_p$, which is required to preserve the information necessary for answering diverse image-centric queries $\mathcal{Q}$ (e.g., captioning, OCR, QA, and visual reasoning), formally: $\mathcal{P}(A \mid \mathbf{z_p}, \mathcal{Q}) \approx \mathcal{P}(A \mid I, \mathcal{Q})$,
+where $A$ denotes the ground-truth response. To encourage this property, the SAE is trained with a large-scale multi-aspect alignment objective:
+\begin{equation}
+\mathcal{L}_{\text{SAE}} =
+\mathbb{E}_{(I,\mathcal{Q},A)}
+\left[
+-\log P(A \mid \mathbf{z_p}, \mathcal{Q})
+\right].
+\end{equation}
+
+In practice, semantic completeness is implicitly enforced through large-scale vision–language training.
+This process can be constructed through different progressive stages:(i) \textit{Global Alignment}, where coarse cross-modal correspondence is established through CLIP-style contrastive learning and (ii) \textit{Detailed Learning}: where the model moves beyond coarse contrastive alignment (as in vanilla SigLIP) to capture fine-grained details and nuanced semantics via multi-aspect language-conditioned supervision (as in diverse QAs).
+
+Importantly, this perspective allows us to leverage existing vision–language models as strong SAE approximations. The class of encoders, e.g., QwenViT \cite{qwenvl}, MoonViT \cite{kimivl}, and AIMv2 \cite{aimv2} can be directly adopted as candidates.
+This avoids the need for expensive, dedicated SAE training from scratch, while still enabling discretized tokens to inherit rich semantic structure for unified multimodal modeling.
+
+\subsubsection{Tokenization} 
+\label{sec:tokenization}
+
+While SAE provides a semantically complete manifold, the subsequent discretization must preserve this information density within a finite discrete space. To bridge the gap between continuous features and discrete tokens without the fidelity loss typical of single-stage quantization, we employ Residual Vector Quantization (RVQ) \cite{rqvae}, which decomposes the quantization of SAE features $\mathbf{z}$ into $L$ cascaded codebook levels. Instead of a single-step mapping, each stage $l \in \{1, \dots, L\}$ recursively encodes the residual error from the previous level. This hierarchical refinement allows quantization to approximate the high-dimensional, semantically rich SAE space with significantly higher fidelity, ensuring that the resulting tokens remain a sufficient proxy for both comprehension and generation.
+
+\textbf{Semantic Tokenization at Native Resolution.} 
+We adopt the RVQ approach applied to the latent representations produced by the SAE. This design yields two critical advantages:
+(i) Semantic Structuredness: By discretizing features already refined through large-scale vision-language pre-training, the resulting tokens inherit a natural correlation with linguistic space. facilitating convergence in multimodal autoregressive training. (ii) Native Resolution: Instead of relying on a fixed-size bottleneck, we operate on the encoder’s native-resolution latent representations under variable lengths \cite{packnpack}. This allows the tokenizer to handle arbitrary input resolutions while maintaining architectural consistency with language models. The SAE output $\mathbf{z}$ is first projected through a learnable mapping $f_{\text{proj}}$ and then quantized through $L$ cascaded codebook levels:
+\begin{equation}
+\mathbf{r}_0 = f_{\text{proj}}(\mathbf{z}), \quad
+\hat{\mathbf{q}}_l = \operatorname{VQ}(\mathbf{r}_{l-1}), \quad
+\mathbf{r}_l = \mathbf{r}_{l-1} - \hat{\mathbf{q}}_l, \quad
+\hat{\mathbf{z}} = \sum_{l=1}^{L} \hat{\mathbf{q}}_l,
+\end{equation}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figs/dnavit.pdf}
+    \caption{The tokenizer and de-tokenizer training pipeline of the proposed dNaViT, which encodes images into discrete tokens via RVQ and decodes them back into the image space through a pixel decoder at arbitrary resolutions.}
+    \label{fig:dnavit}
+\end{figure}
+
+
+where \(\mathbf{r}_0 = f_{\text{proj}}(\mathbf{z})\) is the projected latent representation, \(\hat{\mathbf{q}}_l = \text{VQ}(\mathbf{r}_{l-1})\) is the quantized feature at level \(l\), \(\mathbf{r}_l = \mathbf{r}_{l-1} - \hat{\mathbf{q}}_l\) denotes the residual error, and \(\hat{\mathbf{z}} = \sum_{l=1}^{L} \hat{\mathbf{q}}_l\) is the final quantized representation.
+
+Given a batch of continuous residual vectors $\{\mathbf{r}_j\}$ from the projection layer, we update the codebook entries using an exponential moving average (EMA) \cite{van2017neural,rqvae} rather than gradient descent. Specifically, for each codebook entry $\mathbf{e}_k$, we maintain a running cluster size $N_k \leftarrow \gamma N_k + (1-\gamma)|\mathcal{S}_k|$ and an embedding sum $\mathbf{m}_k \leftarrow \gamma \mathbf{m}_k + (1-\gamma)\sum_{j \in \mathcal{S}_k} \mathbf{r}_j$, where $\mathcal{S}_k = \{ \mathbf{r}_j : \arg\min_i \|\mathbf{r}_j - \mathbf{e}_i\| = k \}$ denotes the set of residual vectors assigned to entry $k$, and $\gamma$ is the decay factor. The codebook entry is then updated as:
+
+\begin{equation}
+\mathbf{e}_k \leftarrow \frac{\mathbf{m}_k}{N_k}.
+\end{equation}
+
+We apply Laplace smoothing to $N_k$ for numerical stability, and re-initialize inactive entries ($N_k < 1$) from current batch to maintain codebook utilization.
+To provide supervision for $f_{\text{proj}}$, we introduce a lightweight decoder that reconstructs the pre-quantization semantic features from the quantized embeddings. The overall quantization objective is defined as:
+
+\begin{equation}
+\mathcal{L}_{\text{quant}} = \lambda_c \mathcal{L}_{\text{commit}} + \lambda_s \mathcal{L}_{\text{semantic}},
+\end{equation}
+
+where $\mathcal{L}_{\text{commit}}$ is the standard commitment loss that encourages the projected representation $\mathbf{r}_0$ to stay close to the assigned codebook entries, averaged across all $L$ residual levels, and $\mathcal{L}_{\text{semantic}}$ is the semantic reconstruction loss with feature cosine similarity.
+As a result, the tokenization pipeline consists of three stages: (1) semantically aligned feature extraction via SAE, (2) hierarchical discretization using RVQ with EMA-updated codebooks, and (3) semantic tokens serving as input for multimodal understanding and generation via autoregressive modeling.
+
+
+
+
+
+
+\subsubsection{De-tokenization}
+\label{subsubsection:de-tokenization}
+
+
+After tokenization training, both the SAE encoder and the codebook are frozen. This design is motivated by the premise that if the pre-quantization representation is semantically complete, then the resulting discrete tokens should inherently retain sufficient information, even without further adaptation. Specifically, the de-tokenizer is centered on a pixel decoder, a Vision Transformer~\cite{dosovitskiy2021imageworth16x16words} trained to reconstruct images from the discrete code embeddings alone. The pixel decoder recovers spatial layout, object structure, and identifiable content directly from the quantized representation, producing a structurally faithful reconstruction. We train the pixel decoder with the following objective:
+
+\begin{equation}
+\mathcal{L}_{\text{dec}} = \lambda_1 \mathcal{L}_{\text{pixel}} + \lambda_2 \mathcal{L}_{\text{percep}} + \lambda_3 \mathcal{L}_{\text{align}},
+\end{equation}
+With these objectives alone, the pixel decoder is already capable of recovering coherent spatial layouts, object structures, and semantic content directly from discrete tokens, demonstrating that the quantized representation retains sufficient information for faithful reconstruction. However, the resulting images tend to be overly smooth, with diminished high-frequency details and perceptual sharpness. To slightly improve visual fidelity, we introduce a lightweight image refiner trained with a flow-matching objective $\mathcal{L}_{\text{flow}}$, conditioned on the pixel decoder’s reconstruction and the discrete code embeddings. The reconstruction serves as a structural anchor, constraining the refinement process and allowing the model to focus on enhancing fine-grained textures without introducing noticeable artifacts.
+
+\subsubsection*{Dicussion about the Information Recovery}
+
+
+
+To achieve semantic completeness, a unified representation $\mathbf{z}_\mathbf{p}$ must not only support semantic comprehension but also possess \textit{generative sufficiency}, i.e., the ability to recover the original visual signal. While prior works~\cite{rae,zheng2025diffusion} (e.g., RAE) suggest reconstruction capability primarily to semantically enriched latent priors, we take a different perspective and argue that such recoverability also arises from intrinsic architectural properties of the encoder. We refer to this property as \textit{intrinsic information recovery}.
+
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figs/reconstruction.pdf} % 宽度可根据页面调整
+    \caption{Visual reconstruction from different frozen vision encoders, trained with a lightweight pixel decoder. The results suggest that residual connections inherently preserve a latent pathway for low-level signal propagation.}
+    \label{fig:reconstruction_visuals}
+\end{figure}
+
+
+Empirically, we observe that even a randomly initialized ViT-Base \cite{dosovitskiy2020image} exhibits strong reconstruction capability, outperforming its pretrained counterpart in terms of reconstruction fidelity (see Sec.~\ref{information_recovery}). This suggests that effective information recovery is not solely a consequence of learned semantics, but is closely tied to the underlying network structure. This phenomenon can be understood through the residual architecture of modern vision encoders, which inherently preserves a latent pathway for low-level signal propagation, allowing effective reconstruction even without supervision. Formally, we formulate the encoder as a sequence of $L$ residual blocks. The final latent representation $\mathbf{z}_p$ can be expressed as the additive accumulation of the initial projection and subsequent feature increments:
+
+\begin{equation}
+\mathbf{z}_p = \mathbf{x}_0 + \sum_{l=1}^{L} \mathcal{F}_l( \mathbf{x}_{l-1}) = \underbrace{\mathbf{x}_0 + \mathcal{F}_1(\mathbf{x}_0) + \dots + \mathcal{F}_L(\mathbf{x}_{L-1})}_{\textit{pixel-level} \xrightarrow{\hspace{2cm}} \textit{semantic-level}}, \quad \text{where} \quad \mathbf{x}_l = \underbrace{\mathbf{x}_{l-1} + \mathcal{F}_l(\mathbf{x}_{l-1})}_{\text{residual connection}},
+\end{equation}
+
+where the identity mapping $\mathbf{x}_{l-1}$ ensures that fine-grained visual signals from earlier layers are not overwritten by higher-level semantic abstractions. Instead, they are propagated through the network $\mathcal{F}_L$ and progressively integrated into $\mathbf{z}_p$, resulting in a representation that retains high mutual information $\mathcal{I}(I; \mathbf{z}_p)$ with the original image. Surprisingly, this analysis suggests that modern encoders, even an encoder optimized primarily for semantic alignment (such as SAE),  naturally retain the structural elements required for image recovery, providing a structural foundation for semantic completeness prior to discretization.
+
+
+
+
+\subsubsection{dNaViT: Discrete Native Resolution Vision Transformer}
+
+
+Building upon the principles of semantic completeness and discrete quantization approach, we introduce the Discrete Native-Resolution Vision Transformer (dNaViT), a vision tokenizer designed to play a role analogous to language tokenizers in large language models. The central objective of dNaViT is to establish a discrete visual interface where images can be represented, processed, and generated entirely through sequences of semantically meaningful tokens.
+
+Unlike conventional vision encoders that rely on fixed-resolution inputs, dNaViT operates directly on images at their \emph{native resolution}, avoiding information loss and spatial distortions introduced by resizing, cropping, or padding. This design allows the model to faithfully preserve visual details across arbitrary image scales.
+More importantly, dNaViT constructs a hierarchy of semantically aligned discrete tokens that serve as a structured proxy for visual content. These tokens move beyond low-level quantization by encoding information across multiple semantic levels, preserving both global structure and local details within a unified discrete representation.
+
+
+Built upon this hierarchical representation, dNaViT effectively induces a language-like visual vocabulary, where images are expressed as sequences of discrete symbols that are directly compatible with autoregressive modeling.
+Within this symbolic space, image understanding and generation are unified under a single formulation, where captioning and synthesis correspond to inverse sequence modeling over shared token representations, enabling a single autoregressive model to jointly handle visual perception and generation.
+
+
+
+\textbf{Native Visual Representation.} 
+dNaViT provides a topological interface that maps images to discrete token sequences, enabling a unified symbolic representation for multimodal modeling. Beyond this interface, the semantic content is not fixed within the tokenizer, but is instead internalized in the language model’s visual embedding space.
+Specifically, visual codebook embeddings are randomly initialized and then co-evolve with linguistic tokens under a shared autoregressive objective. Through this joint optimization process, the model learns \emph{native visual representations} that are fully adapted to the LLM’s internal representation space.
+This mechanism enables the model to develop a "native language" for vision, shifting the representation paradigm from externally defined quantized IDs to learned, model-internal visual semantics, enabling a truly native multimodal modeling framework.
+
+
+
+\subsection{Audio Tokenizer}
+
+
+We design an audio tokenizer that transforms continuous speech into discrete tokens, preserving both semantic and acoustic information. 
+As shown in Fig.~\ref{fig:audio_tokenizer}, the input audio is first passed to a Whisper encoder~\cite{radford2023robust} for audio feature extraction. The features are then downsampled by a factor of 4 before being quantized into discrete tokens by an 8-layer residual vector quantizer (RVQ).
+
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figs/audio_tokenizer.pdf}
+    \caption{Illustration of the audio tokenizer framework.}
+    \label{fig:audio_tokenizer}
+    \vspace{-2pt}
+\end{figure}
+
+
+The resulting discrete audio tokens are forwarded along two parallel branches. 
+In the first branch, they are fed into a frozen pretrained large language model (LLM). Through extensive training on diverse audio understanding tasks, these tokens encode both semantic and acoustic information necessary for downstream tasks. They simultaneously align with the LLM's textual embedding space. 
+The audio representations are transferable across LLM architectures and vocabularies. Based on this finding, we adopt a smaller LLM, Qwen3-1.7B~\cite{yang2025qwen3}, in the tokenizer training phase to improve efficiency and discard it in the later stages.
+
+
+
+In the second branch, the audio tokens are passed to a decoder whose architecture is symmetric to that of the encoder. It reconstructs coarse Mel spectrograms from the input tokens. 
+To further enhance reconstruction fidelity, we introduce a flow-matching model~\cite{lipman2022flow} after the decoder, which refines the coarse Mel spectrograms. The resulting refined Mel spectrograms are then converted into audio waveforms by a vocoder~\cite{kong2020hifi}. The training objective of audio tokenizer includes Mel spectrogram reconstruction loss, RVQ commit loss, and LLM loss for audio understanding:
+\begin{equation}
+\mathcal{L}_{\text{audio}} = \lambda_1 \mathcal{L}_{\text{recon}} + \lambda_2 \mathcal{L}_{\text{commit}} + \lambda_3 \mathcal{L}_{\text{llm}}.
+\end{equation}
+
+
+\subsection{Language Model Backbone}
+
+Under the DiNA framework, we observe that a language backbone equipped with a modality-agnostic MoE inherently functions as a \textit{multi-task learner} across different modalities, dynamically allocating capacity to multiple objectives without requiring modality-specific design. We adopt LongCat-Flash-Lite A3B~\cite{longcat-flash-lite} as the decoder-only backbone, trained from scratch with 68.5B total parameters and an average of 3B activated parameters (ranging from 2.9B to 4.5B depending on the context), the design of Zero-Expert and Shortcut MoE is adopted in architecture~\cite{meituanlongcatteam2025longcatflashtechnicalreport}. Unlike conventional approaches to multimodal integration, which often introduce modality-specific branching~\cite{deng2025emergingpropertiesunifiedmultimodal,qwenvl} (e.g., modality-aware MoE, 3D RoPE, or bidirectional attention), our framework enforces a unified latent space in which all tokens, textual, visual, and acoustic, are processed through a single modality-agnostic pathway. We provide further analysis and empirical findings in Sec.~\ref{moe_label}.
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figs/audiotext.pdf}
+    \caption{Two speech generation strategies with internal linguistic guidance. The user's input audio is treated as a pure audio modality, whereas the output generated by Longcat-Next (or the assistant) is regarded as a text-guided audio modality. To indicate modality conversion and facilitate segment alignment, we introduce three special tokens: AS (Audio Start), AE (Audio End), and TE (Text End), which respectively denote the beginning and end of an audio segment, and the end of a text segment.}
+    \vspace{-4pt}
+    \label{fig:audiotext}
+\end{figure}
+
+
+\subsection{Multimodality Component}
+
+Unlike conventional multimodal approaches that project continuous visual features into embedding space of the language model. All multimodal embeddings are randomly initialized and jointly trained with the native model, ensuring that vision, audio, and language share a unified token-level representation paradigm. 
+
+\subsubsection{End-to-End Multimodal Embedding}
+
+Specifically, the visual embedding uses a codebook of size (8 $\times$ 16,384), with multi-level tokens combined through a multi-level summation for efficient representation. These embeddings are not shared across levels, allowing each level to capture complementary information. 
+The audio component follows the same design but with decreasing codebook sizes. Its multi-level embeddings are also randomly initialized and learned during training. 
+Importantly, these embeddings are learned end-to-end to support both multimodal understanding and generation. The pre-quantization features are used solely for establishing the discrete clustering assignments in the Residual Vector Quantization (RVQ) process, rather than directly dictating the embedding values themselves.
+
+\subsubsection{Multimodality Head}
+
+In this architecture, the native model is designed to learn semantic-level compression, while modality-specific signals are compacted through modality-aware tokenizers. Visual and audio inputs are encoded into multi-level discrete tokens, enabling efficient representation of rich perceptual information. During training, we adopt a multi-level supervision scheme: the language model performs single-step autoregressive prediction, while multi-level tokens are decoded in parallel to reconstruct modality-specific details. Specifically, the LLM head is a standard MLP, while multimodal tokens are decoded by a task-aware DepthTransformer~\cite{rqvae}, which generates multi-level outputs to recover structured visual and audio information.
+
+
+
+\subsubsection{Internal Linguistic Guidance}
+
+
+
+For recent large speech language models, whether speech interaction can inherit the same linguistic capabilities as text is an important topic.
+Following the Moshi~\cite{defossez2024moshi} approach, we provide internal linguistic guidance by explicitly modeling text as part of the speech generation process. In our method, segment-level aligned text tokens and audio tokens are first embedded with dedicated input embedding layers and then fused via element-wise summation. We refer to this format as the text-guided audio modality. In contrast, for real-time user input scenarios where textual guidance is often unavailable, we define these instances as the pure audio modality. 
+As shown in Fig.~\ref{fig:audiotext}, within the text-guided audio modality, LongCat-Next is capable of two generation strategies:
+\textbf{(1) Parallel Generation}: The model generates text and audio tokens simultaneously at each step but intentionally delays the generation of the first audio token by a specified number of steps to maintain alignment with the text. We illustrate the case with a delay of one in Fig.~\ref{fig:audiotext}.
+This strategy eliminates response latency and is more suitable for full-duplex modeling. \textbf{(2) Serial Generation}: The model first generates the guided text segment, followed by the corresponding audio segment. Within this strategy, the model only needs to predict tokens from a single modality at each step, which simplifies the process and avoids conflicts between modality representations. As a result, this approach ensures high linguistic quality in the generated speech.
+
+To unify these strategies, we propose a general training paradigm for the text-guided audio modality: for each aligned text-audio segment, the delay is randomly selected from one up to the length of the text segment. This approach encourages the model to learn robust semantic alignment between text and audio representations, enabling it to generate text-guided speech at arbitrary delay steps. Consequently, serial generation and parallel generation can be regarded as two extreme cases within this unified framework.
+
+
+
+
+
+
+\input{experiment}
+
+
+
+
+
+\section{Implementation Details}
+\label{sec:implementation_details}
+
+\subsection{Training Stage}
+
+The optimization of DiNA can be concisely divided into two phases: modality-specific tokenizer training and unified multimodal training, as illustrated in Fig.\ref{fig:training_stage}. (1) \textit{Tokenizer Training:} The process begins with the independent training of modality-specific tokenizers and detokenizers to establish a well-structured discrete representation space. (2) \textit{Native Multimodality Training:} This phase starts with a \textit{Pre-align} stage, in which the codebook embeddings and DepthTransformer decoders are warmed up while the language backbone remains frozen, facilitating alignment between discretized tokens and the backbone model. Subsequently, the entire framework, comprising the language backbone, all modality embeddings, and decoders, is unfrozen for end-to-end training, while the tokenizers remain fixed. This stage encompasses \textit{Pre-train}, \textit{Mid-training}, and \textit{SFT}. Such a unified training paradigm enables seamless integration of multimodal understanding and generation, allowing the model to function as a single, coherent system across modalities.
+
+\subsubsection{Visual Tokenizer}
+
+The methodology for constructing a semantically complete dNaViT tokenizer is described in Sec.~\ref{sec:visual_tokenizer}. In this work, we focus on the development of the dNaViT tokenizer itself, bypassing the computationally demanding SAE training phase, which typically involves large-scale vision–language pretraining. Instead, we directly adopt Qwen2.5-ViT~\cite{qwenvl} (with a 28× spatial compression ratio) as the encoder for our experiments, concentrating on the tokenization and de-tokenization processes. While a better optimized SAE could potentially yield further improvements, we find this choice sufficient for the target of current version. In the following, we detail how dNaViT is trained to support tokenization and de-tokenization at arbitrary resolutions.
+
+
+\begin{itemize}
+\item
+\textbf{Stage 1: Visual Tokenization} As described in Sec~\ref{sec:tokenization}, this stage maps the continuous manifold of SAE features into a discrete latent space. We employ RVQ to minimize quantization error for converting dense visual signals into discrete token IDs.
+To support arbitrary-resolution encoding and decoding, we adopt a flexible sequence-based modeling paradigm~\cite{packnpack}, where images of varying resolutions are flattened into a single sequence and efficiently processed using variable-length FlashAttention~\cite{dao2022flashattention,dao2023flashattention}. Training could be conducted in two phases: an initial fixed-resolution stage for fast convergence, followed by the any-resolution training with RVQ to adapt the quantization process to variable token lengths, where the maximum training sequence length is set to 8192. The training corpus is designed to support both understanding and generation, comprising a diverse collection of images from LAION~\cite{schuhmann2022laion}, COYO~\cite{kakaobrain2022coyo-700m}, DataComp~\cite{gadre2023datacomp}, and TextAtlas~\cite{wang2025textatlas5m}, along with a subset of in-house visual understanding dataset. To further enhance generation quality, we incorporate high-fidelity synthetic data (e.g., MidJourney). Training is conducted on approximately 50M images at arbitrary resolutions until convergence, with the maximum image resolution set to 1,736$\times$ 1,736. Empirically, we find that the resulting discrete representations effectively preserve both discriminative and generative information, making them well-suited for autoregressive modeling.
+\item
+\textbf{Stage 2: Visual De-tokenization}. Once the discrete codebook is established, we proceed to train the de-tokenizer, as described in \Cref{subsubsection:de-tokenization}, to reconstruct pixel-level images from the discrete token IDs. The pixel decoder is a 400M-parameter Vision Transformer~\cite{dosovitskiy2020image, QLIP} trained from scratch. It receives the projected discrete code embeddings, which are initially processed by a learnable MLP-based patch unmerger that reverses the spatial merging applied by the SAE encoder, thereby restoring the original patch sequence. The unmerged features are subsequently passed through a stack of transformer layers with 2D RoPE positional embeddings, and a linear head is employed to project the final hidden states to pixel space.
+To further enhance perceptual sharpness and high-frequency detail, we train an image refiner initialized from OmniGen2~\cite{wu2025omnigen2explorationadvancedmultimodal} with continued training using flow-matching loss. The refiner receives two forms of conditioning: (1) the pixel decoder's reconstruction, concatenated with the noise latent along the channel dimension for spatial guidance, and (2) the projected discrete code embeddings for semantic conditioning. 
+Overall, the training data for this stage reuses the same image corpus as Stage 1, supplemented with the data from SAM-1B~\cite{kirillov2023segment}, RenderedText~\cite{wendler2024renderedtext}, IDL~\cite{biten2022ocr} and a collection of high-resolution in-house images. Both the SAE encoder and the codebook remain frozen throughout this stage, and the de-tokenizer is trained at native resolution until convergence.
+\end{itemize}
+
+\subsubsection{Audio Tokenizer}
+
+
+Leveraging the scaling laws~\cite{parker2024scaling} observed in audio tokenizers, we initialize our encoder from the pre-trained Whisper-large-v3~\cite{radford2022whisper} and further train it on our tasks. The resulting model demonstrates strong semantic comprehension of speech, environmental sounds, and music, while maintaining robust acoustic reconstruction fidelity.
+
+
+
+The training corpus consists of two parts: (i) a large-scale collection of web-collected Chinese and English speech data, which has been cleaned and automatically transcribed using open-source ASR models; and (ii) a curated dataset consisting of high-quality multilingual and dialectal ASR data, in-house synthetic speech, and music/sound captioning datasets. The training corpus totals approximately 2.5 million hours.
+
+
+The audio tokenizer is trained in three stages:
+
+\begin{itemize}
+    
+
+\item \textbf{Stage 1: Decoder Warm-up.} The encoder and LLM are initialized with Whisper-large-v3 and Qwen3-1.7B, respectively, and the decoder is randomly initialized. During this stage, the encoder and LLM remain frozen, and the decoder is trained on the Mel spectrogram reconstruction task.
+
+
+        
+    \item \textbf{Stage 2: Semantic-Acoustic Joint Training.} In this stage, all modules are updated except the LLM and flow-matching module. The training objective combines all three losses described above. The RVQ module is also enabled. It consists of 8 layers, with codebook sizes of 8k, 4k, 2k, 1k, 1k, 1k, 1k, and 1k, respectively.
+
+
+
+    
+    \item \textbf{Stage 3: Decoder Fine-tuning.}.This stage aims to further improve the decoder's audio reconstruction capability using high-quality data. We collect a substantial volume of 24kHz high-quality audio. The decoder is reconfigured as a Diffusion Transformer (DiT) module to denoise the artifacts introduced by the RVQ. This refinement yields 24kHz Mel-spectrogram representations that are well-adapted for downstream vocoders.
+\end{itemize}
+
+
+\subsubsection{Native Multimodality Model}
+
+The training pipeline consists of four stages: warm-up, full-modality pre-training, mid-training, and SFT (with $\sim$2 trillion training tokens in total). Pre-training leverages diverse multimodal data sources. During mid-training, we introduce additional synthetic data and high-quality curated datasets; the understanding branch is enhanced with long chain-of-thought reasoning, while the visual generation branch incorporates arbitrary-resolution feature training. Finally, the SFT stage further improves the model’s instruction-following capability.
+
+
+
+
+\begin{figure}[htbp] 
+    \centering
+    
+    % --- 左侧：图片 (变大) ---
+    % 宽度从 0.26 增加到 0.35
+    \begin{minipage}[c]{0.4\textwidth} 
+        \centering
+        \includegraphics[width=\textwidth]{figs/TrainingStage.pdf} 
+        \caption{Training phases of LongCat-Next.}
+        \label{fig:training_stage}
+    \end{minipage}% 
+    \hfill 
+    % --- 右侧：表格 (变窄) ---
+    % 宽度从 0.72 减小到 0.61
+    \begin{minipage}[c]{0.57\textwidth} 
+        \centering
+        % 强制字号为 \small
+        \footnotesize
+        \captionof{table}{Detailed training stages, configurations, and data for \textbf{V (Visual)}, \textbf{A (Audio)}, and \textbf{T (Text)} Modalities.}
+        \label{tab:training_details}
+        
+        \renewcommand{\arraystretch}{1.2} % 稍微收紧行高，因为表格变窄可能会变高
+        % 关键：减小列间距，防止在较窄的表格中文字挤在一起换行太多
+        \setlength{\tabcolsep}{3pt}
+        
+        \resizebox{\textwidth}{!}{%
+        \begin{tabular}{@{}l | c c c c@{}}
+            \toprule
+            \textbf{Stages} & \textbf{Stage 1} & \textbf{Stage 2} & \textbf{Stage 3} & \textbf{Stage 4} \\
+            \midrule
+            
+            \textbf{Purpose} & 
+            \makecell[c]{Pre-Align} & 
+            \makecell[c]{Pre-training} & 
+            \makecell[c]{Mid-training} & 
+            \makecell[c]{SFT} \\
+            \midrule
+            
+            \textbf{Dataset} & 
+            \makecell[c]{\textbf{V:} Image-Caption Pairs, \\ \textbf{A:} Pure Audio, ASR, \\ TTS, Interleaved Data} & 
+            \makecell[c]{+\\ \textbf{V:} Interleaved Data,\\ OCR, Grounding, \\ FixRes. Generation \\ \textbf{A:} Same as Last Stage\\ \textbf{T:} Pure Text} & 
+            % 因为空间变窄，将过长的 Dataset 描述稍微增加换行，或者排得更紧凑
+            \makecell[c]{+\\ \textbf{V:} Long CoT,\\Genaral QA,\\Video, GUI\\AnyRes. Generation\\ \textbf{A:} High-quality Data \\ Multi-turn Dialogue \\ \textbf{T:} Same as Last Stage} & 
+            \makecell[c]{\\ \textbf{V:} High-quality\\Instruct,\\ Reasnoing,\\AnyRes. Generation \\ 
+            \textbf{A:} Instruction Data\\
+            \textbf{T:} Long Pure Text} \\
+            \midrule
+            
+            \textbf{Batch Size} & 8192 & 8192 & 1024 & 128 \\
+            
+            \textbf{Seq. Len} & 8K & 8K & 32K & 64K \\
+            
+            \textbf{Trainable} & \makecell[c]{Embed.,\\DepthT.} & All & All & All \\
+            
+            \bottomrule
+        \end{tabular}%
+        } 
+    \end{minipage}
+    
+\end{figure}
+
+
+
+
+\subsection{Visual Understanding}
+
+We collect a large-scale and diverse multimodal corpus  for visual-language understanding, which primarily consists of the following components: Image Caption Data, Interleaved Image-Text Data, OCR data, Grounding data, STEM data, and GUI data. Each component is carefully curated to ensure broad coverage and high data quality, enabling the model to develop robust multimodal comprehension capabilities across a wide range of tasks and domains.
+
+\subsubsection{Data Collection}
+
+\paragraph{Image Caption Data} 
+To facilitate robust vision-language alignment, we curate a large-scale, high-quality image-text dataset through a three-stage cleaning pipeline. First, we apply heuristic filtering to remove corrupted files, abnormal resolutions, and low-quality images. Second, to mitigate web data noise, we leverage multiple open-source LVLMs for recaption, transforming sparse labels into detailed, semantically rich descriptions. Finally, we use a SigLIP-based similarity threshold to prune misaligned pairs, retaining only highly accurate matches. This pipeline yields a balanced and diverse dataset, providing a semantically grounded foundation for dNaViT’s unified discrete modeling.
+
+
+\paragraph{Interleaved Image-Text Data}
+The interleaved image-text data consists of two components to enhance multimodal understanding. The first includes image-text pairs from open web pages, filtered using CLIP scores to remove noisy and low-alignment pairs. The second comes from video data, segmented into scenes with key frames and textual content extracted via ASR and OCR. These are organized into interleaved token sequences for fine-grained temporal and cross-modal learning. Together, they provide diverse data, strengthening vision-language alignment and reasoning.
+
+
+
+\paragraph{Optical Character Recognition (OCR)}
+
+Fine-grained visual perception is fundamental to multimodal large language models(MLLMs), enabling complex tasks like STEM reasoning and GUI interaction.
+
+To this end, we constructed a massive OCR dataset comprising 75\% in-house synthetic data and 25\% filtered real-world data from over 90 open-source datasets. This hybrid approach ensures cross-scenario robustness and instruction-following proficiency. Domain-specific OCR data construction strategies are as follows:
+
+
+
+\begin{itemize}
+
+\item \textbf{{Document.}} Utilizing in-house data synthesis tools, paragraphs, formulas, and diverse text-image layouts were converted into structured Markdown formats, while tabular data was meticulously annotated in HTML format.
+
+
+\item \textbf{{Chart \& Infographic.}} 
+
+A dataset of 4.2M chart-to-code/table/JSON tuples was synthesized from arXiv to improve structural and numerical extraction. Additionally, a heterogeneous corpus of web-crawled infographics, presentations, and flowcharts was annotated to facilitate the parsing of intricate visual structures.
+
+    
+\item \textbf{{Scene \& Synthetic Text.}} 
+
+Natural scene images from ST-VQA~\cite{biten2019scene} and filtered Common Crawl were rigorously decontaminated and re-annotated. To mitigate linguistic priors and hallucinations, we introduced out-of-vocabulary (OOV) text combinations. Furthermore, specialized tools (e.g., SynthDoG~\cite{kim2022ocr}, \LaTeX) were leveraged to generate challenging cases—including artistic fonts, handwriting, and distorted surfaces—to bolster OCR robustness.
+\end{itemize}
+
+
+This data construction pipeline ensures precise character-level alignment across diverse domains. While pre-training establishes foundational perception, the SFT stage refines the model into a functional OCR agent by enhancing instruction-following and structured output capabilities. We curated task-oriented queries from high-quality datasets (e.g., IDL-WDS~\cite{biten2022ocr}, ChartGalaxy~\cite{li2025chartgalaxy}, WildReceipt~\cite{sun2021spatial}, Hiertext~\cite{long2022towards}, and CORD~\cite{park2019cord}) across three difficulty levels: \textit{(1) Simple} (direct extraction), \textit{(2) Intermediate} (standardized formatting), and \textit{(3) Complex} (relational reasoning and inference). To ensure robust training signals, data quality is further optimized through \textit{rule-based filtering}, \textit{LLM-as-a-judge evaluation}, and \textit{rejection sampling}.
+
+\paragraph{STEM} 
+
+Robust STEM reasoning serves as the cognitive cornerstone of next-generation artificial intelligence, directly empowering advanced analytical tasks such as algorithmic problem-solving and automated scientific discovery.
+To enhance the model's logical reasoning, we construct a high-quality dataset comprising 60\% open-source and 40\% proprietary/synthetic data. This composition provides a solid training foundation, ensuring both extensive knowledge breadth and deep reasoning structures. The specific construction strategies are as follows:
+\begin{itemize}
+\item \textbf{Public Data Curation:} We systematically collect and integrate over 70 open-source datasets (such as MAVIS~\cite{DBLP:conf/iclr/ZhangWJGZT0ZZG025}, AI2D~\cite{DBLP:conf/eccv/KembhaviSKSHF16}, 
+MMK12~\cite{DBLP:journals/corr/abs-2503-07365}, and ViRL39K~\cite{DBLP:journals/corr/abs-2504-08837}). To improve data quality and representativeness, we perform deep-level deduplication and resampling on the original data, ensuring that the model is exposed to diverse STEM knowledge content spanning from basic education to higher education levels.
+\item \textbf{Private Data Synthesis:} We focus on strengthening the quality control of synthetic data and the deep modeling of domain-specific knowledge. 
+
+This involves the large-scale, in-house collection and structured processing of K12 and STEM content.
+This curated data not only contains expert-annotated logical reasoning chains but also introduces complex multi-step reasoning synthetic samples, significantly improving the dataset's logical rigor and expressive precision, thereby addressing the shortcomings of open-source data in supporting deep reasoning capabilities. Additionally, for relatively specialized fields such as art, we synthesize high-quality image-text samples to supplement the model's knowledge representation in interdisciplinary contexts.
+\end{itemize}
+
+We restructure the dataset to enhance the model's multi-step reasoning in complex STEM tasks. First, we clean and rewrite problem statements to remove noise and improve clarity. Next, we construct structured reasoning chains for each instance, breaking complex problems into traceable, step-by-step nodes. This approach strengthens the model's multi-step reasoning, long-range dependency handling, and implicit logic modeling.
+
+\paragraph{GUI} 
+The training data for our GUI agent combines real-world collections with open-source datasets, using tailored processing pipelines to ensure high data quality and cross-platform adaptability. For real-world data, building on recent automated synthesis methods (e.g., UI-TARS~\cite{qin2025ui}, EvoCUA~\cite{xue2026evocua}), we deploy tens of thousands of concurrent sessions to collect raw interaction traces. We then apply a strict refinement pipeline: first, we remove visual noise to isolate fundamental interactive elements. Next, we align the collected instructions with our model's input format to guarantee precise coordinate prediction. Finally, we translate raw metadata into natural language intents and carefully fine-tune the spatial coordinates. For open-source data, we aggregate established datasets (e.g., AgentNet~\cite{wang2025opencua}, ScaleCUA~\cite{liu2025scalecua}) and immediately filter out abnormal samples. To ensure the model handles various screen layouts robustly, we balance this data across different operating systems and applications. We also rewrite unclear or fragmented instructions to accurately reflect the user's true intent. To salvage complex boundary cases, we introduce a dual-model recovery process: a lightweight model filters out spatial noise, while a stronger reasoning model repairs semantic errors and recalibrates coordinates, allowing us to retain valuable long-tail data.
+
+
+
+\paragraph{Grounding and Counting}
+Visual grounding connects semantic recognition with spatial localization to identify both \textit{what} is present and \textit{where} it is located. We enhance this by using bounding boxes for region-level reasoning and extend it to support quantitative counting. \textbf{(1) Grounding:}
+We create a large-scale multi-source dataset by aggregating over ten public sources, including GRiT~\cite{peng2023kosmos}, Visual Genome~\cite{krishna2017visual}, RefCOCO/+/g~\cite{kazemzadeh2014referitgame, nagaraja2016modeling, yu2016modeling}, Objects365~\cite{shao2019objects365}, and OpenImages~\cite{kuznetsova2020open}. To ensure data quality, we apply bounding boxes and filter misaligned annotations using a pre-trained VLM. This pipeline yields a curated dataset of approximately 60M samples, ensuring robust grounding and high-precision visual prompting. \textbf{(2) Counting:}
+Expanding on grounding, we develop a counting dataset with 8M samples, based on PixMo-Points~\cite{deitke2025molmo} for point-based counting and TallyQA~\cite{acharya2019tallyqa} for complex reasoning. A VLM-based filtering process further improves annotation quality. These datasets support direct and point-based counting, using a normalized coordinate system [0, 1,000] for better resolution robustness and simpler downstream application.
+
+
+\subsubsection{Data Cleaning, Filtering, and Sampling}
+
+
+\paragraph{Decontamination and Deduplication}
+To ensure data quality and evaluation fairness, we adopt a multi-stage decontamination pipeline that filters training samples at both the image and text levels. Specifically, we apply pHash-based matching for images and N-gram overlap detection for text to remove samples that are highly similar to public benchmarks, mitigating memorization effects. In addition, we perform semantic-level deduplication via clustering to eliminate redundant or overly similar queries, thereby improving data diversity and coverage while reducing the risk of overfitting.
+
+
+
+\paragraph{Quality Filtering}
+We design a multi-faceted filtering strategy to improve data quality in logical structure and knowledge representation:
+\textit{(1) Rule-Based Filtering}: We apply heuristic rules to eliminate anomalies like web links, formatting errors, and redundant text in the CoT. This enhances the information density and efficiency of the reasoning chains.
+\textit{(2) Model-Based Filtering}: We use automated evaluation to compare CoT reasoning against ground-truth answers, removing flawed derivation paths and incorrect results. Additionally, we score image captions for knowledge density to prioritize professional, high-quality samples with strong image-text alignment and rich semantic content.
+
+
+
+
+\paragraph{Data Sampling} 
+We establish a comprehensive metadata management system to ensure the SFT data distribution supports model generalization and robustness. We annotate each entry with its source, difficulty, domain, and quality scores to implement differentiated sampling strategies:
+\textit{(1) Difficulty Proportional Control}: We quantify sample difficulty using the model's correct response rate over multiple rollouts. We dynamically adjust the ratio of easy, medium, and hard samples, enabling the model to consolidate foundational knowledge while mastering complex reasoning.
+\textit{(2) Reasoning Length Balancing}: We balance the length distribution of CoT reasoning chains based on task complexity. This ensures diverse step coverage and guides the model to generate logically compact, efficient paths without being excessively verbose or overly brief.
+\textit{(3) Diversity Preservation Mechanism}: We set a minimum retention ratio for each data source to ensure diverse domain representation. This prevents capability degradation on specialized tasks caused by over-filtering and guarantees balanced, multi-source learning.
+
+
+
+\subsection{Visual Generation}
+
+
+Foundation text-to-image models typically acquire their generative capabilities from Web-scale image–text data, where a large fraction of samples concentrate on high-frequency patterns (e.g., generic portraits or common objects), leading to severe long-tail distributions and low semantic density. This causes the model to spend much of its capacity memorizing repetitive patterns rather than learning the broad and diverse visual concepts it needs.
+
+To move beyond purely scale-driven approaches, we design our data strategy around \textit{maximizing effective semantic coverage and density}. Our curation pipeline follows a multi-stage progression (see Fig.~\ref{fig:placeholder}): starting from broad foundational alignment, advancing to distributional rebalancing, and culminating in instruction-driven refinement. Following this strategy, we curated an in-house dataset of approximately 300 million image–text pairs from diverse public sources and web platforms~\cite{team2025longcat}. Compared to single-source datasets, this multi-source approach significantly enhances both semantic diversity and visual coverage.
+In addition, we place particular emphasis on \textit{text-rich visual content}, as precise text rendering remains a critical challenge for real-world applications. Our text-centric corpus includes: (1) Synthetic typographic images. (2) Natural scenes featuring embedded text. (3) Professional poster and advertisement layouts. (4) Information-dense infographics and chart-style content. By providing stronger supervision for complex layouts and vision–language interactions, this strategy maximizes concept coverage while keeping dataset size manageable and training efficient.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figs/gen_data.pdf}
+    \caption{Left: The data curation and training process consists of three stages: (I) Pre-training with filtering and recaptioning for basic alignment; (II) Mid-training with semantic clustering and rebalancing to address data imbalance; (III) Supervised Fine-Tuning on high-quality, instruction-following data for improved aesthetics and text rendering. Right: The distribution of image sources.}
+    \vspace{-3pt}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\subsubsection{Stage I: Pre-training}
+We first establish robust visual–text alignment through filtering and recaptioning.
+ 
+\textit{Data Filtering.}
+We apply multi-stage filtering to ensure data quality:
+(1) \textbf{Deduplication}: SigLIP-based embeddings with cosine similarity to remove near-duplicates;
+(2) \textbf{Quality Control}: resolution $\geq 384\times384$, aspect ratio constraints, and HPS v3 scoring~\cite{ma2025hpsv3};
+(3) \textbf{Content Filtering}: watermark detection (Qwen3-VL-8B) and AIGC filtering to remove synthetic or corrupted samples. \textit{Structured Recaptioning.}
+We perform recaptioning using Qwen3-VL-8B to generate structured descriptions (overview, detailed attributes, and tags), improving semantic richness and alignment. For text-rich images, OCR signals (PaddleOCR) are integrated to enhance text–image consistency.
+
+
+\subsubsection{Stage II: Mid-training — Cluster-based Rebalancing}
+Once the model has learned basic visual–textual alignment, the training bottleneck shifts to \textbf{distributional imbalance}. Aggressive aesthetic filtering can narrow the model toward a homogeneous ``AI-style'' aesthetic at the expense of diversity. To address this, we reorganize the dataset through a cluster-based rebalancing procedure:
+
+\textit{Semantic Clustering}: We encode all images using SigLIP2 and perform large-scale distributed K-Means clustering via FAISS, partitioning the dataset into millions of semantic clusters. \textit{Intra-cluster Deduplication}: Within high-density clusters, we apply aggressive deduplication to remove near-redundant samples.
+\textit{Inter-cluster Reweighting}: We adopt a power-law rebalancing strategy that increases the sampling probability of sparse clusters (e.g., rare flora or specialized scientific instruments), effectively flattening the distribution so that long-tail concepts receive sufficient gradient updates during training.
+
+
+\subsubsection{Stage III: Supervised Fine-Tuning}
+The final stage performs supervised fine-tuning (SFT) to align the model with complex human instructions. The SFT dataset is constructed from three complementary sources:
+
+\textit{Cluster-Representative Sampling}: From the semantic clusters obtained in Stage~II, we select the highest-quality exemplar near each centroid, maintaining broad diversity while eliminating noisy samples. \textit{High-Aesthetic Data}: A curated set of professional photography and digital art is incorporated to improve lighting, composition, and fine-grained detail. \textit{Text-Rich Data}: To address the text-rendering bottleneck, we include a dedicated subset of synthetic typographic layouts and real-world OCR-grounded scenes (e.g., posters and infographics), providing dense supervision for precise character generation.
+
+By progressively evolving the training data—from large-scale noisy pairs, to semantically rebalanced clusters, and finally to high-fidelity instruction-tuning sets—our model achieves broad concept coverage and strong aesthetic quality within an efficient computational budget.
+
+% 定义颜色
+\definecolor{boxgray}{RGB}{250, 250, 250} % 极浅灰色背景
+\definecolor{bordergray}{RGB}{160, 160, 160} % 边框颜色
+
+\newtcolorbox{qwenbox}[1]{
+    enhanced,
+    colback=boxgray,
+    colframe=bordergray,
+    arc=6pt,                  % 圆角弧度
+    boxrule=0.8pt,            % 边框粗细
+    top=12pt, bottom=10pt, left=15pt, right=15pt,
+    fontupper=\small\sffamily\linespread{1.2}\selectfont, % 无衬线字体，行间距稍微加宽
+    % 设置顶部标题标签
+    attach boxed title to top left={xshift=8mm, yshift=-3mm},
+    boxed title style={
+        colback=black, 
+        colframe=black, 
+        arc=4pt, 
+        boxrule=0pt,
+        top=3pt, bottom=3pt, left=10pt, right=10pt
+    },
+    title={\bfseries #1} % 标题加粗
+}
+
+
+\subsection{Audio}
+\subsubsection{Data Collection and Processing}
+Audio pretraining at scale depends heavily on web-crawled recordings, but raw audio is often much less uniform than text-image data, with noisy supervision, duplication, background interference, and highly imbalanced speaker distributions. To move beyond purely scale-driven collection, we design our audio data strategy around broad acoustic coverage, controllable paired supervision, and targeted support for specialized perception tasks. As summarized in Fig.~\ref{fig:audio-data-pipeline}, this strategy is realized through three complementary data sources: large-scale web audio, synthetic speech-text data, and curated task-specific datasets for abilities such as paralinguistic perception and audio-event understanding that are less accessible from naturally collected web audio.
+
+\noindent
+\begin{minipage}[t]{0.56\textwidth}
+\vspace{0pt}
+
+\textbf{Web-Audio Curation.}
+This data recipe is implemented through a multi-stage curation pipeline. Starting from 19.9 million hours of open-web audio, we apply three major curation steps:
+(1) Filtering and Alignment: VAD, forced alignment, deduplication, dual-ASR consistency filtering, DNSMOS-based quality filtering, and background-noise filtering are used to remove noisy or unreliable samples and improve supervision fidelity;
+(2) Speaker Distribution Control: speaker-embedding-based clustering is used to retain medium-frequency speaker clusters while suppressing both overrepresented synthetic voice patterns and extremely sparse outlier categories, thereby reducing distributional skew and improving speaker diversity;
+(3) Re-segmentation: utterances are re-segmented so that their length distribution better aligns with the power-law structure of natural speech, improving corpus consistency and training usability at scale.
+Collectively, these stages transform raw web audio into a cleaner, more balanced speech corpus while preserving acoustic diversity. After curation, 3.2 million hours of processed audio are retained, corresponding to 16.2\% of the original collection.
+
+\end{minipage}\hfill
+\begin{minipage}[t]{0.42\textwidth}
+\vspace{0pt}
+\centering
+\includegraphics[width=\linewidth]{figs/audio_data_fix.png}
+\vspace{-6pt}
+\captionof{figure}{Audio data pipeline.}
+\label{fig:audio-data-pipeline}
+\vspace{-8pt}
+\end{minipage}
+
+\paragraph{Synthetic Speech-Text Data.}
+Based on representative speaker clusters derived from the curated web-audio corpus, reference voices are constructed to synthesize 1.2 million hours of speech-text data. This component serves as a source of controllable paired supervision, particularly when target text content or supervision structure cannot be reliably obtained from raw web audio. During synthesis, model-based controls on speaker similarity and ASR consistency are applied to improve the quality and reliability of the generated speech-text pairs.
+
+\paragraph{Task-Specific Data.}
+In addition, 0.4 million hours of task-specific datasets are collected from both open-source and internal resources to supplement capabilities that remain underrepresented in the main corpus, particularly paralinguistic perception and audio-event understanding. These datasets provide targeted supervision for specialized perception and understanding tasks that are not well covered by curated web audio or synthetic speech-text data.
+
+\begin{table}[htbp]
+\centering
+%\scriptsize
+%\renewcommand{\arraystretch}{0.9}
+\small
+\setlength{\tabcolsep}{1em}
+\caption{Detailed Statistics of Audio Pre-training Data. Text-Guided Audio is abbreviated as TextAudio here.}
+\label{tab:audiodata}
+\vspace{1em}
+\begin{tabularx}{0.9\textwidth}{llc}
+\toprule
+\textbf{Task} &\textbf{ Data Format} & \textbf{Prop. (\%)} \\
+\hline
+Automatic Speech Recognition (ASR) & <prompt, audio, transcript> & 11 \\
+Contiguous TextAudio (TTS) & <textaudio\_1, textaudio\_2, textaudio\_3, ...> & 40\\
+Interleaved Audio and Text (INTLV) & <audio\_1, text\_2, audio\_3, text\_4, ...> & 22 \\
+Interleaved Audio and TextAudio (INTLV-TA) & <audio\_1, textaudio\_2, audio\_3, textaudio\_4, ...> & 22 \\
+Pure Audio & <audio> & 2 \\
+others (AQA, S2TT, etc.) & <prompt, audio, response> & 3 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\subsubsection{Data Typology and Statistics}
+The audio data utilized in pre-training encompasses several formats: Automatic Speech Recognition (ASR), Pure Audio, Contiguous Text-Guided Audio, Interleaved Audio and Text (INTLV), Interleaved Audio and Text-Guided Audio (INTLV-TA), as well as small amounts of Audio Query Answer (AQA), Speech-to-Text Translation (S2TT), and other task types.
+The data formats and proportions for these task types are summarized in Table~\ref{tab:audiodata}.
+
+ASR and S2TT data ensure that the model possesses fundamental semantic alignment capabilities between text and audio. Notably, Contiguous Text-Guided Audio data consists of single or multiple text-guided audio spans separated by special marks. This format essentially corresponds to a Text-To-Speech (TTS) task: serial generation is analogous to non-streaming TTS, while parallel generation aligns with streaming TTS. By segmenting Contiguous Text-Guided Audio, the long-range correspondence between audio and text tokens is reduced, thereby simplifying the model’s learning process for generating audio under text supervision.
+The interleaved data is divided into two types: INTLV and INTLV-TA. INTLV comprises alternating pure audio and text modalities, which enhance the model’s ability to complete text given audio context. INTLV-TA, on the other hand, consists of alternating pure audio and text-guided audio modalities, aiming to strengthen the model’s capability for audio continuation. These interleaved formats are beneficial for cross-modal knowledge transfer learning.
+We utilize a small amount of pure audio data during the pre-training stage. We believe this is advantageous for training the depth transformer-based audio head, and it also helps the model to preserve timbre when generating audio.
+
+Since unconditional audio generation is extremely challenging and can degrade the model’s ability for cross-modal continuation, we omit loss computation for the pure audio modality in ASR, INTLV, and INTLV-TA data following \cite{li2025baichuan}. In contrast, for the text-audio modality in TTS and INTLV-TA, we compute the loss jointly for both text tokens and audio tokens.
+
+
+
+\section{Infrastructure}
+
+ 
+The computational workload in multimodal models is inherently heterogeneous. The execution time of the embedding layer and modality-specific loss modules (\textit{e.g.}, DepthTransformer) significantly differs from that of the core LLM transformer layers. Furthermore, this latency fluctuates dynamically based on the specific token distribution of each modality within a given sample. Under a naive linear and uniformly partitioned pipeline parallel configuration, this heterogeneity induces pronounced inter-stage load imbalance. It also exacerbates peer-to-peer (P2P) communication overhead, leading to substantial pipeline bubbles and reduced hardware utilization.
+
+\subsection{VHalf-based Pipeline Parallelism}
+To address this, we propose a profile-guided load-balancing pipeline schedule based on the V-Half~\cite{qi2024pipelineparallelismcontrollablememory} pipeline parallel architecture. It consists of two core architectural design choices: \textbf{(1) V-shaped Schedule:} Instead of a linear assignment, we fold the pipeline into a V-shape by co-locating the first computational stage (the embedding layer) and the final computational stage (the modality-specific loss modules) onto the same physical device. \textbf{(2) Shared Buffer:} We construct a shared buffer at the first stage of the V-shaped pipeline, enabling the modality loss module to directly access the hidden states corresponding to RVQ multi-level tokens after embedding lookup for loss computation.
+
+Specifically, we first profile the exact execution latency of the embedding layer, modality-specific loss modules, the LLM head, and a single LLM transformer layer. Based on these empirical measurements, we implement the V-Shaped stage assignment as follows (illustrated in Fig.~\ref{fig:infra_training_pipeline}): \textbf{(1) Co-locating Embedding and Modality Loss:} The embedding layer and the modality loss modules are deployed on the same pipeline stage as independent chunks. Although the execution time of the modality loss modules varies with input data, our profile-guided assignment ensures that the combined latency of these heterogeneous components remains strictly bounded within the ideal uniform chunk latency. \textbf{(2) Decoupling the LLM Head:} To prevent overloading the V-shape's anchor device, we strategically separate the LLM head from the modality-specific loss modules. The LLM head, bundled with a small number of LLM transformer layers, is assigned to a separate pipeline stage. \textbf{(3) Adaptive LLM Layer Distribution:} The remaining standard LLM transformer layers are evenly distributed across the rest of the chunks. This ensures that the baseline computational cost of each pipeline stage is approximately uniform across the entire cluster.
+
+This V-shaped configuration yields two significant system-level benefits: \textbf{(1) Effective Bubble Mitigation:} By folding the pipeline and carefully isolating the heterogeneous workloads, the dynamic computational overhead of the embedding and modality loss modules is effectively absorbed by the schedule. This prevents these volatile modules from becoming systemic bottlenecks, substantially mitigating pipeline bubbles, and achieving near-perfect load balance. \textbf{(2) Elimination of Cross-Stage Communication:} Because the embedding layer and its corresponding modality loss module are co-located on the exact same device, both the forward activation passing and the backward gradient transmission between them are resolved entirely via zero-copy intra-device memory access. This design fundamentally eliminates the high cross-stage communication overhead that is typically required for these boundary modules.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{figs/infra_training_pipeline_compact.png}
+    \caption{Infra training pipeline designed for LongCat-Next.}
+    \label{fig:infra_training_pipeline}
+    \vspace{-4pt}
+\end{figure}
+
+
+
+\section{Advantages and Future Work}
+Under the DiNA framework, multimodal modeling naturally inherits the advantages of discrete training, including the unification of generation and understanding, as well as infrastructure-friendly deployment. Furthermore, in the post-training stage, discrete visual representations can be optimized using modeling strategies analogous to those used in language, providing preliminary evidence for the potential of a unified discrete modeling paradigm.
+
+\subsection{Reinforcement Learning}
+Discrete representations in reinforcement learning (RL) offer inherent advantages that make them particularly suitable for multimodal tasks. The discrete visual latent space naturally serves as an action space, enabling seamless compatibility with existing language model RL methods such as Group Relative Policy Optimization (GRPO)~\cite{shao2024deepseekmath}. This avoids the need for sampling process conversion (\textit{e.g.}, ODE-to-SDE in flow models~\cite{liu2025flow, xue2025dancegrpo}) while maintaining a finite Markov Decision Process (MDP) structure for efficient policy optimization. In this work, we leverage these advantages by applying GRPO-based optimization to both image understanding and generation tasks, demonstrating the versatility of discrete representations across multimodal applications.
+
+\textbf{RL for Text-to-Image Generation.} RL demonstrates superior adaptability and generalization capability in text-to-image generation tasks, particularly when facing data scarcity, complex scenarios, or ambiguous requirements~\cite{blip3oNext2025,liu2025flow}. 
+The reward-driven optimization of RL provides significant advantages in text-to-image precise alignment and specialized capability enhancement. 
+
+Given an input prompt, the policy generates a sequence of discrete tokens, which are subsequently decoded into an image by a frozen decoder. The generated image is then evaluated by a set of multi-dimensional reward models to compute a scalar reward signal. 
+During the forward pass, the model outputs probability distributions $\pi_\theta^{(l)}$ for each quantization level $l$ by depth transformer. For policy optimization, we compute a weighted objective that considers the GRPO loss from all levels, allowing us to balance their contributions during training. 
+The modified GRPO objective is formulated as:
+\begin{align}
+r_t^{(l)} &= \frac{\pi_\theta^{(l)}(a_t^{(l)}|s_t)}{\pi_{\text{old}}^{(l)}(a_t^{(l)}|s_t)}, \\
+\mathcal{L}_{GRPO} &= \mathbb{E} \left[ \sum_{l=1}^{L} w_l \cdot
+    \min \left(
+        r_t^{(l)} \cdot \hat{A}_t,\;
+        \mathrm{clip}(r_t^{(l)}, 1-\epsilon, 1+\epsilon) \cdot \hat{A}_t
+    \right)
+\right],
+\end{align}
+where $L$ denotes the number of quantization levels in RVQ, $w_l$ is the weight coefficient for level $l$.  $\pi_\theta^{(l)}(a_t^{(l)}|s_t)$ and $\pi_{\text{old}}^{(l)}(a_t^{(l)}|s_t)$ are the probabilities assigned by the current and previous policies, respectively. $\hat{A}_t$ is the advantage estimate, $\epsilon$ is the clipping parameter. 
+
+Our reward models are designed across four key dimensions: comprehensive capability evaluation, OCR capability enhancement, text-image semantic alignment, and image quality assessment. 
+
+\textbf{(1) Comprehensive Capability Enhancement. }
+To holistically improve generation quality, we evaluate object count, color accuracy, spatial positioning, and attribute consistency between generated images and prompts. We first detect objects, then identify their attributes, and infer spatial relationships. The dataset includes prompts of varying lengths, from simple phrases to detailed descriptions, enabling quantitative evaluation across these dimensions.
+
+\textbf{(2) OCR Capability Enhancement.} For visual text rendering, we use the GOT-OCR 2.0 \cite{wu2023human} model to recognize text in rendered images, including plain text, formulas, tables, and geometric figures. By quantifying the edit distance between rendered and ground truth text, we objectively assess textual fidelity. Prompts contain 2 to 20 texts, and we apply bucket sampling for different text lengths. 
+
+\textbf{(3) Text-Image Semantic Alignment.} We utilize vision-language models (VLMs) as reward model to assess whether generated images accurately represent prompt descriptions. The VLM-based reward signal effectively guides the model toward producing images that maintain deeper conceptual alignment with input prompts. 
+
+\textbf{(4) Image Quality Assessment.}
+For comprehensive quality evaluation, we employ HPS~\cite{wu2023human, ma2025hpsv3}, Aesthetic Score~\cite{Laion2022} and Unified Reward~\cite{wang2025unified} for human preference alignment and visual quality assessment. These complementary metrics capture both subjective aesthetic preference and objective quality metrics. 
+
+
+
+
+This multi-dimensional reward framework enables systematic improvement across several critical aspects of text-to-image generation, with each component addressing specific challenges, and effectively mitigating reward hacking issues associated with single reward optimization.
+
+
+\textbf{RL for Image Understanding.} We further conduct RL training on image understanding tasks. We face a severe challenge related to entropy explosion. 
+
+As training progresses, both policy entropy and the degree of training-inference mismatch increase simultaneously, leading to the generation of noisy and garbled tokens during rollouts. When low-probability tokens enter the training data, their sampling probability is further amplified, creating a positive feedback loop that exacerbates the explosive growth of entropy. This phenomenon is particularly severe for long rollout sequences due to the cumulative effect of mismatch across tokens.
+
+We identify that the core issue is the influx of a large number of noisy and garbled sequences into the training process. To address this issue, we propose sequence-level filtering mechanisms, including the entropy-based filter and the training-inference difference filter. 
+
+\textbf{Entropy based Filter.} During training, we compute the mean and variance of the sequence-wise entropy for each minibatch. Any sequence whose entropy $H_{\text{seq}}$ exceeds the batch mean $\mu_H$ by $n$ standard deviations $\sigma_H$ is considered an outlier and filtered by 
+$H_{\text{seq}} > \mu_H + n \sigma_H$. 
+
+\textbf{Training-Inference Difference based Filter.} 
+For each rollout, we monitor the per-token probability difference between the sampling policy and the actor policy. If the absolute difference for \textbf{any} token within a sequence surpasses a predefined threshold $\delta$, i.e., $|\pi_{\text{sampler}}(a_t|s_t) - \pi_{\text{actor}}(a_t|s_t)| > \delta$, the entire sequence is considered to have a severe training-inference mismatch and is consequently discarded.
+
+Integrating these two sequence-level filters into the GRPO objective results in a stabilized loss formulation. The modified objective, $\mathcal{L}_{\text{GRPO-Filtered}}$, applies the filters via indicator functions that mask out problematic sequences before the standard clipped surrogate loss is computed:
+
+\begin{equation}\label{eq:grpo_filtered}
+\begin{aligned}
+\mathcal{L}_{\text{GRPO-Filtered}} = \mathbb{E}_{(s_t, a_t) \sim \mathcal{D}} \Bigg[
+& \underbrace{\mathbb{I} \left\{ H_{\text{seq}}(s_t) \le \mu_H + n \sigma_H \right\}}_{\text{(1) Entropy Filter}} \;
+\cdot \;
+\underbrace{\mathbb{I} \left\{ \max_{t' \in \mathcal{T}_y} |\pi_{\text{sampler}}(a_{t'}|s_{t'}) - \pi_{\text{actor}}(a_{t'}|s_{t'})| \le \delta \right\}}_{\text{(2) Prob. Diff. Filter}} \\
+& \cdot \;
+\min \Big(
+r_t(\theta) \cdot \hat{A}_t, \;
+\mathrm{clip}\big(r_t(\theta), 1-\epsilon, 1+\epsilon\big) \cdot \hat{A}_t
+\Big)
+\Bigg],
+\end{aligned}
+\end{equation}
+where $\mathbb{I}\{\cdot\}$ act as a hard binary mask; a sequence contributes to the gradient \textbf{only if} it passes both filters.
+
+
+
+In summary, this integrated filtering approach provides a diagnostic and prophylactic solution. It diagnostically identifies sequences containing the critical failure mode and prophylactically removes them from the gradient update. By doing so at the sequence level, it directly addresses the root cause, moving beyond token-level approximations to provide the stability necessary for large training-inference mismatch. More analysis is presented in the Appendix ~\ref{rl_appendix}.
+
+\begin{figure}[t]
+    \centering
+    % 一排五图
+    \begin{subfigure}[b]{0.19\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/imge_und.png}
+        \label{fig:metrics:a}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.19\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/geneval_reward.png}
+        \label{fig:metrics:b}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.19\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/ocr_math_equal.png}
+        \label{fig:metrics:c}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.19\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/case_rewards.png}
+        \label{fig:metrics:d}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.19\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figs/hpsv_reward.png}
+        \label{fig:metrics:e}
+    \end{subfigure}
+
+    \caption{Reward Scores in RL.}
+    \label{fig:metrics}
+\end{figure}
+
+Fig.~\ref{fig:metrics} shows the reward curves for image understanding and image generation. The rewards of image generation cover comprehensive capability, OCR performance, semantic alignment, and image quality. Each curve demonstrates the model’s progressive improvement across different tasks, reflecting steady increases in reward values throughout the training steps.
+
+
+\subsection{Discussion and Future Work}
+
+This work represents an initial step toward native multimodal modeling within a unified discrete autoregressive framework. Constrained by computational resources and data availability, current study remains limited in scope, and several important aspects are not yet fully explored. We view these limitations as opportunities for future investigation and welcome discussion and collaboration from the community. There are some potential future works as below:
+
+
+\textbf{Vision Tokenizer.} The primary task of the current version is to realize the process of discrete encoding and decoding with dNaViT. As the model is currently focused on image understanding and generation tasks, the tokenizer is not yet fully optimized. Notably, the current de-tokenizer focuses primarily on ensuring semantic decoding consistency, rather than pixel fidelity. However, despite not being the most advanced version of the tokenizer, we have achieved strong performance in understanding and generation tasks, validating the effectiveness of the approach. This demonstrates that the model's capabilities can be further enhanced by scaling the data. We will update the tokenizer in future iterations to better meet the goals of the next version.
+
+
+\textbf{Beyond Understanding and Generation.}
+Our current evaluation emphasizes semantic integrity through tasks such as image-to-text and text-to-image. However, a truly native multimodal system should not be confined to these canonical directions. A natural next step is to generalize toward any-to-any generation and interleaved multimodal reasoning, where inputs and outputs span arbitrary combinations of text, vision, and audio. This includes long-context multimodal interaction, multi-turn grounded dialogue, and compositional generation where modalities dynamically condition one another. Enabling such flexible, unified interaction will be key to moving from task-specific competence to general multimodal intelligence.
+
+\textbf{Data Scaling and Representation Learning.} A central open question is whether multimodality can introduce capabilities beyond those already captured by language. While language encodes a highly compressed abstraction of human knowledge, perceptual modalities provide complementary signals grounded in the physical world. Effectively leveraging this complementarity requires not only scaling data, but also improving its structure and alignment. In particular, the interaction between large-scale perceptual pretraining and discrete token modeling remains underexplored. Our preliminary results suggest that conventional pretraining paradigms do not directly translate into consistent gains, indicating a potential mismatch between continuous representations and discrete modeling. Future work may involve co-designing data, pretraining objectives, and discretization strategies to learn semantically aligned representations that better support unified multimodal reasoning.
+
+
+Overall, we regard this work as a preliminary exploration, and many components remain to be validated and scaled. Future efforts will expand along these directions with more comprehensive experiments, stronger models, and broader evaluations, aiming to move closer to truly unified multimodal intelligence.
+
+
+
+
+\section{Conclusion}
+
+In this work, we revisit a fundamental question in native multimodality: how to represent and model the diverse modalities of the world within a unified learning paradigm. By introducing LongCat-Next, we explore the possibility that language-style discrete autoregressive modeling can naturally extend beyond text to encompass vision and audio within a shared token interface. Our results suggest that, with carefully designed tokenizers and training strategies, continuous perceptual signals can be effectively discretized while maintaining strong capabilities. As an initial step in this direction, we hope this work offers a different perspective on multimodal modeling and provides insights for the community toward building truly unified multimodal foundation models.
+
+\section{Contributions and Acknowledgments}
+
+Contributors are defined as individuals who held primary responsibilities in data curation, model design, model training, and infrastructure support throughout the full development lifecycle of LongCat-Next. The Acknowledgments section recognizes those who contributed to specific tasks such as data collection, annotation, model evaluation, and technical discussions. All names are listed in alphabetical order by first name; names marked with an asterisk (*) indicate former team members.
+
+% ── Contributors ──────────────────────────────────────────────
+\section*{Contributors}
+
+\begin{multicols}{4}
+\small
+Bin Xiao\\
+Chao Wang\\
+Chengjiang Li\\
+Chi Zhang\\
+Chong Peng\\
+Hang Yu\\
+Hao Yang\\
+Haonan Yan\\
+Haoze Sun\\
+Haozhe Zhao\\
+Hong Liu\\
+Hui Su\\
+Jiaqi Zhang\\
+Jiawei Wang\\
+Jing Li\\
+Kefeng Zhang\\
+Manyuan Zhang\\
+Minhao Jing\\
+Peng Pei\\
+Quan Chen\\
+Taofeng Xue\\
+Tongxin Pan\\
+Xiaotong Li\\
+Xiaoyang Li\\
+Xiaoyu Zhao\\
+Xing Hu\\
+Xinyang Lin\\
+Xunliang Cai\\
+Yan Bai\\
+Yan Feng\\
+Yanjie Li\\
+Yao Qiu\\
+Yerui Sun\\
+Yifan Lu\\
+Ying Luo\\
+Yipeng Mei\\
+Yitian Chen\\
+Yuchen Xie\\
+Yufang Liu\\
+Yufei Chen\\
+Yulei Qian\\
+Yuqi Peng\\
+Zhihang Yu\\
+Zhixiong Han
+\end{multicols}
+
+\vspace{0.3em}
+% ── Acknowledgements ──────────────────────────────────────────
+\section*{Acknowledgments}
+
+\begin{multicols}{4}
+\small
+Changran Wang\\
+Chen Chen\\
+Dian Zheng\\
+Fengjiao Chen\\
+Ge Yang\\
+Haowei Guo\\
+Haozhe Wang\\
+Hongyu Li\\
+Huicheng Jiang\\
+Jiale Hong\\
+Jialv Zou\\
+Jiamu Li\\
+Jianping Lin\\
+Jiaxing Liu\\
+Jie Yang\\
+Jing Jin\\
+Jun Kuang\\
+Juncheng She$^*$\\
+Kunming Luo\\
+Kuofeng Gao\\
+Lin Qiu\\
+Linsen Guo\\
+Mianqiu Huang\\
+Qi Li\\
+Qian Wang\\
+Rumei Li\\
+Siyu Ren\\
+Wei Wang\\
+Wenlong He\\
+Xi Chen\\
+Xiao Liu\\
+Xiaoyu Li\\
+Xu Huang\\
+Xuanyu Zhu\\
+Xuezhi Cao\\
+Yaoming Zhu\\
+Yifei Cao\\
+Yimeng Jia\\
+Yizhen Jiang\\
+Yufei Gao\\
+Zeyang Hu\\
+Zhenlong Yuan\\
+Zijian Zhang\\
+Ziwen Wang
+\end{multicols}
+
+
+\clearpage
+% \bibliographystyle{unsrtnat}
+% \bibliography{references}  
+\printbibliography
+
+% \clearpage
+
+% \appendix
+% \section{Appendix}\label{appendix}
+
+
+\input{appendix}
+
+
+\end{document}
+
+ 

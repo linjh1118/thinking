@@ -1,0 +1,139 @@
+\section{Evaluations}
+In this section, we evaluate our~{\longcatthink} model after the whole training pipeline on automatic benchmarks.
+% to assess model performance. 
+These benchmarks are categorized into several dimensions, including general QA, alignment, mathematics, general reasoning, coding, agentic tool use, formal theorem proving, and safety.
+
+% \input{tables/Leaderboard}
+\input{tables/Leaderboard_wjn}
+
+\subsection{Benchmarks and Configurations}
+The evaluation employs the following benchmarks:
+\begin{itemize}
+    \item\textbf{General QA: }MMLU-Pro \citep{wang2024mmluprorobustchallengingmultitask}, a robustly re-evaluated version of MMLU \citep{hendrycks2021measuringmassivemultitasklanguage} that corrects errors and reduces contamination. MMLU-Redux \citep{gema2025mmluredux}, another high-quality variant of the MMLU Benchmark. 
+    % SimpleQA \citep{simpleqa}, a standard test for fact-seeking question answering over a large knowledge base, evaluating the model's ability to retrieve precise information. 
+    \item\textbf{Alignment: }IFEval \citep{zhou2023ifeval}, an instruction following benchmark consisted of a set of prompts with programmatically verifiable constraints, offering an objective score on the model's fidelity to complex instructions. Arena-Hard \citep{arenahard2024}, a benchmark sourced from the Chatbot Arena platform for assessing model's helpfulness and conversational quality on difficult, open-ended user queries. 
+    \item\textbf{Mathematical Reasoning: }Olympiad-level mathematical benchmarks, including MATH-500 \citep{math500}, HMMT-25\citep{HMMT25} (Harvard-MIT Mathematics Tournament), AIME-24 \citep{AIME24} and AIME-25 \citep{AIME25} (American Invitational Mathematics Examinations), and BeyondAIME \citep{bytedanceseed2025beyondaime}.
+    \item\textbf{General Reasoning: }GPQA-Diamond \citep{rein2024gpqa}, a benchmark evaluating deep reasoning on graduate-level questions across several science domains. ZebraLogic \citep{lin2025zebralogic}, composed of classic logic grid puzzles that require multi-step deductive reasoning and constraint satisfaction. Sudoku-Bench \citep{seely2025sudoku-bench}, symbolic and structured reasoning by requiring models to solve Sudoku puzzles\footnote{We evaluate the model on the challenging nikoli\_100 dataset.}. ARC-AGI \citep{chollet2019github}, a benchmark designed to measure fluid intelligence.
+    \item\textbf{Coding: }LiveCodeBench (LCB) \citep{jain2025livecodebench}, a dynamic benchmark and we evaluate on problems between 2408 and 2505. 
+    % Aider-Polyglot~\citep{aider_polyglot}, assessing a code agent's ability to perform real-world code editing tasks across multiple programming languages. 
+    OJBench~\citep{wang2025ojbenchcompetitionlevelcode}, ACM-ICPC level code reasoning benchmarks. 
+    \item\textbf{Agentic Tool Using: } 
+    SWE-Bench~\citep{jimenez2024swebench}, sourced from real GitHub issues for evaluating a model's ability to solve software engineering problems. 
+    BFCL~\citep{BFCL}, 
+    % $\tau$-Bench~\citep{yao2025taubench}, 
+    and $\tau^2$-Bench~\citep{barres2025tau2} are Tool-Augmented Reasoning benchmarks. VitaBench~\citep{meituan2025longcat_flash_chat}, our self-designed comprehensive real-world benchmark for systematically evaluating models’ capabilities in addressing complex real-world tasks. 
+    \item\textbf{Formal Theorem Proving: }MiniF2F~\citep{zheng2021minif2f} is a benchmark for formal theore proving, featuring a collection of problem statements translated across multiple formal systems. The problems are curated from high school and undergraduate mathematics exercises to challenging questions from prestigious competitions such as the AMC, AIME, and IMO. We evaluate on the test set that consists of 244 problems.
+    \item\textbf{Safety}: Following LongCat-Flash-Chat~\citep{meituan2025longcat_flash_chat}, we evaluate the safety performance of LongCat-Flash-Thinking on four major risk categories: \textbf{Harmful} (e.g., violence, hate Speech, insulting, harassment, self-harm, and adult content), \textbf{Criminal} (e.g., illegal activities, terrorism, and underage violations), \textbf{Misinformation} (e.g., misinformation， disinformation, and unsafe practices), and \textbf{Privacy} (e.g., privacy violation and infringement). For each category, we curated a substantial set of private test queries, which then underwent a rigorous manual review to validate their categorization and ensure their quality.
+    
+    
+\end{itemize}
+
+For each benchmark category, we employ the following specialized metrics and configurations:
+\begin{itemize}
+    \item\textbf{General QA: }We use accuracy as the primary evaluation metric. Following~\citep{meituan2025longcat_flash_chat}, we employ a scoring model to assess the semantic alignment between model responses and reference answers. Because this approach recognizes responses that are semantically correct but not textually identical, our reported accuracy scores may be slightly higher than those originally documented.
+    
+    \item\textbf{Alignment: }To assess instruction compliance, we design regular expressions tailored to the specific rules of each task. This verification process is further supported by both rule-based and model-based answer span extraction tools.
+    % We report the strict prompt level and the creative writing score for IFEval and Arena-Hard, respectively.
+    \item\textbf{Mathematical Reasoning: } For the AIME and HMMT benchmarks, we report the average accuracy over 32 samples (Mean@32), while for MATH-500 
+    and BeyondAIME we report Mean@1 and Mean@10, respectively.
+    
+    \item\textbf{General Reasoning: }We apply the LLM-as-a-Judge for GPQA-diamond, while apply rule-based matching for ZebraLogic. For the GPQA-diamond benchmark, we report the average accuracy over 16 samples (Mean@16), while for ZebraLogic, Sudoku-Bench 
+    and ARC-AGI we report Mean@1 accuracy.
+    \item\textbf{Coding:} We use the acceptance (AC) rate to evaluate coding performance, where the model scores 1 on one problem only if its code passes all test cases, otherwise it scores 0. For LCB, we use Python 3.11 as the paper suggested. 
+    % For SWE-Bench, we use R2E-Gym\footnote{\url{https://github.com/R2E-Gym/R2E-Gym}} as the evaluation environment, and for OJBench and Aider-Polyglot, we follow their evaluation scripts and environments.
+    For each benchmark, we utilize official benchmark frameworks to ensure fairness and reproducibility. 
+    \item\textbf{Agentic Tool Using: } Similar to the task of coding, we also utilize official benchmark frameworks to ensure fairness and reproducibility. 
+    \item\textbf{Formal Theorem Proving: } We report the $pass@k$ metric ($k\in\{1, 8, 32\}$) for MiniF2F-Test. The proof will be accepted if it passes the syntax check through the Lean4 server.
+    \item\textbf{Safety: }We directly choose accuracy as the primary metric.
+\end{itemize}
+
+\subsection{Evaluation Results}
+As illustrated in Table~\ref{tab:main_results}, we compare~{\longcatthink} with several advanced reasoning models, including DeepSeek-V3.1-Thinking~\citep{deepseekai2025deepseekv3technicalreport}, Qwen3-235B-A22B-Thinking~\citep{qwen3_thinking_2507}, GLM-4.5~\citep{zeng2025glm}, OpenAI-o3~\citep{o3}, Gemini2.5-Pro~\citep{gemini25pro}, and GPT-5-Thinking~\citep{gpt5}.
+%  and Claude-4.1-Opus-Thinking~\citep{claude41}
+The results of our comprehensive evaluation indicate that~{\longcatthink} is a highly capable and versatile model. It consistently demonstrates superior performance across a broad spectrum of reasoning tasks, surpassing its counterparts that require a greater number of activated parameters. A detailed breakdown of these capabilities is provided in the subsequent analysis.
+The inference parameters of our LongCat-Flash-Thinking are set as temperature=1.0, topk=-1, and topp=0.95.
+
+
+\begin{figure}[t]
+%\centerline{\includegraphics[width=0.85\linewidth]{figs/token_efficiency}}
+\centerline{\includegraphics[width=0.85\linewidth]{figs/token_efficiency0922}}
+% \vspace{-.25cm}
+\caption{\small
+The comparison of performance (\%) and average tokens on AIME-25.
+}
+% \vspace{-.3cm}
+\label{fig:token_efficiency}
+\end{figure}
+
+
+\begin{itemize}
+    \item\textbf{General Abilities: }In the domain of general knowledge, the result demonstrates robust foundational understanding ability of~{\longcatthink}, particularly on comprehensive multi-task benchmarks. 
+    It achieves an accuracy of 89.3\% on MMLU-Redux, rivaling the state-of-the-art open-source model Qwen3-235B-A22B, and maintains strong competitiveness on MMLU-Pro with a score of 82.6\%. 
+    These results are especially remarkable considering~{\longcatthink}’s efficiency.
+    
+    \item\textbf{Alignment Abilities: }In alignment tasks, LongCat-Flash-Thinking exhibits strong and competitive performance. It attains an impressive score of 86.9\% on the IFEval benchmark (strict prompt) and 69.9\% on Arena-Hard(hard prompt gemini), demonstrating robust capability in following complex instructions and surpassing several key baselines, including DeepSeek V3.1.
+    
+    \item\textbf{Mathematical Abilities: }{\longcatthink} demonstrates outstanding proficiency in mathematical reasoning, distinguishing itself as one of the top-performing models currently available. In particular, it achieves a highly competitive score of 99.2\% on the MATH500 benchmark, and its true capabilities become even more evident on more challenging benchmarks. The model delivers impressive results on HMMT and AIME-related benchmarks, outperforming strong baselines such as OpenAI-o3 and rivaling leading proprietary models like Qwen3-235B-A22B and GPT-5. These findings highlight its advanced ability to solve complex, multi-step problems.
+    \item\textbf{General Reasoning Abilities: }{\longcatthink} demonstrates superior general reasoning capabilities, particularly in tasks that require structured logic. It achieves exceptional performance on ARC-AGI, attaining a score of 50.3\% and surpassing leading proprietary models such as OpenAI-o3 and Gemini2.5-Pro. Additionally, it displays remarkable aptitude in puzzle reasoning, with scores of 56.0\% on Sudoku-Bench and 95.5\% on ZebraLogic, highlighting its advanced ability to solve complex, non-linguistic puzzles. 
+    % These results underscore its proficiency in both structured and abstract deduction.
+    
+    \item\textbf{Coding Abilities: }In the coding domain,~{\longcatthink} 
+    demonstrates state-of-the-art performance and strong overall capabilities. On LiveCodeBench, it achieves a score of 79.4\%, significantly outperforming all listed open-source models and performing competitively with the top proprietary model, GPT-5 (80.6\%). This showcases its excellent proficiency in solving fresh, competitive programming problems. 
+    % Furthermore, it demonstrates excellent proficiency in software engineering tasks with a score of 56.0\% on SWE-Bench. 
+    Furthermore, it scores 40.7\% on OJBench, surpassing most proprietary models and nearly matching the leading score of Gemini2.5-Pro (41.6\%).
+    % Its performance on OJBench (40.7\%) is also highly competitive
+    
+    \item\textbf{Agentic Abilities: }The evaluation of agentic capabilities reveals that~{\longcatthink} excels in complex, tool-augmented reasoning. 
+    demonstrates robust capabilities in agentic tool using. Specifically, it achieves a state-of-the-art result on $\tau^2$-Bench-Airline with a score of 67.5\% and delivers highly competitive performance across a range of other benchmarks, including SWE-Bench, BFCL V3, and VitaBench. 
+    % It achieves the state-of-the-art performance of 67.9\% on the $\tau^2$-Bench, significantly surpassing all contemporary open-source and proprietary models.  
+    In particular, enabling targeted tool use substantially improves the trade-off between performance and token budget. 
+    In our experiments,~{\longcatthink} with the tool reduces average token consumption from $19,653$ to $6,965$ ($\approx$64.5\% less) while preserving AIME-25 accuracy, as shown in Figure \ref{fig:token_efficiency}. This demonstrates that agentic systems can achieve nearly state-of-the-art performance not only by extending model-only reasoning but also efficiently by offloading select reasoning steps to external tools.
+    
+    \item\textbf{Formal Reasoning for ATP: } 
+    In the domain of proving,~{\longcatthink} demonstrates state-of-the-art capabilities. On the MiniF2F-Test benchmark, it achieves a pass@1 score of 67.6\%, outperforming the second best model, DeepSeek V3.1 by a substantial margin of 18\%. This lead is maintained across pass@8 and pass@32, highlighting its superior ability in generating structured proofs and formal mathematical reasoning.
+    
+    \item\textbf{Safety Abilities: }On safety benchmarks,~{\longcatthink} demonstrates state-of-the-art performance in refusing to answer harmful or unethical queries. It achieves the overall best performance, significantly outperforming all other evaluated open-source and proprietary models. Its strength is consistent across all sub-categories, with top scores in Harmful (93.7\%), Criminal (97.1\%), and Misinformation (93.0\%). This robust performance underscores the effectiveness of our model's safety alignment and its reliability in adhering to safety protocols.
+\end{itemize}
+
+
+
+% \subsubsection{Evaluation of General Abilities}
+
+% \subsubsection{Evaluation of Alignment Abilities}
+% \subsubsection{Evaluation of Reasoning Abilities}
+% \subsubsection{Evaluation of Coding Abilities}
+% \subsubsection{Evaluation of Agentic Abilities}
+
+
+
+% \begin{table*}[t]
+% \centering
+% \caption{Performance comparison  up-arrow ($\uparrow$). 
+% \textbf{A-LLM} denotes 
+% Top-1 accuracy is reported (Best in \textbf{bold}, second best is \underline{underlined}).}
+% \label{tab:multi-modal-understanding-vqa}
+% \begin{tabular}{l c c ccccccc}
+% \toprule
+% % Use \multirow{2}{*}{...} for headers that span two rows vertically
+% % The headers for parameters are now split into two actual rows
+% \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{\# Params}} & \multirow{2}{*}{\textbf{MMLU$\uparrow$}} & \multirow{2}{*}{\textbf{xxx$\uparrow$}} & \multirow{2}{*}{\textbf{xxx$\uparrow$}} & \multirow{2}{*}{\textbf{xxx$\uparrow$}} & \multirow{2}{*}{\textbf{xxx$\uparrow$}} & \multirow{2}{*}{\textbf{xxx$\uparrow$}} \\
+% % Use \cmidrule for a partial line under the merged header, looks cleaner
+% \cmidrule(lr){2-3}
+% % Header Row 2: Define the sub-headers for Params
+% & \textbf{Activated} & \textbf{Total} & & & & & & & \\
+% \midrule
+% \multicolumn{10}{l}{\textit{RL Models}} \\
+% \addlinespace
+% OpenAI o3\\
+% DeepSeek R1-0528\\
+% DeepSeek V3.1-Thinking\\
+% Qwen3-Thinking-2507 \\
+% GLM-4.5 \\
+% Gemini2.5-Pro \\
+% LongCat-Flash-Thinking \\
+% \bottomrule
+% \end{tabular}%
+% \end{table*}
+
+
+

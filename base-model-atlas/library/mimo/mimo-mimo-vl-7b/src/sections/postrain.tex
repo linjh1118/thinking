@@ -1,0 +1,84 @@
+\section{Post-Training}
+Building upon the visual perception capabilities and multimodal reasoning established during pre-training, we conduct post-training to further enhance \mimovl{}. 
+Our approach employs a novel Mixed On-policy Reinforcement Learning~(MORL) framework that seamlessly integrates Reinforcement Learning with Verifiable Rewards (RLVR)~\citep{shao2024deepseekmath,lambert2025tulu3pushingfrontiers} with Reinforcement Learning from Human Feedback (RLHF)~\citep{ouyang2022instructgpt} to improve \mimovl{} on challenging reasoning tasks and alignment with human preferences.
+
+\subsection{Reinforcement Learning with Verifiable Rewards}
+
+
+RLVR relies exclusively on rule-based reward functions, enabling continuous model self-improvement. In the post-training of \mimovl{}, we design multiple verifiable reasoning and perception tasks where final solutions can be precisely validated using predefined rules.
+
+
+\paragraph{Visual Reasoning} 
+Visual reasoning capabilities are fundamental for multimodal models to understand and solve complex problems that require both visual perception and logical thinking. To facilitate this capability, we compile diverse verifiable STEM questions from open-source communities and proprietary K-12 collections. 
+An LLM is prompted to filter proof-based problems and rewrite multiple-choice questions with numerical or symbolic answers into free-answer formats, alleviating potential reward hacking.
+We further refine question quality through comprehensive model-based difficulty assessment, excluding questions that either cannot be solved by advanced VLMs or are too easy, with a \mimovl{} rollout pass rate exceeding 90\%.
+Additionally, we remove questions solvable even without image inputs. After data cleaning and category balancing, we curate a visual reasoning dataset of 80K problems. For evaluation, we use the rule-based Math-Verify library to determine response correctness.\footnote{\url{https://github.com/huggingface/Math-Verify}}
+
+\paragraph{Text Reasoning}
+Since most visual reasoning data is limited to K-12 level questions, the reasoning performance of RL-trained models could be constrained.
+In contrast, text-only reasoning datasets include more challenging queries requiring college or competition-level intelligence.
+To unleash the full reasoning potential of our model, we incorporate mathematical reasoning data from \citet{xia2025mimo}. Rewards are computed using the same rule-based Math-Verify library to ensure consistent evaluation across both visual and textual reasoning tasks.
+
+
+\paragraph{Image Grounding}
+Accurate spatial localization is essential for models to understand object relationships and spatial reasoning in images. We include both general and GUI grounding tasks in our RLVR framework to enhance \mimovl{}'s grounding capability. For bounding box predictions, rewards are calculated using the Generalized Intersection over Union (GIoU)~\citep{rezatofighi2019generalized} between predicted and ground-truth boxes. For point-style outputs, rewards are determined by whether the predicted point falls within the ground-truth bounding box.
+
+\paragraph{Visual Counting}
+Precise counting abilities are essential for quantitative visual understanding and mathematical reasoning in visual contexts~\citep{chen2025r1v}. 
+We enhance visual counting capabilities through RL training, where rewards are defined by the accuracy of the model's counting predictions compared to ground-truth counts.
+
+
+
+\paragraph{Temporal Video Grounding}
+Beyond static image understanding and reasoning, we extend our RLVR framework to dynamic video content to capture temporal dependencies. We incorporate temporal video grounding tasks that require the model to localize video segments corresponding to natural language queries~\citep{wang2025timezero}. The model outputs timestamps in \texttt{[mm:ss,mm:ss]} format to indicate the start and end times of the target video segments. Rewards are computed as the Intersection over Union (IoU) between predicted and ground-truth temporal segments.
+
+\subsection{Reinforcement Learning from Human Feedback}
+To align model outputs with human preferences and mitigate undesirable behaviors, we employ Reinforcement Learning from Human Feedback (RLHF) as a complementary approach to our verifiable reward framework.
+
+
+\paragraph{Query Collection}
+
+Query diversity is paramount to the success of RLHF. Our methodology commences with gathering multimodal and text-only queries from open-source instruction tuning datasets and in-house human-written sources. All collected queries, both text and multimodal, then undergo a dedicated screening process. To further enhance diversity, we employ techniques such as clustering queries based on their embeddings and analyzing the resultant patterns. Crucially, we balance the proportions of Chinese and English queries, as well as those targeting helpfulness and harmlessness, before curating the final query set. For each selected query, MiMo-VL-7B and multiple other top-performing VLMs are prompted to generate responses. These responses are subsequently pairwise ranked by an advanced VLM to construct the definitive dataset for reward model training. Notably, to mitigate potential reward hacking, this same query set is utilized for both reward model training and the RLHF process.
+
+
+
+\paragraph{Reward Model}
+We develop two specialized reward models tailored to different input modalities, training them using the Bradley-Terry reward modeling objective~\citep{ouyang2022instructgpt}. 
+The text-only reward model is initialized from \mimo{}~\citep{xia2025mimo} to leverage its strong language understanding capabilities, while the multimodal reward model builds upon \mimovl{} to effectively process queries containing visual inputs. This dual-model approach ensures optimal performance across both textual and multimodal evaluation scenarios.
+
+
+\subsection{Mixed On-Policy Reinforcement Learning}
+
+In the post-training phase of \mimovl{}, we implement Mixed On-policy Reinforcement Learning (MORL) to simultaneously optimize RLVR and RLHF objectives.
+As illustrated in Figure~\ref{fig:morl_pipeline}, we integrate rule-based and model-based rewards as unified services within the verl framework~\citep{sheng2024hybridflow}, enhanced by the Seamless Rollout Engine~\citep{xia2025mimo}.
+
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.97\linewidth]{figures/morl_pipeline.pdf}
+    \caption{Mixed On-policy Reinforcement Learning in post-training phase.}
+    \label{fig:morl_pipeline}
+\end{figure}
+
+
+\paragraph{On-Policy RL Recipe}
+We adopt a fully on-policy variant of GRPO~\citep{shao2024deepseekmath} as the RL algorithm, which demonstrates robust training stability and effective exploration capabilities~\citep{chen2025acereason}.
+For each problem $q$, the algorithm samples a group of responses $\left\{o_1,o_2,...,o_G\right\}$ from the policy $\pi_\theta$, and updates the policy by maximizing the following objective:
+\begin{equation}
+\label{eq:grpo}
+    \mathcal{J}_{\mathrm{GRPO}}\left(\theta\right)= \mathbb{E}_{q\sim D,\{o_i\}_{i=1}^G\sim \pi_\theta(\cdot|q)} \left[\frac{1}{\sum_{i=1}^G\left|o_i\right|}\sum_{i=1}^G \sum_{j=1}^{\left|o_i\right|} A_{i,j}\right],
+\end{equation}
+where $A_{i,j}$ is the advantage, which is computed by the rewards $\left\{r_1,r_2,...,r_G\right\}$ of responses in the same group:
+\begin{equation}
+    A_{i,j} = \frac{r_i-\mathrm{mean}(\{r_i\}_{i=1}^G)}{\mathrm{std}(\{r_i\}_{i=1}^G)}.
+\end{equation}
+Compared to vanilla GRPO, this on-policy variant performs single-step policy updates following response rollout, eliminating the need for a clipped surrogate training objective.
+Following \citet{xia2025mimo}, we integrate several advancements, including removal of the KL loss, dynamic sampling, easy data filter, and re-sampling strategies, into our RL training recipe.
+
+\paragraph{Reward-as-a-Service}
+The MORL process integrates tasks across reasoning, perception, grounding, multimodal RLHF, and text-only RLHF, each requiring distinct reward functions or dedicated reward models. 
+To provide a unified interface and near-zero latency reward computation, we introduce Reward-as-a-Service (RaaS).
+A reward router dynamically selects the appropriate reward function based on the query's task type.
+To minimize latency, reward models are deployed as standalone services, ensuring scalable reward computation accessible via HTTP.
+All rewards are normalized to the range $[0,1]$.
+No additional reward, such as format rewards, is incorporated in our training process.

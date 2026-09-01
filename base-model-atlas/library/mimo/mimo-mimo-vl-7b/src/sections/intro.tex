@@ -1,0 +1,42 @@
+\section{Introduction}
+Vision-language models (VLMs) have emerged as the foundational backbone for multimodal AI systems, enabling autonomous agents to perceive the visual world, reason over multimodal content~\citep{yue2023mmmu}, and interact with both digital~\citep{xie2024osworld,cua2025} and physical environments~\citep{rt2,pi0}. 
+The significance of these capabilities has motivated extensive exploration across multiple dimensions, including novel architectural designs~\citep{Alayrac2022FlamingoAV,team2024chameleon,dream2025} and innovative training methodologies with optimized data recipes~\citep{prismaticVLM,nvlm2024}, leading to rapid progress in the field~\citep{liu2023llava,tong2024cambrian,Qwen25VL}.
+
+
+
+In this report, we share our efforts to build a compact yet powerful VLM, \mimovl{}. \mimovl{} comprises three components: (1) a native-resolution Vision Transformer (ViT) encoder that preserves fine-grained visual details, (2) a Multi-Layer Perceptron (MLP) projector for efficient cross-modal alignment, and (3) our \mimo{}~\citep{xia2025mimo} language model, specifically optimized for complex reasoning tasks. 
+
+The development of \mimovl{} involves two sequential training processes: 
+(1) A \emph{four-stage pre-training phase}, which includes projector warmup, vision-language alignment, general multimodal pre-training, and long-context Supervised Fine-Tuning (SFT). 
+Throughout these stages, we curate high-quality datasets by strategically combining open-source collections with synthetic data generation techniques, consuming 2.4 trillion tokens, adjusting the dataset distribution in different stages to facilitate training. This phase yields the \textbf{\mimovlsft{}} model. 
+(2) A subsequent \emph{post-training phase}, where we introduce Mixed On-policy Reinforcement Learning (MORL), a novel framework that seamlessly integrates diverse reward signals spanning perception accuracy, visual grounding precision, logical reasoning capabilities, and human preferences. 
+We adopt the idea of GRPO~\citep{shao2024deepseekmath} and enhance training stability by exclusively performing on-policy gradient updates during this stage. This phase yields the \textbf{\mimovlrl{}} model.
+
+
+During this journey, we find:
+
+\textbf{(1) Incorporating high-quality, broad-coverage reasoning data from the pre-training stage is crucial for enhancing model performance. } 
+In the current era of ``thinking'' models, vast quantities of multimodal pre-training data are undergoing a significant re-evaluation. Traditional question-answering (QA) data, with its direct, short answers, often restricts models to superficial pattern matching and leads to overfitting. 
+In contrast, synthesized reasoning data with long Chain-of-Thought~(CoT) enables learning of complex logical relationships and generalizable reasoning patterns, providing richer supervision signals that markedly improve both performance and training efficiency.
+To leverage this advantage, we curate high-quality reasoning data by identifying diverse queries, employing large reasoning models to regenerate responses with long CoT, and applying rejection sampling to ensure quality.
+Furthermore, rather than treating this as supplementary fine-tuning data, we incorporate substantial volumes of this synthetic reasoning data directly into the later pre-training stages, where extended training yields continued performance improvements without saturation.
+
+
+\textbf{(2) Mixed On-policy Reinforcement Learning further enhances model performance, while achieving stable simultaneous improvements remains challenging.}
+We apply RL across diverse capabilities, including reasoning, perception, grounding, and human preference alignment, spanning modalities including text, images, and videos.
+While this hybrid training approach further unlocks the model's potential, interference across data domains remains challenging.
+Disparities in the growth trends of response length and task difficulty levels hinder stable, simultaneous improvements across all capabilities.
+
+
+
+\mimovlrl{} delivers exceptional results across the full spectrum of multimodal capabilities.
+\textbf{(1) On fundamental visual perception tasks,} it achieves state-of-the-art performance among open-source VLMs of comparable scale, scoring 66.7 on MMMU~\citep{yue2023mmmu} and outperforming Qwen2.5-VL-7B~\citep{Qwen25VL} on 35 out of 40 evaluated tasks. 
+\textbf{(2) For complex multimodal reasoning,} \mimovlrl{} exhibits outstanding performance, scoring 59.4 on OlympiadBench~\citep{he2024olympiadbench} and surpassing models up to 72B parameters.
+\textbf{(3) In GUI grounding for agentic applications,} our model sets a new standard by achieving a score of 54.7 on OSWorld-G~\citep{osworldg}, even exceeding specialized models like UI-TARS~\citep{qin2025uitars1}.
+\textbf{(4) In terms of user experience and preference,} \mimovlrl{} achieves the highest Elo rating among all open-source VLMs on our in-house user preference evaluation, performing competitively with proprietary models such as Claude 3.7 Sonnet.
+
+
+These results validate our approach: by combining strong perception, sophisticated reasoning, and precise grounding capabilities through our MORL framework, \mimovlsft{} and \mimovlrl{} establish new standards for open-source vision-language models.
+To promote transparency and reproducibility, we also contribute a comprehensive evaluation suite covering 50+ tasks with complete prompts and protocols, enabling the community to build upon our work.
+
+

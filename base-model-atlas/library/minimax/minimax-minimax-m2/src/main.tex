@@ -1,0 +1,239 @@
+% --- patched for arXiv submission by arxiv_build.sh ---
+\documentclass[11pt, letterpaper, logo, onecolumn, copyright, numbering]{minimax}
+\usepackage{etoolbox}
+
+\usepackage[authoryear, sort&compress, round]{natbib}
+
+\usepackage[most, breakable, skins]{tcolorbox}
+\usepackage{academicons}
+
+\tcbuselibrary{skins}
+\usepackage{lipsum}
+\usepackage{tabularx}
+\usepackage{afterpage}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{multicol} 
+\usepackage{array}
+\usepackage{float}
+\usepackage{listings, listings-rust}
+\usepackage{fontawesome5}
+\usepackage{amssymb,graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning,chains,shapes,arrows,fit,decorations.pathmorphing,patterns,fadings,shadows,patterns.meta,arrows.meta}
+\usepackage{wrapfig}
+\usepackage{dialogue}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{colortbl}
+\usepackage{mdframed}
+
+
+\usepackage{listings}
+
+\usepackage{tcolorbox}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{multicol}
+
+\usepackage{caption}
+\captionsetup{justification=justified, singlelinecheck=true}
+
+\input{math_commands.tex}
+
+\input{showcase_format}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\lstset{
+basicstyle=\footnotesize\ttfamily,
+columns=flexible,
+frame=single,
+xleftmargin=1em,
+breaklines=true,
+breakindent=0em
+}
+
+% colours
+\definecolor{medgray55}{gray}{0.55}
+\definecolor{medgray}{gray}{0.7}
+\definecolor{litegray}{gray}{0.9}
+\definecolor{gblue}{RGB}{210, 227, 252}
+\definecolor{gred}{RGB}{250, 210, 207}
+\definecolor{gyellow}{RGB}{254, 239, 195}
+\definecolor{ggreen}{RGB}{206, 234, 214}
+\definecolor{gorange}{RGB}{254, 223, 200}
+
+\definecolor{gblue9}{RGB}{23, 78, 166}
+\definecolor{gred9}{RGB}{165, 14, 14}
+\definecolor{gyellow9}{RGB}{227, 116, 0}
+\definecolor{ggreen9}{RGB}{13, 101, 45}
+\definecolor{gorange9}{RGB}{176, 96, 0}
+
+\definecolor{myblue}{rgb}{0,0,1}
+\definecolor{myred}{rgb}{1,0,0}
+\definecolor{mylightgray}{gray}{0.95}
+
+\definecolor{highlightblue}{HTML}{185ABC}
+
+\makeatletter
+
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+            {-2.5ex\@plus -1ex \@minus -.25ex}%
+            {1.25ex \@plus .25ex}%
+            {\itshape\normalsize\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{4} % how many sectioning levels to assign numbers to
+\setcounter{tocdepth}{4}    % how many sectioning levels to show in ToC
+
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering}m{#1}}
+
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\definecolor{ao}{rgb}{0.0, 0.0, 1.0}
+
+\newcommand{\sota}[1]{\textcolor{ao}{$\textbf{#1}$}}
+\newcommand{\red}[1]{\textcolor{red}{{#1}}}
+\newcommand{\green}[1]{\textcolor{green}{{#1}}}
+\newcommand\rowincludegraphics[2][]{\raisebox{-0.55\height}{\includegraphics[#1]{#2}}}
+\newcommand\vcent[1]{\vcenter{\hbox{#1}}}
+\newcommand{\vvr}[1]{\textcolor{red}{[Vinay TODO: #1]}}
+\newcommand{\ov}[1]{\textcolor{red}{[OV: #1]}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand\loudspeaker[1][3]{\ensuremath{\vcent{\rule{.6ex}{.6ex}}\kern-.5ex%
+  \vcent{\scalebox{.6}[1]{\rotatebox[origin=center]{90}{$\blacktriangle$}}}%
+  \ifnum#1>0\relax\kern.05ex\vcent{\scalebox{.4}{\ttfamily)}}%
+  \ifnum#1>1\relax\kern-.4ex\vcent{\scalebox{.56}{\ttfamily)}}%
+  \ifnum#1>2\relax\kern-.55ex\vcent{\scalebox{.7}{\ttfamily)}}%
+  \fi\fi\fi}%
+}
+
+\definecolor{green}{rgb}{0.9,0.9,0.9}
+\newcommand{\std}[1]{{\tiny\(\pm\)#1}}
+\newcommand{\etal}{\textit{et al.}} 
+
+\newcommand{\yr}[1]{\textcolor{red}{uno:#1}}
+\newcommand{\jiangwei}[1]{\textcolor{violet}{jiangwei:#1}}
+\newcommand{\meish}[1]{\textcolor{blue}{#1}}
+\newcommand{\panyq}[1]{\textcolor{violet}{#1}}
+\newcommand{\huangyb}[1]{\textcolor{purple}{#1}}
+\newcommand{\guixianren}[1]{\textcolor[rgb]{0.545,0.545,0}{[Guixianren: #1]}}
+\newcommand{\yuban}[1]{\textcolor[rgb]{1.0,0.75,0.8}{[yuban: #1]}}
+\newcommand{\puwang}[1]{\textcolor[rgb]{0.5,0.3,0.9}{[puwang: #1]}}
+\newcommand{\jianxin}[1]{\textcolor[rgb]{0.8,0.75,1.0}{[jianxin: #1]}}
+\newcommand{\yize}[1]{\textcolor[rgb]{1.0,0.75,0.8}{[yize: #1]}}
+\newcommand{\pascal}[1]{\textcolor[rgb]{1.0,0.75,0.8}{[pascal: #1]}}
+\newcommand{\ray}[1]{\textcolor[rgb]{0.63, 1.0, 0.4}{[Ray: #1]}}
+\newcommand{\qinggangying}[1]{\textcolor[rgb]{0.3,0.8,1.0}{[qinggangying: #1]}}
+\newcommand{\donghuang}[1]{\textcolor[rgb]{1.0,0.5,0.5}{[donghuang: #1]}}
+\newcommand{\ami}[1]{\textcolor[rgb]{0.222, 0.715, 0.015}{[Ami: #1]}}
+\newcommand{\sskip}[1]{\textcolor[rgb]{0.672, 0.061, 0.17}{[Skip: #1]}}
+\newcommand{\xiaohui}[1]{\textcolor[rgb]{0.63, 0.7, 0.1}{[Xiaohui: #1]}}
+\newcommand{\schon}[1]{\textcolor{brown}{[Schon: #1]}}
+\newcommand{\olive}[1]{\textcolor{brown}{[Olive: #1]}}
+\newcommand{\lecun}[1]{\textcolor{red}{[Lecun: #1]}}
+\newcommand{\kawendixu}[1]{\textcolor{red}{[Kawendixu: #1]}}
+\newcommand{\io}[1]{\textcolor[rgb]{0.33, 0.33, 0.33}{[IO: #1]}}
+\newcommand{\pengyu}[1]{\textcolor[rgb]{1.0,0.6,0.0}{[Pengyu: #1]}}
+\newcommand{\jh}[1]{\textcolor{magenta}{[Xiaoxian: #1]}}
+
+\newcommand{\method}{CISPO}
+
+
+\makeatletter
+\renewcommand\subparagraph{%
+ \@startsection {subparagraph}{5}{\z@ }{3.25ex \@plus 1ex
+ \@minus .2ex}{-1em}{\normalfont \normalsize \bfseries }}%
+\makeatother
+
+\newcommand{\modelname}{MiniMax-01}
+\newcommand{\modelnameflash}{MiniMax-01}
+
+\bibliographystyle{plainnat}
+
+
+\let\cite\citep
+
+\title{The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence}
+
+
+\reportnumber{}
+
+
+\renewcommand{\today}{}
+
+
+\author[*,1]{MiniMax\footnote{Please send correspondence to model@minimax.io.}}
+
+
+\begin{abstract}
+We introduce the MiniMax-M2 series, a family of Mixture-of-Experts language models built around the principle that \emph{mini activations can unleash maximum real-world intelligence}. The flagship M2 contains 229.9B total parameters with only 9.8B activated per token. Designed end-to-end for agentic deployment, the M2 series rests on three components: (i) agent-driven data pipelines producing large-scale, verifiable trajectories across agentic coding and agentic cowork, each grounded in an executable workspace and an artifact-aligned reward; (ii) Forge, a scalable agent-native RL system that adapts to long-horizon agent trajectories, paired with windowed-FIFO scheduling, prefix-tree merging, inference optimization, and a clean training--inference--agent decoupling that supports both white-box and black-box agents; (iii) the latest M2.7 checkpoint takes an early step toward \emph{self-evolution}---autonomously debugging training runs and modifying its own scaffold. Across M2 through M2.7, this combination translates a mini-activation footprint into frontier-tier performance on agentic coding, deep search, office-task, and reasoning benchmarks.
+\end{abstract}
+
+\begin{document}
+
+
+
+
+\maketitle
+
+
+% Hero figure paired with the abstract on page 1.
+% \begin{figure}[H] forces in-place placement (float package, loaded above);
+% \clearpage pushes everything that follows to the next page.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures_new/main_bar.pdf}
+\caption{Performance of MiniMax-M2.7 versus closed-weight frontier baselines across agentic coding, agentic cowork, and reasoning \& knowledge benchmarks. With only $\sim$10\,B activated parameters, MiniMax-M2.7 remains competitive with substantially larger and more compute-intensive systems.}
+\label{fig:main-bar}
+\end{figure}
+\clearpage
+
+
+\input{intro}
+
+\input{section/pretrain_architecture}
+
+\input{section/pretrain_data}
+
+\input{section/post_training_data}
+
+\input{section/post_training_sft}
+
+\input{section/post_training_rl}
+
+\input{section/post_training_agentic}
+
+
+\input{eval}
+
+
+\input{conclusion}
+
+\bibliography{M2_cite}
+
+\newpage
+\input{app}
+
+
+\end{document}

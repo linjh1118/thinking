@@ -13,14 +13,17 @@ status: read
 rating: 5
 related: ["[[Topics/13_base_model/MiniMax/2605_MiniMax_M2_Series/MiniMax-M2-Series-Mini-Activations-Max-Real-World-Intelligence]]", "[[Topics/13_base_model/MiniMax/2606_MiniMax_M3/src/MiniMax-M3 - Official Blog]]"]
 created: 2026-06-01
+updated: 2026-09-01
 ---
 
 # TL;DR
 
 MiniMax M3 是 M2 系列之后的一次架构级换代：它把 **frontier coding / agentic tasks、1M context、native multimodality** 放到同一个模型里，核心机制是 MiniMax Sparse Attention (MSA)。我对它的判断是：M3 的关键不只是“更会写代码”，而是把长上下文压到可承受成本后，让 agent 可以把论文、repo、日志、工具轨迹和截图/视频都放进一个持续工作线程里。
 
+![MiniMax M3 官方能力总览](src/assets/m3-benchmark.jpeg)
+
 > [!note]
-> 技术报告和权重还没同步放出。官方博客写明“未来 10 天内发布 technical report 并开源对应权重”。所以这篇先基于官方发布博客、API 文档、工具文档与第三方路由页整理，等 technical report 出来后应再更新一次。
+> M3 权重和 Hugging Face model card 已公开；但截至本次更新，官方仍没有发布可独立核对训练细节与完整消融的 technical report。因此本页达到“详细 Tech Blog + Model Card”整理标准，不冒充论文精读；未公开的参数分解、训练数据配比和 RL recipe 均明确留白。
 
 ## 问题与动机
 
@@ -36,6 +39,8 @@ M3 要解决的是这个更底层的问题：
 ## 方法核心思路
 
 ### 1. MSA：把长上下文变成可扩展维度
+
+![MiniMax Sparse Attention 架构](src/assets/m3-msa-arch.png)
 
 M3 的核心架构变化是 **MiniMax Sparse Attention (MSA)**。官方给出的直觉是：先用预筛选阶段找出相关 KV blocks，再对被选中的 blocks 做精确注意力计算。
 
@@ -102,6 +107,8 @@ MiniMax API 文档明确说，M3 natively supports Interleaved Thinking：每轮
 
 ### Real-world task demos
 
+![M3 独立复现论文的长时程任务案例](src/assets/m3-paper-repro.png)
+
 | 任务 | M3 表现 | 我怎么看 |
 |------|---------|----------|
 | 论文复现 | 近 12 小时自主运行，18 commits，23 experimental figures，复现核心实验趋势 | 这是 long-context + coding + multimodal 的组合验证，比单纯 SWE 分数更能说明 agent 能力 |
@@ -143,6 +150,8 @@ M2 系列的核心是“mini activations + agentic RL + self-evolution”；M3 �
 | 开源状态 | M2 系列已开源/技术报告已出 | 官方称 technical report 和 weights 10 天内发布 |
 
 ## 相关资料
+
+- [HF Model Card 本地原文](src/HF%20Model%20Card.md)
 
 - 官方博客剪藏：[[Topics/13_base_model/MiniMax/2606_MiniMax_M3/src/MiniMax-M3 - Official Blog]]
 - AI Coding Tools 文档：待补剪藏

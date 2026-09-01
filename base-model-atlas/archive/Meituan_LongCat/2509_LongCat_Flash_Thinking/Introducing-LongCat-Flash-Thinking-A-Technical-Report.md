@@ -13,10 +13,13 @@ rating: 4
 topic: "13_base_model/Meituan_LongCat"
 related: ["[[2509_LongCat_Flash|LongCat-Flash]]", "[[2601_LongCat_Flash_Thinking_2601|Thinking-2601]]"]
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > 美团 LongCat 系列的**第一个 reasoning model**：在 [[2509_LongCat_Flash|LongCat-Flash]] 这个 560B MoE / 27B activated 的 non-thinking 基座上，叠加**长 CoT cold-start（mid-training + reasoning-oriented SFT）+ 大规模 RL** 这套两阶段范式。三个真正的核心贡献：(1) **Domain-Parallel RL**——把 STEM / Code / Agentic 三路解耦并行训练、再用 task-vector normalization + DARE dropout + SCE erase 三步融合成近 Pareto-optimal 单模型，绕开 mixed-domain RL 的 negative transfer；(2) **DORA (Dynamic ORchestration for Asynchronous rollout)** RL 系统——streaming rollout + 多版本 actor + elastic colocation，在数万张卡上比同步训练快 >3×，RL 投入占 pre-training compute 的近 20%；(3) **agentic efficiency 副产品**：AIME-25 平均 token 从 19,653 降到 6,965（-64.5%），精度不降。MiniF2F pass@1 = 67.6%（开源 SOTA，超 DeepSeek-V3.1 18 个百分点）。和 Flash 相比，它没有改架构，只是把同一基座"激活"成 reasoning model；后续 [[2601_LongCat_Flash_Thinking_2601|Thinking-2601]] 进一步把 agentic / tool-use 推到更深。
+
+![LongCat-Flash-Thinking 的 cold-start 数据流水线](src/assets/cold_start_data_pipeline.png)
 
 ## 1. 问题与动机
 
@@ -200,6 +203,8 @@ DORA 是这篇技术报告的另一块核心贡献，主要解决两个 RL infra
 - 弱项：General QA（MMLU-Pro / MMLU-Redux）和 Alignment（IFEval / Arena-Hard）相对靠后——这正是 cold-start 阶段把重心放在 reasoning 上的取舍。
 
 ### 4.2 Agentic Token Efficiency（另一核心卖点）
+
+![LongCat-Flash-Thinking 的 token efficiency](src/assets/token_efficiency0922.png)
 
 Figure token_efficiency0922 显示：在 AIME-25 上启用 tool use（agentic reasoning），LongCat-Flash-Thinking 把平均 token 消耗从 **19,653 降到 6,965（-64.5%）**，**精度不掉**。
 

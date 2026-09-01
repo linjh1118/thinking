@@ -1,0 +1,98 @@
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+This section presents a comprehensive evaluation of the \longcat base model, including the methodology and results.
+
+\subsubsection{Evaluation Benchmarks and Configurations}
+The model evaluation covers four core capabilities: general tasks, general reasoning, mathematical reasoning, and coding. The benchmarks used for assessment include:
+
+\begin{itemize}
+    \item \textbf{General Tasks:} MMLU~\citep{hendrycks2021measuringmassivemultitasklanguage}, MMLU-Pro~\citep{wang2024mmluprorobustchallengingmultitask}, C-Eval~\citep{huang2023ceval}, and CMMLU~\citep{li2023cmmlu}.
+
+    \item \textbf{Reasoning Tasks:} GPQA~\citep{rein2023gpqagraduatelevelgoogleproofqa}, SuperGPQA~\citep{pteam2025supergpqascalingllmevaluation}, BBH~\citep{BBH}, PIQA~\citep{piqa}, DROP~\citep{drop}, CLUEWSC~\citep{clue}, and WinoGrande~\citep{winogrande}.
+    
+    \item \textbf{Math Tasks:} GSM8K~\citep{cobbe2021gsm8k}, MATH~\citep{mathbenchmark}.
+
+    \item \textbf{Coding Tasks:} MBPP+~\citep{humanevalmbppplus}, HumanEval+~\citep{humanevalmbppplus}, MultiPL-E~\citep{cassano2022multiplescalableextensibleapproach}, and CRUXEval~\citep{gu2024cruxevalbenchmarkcodereasoning}. 
+\end{itemize}
+
+
+We compare the \longcat base model with state-of-the-art open-source base MoE models, including DeepSeek-V3.1 Base \citep{deepseekai2025deepseekv3technicalreport}, Llama-4-Maverick Base \citep{meta2025llama4}, and Kimi-K2 Base \citep{Kimi_K2_web_doc}.
+
+To ensure fairness, all models are evaluated under identical pipelines and configurations. For minority results that cannot be reproduced, we directly adopt metrics from public reports and explicitly annotate them in Table~\ref{tab:base_model_results}. The evaluation settings are as follows:
+
+\begin{itemize}
+\item General/reasoning/math tasks: Use few-shot prompts to guide output format. Performance is measured via accuracy or F1 score.
+
+\item HumanEval+ and MBPP+: Follow OpenAI's recommended setting \citep{chen2021codex}.
+
+\item MultiPL-E: Follow BigCode Evaluation Harness\citep{bigcode-evaluation-harness}.
+\item CRUXEval: Follow the official configuration\footnote{\url{https://github.com/facebookresearch/cruxeval}}, employing 2-shots examples.
+
+\end{itemize}
+
+\subsubsection{Evaluation Results}
+
+Table~\ref{tab:base_model_results} presents the evaluation results across diverse benchmarks. \longcat Base model achieves performance on par with state-of-the-art base models despite its compact active/total parameter size. Although Llama-4-Maverick has fewer activated and total parameters, \longcat Base surpasses both on nearly all benchmarks.
+
+A comparative analysis reveals that \longcat Base matches DeepSeek-V3.1 Base's performance across all domains despite containing fewer parameters. While the two models perform similarly in general tasks, \longcat Base demonstrates a notably advantage on the MMLU-Pro benchmark (featuring challenging questions). For reasoning tasks, \longcat Base attains a higher average score. In math and coding tasks, it outperforms DeepSeek-V3.1 Base on most benchmarks, with only marginal performance gaps observed on CRUXEval and MultiPL-E. Against Kimi K2 Base, \longcat Base shows modestly lower performance in general tasks but achieves parity or superiority in reasoning, math, and coding tasks. 
+
+These results collectively underscore \longcat Base's parameter efficiency, as it delivers competitive or superior performance to larger models across the majority of evaluated benchmarks.
+
+
+\begin{table}[htbp]
+    \caption{Comparison between \longcat and other base models. Values marked with * are sourced from public reports.}
+    \centering
+    \resizebox{0.8\textwidth}{!}{
+    \begin{tabular}{l|ccc|cc}
+        \toprule
+        Benchmark & \begin{tabular}[c]{@{}c@{}}DeepSeek-V3.1 \\ Base\end{tabular} & \begin{tabular}[c]{@{}c@{}}Llama-4-Maverick \\ Base\end{tabular} & \begin{tabular}[c]{@{}c@{}}Kimi-K2 \\ Base\end{tabular}  & \begin{tabular}[c]{@{}c@{}}\longcat \\ Base\end{tabular} \\ 
+        \midrule
+        Architecture & MoE & MoE  & MoE  & MoE  \\
+        \# Total Params & 671B & 402B & 1043B  & 560B \\
+        \# Activated Params & 37B & 17B & 32B  & 27B \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{General Domains}} \\
+        \midrule
+        MMLU $_{\text{(acc)}}$ & 87.46 & 84.41 & 87.47  & 87.05 \\
+        MMLU-Pro $_{\text{(acc)}}$ & 59.29 & 63.90  & 68.36  & 70.32 \\
+        CEval $_{\text{(acc)}}$ & 89.33 & 81.93  & 91.24  & 87.73 \\
+        CMMLU $_{\text{(acc)}}$ & 88.21 & 80.71 & 90.35  & 87.19 \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{General Reasoning}} \\
+        \midrule
+        GPQA $_{\text{(acc)}}$  & 47.16 & 48.08 & 45.89  & 51.09 \\
+        SuperGPQA $_{\text{(acc)}}$ & - & 40.58*  & 44.70*  & 52.03 \\
+        BBH $_{\text{(acc)}}$ & 89.46 &87.56 & 89.19 & 90.54  \\
+        DROP $_{\text{(f1)}}$  & 80.74 & 77.44 & 69.81  & 78.39  \\
+        PIQA $_{\text{(acc)}}$ & 93.00 & 90.59 & 95.10  & 92.33 \\
+        WinoGrande $_{\text{(acc)}}$ & 83.50  & 73.32 & 82.87  & 85.08 \\
+        CLUEWSC $_{\text{(acc)}}$ & 88.16 & 88.00 & 76.32  & 91.12 \\
+
+        \midrule
+        \multicolumn{5}{c}{\textbf{Mathematical Reasoning}} \\
+        \midrule
+
+        GSM8K $_{\text{(acc)}}$ & 92.22 & 84.61 & 92.27  & 93.86 \\
+        MATH $_{\text{(acc)}}$ & 65.38 & 63.34 & 66.74 & 69.28 \\
+        \midrule
+        \multicolumn{5}{c}{\textbf{Coding}} \\
+        \midrule
+        MBPP+ $_{\text{(pass@1)}}$ & 59.26 & 70.11 & 80.49  & 77.25 \\
+        HumanEval+ $_{\text{(pass@1)}}$  & 67.07 & 60.37  & 69.84  & 65.85 \\
+        MultiPL-E $_{\text{(pass@1)}}$ & 62.00 & 58.35 & 59.22  & 69.25 \\
+        CRUXEval-I $_{\text{(pass@1)}}$ & 65.87 & 62.00 & 65.87  & 71.63  \\
+        CRUXEval-O $_{\text{(pass@1)}}$ & 71.25 & 64.25 & 68.75  & 75.88 \\
+        \bottomrule
+    \end{tabular}
+    }
+    
+    \label{tab:base_model_results}
+\end{table}
+ 
+
+
+
+
+
+
+

@@ -1,0 +1,270 @@
+\section{Large-Scale Reinforcement Learning}
+RL is a critical phase for advancing the reasoning capabilities of LLMs, offering superior token efficiency and generalization over SFT.
+However, applying RL to LLMs is notoriously challenging. The training process is often unstable, highly sensitive to hyperparameters, and incurs substantial system overhead that complicates industrial-scale deployment.
+To overcome these hurdles, we develop a comprehensive, three-pronged solution: 1) At the system level, we build DORA, a robust distributed RL framework that supports asynchronous training and flexible accelerator usage to ensure stability and efficiency. 2) At the algorithm level, we introduce several modifications to stabilize training and enhance adaptability. 3) At the reward level, we design a versatile reward system capable of handling both verifiable and non-verifiable tasks, ensuring broad domain applicability.
+The following subsections will detail our RL infrastructure, algorithmic enhancements, and reward design.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9 \linewidth]{figs/figs_workflow/streaming_framework}
+    \caption{
+    % The Demo timeline of DORA system uses a staleness of two
+    The staleness in the demo timeline of DORA system is set to 2, which allows up to three policy weights $\theta_{j}$. At the $n$-th step, prompts 5, 8, 3, 1, 6, and 2 are completed sequentially. The completion of prompt 2 fills the batch, which is then used for training. Prompts 10 and 12 are discarded and scheduled for regeneration. The remaining prompts continue rollout using KV-cache reuse or transfer.}
+    \label{fig:streaming_workflow}
+\end{figure}
+
+\subsection{RL Infrastructure}
+\label{subsec:rl_infra}
+The efficiency in RL training is hindered by two primary problems: \textit{RL scheduling}~\citep{xiao2023adaptive, hu2024openrlhf,sheng2025hybridflow}, and \textit{skewed generation problem}~\citep{wu2025llamarl,zhong2025streamrl,seed2025seed1}.
+In scheduling, the disaggregated architecture leads to device idleness due to dependencies among different stages.
+Conversely, the colocated architecture avoids this by allowing all roles share the same devices, but this efficiency comes at a cost. The tight coupling of hardware for heterogeneous workloads, where generation is memory-bound and training is compute-bound, can lead to suboptimal performance.
+The second problem, skewed generation, arises in synchronous training, where the entire batch is blocked by the single longest output. This issue is exacerbated in long-context scenarios, such as reasoning or agentic tool use. Asynchronous training approaches~\citep{team2025kimi,fu2025areal}, like partial rollout, have been proposed to optimize the long-tail generation problem. It breaks up the long responses into segments and utilizes the latest actor model to generate each segment across different iterations. However, we observed considerable inefficiency in the re-prefilling of interrupted samples in practice. The use of latest updated actor models requires re-prefilling of all interrupted samples after concatenating them with previously incomplete responses in the rollout. Furthermore, the use of inconsistent policy versions for different segments of a single response could theoretically harm model convergence.
+
+\subsubsection{DORA: Dynamic ORchestration for Asynchronous rollout} 
+To address the aforementioned challenges, we introduce our DORA system. The core idea is to optimize long-tail generation by leveraging multiple old versions of the Actor model through streaming rollout while keeping sampling consistency. To further enhance scheduling efficiency and parallelize both generation and training stages without device idleness, we introduce the elastic colocation of RL roles. As illustrated in Figure~\ref{fig:streaming_workflow}, DORA employs a disaggregated architecture that divides accelerator clusters into two distinct groups:
+
+\begin{itemize}
+\item\textbf{Standalone Generator Group}: A pool of devices exclusively dedicated to the Generator role, ensuring optimized rollout. The Generator is a replica of the Actor model specialized for inference.
+\item\textbf{Elastic Role Group}: A pool of devices where roles are elastically colocated to ensure flexibility and efficiency. These devices can dynamically switch between serving as Generators and executing various training-related roles (e.g., Reference \& Actor, Reward \& Critic) with elasticity.
+\end{itemize}
+
+\textcolor{black}{Based on our resource scheduling for asynchronous rollout, we present the workflow of our DORA system as follows:}
+
+\noindent\paragraph{Generation Phase} To improve the rollout throughput, Generator devices are scaled up, with both Standalone and Elastic Groups activating the inference engine for rollouts. The inference instances maintain up to a predefined staleness number of policy weight versions. During the rollout stage, our Load Balancing Controller rebalances the resource allocation across various policy versions and reuses the KV-cache within the inference engine, as illustrated in Figure~\ref{fig:kv_cache_workflow}. Crucially, completed samples are immediately streamed to the next stage, without blocking the subsequent stages.
+\noindent\paragraph{Experience-Maker Phase} Once the generated samples are satisfied for the training conditions, the Elastic Group scales down its Generator roles, and other RL roles are activated. In a partial colocation setup, Reference \& Actor and the Reward \& Critic roles execute the inference stage in parallel. Meanwhile, the Standalone Generators temporarily switch to the training engine to recompute log probabilities, a critical step to minimize the system-level mismatch between the inference and the training engine. Once completed, the Standalone Group reactivates the Inference engine and continues generation using the previous policy versions. 
+\noindent\paragraph{Model Training Phase} Finally, the Actor and Critic models are trained on the collected experience. At the same time, the Standalone Group continues to generate without blocking, while rebalancing workloads and reallocating resources. Notably, the specific policy version will be deleted once it meets the user-defined eviction strategy. After the training finished, the latest policy weights are efficiently synchronized back to the Generator roles using layer-wise Point-to-Point communication, to prepare for the next round of RL training.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0 \linewidth]{figs/figs_workflow/load_balance.pdf}
+    \caption{The workflow of Load Balancing. The Load Balancing Controller monitors the load on each device, and when predefined thresholds are met, it initiates resource redistribution, including weight transfer and KV-cache transfer.}
+    \label{fig:kv_cache_workflow}
+\end{figure}
+
+The key benefits of DORA are summarized as follows: 
+1) The streaming architecture ensures that the responses completed first can be immediately processed in subsequent stages, without being blocked by the longest response. 2) The multi-version design guarantees that each response is generated completely by the same Actor model until completion, eliminating the inconsistency among segments. This also enables easy reuse of the KV-cache for the interrupted samples to significantly reduce the overhead, especially in prefill-heavy scenarios. 
+3) Our Elastic Colocation strategy achieves near-zero bubbles in terms of the device idleness except for the negligible duration via intra-process context switching and offloading. It also preserves the advantages of the disaggregated architecture by allowing flexible allocation of both the number and type of accelerators to distinct workloads.
+
+\subsubsection{Optimization for Large-Scale Training} 
+To enable industrial-level RL training across tens of thousands of accelerators with our DORA system, we have introduced several key engineering optimizations.
+
+\paragraph{Massive Streaming RPC} The control plane of our system is built on PyTorch RPC ~\citep{damania2023pytorch}, which provides remote procedure calls optimized for the tensor. It decreases the significant serialization and deserialization costs for tensors, and allows dedicated and flexible control over the computing clusters. To enable large-scale RPC capability, we enhanced the TCPStore implementation with additional group-key primitives and data compression during RPC initialization, reducing communication complexity from $O(N^2)$ to $O(N)$. At runtime, we introduced bidirectional streaming RPC—unlike the unary RPC in Pytorch—which enables high-performance streaming rollouts for Inference Engine during asynchronous training.
+\paragraph{Efficient MoE Parallelism at Scale}
+
+To deploy LongCat-Flash on our accelerators, we employ a high degree of expert parallelism for generation. 
+This strategy not only distributes the computational load but also increases the available memory per accelerator, which is critical for accommodating the large KV-cache required by long-context tasks. 
+However, as the scale of expert parallelism increases, maintaining synchronization across distributed accelerators is often bottlenecked by host-side kernel launch overheads, which can lead to execution desynchronization. 
+To resolve this, we employ a graph-level compilation approach to reduce the kernel dispatch frequency~\citep{ansel2024pytorch}, thereby enabling the application of graph-level optimizations and effectively overlapping communication with computation. 
+As a result, this strategy yielded a $1.5$× rollout speedup, compared to standard eager execution.
+
+Ultimately, the combination of the DORA architecture and large-scale optimizations demonstrates remarkable performance and industrial-grade capability, achieving more than a threefold speedup compared to synchronous training for our 560B LongCat-Flash models across tens of thousands of accelerators.
+
+% Ultimately, the combination of the DORA system and these optimizations demonstrates superior performance and industrial-grade capability, powering the RL training for our 560B LongCat-Flash-Thinking models across tens of thousands of accelerators.
+
+\subsection{RL Algorithm}
+
+\subsubsection{Training Objective}
+Our RL algorithm is developed based on the DORA system. We denote $\pi$ as the autoregressive language model parameterized by $\theta$. Given a query $x$ from the training set $\mathcal{D}$, the likelihood of response $y$ is denoted as $\pi_\theta(y|x)=\prod_{t=1}^{|y|}\pi_\theta(y_t|x,y_{<t})$, where $|y|$ denote the length of the response $y$. Using samples generated from behavior policy $\pi_{\mu}$, Group Relative Policy Optimization (GRPO)~\citep{grpo}, a variant of PPO~\citep{schulman2017proximalpolicyoptimizationalgorithms}, optimizes the policy model within a trust region with group-level advantages, via the following objective:
+% \begin{equation}
+% \begin{aligned}
+% \label{eq:grpo}
+%     \mathcal{J}_\text{GRPO}(\theta)=\mathbb{E}_{\substack{x\sim\mathcal{D},\\\{y_i\}_{i=1}^G\sim\pi_{\mu}(\cdot|x)}}\left[\frac{1}{G}\sum_{i=1}^G\frac{1}{|y_i|}\sum_{t=1}^{|y_i|}\left(\min\left(r_{i,t}(\theta)\hat{A}_{i,t}, \text{clip}(r_{i,t}(\theta),1-\epsilon,1+\epsilon)\hat{A}_{i,t}\right)-\beta\mathbb{D}_{\text{KL}}[\pi_\theta||\pi_{\text{ref}}]\right)\right],
+% \end{aligned}
+% \end{equation}
+\begin{equation}
+\label{eq:grpo}
+\begin{aligned}
+\mathcal{J}_\text{GRPO}(\theta) =\ 
+&\mathbb{E}_{\substack{x\sim\mathcal{D},\\\{y_i\}_{i=1}^G\sim\pi_{\mu}(\cdot|x)}}\Bigg[ 
+    \frac{1}{G} 
+    \sum_{i=1}^G \frac{1}{|y_i|}\sum_{t=1}^{|y_i|} \Bigg(
+        \min \Big(
+            r_{i, t}(\theta) \hat{A}_{i, t},\operatorname{clip}_\varepsilon\big(
+                r_{i, t}(\theta)
+            \big) \hat{A}_{i, t}
+    \Big)-\beta\mathbb{D}_{\text{KL}}[\pi_\theta||\pi_{\text{ref}}]\Bigg) 
+\Bigg],
+\end{aligned}
+\end{equation}
+where $r_{i,t}(\theta)=\frac{\pi_{\theta}(y_{i,t}|x,y_{i,<t})}{\pi_{\mu}(y_{i,t}|x,y_{i,<t})}$ is the importance weight, $\operatorname{clip}_\varepsilon$ is the function that clips to $[1-\varepsilon,1+\varepsilon]$ and $\epsilon$ defines the clipping range, 
+$\hat{A}_{i,t}$ is the estimated advantage, $G$ represents the sample group from the same query, $\pi_{\text{ref}}$ is the SFT model. However, when this objective is applied to asynchronous training in complex reasoning scenarios, it faces significant challenges due to \textit{distribution drift}, which can disrupt the model's convergence and result in its rapid collapse. This phenomenon can be categorized into two distinct sources:
+\begin{itemize}
+    \item \textbf{Engine Numerical Gap:} To achieve high throughput and data efficiency, highly optimized inference engines, e.g., vLLM~\citep{vllm}, are naturally applied to generate samples. However, these engines utilize optimizations like kernel fusion that do not guarantee bitwise consistency. This inconsistency is especially critical when the inference and training backends (e.g., the Megatron engine~\citep{shoeybi2019megatron}) are mismatched. While it is possible to use sampling probabilities from the inference engine as $\pi_{\mu}$ during policy optimization, the numerical errors accumulated from this backend mismatch can lead to instability.
+    \item \textbf{Policy Staleness:} In asynchronous training, each generated sample may originate from multiple prior versions of the policy, which can become outdated as the current policy $\pi_\theta$ undergoes continuous updates. This discrepancy between the behavior policy that generates the data and the target policy being optimized introduces instability into the training process, hindering convergence and potentially causing model collapse in extreme cases. The standard objective like Eq.~\ref{eq:grpo}, which assumes a high degree of policy alignment, is not robust to these deviations, and the effects of staleness impair its effectiveness.
+\end{itemize}
+To mitigate the aforementioned issues, we revise the GRPO objective with the following improvements:
+\begin{itemize}
+    \item The vanilla GRPO loss includes a KL divergence loss term to prevent the policy from deviating far from the reference model. However, with the use of default $k_3$ estimator, the corresponding gradient of this term is biased during optimization despite its unbiased expectation~\citep{zang2025KLGRPO}. Hence, we remove the KL loss term in the GRPO loss, which helps with the substantial policy updates. 
+    \item We employ token-level loss, as opposed to sample-level loss, to enhance both the stability of training and the final performance of the model. Furthermore, following the approach of~\citet{dr_grpo}, we utilize the global constant maximum generation length during training as the denominator of the loss function. This adjustment mitigates the length bias that can pose challenges to training robustness.
+    \item Setting the clipping range is essential for effective policy optimization, as it affects both exploration and model stability. Besides, as expert routing strategy may change across different versions of policies, the staleness issue can be even more obvious in sparse MoE models, where negative token-level advantages can therefore lead to excessively large importance sampling ratios and unbounded variance. 
+    Following~\citet{dapo} and \citet{tencent_moba}, we employ a triplet clipping scheme: $\epsilon_{\text{neg}_\text{low}}$ and $\epsilon_{\text{neg}_\text{high}}$ bound the importance ratio for negative advantages, while $\epsilon_{\text{pos}_\text{high}}$ provides an upper bound for positive advantages. This strategy prevents model collapse and maintains sufficient entropy for effective exploration.
+    \item The engine numerical gap can accumulate during RL training and therefore destabilize the whole training procedure. We thus apply truncated importance sampling~\citep{off-policy-rl, ionides2008truncated} to mitigate the distribution mismatch between the inference engine and the train engine.
+\end{itemize}
+The final objective can be formulated as follows:
+\begin{equation}
+\begin{aligned}
+\mathcal{J}(\theta) =\ 
+&\mathbb{E}_{\substack{x\sim\mathcal{D},\\\{y_i\}_{i=1}^G\sim\pi_{\mu}(\cdot|x)}}\Bigg[ 
+    \frac{1}{G\cdot T_\text{max}} 
+    \sum_{i=1}^G \sum_{t=1}^{|y_i|} 
+    \min\bigg(r_{i,t}(\mu),C\bigg)\cdot \\
+&\qquad\max\Bigg(
+        \min \Big(
+            r_{i, t}(\theta) \hat{A}_{i, t},\ 
+            \operatorname{clip}\big(
+                r_{i, t}(\theta),\ 1-\varepsilon_{\text{neg}_\text{low}},\ 1+\varepsilon_{\text{pos}_\text{high}}
+            \big) \hat{A}_{i, t}
+        \Big),\ 
+        \varepsilon_{\text{neg}_\text{high}}\hat{A}_{i, t}
+    \Bigg)
+\Bigg],
+\end{aligned}
+\end{equation}
+where $T_{\text{max}}$ is the maximum generation length, $r_{i,t}(\mu)=\frac{\pi_{\mu}^\text{train}}{\pi_{\mu}^\text{infer}}$ is the importance ratio between train and inference engine under the sampling policy $\mu$, and $C$ is a constant value. 
+
+\subsubsection{Efficient Training Strategies}
+
+To better balance effectiveness and efficiency, while maintaining the stability and avoiding reward hacking of the model, we also utilize other techniques:
+% \paragraph{Off-policyness} We employ a large training batch size to mitigate the variance in gradient estimation. For each generation batch, we partite a large generation batch into 4 mini-batches for gradient update. 
+\noindent\paragraph{With-replacement Online Filtering} We employ online filtering to remove prompts with accuracy scores equal to 1 (fully correct) or 0 (fully incorrect) in the streaming generation stage, retaining the samples with consistently challenging difficulties that provide an effective gradient signal to prevent large gradient fluctuations. To ensure the data consumed-at-least-once and the integrity~\citep{xiao2024antdt}, we develop a sampling-with-replacement strategy for training, differing from the sampling-without-replacement used in dynamic sampling~\citep{dapo}. 
+This mechanism enables over-sampling prompts to be regenerated at each training step in synchronous training scenarios. In asynchronous training scenarios, the prompts are reused if their staleness does not exceed the maximum staleness threshold; otherwise, they are regenerated.
+\noindent\paragraph{Staleness Control} In the streaming pipeline, we apply maximum staleness as a part of interruption strategy to maintain controllable freshness of the generated samples. To enhance sample efficiency, we apply a data reuse strategy, where the oversampled data of the online filter are stored in the replay buffer and re-sampled in subsequent training iterations, determined by a predefined reuse-ratio. This mechanism caches these stale samples in the replay buffer, allowing them to be proportionally mixed with new samples in subsequent training iterations. Meanwhile, this mixed training batch is required to be shuffled to stabilize the staleness across the training within the buffer. Although this strategy inevitably increases the average staleness, the gains in sample efficiency justify it as an effective trade-off. 
+\noindent\paragraph{Incomplete-Signal Masking} We apply a masking strategy to samples that have grading issues, such as sandbox execution errors during code evaluation. This ensures the reliability of the reward signal, resulting in a marginally biased but low-variance gradient. We also mask samples that reach the generation token length without being identified as repetitions. This helps prevent the loss from being affected by outputs that are truncated due to length limits, further improving the stability of the training signal.
+
+\subsection{Reward System}
+The reward system is crucial for providing the direction of optimization during the training process. To train LongCat-Flash-Thinking, we develop a well-designed reward system with different reward models to provide accurate reward signals for different tasks.
+
+% \wangjianing{The reward signal is critical for RL optimization, which affects the stability and generalization of RL optimization.}
+
+\noindent\paragraph{Non-Verifiable Tasks}
+A discriminative reward model is employed to provide reward signals for non-verifiable tasks such as creative writing, knowledge QA, etc. To obtain this reward model, we initialize it based on the LongCat-Flash SFT checkpoint and subsequently train it on a comprehensive preference dataset, which has been curated through joint annotation by both humans and models. This approach enables the discriminative reward model to accurately capture preferences between different responses. For long CoT responses, we do not include the reasoning process as input; therefore, the reward model evaluates only the answer portion.
+
+\noindent\paragraph{Verifiable Tasks}
+% For verifiable tasks like STEM questions, and instruction following. a rule-based reward system has been widely used to assess if the model's answer is the same as the reference answer, or the model's response aligns with the required format. A well-designed rule-based reward can assess the model's response with high accuracy, and avoid reward hacking at the same time. However, there exists several drawbacks of using rule-based reward. The most significant drwaback of rule-based-reward system is it's always hard to design complete rules to cover all corner cases.
+
+For STEM domains, instead of using a rule-based reward system, a Generative Reward Model (GenRM) with reasoning process has been developed to provide the reward signal during the training process~\citep{zhou2025libra}. Given the question, the GenRM compares the reference answer with the response from the LLM and determines whether the response is correct.
+
+% There exist several advantages of using the GenRM with reasoning process. Firstly, GenRM accommodates various expressions of answers that have the same meaning. e.g. $a^2 - b^2$ and $(a+b)(a-b)$. At the same time, GenRM is capable of handling complex expressions. Moreover, our GenRM with reasoning process not only provides predictions, but also reveals the reason behind the predictions. The reasoning process enables us to continuously enhance the GenRM. Table \ref{tab:reward_models_accuracy} shows the prediction accuracy of different reward models on a human-labeled test set.
+
+There exist several advantages of using the GenRM with reasoning process. Firstly, GenRM accommodates various expressions of answers that have the same meaning, e.g., $a^2 - b^2$ and $(a+b)(a-b)$. At the same time, GenRM is capable of handling complex expressions. Moreover, our GenRM with reasoning process not only provides predictions, but also reveals the reason behind the predictions. The reasoning process enables us to continuously improve the GenRM. We compare the effectiveness of distinct reward models: a rule-based reward method, a non-reasoning GenRM that directly outputs True or False, and our GenRM that incorporates a reasoning process, on a human-labeled test set. Table \ref{tab:reward_models_accuracy} presents the prediction accuracy of these models, demonstrating the effectiveness of our GenRM method.
+\begin{table*}[h]
+\small
+\centering
+\caption{Prediction accuracy of different reward models.}
+  \begin{tabular}{ccc}
+    \toprule
+    Rule-based Reward Model & Non-Reasoning GenRM & Reasoning GenRM (Ours) \\
+    \midrule
+    80.9\%            & 94.0\%              & 98.8\% \\
+    \bottomrule
+\end{tabular}
+\label{tab:reward_models_accuracy}
+\end{table*}
+
+For coding tasks, a distributed code sandbox cluster is developed to efficiently manage millions of concurrent code executions for over $20$ programming languages. 
+To handle variable workloads from asynchronous RL, we design an asynchronous interface that processes large batches of code, significantly improving throughput by eliminating constant polling. Furthermore, we also optimize efficiency with once-compilation for multi-run executions to reduce overhead, and ensure fast and reliable data transmission and storage with compression and cache sharding.
+
+\subsection{Training Recipe}
+Our RL training recipe follows a structured, three-stage methodology designed to cultivate advanced reasoning, comprising: 1) Domain-Parallel Training, where expert models are independently trained on curated datasets for distinct domains (e.g., STEM, Code, Agentic); 2) Model Fusion, a novel technique to integrate these experts into a single, cohesive agent and consolidate their skills; and 3) General RL Fine-Tuning, a final stage to harmonize the model's capabilities and ensure robust performance across diverse applications.
+
+\subsubsection{Reasoning-oriented RL: A Domain-Parallel Approach}
+In large-scale RL, we observed that a domain-mixed training pipeline often results in negative transfer during asynchronous training, leading to inefficiency and sub-optimal performance. 
+We attribute this to significant distributional shifts between training batches, caused by varying response characteristics across domains (as shown in Figure~\ref{fig:domain_train_length_dis}).
+While sequential training (i.e., optimizing one domain at a time) can partially mitigate this issue, it is inherently inefficient and inflexible.
+Once later training stages commence, it is difficult to revisit or refine capabilities from earlier domains. Therefore, we introduce a domain-parallel training framework. This approach first trains separate "expert" models for distinct reasoning domains and then merges them into a single, powerful model that achieves nearly Pareto-optimal performance across all specializations. 
+The process concludes with a general RL phase to ensure broad capabilities and alignment. 
+This overall pipeline is illustrated in Figure~\ref{fig:parallel_training_pipeline}.
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=0.8\linewidth]{figs/domain_train_length_dis}}
+% \vspace{-.25cm}
+\caption{\small
+The response length distributions of different domains during large-scale RL training.
+}
+% \vspace{-.3cm}
+\label{fig:domain_train_length_dis}
+\end{figure}
+
+\noindent\paragraph{Query Curation for RL}
+To supply high-quality data for the RL stage, we implemented a rigorous, multi-faceted curation protocol tailored for each reasoning domain.
+For STEM and Code queries, the protocol begins with standard decontamination and deduplication against known benchmarks. 
+We further refine the STEM dataset by excluding unsuitable formats, such as multi-part, multiple-choice, or true/false questions. 
+For Code queries, test cases are systematically reformatted into a standardized input-output structure to ensure compatibility. 
+A crucial subsequent filtering step is applied to both domains to prevent reward signal bias: using an SFT model, we generate multiple responses for each query and retain only those instances exhibiting a balanced distribution of correct and incorrect solutions. 
+This avoids problems that are trivially easy (all correct) or impossibly hard (all incorrect), thereby improving training efficacy. Specifically for Code, we also leverage sandbox execution feedback to identify and remove ambiguous problems or mismatched test cases that could lead to false negatives.
+For Agentic RL, we curated a specialized dataset focused on mathematical problems that necessitate complex reasoning and tool application. 
+Each training instance is structured as a triplet, containing the problem description, a reference answer, and an accompanying grading rubric. 
+This detailed structure is designed to effectively guide the model in learning the appropriate tool-use trajectories for solving intricate tasks.
+
+% To ensure the provision of high-quality data for reasoning-oriented RL training, we developed a comprehensive verification pipeline to curate both STEM and code-related queries. 
+% For STEM data, this process encompasses decontamination and deduplication against widely used mathematical benchmarks, as well as the exclusion of unsuitable question types, including multi-part questions, multiple-choice formats, true/false items, incomplete problems, or those with excessively lengthy reference answers. 
+% Code queries undergo analogous curation procedures; in addition, test cases are reformatted into a standardized input-output format to eliminate incompatible entries. 
+% During RL training preparation across both domains, further filtering is applied: by leveraging an SFT model to generate multiple responses per query, we retain only those instances that yield a balanced distribution of correct solutions, specifically avoiding cases where all responses are either entirely correct or incorrect, to prevent reward signal bias and improve training efficacy. 
+% For code queries in particular, sandbox execution feedback is utilized to identify and remove ambiguous items or mismatched test cases that may result in false negatives. Ultimately, this rigorous curation protocol ensures that only informative samples contribute to robust RL outcomes for both STEM and coding tasks.
+% For agentic RL, we curate a specialized dataset primarily composed of mathematical problems that necessitate complex reasoning and the application of various tools. Each training instance comprises a problem description, a reference answer, and an accompanying grading rubric. This structure enables the model to effectively learn appropriate tool utilization for solving intricate tasks.
+
+\noindent\paragraph{Domain-Parallel Training}
+A key advantage of our domain-parallel approach is the ability to tailor training methodologies to the unique characteristics of each reasoning domain. 
+We applied distinct configurations for STEM, Code, and Agentic RL to maximize their respective strengths:
+
+% During the reasoning-oriented RL stage, we employ an independent and parallel training scheme across distinct domains, specifically STEM, code, and agentic tasks. This strategy confers 
+% % at least 
+% two key advantages: 
+% 1) It improves training efficiency;
+% 2) It provides greater flexibility by enabling customization of both the training procedures and algorithmic hyperparameters for each domain.
+
+\begin{itemize}
+    \item\textbf{STEM RL:} The training process utilizes a fixed $64$K context length. We implement a curriculum learning strategy by gradually increasing data difficulty (by lowering the pass-rate threshold for inclusion). Concurrently, we dynamically adjust the PPO clipping bound $\varepsilon_{\text{pos}_{\text{high}}}$ to maintain training stability. These approaches guarantee that the model's learning evolves in an efficient manner, while seamlessly adapting to the growing complexity of the training data.
+    \item\textbf{Code RL:} We employ a multi-stage curriculum for context length, starting at $48$K tokens, then progressively extending to $56$K, and ultimately reaching to $64$K. The context window is expanded once the $90$th percentile of generated output lengths approaches the current limit, ensuring smooth adaptation.
+    \item\textbf{Agentic RL:} The training process utilizes a fixed $48$K context length. We enforce structured reasoning and tool use via two techniques: 1) structured dialogue templates using  \texttt{<longcat\_think>} and \texttt{<longcat\_tool\_call>} tags, and 2) a tool-call format reward that incentivizes syntactically correct tool usage, ensusing stable and interpretable multi-turn trajectories.
+    % To ensure consistent multi-turn reasoning and tool use, we employ two key techniques including structured dialogue templates and tool-call format reward. While structured dialogue templates enforce explicit reasoning and tool invocation through the use of \texttt{<longcat\_think>} and \texttt{<longcat\_tool\_call>} tags, tool-call format reward incentivizes well-formed tool usage independent of correctness, thereby ensuring interpretable and stable multi-turn trajectories.
+\end{itemize}
+
+\subsubsection{Model Fusion}
+To consolidate the capabilities of our domain-expert models, we merge their parameters into a single, unified agent. 
+This approach is supported by prior work~\citep{yadav2023ties, DBLP:conf/naacl/LeeLWWCW25}, which has shown that merging domain-specific models can yield a single model with superior overall performance. 
+The primary challenge is mitigating parameter interference between the experts. 
+To address this, we employ a three-pronged strategy inspired by recent advances:
+1)~\textbf{Normalization}: We normalize the magnitude of task vectors ($\tau_{i}=\theta^{i}_{RL}-\theta_{SFT}$) to balance contributions from different domains.
+2)~\textbf{Dropout}: Similar to DARE~\citep{yu2024language}, we apply dropout to prune redundant delta parameters.
+3)~\textbf{Erase}: Inspired by SCE~\citep{DBLP:journals/corr/abs-2408-07990}, we erase parameter elements with minority-direction updates.
+This fusion strategy constructs a single model that excels in mathematical reasoning, coding, and agentic capabilities, as demonstrated in Figure~\ref{fig:model_fusion_results}.
+
+
+\subsubsection{Final Aligenment with General RL}
+The final stage of our pipeline is a general RL phase designed to enhance the model's capabilities in broad scenarios (e.g., creative writing, instruction following) and prevent any regression of core competencies like safety after fusion. 
+We first compile a diverse dataset from open-source and synthetic queries, then apply clustering algorithms to deduplicate and filter for high-quality, challenging data. 
+This curated dataset is then used for a final round of PPO training, ensuring the model is well-aligned, robust, and adaptable for real-world applications.
+
+%The general RL stage aims is to enhance the model’s capabilities and stability across general scenarios such as creative writing and instruction following. To prevent regression in key capabilities such as safety and instruction following after model fusion, we employ general RL training as the final stage. Specifically, an initial query dataset is obtained by aggregating open-source data and synthesizing queries. We then apply clustering algorithms to deduplicate semantically similar data and filter out low-difficulty content, yielding a high-quality, diverse general dataset for PPO training.
+
+
+% \begin{table*}
+% \small
+% \tabcolsep=0.1cm
+% \centering
+% \caption{The performance (\%) of model fusion.}
+%   \begin{tabular}{l|cccc|c|c}
+%     \toprule
+%      \multirow{2}{*}{\textbf{Model}} & \multicolumn{4}{c|}{\textbf{Math}} &  \multicolumn{1}{c|}{\textbf{Code}} & \textbf{Agent} \\
+%     & AIME-24 & AIME-25 & HMMT-25 & BeyondAIME & LiveCodeBench & SWE-Bench \\
+%     \midrule
+%     STEM RL & 93.6 & 90.8 & 84.8 & 70.8 &77.8 & 35.4 \\
+%     Code RL & 90.5 & 89.3 & 83.4 & 68.9 & 78.0  & 39.8 \\
+%     Agentic RL & 92.9 & 87.9  & 82.9 & 69.2 & 79.7  & \textbf{60.0} \\
+%     Fused Model & \textbf{94.3} & \textbf{90.8} & \textbf{85.4} & \textbf{71.2} & \textbf{80.1} & 55.8 \\
+%     \bottomrule
+% \end{tabular}
+% \label{tab:model_fusion}
+% \vspace{-5mm}
+% \end{table*}
+
+\begin{figure}[t]
+\centerline{\includegraphics[width=0.9\linewidth]{figs/fused_model_result}}
+% \vspace{-.25cm}
+\caption{\small
+The performance (\%) of the fused model after STEM RL, Code RL, and Agentic RL.
+}
+% \vspace{-.3cm}
+\label{fig:model_fusion_results}
+\end{figure}

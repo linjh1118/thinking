@@ -1,21 +1,27 @@
 ---
 title: "MiMo-V2.5-Pro — Xiaomi's Most Capable Agentic Model"
-type: paper
+type: model-note
 authors: ["Xiaomi MiMo Team"]
 year: 2026
 venue: Official Blog / Hugging Face
 url: "https://mimo.xiaomi.com/mimo-v2-5-pro/"
 arxiv: ""
-tags: [paper, base-model, agentic, MoE, Xiaomi]
+tags: [model-note, base-model, agentic, MoE, Xiaomi]
 status: read
 rating: 4
 topic: "13_base_model"
 related: ["[[Topics/13_base_model/Xiaomi_MiMo/2604_MiMo_V2_5]]", "[[Topics/13_base_model/Xiaomi_MiMo/2603_MiMo_V2_Pro]]"]
 created: 2026-06-11
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > MiMo-V2.5-Pro 是小米迄今为止最强的 Agentic 模型，1.02T 参数（42B active），基于混合注意力 + MTP 架构，在 SWE-Bench Pro、Terminal-Bench 2.0、τ³-bench 等指标上达到前沿水平，同时 Token 效率比 Claude Opus 4.6 高 40-60%。
+
+![MiMo-V2.5-Pro 官方 Token Plan 与产品定位](src/assets/tokenplan.png)
+
+> [!warning]
+> 官方材料是 Tech Blog 与 Hugging Face model cards，不是完整 technical report。它足以核对规模、上下文、公开评测和产品能力，但不足以复原训练 recipe、数据配比、RL 环境构造和完整消融，因此本页明确低于论文精读的证据等级。
 
 ## 问题与动机
 

@@ -13,10 +13,13 @@ rating: 5
 topic: "13_base_model/Meituan_LongCat"
 related: ["[[2509_LongCat_Flash|LongCat-Flash]]", "[[2601_LongCat_Flash_Lite|LongCat-Flash-Lite]]", "[[2511_LongCat_Flash_Omni|Flash-Omni]]"]
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > LongCat 系列路线最激进的一篇：放弃 [[2511_LongCat_Flash_Omni|Flash-Omni]] 那种 encoder-decoder 拼接式架构，转向 **DiNA（Discrete Native Autoregressive）**——把 text / vision / audio 全部 lexicalize 成离散 token，在单个 decoder-only MoE 上用同一个 NTP 目标统一建模。核心创新 **dNaViT** 用 SAE（语义对齐编码器）+ 8 级 RVQ 实现任意分辨率图像的 28× 压缩离散化，**首次把离散视觉建模的能力天花板顶到接近连续编码器**（与 Qwen3-VL-A3B 持平甚至在 MathVista/MathVision 反超）。它的真正价值不是某个 benchmark SOTA，而是给「下一代 any-to-any 多模态模型该走哪条路」提供了一个工业级的可落地答案：**离散不是性能瓶颈，是范式选择**。
+
+![LongCat-Next 总体能力比较](src/assets/longcat-next-benchmark-charts-2026-03-26.png)
 
 ## 1. 范式问题：为什么需要原生统一离散 token？
 
@@ -70,6 +73,8 @@ $$\mathcal{P}(A \mid z, \mathcal{Q}) \approx \mathcal{P}(A \mid I, \mathcal{Q})$
 - **Generative Sufficiency**（生成充分性）：token 应能反解出图像的结构与纹理。
 
 ### 3.2 为什么选 Semantic-and-Aligned Encoder (SAE)
+
+![dNaViT 视觉 tokenizer](src/assets/dnavit.png)
 
 论文把现有视觉表示分四类，作者押注第四类 **SAE**：
 

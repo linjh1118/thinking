@@ -13,10 +13,13 @@ rating: 4
 topic: "13_base_model/Meituan_LongCat"
 related: ["[[2509_LongCat_Flash|LongCat-Flash]]", "[[2603_LongCat_Next|LongCat-Next]]"]
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > LongCat 系列第 3 篇：在 560B / 27B 激活的 [[2509_LongCat_Flash|LongCat-Flash]] 基座上扩出 **全模态（text + image + video + audio in / text + audio out）+ 实时流式 audio-visual 交互**。核心思路是 **encoder-decoder 拼接式**：保留 LongCat-Flash 的 ScMoE + zero-computation experts 不变，外挂三个轻量组件（ViT 637M + audio encoder ~600M + audio decoder ~600M），通过 6 阶段 curriculum（text → speech → image → video → long-ctx → audio encoder alignment）实现 early-fusion 而不破坏单模态性能。真正的卖点不是 benchmark 第一，而是 **560B 这种规模做端到端流式音视频交互，端到端首包延迟控制在 ~100ms 量级**——开源 omni 模型里目前最强（OmniBench 61.38 / WorldSense 60.89 / 实时交互评分 1.37，比 Qwen3-Omni 高 0.56）。
+
+![LongCat-Flash-Omni 总体架构](src/assets/architecture.png)
 
 ## 1. 全模态实时交互的难点
 
@@ -90,6 +93,8 @@ created: 2026-07-01
    - 进 LLM 前如果视觉 token 还超限，再做插值下采样
 
 ### 2.5 Streaming Audio-Visual Interaction（核心创新）
+
+![Streaming audio-visual pipeline](src/assets/streaming_pipeline.png)
 
 这是区别于离线 omni 模型的关键。两个机制：
 

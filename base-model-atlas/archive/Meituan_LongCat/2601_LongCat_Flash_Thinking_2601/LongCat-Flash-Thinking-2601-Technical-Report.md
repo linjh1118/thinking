@@ -16,10 +16,13 @@ related:
   - "[[2509_LongCat_Flash_Thinking|LongCat-Flash-Thinking]]"
   - "[[2603_LongCat_Next|LongCat-Next]]"
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > 美团 LongCat 系列的 **2026 年 1 月 thinking 升级版**——仍是 560B MoE / 平均激活 27B，但重心从 2509 版本的"基础 reasoning + tool-augmented 数学"明确转向 **agentic reasoning**：agentic search / agentic tool use / tool-integrated reasoning 三条线全面拉到开源 SOTA。真正的新东西不是模型本身，而是 **三件配套基础设施**：(1) **Environment Scaling**——把"工具图"做成自动化 pipeline，扩张到 20+ domain、1万+ 环境、3.2万并发；(2) **Robust RL**——把真实世界的 noise（instruction noise + tool noise）显式拆解并 curriculum-injected 进训练；(3) **Heavy Thinking Mode**——同时扩 depth × width 的 test-time scaling，AIME-25 heavy mode 直接打满 100。在 BrowseComp 73.1、BrowseComp-ZH 77.7、τ²-Bench 88.2、VitaBench 29.3 这些 agentic 指标上把开源拉开了一个身位，但 GPQA / HLE / SWE-bench 这些"传统硬骨头"仍输给 Gemini-3-Pro / GPT-5.2 一个段位。
+
+![LongCat-Flash-Thinking-2601 的 RL 框架](src/assets/rl_framework.png)
 
 ## 1. 问题与动机：vs 2509 版本到底缺了什么
 
@@ -48,6 +51,8 @@ created: 2026-07-01
 这是这篇报告的真正技术干货，分成四个互相耦合的子系统讲。
 
 ### 3.1 Environment Scaling Pipeline（最核心的创新）
+
+![Environment Scaling](src/assets/env_scaling.png)
 
 目标：**自动**把一个高层 domain spec 变成可执行、可验证的环境集合。流程是：
 
@@ -84,6 +89,8 @@ created: 2026-07-01
 - **Agent-based QA Synthesis**（ambiguity 难度）：Finite State Machine 编排 Entity Extraction Agent → Question Synthesis Agent → Verification Agent → Answer Generation Agent → Judgment Agent。遇到 multi-answer conflict 自动加 attribute 重合成 question 保证唯一性。同时产出基于 Answer Generation Agent accuracy 的 **自动难度分级**。
 
 ### 3.5 Heavy Thinking Mode（test-time scaling 的具体实现）
+
+![Heavy Thinking Mode](src/assets/heavy_mode.png)
 
 两阶段：
 1. **Parallel Reasoning**：thinking model 并行生成 N 条 candidate trajectory（扩 width）。

@@ -13,10 +13,13 @@ rating: 5
 topic: "13_base_model/Meituan_LongCat"
 related: ["[[LongCat-Flash-Technical-Report]]"]
 created: 2026-07-01
+updated: 2026-09-01
 ---
 
 > [!tldr]
 > LongCat 系列的 **小基座** 路线 + 一篇少见的 **scaling law 类方法论文**。核心反直觉发现：当 MoE 的 expert 数量已经过了 "sweet spot" 进入饱和区（即模型足够 sparse），与其继续加专家，不如把参数分配给 **N-gram Embedding** 这个本身 $O(1)$ lookup、零通信开销的稀疏维度——在宽模型 + 中等深度（≤40 shortcut layers）的常见 regime 下能取得更优的 Pareto frontier。落地为 **LongCat-Flash-Lite**：68.5B MoE（256 experts × 14 shortcut layers，激活 2.9B–4.5B），其中 **31.4B 参数（46%）是 N-gram embedding**。和参数等价的 LongCat-Vanilla（同样 68.5B 但全部为 MoE）比，base model 几乎全线领先（BBH +5.1、GPQA +4.3、BigCodeBench +2.6），并在 agentic / coding 任务上击败 Qwen3-Next-80B-A3B、Gemini 2.5 Flash-Lite、Kimi-Linear-48B-A3B。
+
+![N-gram Embedding scaling 总览](src/assets/NE-overview.png)
 
 ## 1. 反直觉的核心发现：Embedding Scaling vs. Expert Scaling
 
@@ -127,6 +130,8 @@ polynomial rolling hash（Eq. 2）：$\mathcal{H}_n = (\sum_{j=0}^{n-1} t_{i-j} 
 **核心判断**：在 agentic 任务上 Lite 取得 **断崖式领先**（τ²-Telecom 72.8 vs. Qwen 13.2，差 5.5×；SWE-Bench 54.4 vs. Gemini 41.3）。在通用知识 / 数学 reasoning 上 Qwen3-Next-80B-A3B（80B 总参）整体更强，但 Lite 在中文（CEval 86.55 / CMMLU 82.48）显著超过 Gemini 2.5 Flash-Lite 和 Kimi-Linear。
 
 ### 4.3 Scaling curve 核心数字（Section 3）
+
+![N-gram Embedding 与专家扩展的 scaling curve](src/assets/scaling-1B_n.png)
 
 - **280M activated**：ratio > 30 时 NE 反而劣于 MoE baseline
 - **790M activated**：仅英文 val set 在 ratio=30 处劣于 MoE，其余全部领先

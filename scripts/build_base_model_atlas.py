@@ -295,12 +295,137 @@ SEED_OFFICIAL_SOURCES = {
 }
 
 
+# MiniMax's release pages and Hugging Face READMEs are complementary.  The M2
+# checkpoints share the later family technical report, while M3 currently has
+# a detailed release blog/model card but no standalone paper.
+MINIMAX_OFFICIAL_SOURCES = {
+    "MiniMax-M1": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M1-80k"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2506.13585"},
+    ],
+    "MiniMax-M2": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M2"},
+        {"label": "Tech Blog", "url": "https://www.minimax.io/news/minimax-m2"},
+        {"label": "Family Tech Report", "url": "https://arxiv.org/pdf/2605.26494"},
+    ],
+    "MiniMax-M2.1": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M2.1"},
+        {"label": "Tech Blog", "url": "https://www.minimax.io/news/minimax-m21"},
+        {"label": "Family Tech Report", "url": "https://arxiv.org/pdf/2605.26494"},
+    ],
+    "MiniMax-M2.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M2.5"},
+        {"label": "Tech Blog", "url": "https://www.minimax.io/news/minimax-m25"},
+        {"label": "Family Tech Report", "url": "https://arxiv.org/pdf/2605.26494"},
+    ],
+    "MiniMax-M2.7": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7"},
+        {"label": "Tech Blog", "url": "https://www.minimax.io/news/minimax-m27-en"},
+        {"label": "Family Tech Report", "url": "https://arxiv.org/pdf/2605.26494"},
+    ],
+    "MiniMax-M3": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/MiniMaxAI/MiniMax-M3"},
+        {"label": "Tech Blog", "url": "https://www.minimax.io/blog/minimax-m3"},
+    ],
+}
+
+
+MIMO_OFFICIAL_SOURCES = {
+    "MiMo-7B": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/XiaomiMiMo/MiMo-7B-RL"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2505.07608"},
+    ],
+    "MiMo-VL-7B": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/XiaomiMiMo/MiMo-VL-7B-RL"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2506.03569"},
+    ],
+    "MiMo-V2-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Flash"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2601.02780"},
+    ],
+    "MiMo-V2-Pro": [
+        {"label": "Tech Blog", "url": "https://mimo.xiaomi.com/mimo-v2-pro"},
+    ],
+    "MiMo-V2.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5"},
+        {"label": "Tech Blog", "url": "https://mimo.xiaomi.com/mimo-v2-5/"},
+    ],
+    "MiMo-V2.5-Pro": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro"},
+        {"label": "Tech Blog", "url": "https://mimo.xiaomi.com/mimo-v2-5-pro/"},
+    ],
+}
+
+
+LONGCAT_OFFICIAL_SOURCES = {
+    "LongCat-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Flash-Chat"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2509.01322"},
+    ],
+    "LongCat-Flash-Thinking": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2509.18883"},
+    ],
+    "LongCat-Flash-Omni": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Flash-Omni"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2511.00279"},
+    ],
+    "LongCat-Flash-Lite": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Flash-Lite"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2601.21204"},
+    ],
+    "LongCat-Flash-Thinking-2601": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-2601"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2601.16725"},
+    ],
+    "LongCat-Next": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-Next"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2603.27538"},
+    ],
+    "LongCat-2.0": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/meituan-longcat/LongCat-2.0"},
+        {"label": "Tech Blog", "url": "https://longcat.chat/blog/longcat-2.0/"},
+    ],
+}
+
+
+# Local source folders use human-readable names such as ``HF Model Card.md``.
+# Keep an explicit repository hint for their relative figures so the rendered
+# reading copy remains faithful even when the raw Markdown is viewed outside
+# Hugging Face.  M2 cards share one family folder, hence the filename overrides.
+HF_REPO_BY_LOCAL_MODEL_DIR = {
+    "2506_MiniMax_M1": "MiniMaxAI/MiniMax-M1-80k",
+    "2606_MiniMax_M3": "MiniMaxAI/MiniMax-M3",
+    "2505_MiMo_7B": "XiaomiMiMo/MiMo-7B-RL",
+    "2506_MiMo_VL_7B": "XiaomiMiMo/MiMo-VL-7B-RL",
+    "2601_MiMo_V2_Flash": "XiaomiMiMo/MiMo-V2-Flash",
+    "2604_MiMo_V2_5": "XiaomiMiMo/MiMo-V2.5",
+    "2604_MiMo_V2_5_Pro": "XiaomiMiMo/MiMo-V2.5-Pro",
+    "2509_LongCat_Flash": "meituan-longcat/LongCat-Flash-Chat",
+    "2509_LongCat_Flash_Thinking": "meituan-longcat/LongCat-Flash-Thinking",
+    "2511_LongCat_Flash_Omni": "meituan-longcat/LongCat-Flash-Omni",
+    "2601_LongCat_Flash_Lite": "meituan-longcat/LongCat-Flash-Lite",
+    "2601_LongCat_Flash_Thinking_2601": "meituan-longcat/LongCat-Flash-Thinking-2601",
+    "2603_LongCat_Next": "meituan-longcat/LongCat-Next",
+    "2607_LongCat_2_0": "meituan-longcat/LongCat-2.0",
+}
+HF_REPO_BY_CARD_FILENAME = {
+    "MiniMax-M2.md": "MiniMaxAI/MiniMax-M2",
+    "MiniMax-M2.1.md": "MiniMaxAI/MiniMax-M2.1",
+    "MiniMax-M2.5.md": "MiniMaxAI/MiniMax-M2.5",
+    "MiniMax-M2.7.md": "MiniMaxAI/MiniMax-M2.7",
+}
+
+
 TYPED_OFFICIAL_SOURCES = {
     **GLM_OFFICIAL_SOURCES,
     **DEEPSEEK_OFFICIAL_SOURCES,
     **KIMI_OFFICIAL_SOURCES,
     **QWEN_OFFICIAL_SOURCES,
     **SEED_OFFICIAL_SOURCES,
+    **MINIMAX_OFFICIAL_SOURCES,
+    **MIMO_OFFICIAL_SOURCES,
+    **LONGCAT_OFFICIAL_SOURCES,
 }
 
 
@@ -477,24 +602,25 @@ TEAMS = [
     {"id":"minimax","dir":"MiniMax","name":"MiniMax","region":"国内","color":"#ff8566","thesis":"长上下文 attention 效率与真实环境 agent RL 双线合流。","models":[
         ["2506","MiniMax-M1","Lightning Attention、1M context 与 CISPO。","https://arxiv.org/abs/2506.13585"],
         ["2510","MiniMax-M2","低激活 MoE 与 coding agent。","https://www.minimax.io/news/minimax-m2"],
-        ["2512","MiniMax-M2.1","多语言 coding 与 office agent。","https://www.minimax.io/news"],
-        ["2602","MiniMax-M2.5","真实环境 RL、search/tool/office tasks。","https://www.minimax.io/news"],
-        ["2603","MiniMax-M2.7","训练流程中的早期 self-evolution。","https://www.minimax.io/news"],
-        ["2606","MiniMax-M3","MSA、1M context 与原生多模态。","https://www.minimax.io/news"]]},
+        ["2512","MiniMax-M2.1","多语言 coding 与 office agent。","https://www.minimax.io/news/minimax-m21"],
+        ["2602","MiniMax-M2.5","真实环境 RL、search/tool/office tasks。","https://www.minimax.io/news/minimax-m25"],
+        ["2603","MiniMax-M2.7","训练流程中的早期 self-evolution。","https://www.minimax.io/news/minimax-m27-en"],
+        ["2606","MiniMax-M3","MSA、1M context 与原生多模态。","https://www.minimax.io/blog/minimax-m3"]]},
     {"id":"mimo","dir":"Xiaomi_MiMo","name":"Xiaomi · MiMo","region":"国内","color":"#ff9b5f","thesis":"小型 reasoning base 演进为低激活、长上下文、全模态 agent family。","models":[
         ["2505","MiMo-7B","25T tokens、MTP 与 reasoning pretraining。","https://arxiv.org/abs/2505.07608"],
         ["2506","MiMo-VL-7B","视觉 grounding 与 MORL。","https://arxiv.org/abs/2506.03569"],
         ["2601","MiMo-V2-Flash","309B/15B、Hybrid SWA 与 MOPD。","https://arxiv.org/abs/2601.02780"],
-        ["2603","MiMo-V2-Pro","万亿参数、1M context 与 agent workloads。","https://github.com/XiaomiMiMo"],
-        ["2604","MiMo-V2.5","开放 omnimodal agent family。","https://github.com/XiaomiMiMo"],
-        ["2604","MiMo-V2.5-Pro","1.02T/42B、长时程 coding agent。","https://github.com/XiaomiMiMo"]]},
-    {"id":"longcat","dir":"Meituan_LongCat","name":"Meituan · LongCat","region":"国内","color":"#ffd15f","thesis":"稳定 560B MoE 基座上扩展 thinking、agent、omni 与 formal reasoning。","models":[
+        ["2603","MiMo-V2-Pro","万亿参数、1M context 与 agent workloads。","https://mimo.xiaomi.com/mimo-v2-pro"],
+        ["2604","MiMo-V2.5","开放 omnimodal agent family。","https://mimo.xiaomi.com/mimo-v2-5/"],
+        ["2604","MiMo-V2.5-Pro","1.02T/42B、长时程 coding agent。","https://mimo.xiaomi.com/mimo-v2-5-pro/"]]},
+    {"id":"longcat","dir":"Meituan_LongCat","name":"Meituan · LongCat","region":"国内","color":"#ffd15f","thesis":"从 560B ScMoE 扩展到 1.6T/48B-active、1M context 的国产 ASIC agent 基座。","models":[
         ["2509","LongCat-Flash","560B/27B、Zero-Comp Experts 与 ScMoE。","https://github.com/meituan-longcat/LongCat-Flash-Chat"],
         ["2509","LongCat-Flash-Thinking","Domain-Parallel RL 与长 CoT。","https://arxiv.org/abs/2509.18883"],
         ["2511","LongCat-Flash-Omni","实时音视频 omni 扩展。","https://arxiv.org/abs/2511.00279"],
         ["2601","LongCat-Flash-Lite","68.5B/3B 与 embedding scaling。","https://arxiv.org/abs/2601.21204"],
         ["2601","LongCat-Flash-Thinking-2601","robust RL、agent search 与 1M context。","https://arxiv.org/abs/2601.16725"],
-        ["2603","LongCat-Next","DiNA 与原生离散 token omni。","https://arxiv.org/abs/2603.27538"]]},
+        ["2603","LongCat-Next","DiNA 与原生离散 token omni。","https://arxiv.org/abs/2603.27538"],
+        ["2607","LongCat-2.0","1.6T/48B active、LSA、35T+ tokens 与 1M context agent 基座。","https://longcat.chat/blog/longcat-2.0/"]]},
     {"id":"stepfun","dir":"stepfun","name":"StepFun · Step","region":"国内","color":"#74d6ff","thesis":"大规模 MoE、推理效率与专项 agent/reasoning family。","models":[
         ["2404","Step-1","千亿参数通用基模。","https://www.stepfun.com/"],
         ["2407","Step-2","万亿参数 MoE 与多模态 family。","https://www.stepfun.com/"],
@@ -730,6 +856,10 @@ PINNED_TIMELINE_VARIANTS = {
 # Family folders may contain a dedicated note/poster for a sibling SKU.  Keep
 # the generic family leaf on its own assets after those sibling files are added.
 MODEL_ASSET_OVERRIDES = {
+    "MiniMax-M3": {
+        "assetNote": "MiniMax-M3-Frontier-Coding-1M-Context-Native-Multimodality.md",
+        "assetPosters": ["MiniMax_M3_poster_zh.html"],
+    },
     "DeepSeek-V4": {
         "assetNote": "DeepSeek-V4.md",
         "assetPosters": ["deepseek_v4_poster_zh.html"],
@@ -742,6 +872,26 @@ MODEL_ASSET_OVERRIDES = {
     "GLM-4.7": {
         "assetNote": "GLM-4.7.md",
         "assetPosters": ["glm_4_7_poster_zh.html"],
+    },
+    "MiniMax-M2": {
+        "folder": "2605_MiniMax_M2_Series",
+        "assetNote": "MiniMax-M2-Series-Mini-Activations-Max-Real-World-Intelligence.md",
+        "assetPosters": ["MiniMax_M2_poster_zh.html"],
+    },
+    "MiniMax-M2.1": {
+        "folder": "2605_MiniMax_M2_Series",
+        "assetNote": "MiniMax-M2-Series-Mini-Activations-Max-Real-World-Intelligence.md",
+        "assetPosters": ["MiniMax_M2_poster_zh.html"],
+    },
+    "MiniMax-M2.5": {
+        "folder": "2605_MiniMax_M2_Series",
+        "assetNote": "MiniMax-M2-Series-Mini-Activations-Max-Real-World-Intelligence.md",
+        "assetPosters": ["MiniMax_M2_poster_zh.html"],
+    },
+    "MiniMax-M2.7": {
+        "folder": "2605_MiniMax_M2_Series",
+        "assetNote": "MiniMax-M2-Series-Mini-Activations-Max-Real-World-Intelligence.md",
+        "assetPosters": ["MiniMax_M2_poster_zh.html"],
     },
 }
 
@@ -1644,6 +1794,24 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                 hf_asset_base = raw_url.replace("/raw/main/README.md", "/resolve/main/")
             except (KeyError, TypeError, json.JSONDecodeError):
                 pass
+    if not hf_asset_base:
+        repo = HF_REPO_BY_CARD_FILENAME.get(source_file.name)
+        if not repo:
+            source_parts_lower = {part.lower() for part in source_file.parts}
+            repo = next(
+                (
+                    value
+                    for folder, value in HF_REPO_BY_LOCAL_MODEL_DIR.items()
+                    if folder.lower() in source_parts_lower
+                ),
+                "",
+            )
+        if repo and (
+            re.sub(r"[^a-z0-9]+", "_", source_file.stem.lower()).strip("_")
+            in {"hf_model_card", "hugging_face_model_card"}
+            or source_file.name in HF_REPO_BY_CARD_FILENAME
+        ):
+            hf_asset_base = f"https://huggingface.co/{repo}/resolve/main/"
     if hf_asset_base:
         raw = re.sub(
             r'(<img\b[^>]*?\bsrc=["\'])(?!https?://|data:|/)([^"\']+)',
@@ -1826,10 +1994,14 @@ def sync_source_archive(
             f'<tr id="{slugify(rel.parent.name or rel.stem)}"><td><a href="{html.escape(href, quote=True)}">{html.escape(str(rel))}</a></td>'
             f'<td>{html.escape(kind)}</td><td>{source.stat().st_size:,} B</td></tr>'
         )
-        selectable_model_card = rel.parts and rel.parts[0] == "huggingface_model_cards"
+        normalized_name = re.sub(r"[^a-z0-9]+", "_", source.stem.lower()).strip("_")
+        selectable_model_card = (
+            (rel.parts and rel.parts[0] in {"huggingface_model_cards", "model_cards"})
+            or normalized_name in {"hf_model_card", "hugging_face_model_card"}
+        )
         selectable_repo_metadata = rel.parts and rel.parts[0] == "huggingface_repository_metadata"
         if (rel.parent == Path(".") or selectable_model_card or selectable_repo_metadata) and source.name != "Official Source.md":
-            if source.name == "hf_model_card.md":
+            if normalized_name in {"hf_model_card", "hugging_face_model_card"}:
                 label = "Hugging Face Model Card · 官方主卡"
             elif selectable_model_card:
                 label = f"HF · {source.stem}"
@@ -1839,7 +2011,7 @@ def sync_source_archive(
                 source_docs.append({
                     "label": f"{label} · Markdown 阅读版",
                     "path": str(published.relative_to(ATLAS)),
-                    "kind": "hf-model-card" if selectable_model_card or source.name == "hf_model_card.md" else "readable",
+                    "kind": "hf-model-card" if selectable_model_card else "readable",
                     "name": source.name,
                 })
             elif source.suffix.lower() == ".pdf":
@@ -1866,9 +2038,15 @@ def sync_source_archive(
     if not rows:
         return None
     index = dest_root / "Sources.html"
-    index.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeek 一手资料包</title><style>
+    manifest_hint = (
+        '来源 URL、抓取日期、字节数与 SHA-256 见 '
+        '<a href="src/retrieval_manifest.json">retrieval_manifest.json</a>。'
+        if (source_root / "retrieval_manifest.json").is_file()
+        else "原始文件保留不改写；Markdown 另提供阅读版 HTML。"
+    )
+    index.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模型一手资料包</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#07111c;color:#eaf4ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:34px}}main{{max-width:1120px;margin:auto}}a{{color:#7dd3fc;text-decoration:none}}.back{{display:inline-block;margin-bottom:28px}}h1{{font-size:clamp(40px,7vw,74px);letter-spacing:-.05em;margin:0 0 12px}}.lead{{color:#9db2c3;line-height:1.7;max-width:820px}}.box{{margin-top:30px;overflow:auto;border:1px solid #20415a;border-radius:18px;background:#0b1b29}}table{{border-collapse:collapse;width:100%;font-size:13px}}th,td{{padding:13px 16px;border-bottom:1px solid #18374c;text-align:left;vertical-align:top}}th{{color:#78d7ec;background:#0d2435;position:sticky;top:0}}tr:last-child td{{border:0}}code{{color:#a7c5d8}}@media(max-width:700px){{body{{padding:20px 12px}}}}
-</style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的 DeepSeek 官方网页、模型卡、技术报告与可获得的论文源码。原始文件保留不改写；Markdown 另提供阅读版 HTML。来源 URL、抓取日期、字节数与 SHA-256 见 <a href="src/retrieval_manifest.json">retrieval_manifest.json</a>。</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
+</style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的官方网页、Hugging Face Model Card、技术报告与可获得的论文源码。{manifest_hint}</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
     priorities = {
         "hf_model_card.md": 0,
         "official_pro_model_card.md": 1,
@@ -1965,6 +2143,15 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 targets,
                 include_relative={Path("hf_model_card.md")},
             )
+            if source_archive:
+                record["sources"] = source_archive["index"]
+                record["sourceReader"] = source_archive["reader"]
+                record["sourceDocs"] = source_archive["docs"]
+        elif record["team"] in {"minimax", "mimo", "longcat"}:
+            # These families are maintained as first-party research packs in
+            # BrainHao. Publish the complete local source tree so the public
+            # atlas does not degrade to external links plus copied figures.
+            source_archive = sync_source_archive(model_root, dest_root, targets)
             if source_archive:
                 record["sources"] = source_archive["index"]
                 record["sourceReader"] = source_archive["reader"]

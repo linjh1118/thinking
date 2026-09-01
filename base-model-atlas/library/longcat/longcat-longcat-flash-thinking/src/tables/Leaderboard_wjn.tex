@@ -1,0 +1,96 @@
+\begin{table*}[t]
+\setlength{\tabcolsep}{4pt}
+\centering
+\caption{Performance (\%) comparison across multiple benchmarks (Best in \textbf{bold}, second best is \underline{underlined}).$\dagger$ indicates the score is from external reports.}
+\label{tab:main_results}
+\resizebox{0.98\textwidth}{!}{
+\begin{tabular}{@{}l| c c c c c c c@{}}
+\toprule
+\multirow{3}{*}{\textbf{Benchmark}} & \multicolumn{3}{c}{\textit{Open-Weights Reasoning Models}} & \multicolumn{3}{c}{\textit{Close-Weights Reasoning Models}} & \textit{Ours} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-8}
+& DeepSeek-V3.1- & Qwen3-235B-A22B- & GLM-4.5 & OpenAI-o3 & Gemini2.5-Pro & GPT-5- & \textcolor{mygreen}{LongCat-Flash-} \\
+&Thinking &Thinking-2507 & & & &Thinking &\textcolor{mygreen}{Thinking}  \\
+\midrule
+Architecture &MoE &MoE &MoE&-&-&-&MoE \\
+\# Total Params &671B & 235B &355B &- &- &- &560B\\
+\# Activated Params &37B &22B &32B &- &- &- &27B \\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{General QA}} \\
+MMLU-Pro$_\text{(acc)}$ &84.4 &84.4 &81.5 &\underline{85.3} &\textbf{86.7} &84.5 & 82.6\\
+MMLU-Redux$_\text{(acc)}$ &90.5 &91.4 &89.9 &\textbf{93.1} &90.1 &\underline{92.6} & 89.3\\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{Alignment}} \\
+IFEval$_\text{(strict prompt)}$ &86.3 &89.3 &85.4 &90.2 &\underline{92.4} &\textbf{92.8} & 86.9\\
+
+
+% Arena-Hard$_\text{(creative writting)}$ &86.6 &90.9 &88.6 &89.6 &\textbf{95.7} &\underline{91.8} &00.00\\
+% Arena-Hard$_\text{(hard prompt gpt)}$ &49.7 &63.8 &58.6 &\textbf{86.7}&65.7 &\underline{85.3}&00.00\\
+Arena-Hard$_\text{(hard prompt gemini)}$ &57.1 &74.5 &67.7 &\underline{87.1}&\underline{87.1}&\textbf{87.7} &69.9\\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{Mathematical Reasoning}} \\
+MATH-500$_\text{(Mean@1)}$ &98.8 &\textbf{99.6} &95.4 &98.4 &98.0 &\underline{99.2} &\underline{99.2}\\
+HMMT-25$_\text{(Mean@32)}$ &80.4 &\underline{83.8} &76.3 &71.9 &79.3 &\textbf{84.8} &83.7\\
+AIME-24$_\text{(Mean@32)}$ &\textbf{93.9} &\textbf{93.9} &89.3 &91.6$^\dagger$ &90.7 &92.0 &\underline{93.3}\\
+AIME-25$_\text{(Mean@32)}$ &87.9 &\underline{92.5} &85.5 &88.9$^\dagger$ &89.2 &\textbf{94.6}$^\dagger$ &90.6\\
+BeyondAIME$_\text{(Mean@10)}$ &\textbf{71.8} &\underline{71.5} &66.0 &63.2 &63.0 &70.0 &69.5\\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{General Reasoning}} \\
+GPQA-Diamond$_\text{(Mean@16)}$ &\underline{84.2} &80.4 &78.3 &81.9 &84.0 &\textbf{84.4} & 81.5\\
+ZebraLogic$_\text{(Mean@1)}$ &\underline{96.1}&\textbf{97.5} &90.9 &94.3 &92.4 &92.7 &{95.5}\\
+Sudoku-Bench$_\text{(Mean@1)}$ &1.0 &2.0 &1.0 &\textbf{70.0} &0.0 &\underline{63.0} &56.0\\
+ARC-AGI$_\text{(Mean@1)}$ &37.5 &45.3 &21.4 &{47.3} &46.8 &\textbf{59.0} & \underline{50.3}\\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{Coding}} \\
+LCB (24.08-25.05)$_\text{(Mean@4)}$ &73.5 &75.4 &61.1 &76.2 &74.2 &\textbf{80.6} &\underline{79.4}\\
+OJBench$_\text{(Mean@1)}$ &33.6 &32.1 &19.0 &38.4 &\textbf{41.6} &34.1 &\underline{40.7}\\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{Agentic Tool Using}} \\
+SWE-Bench$_\text{(Pass@1)}$ &66.0$^\dagger$ &34.4 &64.2$^\dagger$ &\underline{69.1}$^\dagger$ &59.6$^\dagger$ &\textbf{74.9}$^\dagger$ &59.4\\
+
+BFCL V3$_\text{(full)}$ &55.4 &\underline{75.7} &\textbf{79.1} &72.4$^\dagger$ &63.2 &60.1 &74.4\\
+
+$\tau^2$-Bench-Retail$_\text{(Mean@4)}$ &65.4 &68.2 &69.3 &\underline{72.8} &70.9 &\textbf{81.1}$^\dagger$ &{71.5}\\
+$\tau^2$-Bench-Airline$_\text{(Mean@4)}$ &44.0 &58.0 &\underline{66.0} &62.5 &58.0 &{62.6}$^\dagger$ &\textbf{67.5}\\
+$\tau^2$-Bench-Telecom$_\text{(Mean@4)}$ &23.7 &47.3 &56.1 &67.5 &38.3 &\textbf{96.7}$^\dagger$ &\underline{83.1}\\
+
+VitaBench &13.5 &21.5 &26.8 &\textbf{35.3} &24.3 &29.3 & \underline{29.5} \\
+\midrule
+\rowcolor{mygray}
+
+
+\multicolumn{8}{c}{\textit{Formal Theorem Proving}} \\
+MiniF2F-Test$_\text{(Pass@1)}$ &\underline{49.6} &11.9 &10.9 &15.2 &13.9 &21.4 &\textbf{67.6}\\
+MiniF2F-Test$_\text{(Pass@8)}$ &\underline{74.4} &20.9 &22.1 &29.6 &29.4 &39.7 &\textbf{79.4}\\
+MiniF2F-Test$_\text{(Pass@32)}$ &\underline{79.5} &26.6 &27.0 &37.7 &41.8 &51.2 &\textbf{81.6}\\
+\midrule
+\rowcolor{mygray}
+
+
+
+\multicolumn{8}{c}{\textit{Safety}} \\
+Harmful &79.2 &\underline{84.3} &70.4 &64.8 &44.3 &56.8 &\textbf{93.7}\\
+Criminal &89.7 &\underline{92.7} &88.8 &85.7 &77.4 &87.3 &\textbf{97.1}\\
+Misinformation &\underline{81.1} &80.9 &67.1 &42.7 &31.0 &41.9 &\textbf{93.0}\\
+Privacy &96.2 &\textbf{100.0} &97.6 &\textbf{100.0} &95.0 &\underline{98.8} &\underline{98.8}\\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

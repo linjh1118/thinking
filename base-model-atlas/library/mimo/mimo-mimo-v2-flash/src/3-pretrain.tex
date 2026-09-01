@@ -1,0 +1,69 @@
+\section{Pre-Training}
+
+
+The \mimoflash{} pre-training corpus consists of 27 trillion tokens drawn from a diverse collection of high-quality sources, including public web content, books, academic papers, code, mathematics, and broader STEM materials. Our data processing pipeline largely follows that of MiMo-7B~\citep{xia2025mimo}, with a deliberate shift toward data exhibiting long-range dependencies.
+In particular, we emphasize long-form web documents and carefully curated code corpora such as repository-level code, pull requests, issues, and commit histories to strengthen the model’s ability to capture extended contextual relationships and perform complex, multi-step reasoning.
+
+\subsection{Data Scheduler} The pre-training of \mimoflash{} is organized into three sequential stages:
+\begin{itemize}
+  
+
+\item \textit{Stage 1 (Pre-training, 0 -- 22T).} The model is trained on a diverse, high-quality general-purpose corpus using a context length of 32K tokens to establish strong foundational language capabilities.
+
+\item \textit{Stage 2 (Mid-training, 22 -- 26T).} We modify the data mixture by upsampling code-centric data and incorporating approximately 5\% synthetic reasoning data to further enhance logical reasoning and program synthesis abilities.
+
+\item \textit{Stage 3 (Context Extension, 26 -- 27T).} Following the Stage 2 data distribution, we extend the model’s context window to 256K tokens and upsample data with long-range dependencies, enabling more effective modeling of extended contexts and long-horizon reasoning.
+
+\end{itemize}
+
+\subsection{Hyper-Parameters}
+\paragraph{Model Hyper-Parameters} We configure \mimoflash{} with 48 Transformer layers, comprising 39 sliding window attention layers and 9 global attention layers. The hidden dimension is set to 4096. All layers except the first are equipped with sparse MoE. Each MoE layer contains 256 routed experts, with 8 experts activated per token, and an intermediate hidden dimension of 2048 for each expert. The intermediate hidden dimension of the FFN of dense layers is set to 16384. All learnable parameters are randomly initialized with a standard deviation of 0.006. The model uses a single MTP layer during pre-training. Overall, \mimoflash{} has 309B total parameters, of which 15B are active.
+
+\paragraph{Training Hyper-Parameters} 
+We employ the AdamW optimizer with $\beta_1=0.9$, $\beta_2=0.95$, and a weight decay of 0.1. 
+Gradient clipping is applied with a maximum norm of 1.0. 
+The learning rate schedule operates in two stages.
+In Stage 1, the learning rate starts with a linear warm-up from 0 to $3.2 \times 10^{-4}$ over the first 50B tokens, followed by a constant phase at $3.2 \times 10^{-4}$ for 12T tokens, and concludes with a cosine decay to $1.0 \times 10^{-4}$ over 10T tokens. Stage 2 begins at $1.0 \times 10^{-4}$ and follows a cosine decay down to $3.0 \times 10^{-5}$ over 4T tokens. The batch size warms up linearly to 2,048 over the initial 500B tokens and remains constant for the remainder of both stages.
+Regarding auxiliary losses, the MoE sequence auxiliary loss coefficient is set to $1.0 \times 10^{-5}$ for all stages. The expert bias update factor is set to 0.001 during Stage 1 and Stage 2. The MTP loss weight is set to 0.3 for Stage 1 and 0.1 for Stage 2 and 3.
+
+
+\paragraph{Long Context Extension} 
+
+In Stage 1, we set the pre-training sequence length to 32,768 with a RoPE base frequency of 640,000 for GA and 10,000 for SWA. In Stage 3, the sequence length is extended to 262,144, and the RoPE base frequency of GA is adjusted to 5,000,000. The learning rate in Stage 3 decays from $3.0 \times 10^{-5}$ to $1.0 \times 10^{-5}$ following a cosine schedule, with a fixed batch size of 256. The expert bias update factor is reduced to $1.0 \times 10^{-5}$ in Stage 3.
+
+
+
+
+\subsection{Evaluations}
+\subsubsection{Evaluation Setup}
+We evaluate \mimoflash{}-Base on a series of benchmarks, encompassing various capabilities: (1) General language understanding and reasoning, including BBH~\citep{suzgun2022challenging}, MMLU~\citep{hendrycks2020measuring}, MMLU-Redux~\citep{gema2024we}, MMLU-Pro~\citep{wang2024mmlu}, DROP~\citep{dua2019drop}, ARC~\citep{clark2018think}, HellaSwag~\citep{zellers2019hellaswag}, WinoGrande~\citep{sakaguchi2021winogrande}, TriviaQA~\citep{joshi2017triviaqa}, GPQA-Diamond~\citep{rein2024gpqa}, SuperGPQA~\citep{du2025supergpqa}, and SimpleQA~\citep{simpleqa}.
+(2) Mathematics reasoning.
+GSM8K~\citep{cobbe2021training}, MATH~\citep{hendrycks2021measuring}, and  AIME~\citep{AIME} (2024 \& 2025). 
+(3) Coding. HumanEval+~\citep{liu2023your}, MBPP+~\citep{liu2023your}, CRUXEval~\citep{gu2024cruxeval}, MultiPL-E~\citep{cassano2022multipl}, BigCodeBench~\citep{zhuo2024bigcodebench}, LiveCodeBench-v6~\citep{jain2024livecodebench}, and SWE-Bench~\citep{jimenez2023swe} (few-shot Agentless Repair~\citep{xia2024agentless}).
+(4) Chinese understanding. C-Eval~\citep{huang2023c}, CMMLU~\citep{li2023cmmlu}, and C-SimpleQA~\citep{he2025chinese}.
+(5) Multilingual understanding. GlobalMMLU~\citep{singh2025global}, and INCLUDE~\citep{romanou2024include}.
+(6) Long context. NIAH-Multi~\citep{hsieh2024ruler}, GSM-Infinite~\citep{zhou2025gsm} (5-shot, Hard Ops-\{2,4,6,8,10\}).
+
+
+\subsubsection{Evaluation Results}
+
+\input{tables/base_eval}
+
+Table~\ref{tab:base_eval} presents a comprehensive comparison of \mimoflash{}-Base against leading open-source base models~\citep{team2025kimik2,liu2024deepseek}.
+% As shown, our model achieves competitive performance on nearly all benchmarks.
+% On reasoning tasks, such as MMLU-Pro, GPQA-Diamond, and AIME, our model consistently outperforms other baseline models.
+\mimoflash{}-Base delivers competitive performance across most benchmarks and consistently outperforms peers on reasoning tasks (MMLU-Pro, GPQA-Diamond, AIME).
+On SWE-Bench, it even surpasses the substantially larger Kimi-K2-Base while using less than one-third the parameters, underscoring the strength of our approach for realistic code-agent tasks. 
+However, constrained by its limited parameter count, we observe \mimoflash{} exhibits lower knowledge capacity compared to larger models, as reflected in SimpleQA.
+
+
+\input{tables/long_eval}
+
+We illustrate the long context capabilities of each model in Table~\ref{tab:long_eval}.
+For long-context retrieval, our model architecture achieves a near 100\% success rate from 32K to 256K.
+On the extreme stress long context reasoning benchmark GSM-Infinite, \mimoflash{} also shows strong performance, with minimal performance degradation from 16K to 128K.
+In contrast, DeepSeek-V3.2-Exp, a sparse attention LLM, attains the highest score under 32K but degrades substantially at 64K and 128K, suggesting an intrinsic disadvantage in long-context reasoning with noisy inputs.
+These results strongly demonstrate the effectiveness and scalability of our hybrid SWA architecture, vanilla 32K pretraining, and context extension training.
+
+
+

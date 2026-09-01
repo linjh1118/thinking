@@ -1,0 +1,86 @@
+\section{Pre-Training}
+In this section, we introduce the architecture design of our \mimovl, followed by the data curation process and training recipes of pre-training stages.
+
+\subsection{Architecture}
+
+\mimovl{} consists of three components: (1) a Vision Transformer (ViT) for encoding visual inputs such as images and videos; (2) a projector that maps the visual encodings into a latent space aligned with the Large Language Model (LLM); and (3) the LLM itself, which performs textual understanding and reasoning. 
+To support native resolution inputs, we adopt Qwen2.5-ViT~\citep{Qwen25VL} as our visual encoder. 
+We initialize the LLM backbone with \mimobase{}~\citep{xia2025mimo} to leverage its strong reasoning capability, and utilize a randomly initialized Multi-Layer Perceptron (MLP) as the projector. 
+The overall architecture is illustrated in Figure~\ref{fig:model_arch}, and the model configuration can be found in Appendix~\ref{sec:model_config}.
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/mimo_vl_arch.pdf}
+    \caption{Model architecture of \mimovl{}.}
+    \label{fig:model_arch}
+\end{figure}
+
+\input{tables/training_stages}
+
+\subsection{Pre-training Data}
+The \mimovl{} pre-training dataset comprises 2.4 trillion tokens of high-quality, diverse multimodal data spanning images, videos, and text. This comprehensive dataset includes general image captions, interleaved data, Optical Character Recognition~(OCR) data, grounding data, video content, GUI interactions, reasoning examples, and text-only sequences.
+
+To ensure the quality of each data modality, we implement dedicated data curation pipelines tailored to the characteristics of each data type. Throughout the training process, we systematically adjust the proportions of different data modalities across various training stages to optimize both training efficiency and model stability. Additionally, we employ phash-based image deduplication to eliminate potential overlaps between our training datasets and evaluation benchmarks, thereby minimizing data contamination.
+
+We detail the specific processing procedures for each data type in the following sections.
+
+
+\subsubsection{Image Caption Data} 
+The construction of our image caption dataset involves a multi-stage process designed to ensure high quality and distributional balance. We begin by aggregating a substantial volume of publicly available caption data from web sources. This initial corpus then undergoes a rigorous deduplication phase, employing image perceptual hashing (phash) in conjunction with text filtering, to yield a refined set of unique raw captions.
+
+Subsequently, leveraging both the images and their original textual descriptions as priors, we utilize a specialized captioning model to re-caption the entire raw caption dataset. Following re-captioning, we apply filtering mechanisms to the generated captions based on linguistic consistency and repetition patterns to ensure the quality of the re-captioned text. To address inherent data imbalances, we adopt the methodology of MetaCLIP~\citep{MetaCLIP}, which involves constructing novel bilingual (Chinese and English) metadata. This critical step serves to refine the caption distribution, thereby mitigating the over-representation of high-frequency entries and reducing dataset noise.
+
+The culmination of this meticulous process is a balanced, high-quality, and diverse caption dataset. Crucially, we observe that this rich dataset significantly enhances model generalization and qualitative performance, offering advantages not always fully reflected in evaluations on existing, specialized benchmarks.
+
+\subsubsection{Interleaved Data}
+We compile an extensive corpus of interleaved image-text data from diverse sources, including webpages, books, and academic papers. For content originating from books and papers, we employ advanced PDF parsing toolkits for content extraction and cleansing. The filtering process prioritizes and retains data types rich in world knowledge, such as textbooks, encyclopedias, manuals, guides, patents, and biographies. Within this interleaved dataset, textual segments are evaluated based on metrics including knowledge density and readability. For the visual components, we implement filters to exclude images of diminutive size, anomalous aspect ratios, unsafe content, and those with minimal visual information (e.g., decorative chapter headings and illustrations). Finally, image-text pairs are scored on relevance, complementarity, and the balance of information density, ensuring the retention of high-quality data. This curated dataset significantly augments the model's knowledge repository, thereby establishing a robust foundation for its subsequent reasoning capabilities.
+
+\subsubsection{OCR and Grounding Data}
+To enhance the model's capabilities in OCR and object grounding, we compile an extensive corpus of OCR and grounding data from open-source datasets for pre-training. 
+
+For the OCR data, the images encompass a diverse textual content from documents, tables, general scenes, product packaging, and mathematical formulas. To increase learning difficulty, in addition to standard printed text, we specifically incorporate images containing handwritten script, typographically deformed text, and blurry/occluded text, thereby improving the model's recognition performance and robustness. For a portion of this data, textual regions are annotated with bounding boxes, enabling the model to simultaneously predict these locations. 
+
+For the grounding data, our images feature scenarios with both single and multiple objects. We further improve the model's capacity to comprehend complex referential intentions by employing intricate object expressions within localization prompts. In all scenarios involving localization, we use absolute coordinates for representation.
+
+\subsubsection{Video Data}
+
+Our video dataset primarily draws from publicly available online videos, spanning a wide array of domains, genres, and durations. Based on the videos, we design a video re-captioning pipeline that produces dense, fine-grained event-level descriptions. Each caption is temporally grounded with precise start and end timestamps, enabling the model to develop general video perception with time-awareness. From the caption dataset, we further collect a subset with a balanced distribution of event durations for temporal grounding pretraining. We also curate video analysis data that summarize the global semantics of videos, such as narrative structures, stylistic elements, and implicit intentions. These analytical paragraphs enable the model to grasp in-depth comprehension of videos and extended world knowledge. To enhance the model’s conversational coherence, we collect diverse and challenging questions about videos and synthesize corresponding responses. We also incorporate open-source video captioning and conversation datasets to further enrich our video pretraining data.
+
+
+\subsubsection{Graphical User Interface Data}
+
+
+To enhance the model's capabilities in navigating Graphical User Interfaces (GUIs), we collect open-source pre-training data covering all sorts of platforms such as mobile, web, and desktop. A synthetic data engine is also devised to compensate for the limitations of open-source data and to strengthen specific aspects of the model's capabilities. For example, we have constructed a vast amount of Chinese GUI data to enable the model to better handle Chinese GUI scenarios.
+
+For GUI Grounding, we gather data for both element grounding and instruction grounding. Element grounding trains the model to precisely locate interface elements based on textual descriptions, establishing a robust perception of static user interfaces. Instruction grounding requires the model to identify target objects on screenshots according to user instructions, enhancing comprehension of GUI interaction logic. For this part, we additionally introduce a pre-training task that involves predicting intermediate actions based on before-and-after screenshots. Empirical evidence demonstrates that this approach significantly improves the model's dynamic perception of GUI interfaces.
+
+For GUI Action, we collect a large scale of long GUI action trajectories. To ensure consistency across different platforms, we unified actions from mobile, web, and desktop environments into a standardized action space. A detailed specification of this action space is provided in Appendix~\ref{sec:gui_action_space}. This harmonization prevents action conflicts while maintaining platform-specific functionality.
+
+\subsubsection{Synthetic Reasoning Data}
+Our approach to generating synthetic reasoning data begins with the comprehensive curation of open-source questions. This diverse collection spans perceptual question answering, document question answering, video question answering, and visual reasoning tasks, supplemented by question-answer pairs derived from web content and literary works.
+
+Following initial filtering of these source questions, we leverage a large reasoning model to produce answers that integrate explicit reasoning. A cornerstone of our methodology is rigorous, multi-stage quality control. Beyond verifying the factual correctness of answers, we apply strict filtering criteria to the reasoning processes themselves, evaluating clarity of thought, eliminating redundancy, and ensuring consistent formatting.
+
+The resulting high-fidelity dataset plays a critical role in empowering our model. It facilitates the effective inheritance of strong reasoning abilities inherent in MiMo-7B-Base~\citep{xia2025mimo}, enabling their seamless transfer and adaptation to multimodal contexts. Consequently, this allows our model to exhibit powerful and versatile multimodal reasoning capabilities across a broad array of domains.
+
+\subsection{Pre-training Stages}
+
+Our model undergoes a four pre-training stages as illustrated in Table~\ref{tab:training_stages}:
+
+
+\textbf{Stage 1}: We freeze the ViT and LLM components, and warm up the randomly initialized projector using image-caption pairs.
+This ensures the projector learns to map visual concepts to the language model's representation space effectively, providing informative gradient signals for subsequent training stages rather than noisy updates from a poorly aligned projector.
+
+
+\textbf{Stage 2}: The ViT is then unfrozen, and interleaved data is introduced to further strengthen vision-language alignment. The inclusion of complex and diverse images within the interleaved data enhances the ViT's performance and robustness.
+
+\textbf{Stage 3}: In this stage, all parameters are trainable. We introduce a more diverse array of data and tasks, including OCR, grounding, video, and GUI data—accumulating to 1.4 trillion tokens—to bolster the model's general multimodal capabilities. To ensure stable mid-stage evaluation monitoring, small quantities of QA, instruction-following, and reasoning data are incorporated. Furthermore, a limited amount of text-only data is utilized to preserve \mimobase{}'s textual capability.
+
+\textbf{Stage 4}: This stage is dedicated to enhancing the model's adaptability to long-context inputs. 
+The training sequence length is extended from 8K to 32K tokens. 
+We introduce additional data types such as long pure text, high-resolution images, long documents, extended videos, and long reasoning data to augment its long-context processing capabilities. 
+As long-context packing significantly increases the effective batch size, the learning rate is adjusted from 1e-5 to 2.5e-5. 
+Relative to Stage 3, this stage features a markedly increased proportion of reasoning data, alongside the introduction of long-form reasoning patterns.
+
+
+These four stages create a powerful model, \mimovlsft{}. With particular emphasis on Stage 4, the model's reasoning capabilities are fully realized, enabling it to address highly intricate STEM problems. This advanced reasoning aptitude also generalizes effectively to common perception tasks. Consequently, our model demonstrates exceptionally high performance across various downstream benchmarks.

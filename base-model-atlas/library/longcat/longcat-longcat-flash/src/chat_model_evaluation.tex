@@ -1,0 +1,136 @@
+We conduct a comprehensive and rigorous evaluation of \longcat after post-training. Specifically, we assess its capabilities across multiple dimensions, including general domains, instruction following, mathematical reasoning, general reasoning, coding, agentic tool use, and safty tasks.
+
+\subsubsection{Evaluation Benchmarks and Configurations}
+
+The evaluation employs the following benchmarks:
+\begin{itemize}
+    \item \textbf{General Domains:} MMLU~\citep{hendrycks2021measuringmassivemultitasklanguage}, MMLU-Pro~\citep{wang2024mmluprorobustchallengingmultitask}, 
+    ArenaHard~\citep{li2024crowdsourced, arenahard2024}, CEval~\citep{huang2023ceval}, and CMMLU~\citep{li2023cmmlu}.
+    \item \textbf{Instruction Following:} IFEval~\citep{zhou2023ifeval}, COLLIE~\citep{yao2024collie}, and Meeseeks~\citep{meeseeks}, Meeseeks evaluates models' instruction-following capabilities in multi-turn scenarios through an iterative feedback framework that simulates realistic human-LLM interactions, enabling models to self-correct based on turn-specific failures and better reflect real-world usage patterns.
+    \item \textbf{Mathematical Reasoning:}  MATH500~\citep{math500}, AIME24~\citep{AIME24}, AIME25~\citep{AIME25}, and BeyondAIME~\citep{bytedance_seed_2025_beyondaime}.
+    \item \textbf{General Reasoning:}  GPQA-diamond~\citep{rein2023gpqagraduatelevelgoogleproofqa}, DROP~\citep{drop}, ZebraLogic~\citep{lin2025zebralogic}, and GraphWalks~\citep{graphwalks}.
+    \item \textbf{Coding:}  Humaneval+~\citep{humanevalmbppplus}, MBPP+~\citep{humanevalmbppplus}, 
+    LiveCodeBench (2024.08-2025.05)~\citep{jain2025livecodebench}, 
+    SWE-Bench-Verified~\citep{jimenez2024swebench}, and TerminalBench~\citep{tbench_2025}.
+    \item \textbf{Agentic Tool Use:}  $\tau^2$-Bench~\citep{tau2-bench} and AceBench~\citep{chen2025acebench}. Furthermore, we develop a high-quality proprietary benchmark, VitaBench, leveraging Meituan's comprehensive real-world business scenarios to systematically evaluate models' capabilities in addressing complex real-world tasks. Within VitaBench, to comprehensively assess models' generalized agentic capabilities, we deliberately curate cross-domain quotidian scenarios and explicitly delineate inter-tool dependencies, eschewing the provision of extensive domain-specific policies. Our benchmark emphasizes three critical dimensions of complexity: tool set complexity (characterized by dense tool graphs averaging over 30 available tools per task), reasoning complexity, and user interaction complexity (featuring challenging user personas with an average exceeding 60 interaction rounds per task for evaluated models). The complete benchmark dataset, along with detailed construction methodologies and comprehensive result analysis, will be fully released in subsequent work.
+\end{itemize}
+
+We also evaluate the safety performance of \longcat. Specifically, we conduct evaluations on four major risk categories:
+\begin{itemize}
+    \item \textbf{Harmful}: Violence, hate Speech, insulting, harassment and bullying, self-harm and suicide, adult content, etc. 
+    \item \textbf{Criminal}: Illegal activities, underage violations, extreme terrorism and violence, etc. 
+    \item \textbf{Misinformation}: misinformation and disinformation, unsafe practices, hallucination, etc. 
+    \item \textbf{Privacy}: privacy violation, infringement, etc.
+\end{itemize}
+
+Within each category, a sufficient number of private test queries are constructed, followed by a comprehensive manual review to ensure the accuracy of their classification and the reliability of their quality.
+
+We compare the chat version of \longcat with several contemporary non-thinking chat models, including DeepSeek-V3.1~\citep{deepseekai2025deepseekv3technicalreport}, Qwen3-235B-A22B (2507 version)~\citep{yang2025qwen3}, Kimi-K2~\citep{Kimi_K2_web_doc}, GPT-4.1~\citep{gpt4.1}, Claude4-Sonnet~\citep{claude4}, and Gemini2.5-Flash~\citep{comanici2025gemini}. For closed-source models, we conduct evaluations through their official APIs. For models supporting both thinking and non-thinking modes (Qwen3-235B-A22B, Gemini2.5-Flash, and Claude4-Sonnet), we explicitly configure these models to operate in non-thinking mode for a fair comparison.
+
+
+For each benchmark category, we employ the following specialized metrics and settings:
+\begin{itemize}
+    \item \textbf{General domain benchmarks:} We use accuracy as the evaluation metric, except for ArenaHard-V2. Unlike the original benchmarks that rely on exact-match (EM) for correctness judgment, we employ a scoring model to assess whether model responses align with reference answers. Since our scoring model recognizes semantically correct answers even without exact textual matches, reported values may be slightly higher than originally documented.
+    \item \textbf{Instruction following benchmarks:} We design regular expressions based on instruction rules to verify compliance. Rule-based and model-based answer span extraction tools are additionally employed to support this evaluation.
+    \item \textbf{Mathematical reasoning benchmarks:} We apply the aforementioned scoring model for MATH500, and the averaged EM scores over $10$ runs for AIME-related benchmarks.
+    \item \textbf{General reasoning benchmarks:}  We apply the scoring model for GPQA-diamond, calculate the F1 score for DROP, adopt rule-based matching for ZebraLogic, and use the precision metric for GraphWalk following the official implementation on its 128k context length subset.
+    \item \textbf{Coding benchmarks:} Each problem is scored 1 if the model's response passes all test cases in a sandbox environment or matches a specific state, otherwise 0. The final score is the average across all problems. We adopt the script provided by OpenAI\footnote{\url{https://github.com/bigcode-project/bigcode-evaluation-harness}} to evaluate Humaneval+ and MBPP+, and the official scripts for the others. Specifically, for SWE-Bench-Verified, we use R2E-Gym\footnote{\url{https://github.com/R2E-Gym/R2E-Gym}} (Openhands scraffold) with runs limited to 100 iterations to evaluate all models except Deepseek-V3.1 and Claude4-Sonnet; their results are sourced from other public reports.
+    \item \textbf{Agentic tool use benchmarks:} We utilize official benchmark frameworks to ensure fairness and reproducibility. For AceBench, we use direct prompting rather than function calling. For our proposed \textbf{VitaBench}, given the inherent long-context characteristics of agentic tasks, we employ a sliding window mechanism to systematically evaluate task completion status throughout the entire execution trajectory, facilitating continuous updates to the completion status of individual checklist components.
+\end{itemize}
+
+
+\subsubsection{Evaluation Results}
+
+As detailed in Table \ref{tab:chat_model_eval_results}, our comprehensive evaluation reveals that \longcat is a powerful and versatile model. It consistently demonstrates leading performance in different domains, often outperforming contemporary models across a wide array of challenging tasks with relatively fewer activated parameters. The following analysis provides a detailed breakdown of its impressive capabilities across different dimensions.
+
+\textbf{General Domains}  In general domain knowledge, \longcat demonstrates a strong and well-rounded performance. It achieves an excellent score of 86.50 on ArenaHard-V2, ranking second among all evaluated models and showcasing its robust capabilities in challenging head-to-head comparisons. On foundational benchmarks, it remains highly competitive, scoring 89.71 on MMLU and 90.44 on CEval. These results are comparable to leading models, and notably, are achieved with fewer parameters than competitors like DeepSeek-V3.1 and Kimi-K2, indicating high efficiency.
+
+\textbf{Instruction Following}  \longcat exhibits state-of-the-art instruction following capabilities. It achieves the highest score of 89.65 on IFEval, outperforming all other models and demonstrating superior reliability in adhering to complex and nuanced directives. Furthermore, it secures the best score on COLLIE (57.10) and Meeseeks-zh (43.03), underscoring its exceptional proficiency across diverse and challenging instruction sets in both English and Chinese.
+
+\textbf{Mathematical Reasoning}  In mathematical reasoning, \longcat shows powerful and advanced capabilities. While its score on MATH500 (96.40) is highly competent, its strength is particularly evident in more complex, competition-level benchmarks. It delivers excellent, top-tier results on AIME25 (61.25) and BeyondAIME (43.00), ranking among the best-performing models in these challenging domains. This highlights its advanced capacity for sophisticated, multi-step logical deduction and problem-solving.
+
+\textbf{General Reasoning}  For general reasoning tasks, \longcat's performance is also solid. It demonstrates exceptional strength in structured logical deduction, achieving a score of 89.30 on ZebraLogic, which is among the top competitors. It also obtains a competitive score of 79.06 on the reading comprehension benchmark DROP. Conversely, its results on GPQA-diamond (73.23) and GraphWalks (51.05) indicate an opportunity for further improvement, particularly in enhancing its capabilities for analyzing structured data within extremely long contexts.
+
+\textbf{Coding}  \longcat displays a promising and capable profile in the coding domain. Its standout performance is on TerminalBench, where it achieves a score of 39.51, ranking second and demonstrating excellent proficiency in practical, agentic command-line tasks. It is also competitive on the SWE-Bench-Verified benchmark with a score of 60.4. On foundational code generation tasks such as Humaneval+ and MBPP+, its performance is solid, yet there remains potential for future optimization to align with the leading models.
+
+\textbf{Agentic Tool Use}  \longcat demonstrates a clear advantage in using agentic tool use domain, notably outperforming other models on $\tau^2$-Bench even when compared to models with more parameters. In highly complex scenarios, it achieves the highest score of 24.30 on VitaBench, demonstrated strong capability in complex scenarios.
+
+\textbf{Safety}  \longcat showed outstanding capability in identifying and mitigating risks on the whole, particularly in the domains of Harmful and Criminal compared to other models.
+
+
+\begin{table*}[htbp] 
+     \centering 
+     \caption{Evaluation results of frontier chat models. Values marked with * are sourced from other public reports. Note that DeepSeek-V3.1, Qwen3-235B-A22B, Gemini2.5-Flash, and Claude4-Sonnet are evaluated under their non-thinking mode.}
+     \label{tab:chat_model_eval_results} 
+     \resizebox{\textwidth}{!}{ 
+     \begin{tabular}{l|ccc|ccc|c} 
+         \toprule 
+         \textbf{Benchmark} & \begin{tabular}[c]{@{}c@{}}\textbf{DeepSeek} \\ \textbf{V3.1}\end{tabular} & \begin{tabular}[c]{@{}c@{}}\textbf{Qwen3} \\ \textbf{MoE-2507}\end{tabular} & \begin{tabular}[c]{@{}c@{}}\textbf{Kimi-K2} \\ \end{tabular} & \textbf{GPT-4.1} & \begin{tabular}[c]{@{}c@{}}\textbf{Claude4} \\ \textbf{Sonnet}\end{tabular} & \begin{tabular}[c]{@{}c@{}}\textbf{Gemini2.5} \\ \textbf{Flash}\end{tabular} & \begin{tabular}[c]{@{}c@{}}\textbf{\longcat} \\ \end{tabular} \\ 
+         \midrule 
+         
+Architecture & MoE & MoE & MoE & - & - & - & MoE \\ 
+         \# Total Params & 671B & 235B & 1043B & - & - & - & 560B \\ 
+         \# Activated Params & 37B & 22B & 32B & - & - & - & 27B \\ 
+         \midrule 
+         \multicolumn{8}{c}{\textbf{General Domains}} \\ 
+  
+        \midrule 
+         MMLU $_{\text{(acc)}}$ & 90.96 & 90.23 & 89.86 & 89.64 & 91.75 & 86.33 & 89.71 \\ 
+         MMLU-Pro $_{\text{(acc)}}$  & 84.45 & 84.83 & 82.06 & 81.72 & 83.74 & 81.95 & 82.68 \\ 
+         ArenaHard-V2 & 84.10 & 88.20 & 85.70  & 61.50 & 62.10 & 77.00 & 86.50 \\ 
+         CEval $_{\text{(acc)}}$ & 89.21 & 92.70 & 91.26 & 79.53 & 86.63 & 78.78 & 90.44 \\ 
+         CMMLU $_{\text{(acc)}}$ & 88.04 & 88.14 & 89.66 & 77.65 & 86.51 & 78.30 & 84.34 \\ 
+         \midrule 
+         \multicolumn{8}{c}{\textbf{Instruction Following}} \\ 
+        
+ \midrule 
+         IFEval $_{\text{(acc)}}$ & 86.69 & 88.54 & 88.91 & 85.58 & 88.35 & 83.92 & 89.65 \\ 
+         COLLIE $_{\text{(acc)}}$ & 43.80 & 49.71 & 56.34 & 50.00 & 51.22 & 48.60 & 57.10 \\ 
+         Meeseeks-zh $_{\text{(acc)}}$ & 33.83 & 35.32 & 42.79 & 41.54 & 35.07 & 34.84 & 43.03 \\ 
+         \midrule 
+       
+  \multicolumn{8}{c}{\textbf{Mathematical Reasoning}} \\ 
+         \midrule 
+         MATH500 $_{\text{(acc)}}$  & 96.08 & 98.80 & 97.60 & 90.60 & 93.80 & 98.40 & 96.40 \\ 
+         AIME24 $_{\text{(avg@10)}}$  & 66.30* & 81.67 & 69.60* & 47.00 & 47.00 & 79.67 &  70.42 \\ 
+         AIME25 $_{\text{(avg@10)}}$  & 49.27 & 68.33 & 50.66 & 32.00 & 37.00 & 67.33 & 61.25 \\ 
+    
+     BeyondAIME $_{\text{(avg@10)}}$ & 36.50 & 57.60 & 36.60 & 22.10 & 20.50 & 44.20 & 43.00 \\ 
+         \midrule 
+         \multicolumn{8}{c}{\textbf{General Reasoning}} \\ 
+         \midrule 
+         GPQA-diamond $_{\text{(acc)}}$ & 74.90* & 77.43 & 75.76 & 67.68 & 70.71 & 80.30 & 73.23 \\ 
+         DROP $_{\text{(f1)}}$  & 84.19 & 78.57 & 89.04 & 66.94 & 73.06 & 45.03 & 79.06 \\ 
+         ZebraLogic $_{\text{(acc)}}$  & 85.30 & 94.22 & 89.11 & 56.30* & 80.10 & 57.00 & 89.30 \\ 
+         GraphWalks-128k $_{\text{(precision)}}$  & 73.54 & 80.72 & 47.50 & 85.02 & 80.57 & 64.83 & 51.05 \\ 
+         \midrule 
+         \multicolumn{8}{c}{\textbf{Coding}} \\ 
+         \midrule 
+   
+         LiveCodeBench $_{\text{(pass@1)}}$ & 56.40*  & 46.48 & 46.70 & 39.21 & 45.59 & 39.65 & 48.02 \\ 
+      Humaneval+ $_{\text{(pass@1)}}$  & 92.68 & 94.51 & 85.98 & 93.29 & 94.51 & 87.80 & 88.41 \\ 
+         MBPP+ $_{\text{(pass@1)}}$  & 79.89 & 79.89 & 81.75 & 79.37 & 80.16 & 76.19 & 79.63 \\ 
+         SWE-Bench-Verified $_{\text{(acc)}}$  & 66.00* & 48.40 & 64.60 & 51.00 & 68.00* & 42.40 & 60.40 \\ 
+         TerminalBench $_{\text{(acc)}}$ & 31.30* & 17.28 & 25.93 & 28.40 & 40.74 & 12.35 & 39.51 \\ 
+         \midrule 
+         \multicolumn{8}{c}{\textbf{Agentic Tool Use}} \\ 
+         \midrule 
+         
+         $\tau^2$-Bench (telecom) $_{\text{(avg@4)}}$  & 38.50 & 25.60 & 67.50 & 35.20 & 46.20 & 16.50 & 73.68 \\ 
+         $\tau^2$-Bench (airline) $_{\text{(avg@4)}}$ & 46.00 & 48.00 & 54.20 & 56.00 & 60.00 & 41.50 & 58.00 \\ 
+         $\tau^2$-Bench (retail) $_{\text{(avg@4)}}$  & 64.90 & 70.50 & 70.80 & 74.10 & 80.00 & 64.80 & 71.27 \\ 
+         AceBench $_{\text{(acc)}}$  & 71.70 & 76.00 & 71.70 & 80.10* & 76.10 & 74.50* & 76.10 \\
+         VitaBench $_{\text{(avg@4)}}$  & 20.30 & 8.50 & 18.20 & 19.00 & 23.00 & 8.00 & 24.30 \\
+         \midrule 
+         \multicolumn{8}{c}{\textbf{Safety}} \\ 
+         \midrule 
+         Harmful        & 82.79 & 80.82 & 53.91 & 56.19 &  66.56  & - & 83.98   \\ 
+        Criminal       & 87.83 & 89.13 & 77.19 & 81.58 & 87.58  & - & 91.24   \\
+        Misinformation & 83.17 & 77.76 & 42.68 & 45.49 & 54.91  & - & 81.72   \\
+        Privacy        & 98.80 & 98.80 & 96.39 & 98.80 & 100.00 & - & 93.98   \\
+         \bottomrule 
+     \end{tabular}
+     } 
+ \end{table*}
+
+
