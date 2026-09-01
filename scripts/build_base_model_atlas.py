@@ -177,7 +177,54 @@ DEEPSEEK_OFFICIAL_SOURCES = {
 }
 
 
-TYPED_OFFICIAL_SOURCES = {**GLM_OFFICIAL_SOURCES, **DEEPSEEK_OFFICIAL_SOURCES}
+# Kimi's public artifact coverage changes across generations.  In particular,
+# K2.6 and K2 Thinking do not have standalone technical reports, while K2 is a
+# family with separate Base and Instruct model cards.  Reflect that evidence
+# boundary rather than manufacturing a uniform three-button set.
+KIMI_OFFICIAL_SOURCES = {
+    "Moonshot v1": [
+        {"label": "Tech Blog", "url": "https://platform.kimi.com/blog/posts/kimi-latest"},
+    ],
+    "Kimi k1.5": [
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2501.12599"},
+    ],
+    "Kimi K2": [
+        {"label": "HF Model Card · Base", "url": "https://huggingface.co/moonshotai/Kimi-K2-Base"},
+        {"label": "HF Model Card · Instruct", "url": "https://huggingface.co/moonshotai/Kimi-K2-Instruct"},
+        {"label": "Tech Blog", "url": "https://moonshotai.github.io/Kimi-K2/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2507.20534"},
+    ],
+    "Kimi K2-Instruct-0905": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905"},
+        {"label": "Tech Blog", "url": "https://platform.kimi.com/blog/posts/kimi-k2-0905"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2507.20534"},
+    ],
+    "Kimi K2 Thinking": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/moonshotai/Kimi-K2-Thinking"},
+        {"label": "Tech Blog", "url": "https://moonshotai.github.io/Kimi-K2/thinking.html"},
+    ],
+    "Kimi K2.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/moonshotai/Kimi-K2.5"},
+        {"label": "Tech Blog", "url": "https://www.kimi.com/en/blog/kimi-k2-5"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2602.02276"},
+    ],
+    "Kimi K2.6": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/moonshotai/Kimi-K2.6"},
+        {"label": "Tech Blog", "url": "https://www.kimi.com/en/blog/kimi-k2-6"},
+    ],
+    "Kimi K3": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/moonshotai/Kimi-K3"},
+        {"label": "Tech Blog", "url": "https://www.kimi.com/en/blog/kimi-k3"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2607.24653"},
+    ],
+}
+
+
+TYPED_OFFICIAL_SOURCES = {
+    **GLM_OFFICIAL_SOURCES,
+    **DEEPSEEK_OFFICIAL_SOURCES,
+    **KIMI_OFFICIAL_SOURCES,
+}
 
 
 TEAMS = [
@@ -348,8 +395,8 @@ TEAMS = [
         ["2509","Kimi K2-Instruct-0905","K2 主 checkpoint 更新，强化 agentic coding、前端与上下文能力。","https://huggingface.co/moonshotai/Kimi-K2-Instruct-0905"],
         ["2511","Kimi K2 Thinking","K2 正式 reasoning 更新，扩展通用推理与工具任务能力。","https://www.kimi.com/en/blog/kimi-k2-thinking"],
         ["2601","Kimi K2.5","视觉 agent、joint RL 与 Agent Swarm。","https://www.kimi.com/en/blog/kimi-k2-5"],
-        ["2604","Kimi K2.6","开放 coding 与 agentic scaling。","https://huggingface.co/moonshotai"],
-        ["2607","Kimi K3","2.8T/104B-active 原生多模态 agent 基座，1M context。","https://github.com/MoonshotAI/Kimi-K3"]]},
+        ["2604","Kimi K2.6","开放 coding 与 agentic scaling。","https://huggingface.co/moonshotai/Kimi-K2.6"],
+        ["2607","Kimi K3","2.8T/104B-active 原生多模态 agent 基座，1M context。","https://huggingface.co/moonshotai/Kimi-K3"]]},
     {"id":"minimax","dir":"MiniMax","name":"MiniMax","region":"国内","color":"#ff8566","thesis":"长上下文 attention 效率与真实环境 agent RL 双线合流。","models":[
         ["2506","MiniMax-M1","Lightning Attention、1M context 与 CISPO。","https://arxiv.org/abs/2506.13585"],
         ["2510","MiniMax-M2","低激活 MoE 与 coding agent。","https://www.minimax.io/news/minimax-m2"],
