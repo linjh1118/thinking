@@ -1,12 +1,12 @@
 ---
 title: "Kimi K2: Open Agentic Intelligence"
-type: paper
+type: model-note
 authors: ["Kimi Team"]
 year: 2025
 venue: arXiv
 arxiv: "2507.20534"
 url: "https://arxiv.org/abs/2507.20534"
-tags: [paper, kimi, agentic, moe]
+tags: [model-note, kimi, agentic, moe, tool-use]
 topic: "13_base_model"
 status: read
 rating: 5
@@ -16,6 +16,19 @@ created: 2026-05-30
 # TL;DR
 
 Kimi K2 是一个 1.04T 参数的 MoE 模型（32B 激活），通过 MuonClip 优化器（Muon + QK-Clip 稳定化）实现了稳定的大规模预训练，并构建了大规模 agentic 数据合成 pipeline + RLVR + Self-Critique Rubric Reward 的完整 post-training 框架，在 SWE-bench、SWE-bench Multilingual、tau2-bench、ACEBench 等 agentic 任务上达到 SOTA，位列 LMSYS Arena 开源模型第一。
+
+![Kimi K2 预训练 scaling law](src/assets/scaling_law_validation_loss.png)
+
+## 一页判断
+
+| 维度 | Kimi K2 | 我的判断 |
+|---|---:|---|
+| 架构 | 1.04T total / 32.6B active，384 experts，top-8 | 用更高 sparsity 扩大知识容量，同时控制单 token 计算 |
+| 优化器 | MuonClip | 真正贡献是让 Muon 在万亿参数 MoE 上不因 attention logits 爆炸而失稳 |
+| 数据 | 15.5T tokens + rephrasing | 把“同一知识多次暴露”改成语义保持的多样改写 |
+| Agent 数据 | 3K+ real MCP tools + 20K+ synthetic tools | 工具分布与任务/trajectory 合成一起扩展 |
+| 后训练 | verifiable RL + self-critique rubric reward | 同时覆盖可验证与开放域 agent 目标 |
+| 报告完整度 | 完整 Tech Report + LaTeX + 官方图 | 足以做技术精读，但仍不是完全可复现 recipe |
 
 ## 问题与动机
 
@@ -37,6 +50,8 @@ Muon 在相同 compute budget 下显著优于 AdamW，但 scaling 时会遇到 a
 - 对于 MLA，shared rotary components 保持不变以避免 cross-head 干扰
 
 关键发现：只有少数 head 会出现 logit 爆炸，per-head clipping 最小化了干预。实验中 $\tau = 100$，logits 逐渐稳定衰减，15.5T tokens 训练全程无 loss spike。
+
+![MuonClip 对 attention logits 的稳定作用](src/assets/muon-qkclip_vs_noclip.png)
 
 ### 2. 预训练数据：Rephrasing 增强 Token Utility
 
@@ -60,6 +75,8 @@ Attention heads 从 128 减至 64：128k context 下减少 83% inference FLOPs�
 
 ### 4. 大规模 Agentic 数据合成 Pipeline
 
+![真实工具仓库到 tool specification 的合成流程](src/assets/tool_repo_synthesis.png)
+
 **三层架构**：
 1. **Tool Spec Generation**：从 GitHub 获取 3000+ 真实 MCP 工具 + 通过 hierarchical domain evolution 生成 20000+ 合成工具
 2. **Agent & Task Generation**：为每个 tool-set 生成多样化的 agent（不同 system prompt + tool 组合）和任务，配对 explicit rubric（成功标准、期望工具使用模式、评估检查点）
@@ -69,7 +86,11 @@ Attention heads 从 128 减至 64：128k context 下减少 83% inference FLOPs�
 - Multi-turn Trajectory Generation：LLM 生成 user personas 与 agent 多轮对话，tool simulator 维护状态并引入受控随机性
 - Hybrid with Real Execution：代码/软件工程任务使用真实 sandbox 而非模拟，提供 ground-truth feedback
 
+![工具轨迹合成流程](src/assets/tool_traj_synthesis.png)
+
 ### 5. RL Framework：Verifiable Rewards + Self-Critique Rubric Reward
+
+![K2 RL 数据与训练流水线](src/assets/new-rl-reload-3-stage-pipeline.png)
 
 **Verifiable Rewards Gym**：
 - Math/STEM/Logical：diverse coverage + moderate difficulty（pass@k 筛选）
@@ -115,8 +136,15 @@ Kimi K2-Base 在 10/12 English benchmarks 达到 SOTA，数学（MATH 70.22%）�
 > 2. **Rephrasing > Multi-epoch**：数据复用应通过多样性改写而非简单重复，这对数据稀缺场景有重要借鉴
 > 3. **Agentic Data Synthesis 的规模化路径**：从真实工具（MCP）+ 合成工具双轨构建 diversity，结合真实 execution sandbox 保证 fidelity
 > 4. **Self-Critique 将 RL 扩展到开放域**：通过 closed-loop critic refinement，verifiable tasks 的能力可以迁移到主观评判任务
-> 5. **对 GUI Agent 的直接关联**：K2 的 tool-use、software engineering、SWE-bench 能力直接对应 GUI Agent 的核心能力需求
+> 5. **对 Agent Training 的直接关联**：K2 把真实 MCP、合成工具、sandbox execution、verifier 与开放域 rubric reward 串成闭环；后续实验应重点拆分 simulator fidelity、真实执行比例和 critic 自举误差。
+
+## 证据边界与复现缺口
+
+报告公开了架构、MuonClip、rephrasing、agentic synthesis、RL 框架与大量结果，但训练数据明细、各阶段 token/compute、合成轨迹规模、reward 权重、critic 更新频率和完整超参数仍不充分。尤其是官方 agentic benchmark 依赖特定 harness 与 sandbox，独立复现时应同时报告模型权重、tool schema、context policy 与执行环境。
 
 ## 相关链接
-- 论文: [arXiv Link](https://arxiv.org/abs/2507.20534)
-- 开源 checkpoint: Kimi K2 base + post-trained checkpoints 已开源
+- [Hugging Face Base](https://huggingface.co/moonshotai/Kimi-K2-Base)
+- [Hugging Face Instruct](https://huggingface.co/moonshotai/Kimi-K2-Instruct)
+- [Tech Blog](https://moonshotai.github.io/Kimi-K2/)
+- [Tech Report](https://arxiv.org/abs/2507.20534)
+- 本地完整 LaTeX 与图片：`src/`

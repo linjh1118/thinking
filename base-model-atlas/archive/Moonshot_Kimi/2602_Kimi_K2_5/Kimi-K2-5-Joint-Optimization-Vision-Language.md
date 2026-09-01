@@ -1,12 +1,12 @@
 ---
 title: "Kimi K2.5: Joint Optimization of Text and Vision"
-type: paper
+type: model-note
 authors: ["Kimi Team"]
 year: 2026
 venue: arXiv
 arxiv: "2602.02276"
 url: "https://arxiv.org/abs/2602.02276"
-tags: [paper, kimi, multimodal, agent-swarm, joint-training]
+tags: [model-note, kimi, multimodal, agent-swarm, joint-training]
 topic: "13_base_model"
 status: read
 rating: 5
@@ -16,6 +16,20 @@ created: 2026-05-30
 # TL;DR
 
 Kimi K2.5 是一个原生多模态模型，通过两大核心创新构建统一架构：（1）**Joint Optimization of Text and Vision**——早期融合 + 低 vision ratio 的原生多模态预训练策略，配合 zero-vision SFT 激活视觉能力，视觉 RL 还能反向提升文本性能；（2）**Agent Swarm + PARL**——通过 RL 学习动态子 agent 实例化和并行调度，将任务复杂度从线性增长转为并行处理，在 BrowseComp 上比单 agent K2.5 提升 17.8%，同时减少 3~4.5× 执行时间。
+
+![Kimi K2.5 官方主结果总览](src/assets/k25-main-result.png)
+
+## 一页判断
+
+| 维度 | Kimi K2.5 | 我的判断 |
+|---|---|---|
+| 主干 | K2 级 1T / 32B-active MoE | 重点在原生多模态与 post-training，不是重做文本 backbone |
+| 视觉训练 | early fusion + low vision ratio | 证明“更早、更久地混合”比后期大量灌视觉 token 更有效 |
+| SFT | zero-vision SFT | 用文本中的程序化图像操作轨迹激活预训练视觉能力 |
+| RL | joint multimodal RL | 视觉 RL 对文本 benchmark 产生正迁移，而非相互竞争 |
+| Agent | Agent Swarm + PARL | 学习任务分解和并行调度，而不是用固定规则开子 agent |
+| Infra | DEP + token-level clipping | 同时解决多模态 pipeline 负载与长程 off-policy drift |
+| 报告完整度 | 完整 Tech Report + LaTeX + 10 张官方图 | 可做机制级精读；数据与 compute 仍非完全可复现 |
 
 ## 问题与动机
 
@@ -32,6 +46,8 @@ Kimi K2.5 是一个原生多模态模型，通过两大核心创新构建统一�
 ## 方法核心思路
 
 ### 1. Native Multimodal Pre-training
+
+![K2.5 联合视觉训练策略](src/assets/vision-joint.png)
 
 **核心发现（反直觉）**：在固定 vision-text token 预算下，**early fusion + lower vision ratio** 反而优于 late fusion + high vision ratio。
 
@@ -62,6 +78,8 @@ Kimi K2.5 是一个原生多模态模型，通过两大核心创新构建统一�
 - 泛化到视觉 grounded 任务
 - 相对于 text-vision SFT，zero-vision 效果更好（因为 joint pretraining 已建立了强 vision-text alignment）
 
+![Zero-Vision 与视觉 RL 的训练曲线](src/assets/k25_visionzerorl_curves.png)
+
 ### 3. Joint Multimodal RL
 
 **Outcome-Based Visual RL**：
@@ -86,6 +104,8 @@ Kimi K2.5 是一个原生多模态模型，通过两大核心创新构建统一�
 - GRM（Generative Reward Model）同样跨模态优化
 
 ### 4. Agent Swarm + PARL
+
+![Agent Swarm 的动态子 agent 组织](src/assets/agent_swarm_subagents.png)
 
 **核心思想**：不通过预设规则指定并行化，而是让模型通过 RL 学习是否并行、何时并行、如何并行。
 
@@ -114,6 +134,8 @@ $$\text{CriticalSteps} = \sum_{t=1}^{T} \left( S_{\mathrm{main}}^{(t)} + \max_i 
 - Agent Swarm 通过多 agent 架构实现 proactive context control：长任务分解为并行、语义隔离的子任务，每个子 agent 有独立 bounded local context
 - 只有任务相关输出（而非完整交互轨迹）选择性路由回 orchestrator
 - 实现 context sharding 而非 context truncation
+
+![Agent Swarm 的 context management](src/assets/agent_swarm_ctx_mgm.png)
 
 ### 5. RL 算法：Token-Level Clipping
 
@@ -163,6 +185,8 @@ DEP 实现 90% 相对纯文本训练的多模态训练效率。
 
 WideSearch 上实现 **3×~4.5× 执行时间减少**（随目标 Item-F1 从 30% 增至 70%）。
 
+![Agent Swarm 的质量—延迟效率曲线](src/assets/agent_swarm_efficiency.png)
+
 ### 视觉理解
 
 | Benchmark | Score |
@@ -183,6 +207,12 @@ WideSearch 上实现 **3×~4.5× 执行时间减少**（随目标 Item-F1 从 30
 > 5. **PARL 的 credit assignment 解法**：冻结 subagents，将协同逻辑与执行能力解耦——这对多 agent 系统的训练稳定性有普遍参考价值
 > 6. **Critical Steps 作为 RL 目标**：将计算图 critical path 的概念引入 RL reward，比单纯激励并行（serial collapse 的反例）更能学到真正高效的调度策略
 
+## 证据边界与复现缺口
+
+报告足以确认 early-fusion/low-ratio、zero-vision SFT、joint multimodal RL、PARL、critical steps、DEP 和 token-level clipping 的设计与主要消融；但预训练/后训练数据清单、各模态 token 总量、swarm 训练任务规模、reward 系数调度、总 compute 与完整系统配置仍未全部公开。Agent Swarm 结果还依赖 orchestrator、subagent checkpoint、工具环境和并发预算，复现不能只下载单一权重。
+
 ## 相关链接
-- 论文: [arXiv Link](https://arxiv.org/abs/2602.02276)
-- 开源 post-trained checkpoints: K2.5 权重已开源
+- [Hugging Face model card](https://huggingface.co/moonshotai/Kimi-K2.5)
+- [Tech Blog](https://www.kimi.com/en/blog/kimi-k2-5)
+- [Tech Report](https://arxiv.org/abs/2602.02276)
+- 本地完整 LaTeX 与图片：`src/`
