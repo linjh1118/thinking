@@ -19,4 +19,32 @@ if(x.officialSources?.length){
     generic.replaceWith(...typed);
   }
 }
+
+const actionIcon = label => {
+  if(/^HF\b/i.test(label)) return '🤗';
+  if(/Tech Blog/i.test(label)) return '📝';
+  if(/Tech Report/i.test(label)) return '📄';
+  return '🔗';
+};
+
+const readingActions=[...document.querySelectorAll('.actions2 a')];
+readingActions.forEach(link=>{
+  const label=link.textContent.trim();
+  link.classList.remove('primary');
+  if(label==='阅读渲染笔记'){
+    link.textContent='📖 阅读渲染笔记';
+    link.classList.add('primary');
+  }else if(label==='浏览本地一手资料包'){
+    link.textContent='🗂️ 浏览本地一手资料包';
+  }else if(label==='打开 Poster'){
+    link.textContent='🖼️ 打开 Poster';
+  }else if(/^Poster \d+$/.test(label)){
+    link.textContent=`🖼️ ${label}`;
+  }else if(label==='官方一手来源 ↗'){
+    link.textContent='🔗 官方一手来源 ↗';
+  }else if(label.endsWith(' ↗')){
+    const sourceLabel=label.slice(0,-2).trim();
+    link.textContent=`${actionIcon(sourceLabel)} ${sourceLabel} ↗`;
+  }
+});
 </script></body></html>
