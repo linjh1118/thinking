@@ -2412,6 +2412,11 @@ CSS = r'''
 @media(max-width:800px){.hero{grid-template-columns:1fr}.branch{grid-template-columns:1fr}.team{border-right:0;border-bottom:1px solid var(--line)}.team:after{display:none}.legend{margin-left:0}.timeline{padding-left:18px}.topbar{align-items:flex-start}.hero h1{font-size:54px}}
 '''
 
+# The atlas wordmark uses deliberate camel case; do not let the shared header
+# style transform OmegaBrain into all caps.
+CSS += "\n.brand{text-transform:none}\n"
+HOMEPAGE_BRAND = "ω OmegaBrain · Research Atlas"
+
 
 def render_index(teams: list[dict], records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
@@ -2638,6 +2643,9 @@ def main() -> None:
         '<div class="toplinks">',
         '<div class="toplinks"><a class="ghost" href="base-model-atlas/library/deepseek/hf-collections/index.html">DeepSeek HF 全集</a>',
         1,
+    )
+    index_page = index_page.replace(
+        "BrainHao / Thinking · Research Atlas", HOMEPAGE_BRAND, 1
     )
     (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
     (ATLAS / "model.html").write_text(
