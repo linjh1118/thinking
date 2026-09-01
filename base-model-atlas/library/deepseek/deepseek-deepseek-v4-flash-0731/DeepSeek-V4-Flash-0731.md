@@ -5,6 +5,7 @@ organization: "DeepSeek-AI"
 release: 2026-07-31
 year: 2026
 model_code: "DeepSeek-V4-Flash-0731"
+arxiv: "2606.19348"
 url: "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731"
 license: MIT
 tags: [model-note, base-model, deepseek, v4, flash, agentic, dspark]
@@ -115,6 +116,7 @@ Flash-0731 在 Terminal Bench 2.1 为 82.7，接近官方表中的 Opus-4.8 85.0
 ## 一手资料
 
 - [官方 Hugging Face model card](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731)
+- [DeepSeek-V4 Technical Report（arXiv:2606.19348）](https://arxiv.org/abs/2606.19348) — 解释 V4 family 架构；0731 没有另发 checkpoint 专属 report
 - [[src/huggingface_model_cards/DeepSeek-V4-Flash-0731.md|本地 HF model card]]
 - [[src/paper/main.tex|V4 technical report 源码（家族架构）]]
 - [[DeepSeek-V4-Flash|Flash Preview 精读]]

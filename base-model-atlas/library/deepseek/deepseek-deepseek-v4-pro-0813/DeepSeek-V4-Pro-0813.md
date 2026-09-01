@@ -5,6 +5,7 @@ organization: "DeepSeek-AI"
 release: 2026-08-13
 year: 2026
 model_code: "DeepSeek-V4-Pro-0813"
+arxiv: "2606.19348"
 url: "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813"
 license: MIT
 tags: [model-note, base-model, deepseek, v4, pro, agentic, dspark]
@@ -114,6 +115,7 @@ SGLang 用 `--speculative-algorithm DSPARK`，无需单独 draft path。DSpark �
 ## 一手资料
 
 - [官方 Hugging Face model card](https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813)
+- [DeepSeek-V4 Technical Report（arXiv:2606.19348）](https://arxiv.org/abs/2606.19348) — 解释 V4 family 架构；0813 没有另发 checkpoint 专属 report
 - [[src/huggingface_model_cards/DeepSeek-V4-Pro-0813.md|本地 HF model card]]
 - [[src/official_ga_release.md|官方正式版发布页]]
 - [[src/paper/main.tex|V4 technical report 源码（家族架构）]]

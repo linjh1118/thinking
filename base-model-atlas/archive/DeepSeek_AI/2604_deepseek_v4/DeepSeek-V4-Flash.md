@@ -5,6 +5,7 @@ organization: "DeepSeek-AI"
 release: 2026-04-24
 year: 2026
 model_code: "DeepSeek-V4-Flash"
+arxiv: "2606.19348"
 url: "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash"
 license: MIT
 tags: [model-note, base-model, deepseek, v4, moe, long-context, agentic, hybrid-attention]
@@ -140,6 +141,7 @@ prompt = encode_messages(
 ## 一手资料
 
 - [官方 Hugging Face model card](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash)
+- [DeepSeek-V4 Technical Report（arXiv:2606.19348）](https://arxiv.org/abs/2606.19348) — 同时覆盖 V4-Flash 与 V4-Pro 的 family report
 - [[src/huggingface_model_cards/DeepSeek-V4-Flash.md|本地 HF model card]]
 - [[src/paper/main.tex|DeepSeek-V4 technical report 源码]]
 - [[src/official_preview_release.md|官方 Preview 发布页]]

@@ -11,7 +11,7 @@ status: read
 rating: 5
 topic: "13_base_model"
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-01
 source_sufficiency: sufficient
 ---
 
@@ -91,6 +91,7 @@ Flash 预训练约 32T tokens，Pro 约 33T。post-training 先分别培养数�
 
 本目录已保存原始官方 HTML/Markdown、模型卡，以及可获得的论文源码或技术报告。`retrieval_manifest.json` 记录 URL、抓取日期、字节数和 SHA-256，便于日后核验网页是否变化。
 
+- [DeepSeek-V4 Technical Report（arXiv:2606.19348）](https://arxiv.org/abs/2606.19348) — V4-Flash 与 V4-Pro 共用的 family technical report
 - [[src/assets|assets/]]
 - [[src/hf_collection_manifest.json|hf_collection_manifest.json]]
 - [[src/hf_model_card.md|hf_model_card.md]]
