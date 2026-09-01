@@ -73,6 +73,113 @@ GLM_OFFICIAL_SOURCES = {
 }
 
 
+# DeepSeek publishes three distinct kinds of first-party material.  Keep the
+# artifact type visible in the UI: a weight repository README is a model card,
+# a release article is a Tech Blog, and a paper PDF is a Tech Report.  Several
+# checkpoints deliberately share the report of their underlying family.
+DEEPSEEK_OFFICIAL_SOURCES = {
+    "DeepSeek LLM": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/deepseek-llm-67b-base"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2401.02954"},
+    ],
+    "DeepSeek-V2": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V2"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2405.04434"},
+    ],
+    "DeepSeek-V2.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V2.5"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news0905/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2405.04434"},
+    ],
+    "DeepSeek-V2.5-1210": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V2.5-1210"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news1210/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2405.04434"},
+    ],
+    "DeepSeek-V3": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news1226/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2412.19437"},
+    ],
+    "DeepSeek-R1": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-R1"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250120/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2501.12948"},
+    ],
+    "DeepSeek-V3-0324": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3-0324"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250325/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2412.19437"},
+    ],
+    "DeepSeek-R1-0528": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250528/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2501.12948"},
+    ],
+    "DeepSeek-V3.1": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.1"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250821/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2412.19437"},
+    ],
+    "DeepSeek-V3.1-Terminus": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Terminus"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250922/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2412.19437"},
+    ],
+    "DeepSeek-V3.2-Exp": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news250929/"},
+        {"label": "Tech Report", "url": "https://github.com/deepseek-ai/DeepSeek-V3.2-Exp/raw/refs/heads/main/DeepSeek_V3_2.pdf"},
+    ],
+    "DeepSeek-V3.2": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news251201/"},
+        {"label": "Tech Report", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2/resolve/main/assets/paper.pdf"},
+    ],
+    "DeepSeek-V4": [
+        {"label": "HF Model Card · Flash", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash"},
+        {"label": "HF Model Card · Pro", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260424/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260424/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Pro": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260424/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Flash-DSpark": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-DSpark"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Pro-DSpark": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-DSpark"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Flash-0731": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/updates/#date-2026-07-31"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Pro-0813": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260813/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2606.19348"},
+    ],
+    "DeepSeek-V4-Flash-Vision-Exp": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"},
+        {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260821/"},
+    ],
+}
+
+
+TYPED_OFFICIAL_SOURCES = {**GLM_OFFICIAL_SOURCES, **DEEPSEEK_OFFICIAL_SOURCES}
+
+
 TEAMS = [
     {"id":"openai","dir":"OpenAI","name":"OpenAI · GPT","region":"海外","color":"#7cf2c8","thesis":"从通用 next-token scaling 走向统一 reasoning、工具调用与专业工作基座。","models":[
         ["1806","GPT-1","生成式预训练证明统一语言建模可迁移。","https://openai.com/index/language-unsupervised/"],
@@ -1880,7 +1987,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "lineageType":item.get("lineageType", "variant"),
                 "lineageLabel":item.get("label", "专项支线"),
                 **({"timelineVisible": False} if item.get("timelineVisible") is False else {}),
-                **({"officialSources": GLM_OFFICIAL_SOURCES[name]} if name in GLM_OFFICIAL_SOURCES else {}),
+                **({"officialSources": TYPED_OFFICIAL_SOURCES[name]} if name in TYPED_OFFICIAL_SOURCES else {}),
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
                 "_assets": assets,
             })
