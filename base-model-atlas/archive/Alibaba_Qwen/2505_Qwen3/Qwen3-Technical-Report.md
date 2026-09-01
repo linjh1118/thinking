@@ -11,12 +11,15 @@ topic: "13_base_model"
 status: read
 rating: 5
 created: 2026-05-30
+updated: 2026-09-01
 ---
 
 # Qwen3 Technical Report — 深度技术分析
 
 > [!TL;DR]
 > Qwen3 核心贡献：**单一模型统一 thinking/non-thinking 双模式** + **Thinking Budget 机制**实现推理资源动态分配。MoE 架构（235B总参/22B激活）以 60% 激活参数在 17/23 基准上超越 DeepSeek-R1。后训练四阶段设计（冷启动→推理RL→模式融合→蒸馏）是关键技术路径。
+
+![Qwen3 家族与性能总览](src/figures/main.png)
 
 ---
 
@@ -125,6 +128,8 @@ created: 2026-05-30
 ---
 
 ## 4. 后训练四阶段（核心技术）
+
+![Qwen3 四阶段后训练流水线](src/figures/posttrain_pipeline.png)
 
 ### 4.1 阶段概览
 
@@ -281,13 +286,15 @@ Thinking Budget ↑ → Thinking Tokens ↑ → 性能 ↑
 - **平滑上升**：性能随 thinking budget 增加而持续提升
 - **无饱和迹象**：如果延长到 32K+，预期性能会更好
 
-### 6.3 对 GUI Agent 的启示
+![Thinking budget 与性能的 scaling 关系](src/figures/thinking_budget.png)
+
+### 6.3 对通用 Agent Training 的启示
 
 | 任务复杂度 | 推荐 Thinking Budget | 原因 |
 |------------|---------------------|------|
 | 简单问答 | 短/无 | 快速响应 |
 | 任务规划 | 中等 | 需要基本推理 |
-| 复杂桌面操作 | 较长 | 需要多步规划+回溯 |
+| 复杂工具链 / 代码执行 | 较长 | 需要多步规划、验证与回溯 |
 | 开放世界探索 | 最长 | 需要深度探索 |
 
 ---
@@ -373,12 +380,13 @@ Thinking Budget ↑ → Thinking Tokens ↑ → 性能 ↑
 
 ## 10. 研究启发与开放问题
 
-### 10.1 对 GUI Agent 的直接价值
+### 10.1 对 Agent Training 的直接价值
 
 > [!insight]
-> 1. **Thinking Budget 控制**：GUI 任务可以动态调整推理深度
+> 1. **Thinking Budget 控制**：工具任务可以动态调整推理深度
 > 2. **Mode Switching**：复杂任务用 /think，简单操作用 /no_think
 > 3. **工具调用能力**：Stage 4 General RL 显著提升了 ToolUse 能力
+> 4. **轨迹成本意识**：训练与评测应同时报告成功率、thinking tokens 与环境交互次数，而不是只看答案准确率
 
 ### 10.2 Strong-to-Weak Distillation 的局限
 
@@ -397,8 +405,14 @@ Stage 3-4 的设计揭示了一个根本问题：
 
 这为未来的 inference-time scaling 研究指明方向。
 
+### 10.5 资料充分度与证据边界
+
+本页基于完整 Technical Report、LaTeX 源码与官方模型卡，达到论文级精读标准。仍需注意：公开论文没有给出全部训练数据、RL 环境实现和线上 serving 配置，因此无法仅凭本文复现完整 Qwen3 训练系统。
+
 ---
 
 ## 相关链接
 - 论文: [arXiv Link](https://arxiv.org/abs/2505.09388)
 - 源码: [GitHub Link](https://github.com/QwenLM/Qwen3)
+- 模型卡: [Qwen3-235B-A22B on Hugging Face](https://huggingface.co/Qwen/Qwen3-235B-A22B)
+- 本地模型卡: [[src/hf_model_card|Hugging Face 模型卡 MD]]

@@ -220,10 +220,84 @@ KIMI_OFFICIAL_SOURCES = {
 }
 
 
+QWEN_OFFICIAL_SOURCES = {
+    "Qwen": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen-72B"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2309.16609"},
+        {"label": "Official Repo", "url": "https://github.com/QwenLM/Qwen"},
+    ],
+    "Qwen1.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen1.5-72B"},
+        {"label": "Tech Blog", "url": "https://qwenlm.github.io/blog/qwen1.5/"},
+    ],
+    "Qwen2": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen2-72B"},
+        {"label": "Tech Blog", "url": "https://qwenlm.github.io/blog/qwen2/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2407.10671"},
+    ],
+    "Qwen2.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct"},
+        {"label": "Tech Blog", "url": "https://qwenlm.github.io/blog/qwen2.5/"},
+    ],
+    "Qwen3": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen3-235B-A22B"},
+        {"label": "Tech Blog", "url": "https://qwenlm.github.io/blog/qwen3/"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2505.09388"},
+    ],
+    "Qwen3-Next": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct"},
+        {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3-next"},
+    ],
+    "Qwen3.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen3.5-397B-A17B"},
+        {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3.5"},
+    ],
+    "Qwen3.6": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B"},
+        {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3.6-35b-a3b"},
+    ],
+    "Qwen3.7": [
+        {"label": "Family Repo", "url": "https://github.com/QwenLM/Qwen3.8"},
+        {"label": "Later Tech Blog · Evidence", "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"},
+    ],
+    "Qwen3.8": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B"},
+        {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"},
+        {"label": "Official Repo", "url": "https://github.com/QwenLM/Qwen3.8"},
+    ],
+}
+
+
+SEED_OFFICIAL_SOURCES = {
+    "Seed1.5": [
+        {"label": "Tech Page", "url": "https://seed.bytedance.com/en/special/doubao_1_5_pro"},
+        {"label": "Official Model Index", "url": "https://seed.bytedance.com/en/models?view_from=homepage_tab"},
+    ],
+    "Seed1.6": [
+        {"label": "Tech Blog", "url": "https://seed.bytedance.com/en/blog/introduction-to-techniques-used-in-seed1-6"},
+    ],
+    "Seed1.8": [
+        {"label": "Tech Blog", "url": "https://seed.bytedance.com/en/blog/official-release-of-seed1-8-a-generalized-agentic-model"},
+        {"label": "Tech Report", "url": "https://arxiv.org/pdf/2603.20633"},
+    ],
+    "Seed2.0": [
+        {"label": "Model Card", "url": "https://lf3-static.bytednsdoc.com/obj/eden-cn/lapzild-tss/ljhwZthlaukjlkulzlp/seed2/seed2_model_card.pdf"},
+        {"label": "Tech Blog", "url": "https://seed.bytedance.com/en/blog/seed-2-0-official-launch"},
+        {"label": "Official Model Page", "url": "https://seed.bytedance.com/en/seed2"},
+    ],
+    "Seed2.1": [
+        {"label": "Tech Blog", "url": "https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity"},
+        {"label": "Official Model Page", "url": "https://seed.bytedance.com/en/seed2_1"},
+    ],
+}
+
+
 TYPED_OFFICIAL_SOURCES = {
     **GLM_OFFICIAL_SOURCES,
     **DEEPSEEK_OFFICIAL_SOURCES,
     **KIMI_OFFICIAL_SOURCES,
+    **QWEN_OFFICIAL_SOURCES,
+    **SEED_OFFICIAL_SOURCES,
 }
 
 
@@ -337,10 +411,10 @@ TEAMS = [
         ["2409","Qwen2.5","大规模 family 与 coder/math 支线成熟。","https://qwenlm.github.io/blog/qwen2.5/"],
         ["2505","Qwen3","thinking/non-thinking 单模型统一。","https://qwenlm.github.io/blog/qwen3/"],
         ["2509","Qwen3-Next","以超稀疏 MoE 和 hybrid attention 预演 Qwen3.5 架构。","https://qwen.ai/blog?id=qwen3-next"],
-        ["2602","Qwen3.5","下一代开放模型架构迭代。","https://github.com/QwenLM/Qwen3"],
-        ["2604","Qwen3.6","正代 family 的效率与能力升级。","https://github.com/QwenLM/Qwen3"],
-        ["2606","Qwen3.7","沿用 hybrid attention 架构并继续推进正代能力。","https://github.com/QwenLM/Qwen3.8-Flash-Next"],
-        ["2608","Qwen3.8","原生多模态、1M context 与内置工具。","https://github.com/QwenLM/Qwen3.8"]]},
+        ["2602","Qwen3.5","原生多模态、hybrid Gated DeltaNet + MoE 与大规模 Agent RL 合流。","https://qwen.ai/blog?id=qwen3.5"],
+        ["2604","Qwen3.6","35B-A3B / 27B 开放家族，重点强化真实 Agentic Coding。","https://qwen.ai/blog?id=qwen3.6-35b-a3b"],
+        ["2606","Qwen3.7","托管正代检查点；官方未发布独立技术报告或开放权重。","https://github.com/QwenLM/Qwen3.8"],
+        ["2608","Qwen3.8","2.4T-A95B Max 级开放权重、27B Dense 与长程 Agent 家族。","https://github.com/QwenLM/Qwen3.8"]]},
     {"id":"deepseek","dir":"DeepSeek_AI","name":"DeepSeek AI","region":"国内","color":"#5aa8ff","thesis":"MLA/MoE 训练效率、开放 reasoning RL 与 agentic tool-use 是三条主轴。","models":[
         ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://huggingface.co/deepseek-ai/deepseek-llm-67b-base"],
         ["2405","DeepSeek-V2","MLA + DeepSeekMoE 显著降低训练/推理成本。","https://huggingface.co/deepseek-ai/DeepSeek-V2"],
@@ -370,11 +444,11 @@ TEAMS = [
         ["2504","Hunyuan-T1","hybrid reasoning 模型。","https://cloud.tencent.com/product/tclm"],
         ["2506","Hunyuan-A13B","80B/13B active 开放混合推理 MoE，20T tokens。","https://github.com/Tencent-Hunyuan/Hunyuan-A13B"]]},
     {"id":"seed","dir":"ByteDance_Seed","name":"ByteDance · Seed","region":"国内","color":"#ff6ca8","thesis":"从多模态理解走向真实环境 agency 与 computer use。","models":[
-        ["2505","Seed1.5","通用多模态与 reasoning 基座。","https://seed.bytedance.com/en/"],
-        ["2506","Seed1.6","多模态 family 与产品部署升级。","https://seed.bytedance.com/en/"],
-        ["2512","Seed1.8","真实世界 agent foundation model。","https://seed.bytedance.com/en/blog/official-release-of-seed1-8-a-generalized-agentic-model"],
-        ["2602","Seed2.0","Computer Use 与 agent foundation model 扩展。","https://seed.bytedance.com/en/blog/seed-2-0-official-launch"],
-        ["2606","Seed2.1","面向真实生产力任务的下一代通用 agent 基座。","https://seed.bytedance.com/en/blog/seed2-1-officially-released-advancing-ai-productivity"]]},
+        ["2505","Seed1.5","Doubao-1.5-pro：稀疏 MoE、训练—推理一体化与生产 serving 起点。","https://seed.bytedance.com/en/special/doubao_1_5_pro"],
+        ["2506","Seed1.6","230B/23B-active、256K 原生多模态与 AdaCoT。","https://seed.bytedance.com/en/blog/introduction-to-techniques-used-in-seed1-6"],
+        ["2512","Seed1.8","统一 Search、Code、GUI 与四档思考预算的真实世界 Agent。","https://seed.bytedance.com/en/blog/official-release-of-seed1-8-a-generalized-agentic-model"],
+        ["2602","Seed2.0","Pro/Lite/Mini 组成的 omni-modal Agent Foundation family。","https://seed.bytedance.com/en/seed2"],
+        ["2606","Seed2.1","Pro/Turbo 面向编码工程、科研计算与可验证生产力交付。","https://seed.bytedance.com/en/seed2_1"]]},
     {"id":"zhipu","dir":"Zhipu_GLM","name":"Zhipu · GLM","region":"国内","color":"#58e0b5","thesis":"General Language Model 演进为 agentic reasoning/coding 原生基座。","models":[
         ["2210","GLM-130B","双语开放自回归预训练基座。","https://github.com/THUDM/GLM-130B"],
         ["2303","ChatGLM","首代中英双语对话 GLM，将系列带入广泛开源使用。","https://github.com/zai-org/ChatGLM-6B"],
@@ -1878,6 +1952,20 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                         record["sourceDocs"] = [preferred] + [
                             doc for doc in record["sourceDocs"] if doc is not preferred
                         ]
+        elif record["team"] == "qwen":
+            # Qwen mainline notes archive one representative official HF card
+            # per generation. Publish the raw Markdown and its readable HTML,
+            # without copying unrelated branch/source trees into each leaf.
+            source_archive = sync_source_archive(
+                model_root,
+                dest_root,
+                targets,
+                include_relative={Path("hf_model_card.md")},
+            )
+            if source_archive:
+                record["sources"] = source_archive["index"]
+                record["sourceReader"] = source_archive["reader"]
+                record["sourceDocs"] = source_archive["docs"]
 
 
 def validate_top8_mainline_contract(records: list[dict]) -> None:
