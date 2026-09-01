@@ -25,6 +25,54 @@ ATLAS = THINKING / "base-model-atlas"
 LIBRARY = ATLAS / "library"
 
 
+# Z.ai publishes complementary first-party artifacts for modern GLM releases:
+# the HF README is the weight/deployment model card, while the Tech Blog carries
+# the release narrative, architecture discussion, training details and results.
+# Keep both addressable instead of collapsing them into one generic source URL.
+GLM_OFFICIAL_SOURCES = {
+    "GLM-4.5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-4.5"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-4.5"},
+    ],
+    "GLM-4.5-Air": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-4.5-Air"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-4.5"},
+    ],
+    "GLM-4.6": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-4.6"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-4.6"},
+    ],
+    "GLM-4.7": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-4.7"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-4.7"},
+    ],
+    "GLM-4.7-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-4.7-Flash"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-4.7"},
+    ],
+    "GLM-5": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-5"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-5"},
+    ],
+    "GLM-5.1": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-5.1"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-5.1"},
+    ],
+    "GLM-5.2": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-5.2"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-5.2"},
+    ],
+    "GLM-5.3": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-5.3"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-5.3"},
+    ],
+    "GLM-5.3-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/zai-org/GLM-5.3-Flash"},
+        {"label": "Tech Blog", "url": "https://z.ai/blog/glm-5.3-flash"},
+    ],
+}
+
+
 TEAMS = [
     {"id":"openai","dir":"OpenAI","name":"OpenAI · GPT","region":"海外","color":"#7cf2c8","thesis":"从通用 next-token scaling 走向统一 reasoning、工具调用与专业工作基座。","models":[
         ["1806","GPT-1","生成式预训练证明统一语言建模可迁移。","https://openai.com/index/language-unsupervised/"],
@@ -1832,6 +1880,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "lineageType":item.get("lineageType", "variant"),
                 "lineageLabel":item.get("label", "专项支线"),
                 **({"timelineVisible": False} if item.get("timelineVisible") is False else {}),
+                **({"officialSources": GLM_OFFICIAL_SOURCES[name]} if name in GLM_OFFICIAL_SOURCES else {}),
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
                 "_assets": assets,
             })
@@ -1933,6 +1982,28 @@ DETAIL_CSS = CSS + r'''
 def render_detail(records: list[dict]) -> str:
     data = json.dumps([{k:v for k,v in r.items() if not k.startswith("_")} for r in records], ensure_ascii=False).replace("</", "<\\/")
     return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Base Model Atlas 模型 overview"><title>Model Overview · Base Model Atlas</title><style>{DETAIL_CSS}</style></head><body><main class="detail" id="app"></main><script>const DATA={data};const p=new URLSearchParams(location.search);const id=p.get('id');const x=DATA.find(v=>v.slug===id)||DATA[0];document.title=`${{x.name}} · Base Model Atlas`;const family=DATA.filter(v=>v.team===x.team&&v.lineageType===x.lineageType);const pos=family.findIndex(v=>v.slug===x.slug);const newer=family[pos-1],older=family[pos+1];const atlas='../base_model_atlas.html';const rel=s=>s;document.querySelector('#app').style.setProperty('--team',x.color);const variants=(x.variants||[]).map(v=>`<a class="button" href="${{v.source}}" target="_blank" rel="noopener" title="${{v.models}}">${{v.name}} · ${{v.models}}</a>`).join('');const hasWorkspace=Boolean(x.sources&&x.note);document.querySelector('#app').innerHTML=`<nav class="crumb"><a href="${{atlas}}">← 全球基模谱系</a><span>${{x.teamName}}</span></nav><header class="model-head"><div><div class="kicker">${{x.region}} · ${{x.teamName}} · ${{x.lineageLabel}}</div><h1>${{x.name}}</h1><p class="lead2">${{x.summary}}</p></div><div class="datecard"><span>Release node</span><b>${{x.date}}</b><span>${{x.sourceType}}</span></div></header><section class="section"><h2>在团队谱系中的位置</h2><div class="cards"><div class="card2"><b>${{x.lineageType==='variant'?'专项支线叶':'团队主线'}}</b><span>${{x.lineageType==='variant'?x.lineageLabel+'，直接挂在 '+x.teamName+' 时间线上。':x.thesis}}</span></div><div class="card2"><b>资料状态</b><span>${{x.note?'已有 HTML 渲染笔记':'Overview 已补，独立精读笔记待扩展'}} · ${{x.posters?.length?x.posters.length+' 张 Poster':'独立 Poster 待扩展'}}</span></div><div class="card2"><b>证据边界</b><span>${{x.sourceType}}。未公开的参数、数据、训练 recipe 不作猜测。</span></div></div></section><section class="section"><h2>继续阅读</h2><div class="actions2">${{hasWorkspace?`<a class="button primary" href="workspace.html?id=${{encodeURIComponent(x.slug)}}">进入三合一研读台</a>`:''}}<a class="button ${{hasWorkspace?'':'primary'}}" href="${{x.source}}" target="_blank" rel="noopener">官方一手来源 ↗</a>${{x.note?`<a class="button" href="${{rel(x.note)}}">阅读渲染笔记</a>`:''}}${{x.sources?`<a class="button" href="${{rel(x.sources)}}">浏览本地一手资料包</a>`:''}}${{(x.posters||[]).map((u,i)=>`<a class="button" href="${{rel(u)}}">${{i===0?'打开 Poster':'Poster '+(i+1)}}</a>`).join('')}}</div>${{!x.note&&!x.posters?.length?'<p class="empty">此节点目前以官方材料 + Overview 为主；后续完成源码/技术报告精读后会在这里补上独立笔记与 Poster。</p>':''}}</section>${{x.lineageType==='variant'&&variants?`<section class="section"><h2>团队专项支线</h2><div class="actions2">${{variants}}</div><p class="empty">支线与主干正代分开展示，避免把模态模型、能力层和产品 SKU 误当作新一代通用基模。</p></section>`:''}}<section class="section"><h2>前后节点 · 时间线为最新优先</h2><div class="prevnext">${{newer?`<a class="next" href="?id=${{newer.slug}}"><small>← 更新节点 · ${{newer.date}}</small><br><b>${{newer.name}}</b></a>`:'<div></div>'}}${{older?`<a class="next" href="?id=${{older.slug}}"><small>更早节点 · ${{older.date}} →</small><br><b>${{older.name}}</b></a>`:'<div></div>'}}</div></section>`;</script></body></html>'''
+
+
+def add_typed_official_source_links(page: str) -> str:
+    """Replace the generic source action with separately labelled artifacts."""
+    enhancement = r'''<script>
+if(x.officialSources?.length){
+  const generic=[...document.querySelectorAll('.actions2 a')].find(link=>link.textContent.trim()==='官方一手来源 ↗');
+  if(generic){
+    const typed=x.officialSources.map((item,index)=>{
+      const link=document.createElement('a');
+      link.className='button'+(!hasWorkspace&&index===0?' primary':'');
+      link.href=item.url;
+      link.target='_blank';
+      link.rel='noopener';
+      link.textContent=item.label+' ↗';
+      return link;
+    });
+    generic.replaceWith(...typed);
+  }
+}
+</script>'''
+    return page.replace("</body></html>", enhancement + "</body></html>")
 
 
 WORKSPACE_CSS = r'''
@@ -2066,7 +2137,9 @@ def main() -> None:
         1,
     )
     (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
-    (ATLAS / "model.html").write_text(render_detail(records), encoding="utf-8")
+    (ATLAS / "model.html").write_text(
+        add_typed_official_source_links(render_detail(records)), encoding="utf-8"
+    )
     (ATLAS / "workspace.html").write_text(render_workspace(records), encoding="utf-8")
     (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
     (ATLAS / "branch-audit.html").write_text(render_branch_audit_complete(teams, records), encoding="utf-8")
