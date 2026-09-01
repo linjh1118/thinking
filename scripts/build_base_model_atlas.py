@@ -241,7 +241,7 @@ TEAM_PRIORITY = [
 # 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
-    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash", "DeepSeek-V4-Pro", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
     "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.5-Air", "GLM-4.6", "GLM-4.7", "GLM-4.7-Flash", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3", "GLM-5.3-Flash"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
@@ -328,8 +328,9 @@ PINNED_TIMELINE_VARIANTS = {
             "folder": "2604_deepseek_v4",
             "assetNote": "DeepSeek-V4-Flash.md",
             "assetPosters": ["deepseek_v4_flash_poster_zh.html"],
-            "lineageType": "mainline",
-            "label": "V4 Preview checkpoint",
+            "lineageType": "family-member",
+            "label": "V4 Preview family member",
+            "timelineVisible": False,
         },
         {
             "date": "260424",
@@ -339,8 +340,9 @@ PINNED_TIMELINE_VARIANTS = {
             "folder": "2604_deepseek_v4",
             "assetNote": "DeepSeek-V4-Pro.md",
             "assetPosters": ["deepseek_v4_pro_poster_zh.html"],
-            "lineageType": "mainline",
-            "label": "V4 Preview checkpoint",
+            "lineageType": "family-member",
+            "label": "V4 Preview family member",
+            "timelineVisible": False,
         },
         {
             "date": "260627",
@@ -1686,7 +1688,9 @@ def validate_top8_mainline_contract(records: list[dict]) -> None:
     for team_id, expected_oldest_first in TOP8_MAINLINE_CONTRACT.items():
         mainline = [
             record for record in records
-            if record["team"] == team_id and record["lineageType"] == "mainline"
+            if record["team"] == team_id
+            and record["lineageType"] == "mainline"
+            and record.get("timelineVisible", True)
         ]
         actual_newest_first = [record["name"] for record in mainline]
         if sorted(actual_newest_first) != sorted(expected_oldest_first):
@@ -1827,6 +1831,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "sourceType":source_label(url),"thesis":team["thesis"],
                 "lineageType":item.get("lineageType", "variant"),
                 "lineageLabel":item.get("label", "专项支线"),
+                **({"timelineVisible": False} if item.get("timelineVisible") is False else {}),
                 "variants":VARIANT_FAMILIES.get(team["id"], []),
                 "_assets": assets,
             })
@@ -1874,7 +1879,10 @@ def neutralize_single_model_emphasis(page: str) -> str:
 def render_index_complete(teams: list[dict], records: list[dict]) -> str:
     sections = []
     for team in teams:
-        family = [r for r in records if r["team"] == team["id"]]
+        family = [
+            r for r in records
+            if r["team"] == team["id"] and r.get("timelineVisible", True)
+        ]
         mainline = [r for r in family if r["lineageType"] == "mainline"]
         variants = [r for r in family if r["lineageType"] == "variant"]
 
@@ -1965,7 +1973,7 @@ def render_top8_tree(teams: list[dict]) -> str:
         team = next(t for t in teams if t["id"] == tid)
         timeline = [{"date":d,"name":n} for d,n,_,_ in team["models"]] + [
             {"date":x["date"],"name":x["name"]} for x in PINNED_TIMELINE_VARIANTS.get(tid, [])
-            if x.get("lineageType") == "mainline"
+            if x.get("lineageType") == "mainline" and x.get("timelineVisible", True)
         ]
         latest = sorted(timeline, key=lambda x:x["date"], reverse=True)[:5]
         generations = "".join(f'<a href="model.html?id={tid}-{slugify(item["name"])}"><time>{pretty_date(item["date"])}</time><b>{html.escape(item["name"])}</b></a>' for item in latest)
@@ -1981,7 +1989,10 @@ def render_top8_tree(teams: list[dict]) -> str:
 def render_branch_audit_complete(teams: list[dict], records: list[dict]) -> str:
     cards = []
     for team in [t for t in teams if t["id"] in BRANCH_MODEL_NODES]:
-        family = [r for r in records if r["team"] == team["id"]]
+        family = [
+            r for r in records
+            if r["team"] == team["id"] and r.get("timelineVisible", True)
+        ]
         mains = [r for r in family if r["lineageType"] == "mainline"]
         variants = [r for r in family if r["lineageType"] == "variant"]
         groups = []
@@ -2000,7 +2011,10 @@ def render_top8_tree_complete(teams: list[dict], records: list[dict]) -> str:
     boxes = []
     for tid in order:
         team = next(t for t in teams if t["id"] == tid)
-        family = [r for r in records if r["team"] == tid]
+        family = [
+            r for r in records
+            if r["team"] == tid and r.get("timelineVisible", True)
+        ]
         main = [r for r in family if r["lineageType"] == "mainline"]
         main_nodes = "".join(f'<a href="model.html?id={quote(r["slug"])}"><time>{r["date"]}</time><b>{html.escape(r["name"])}</b></a>' for r in main)
         boxes.append(f'<article class="team-box {"domestic" if team["region"]=="国内" else "overseas"}" style="--team:{team["color"]}"><header><small>{team["region"]}</small><h2>{html.escape(team["name"])}</h2></header><div class="trunk"><strong>MAINLINE</strong><div>{main_nodes}</div></div></article>')
