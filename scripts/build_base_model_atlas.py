@@ -2415,7 +2415,7 @@ CSS = r'''
 # The atlas wordmark uses deliberate camel case; do not let the shared header
 # style transform OmegaBrain into all caps.
 CSS += "\n.brand{text-transform:none}\n"
-HOMEPAGE_BRAND = "ω OmegaBrain · Research Atlas"
+HOMEPAGE_BRAND = "ω BrainHao · Research Atlas"
 
 
 def render_index(teams: list[dict], records: list[dict]) -> str:
