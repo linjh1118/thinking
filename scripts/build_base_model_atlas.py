@@ -241,7 +241,7 @@ TEAM_PRIORITY = [
 # 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
-    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash-Base", "DeepSeek-V4-Flash", "DeepSeek-V4-Pro-Base", "DeepSeek-V4-Pro", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash", "DeepSeek-V4-Pro", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
     "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.5-Air", "GLM-4.6", "GLM-4.7", "GLM-4.7-Flash", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3", "GLM-5.3-Flash"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
@@ -322,17 +322,6 @@ PINNED_TIMELINE_VARIANTS = {
     "deepseek": [
         {
             "date": "260424",
-            "name": "DeepSeek-V4-Flash-Base",
-            "summary": "V4-Flash 的 284B/13B 预训练基座，FP8 Mixed、1M context；官方仓库未提供 README/model card。",
-            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Base",
-            "folder": "2604_deepseek_v4",
-            "assetNote": "DeepSeek-V4-Flash-Base.md",
-            "assetPosters": ["deepseek_v4_flash_base_poster_zh.html"],
-            "lineageType": "mainline",
-            "label": "V4 Base checkpoint",
-        },
-        {
-            "date": "260424",
             "name": "DeepSeek-V4-Flash",
             "summary": "V4-Flash Preview：284B/13B、1M context，是独立训练的高效率同代 checkpoint。",
             "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash",
@@ -341,17 +330,6 @@ PINNED_TIMELINE_VARIANTS = {
             "assetPosters": ["deepseek_v4_flash_poster_zh.html"],
             "lineageType": "mainline",
             "label": "V4 Preview checkpoint",
-        },
-        {
-            "date": "260424",
-            "name": "DeepSeek-V4-Pro-Base",
-            "summary": "V4-Pro 的 1.6T/49B 预训练基座，FP8 Mixed、1M context；官方仓库未提供 README/model card。",
-            "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-Base",
-            "folder": "2604_deepseek_v4",
-            "assetNote": "DeepSeek-V4-Pro-Base.md",
-            "assetPosters": ["deepseek_v4_pro_base_poster_zh.html"],
-            "lineageType": "mainline",
-            "label": "V4 Base checkpoint",
         },
         {
             "date": "260424",
