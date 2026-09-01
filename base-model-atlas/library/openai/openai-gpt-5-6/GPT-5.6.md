@@ -2,35 +2,84 @@
 title: "GPT-5.6 — Model Overview"
 type: model-note
 year: 2026
-url: "https://developers.openai.com/api/docs/models"
+url: "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
 tags: [model-note, base-model, openai]
 status: read
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-02
 ---
 
 # GPT-5.6 — Model Overview
 
 > [!tldr]
-> Sol / Terra / Luna 三层，1.05M context，统一 reasoning、web、files 与 computer use。
+> Sol / Terra / Luna 三层把最新正代统一到超长上下文与多工具工作流。 **我的判断：三档不是三条代际线，而是同一 family 内的能力—成本分层；Atlas 只保留一个叶子。**
 
-## 定位
+![GPT-5.6 官方发布图](src/assets/official-hero.png)
 
-这是为补齐 Base Model Atlas 全球主干谱系而建立的模型概览。当前证据等级为 **Official docs**；只记录官方材料明确支持的产品定位与能力，不据此虚构训练细节。
+![GPT-5.6 证据地图](src/assets/evidence-map.svg)
 
-## 核心变化
+## 谱系位置
 
-- Sol / Terra / Luna 三层，1.05M context，统一 reasoning、web、files 与 computer use。
-- 在团队谱系中的位置：当前旗舰或关键正代节点。
-- 研究阅读重点：架构效率、agent/tool-use 训练、长上下文成本以及公开证据边界。
+| 字段 | 结论 |
+|---|---|
+| 团队 | OpenAI · GPT |
+| 发布时间 | 2026-08 |
+| Atlas 归类 | 主干正代 |
+| 主要证据 | API Model Page |
+| 证据充分度 | 见“资料边界”，不把产品页补写成论文 |
 
-## 证据与限制
+GPT-5.6 不是孤立 SKU，而是这条主线能力重心的一次迁移。上一代积累的通用语言能力仍是底座，但这一节点把评价重点移到：**Sol / Terra / Luna 三层把最新正代统一到超长上下文与多工具工作流。** 因此阅读它时不能只看一张 benchmark 表，而要看模型进入真实工作流后，规划、上下文管理、工具调用和失败恢复如何协同。
 
-- 官方来源：[https://developers.openai.com/api/docs/models](https://developers.openai.com/api/docs/models)
-- 若官方未公开参数、训练数据或消融，本笔记不作推断。
+## 三个必须记住的事实
+
+1. **1.05M token context**：这是区分前后代的第一条硬证据。
+2. **最高 128K output**：它决定模型更适合怎样的上下文与工作负载。
+3. **functions / web / file / computer use**：它说明 family 的产品接口或能力边界如何变化。
+
+## 技术变化怎么理解
+
+### 1. 基础能力层
+
+官方材料可以确认的核心转向是：Sol / Terra / Luna 三层把最新正代统一到超长上下文与多工具工作流。 这比“模型更聪明”更精确，因为它给出了比较维度；静态知识问答、长上下文利用、推理预算、多模态输入与工具执行不能混成一个总分。
+
+### 2. Post-training 与行为层
+
+闭源模型通常不公开完整数据配比、奖励模型或 RL 环境。本笔记因此只根据公开行为、接口和评测作判断。对 agent training 而言，更值得追踪的是模型是否能持续遵循约束、正确选择工具、消费工具返回值，并在中间步骤失败时修复计划。
+
+### 3. Serving 与工作流层
+
+同一正代内的速度档、成本档、dated snapshot 或上下文档位不重复拆成 Atlas 叶子。它们属于 family 内 serving 选择；只有官方明确形成可独立识别的正代节点，才进入主干时间线。
+
+## 对 Agent Training 的启发
+
+> [!insight]
+> 三档不是三条代际线，而是同一 family 内的能力—成本分层；Atlas 只保留一个叶子。
+
+- 训练数据应保留完整轨迹：计划、调用、观测、验证与恢复，而非只保留最终答案。
+- 评测至少拆成任务成功率、轨迹长度、无效调用、上下文成本和恢复成功率。
+- 若官方没有训练消融，就不要把产品行为倒推出某一种 RL 或架构；应把它写成待验证假设。
+
+## 横向比较时不要混淆
+
+- **正代 vs. SKU**：family 内参数尺寸、速度档和服务快照不等于新代。
+- **上下文窗口 vs. 有效利用**：窗口数字不能替代跨段检索和长程推理测试。
+- **benchmark vs. workflow**：单题正确率不能说明长时程 agent 是否稳定。
+- **官方事实 vs. 编辑判断**：前三节记录证据，本节及 insight 明确标出判断。
+
+## 资料边界
+
+> [!warning]
+> 当前官方文档丰富到可做接口级笔记，仍无参数、训练集和架构消融。
+
+因此这份笔记的目标是达到**一手资料能支持的最高标准**，而不是用通用套话伪造参数、训练数据、架构和消融。若后续出现新的 Tech Report / System Card，应优先补进 `src/` 并据此重写技术细节。
+
+## 一手资料
+
+- [API Model Page](https://developers.openai.com/api/docs/models/gpt-5.6-sol)
+- [[src/Source Index|本地来源索引]]
+- [[src/assets/evidence-map.svg|本地证据地图]]
 
 ## 导航
 
 - [[Topics/13_base_model/Base Model MOC|Base Model MOC]]
-- [[Topics/13_base_model/Base_Model_Global_Coverage_2026|Global Coverage]]
 - [[gpt_5_6_poster_zh|中文 Poster]]

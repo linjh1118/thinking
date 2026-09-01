@@ -391,6 +391,61 @@ LONGCAT_OFFICIAL_SOURCES = {
 }
 
 
+# Overseas Top 3 use the same source taxonomy as the audited domestic teams.
+# A product/API page is not mislabeled as a technical report; sparse releases
+# therefore show fewer buttons and carry the limitation inside the local note.
+OPENAI_OFFICIAL_SOURCES = {
+    "GPT-1": [{"label":"Tech Blog","url":"https://openai.com/index/language-unsupervised/"},{"label":"Tech Report","url":"https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf"}],
+    "GPT-2": [{"label":"Tech Blog","url":"https://openai.com/index/better-language-models/"},{"label":"Tech Report","url":"https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"}],
+    "GPT-3": [{"label":"Tech Report","url":"https://arxiv.org/pdf/2005.14165"}],
+    "GPT-3.5": [{"label":"Product Blog","url":"https://openai.com/index/chatgpt/"},{"label":"RLHF Lineage Report","url":"https://arxiv.org/pdf/2203.02155"}],
+    "GPT-4": [{"label":"Tech Blog","url":"https://openai.com/research/gpt-4"},{"label":"Tech Report + System Card","url":"https://cdn.openai.com/papers/gpt-4.pdf"}],
+    "GPT-4 Turbo": [{"label":"Tech Blog","url":"https://openai.com/index/new-models-and-developer-products-announced-at-devday/"}],
+    "GPT-4o": [{"label":"Tech Blog","url":"https://openai.com/index/hello-gpt-4o/"},{"label":"System Card","url":"https://cdn.openai.com/gpt-4o-system-card.pdf"}],
+    "GPT-4.5": [{"label":"Tech Blog","url":"https://openai.com/index/introducing-gpt-4-5/"}],
+    "GPT-4.1": [{"label":"Tech Blog","url":"https://openai.com/index/gpt-4-1/"},{"label":"API Model Catalog","url":"https://developers.openai.com/api/docs/models"}],
+    "GPT-5": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5"},{"label":"Model Guide","url":"https://developers.openai.com/api/docs/guides/latest-model"}],
+    "GPT-5.1": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5.1"},{"label":"Model Guide","url":"https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.1"}],
+    "GPT-5.2": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5.2"},{"label":"Model Guide","url":"https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.2"}],
+    "GPT-5.3": [{"label":"API Model Page · Deprecated","url":"https://developers.openai.com/api/docs/models/gpt-5.3-chat-latest"}],
+    "GPT-5.4": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5.4"}],
+    "GPT-5.5": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5.5"},{"label":"Model Guide","url":"https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.5"}],
+    "GPT-5.6": [{"label":"API Model Page · Sol","url":"https://developers.openai.com/api/docs/models/gpt-5.6-sol"},{"label":"API Model Catalog","url":"https://developers.openai.com/api/docs/models"}],
+}
+
+ANTHROPIC_OFFICIAL_SOURCES = {
+    "Claude 1": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/introducing-claude"}],
+    "Claude 2": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-2"}],
+    "Claude 2.1": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-2-1"}],
+    "Claude 3": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-3-family"},{"label":"System Cards","url":"https://www.anthropic.com/system-cards"}],
+    "Claude 3.5 Sonnet": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-3-5-sonnet"},{"label":"System Cards","url":"https://www.anthropic.com/system-cards"}],
+    "Claude 3.6 Sonnet": [{"label":"Tech Blog · Original name 3.5 (new)","url":"https://www.anthropic.com/news/3-5-models-and-computer-use"},{"label":"System Cards · Retrospective 3.6 name","url":"https://www.anthropic.com/system-cards"}],
+    "Claude 3.7 Sonnet": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-3-7-sonnet"},{"label":"System Cards","url":"https://www.anthropic.com/system-cards"}],
+    "Claude 4": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-4"},{"label":"System Cards","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 4.1": [{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Sonnet 4.5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-sonnet-4-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 4.5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Sonnet 4.6": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-sonnet-4-6"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 4.6": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-6"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 4.7": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-7"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 4.8": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-8"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Sonnet 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-sonnet-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Opus 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+}
+
+GEMINI_OFFICIAL_SOURCES = {
+    "Gemini 1.0": [{"label":"Official Model Page","url":"https://deepmind.google/technologies/gemini/"},{"label":"Tech Report","url":"https://arxiv.org/pdf/2312.11805"}],
+    "Gemini 1.5 Pro": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/products/google-gemini-next-generation-model-february-2024/"},{"label":"Tech Report","url":"https://arxiv.org/pdf/2403.05530"}],
+    "Gemini 2.0": [{"label":"Tech Blog","url":"https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/"}],
+    "Gemini 2.5 Pro": [{"label":"Tech Blog","url":"https://blog.google/technology/google-deepmind/gemini-model-thinking-updates-march-2025/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
+    "Gemini 3 Pro": [{"label":"Official Model Page","url":"https://deepmind.google/models/gemini/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
+    "Gemini 3.1 Pro": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-pro/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
+    "Gemini 3.5 Flash": [{"label":"API Model Catalog · Legacy","url":"https://ai.google.dev/gemini-api/docs/models"}],
+    "Gemini 3.6 Flash": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
+    "Gemini 3.7 Flash": [{"label":"API Model Page","url":"https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash"},{"label":"Latest Model Guide","url":"https://ai.google.dev/gemini-api/docs/latest-model"}],
+}
+
+
 # Local source folders use human-readable names such as ``HF Model Card.md``.
 # Keep an explicit repository hint for their relative figures so the rendered
 # reading copy remains faithful even when the raw Markdown is viewed outside
@@ -428,6 +483,9 @@ TYPED_OFFICIAL_SOURCES = {
     **MINIMAX_OFFICIAL_SOURCES,
     **MIMO_OFFICIAL_SOURCES,
     **LONGCAT_OFFICIAL_SOURCES,
+    **OPENAI_OFFICIAL_SOURCES,
+    **ANTHROPIC_OFFICIAL_SOURCES,
+    **GEMINI_OFFICIAL_SOURCES,
 }
 
 
@@ -455,6 +513,7 @@ TEAMS = [
         ["2311","Claude 2.1","200K context，并降低长文档任务中的错误率。","https://www.anthropic.com/news/claude-2-1"],
         ["2403","Claude 3","Haiku / Sonnet / Opus 能力—成本分层。","https://www.anthropic.com/news/claude-3-family"],
         ["2406","Claude 3.5 Sonnet","coding 与 computer use 成为核心优势。","https://www.anthropic.com/news/claude-3-5-sonnet"],
+        ["2410","Claude 3.6 Sonnet","新版 3.5 Sonnet（后续官方称 3.6）引入 computer use，并强化 coding。","https://www.anthropic.com/news/3-5-models-and-computer-use"],
         ["2502","Claude 3.7 Sonnet","hybrid reasoning 统一快答与 extended thinking。","https://www.anthropic.com/news/claude-3-7-sonnet"],
         ["2505","Claude 4","Opus / Sonnet 进入 agent 与长任务阶段。","https://www.anthropic.com/news/claude-4"],
         ["2508","Claude Opus 4.1","在 agentic tasks、真实 coding 与 reasoning 上更新 Opus 4。","https://www.anthropic.com/system-cards"],
@@ -654,7 +713,7 @@ TOP8_MAINLINE_CONTRACT = {
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
     "seed": ("Seed1.5", "Seed1.6", "Seed1.8", "Seed2.0", "MedXIAOHE", "Seed2.1"),
     "openai": ("GPT-1", "GPT-2", "GPT-3", "GPT-3.5", "GPT-4", "GPT-4 Turbo", "GPT-4o", "GPT-4.5", "GPT-4.1", "GPT-5", "GPT-5.1", "GPT-5.2", "GPT-5.3", "GPT-5.4", "GPT-5.5", "GPT-5.6"),
-    "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Opus 5"),
+    "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.6 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Opus 5"),
     "google": ("Gemini 1.0", "Gemini 1.5 Pro", "Gemini 2.0", "Gemini 2.5 Pro", "Gemini 3 Pro", "Gemini 3.1 Pro", "Gemini 3.5 Flash", "Gemini 3.6 Flash", "Gemini 3.7 Flash"),
 }
 
@@ -2002,7 +2061,10 @@ def sync_source_archive(
             or normalized_name in {"hf_model_card", "hugging_face_model_card"}
         )
         selectable_repo_metadata = rel.parts and rel.parts[0] == "huggingface_repository_metadata"
-        if (rel.parent == Path(".") or selectable_model_card or selectable_repo_metadata) and source.name != "Official Source.md":
+        if (
+            (rel.parent == Path(".") or selectable_model_card or selectable_repo_metadata)
+            and source.name not in {"Official Source.md", "Source Index.md", "Retrieval Note.md"}
+        ):
             if normalized_name in {"hf_model_card", "hugging_face_model_card"}:
                 label = "Hugging Face Model Card · 官方主卡"
             elif selectable_model_card:
@@ -2067,6 +2129,13 @@ def sync_source_archive(
         priorities.get(item["name"], 10 if item["kind"] == "hf-model-card" else 50),
         item["label"],
     ))
+    if not source_docs and (destination_root / "Source Index.md.html").is_file():
+        source_docs.append({
+            "label": "来源索引 · 资料限制说明",
+            "path": str((destination_root / "Source Index.md.html").relative_to(ATLAS)),
+            "kind": "evidence-index",
+            "name": "Source Index.md",
+        })
     return {
         "index": str(index.relative_to(ATLAS)),
         "reader": source_docs[0]["path"] if source_docs else str(index.relative_to(ATLAS)),
@@ -2149,7 +2218,7 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 record["sources"] = source_archive["index"]
                 record["sourceReader"] = source_archive["reader"]
                 record["sourceDocs"] = source_archive["docs"]
-        elif record["team"] in {"minimax", "mimo", "longcat"}:
+        elif record["team"] in {"minimax", "mimo", "longcat", "openai", "anthropic", "google"}:
             # These families are maintained as first-party research packs in
             # BrainHao. Publish the complete local source tree so the public
             # atlas does not degrade to external links plus copied figures.
