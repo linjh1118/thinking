@@ -269,6 +269,9 @@ QWEN_OFFICIAL_SOURCES = {
 
 
 SEED_OFFICIAL_SOURCES = {
+    "MedXIAOHE": [
+        {"label": "Tech Report", "url": "https://arxiv.org/abs/2602.12705"},
+    ],
     "Seed1.5": [
         {"label": "Tech Page", "url": "https://seed.bytedance.com/en/special/doubao_1_5_pro"},
         {"label": "Official Model Index", "url": "https://seed.bytedance.com/en/models?view_from=homepage_tab"},
