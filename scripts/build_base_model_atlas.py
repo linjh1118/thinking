@@ -431,6 +431,7 @@ ANTHROPIC_OFFICIAL_SOURCES = {
     "Claude Opus 4.8": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-8"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
     "Claude Sonnet 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-sonnet-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
     "Claude Opus 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Fable 5": [{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
     "Claude Fable 5.1": [
         {"label":"Tech Blog","url":"https://www.anthropic.com/claude-fable-and-mythos-5-1"},
         {"label":"Platform Docs","url":"https://platform.claude.com/docs/en/models/fable-5-1/overview"},
@@ -529,7 +530,9 @@ TEAMS = [
         ["2604","Claude Opus 4.7","长时程软件工程与自验证进一步提升。","https://www.anthropic.com/news/claude-opus-4-7"],
         ["2605","Claude Opus 4.8","更可靠的判断、工具效率与诚实性。","https://www.anthropic.com/news/claude-opus-4-8"],
         ["2606","Claude Sonnet 5","把高阶 agent 能力下放到 Sonnet 成本层。","https://www.anthropic.com/news/claude-sonnet-5"],
-        ["2607","Claude Opus 5","面向长时程 agents 的 Opus 代际跃迁。","https://www.anthropic.com/news/claude-opus-5"]]},
+        ["2606","Claude Fable 5","Anthropic 前沿模型序列的首个 Fable 正式节点。","https://www.anthropic.com/system-cards"],
+        ["2607","Claude Opus 5","面向长时程 agents 的 Opus 代际跃迁。","https://www.anthropic.com/news/claude-opus-5"],
+        ["260901","Claude Fable 5.1","1M context、128K output 与 adaptive thinking，强化 agentic coding、科研和真实工作流。","https://www.anthropic.com/claude-fable-and-mythos-5-1"]]},
     {"id":"google","dir":"Google_DeepMind","name":"Google DeepMind · Gemini","region":"海外","color":"#78a8ff","thesis":"原生多模态、超长上下文与推理/工具生态合流。","models":[
         ["2312","Gemini 1.0","Ultra / Pro / Nano 原生多模态分层。","https://deepmind.google/technologies/gemini/"],
         ["2402","Gemini 1.5 Pro","MoE 与百万 token context。","https://blog.google/innovation-and-ai/products/google-gemini-next-generation-model-february-2024/"],
@@ -718,7 +721,7 @@ TOP8_MAINLINE_CONTRACT = {
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
     "seed": ("Seed1.5", "Seed1.6", "Seed1.8", "Seed2.0", "MedXIAOHE", "Seed2.1"),
     "openai": ("GPT-1", "GPT-2", "GPT-3", "GPT-3.5", "GPT-4", "GPT-4 Turbo", "GPT-4o", "GPT-4.5", "GPT-4.1", "GPT-5", "GPT-5.1", "GPT-5.2", "GPT-5.3", "GPT-5.4", "GPT-5.5", "GPT-5.6"),
-    "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.6 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Opus 5"),
+    "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.6 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Fable 5", "Claude Opus 5", "Claude Fable 5.1"),
     "google": ("Gemini 1.0", "Gemini 1.5 Pro", "Gemini 2.0", "Gemini 2.5 Pro", "Gemini 3 Pro", "Gemini 3.1 Pro", "Gemini 3.5 Flash", "Gemini 3.6 Flash", "Gemini 3.7 Flash"),
 }
 
@@ -776,7 +779,7 @@ VARIANT_FAMILIES = {
         {"name":"Capability tiers","models":"Haiku · Sonnet · Opus","source":"https://docs.anthropic.com/en/docs/about-claude/models/overview"},
         {"name":"Hybrid Reasoning","models":"Claude 3.7+ extended thinking","source":"https://www.anthropic.com/news/claude-3-7-sonnet"},
         {"name":"Computer Use","models":"Claude Computer Use","source":"https://www.anthropic.com/news/3-5-models-and-computer-use"},
-        {"name":"Special access","models":"Fable 5 · regulated capability programs","source":"https://www.anthropic.com/news"},
+        {"name":"Special access","models":"Mythos · regulated capability programs","source":"https://www.anthropic.com/news"},
     ],
     "google": [
         {"name":"Serving tiers","models":"Pro · Flash · Flash-Lite · Nano","source":"https://deepmind.google/models/model-cards/"},
@@ -1136,8 +1139,6 @@ BRANCH_MODEL_NODES = {
         ("2509", "Claude Sonnet 4.5", "Sonnet", "https://www.anthropic.com/news/claude-sonnet-4-5"),
         ("2602", "Claude Sonnet 4.6", "Sonnet", "https://www.anthropic.com/system-cards"),
         ("2510", "Claude Haiku 4.5", "Haiku", "https://www.anthropic.com/news/claude-haiku-4-5"),
-        ("2606", "Claude Fable 5", "Frontier access", "https://www.anthropic.com/system-cards"),
-        ("260901", "Claude Fable 5.1", "Frontier access", "https://www.anthropic.com/claude-fable-and-mythos-5-1"),
         ("2606", "Claude Mythos 5", "Frontier access", "https://www.anthropic.com/system-cards"),
         ("2604", "Claude Mythos Preview", "Frontier access", "https://www.anthropic.com/system-cards"),
     ],
@@ -1191,7 +1192,7 @@ _ESTABLISHED_BRANCH_MODELS = {
     "qwen": {"CodeQwen", "Qwen2.5-Coder", "Qwen3-Coder", "Qwen3-Coder-Next", "Qwen-VL", "Qwen2-VL", "Qwen2.5-VL", "Qwen3-VL", "Qwen3-VL-Seg", "Qwen-VLA", "Qwen-Audio", "Qwen2-Audio", "Qwen3-Omni", "Qwen3-ASR", "Qwen3-TTS", "Qwen-Image", "Qwen-Image-2", "Qwen3-Embedding", "Qwen3-VL-Embedding", "Qwen3Guard", "Qwen-Scope"},
     "seed": {"Seed1.5-VL", "Seed-OSS", "Seed-Coder", "BAGEL", "Seed-TTS", "Seedream 3.0", "Seedance 1.0", "Seed3D"},
     "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2"},
-    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Fable 5", "Claude Fable 5.1", "Claude Mythos 5"},
+    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Mythos 5"},
     "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash-Lite", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
 }
 BRANCH_MODEL_NODES = {
@@ -1209,7 +1210,7 @@ LATEST_PACKS = {
     "Cohere": ("2503_Command_A", "Command A", "111B、256K context，面向企业 RAG、tool use、多语言与双 GPU 私有部署。", "https://cohere.com/blog/command-a"),
     "IBM_Granite": ("2510_Granite_4_0", "Granite 4.0", "Mamba-2 + Transformer hybrid，以长上下文 RAM/吞吐效率服务 enterprise agents。", "https://www.ibm.com/new/announcements/ibm-granite-4-0-hyper-efficient-high-performance-hybrid-models"),
     "Microsoft": ("2603_Phi_4_Reasoning_Vision", "Phi-4 Reasoning Vision", "15B 开放权重多模态推理模型，混合 direct/reasoning 数据以平衡质量与时延。", "https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model/"),
-    "Anthropic": ("2607_Claude_Opus_5", "Claude Opus 5", "面向长时程 agents、coding 与专业工作的 Opus 新正代。", "https://www.anthropic.com/news/claude-opus-5"),
+    "Anthropic": ("260901_Claude_Fable_5_1", "Claude Fable 5.1", "1M context、128K output 与 adaptive thinking，强化 agentic coding、科研和真实工作流。", "https://www.anthropic.com/claude-fable-and-mythos-5-1"),
     "OpenAI": ("2608_GPT_5_6", "GPT-5.6", "Sol / Terra / Luna 三层，1.05M context，统一 reasoning、web、files 与 computer use。", "https://developers.openai.com/api/docs/models"),
 }
 
@@ -1268,6 +1269,7 @@ AUDITED_MODEL_FACTS = {
     "GPT-5.6 Cyber": "面向授权漏洞研究与安全测试的专业网络安全模型。",
     "Claude Opus 4.1": "Anthropic system-card 索引中的独立 Opus 更新，不能被 Claude 4 family 标签吞掉。",
     "Claude Mythos Preview": "Anthropic system-card 索引中的前沿能力预览模型。",
+    "Claude Fable 5": "Anthropic 前沿模型序列的首个 Fable 正式节点。",
     "Claude Fable 5.1": "与 Mythos 5.1 共用底层前沿模型的一般可用部署：1M context、128K output、adaptive thinking，并以 classifiers / fallback 划定开放边界。",
     "Gemini 3.7 Flash": "Google 当前最新 Flash，面向 coding、agentic workflows 与可靠多步执行。",
     "Gemini Omni Flash": "带原生音频的视频生成、编辑、关键帧插值与延展模型。",
@@ -2470,8 +2472,9 @@ def render_index_complete(teams: list[dict], records: list[dict]) -> str:
         search_text = " ".join([team["name"], team["thesis"]] + [r["name"] + " " + r["lineageLabel"] for r in family]).lower()
         branch_pack = ""
         if branch_groups:
+            latest_branch = variants[0]["name"]
             branch_pack = (
-                f'<details class="branch-pack"><summary>展开专项支线 · {len(variants)} 个模型</summary>'
+                f'<details class="branch-pack"><summary>展开专项支线 · {len(variants)} 个模型 · 最新：{html.escape(latest_branch)}</summary>'
                 f'{"".join(branch_groups)}</details>'
             )
         sections.append(

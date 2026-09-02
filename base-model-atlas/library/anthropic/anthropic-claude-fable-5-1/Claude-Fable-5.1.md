@@ -29,7 +29,7 @@ Anthropic 在 2026-09-01 同时发布 **Claude Fable 5.1** 与 **Claude Mythos 5
 | 可用性 | General availability | Trusted access only |
 | 核心能力 | 与 Mythos 5.1 共用底层模型 | 与 Fable 5.1 共用底层模型 |
 | 主要差异 | 部署时加入更积极的 classifiers / fallback | 更少限制，但需要受控访问 |
-| Atlas 位置 | Anthropic · Frontier access 支线 | 本笔记中作为配对部署形态说明，不冒充另一套底座 |
+| Atlas 位置 | Anthropic 主时间线 | 本笔记中作为配对部署形态说明，不冒充另一套底座 |
 
 这一区分很重要：**Fable / Mythos 不是能力大小档位，也不是像 Haiku / Sonnet / Opus 那样的常规产品分层。** 它们更像同一前沿 checkpoint 在不同风险边界下的服务接口。
 
@@ -158,7 +158,7 @@ Fable 5.1 带来一些 additive features，也有会破坏旧工作流的行为�
 
 ## 编辑判断
 
-Fable 5.1 不应该进入 Claude 主干正代，因为它没有替代 Sonnet / Opus 的代际命名；它应该挂在 Anthropic 的 **Frontier access** 支线，并位于 Fable 5 之后。Mythos 5.1 在这里作为同底座的受限部署形态记录，避免把同一个底座重复统计成两代模型。
+Fable 已经形成连续的正式模型序列：Fable 5 → Fable 5.1。Atlas 因此把两者直接放在 Anthropic 主时间线上，和 Sonnet / Opus 一样作为可见模型节点；Mythos 5.1 仍作为同底座的受限部署形态记录，避免把同一个底座重复统计成两代模型。
 
 它最值得持续追踪的三件事是：
 
