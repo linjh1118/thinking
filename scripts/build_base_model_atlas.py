@@ -431,6 +431,11 @@ ANTHROPIC_OFFICIAL_SOURCES = {
     "Claude Opus 4.8": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-4-8"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
     "Claude Sonnet 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-sonnet-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
     "Claude Opus 5": [{"label":"Tech Blog","url":"https://www.anthropic.com/news/claude-opus-5"},{"label":"System Card","url":"https://www.anthropic.com/system-cards"}],
+    "Claude Fable 5.1": [
+        {"label":"Tech Blog","url":"https://www.anthropic.com/claude-fable-and-mythos-5-1"},
+        {"label":"Platform Docs","url":"https://platform.claude.com/docs/en/models/fable-5-1/overview"},
+        {"label":"System Card","url":"https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20%26%20Claude%20Mythos%205.1%20System%20Card.pdf"},
+    ],
 }
 
 GEMINI_OFFICIAL_SOURCES = {
@@ -1132,6 +1137,7 @@ BRANCH_MODEL_NODES = {
         ("2602", "Claude Sonnet 4.6", "Sonnet", "https://www.anthropic.com/system-cards"),
         ("2510", "Claude Haiku 4.5", "Haiku", "https://www.anthropic.com/news/claude-haiku-4-5"),
         ("2606", "Claude Fable 5", "Frontier access", "https://www.anthropic.com/system-cards"),
+        ("260901", "Claude Fable 5.1", "Frontier access", "https://www.anthropic.com/claude-fable-and-mythos-5-1"),
         ("2606", "Claude Mythos 5", "Frontier access", "https://www.anthropic.com/system-cards"),
         ("2604", "Claude Mythos Preview", "Frontier access", "https://www.anthropic.com/system-cards"),
     ],
@@ -1185,7 +1191,7 @@ _ESTABLISHED_BRANCH_MODELS = {
     "qwen": {"CodeQwen", "Qwen2.5-Coder", "Qwen3-Coder", "Qwen3-Coder-Next", "Qwen-VL", "Qwen2-VL", "Qwen2.5-VL", "Qwen3-VL", "Qwen3-VL-Seg", "Qwen-VLA", "Qwen-Audio", "Qwen2-Audio", "Qwen3-Omni", "Qwen3-ASR", "Qwen3-TTS", "Qwen-Image", "Qwen-Image-2", "Qwen3-Embedding", "Qwen3-VL-Embedding", "Qwen3Guard", "Qwen-Scope"},
     "seed": {"Seed1.5-VL", "Seed-OSS", "Seed-Coder", "BAGEL", "Seed-TTS", "Seedream 3.0", "Seedance 1.0", "Seed3D"},
     "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2"},
-    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Fable 5", "Claude Mythos 5"},
+    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Fable 5", "Claude Fable 5.1", "Claude Mythos 5"},
     "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash-Lite", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
 }
 BRANCH_MODEL_NODES = {
@@ -1262,6 +1268,7 @@ AUDITED_MODEL_FACTS = {
     "GPT-5.6 Cyber": "面向授权漏洞研究与安全测试的专业网络安全模型。",
     "Claude Opus 4.1": "Anthropic system-card 索引中的独立 Opus 更新，不能被 Claude 4 family 标签吞掉。",
     "Claude Mythos Preview": "Anthropic system-card 索引中的前沿能力预览模型。",
+    "Claude Fable 5.1": "与 Mythos 5.1 共用底层前沿模型的一般可用部署：1M context、128K output、adaptive thinking，并以 classifiers / fallback 划定开放边界。",
     "Gemini 3.7 Flash": "Google 当前最新 Flash，面向 coding、agentic workflows 与可靠多步执行。",
     "Gemini Omni Flash": "带原生音频的视频生成、编辑、关键帧插值与延展模型。",
     "Gemini Robotics-ER 1.6": "面向物理空间理解、仪表读取和多步机器人任务规划的 embodied reasoning 模型。",
@@ -2398,9 +2405,12 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "slug": slug, "team": team["id"], "teamName": team["name"],
                 "teamDir": team["dir"], "region": team["region"], "color": team["color"],
                 "date": pretty_date(raw_date), "rawDate": raw_date, "name": name,
-                "summary": f"{team['name']} 的 {branch_name} 模型节点。",
+                "summary": AUDITED_MODEL_FACTS.get(
+                    name, f"{team['name']} 的 {branch_name} 模型节点。"
+                ),
                 "source": url, "sourceType": source_label(url), "thesis": team["thesis"],
                 "lineageType": "variant", "lineageLabel": branch_name,
+                **({"officialSources": TYPED_OFFICIAL_SOURCES[name]} if name in TYPED_OFFICIAL_SOURCES else {}),
                 "variants": VARIANT_FAMILIES.get(team["id"], []),
                 "_assets": discover_branch_assets(team["dir"], name, raw_date),
             })
@@ -2495,19 +2505,41 @@ def render_detail(records: list[dict]) -> str:
 def add_typed_official_source_links(page: str) -> str:
     """Replace the generic source action with separately labelled artifacts."""
     enhancement = r'''<script>
+const actionIcon=label=>{
+  if(/HF Model Card/i.test(label)) return '🤗 ';
+  if(/Tech Blog|Announcement|Product Blog/i.test(label)) return '📝 ';
+  if(/System Card|Tech Report|PDF/i.test(label)) return '📄 ';
+  if(/Platform Docs|API Model|Model Guide|Official Docs/i.test(label)) return '🧭 ';
+  return '🔗 ';
+};
 if(x.officialSources?.length){
   const generic=[...document.querySelectorAll('.actions2 a')].find(link=>link.textContent.trim()==='官方一手来源 ↗');
   if(generic){
-    const typed=x.officialSources.map((item,index)=>{
+    const typed=x.officialSources.map(item=>{
       const link=document.createElement('a');
-      link.className='button'+(index===0?' primary':'');
+      link.className='button';
       link.href=item.url;
       link.target='_blank';
       link.rel='noopener';
-      link.textContent=item.label+' ↗';
+      link.textContent=actionIcon(item.label)+item.label+' ↗';
       return link;
     });
     generic.replaceWith(...typed);
+  }
+}
+const actionLinks=[...document.querySelectorAll('.actions2 a')];
+for(const link of actionLinks){
+  const label=link.textContent.trim();
+  link.classList.remove('primary');
+  if(label==='阅读渲染笔记'){
+    link.textContent='📖 阅读渲染笔记';
+    link.classList.add('primary');
+  }else if(label==='浏览本地一手资料包'){
+    link.textContent='🗂️ 浏览本地一手资料包';
+  }else if(label==='打开 Poster'){
+    link.textContent='🖼️ 打开 Poster';
+  }else if(label==='官方一手来源 ↗'){
+    link.textContent='🔗 官方来源 ↗';
   }
 }
 </script>'''
