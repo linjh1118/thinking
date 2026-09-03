@@ -449,7 +449,7 @@ GEMINI_OFFICIAL_SOURCES = {
     "Gemini 3.5 Flash": [{"label":"API Model Catalog · Legacy","url":"https://ai.google.dev/gemini-api/docs/models"}],
     "Gemini 3.6 Flash": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
     "Gemini 3.7 Flash": [{"label":"API Model Page","url":"https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash"},{"label":"Latest Model Guide","url":"https://ai.google.dev/gemini-api/docs/latest-model"}],
-    "Gemini 3.8 Flash": [{"label":"Model Card","url":"https://deepmind.google/models/model-cards/gemini-3-8-flash/"},{"label":"Model Card PDF","url":"https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-3-8-Flash-Model-Card.pdf"}],
+    "Gemini 3.8 Flash": [{"label":"Model Card","url":"https://deepmind.google/models/model-cards/gemini-3-8-flash/"},{"label":"Model Card PDF","url":"https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-3-8-Flash-Model-Card.pdf"},{"label":"Evaluation Methodology","url":"https://storage.googleapis.com/deepmind-media/gemini/gemini_3-8_flash_model_evaluation.pdf"}],
 }
 
 
