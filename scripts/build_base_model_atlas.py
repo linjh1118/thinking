@@ -449,6 +449,7 @@ GEMINI_OFFICIAL_SOURCES = {
     "Gemini 3.5 Flash": [{"label":"API Model Catalog · Legacy","url":"https://ai.google.dev/gemini-api/docs/models"}],
     "Gemini 3.6 Flash": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
     "Gemini 3.7 Flash": [{"label":"API Model Page","url":"https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash"},{"label":"Latest Model Guide","url":"https://ai.google.dev/gemini-api/docs/latest-model"}],
+    "Gemini 3.8 Flash": [{"label":"Model Card","url":"https://deepmind.google/models/model-cards/gemini-3-8-flash/"},{"label":"Model Card PDF","url":"https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-3-8-Flash-Model-Card.pdf"}],
 }
 
 
@@ -542,7 +543,8 @@ TEAMS = [
         ["2602","Gemini 3.1 Pro","面向复杂专业任务与长时程 agents。","https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-pro/"],
         ["2605","Gemini 3.5 Flash","3.x 正代在速度、成本与多模态 agent 之间继续扩展。","https://ai.google.dev/gemini-api/docs/models"],
         ["2607","Gemini 3.6 Flash","面向通用 agentic 与多模态任务的 3.x 升级。","https://ai.google.dev/gemini-api/docs/models"],
-        ["2608","Gemini 3.7 Flash","当前 3.x 正代，强化 coding、agentic workflow 与可靠多步执行。","https://ai.google.dev/gemini-api/docs/latest-model"]]},
+        ["2608","Gemini 3.7 Flash","Google Flash 主线的 agentic workflow 升级。","https://ai.google.dev/gemini-api/docs/latest-model"],
+        ["260902","Gemini 3.8 Flash","1M input、64K output 与可调 effort，重点提升软件工程、终端 agent 和专业知识工作流。","https://deepmind.google/models/model-cards/gemini-3-8-flash/"]]},
     {"id":"meta","dir":"Meta_Llama","name":"Meta · Llama","region":"海外","color":"#63d5ff","thesis":"开放权重生态从 dense LLM 演进到原生多模态 MoE。","models":[
         ["2302","Llama 1","高质量开放基础模型开启生态。","https://ai.meta.com/blog/large-language-model-llama-meta-ai/"],
         ["2307","Llama 2","开放权重与商业许可扩大采用。","https://ai.meta.com/llama/"],
@@ -722,7 +724,7 @@ TOP8_MAINLINE_CONTRACT = {
     "seed": ("Seed1.5", "Seed1.6", "Seed1.8", "Seed2.0", "MedXIAOHE", "Seed2.1"),
     "openai": ("GPT-1", "GPT-2", "GPT-3", "GPT-3.5", "GPT-4", "GPT-4 Turbo", "GPT-4o", "GPT-4.5", "GPT-4.1", "GPT-5", "GPT-5.1", "GPT-5.2", "GPT-5.3", "GPT-5.4", "GPT-5.5", "GPT-5.6"),
     "anthropic": ("Claude 1", "Claude 2", "Claude 2.1", "Claude 3", "Claude 3.5 Sonnet", "Claude 3.6 Sonnet", "Claude 3.7 Sonnet", "Claude 4", "Claude Opus 4.1", "Claude Sonnet 4.5", "Claude Opus 4.5", "Claude Sonnet 4.6", "Claude Opus 4.6", "Claude Opus 4.7", "Claude Opus 4.8", "Claude Sonnet 5", "Claude Fable 5", "Claude Opus 5", "Claude Fable 5.1"),
-    "google": ("Gemini 1.0", "Gemini 1.5 Pro", "Gemini 2.0", "Gemini 2.5 Pro", "Gemini 3 Pro", "Gemini 3.1 Pro", "Gemini 3.5 Flash", "Gemini 3.6 Flash", "Gemini 3.7 Flash"),
+    "google": ("Gemini 1.0", "Gemini 1.5 Pro", "Gemini 2.0", "Gemini 2.5 Pro", "Gemini 3 Pro", "Gemini 3.1 Pro", "Gemini 3.5 Flash", "Gemini 3.6 Flash", "Gemini 3.7 Flash", "Gemini 3.8 Flash"),
 }
 
 # Top-8 branch audit.  Mainline generations stay in TEAMS; these are specialist
@@ -1272,6 +1274,7 @@ AUDITED_MODEL_FACTS = {
     "Claude Fable 5": "Anthropic 前沿模型序列的首个 Fable 正式节点。",
     "Claude Fable 5.1": "与 Mythos 5.1 共用底层前沿模型的一般可用部署：1M context、128K output、adaptive thinking，并以 classifiers / fallback 划定开放边界。",
     "Gemini 3.7 Flash": "Google 当前最新 Flash，面向 coding、agentic workflows 与可靠多步执行。",
+    "Gemini 3.8 Flash": "基于 3.7 Flash，保持 1M input / 64K output 边界，重点提升软件工程、终端 agent、computer use 与专业研究工作流。",
     "Gemini Omni Flash": "带原生音频的视频生成、编辑、关键帧插值与延展模型。",
     "Gemini Robotics-ER 1.6": "面向物理空间理解、仪表读取和多步机器人任务规划的 embodied reasoning 模型。",
 }
@@ -2681,6 +2684,19 @@ def main() -> None:
     )
     index_page = index_page.replace(
         "BrainHao / Thinking · Research Atlas", HOMEPAGE_BRAND, 1
+    )
+    index_page = index_page.replace(
+        'class="chip active" data-region="all"',
+        'class="chip" data-region="all"',
+        1,
+    ).replace(
+        'class="chip" data-region="海外"',
+        'class="chip active" data-region="海外"',
+        1,
+    ).replace("let region='all';", "let region='海外';", 1).replace(
+        "</script></body></html>",
+        "filter();</script></body></html>",
+        1,
     )
     (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
     (ATLAS / "model.html").write_text(
