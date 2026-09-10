@@ -174,6 +174,10 @@ DEEPSEEK_OFFICIAL_SOURCES = {
         {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"},
         {"label": "Tech Blog", "url": "https://api-docs.deepseek.com/news/news260821/"},
     ],
+    "DeepSeek-V4.1-Flash": [
+        {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"},
+        {"label": "Tech Report", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf"},
+    ],
 }
 
 
@@ -412,6 +416,7 @@ OPENAI_OFFICIAL_SOURCES = {
     "GPT-5.5": [{"label":"API Model Page","url":"https://developers.openai.com/api/docs/models/gpt-5.5"},{"label":"Model Guide","url":"https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.5"}],
     "GPT-5.6": [{"label":"API Model Page · Sol","url":"https://developers.openai.com/api/docs/models/gpt-5.6-sol"},{"label":"API Model Catalog","url":"https://developers.openai.com/api/docs/models"}],
     "GPT-6 Astra": [{"label":"Tech Blog","url":"https://openai.com/index/gpt-6-astra/"},{"label":"API Model Card","url":"https://developers.openai.com/api/docs/models/gpt-6-astra"},{"label":"Model Guidance","url":"https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra"},{"label":"System Card","url":"https://deploymentsafety.openai.com/gpt-6-astra"},{"label":"System Card PDF","url":"https://deploymentsafety.openai.com/gpt-6-astra/gpt-6-astra.pdf"}],
+    "GPT-Image-2.5": [{"label":"Tech Blog","url":"https://openai.com/index/introducing-chatgpt-images-2-5/"},{"label":"API Model Card · Flare","url":"https://developers.openai.com/api/docs/models/gpt-image-2.5-flare"},{"label":"API Model Card · Sunburst","url":"https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst"},{"label":"System Card","url":"https://deploymentsafety.openai.com/chatgpt-images-2-5"}],
 }
 
 ANTHROPIC_OFFICIAL_SOURCES = {
@@ -438,6 +443,11 @@ ANTHROPIC_OFFICIAL_SOURCES = {
         {"label":"Platform Docs","url":"https://platform.claude.com/docs/en/models/fable-5-1/overview"},
         {"label":"System Card","url":"https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20%26%20Claude%20Mythos%205.1%20System%20Card.pdf"},
     ],
+    "Claude Mythos 5.1": [
+        {"label":"Official Model Page","url":"https://www.anthropic.com/claude/mythos"},
+        {"label":"Tech Blog","url":"https://www.anthropic.com/claude-fable-and-mythos-5-1"},
+        {"label":"System Card","url":"https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20%26%20Claude%20Mythos%205.1%20System%20Card.pdf"},
+    ],
 }
 
 GEMINI_OFFICIAL_SOURCES = {
@@ -451,6 +461,7 @@ GEMINI_OFFICIAL_SOURCES = {
     "Gemini 3.6 Flash": [{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/"},{"label":"API Model Catalog","url":"https://ai.google.dev/gemini-api/docs/models"}],
     "Gemini 3.7 Flash": [{"label":"API Model Page","url":"https://ai.google.dev/gemini-api/docs/models/gemini-3.7-flash"},{"label":"Latest Model Guide","url":"https://ai.google.dev/gemini-api/docs/latest-model"}],
     "Gemini 3.8 Flash": [{"label":"Model Card","url":"https://deepmind.google/models/model-cards/gemini-3-8-flash/"},{"label":"Model Card PDF","url":"https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-3-8-Flash-Model-Card.pdf"},{"label":"Evaluation Methodology","url":"https://storage.googleapis.com/deepmind-media/gemini/gemini_3-8_flash_model_evaluation.pdf"}],
+    "Gemini 3.8 Flash Cyber": [{"label":"Official Model Page","url":"https://deepmind.google/models/gemini/cyber/"},{"label":"Tech Blog","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/"}],
 }
 
 
@@ -629,7 +640,8 @@ TEAMS = [
         ["2509","DeepSeek-V3.2-Exp","引入 DeepSeek Sparse Attention，作为下一代架构实验节点。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp"],
         ["2509","DeepSeek-V3.1-Terminus","修订 V3.1 的语言一致性、Code Agent 与 Search Agent 表现。","https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Terminus"],
         ["2512","DeepSeek-V3.2","DSA 与 thinking-in-tool-use。","https://huggingface.co/deepseek-ai/DeepSeek-V3.2"],
-        ["260424","DeepSeek-V4","V4-Pro / V4-Flash family Preview 首次公开；后续正式 checkpoint 与部署发行物沿同一家族演进。","https://huggingface.co/collections/deepseek-ai/deepseek-v4"]]},
+        ["260424","DeepSeek-V4","V4-Pro / V4-Flash family Preview 首次公开；后续正式 checkpoint 与部署发行物沿同一家族演进。","https://huggingface.co/collections/deepseek-ai/deepseek-v4"],
+        ["260910","DeepSeek-V4.1-Flash","552B 多模态 MoE，以 CED、CSA2 与 FP4 KV 把百万 token agent 的全局 KV 压到 890 bytes/token。","https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"]]},
     {"id":"baidu","dir":"Baidu_ERNIE","name":"Baidu · ERNIE","region":"国内","color":"#55d6ce","thesis":"知识增强预训练演进到统一多模态 MoE 与异步 agentic RL。","models":[
         ["1904","ERNIE","entity/phrase masking 注入知识。","https://arxiv.org/abs/1904.09223"],
         ["1907","ERNIE 2.0","continual multi-task pretraining。","https://arxiv.org/abs/1907.12412"],
@@ -719,7 +731,7 @@ TEAM_PRIORITY = [
 # 2026-08-31.  Keeping this separate from TEAMS makes omissions, accidental
 # branch promotion, and silent renames fail the build instead of reaching Pages.
 TOP8_MAINLINE_CONTRACT = {
-    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813"),
+    "deepseek": ("DeepSeek LLM", "DeepSeek-V2", "DeepSeek-V2.5", "DeepSeek-V2.5-1210", "DeepSeek-V3", "DeepSeek-R1", "DeepSeek-V3-0324", "DeepSeek-R1-0528", "DeepSeek-V3.1", "DeepSeek-V3.1-Terminus", "DeepSeek-V3.2-Exp", "DeepSeek-V3.2", "DeepSeek-V4", "DeepSeek-V4-Flash-0731", "DeepSeek-V4-Pro-0813", "DeepSeek-V4.1-Flash"),
     "zhipu": ("GLM-130B", "ChatGLM", "ChatGLM2", "ChatGLM3", "GLM-4", "GLM-4.5", "GLM-4.5-Air", "GLM-4.6", "GLM-4.7", "GLM-4.7-Flash", "GLM-5", "GLM-5.1", "GLM-5.2", "GLM-5.3", "GLM-5.3-Flash"),
     "kimi": ("Moonshot v1", "Kimi k1.5", "Kimi K2", "Kimi K2-Instruct-0905", "Kimi K2 Thinking", "Kimi K2.5", "Kimi K2.6", "Kimi K3"),
     "qwen": ("Qwen", "Qwen1.5", "Qwen2", "Qwen2.5", "Qwen3", "Qwen3-Next", "Qwen3.5", "Qwen3.6", "Qwen3.7", "Qwen3.8"),
@@ -1131,6 +1143,7 @@ BRANCH_MODEL_NODES = {
         ("2503", "GPT-4o Mini TTS", "Realtime / Audio", "https://developers.openai.com/api/docs/models"),
         ("2503", "GPT-Image-1", "Image", "https://developers.openai.com/api/docs/models"),
         ("2608", "GPT-Image-2", "Image", "https://developers.openai.com/api/docs/models"),
+        ("260908", "GPT-Image-2.5", "Image", "https://openai.com/index/introducing-chatgpt-images-2-5/"),
     ],
     "anthropic": [
         ("2403", "Claude 3 Haiku", "Haiku", "https://www.anthropic.com/news/claude-3-family"),
@@ -1144,6 +1157,7 @@ BRANCH_MODEL_NODES = {
         ("2602", "Claude Sonnet 4.6", "Sonnet", "https://www.anthropic.com/system-cards"),
         ("2510", "Claude Haiku 4.5", "Haiku", "https://www.anthropic.com/news/claude-haiku-4-5"),
         ("2606", "Claude Mythos 5", "Frontier access", "https://www.anthropic.com/system-cards"),
+        ("260901", "Claude Mythos 5.1", "Frontier access", "https://www.anthropic.com/claude/mythos"),
         ("2604", "Claude Mythos Preview", "Frontier access", "https://www.anthropic.com/system-cards"),
     ],
     "google": [
@@ -1164,6 +1178,7 @@ BRANCH_MODEL_NODES = {
         ("2607", "Gemini 3.5 Flash-Lite", "Flash-Lite", "https://deepmind.google/models/model-cards/"),
         ("2607", "Gemini 3.6 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
         ("2608", "Gemini 3.7 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
+        ("260902", "Gemini 3.8 Flash Cyber", "Cyber", "https://deepmind.google/models/gemini/cyber/"),
         ("2608", "Gemini Omni Flash", "Omni", "https://deepmind.google/models/model-cards/"),
         ("2511", "Nano Banana", "Image", "https://ai.google.dev/gemini-api/docs/models"),
         ("2608", "Nano Banana 2", "Image", "https://ai.google.dev/gemini-api/docs/models"),
@@ -1195,9 +1210,9 @@ _ESTABLISHED_BRANCH_MODELS = {
     "kimi": {"Kimi-Audio", "Kimi-Dev", "Kimina-Prover Preview", "MoBA"},
     "qwen": {"CodeQwen", "Qwen2.5-Coder", "Qwen3-Coder", "Qwen3-Coder-Next", "Qwen-VL", "Qwen2-VL", "Qwen2.5-VL", "Qwen3-VL", "Qwen3-VL-Seg", "Qwen-VLA", "Qwen-Audio", "Qwen2-Audio", "Qwen3-Omni", "Qwen3-ASR", "Qwen3-TTS", "Qwen-Image", "Qwen-Image-2", "Qwen3-Embedding", "Qwen3-VL-Embedding", "Qwen3Guard", "Qwen-Scope"},
     "seed": {"Seed1.5-VL", "Seed-OSS", "Seed-Coder", "BAGEL", "Seed-TTS", "Seedream 3.0", "Seedance 1.0", "Seed3D"},
-    "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2"},
-    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Mythos 5"},
-    "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash-Lite", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
+    "openai": {"o1", "o3-mini", "o3", "o3-pro", "o4-mini", "GPT-5-Codex", "GPT-5.1-Codex-Max", "GPT-5.2-Codex", "GPT-5.3-Codex", "gpt-oss-20b", "gpt-oss-120b", "GPT-Realtime", "GPT-Realtime-2.1", "GPT-4o Transcribe", "GPT-4o Mini TTS", "GPT-Image-1", "GPT-Image-2", "GPT-Image-2.5"},
+    "anthropic": {"Claude 3 Haiku", "Claude 3 Sonnet", "Claude 3 Opus", "Claude 3.5 Haiku", "Claude Haiku 4.5", "Claude Mythos 5", "Claude Mythos 5.1"},
+    "google": {"Gemini 2.0 Flash", "Gemini 2.0 Flash-Lite", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Gemini 2.5 Deep Think", "Gemini 2.5 Computer Use", "Gemini 3 Flash", "Gemini 3 Pro Image", "Gemini 3.1 Flash Image", "Gemini 3.1 Flash-Lite", "Gemini 3.1 Flash Audio", "Gemini 3.5 Flash-Lite", "Gemini 3.8 Flash Cyber", "Gemini Omni Flash", "Gemini Robotics On-Device", "Gemini Robotics 1.5", "Gemini Robotics-ER 2", "Gemini Robotics On-Device 2"},
 }
 BRANCH_MODEL_NODES = {
     team_id: [node for node in nodes if node[1] in _ESTABLISHED_BRANCH_MODELS[team_id]]
@@ -1277,6 +1292,10 @@ AUDITED_MODEL_FACTS = {
     "Claude Fable 5.1": "与 Mythos 5.1 共用底层前沿模型的一般可用部署：1M context、128K output、adaptive thinking，并以 classifiers / fallback 划定开放边界。",
     "Gemini 3.7 Flash": "Google 当前最新 Flash，面向 coding、agentic workflows 与可靠多步执行。",
     "Gemini 3.8 Flash": "基于 3.7 Flash，保持 1M input / 64K output 边界，重点提升软件工程、终端 agent、computer use 与专业研究工作流。",
+    "DeepSeek-V4.1-Flash": "552B 多模态 MoE，以 CED、CSA2、FP4 KV 与 bounded replay 把全局 KV 压到 890 bytes/token，面向百万 token agent。",
+    "GPT-Image-2.5": "Flare / Sunburst 双 SKU 图像 family，分别服务高吞吐与高精度多轮编辑；Flare 相较 GPT-Image-2 官方称降低 50% latency。",
+    "Claude Mythos 5.1": "与 Fable 5.1 共用 underlying model 的 trusted-access 部署，面向网络安全与生命科学专业任务。",
+    "Gemini 3.8 Flash Cyber": "3.8 family 的受限网络安全部署，面向 20 种语言代码库的漏洞发现与自动补丁，通过 Fairwind Program 开放。",
     "Gemini Omni Flash": "带原生音频的视频生成、编辑、关键帧插值与延展模型。",
     "Gemini Robotics-ER 1.6": "面向物理空间理解、仪表读取和多步机器人任务规划的 embodied reasoning 模型。",
 }
@@ -1949,6 +1968,15 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             body: list[str] = []
             i += 1
             while i < len(lines) and (lines[i].startswith(">") or not lines[i].strip()):
+                # A blank line followed by a new callout starts a sibling block;
+                # do not swallow its marker into the current callout body.
+                if (
+                    not lines[i].strip()
+                    and i + 1 < len(lines)
+                    and re.match(r"> \[![^\]]+\]", lines[i + 1])
+                ):
+                    i += 1
+                    break
                 if lines[i].startswith(">"):
                     body.append(lines[i][1:].lstrip())
                 i += 1

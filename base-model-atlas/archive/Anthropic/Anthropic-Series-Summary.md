@@ -3,7 +3,7 @@ title: "Anthropic · Claude — Series Summary"
 type: model-note
 tags: [model-note, base-model, series, anthropic]
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-02
 ---
 
 # Anthropic · Claude — Series Summary
@@ -26,10 +26,13 @@ updated: 2026-08-31
 | 2026-04 | Claude Opus 4.7 | 长时程软件工程与自验证进一步提升。 | [Official release](https://www.anthropic.com/news/claude-opus-4-7) |
 | 2026-05 | Claude Opus 4.8 | 更可靠的判断、工具效率与诚实性。 | [Official release](https://www.anthropic.com/news/claude-opus-4-8) |
 | 2026-06 | Claude Sonnet 5 | 把高阶 agent 能力下放到 Sonnet 成本层。 | [Official release](https://www.anthropic.com/news/claude-sonnet-5) |
+| 2026-06 | Claude Fable 5 | Anthropic 前沿模型序列的首个 Fable 正式节点。 | [System Cards](https://www.anthropic.com/system-cards) |
 | 2026-07 | Claude Opus 5 | 面向长时程 agents 的 Opus 代际跃迁。 | [Official release](https://www.anthropic.com/news/claude-opus-5) |
+| 2026-09-01 | [[260901_Claude_Fable_5_1/Claude-Fable-5.1|Claude Fable 5.1]] | 与 Mythos 5.1 共用底层模型；1M context、128K output、adaptive thinking，并以 classifiers / fallback 划定一般开放边界。 | [Tech Blog](https://www.anthropic.com/claude-fable-and-mythos-5-1) · [Platform Docs](https://platform.claude.com/docs/en/models/fable-5-1/overview) · [System Card](https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20%26%20Claude%20Mythos%205.1%20System%20Card.pdf) |
 
 ## 编辑判断
 
 - 这里只收主干正代与改变路线的关键节点，不把每个尺寸、API snapshot 或专项 SKU 拆成正代。
+- Fable 5 与 Fable 5.1 直接进入 Anthropic 主时间线；Mythos 仍作为同底座的受限部署形态单独记录。
 - 训练数据、参数和消融只在官方技术报告明确披露时记录；闭源发布不做架构猜测。
 - 当前旗舰详见 [[2607_Claude_Opus_5/Claude-Opus-5|Claude Opus 5]]。
