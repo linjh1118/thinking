@@ -83,3 +83,16 @@ python3 scripts/gen_index.py
 - 海报：`jev-papers/`，所有返回链接回到专题页，访问不依赖内网。
 - 内容源：BrainHao 的 `Topics/22_Jev/projects/`；原页面生成器位于 `00.work/260927_jev_survey/src/`。
 - 更新导入：`scripts/publish_jev_atlas.py --source <生成的 HTML> --poster-origin <海报服务器地址>`。
+
+### Jev Atlas 轻量加载版
+
+公网版的首页为静态 HTML，首屏约 100 KB；文章 JSON、搜索索引、数学字体与图表引擎按需加载。`jev-atlas-assets/` 必须与 `jev_atlas.html` 一起部署。
+
+维护入口：`scripts/jev-site/`。`content.json` 保存导入内容，`shell.html` 为预渲染页面框架，`app.js` 提供交互，`style.css` 提供样式。
+
+```bash
+npm ci --prefix scripts/jev-site
+npm run build --prefix scripts/jev-site
+```
+
+从新版单文件导出重新导入时，先运行 `publish_jev_atlas.py` 完成公网链接转换，再运行 `node scripts/jev-site/build.mjs --import jev_atlas.html`。导入预渲染需 Chromium；可通过 `CHROME_PATH` 指定浏览器可执行文件。日常仅重建无需浏览器。
