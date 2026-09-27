@@ -73,3 +73,13 @@ python3 scripts/gen_index.py
 1. HTML 文件头必须包含 `<!-- index: Title | Date | Description -->` 注释
 2. 如果 HTML 文件没有这个注释，会从 `<title>` 和 `<meta description>` 标签提取
 3. 部署需要目标仓库开启 GitHub Pages（Settings → Pages → Source: GitHub Actions）
+
+
+## Jev Atlas
+
+[打开 Jev 决策模型研究手册](https://linjh1118.github.io/thinking/jev_atlas.html)：八个项目的模型结构、训练数据与 Benchmark 精读，包含搜索、页内目录、公式/结构图、概率实验室与 13 篇论文海报。
+
+- 入口：`jev_atlas.html`，首页部署时自动收录。
+- 海报：`jev-papers/`，所有返回链接回到专题页，访问不依赖内网。
+- 内容源：BrainHao 的 `Topics/22_Jev/projects/`；原页面生成器位于 `00.work/260927_jev_survey/src/`。
+- 更新导入：`scripts/publish_jev_atlas.py --source <生成的 HTML> --poster-origin <海报服务器地址>`。
