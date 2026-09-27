@@ -96,3 +96,9 @@ npm run build --prefix scripts/jev-site
 ```
 
 从新版单文件导出重新导入时，先运行 `publish_jev_atlas.py` 完成公网链接转换，再运行 `node scripts/jev-site/build.mjs --import jev_atlas.html`。导入预渲染需 Chromium；可通过 `CHROME_PATH` 指定浏览器可执行文件。日常仅重建无需浏览器。
+
+## FinJev 方案讨论页
+
+[打开 FinJev 方法与评测方案讨论](https://linjh1118.github.io/thinking/finjev-design-review.html)：模型、数据、RLCD、评测与方案选择的六章讨论稿。
+
+入口为 `finjev-design-review.html`，部署时自动收录到首页。单文件页面无需外部资源；选择保存在当前浏览器，可复制讨论方案或下载 JSON。
