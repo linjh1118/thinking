@@ -102,3 +102,11 @@ npm run build --prefix scripts/jev-site
 [打开 FinJev 方法与评测方案讨论](https://linjh1118.github.io/thinking/finjev-design-review.html)：模型、数据、RLCD、评测与方案选择的六章讨论稿。
 
 入口为 `finjev-design-review.html`，部署时自动收录到首页。单文件页面无需外部资源；选择保存在当前浏览器，可复制讨论方案或下载 JSON。
+
+## Jev Benchmark Dashboard
+
+[打开模型覆盖与排行榜看板](https://linjh1118.github.io/thinking/jev_benchmarks.html)：31 组评测来源、177 张独立协议结果表、1,519 条模型 / 配置结果。支持 Benchmark 检索、模型覆盖矩阵、质量 / 校准 / 成本 / 延迟指标切换与数据导出。
+
+公开结果核对日期：2026-10-04。完整收录 JevBench v1.4.2.2 的 95 个系统；不同数据切分、版本与 harness 分开比较，未披露指标不填零。
+
+数据及维护说明：[`jev-benchmark-data/README.md`](jev-benchmark-data/README.md)。重建命令：`python3 scripts/jev-benchmarks/build.py`。
