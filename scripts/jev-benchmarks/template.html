@@ -742,6 +742,41 @@
         color: var(--muted);
         font-size: 10px;
       }
+      .recommendations {
+        margin: 24px 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .recommendation {
+        padding: 20px;
+        border: 1px solid #51496b;
+        border-radius: 12px;
+        background: linear-gradient(125deg, #29243c, #18252d);
+      }
+      .recommendation h2 {
+        margin: 7px 0 12px;
+        font-size: 20px;
+      }
+      .recommendation ol {
+        margin: 0;
+        padding-left: 20px;
+        color: #ced5e5;
+      }
+      .recommendation li + li {
+        margin-top: 7px;
+      }
+      .recommendation p {
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .recommendation strong {
+        color: var(--text);
+      }
+      .recommendation .eyebrow {
+        margin-bottom: 0;
+      }
       .count-note {
         font-size: 11px;
         margin-bottom: 12px;
@@ -779,6 +814,9 @@
         }
       }
       @media (max-width: 720px) {
+        .recommendations {
+          grid-template-columns: 1fr;
+        }
         .wrap {
           padding: 0 16px;
         }
@@ -908,6 +946,92 @@
           ● 来源核对 2026.10.04
           <span class="muted">/ 静态快照 · 未重新跑模型</span>
         </div>
+        <div
+          class="recommendations"
+          id="recommendations"
+          aria-label="两条优先级建议"
+        >
+          <article class="recommendation">
+            <div class="eyebrow">结论 01 · 推荐打哪些</div>
+            <h2>先做三组核心评测，覆盖能力、概率与综合竞争力</h2>
+            <ol>
+              <li>
+                <strong
+                  ><a href="#board/nimble-macro">Nimble public suite</a
+                  >：主测任务能力。</strong
+                >13 子集 / 3,880
+                条，人标数据、固定样本，覆盖路由、验证、审核等常见决策。
+              </li>
+              <li>
+                <strong
+                  ><a href="#board/jevals-choice">Jevals</a
+                  >：主测概率质量。</strong
+                >Choice / Noul / Score 三类都测，重点看 Decision Score
+                与校准，避免只看准确率。
+              </li>
+              <li>
+                <strong
+                  ><a href="#board/jevbench-full">JevBench</a
+                  >：最终对标生态。</strong
+                >public231 用于本地诊断；完整 v1.4.2.2
+                成绩需要评测方执行封存部分，不能用公开题分数替代。
+              </li>
+            </ol>
+            <p>
+              <strong
+                >中文需求再加
+                <a href="#board/zh-94">zh-decision-bench v0.2</a
+                >；CSS、Judge、Agent 专项后置。</strong
+              >31
+              组来源包含重复数据集与不同协议，不必全部跑。先固定这三组，再按实际短板扩展。
+            </p>
+          </article>
+          <article class="recommendation">
+            <div class="eyebrow">结论 02 · 重点关注哪些 Baseline</div>
+            <h2>先跑四个核心对照，冲榜时追加头部模型</h2>
+            <ol>
+              <li>
+                <strong
+                  ><a href="#board/jevbench-full">Jev 1.13.0 + decider-4B v2</a
+                  >：</strong
+                >闭源标尺与强开放基线。当前快照综合分为 63.29 /
+                64.13；综合分超过 Jev 不等于推理能力更强。
+              </li>
+              <li>
+                <strong
+                  ><a
+                    href="https://github.com/jaredpalmer/kev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Kev-4B</a
+                  >
+                  +
+                  <a
+                    href="https://github.com/NandhaKishorM/laya"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Laya</a
+                  >：</strong
+                >分别作为 Qwen 决策模型复现对照、轻量 encoder
+                路线对照。固定权重版本，勿混用 Kev 旧 preview 或 Laya 不同
+                checkpoint。
+              </li>
+              <li>
+                <strong
+                  >冲榜追加
+                  <a href="#board/jevbench-full">Imajev-4B、Plumb-4B</a
+                  >：</strong
+                >本快照综合榜前二，67.37 / 65.84；跑 Nimble 套件时可补
+                <a href="#board/nimble-macro">Nimble-9B</a> 作为原作者参照。
+              </li>
+            </ol>
+            <p>
+              <strong>另保留一个同尺寸、未做决策微调的底座对照</strong
+              >，判断增益是否来自训练。以上是基于 2026-10-04
+              来源的优先级建议；所有新结果需在统一 harness 下重测。
+            </p>
+          </article>
+        </div>
         <div class="stats" id="stats"></div>
       </div>
     </div>
@@ -920,9 +1044,8 @@
       </nav>
       <section class="section" id="overview">
         <div class="tldr">
-          <b>从四个入口开始：</b>JevBench 看生态总榜；Jevals 看概率质量；Nimble
-          / CSS 看公共任务；中文 v0.2 看中文决策。每张榜只比较自己的数据、版本与
-          harness，完整 Agent 成绩单独呈现。
+          <b>推荐顺序：</b>Nimble 公共套件 → Jevals → JevBench；中文需求再补中文
+          v0.2。 下方保留完整研究地图，供发现短板后选择专项评测。
         </div>
         <div class="row">
           <h2>Benchmark 资源地图</h2>
