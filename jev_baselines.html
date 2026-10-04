@@ -466,7 +466,8 @@
         <div id="main-table"></div>
         <h2>Table 2 · 概率质量与效率</h2>
         <p>
-          逐个模型同时填 raw 与 calibrated 的 NLL、Brier、固定 ECE
+          先分列 Jevals 的 Choice / Noul / Score Decision
+          Score；再逐个模型同时填 raw 与 calibrated 的 NLL、Brier、固定 ECE
           bins、AURC、coverage@风险≤5%；效率填固定硬件与输入桶下的
           P50/P95、显存和每次请求成本。全部待测。
         </p>
@@ -1304,10 +1305,16 @@
             "先锁 ID、转换脚本及 Score 的 exact/expected 规则；13 项明细放附录"
           ],
           [
-            "Typed decisions / Jevals",
+            "Typed decisions（扩展）",
             "固定版本 test 400 cases / 2,000 decisions；Choice/Noul/Score 分项",
             "林景豪",
             "公开 train 使用情况披露；gold 可能是教师分布，报告 hard Acc 与 Brier/NLL"
+          ],
+          [
+            "Jevals · suite 0.1.0",
+            "Choice/Banking77、Noul/PubMedQA、Score/HelpSteer2；3×300 items×5 repeats",
+            "林景豪",
+            "独立套件，非 typed-decisions 2,000 条；Table 2 分列三种 Decision Score，并报告概率、重复稳定性与成本"
           ],
           [
             "JevBench public",
@@ -1381,6 +1388,10 @@
           [
             "NeoHorse-1 论文（不是 Jev 专属报告）",
             "https://arxiv.org/abs/2609.08183"
+          ],
+          [
+            "Jevals 0.1.0：方法、样本与逐题日志",
+            "https://github.com/Jevals/jevals-data"
           ]
         ]
       }
@@ -1629,6 +1640,7 @@
       document.getElementById("quality-table").innerHTML = table(
         [
           "模型",
+          "Jevals Decision Score↑（C/N/S）",
           "NLL↓ / Brier↓ / ECE↓",
           "AURC↓ / 风险 coverage↑",
           "P50/P95 / 显存 / 成本",
@@ -1637,6 +1649,7 @@
           .filter((row) => row[1].startsWith("P0"))
           .map((row) => [
             row[0],
+            "待测 / 待测 / 待测",
             "待测：raw / calibrated",
             "待测",
             "待测：固定硬件与输入桶",
