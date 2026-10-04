@@ -1,0 +1,1671 @@
+<!-- index: Jev Baseline、Data Recipe 与论文主表 | 2026-10-04 | 十个模型家族训练方法对比、公开成绩、统一复测主表与 Data Reserve 消融设计 -->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Jev Baselines · 训练配方与论文主表</title>
+    <meta
+      name="description"
+      content="Jev baseline 技术材料、Data Recipe 深度比较、公开性能表和待复测论文主表。"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1117;
+        --panel: #191e2c;
+        --line: #31394d;
+        --text: #e7ebf5;
+        --muted: #aab5cb;
+        --purple: #bbabff;
+        --mint: #7fe4ce;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          15px/1.75 system-ui,
+          -apple-system,
+          "PingFang SC",
+          sans-serif;
+      }
+      a {
+        color: var(--purple);
+        text-underline-offset: 3px;
+      }
+      a:hover {
+        color: #fff;
+      }
+      header,
+      main,
+      footer {
+        max-width: 1420px;
+        margin: auto;
+        padding: 32px 36px;
+      }
+      header {
+        background:
+          radial-gradient(ellipse at 80% 0, #353078 0, transparent 65%),
+          linear-gradient(125deg, #172742, #201c3b);
+        border-bottom: 1px solid var(--line);
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 3px;
+        color: var(--mint);
+        font-weight: 700;
+      }
+      h1 {
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1.2;
+        margin: 18px 0;
+      }
+      h2 {
+        font-size: 25px;
+        margin: 30px 0 16px;
+      }
+      h3 {
+        margin: 0 0 12px;
+        font-size: 19px;
+      }
+      .sub {
+        max-width: 950px;
+        color: #c4cde1;
+      }
+      .links {
+        display: flex;
+        gap: 10px 20px;
+        flex-wrap: wrap;
+        margin: 20px 0 4px;
+      }
+      .links a {
+        font-size: 13px;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+      }
+      .stat {
+        padding: 10px 20px;
+        background: #ffffff08;
+        border: 1px solid #ffffff20;
+        border-radius: 12px;
+      }
+      .stat strong {
+        font-size: 22px;
+        display: block;
+        color: var(--mint);
+      }
+      .stat span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0f1117ed;
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(12px);
+        padding: 10px max(20px, calc((100vw - 1348px) / 2));
+        display: flex;
+        gap: 8px;
+        overflow: auto;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #202637;
+        color: var(--text);
+        padding: 8px 14px;
+        white-space: nowrap;
+      }
+      button:hover {
+        border-color: var(--purple);
+      }
+      button.active {
+        background: #7260c7;
+        color: white;
+        border-color: #a38cff;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid var(--mint);
+        outline-offset: 3px;
+      }
+      .tab[hidden] {
+        display: none;
+      }
+      .tldr {
+        border-left: 3px solid var(--mint);
+        padding: 17px 22px;
+        background: #16312f55;
+        border-radius: 0 12px 12px 0;
+        margin: 0 0 26px;
+      }
+      .tldr b {
+        color: var(--mint);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .card {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        border-radius: 14px;
+        padding: 23px;
+      }
+      .card p {
+        margin: 9px 0;
+      }
+      .muted,
+      small {
+        color: var(--muted);
+      }
+      .tag {
+        font-size: 12px;
+        color: var(--mint);
+        background: #183a35;
+        padding: 3px 9px;
+        border-radius: 5px;
+      }
+      .warn {
+        border-left: 3px solid #eab96f;
+        background: #342b204d;
+        padding: 13px 18px;
+        margin: 20px 0;
+      }
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        margin: 16px 0 26px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 780px;
+        font-size: 13px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 1px solid #30384a;
+        vertical-align: top;
+      }
+      th {
+        background: #252d43;
+        color: #cad4ec;
+        white-space: nowrap;
+      }
+      td:first-child {
+        min-width: 160px;
+        font-weight: 600;
+      }
+      tbody tr:hover {
+        background: #ffffff05;
+      }
+      .pending {
+        color: #a1aabe;
+        font-size: 12px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+      }
+      input,
+      select {
+        padding: 10px 14px;
+        background: #191e2c;
+        color: var(--text);
+        border: 1px solid #46506b;
+        border-radius: 8px;
+      }
+      input {
+        min-width: 220px;
+        flex: 1;
+      }
+      details {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        margin: 12px 0;
+        background: var(--panel);
+      }
+      summary {
+        cursor: pointer;
+        padding: 17px 20px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      details .inside {
+        padding: 0 22px 22px;
+      }
+      .field {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 14px;
+        padding: 10px 0;
+        border-top: 1px solid #30384a;
+      }
+      .field b {
+        color: #b9aaed;
+      }
+      .chain {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 22px 0;
+      }
+      .chain span {
+        padding: 13px 18px;
+        border-radius: 10px;
+        background: #263450;
+        border: 1px solid #445478;
+      }
+      .empty {
+        padding: 25px;
+        color: var(--muted);
+      }
+      footer {
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid var(--line);
+      }
+      @media (max-width: 700px) {
+        header,
+        main,
+        footer {
+          padding: 24px 18px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .field {
+          grid-template-columns: 1fr;
+          gap: 3px;
+        }
+        nav {
+          padding: 8px 12px;
+        }
+        .stat {
+          flex: 1;
+          min-width: 120px;
+        }
+        .card {
+          padding: 18px;
+        }
+      }
+      @media print {
+        nav,
+        .toolbar {
+          display: none;
+        }
+        .tab[hidden] {
+          display: block;
+        }
+        body {
+          color: #111;
+          background: white;
+        }
+        .card,
+        .tldr,
+        details {
+          background: white;
+          color: #111;
+        }
+        a {
+          color: #443388;
+        }
+        .table-wrap {
+          overflow: visible;
+        }
+        table {
+          min-width: 0;
+          font-size: 9px;
+        }
+        th,
+        td {
+          padding: 5px;
+          color: #111;
+        }
+        header {
+          background: white;
+        }
+        details .inside {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="eyebrow">JEV RESEARCH / BASELINES & DATA RECIPE</div>
+      <h1>从公开配方<br />到可检验的论文主表</h1>
+      <p class="sub">
+        十个模型家族，逐项看清训练数据、监督目标与版本差异。保留作者公开成绩，同时给出我们要补测的主表与
+        Data Reserve 对照实验。
+      </p>
+      <div class="links">
+        <a
+          href="https://ncn5xqvmb1os.feishu.cn/wiki/MPMdwhCSNi4fhvk82UXckh6mnKc"
+          >飞书研究文档 ↗</a
+        ><a href="jev_benchmarks.html">Benchmark 看板 ↗</a
+        ><a href="jev_atlas.html">Jev 研究手册 ↗</a
+        ><a
+          href="https://ncn5xqvmb1os.feishu.cn/wiki/YJAEwOYsQiTs1qkSeoPcNKvOnzf"
+          >One Page ↗</a
+        ><a
+          href="obsidian://open?vault=BrainHao&file=00.work%2F261004_jev_baselines%2Fdiscussion_jev_baselines"
+          >本地研究笔记 ↗</a
+        >
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <strong>10</strong><span>模型家族 / 方法档案</span>
+        </div>
+        <div class="stat"><strong>9</strong><span>公开性能参考表</span></div>
+        <div class="stat"><strong>3</strong><span>论文结果表草案</span></div>
+        <div class="stat">
+          <strong>未运行</strong><span>本次仅研究与实验设计</span>
+        </div>
+      </div>
+    </header>
+    <nav aria-label="页面章节">
+      <button data-tab="overview">核心判断</button
+      ><button data-tab="recipes">训练与 Data Recipe</button
+      ><button data-tab="results">公开成绩</button
+      ><button data-tab="paper">论文主表草案</button
+      ><button data-tab="reserve">Data Reserve 实验</button
+      ><button data-tab="sources">来源与口径</button>
+    </nav>
+    <main>
+      <section class="tab" id="overview">
+        <div class="tldr">
+          <b>TL;DR</b>　有技术报告，也有完整 README /
+          模型卡。真正值得争取的贡献是：固定预算下，弱技能数据分配能否胜过整题
+          hard mining，并迁移到未见组合。
+        </div>
+        <div class="grid" id="insights"></div>
+        <h2>先读这些材料</h2>
+        <div class="grid" id="reading"></div>
+        <h2>如何使用这页</h2>
+        <p>
+          看训练比较确定竞争方法；看公开成绩了解已有证据；用主表草案固定我们自己的统一复测。公开数字不自动成为新实验的结果。
+        </p>
+      </section>
+      <section class="tab" id="recipes" hidden>
+        <div class="tldr">
+          <b>TL;DR</b>　各家的主要差异集中在题目来源、难例筛选、hard/soft
+          target、replay
+          与校准。算法名称相似不代表版本或训练预算一致；点开模型查看完整配方。
+        </div>
+        <div class="toolbar">
+          <input
+            id="recipe-search"
+            aria-label="搜索训练配方"
+            placeholder="搜索模型、replay、soft、RL、技能…"
+          /><button id="expand">全部展开</button>
+        </div>
+        <div id="recipes-list"></div>
+      </section>
+      <section class="tab" id="results" hidden>
+        <div class="tldr">
+          <b>TL;DR</b>　现成的论文式主表确实存在：NeoHorse
+          六组文本表最直观，decider 的 Nimble-13
+          表最完整。这些是不同来源的参考表，不形成跨表综合排名。
+        </div>
+        <div class="warn">
+          重点：Nimble282 ≠ Nimble public-13；JevBench family-macro ≠ pooled
+          accuracy；单次推理 ≠ 四次候选旋转。所有数字是来源方报告。
+        </div>
+        <div class="toolbar">
+          <label for="result-select">选择完整参考表</label
+          ><select id="result-select"></select>
+        </div>
+        <div id="result-panel"></div>
+      </section>
+      <section class="tab" id="paper" hidden>
+        <div class="tldr">
+          <b>TL;DR</b>　Table 1 比能力，Table 2 比概率与成本，Table 3
+          做数据机制消融。所有“待统一复测”均为真实缺口；本次没有生成模型成绩。
+        </div>
+        <div class="toolbar">
+          <label
+            ><input
+              id="p0"
+              type="checkbox"
+              style="min-width: 0; vertical-align: middle"
+            />
+            仅看 P0 首轮模型</label
+          ><button id="csv">下载 Table 1 CSV</button>
+        </div>
+        <h2>Table 1 · 统一协议的能力主表</h2>
+        <p class="muted">
+          默认 single-pass / text-only；Imajev 四次旋转另报。组合 OOD
+          为拟构建测试。P0 是首轮，P1 是扩展/附录。
+        </p>
+        <div id="main-table"></div>
+        <h2>Table 2 · 概率质量与效率</h2>
+        <p>
+          逐个模型同时填 raw 与 calibrated 的 NLL、Brier、固定 ECE
+          bins、AURC、coverage@风险≤5%；效率填固定硬件与输入桶下的
+          P50/P95、显存和每次请求成本。全部待测。
+        </p>
+        <div id="quality-table"></div>
+        <div class="warn">
+          表注草案：相同样本 ID、适配契约和失败计分；区间按 case/family
+          bootstrap。报告训练来源重叠。闭源 Jev 单列外部参考，不用于同算力结论。
+        </div>
+        <h2>补测清单与建议分工</h2>
+        <div id="protocol-table"></div>
+      </section>
+      <section class="tab" id="reserve" hidden>
+        <div class="tldr">
+          <b>TL;DR</b>　先固定训练目标，只比较数据选择策略。优先回答 D 是否胜过
+          B/C，再研究 soft replay、rationale 或 RL；否则无法解释增益来自哪里。
+        </div>
+        <div class="chain">
+          <span>独立诊断集</span><span>技能库存 / 成本</span
+          ><span>预算分配</span><span>固定训练</span><span>未见组合测试</span>
+        </div>
+        <h2>Table 3 · 数据策略消融草案</h2>
+        <div id="ablation-table"></div>
+        <div class="grid">
+          <div class="card">
+            <h3>首轮：16 次训练的分阶段设计</h3>
+            <p>
+              A/B/C/D × 2 领域 × 1 seed = 8 runs；选胜出方案与最强整题控制，各补
+              2 seeds × 2 领域 = 8 runs。先完成这一轮，再考虑扩大。
+            </p>
+            <p class="muted">
+              建议计划，未启动训练。teacher 数据构建成本与 student 训练 token
+              均需计入。
+            </p>
+          </div>
+          <div class="card">
+            <h3>需要留下的审计字段</h3>
+            <p>
+              sample_id、source/family、atomic_skill、组合标签、difficulty、teacher
+              revision、答案证据、token/decision 成本、split、许可与 hash。
+            </p>
+            <p class="muted">
+              最终测试不参与选题、预算分配、温度拟合或 checkpoint 选择。
+            </p>
+          </div>
+          <div class="card">
+            <h3>支持主张的结果</h3>
+            <p>
+              D 在多个 seed 上优于整题 hard mining B 与均匀技能
+              C，且提升未见组合、相同预算下更省数据、旧能力不明显退化。
+            </p>
+          </div>
+          <div class="card">
+            <h3>需要收缩主张的结果</h3>
+            <p>
+              若只提升原子题而组合不变，应写作定向技能修复；若加组合桥接才有效，应明确训练依赖；若提升来自
+              soft replay，则把贡献分清。
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="tab" id="sources" hidden>
+        <div class="tldr">
+          <b>TL;DR</b>　阅读截至 2026-10-04 的公开材料；GitHub 证据固定到
+          commit。遇到 README、技术报告和新 checkpoint
+          冲突，优先呈现版本差异与原始结果口径。
+        </div>
+        <div id="notes"></div>
+        <h2>技术材料怎么读</h2>
+        <p>
+          Imajev 有明确命名的网页版 Technical Report；Kev 与 decider
+          的详细模型卡、训练日志已能支撑方法复核。本次未核到它们的专属 arXiv
+          论文，这不等于证明不存在。NeoHorse-Jev
+          的模型卡有完整六组主表，但所链接的论文属于 NeoHorse-1，不能代替 Jev
+          专项训练说明。
+        </p>
+        <h2>来源入口</h2>
+        <div id="sources-list"></div>
+        <h2>复现记录至少包含</h2>
+        <p>
+          模型 revision、数据 hash、harness commit、请求
+          schema、候选与长度限制、dtype、temperature、rotation、重试与失败政策、逐题
+          logits/probabilities、设备与计时方式。论文主表不填借用另一版本的最佳数字。
+        </p>
+      </section>
+    </main>
+    <footer>
+      核查日期 2026-10-04 ·
+      公开来源研究整理；实验设计与作者报告均已标注。来源资料更新时，以固定
+      revision 为复核依据。
+    </footer>
+    <script id="research-data" type="application/json">
+      {
+        "updated": "2026-10-04",
+        "recipes": [
+          {
+            "name": "Kev 4B · Kev 1.0",
+            "architecture": "Qwen3.5-4B-Base + pointer head；LoRA r16/α32，覆盖 attention、MLP、DeltaNet。问题 token 与候选结束 token 交互打分。",
+            "data": "分阶段加入 decision-v7、日期/缺失证据、真实文档、hard-v1 与 devtools-v1；后续阶段回放 2k/2k/4k 记录。hard-v1 含 6k 程序化技能训练题，devtools-v1 5,320 条。",
+            "objective": "候选分布的监督交叉熵；候选打乱、干扰项和最小对照。校准独立于训练，发布 4B 温度约 2.41。",
+            "schedule": "基础阶段 2 epochs、lr 5e-5；后续阶段各 1 epoch、lr 2e-5；最后技能阶段 1,915 updates。发布权重 139fdd94。",
+            "lesson": "可复制的是逐阶段回归检查、技能题补强和固定 replay。Data Reserve 必须比这种定向补题更强，不能只证明加入 hard 数据有用。",
+            "caveat": "hard-v1 新模板仍来自已训练生成器，不等于跨技能组合泛化；4B 与 27B 的基座/训练方式也不同。",
+            "url": "https://github.com/jaredpalmer/kev/blob/fe64b1274ea7f80d4095866df90666abb03e9cf6/docs/model-cards/kev-4b.md"
+          },
+          {
+            "name": "decider 4B v2.1",
+            "architecture": "Qwen3.5-4B-Base + slot readout；第二阶段使用 attention/MLP LoRA r64，合并发布。",
+            "data": "第一阶段 mixture v2：原有公开混合 + 26 个数据集 + 10 类可验证程序题，742M tokens。第二阶段共 29,325 条 hard/replay；其中 replay 6,700 条。",
+            "objective": "第一阶段 CE；第二阶段 hard 题用监督标签，replay 对齐 v1 的分布以保留概率行为。4B v2.1 没有 RL。",
+            "schedule": "第二阶段 2 epochs、lr 1e-4；按 question type 校准。decider-ai ≥1.4.0 才使用温度映射。2B 的 PPO/一致性训练属于另一版本链。",
+            "lesson": "强对照必须包含“整题 hard mining + 分布 replay”，不能把保留旧能力的收益都归因于技能分解。",
+            "caveat": "v2.1 hard111 为 64.9%，v2 为 67.6%；新版侧重恢复 sampled play，不能把旧版最佳成绩填给新版。",
+            "url": "https://github.com/Mapika/decider/blob/45024082b7d4bb667bf9140b7a7c073d3b483f6b/MODEL_CARD_4B.md"
+          },
+          {
+            "name": "Bespoke-Nimble 9B",
+            "architecture": "Qwen3.5-9B 指定 revision c2022362；LoRA r16，读取允许候选的 logits。",
+            "data": "公开训练集 2,676 条、holdout 324 条；对比式证据题按来源 family 隔离，证据证书与文件 hash 可核验。另一个本地 v2 的 2,826 条不是本次发布数据。",
+            "objective": "hard-label CE，不训练生成 rationale，也不使用 teacher 概率分布。",
+            "schedule": "有效 batch 8，lr 5e-5，最大长度 2,048，seed 17；跑 1 epoch/335 updates，但沿用 1,005-step 的线性学习率计划、warmup 101。",
+            "lesson": "最适合作为低预算数据工程对照：精确证据与最小语义变化是否比多生成整题更划算。",
+            "caveat": "324 synthetic holdout、NeoHorse 过滤后的 282 子集、13 任务/3,880 条公开人标套件是三套评测。",
+            "url": "https://github.com/bespokelabsai/nimble/blob/62076b4f2d365b5879dafcf7f6dd072a1fe76df7/docs/NIMBLE_TRAINING.md"
+          },
+          {
+            "name": "Plumb v5 / v5.2",
+            "architecture": "以 JevK5 v0.2 / Qwen3.5-4B 为起点；attention LoRA r16，候选字母 logits。",
+            "data": "Qwen3.8-27B 写 hard 文档题并独立回答两次，答案一致才保留；v5 的 5,026 教师题（含 500 长文档）挖出 3,204 hard 题，加等量公开人标 replay。",
+            "objective": "hard mining + hard CE；公开 replay 含 MNLI/WANLI/BoolQ/banking77/ARC/CSQA/MMLU-Pro。",
+            "schedule": "v5 3 epochs、lr 3e-5、最大长度 6,144、校准 T=2.07。v5.2 沿用 v5 权重，调整新评测契约下的输出读取。",
+            "lesson": "这是最接近 Data Reserve 的直接竞争方案：错误/不确定性驱动整题采样。必须在相同 teacher 与 token 预算下击败它。",
+            "caveat": "8-gram 去重不排除按公开题型反复调整 recipe 的影响；v5.2 读取规则变化不能写作新训练收益。",
+            "url": "https://github.com/crh225/plumb/blob/fe73067682729221bc61aac1db6c1e08f2f7d7f8/README.md"
+          },
+          {
+            "name": "Eikos 4B",
+            "architecture": "Qwen3.5-4B + LoRA r64；softmax over option letters；4B 发布流程包含 B/E recipe 权重平均。",
+            "data": "writer 出题、GLM-5.3-Flash blind teacher 复核；叠加概率/日期/金融/交易/规则等程序化精确标签、长上下文 dossier、PT↔EN 两种视图。snapshot 控制来源配额与去重。",
+            "objective": "soft CE + rationale loss 0.3 + PT↔EN symmetric KL 0.5；recipe E 另有 light JEPA 0.2。候选顺序置换。",
+            "schedule": "1 epoch、lr 1e-4、LoRA r64；发布 T=1。B/E 使用同一数据和 seed，不能当作独立重复实验。",
+            "lesson": "将“题目选择”与“标签质量/训练目标”拆开：先固定 CE 做数据选择，再单独消融 soft target、rationale、view consistency。",
+            "caveat": "公开投影未包含全部训练行；FinQA-derived 数据排除是有价值的边界，但共享生成器仍限制 OOD 解释。",
+            "url": "https://github.com/caiovicentino/eikos/blob/8902fbe9e06e10da50d3ed5d27bb52fcf8ddd900/README.md"
+          },
+          {
+            "name": "Imajev · 早期四阶段 → 4B phase-3",
+            "architecture": "Qwen3.5 多模态基座；早期 r16 + 255-option/unknown readout；9/26 的 4B phase-3 为 r64/α128 + 256-code readout。",
+            "data": "早期：504k 许可核验的人标决策；9B 伪标新来源；hard typed questions 用多教师一致性过滤；39,515 soft-target rows。4B phase-3 再加约 58k hard text、32k hard image，之后修复残余错误。",
+            "objective": "早期 hard CE → soft CE + rationale 0.3 + permutation，并用 hard/soft 两个 adapter 的 50/50 平均保留视觉能力。phase-3 是后续新阶段，不能沿用旧 soup 说明。",
+            "schedule": "早期 hard 阶段 lr 3e-5/2e-5、2 epochs；soft 阶段 lr 2e-5、2 epochs。当前 4B 的方法说明需同时引用模型卡与 results/phase3。",
+            "lesson": "有明确 Technical Report，但版本是核心阅读维度。跨模态/Unknown gate 与负迁移报告值得借鉴。",
+            "caveat": "当前 hard 单次 71.2%，4-order 72.1%；phase-3 表中 0.082 为 single calibrated ECE，不能标成 4-order ECE。README 的旧训练段与新版 4B 说明混杂。",
+            "url": "https://github.com/mohit67890/imajev/blob/ccf586d43d2a580319b6535c893668904d909eb9/model-cards/imajev-4b.md"
+          },
+          {
+            "name": "Laya Typed Decisions",
+            "architecture": "encoder 路线，与 English/Multilingual 通用 checkpoint 需分行；typed-decisions 是专门微调结果。",
+            "data": "1,200 training cases → 6,000 typed decisions；目标来自教师分布。训练前抽独立 calibration slice，最多 400 或 10%。",
+            "objective": "RLCD：4 次 noisy-logit 采样的 policy-gradient 项 + full-weight soft CE；proper-score reward 含 spherical 0.75、ranked probability 1.0。",
+            "schedule": "4 epochs，effective batch 64；encoder lr 2.5e-5、head lr 1e-4；max_len 1,024，按 type 拟合温度。",
+            "lesson": "它是 encoder/速度对照，也提供 distribution supervision 的对照。若做 typed 主表，要披露它用过相同任务的 train split。",
+            "caveat": "76.6% 是作者报告的 typed test 成绩；当前仓库缺对应提交的原始结果文件。教程中的 teacher self-agreement 不应被解释为数学准确率上限。",
+            "url": "https://github.com/NandhaKishorM/laya/blob/2e4d9c87e8b1621deb344eac7de5c7258f32f849/docs/finetune.md"
+          },
+          {
+            "name": "Open-Jev 2B / 9B / 27B v1.1",
+            "architecture": "LoRA + scalar decision head，以预训练 Yes-minus-No readout 初始化；训练时每个候选是独立序列。",
+            "data": "2B/9B 使用 release-v2 的 80,816 train rows；27B v1.1 使用原始混合 148,639 train rows。公开投影只有 147,139 train rows，不能视为完全相同语料。",
+            "objective": "soft cross-entropy + 0.1 Brier；按 group 隔离划分，在 calibration split 拟合温度。",
+            "schedule": "27B v1.1 固定在预先声明的 37,160-step checkpoint。README 示例 400 steps 不是正式模型训练量；新准备的混合不等于已训练模型。",
+            "lesson": "对标其 typed schema、来源版本和 group split 管理；主实验固定基座与预算，避免把模型规模或数据版本差当方法增益。",
+            "caveat": "内部 Test/OOD 与外部 JevBench 分开；候选独立序列的成本不能只按一次请求计；实验性 prefix cache 默认关闭。",
+            "url": "https://github.com/Zefan-Cai/Open-Jev/blob/435ac7f0ec31b35a968331e33d2d50447038de08/README.md"
+          },
+          {
+            "name": "NeoHorse-Jev-4B",
+            "architecture": "NeoHorse-1-4B 上的 prefill-only typed decision 模型，支持 Choice/Noul/Score。",
+            "data": "本次公开模型卡/README 未核到足以复现 Jev 专项训练的完整语料配比、过滤规则与预算。",
+            "objective": "不能把 NeoHorse-1 的 agentic post-training 论文当作 NeoHorse-Jev 的专项训练 recipe。",
+            "schedule": "HF revision 434cb21d3a994a953d3ae5788405fcb2c4970554；结果表更新于 2026-09-24。先锁定运行时与输入契约，再重测。",
+            "lesson": "已有很好的六组 Benchmark 主表，适合学习展示方式；训练信息不足本身必须作为资料缺口列出。",
+            "caveat": "arXiv 2609.08183 属于 NeoHorse-1；六组 AVG 是作者自定义等权分组平均，不是官方综合榜。",
+            "url": "https://github.com/TokenRhythm/NeoHorse/blob/c494069accfc2d08839675961c1fdfcc54ba0b92/README.md"
+          },
+          {
+            "name": "TypeSafe Jev 1.13",
+            "architecture": "闭源托管 typed decision 系统，作为外部参考。",
+            "data": "训练数据与完整 recipe 未公开到可独立复现程度。",
+            "objective": "不根据其他项目的逆向推断填充 Jev 的官方训练目标。",
+            "schedule": "记录 API 版本、访问时间、输出契约与费用；托管服务可能变化。",
+            "lesson": "能力与概率质量的外部锚点；Data Reserve 方法因果比较仍由相同基座训练的几条数据对照完成。",
+            "caveat": "不能纳入严格参数量/算力相等的开源对比；缺少历史输出时，不假设新查询可还原旧结果。",
+            "url": "https://docs.typesafe.ai/introduction"
+          }
+        ],
+        "published": [
+          {
+            "title": "技术材料地图：每个 baseline 去哪里看",
+            "columns": [
+              "Baseline",
+              "报告／详细说明入口",
+              "现成结果表与阅读价值"
+            ],
+            "rows": [
+              [
+                "NeoHorse-Jev-4B",
+                "HF 模型卡：Text Decision Benchmarks；固定版 README",
+                "已有完整六组文本横向表，覆盖 Open-Jev-9B、Kev-4B、两种 Laya、NeoHorse 底座与决策版。最接近我们想要的 Table 1。"
+              ],
+              [
+                "Imajev",
+                "imajev 1.0 Technical Report；README Results；4B 模型卡",
+                "明确的网页版技术报告：方法、数据、训练、校准、结果与局限。区分作者自测、独立榜单、旧 adapter 与发布版。"
+              ],
+              [
+                "Kev",
+                "README Models／主表；4B 模型卡；研究记录",
+                "未核到专属 arXiv 论文；README + 模型卡已相当于技术说明。域内／域外、dev/test、Brier 放在同表，另有版本与失败记录。"
+              ],
+              [
+                "decider",
+                "4B 模型卡；RESULTS 全量表；研究历程",
+                "未核到专属论文；RESULTS 很丰富，有 JevBench 公共分层、Nimble 13 子集、多尺寸／版本和校准结果。优先读 Bespoke’s public suite。"
+              ],
+              [
+                "Eikos",
+                "4B 模型卡 Evaluation；27B 模型卡；README 与复现",
+                "未核到专属论文；模型卡包含金融、规则、通用能力和量化构建对照。与 FinJev 最贴近，但其 reference 与 release-build 表须分开。"
+              ],
+              [
+                "Bespoke Nimble",
+                "README Methodology；公共 13 子集报告；训练配方",
+                "未核到专属论文；已有 324 题自建 holdout 表，以及完全不同的 3,880 条公共人标套件，后者有样本 ID、区间和概率指标。"
+              ],
+              [
+                "Laya",
+                "BENCHMARKS.md；Research README；项目 README",
+                "未核到专属论文；详细的 encoder 路线结果、typed-decisions、多语言、位置敏感性。部分 Jev 行借用他人结果，部分微调行尚无已提交原始结果。"
+              ],
+              [
+                "Plumb-4B",
+                "README Results so far；v5 模型卡",
+                "未核到专属论文；README 本身是训练迭代报告：JevK5 起点 → v1–v5，数据量／hard mining／长文与成绩一起展示，适合借鉴 Recipe 表。"
+              ],
+              [
+                "Open-Jev（Zefan Cai）",
+                "Benchmark results and scope；README；项目结果页",
+                "未核到专属论文；有大量版本化报告、内部／外部评测和逐模型边界。必须标 ZefanCai，避免混入 DiffusionGemma 等同名 OpenJev 项目。"
+              ],
+              [
+                "Jev（TypeSafe）",
+                "官方技术文档；官方 Workflow evals",
+                "本次未核到完整训练技术报告；官方介绍接口与用法，公开 workflow 评测不能替代训练配方。跨模型数值更适合从同一评测报告获取。"
+              ]
+            ]
+          },
+          {
+            "title": "现成主表 A：NeoHorse 的六组文本 Benchmark",
+            "columns": [
+              "Model",
+              "JevBench",
+              "Kev",
+              "OpenJev text",
+              "Nimble",
+              "VitaminC",
+              "MASSIVE",
+              "AVG"
+            ],
+            "rows": [
+              [
+                "Open-Jev-9B",
+                "77.13",
+                "77.87",
+                "65.39",
+                "80.50",
+                "68.28",
+                "84.86",
+                "75.67"
+              ],
+              [
+                "Kev-4B",
+                "73.71",
+                "81.47",
+                "54.75",
+                "73.40",
+                "76.46",
+                "85.71",
+                "74.25"
+              ],
+              [
+                "Laya English",
+                "55.82",
+                "61.30",
+                "40.07",
+                "45.04",
+                "78.63",
+                "68.57",
+                "58.24"
+              ],
+              [
+                "Laya Typed Decisions",
+                "--",
+                "--",
+                "--",
+                "48.94",
+                "78.30",
+                "65.43",
+                "--"
+              ],
+              [
+                "NeoHorse-1-4B",
+                "--",
+                "--",
+                "--",
+                "69.15",
+                "63.27",
+                "82.86",
+                "--"
+              ],
+              [
+                "NeoHorse-Jev-4B",
+                "75.73",
+                "81.92",
+                "58.74",
+                "87.23",
+                "77.13",
+                "85.43",
+                "77.70"
+              ]
+            ],
+            "note": "数据截至 9/24。六组等权平均；只对六组齐全的模型计算 AVG。详见下方每列协议。"
+          },
+          {
+            "title": "现成主表 A：NeoHorse 的六组文本 Benchmark",
+            "columns": ["列", "真实范围与计分", "用于我们论文时"],
+            "rows": [
+              [
+                "JevBench",
+                "public231；按 family 做宏平均",
+                "不能与 public hard111 accuracy、样本微平均或封存综合分混写。"
+              ],
+              [
+                "Kev",
+                "decision-v7／transfer-v4／transfer-v9 各 dev、test，共六个 clean accuracy 等权；6,436 条输入记录",
+                "一个 state 可有多道 decision。正式主表优先只报 test，dev 留作选择；不能直接拿 Kev 自己的 new-source 单列替换。"
+              ],
+              [
+                "OpenJev text",
+                "NLI、选择式 rerank、固定候选 GSM8K，19 项等权；MNLI 两 split 先平均",
+                "固定候选选择不等于 GSM8K 自由生成。候选池与 scorer 必须固定。"
+              ],
+              [
+                "Nimble",
+                "从自建 324 题筛到 282，保留 case group；116 Choice、112 Noul、54 Score",
+                "不是公共 13 子集。87.23 与公共套件 74.8 等数字不可横比。"
+              ],
+              [
+                "VitaminC / MASSIVE",
+                "分别 599 / 350 题；后者是英文 18 场景",
+                "不是 MASSIVE 51 语言／20 intent 协议。即使来源相同，输入模板和读出配置仍需核对。"
+              ],
+              [
+                "AVG",
+                "六组等权；仅完整六组的模型参与该聚合",
+                "不是所有样本池化准确率；缺测不补零、不用另一版本填空。"
+              ]
+            ]
+          },
+          {
+            "title": "现成主表 B：decider × Nimble 公共 13 子集",
+            "columns": [
+              "子集／类型",
+              "decider 4B v1",
+              "decider 4B v2",
+              "decider 35B-A3B",
+              "Nimble 9B",
+              "Jev 1.13"
+            ],
+            "rows": [
+              [
+                "vitaminc-dev (choice, contrastive fact verification)",
+                "75.6",
+                "77.8",
+                "79.5",
+                "76.6",
+                "80.1"
+              ],
+              [
+                "massive-en-US (choice, 18 scenarios; trained)",
+                "86.0",
+                "86.9",
+                "88.0",
+                "86.9",
+                "87.4"
+              ],
+              [
+                "massive-de-DE (same utterances in German)",
+                "84.3",
+                "83.7",
+                "86.9",
+                "83.4",
+                "86.9"
+              ],
+              ["boolq (noul; trained)", "87.3", "86.0", "88.7", "86.0", "89.7"],
+              [
+                "squad2 (noul, answerability)",
+                "70.6",
+                "79.3",
+                "74.9",
+                "80.6",
+                "82.9"
+              ],
+              [
+                "paws (noul, paraphrase; trained)",
+                "71.6",
+                "83.2",
+                "76.8",
+                "82.8",
+                "89.2"
+              ],
+              [
+                "multinli (choice; trained)",
+                "93.3",
+                "92.6",
+                "91.0",
+                "85.3",
+                "82.9"
+              ],
+              [
+                "civil_comments (noul; trained)",
+                "88.0",
+                "85.7",
+                "90.7",
+                "70.3",
+                "81.0"
+              ],
+              [
+                "aegis2 (noul, prompt safety)",
+                "82.0",
+                "81.2",
+                "80.8",
+                "81.2",
+                "80.4"
+              ],
+              [
+                "helpsteer2 (score, 5 levels; trained)",
+                "46.6",
+                "46.6",
+                "47.8",
+                "39.0",
+                "34.1"
+              ],
+              [
+                "summeval-relevance (score)",
+                "42.5",
+                "46.3",
+                "48.3",
+                "49.2",
+                "35.0"
+              ],
+              [
+                "summeval-consistency (score)",
+                "83.3",
+                "82.6",
+                "75.7",
+                "75.7",
+                "81.2"
+              ],
+              [
+                "pubmedqa (choice; trained)",
+                "72.8",
+                "72.4",
+                "76.8",
+                "75.6",
+                "77.2"
+              ],
+              [
+                "macro / micro",
+                "75.7 / 76.5",
+                "77.3 / 78.1",
+                "77.4 / 78.7",
+                "74.8 / 75.9",
+                "76.0 / 77.3"
+              ]
+            ],
+            "note": "13 项共 3,880 条。decider 自测，Nimble/Jev 引用原始报告；样本可对齐不代表同场运行。宏均值与 micro 分开。"
+          },
+          {
+            "title": "Kev：把域内、域外和 dev/test 分清",
+            "columns": [
+              "模型",
+              "新来源 Acc.",
+              "已训练来源 Acc.",
+              "新来源 Brier"
+            ],
+            "rows": [
+              ["Kev-0.8B", "64.8 / 69.7", "82.7 / 83.8", "0.481 / 0.416"],
+              ["Kev-4B", "81.7 / 83.8", "87.3 / 86.5", "0.269 / 0.242"],
+              ["Kev-9B", "82.0 / 85.2", "87.4 / 87.3", "0.289 / 0.217"],
+              ["Kev-27B", "85.1 / 88.9", "86.5 / 86.6", "0.225 / 0.156"],
+              ["Jev", "85.7 / —", "84.5 / —", "0.211 / —"]
+            ],
+            "note": "每格为 dev / test；Acc 单位为百分比。新来源=transfer-v4，已训练来源=decision-v7 留出。Brier 使用 raw probabilities，不是部署温度下的值。Jev 缺 test。"
+          },
+          {
+            "title": "Eikos：直接可参考的金融／规则主表",
+            "columns": [
+              "模型",
+              "DecisionBench M/H",
+              "通用 9 任务",
+              "Finance",
+              "FinDVer",
+              "未见 Trade 规则"
+            ],
+            "rows": [
+              ["Eikos-4B", "77.1 / 66.9", "76.0", "74.7", "74.0", "76.0"],
+              ["Eikos-27B", "88.4 / 78.5", "82.5", "85.3", "78.0", "88.0"],
+              ["Jev 参照", "89.1 / 69.3", "84.1", "79.9", "73.3", "79.4"]
+            ],
+            "note": "reference harness，Acc 单位为百分比；M/H=medium/hard。Finance 为 CUAD、金融情感、FinQA-judge 组合。release-build 表略有不同，不能混合取最高值。"
+          },
+          {
+            "title": "Nimble：自建 holdout 与公共人标套件是两张表",
+            "columns": ["模型", "正确数 / 324", "参考标签一致率"],
+            "rows": [
+              ["Qwen3.5-4B", "199 / 324", "61.42%"],
+              ["Qwen3.5-9B", "215 / 324", "66.36%"],
+              ["Qwen3.8-27B", "275 / 324", "84.88%"],
+              ["Bespoke-Nimble-9B", "292 / 324", "90.12%"],
+              ["Jev 1.13.0", "302 / 324", "93.21%"]
+            ],
+            "note": "324 个合成对比式 holdout，标签经模型检查；不是 13 个公共人标任务。"
+          },
+          {
+            "title": "Imajev：确实有 Technical Report，也有自己的主表",
+            "columns": [
+              "模型",
+              "ImajevBench 279 题",
+              "JevBench hard111",
+              "Hard ECE · 原报告开头表（口径见注）"
+            ],
+            "rows": [
+              ["Imajev-2B", "71.7%", "60.4%", "0.123"],
+              ["Imajev-4B", "83.9%", "72.1%", "0.082"],
+              ["Imajev-9B", "82.1%", "69.4%", "0.092"]
+            ],
+            "note": "保留 Technical Report 开头表的原值。4B 的更新协议校正在下方；未将其 ECE 与四次 rotation 强行绑定。"
+          },
+          {
+            "title": "Plumb：适合模仿的 Data Recipe 迭代表",
+            "columns": [
+              "版本",
+              "教师题数",
+              "Hard111 Acc.",
+              "Hard ECE",
+              "Held-out check"
+            ],
+            "rows": [
+              ["JevK5 v0.2 起点", "—", "73.9", "0.077", "81.2"],
+              ["v1：公共数据", "0", "69.4", "0.095", "—"],
+              ["v2", "495", "75.7", "0.034", "82.4"],
+              ["v3", "909", "73.9", "0.070", "83.4"],
+              ["v4：hard mining", "2,541", "77.5", "0.051", "84.4"],
+              ["v5：增加长文", "5,026", "80.2", "0.094", "84.6"]
+            ],
+            "note": "Acc/Held-out 单位为百分比，ECE 为小数。模型选择使用作者 held-out；公开题型反馈仍可能影响 recipe，不能视为完全无适应的评测。"
+          },
+          {
+            "title": "Laya：看详细表，避免把所有 checkpoint 当一个模型",
+            "columns": ["模型", "Acc.", "Brier", "ECE", "结果边界"],
+            "rows": [
+              [
+                "Laya typed-decisions",
+                "76.6",
+                "0.061",
+                "0.213",
+                "作者微调报告；文档注明暂无已提交原始结果文件"
+              ],
+              [
+                "Laya English",
+                "36.2",
+                "0.316",
+                "0.175",
+                "原始 T4 结果文件可追溯"
+              ],
+              [
+                "Laya multilingual",
+                "35.2",
+                "0.463",
+                "0.314",
+                "原始 T4 结果文件可追溯"
+              ],
+              [
+                "Jev 1.13（引用值）",
+                "72.7",
+                "0.148",
+                "0.144",
+                "该仓库引用他人测量，不是作者同场重测"
+              ]
+            ],
+            "note": "400 cases / 2,000 typed decisions；Acc 为百分比。gold 为教师分布，soft Brier 与 hard-label Brier 不跨表直接比较。"
+          },
+          {
+            "title": "Open-Jev：内部成绩、外部 public 和模型版本分列",
+            "columns": [
+              "模型",
+              "内部 Old Test",
+              "内部 Old OOD",
+              "JevBench public231",
+              "Hard111"
+            ],
+            "rows": [
+              [
+                "Open-Jev-2B",
+                "94.71%（9,515/10,046）",
+                "86.02%（13,287/15,446）",
+                "64.94%（150/231）",
+                "41.44%（46/111）"
+              ],
+              [
+                "Open-Jev-9B",
+                "97.54%（9,799/10,046）",
+                "91.97%（14,205/15,446）",
+                "77.49%（179/231）",
+                "59.46%（66/111）"
+              ],
+              [
+                "Open-Jev-27B-v1.1",
+                "98.31%（9,876/10,046）",
+                "95.98%（14,825/15,446）",
+                "85.28%（197/231）",
+                "72.07%（80/111）"
+              ]
+            ],
+            "note": "JevBench 列是逐样本准确率，不是 NeoHorse 表的 family-macro；Old Test/OOD 为旧内部切片，不等于所有新增任务。"
+          }
+        ],
+        "main": {
+          "columns": [
+            "模型 / 固定版本",
+            "定位",
+            "Nimble-13 宏均值 ↑",
+            "Typed 2,000 Acc ↑",
+            "JevBench-231 family ↑",
+            "Hard-111 Acc ↑",
+            "组合 OOD Acc ↑"
+          ],
+          "rows": [
+            [
+              "Qwen3.5-4B-Base + 相同 readout",
+              "P0 · 未训练控制",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "同基座 · 随机整题 SFT",
+              "P0 · 数据控制",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "同基座 · Hard mining + replay",
+              "P0 · 强数据控制",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "同基座 · Uniform skills + replay",
+              "P0 · 技能覆盖控制",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "同基座 · Data Reserve + replay",
+              "P0 · 待验证方法",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Kev-4B · 139fdd94",
+              "P0 · 4B 核心",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "decider-4B v2.1（v2 附录）",
+              "P0 · 4B 核心",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "NeoHorse-Jev-4B · 434cb21d",
+              "P0 · 4B 核心",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Plumb v5（v5.2 单列协议）",
+              "P0 · hard-mining 对照",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Imajev-4B phase-3 · 单次",
+              "P1 · 多模态转文本",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Eikos-4B · 固定发布构建",
+              "P1 · soft-target 对照",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Bespoke-Nimble-9B · 发布版",
+              "P0 · 规模参考",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Laya Typed Decisions",
+              "P1 · encoder/同任务微调",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ],
+            [
+              "Jev 1.13 · 固定 API 记录",
+              "P0 · 闭源参考",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测",
+              "待统一复测"
+            ]
+          ]
+        },
+        "ablation": {
+          "columns": [
+            "实验臂",
+            "数据选择",
+            "固定项 / 变化项",
+            "主检验",
+            "当前结果"
+          ],
+          "rows": [
+            [
+              "A 随机整题",
+              "同一候选池随机抽取",
+              "相同基座、事实来源、teacher、token/decision 预算、replay、优化器",
+              "最低数据选择对照",
+              "待训练"
+            ],
+            [
+              "B 整题 hard mining",
+              "选错题/低置信题",
+              "相同预算；使用共同的选择集",
+              "强基线；对照 Plumb 的基本机制",
+              "待训练"
+            ],
+            [
+              "C 均匀技能覆盖",
+              "按 skill 标签均匀分配",
+              "与 D 使用相同技能题池",
+              "排除“只要拆成技能题就有效”",
+              "待训练"
+            ],
+            [
+              "D Data Reserve",
+              "按独立诊断集的弱技能分配配额",
+              "技能预算策略是唯一主变化",
+              "D−B：相对 hard mining；D−C：相对均匀分配",
+              "待训练"
+            ],
+            [
+              "E replay 机制（第二阶段）",
+              "胜出数据方案 + hard/soft replay",
+              "固定数据，只改 replay target",
+              "旧能力保持与校准收益来自哪里",
+              "待训练"
+            ],
+            [
+              "F 组合桥接（条件触发）",
+              "若原子技能升、组合不升，置换 20% 为组合题",
+              "总 token 不增加；提前固定 20%",
+              "检验迁移是否需要组合训练",
+              "待训练"
+            ]
+          ]
+        },
+        "protocols": [
+          [
+            "Nimble public-13",
+            "13 subsets / 3,880 rows；分任务 accuracy、macro 与 micro 分开",
+            "李昱辰",
+            "先锁 ID、转换脚本及 Score 的 exact/expected 规则；13 项明细放附录"
+          ],
+          [
+            "Typed decisions / Jevals",
+            "固定版本 test 400 cases / 2,000 decisions；Choice/Noul/Score 分项",
+            "林景豪",
+            "公开 train 使用情况披露；gold 可能是教师分布，报告 hard Acc 与 Brier/NLL"
+          ],
+          [
+            "JevBench public",
+            "public231 family-macro + hard111；预设关键切片",
+            "林景豪",
+            "单次推理为主；4-order/TTA 额外行；sealed 官方提交在模型选定后"
+          ],
+          [
+            "未见组合 OOD",
+            "相同原子技能、未见组合与新来源/模板分层",
+            "共同冻结；昱辰构建，景豪独立审核",
+            "先冻结 family/source/combination split；禁止 final test 驱动选题"
+          ],
+          [
+            "概率 / 效率",
+            "NLL、Brier、固定 ECE bins、AURC、目标风险 coverage；P50/P95、显存/请求成本",
+            "昱辰整理概率；景豪测效率",
+            "相同硬件/精度/候选数/上下文/批量；单次与 TTA 成本分开"
+          ]
+        ],
+        "insights": [
+          [
+            "已有方法重叠",
+            "Kev 已做技能补题；Plumb 已做弱点驱动 hard mining；decider 已用分布 replay；Eikos/Imajev 已结合软标签与多阶段修复。因此“生成 hard 题 + replay”本身不足以支撑新颖性。"
+          ],
+          [
+            "建议的论文主张",
+            "把 Data Reserve 定义为可审计的技能库存及预算分配策略：诊断 → 分配 → 训练 → 独立测试。核心问题是，在相同标注/训练预算下，弱技能分配能否稳定提高未见组合表现并减少旧能力退化。此处是拟检验假设。"
+          ],
+          [
+            "最小证据链",
+            "主表比较同协议能力；Table 2 同报校准与成本；Table 3 固定预算消融。先做 A/B/C/D × 2 个非业务领域 × 1 seed = 8 runs，再将胜出方案与最强整题控制各补 2 seeds，共增加 8 runs，合计 16。尚未启动训练。"
+          ],
+          [
+            "投稿写作判断",
+            "目前可以写 related work、protocol 与方法假设；公开表只能支撑 baseline 选择，不能证明 Data Reserve 有效。需要 D 相对 B/C 的多 seed 增益、未见组合测试、负迁移记录和预算曲线，才适合写方法优越性结论。"
+          ]
+        ],
+        "notes": [
+          "所有成绩为来源方报告，未在本任务中运行模型。公开参考表按原协议分别展示，不计算跨表总排名。缺失值保留，不填零。",
+          "NeoHorse 的 Nimble282 是 synthetic holdout 子集，Nimble public-13 是 3,880 条；JevBench family-macro 与 pooled accuracy 也不能混用。",
+          "新增核验：decider 4B v2.1 模型卡已给 public-13 macro 75.6 / micro 76.5；旧 13 项明细表是 v2（77.3 / 78.1），不得覆盖版本名。",
+          "新增核验：Imajev 4B phase-3 r2-s000291 的 hard 单次 71.2、4-order 72.1；0.082 ECE 属于 single calibrated。旧 Technical Report/README 对 ECE 与早期 soup 描述有版本混杂，应优先引用 phase-3 原始表。",
+          "原 Benchmark Dashboard 的 JevBench v1.4.2.2 是历史快照，不代表实时最新榜。"
+        ],
+        "sources": [
+          [
+            "Imajev Technical Report",
+            "https://mohit67890.github.io/imajev/report/"
+          ],
+          [
+            "Imajev phase-3 明细（固定 commit）",
+            "https://github.com/mohit67890/imajev/blob/ccf586d43d2a580319b6535c893668904d909eb9/results/phase3/benchmarks.md"
+          ],
+          [
+            "Imajev 早期四阶段 recipe（固定 commit）",
+            "https://github.com/mohit67890/imajev/blob/ccf586d43d2a580319b6535c893668904d909eb9/README.md"
+          ],
+          [
+            "decider 完整 13 项结果",
+            "https://github.com/Mapika/decider/blob/45024082b7d4bb667bf9140b7a7c073d3b483f6b/docs/RESULTS.md"
+          ],
+          [
+            "decider 2B RL（与 4B 分开）",
+            "https://github.com/Mapika/decider/blob/45024082b7d4bb667bf9140b7a7c073d3b483f6b/docs/RL.md"
+          ],
+          [
+            "NeoHorse-Jev 模型卡（固定 revision）",
+            "https://huggingface.co/TokenRhythm/NeoHorse-Jev-4B/blob/434cb21d3a994a953d3ae5788405fcb2c4970554/README.md"
+          ],
+          [
+            "NeoHorse-1 论文（不是 Jev 专属报告）",
+            "https://arxiv.org/abs/2609.08183"
+          ]
+        ]
+      }
+    </script>
+    <script>
+      const data = JSON.parse(
+        document.getElementById("research-data").textContent,
+      );
+      const escapeHtml = (value) =>
+        String(value).replace(
+          /[&<>"']/g,
+          (char) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[char],
+        );
+      function table(columns, rows) {
+        return (
+          '<div class="table-wrap"><table><thead><tr>' +
+          columns
+            .map((c) => '<th scope="col">' + escapeHtml(c) + "</th>")
+            .join("") +
+          "</tr></thead><tbody>" +
+          rows
+            .map(
+              (row) =>
+                "<tr>" +
+                row
+                  .map(
+                    (c) =>
+                      '<td class="' +
+                      (String(c).includes("待") ? "pending" : "") +
+                      '">' +
+                      escapeHtml(c) +
+                      "</td>",
+                  )
+                  .join("") +
+                "</tr>",
+            )
+            .join("") +
+          "</tbody></table></div>"
+        );
+      }
+      function showTab() {
+        const requested = location.hash.slice(1) || "overview";
+        const id = [
+          "overview",
+          "recipes",
+          "results",
+          "paper",
+          "reserve",
+          "sources",
+        ].includes(requested)
+          ? requested
+          : "overview";
+        document
+          .querySelectorAll(".tab")
+          .forEach((section) => (section.hidden = section.id !== id));
+        document.querySelectorAll("nav button").forEach((button) => {
+          button.classList.toggle("active", button.dataset.tab === id);
+          button.setAttribute(
+            "aria-current",
+            button.dataset.tab === id ? "page" : "false",
+          );
+        });
+      }
+      document
+        .querySelectorAll("nav button")
+        .forEach((button) =>
+          button.addEventListener(
+            "click",
+            () => (location.hash = button.dataset.tab),
+          ),
+        );
+      window.addEventListener("hashchange", showTab);
+      showTab();
+      document.getElementById("insights").innerHTML = data.insights
+        .map(
+          ([title, text]) =>
+            '<article class="card"><h3>' +
+            escapeHtml(title) +
+            "</h3><p>" +
+            escapeHtml(text) +
+            "</p></article>",
+        )
+        .join("");
+      const reading = [
+        data.recipes[8],
+        data.recipes[5],
+        data.recipes[1],
+        data.recipes[0],
+        data.recipes[3],
+        data.recipes[2],
+      ];
+      document.getElementById("reading").innerHTML = reading
+        .map(
+          (r) =>
+            '<article class="card"><span class="tag">第一手材料</span><h3>' +
+            escapeHtml(r.name) +
+            "</h3><p>" +
+            escapeHtml(r.lesson) +
+            '</p><a href="' +
+            escapeHtml(r.url) +
+            '">阅读详细材料 ↗</a></article>',
+        )
+        .join("");
+      function renderRecipes() {
+        const query = document
+          .getElementById("recipe-search")
+          .value.trim()
+          .toLowerCase();
+        const matches = data.recipes.filter((r) =>
+          JSON.stringify(r).toLowerCase().includes(query),
+        );
+        const fields = [
+          ["结构", "architecture"],
+          ["数据构建", "data"],
+          ["监督目标", "objective"],
+          ["训练与版本", "schedule"],
+          ["研究启发", "lesson"],
+          ["证据边界", "caveat"],
+        ];
+        document.getElementById("recipes-list").innerHTML =
+          matches
+            .map(
+              (r) =>
+                "<details><summary>" +
+                escapeHtml(r.name) +
+                '</summary><div class="inside">' +
+                fields
+                  .map(
+                    ([label, key]) =>
+                      '<div class="field"><b>' +
+                      label +
+                      "</b><span>" +
+                      escapeHtml(r[key]) +
+                      "</span></div>",
+                  )
+                  .join("") +
+                '<p><a href="' +
+                escapeHtml(r.url) +
+                '">官方来源 / 固定版 ↗</a></p></div></details>',
+            )
+            .join("") || '<p class="empty">没有匹配项，请换一个关键词。</p>';
+      }
+      document
+        .getElementById("recipe-search")
+        .addEventListener("input", renderRecipes);
+      document.getElementById("expand").addEventListener("click", () => {
+        const details = [...document.querySelectorAll("#recipes-list details")];
+        const open = details.some((item) => !item.open);
+        details.forEach((item) => (item.open = open));
+        document.getElementById("expand").textContent = open
+          ? "全部收起"
+          : "全部展开";
+      });
+      renderRecipes();
+      const resultIndices = [1, 3, 4, 5, 6, 7, 8, 9, 10];
+      const select = document.getElementById("result-select");
+      select.innerHTML = resultIndices
+        .map(
+          (i) =>
+            '<option value="' +
+            i +
+            '">' +
+            escapeHtml(data.published[i].title) +
+            "</option>",
+        )
+        .join("");
+      const sourcesByIndex = {
+        1: data.sources[5][1],
+        3: data.sources[3][1],
+        4: data.recipes[0].url.replace(
+          "docs/model-cards/kev-4b.md",
+          "README.md",
+        ),
+        5: "https://huggingface.co/caiovicentino1/Eikos-4B/blob/d06420bda550072bf1385905b1f0e1421fcd710b/README.md",
+        6: data.recipes[2].url.replace("docs/NIMBLE_TRAINING.md", "README.md"),
+        7: data.sources[0][1],
+        8: data.recipes[3].url,
+        9: data.recipes[6].url.replace("docs/finetune.md", "BENCHMARKS.md"),
+        10: data.recipes[7].url,
+      };
+      function renderResults() {
+        const index = Number(select.value);
+        const t = data.published[index];
+        let content =
+          '<p class="muted">' +
+          escapeHtml(t.note || "") +
+          "</p><h2>" +
+          escapeHtml(t.title) +
+          '</h2><p><a href="' +
+          escapeHtml(sourcesByIndex[index]) +
+          '">阅读原始表与完整协议 ↗</a></p>' +
+          table(t.columns, t.rows);
+        if (index === 1)
+          content += table(data.published[2].columns, data.published[2].rows);
+        if (index === 3)
+          content +=
+            '<div class="warn">' + escapeHtml(data.notes[2]) + "</div>";
+        if (index === 7)
+          content +=
+            '<div class="warn">' +
+            escapeHtml(data.notes[3]) +
+            ' <a href="' +
+            escapeHtml(data.sources[1][1]) +
+            '">phase-3 明细 ↗</a></div>';
+        document.getElementById("result-panel").innerHTML = content;
+      }
+      select.addEventListener("change", renderResults);
+      renderResults();
+      function mainRows() {
+        return document.getElementById("p0").checked
+          ? data.main.rows.filter((row) => row[1].startsWith("P0"))
+          : data.main.rows;
+      }
+      function renderMain() {
+        document.getElementById("main-table").innerHTML = table(
+          data.main.columns,
+          mainRows(),
+        );
+      }
+      document.getElementById("p0").addEventListener("change", renderMain);
+      renderMain();
+      document.getElementById("csv").addEventListener("click", () => {
+        const csv = [data.main.columns, ...mainRows()]
+          .map((row) =>
+            row
+              .map((cell) => '"' + String(cell).replace(/"/g, '""') + '"')
+              .join(","),
+          )
+          .join("\r\n");
+        const url = URL.createObjectURL(
+          new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }),
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "jev-paper-main-table-draft.csv";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+      document.getElementById("quality-table").innerHTML = table(
+        [
+          "模型",
+          "NLL↓ / Brier↓ / ECE↓",
+          "AURC↓ / 风险 coverage↑",
+          "P50/P95 / 显存 / 成本",
+        ],
+        data.main.rows
+          .filter((row) => row[1].startsWith("P0"))
+          .map((row) => [
+            row[0],
+            "待测：raw / calibrated",
+            "待测",
+            "待测：固定硬件与输入桶",
+          ]),
+      );
+      document.getElementById("protocol-table").innerHTML = table(
+        ["评测", "范围", "建议负责人", "冻结条件"],
+        data.protocols,
+      );
+      document.getElementById("ablation-table").innerHTML = table(
+        data.ablation.columns,
+        data.ablation.rows,
+      );
+      document.getElementById("notes").innerHTML = data.notes
+        .map((note) => '<div class="warn">' + escapeHtml(note) + "</div>")
+        .join("");
+      document.getElementById("sources-list").innerHTML = [
+        ...data.recipes.map((r) => [r.name, r.url]),
+        ...data.sources,
+      ]
+        .map(
+          ([label, url]) =>
+            '<p><a href="' +
+            escapeHtml(url) +
+            '">' +
+            escapeHtml(label) +
+            " ↗</a></p>",
+        )
+        .join("");
+    </script>
+  </body>
+</html>
