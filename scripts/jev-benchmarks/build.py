@@ -34,6 +34,14 @@ serialized = json.dumps(data, ensure_ascii=False, separators=(',', ':'), allow_n
 serialized = serialized.replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
 template = Path(__file__).with_name('template.html').read_text()
 assert template.count('__DASHBOARD_DATA__') == 1
-out = template.replace('__DASHBOARD_DATA__', serialized)
+questions = json.loads((ROOT / 'jev-benchmark-data/questions/manifest.json').read_text())
+for benchmark in questions['benchmarks']:
+    assert sum(part['count'] for part in benchmark['subsets']) == benchmark['count']
+    for part in benchmark['subsets']:
+        payload = json.loads((ROOT / 'jev-benchmark-data/questions' / part['file']).read_text())
+        assert len(payload['rows']) == part['count']
+viewer = Path(__file__).with_name('questions.js').read_text()
+viewer = viewer.replace('__QUESTIONS_MANIFEST__', json.dumps(questions, ensure_ascii=False).replace('<', '\\u003c'))
+out = template.replace('__DASHBOARD_DATA__', serialized).replace('__QUESTION_VIEWER_JS__', viewer)
 (ROOT / 'jev_benchmarks.html').write_text(out)
 print(f"Built {len(data['boards'])} boards / {sum(len(b['rows']) for b in data['boards'])} rows; {len(out.encode()):,} bytes")

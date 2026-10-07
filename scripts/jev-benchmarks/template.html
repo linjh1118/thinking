@@ -919,6 +919,16 @@
           font-size: 21px;
         }
       }
+
+      .question-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-width:620px;max-height:150px;overflow:auto;font-size:13px}
+      #question-detail{padding:24px;margin-top:22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);scroll-margin-top:80px;min-width:0}
+      #question-detail pre,#question-table pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:none;font:13px/1.7 ui-monospace,monospace;background:#10141e;padding:16px;border-radius:8px}
+      #question-detail h4{margin:22px 0 8px;color:var(--cyan)}
+      #question-detail details{margin:16px 0} #question-detail summary{cursor:pointer;color:var(--purple)}
+      #question-table td{vertical-align:top} #question-table button{max-width:210px;overflow-wrap:anywhere;text-align:left}
+      .selected-question{background:#b3a0ff19} .question-table-wrap{max-height:470px;overflow:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+      .question-table-wrap th{position:sticky;top:0;background:var(--panel2);z-index:1} #questions{scroll-margin-top:75px} .question-table-wrap table{min-width:760px;width:100%} #question-search{flex:1}
+      .question-hero-link{display:inline-block;margin:16px 0;padding:12px 22px;background:#64dfd41a;border:1px solid var(--cyan);border-radius:10px;font-weight:700}
     </style>
   </head>
   <body>
@@ -1036,13 +1046,21 @@
       </div>
     </div>
     <main class="wrap">
-      <nav class="tabs" aria-label="看板导航">
+      <a class="question-hero-link" href="#questions/jevbench">📄 浏览原题 · Dataset Viewer →</a><nav class="tabs" aria-label="看板导航">
+<button class="tab" data-tab="questions">原题浏览器</button>
         <button class="tab active" data-tab="overview">01 评测地图</button
         ><button class="tab" data-tab="boards">02 Leaderboards</button
         ><button class="tab" data-tab="coverage">03 模型覆盖</button
         ><button class="tab" data-tab="sources">04 来源与口径</button>
       </nav>
-      <section class="section" id="overview">
+      <section class="section hidden" id="questions">
+<div class="tldr"><b>直接看原题：</b>选 Benchmark → 选子集 → 点击一行展开完整输入与问题。四套公开评测共12,151题；表格是预览，下方是全文。答案默认折叠。</div>
+<div class="row"><h2>Dataset Viewer · 原题浏览器</h2><a id="question-download" download hidden>下载当前子集 JSON ↓</a></div>
+<div class="controls"><label>Benchmark <select id="question-bench" aria-label="原题 Benchmark"></select></label><label>Subset <select id="question-subset" aria-label="原题子集"></select></label><input id="question-search" type="search" aria-label="搜索原题" placeholder="搜索当前子集的题号、原文或字段"></div>
+<div class="tldr" id="question-meta"></div><p id="question-count" role="status" aria-live="polite"></p>
+<div class="question-table-wrap"><table><thead><tr><th>题号 · 点击展开</th><th>输入 / State 预览</th><th>问题 / Question 预览</th><th>Gold</th></tr></thead><tbody id="question-table"></tbody></table></div>
+<div class="row"><button id="question-prev" disabled>← 上一页</button><span class="muted">每页20题 · 全文不截断</span><button id="question-next" disabled>下一页 →</button></div><article id="question-detail"></article></section>
+<section class="section" id="overview">
         <div class="tldr">
           <b>推荐顺序：</b>Nimble 公共套件 → Jevals → JevBench；中文需求再补中文
           v0.2。 下方保留完整研究地图，供发现短板后选择专项评测。
@@ -1258,7 +1276,7 @@
                   catBoards(c).flatMap((b) => b.rows.map((r) => r.family)),
                 ),
               ].filter(typed);
-              return `<article class="card"><div class="row"><span class="badge">${esc(c.category)}</span><span class="badge ${c.boards.length ? "green" : "amber"}">${c.boards.length ? c.boards.length + " 张结果表" : esc(c.state)}</span></div><h3>${esc(c.name)}</h3><p class="desc">${esc(c.description)}</p><p class="scope">${esc(c.scope)}</p><p class="model-count">${fs.length ? esc(fs.slice(0, 7).join(" · ")) + (fs.length > 7 ? " 等 " + fs.length + " 个家族" : "") : "暂无可比较模型结果行"}</p>${c.gap ? `<p class="gap">${esc(c.gap)}</p>` : ""}<footer>${c.boards.length ? `<button data-open-source="${esc(c.id)}">查看结果 →</button>` : '<span class="muted">保留研究入口</span>'}<a href="${esc(S[c.source].url)}" target="_blank" rel="noopener noreferrer">来源 ↗</a></footer></article>`;
+              return `<article class="card"><div class="row"><span class="badge">${esc(c.category)}</span><span class="badge ${c.boards.length ? "green" : "amber"}">${c.boards.length ? c.boards.length + " 张结果表" : esc(c.state)}</span></div><h3>${esc(c.name)}</h3><p class="desc">${esc(c.description)}</p><p class="scope">${esc(c.scope)}</p><p class="model-count">${fs.length ? esc(fs.slice(0, 7).join(" · ")) + (fs.length > 7 ? " 等 " + fs.length + " 个家族" : "") : "暂无可比较模型结果行"}</p>${c.gap ? `<p class="gap">${esc(c.gap)}</p>` : ""}<footer><a href="#questions/${esc(c.id)}">${["jevbench","jevals","nimble","eikos"].includes(c.id) ? "📄 浏览原题" : "原题接入状态"}</a>${c.boards.length ? `<button data-open-source="${esc(c.id)}">查看结果 →</button>` : '<span class="muted">保留研究入口</span>'}<a href="${esc(S[c.source].url)}" target="_blank" rel="noopener noreferrer">来源 ↗</a></footer></article>`;
             })
             .join("") ||
           '<div class="empty">没有匹配的评测来源。尝试清空关键词或模型筛选。</div>';
@@ -1686,10 +1704,14 @@
         );
       document
         .querySelectorAll("[data-tab]")
-        .forEach((e) => (e.onclick = () => go(e.dataset.tab)));
+        .forEach((e) => (e.onclick = () => e.dataset.tab === "questions" ? openQuestions() : go(e.dataset.tab)));
+      __QUESTION_VIEWER_JS__
       function route() {
         let hash = decodeURIComponent(location.hash.slice(1));
-        if (hash.startsWith("board/") && B[hash.slice(6)]) {
+        if (hash.startsWith("questions")) {
+          const parts = location.hash.slice(1).split("/").map(decodeURIComponent);
+          openQuestions(parts[1] || "jevbench", parts[2] || "", parts[3] || "");
+        } else if (hash.startsWith("board/") && B[hash.slice(6)]) {
           selected = hash.slice(6);
           metricKey = B[selected].metrics[0].key;
           go("boards");

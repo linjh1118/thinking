@@ -919,6 +919,16 @@
           font-size: 21px;
         }
       }
+
+      .question-preview{white-space:pre-wrap;overflow-wrap:anywhere;max-width:620px;max-height:150px;overflow:auto;font-size:13px}
+      #question-detail{padding:24px;margin-top:22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);scroll-margin-top:80px;min-width:0}
+      #question-detail pre,#question-table pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:none;font:13px/1.7 ui-monospace,monospace;background:#10141e;padding:16px;border-radius:8px}
+      #question-detail h4{margin:22px 0 8px;color:var(--cyan)}
+      #question-detail details{margin:16px 0} #question-detail summary{cursor:pointer;color:var(--purple)}
+      #question-table td{vertical-align:top} #question-table button{max-width:210px;overflow-wrap:anywhere;text-align:left}
+      .selected-question{background:#b3a0ff19} .question-table-wrap{max-height:470px;overflow:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+      .question-table-wrap th{position:sticky;top:0;background:var(--panel2);z-index:1} #questions{scroll-margin-top:75px} .question-table-wrap table{min-width:760px;width:100%} #question-search{flex:1}
+      .question-hero-link{display:inline-block;margin:16px 0;padding:12px 22px;background:#64dfd41a;border:1px solid var(--cyan);border-radius:10px;font-weight:700}
     </style>
   </head>
   <body>
@@ -926,7 +936,6 @@
       <div class="wrap">
         <a class="brand" href="#overview"><i></i>JEV / OBSERVATORY</a>
         <div class="top-links">
-          <a href="jev_baselines.html">论文主表：3 个 Bench / 5 列 ↗</a>
           <a href="jev_atlas.html">Jev Atlas ↗</a
           ><a href="https://github.com/linjh1118/thinking">thinking ↗</a
           ><button id="download-json" style="padding: 3px 8px; font-size: 10px">
@@ -1037,13 +1046,21 @@
       </div>
     </div>
     <main class="wrap">
-      <nav class="tabs" aria-label="看板导航">
+      <a class="question-hero-link" href="#questions/jevbench">📄 浏览原题 · Dataset Viewer →</a><nav class="tabs" aria-label="看板导航">
+<button class="tab" data-tab="questions">原题浏览器</button>
         <button class="tab active" data-tab="overview">01 评测地图</button
         ><button class="tab" data-tab="boards">02 Leaderboards</button
         ><button class="tab" data-tab="coverage">03 模型覆盖</button
         ><button class="tab" data-tab="sources">04 来源与口径</button>
       </nav>
-      <section class="section" id="overview">
+      <section class="section hidden" id="questions">
+<div class="tldr"><b>直接看原题：</b>选 Benchmark → 选子集 → 点击一行展开完整输入与问题。四套公开评测共12,151题；表格是预览，下方是全文。答案默认折叠。</div>
+<div class="row"><h2>Dataset Viewer · 原题浏览器</h2><a id="question-download" download hidden>下载当前子集 JSON ↓</a></div>
+<div class="controls"><label>Benchmark <select id="question-bench" aria-label="原题 Benchmark"></select></label><label>Subset <select id="question-subset" aria-label="原题子集"></select></label><input id="question-search" type="search" aria-label="搜索原题" placeholder="搜索当前子集的题号、原文或字段"></div>
+<div class="tldr" id="question-meta"></div><p id="question-count" role="status" aria-live="polite"></p>
+<div class="question-table-wrap"><table><thead><tr><th>题号 · 点击展开</th><th>输入 / State 预览</th><th>问题 / Question 预览</th><th>Gold</th></tr></thead><tbody id="question-table"></tbody></table></div>
+<div class="row"><button id="question-prev" disabled>← 上一页</button><span class="muted">每页20题 · 全文不截断</span><button id="question-next" disabled>下一页 →</button></div><article id="question-detail"></article></section>
+<section class="section" id="overview">
         <div class="tldr">
           <b>推荐顺序：</b>Nimble 公共套件 → Jevals → JevBench；中文需求再补中文
           v0.2。 下方保留完整研究地图，供发现短板后选择专项评测。
@@ -1259,7 +1276,7 @@
                   catBoards(c).flatMap((b) => b.rows.map((r) => r.family)),
                 ),
               ].filter(typed);
-              return `<article class="card"><div class="row"><span class="badge">${esc(c.category)}</span><span class="badge ${c.boards.length ? "green" : "amber"}">${c.boards.length ? c.boards.length + " 张结果表" : esc(c.state)}</span></div><h3>${esc(c.name)}</h3><p class="desc">${esc(c.description)}</p><p class="scope">${esc(c.scope)}</p><p class="model-count">${fs.length ? esc(fs.slice(0, 7).join(" · ")) + (fs.length > 7 ? " 等 " + fs.length + " 个家族" : "") : "暂无可比较模型结果行"}</p>${c.gap ? `<p class="gap">${esc(c.gap)}</p>` : ""}<footer>${c.boards.length ? `<button data-open-source="${esc(c.id)}">查看结果 →</button>` : '<span class="muted">保留研究入口</span>'}<a href="${esc(S[c.source].url)}" target="_blank" rel="noopener noreferrer">来源 ↗</a></footer></article>`;
+              return `<article class="card"><div class="row"><span class="badge">${esc(c.category)}</span><span class="badge ${c.boards.length ? "green" : "amber"}">${c.boards.length ? c.boards.length + " 张结果表" : esc(c.state)}</span></div><h3>${esc(c.name)}</h3><p class="desc">${esc(c.description)}</p><p class="scope">${esc(c.scope)}</p><p class="model-count">${fs.length ? esc(fs.slice(0, 7).join(" · ")) + (fs.length > 7 ? " 等 " + fs.length + " 个家族" : "") : "暂无可比较模型结果行"}</p>${c.gap ? `<p class="gap">${esc(c.gap)}</p>` : ""}<footer><a href="#questions/${esc(c.id)}">${["jevbench","jevals","nimble","eikos"].includes(c.id) ? "📄 浏览原题" : "原题接入状态"}</a>${c.boards.length ? `<button data-open-source="${esc(c.id)}">查看结果 →</button>` : '<span class="muted">保留研究入口</span>'}<a href="${esc(S[c.source].url)}" target="_blank" rel="noopener noreferrer">来源 ↗</a></footer></article>`;
             })
             .join("") ||
           '<div class="empty">没有匹配的评测来源。尝试清空关键词或模型筛选。</div>';
@@ -1687,10 +1704,133 @@
         );
       document
         .querySelectorAll("[data-tab]")
-        .forEach((e) => (e.onclick = () => go(e.dataset.tab)));
+        .forEach((e) => (e.onclick = () => e.dataset.tab === "questions" ? openQuestions() : go(e.dataset.tab)));
+      // Browse frozen public records. Only the selected subset is downloaded.
+const QM = {"updated": "2026-10-07", "benchmarks": [{"id": "jevbench", "name": "JevBench", "note": "公开原题；仅 public231，不含封存评测题。", "source": "https://github.com/fstandhartinger/jevbench/tree/bb05a335bc809e61b20c0f745d25499a82b326fc", "subsets": [{"id": "easy", "count": 48, "file": "jevbench--easy.json"}, {"id": "hard", "count": 111, "file": "jevbench--hard.json"}, {"id": "original", "count": 72, "file": "jevbench--original.json"}], "source_sha256": {"public231.jsonl": "771ea8ac252af155606eeb09cad920b32b326c5c2b1e9c9af868be00fe8e2fad"}, "count": 231}, {"id": "jevals", "name": "Jevals", "note": "suite 0.1.0 固定公开题。Choice、Noul、Score 各300题；不重复展示5次推理。Jevals Contributors / CC-BY-4.0；底层数据许可见 task。", "source": "https://github.com/Jevals/jevals-data/tree/21bb47b72814cf661539b313844d2d2e26166e54", "subsets": [{"id": "banking77", "count": 300, "file": "jevals--banking77.json"}, {"id": "helpsteer2", "count": 300, "file": "jevals--helpsteer2.json"}, {"id": "pubmedqa", "count": 300, "file": "jevals--pubmedqa.json"}], "source_sha256": {"banking77.json": "dfbc2f46282c9f5a88deef3cf9df4b656e90d5c2c5cba654335916422f1f2cdd", "helpsteer2.json": "1f345e989d47b15c9470fed1e3824c2dc19b5e2699dab9e782925ac573bc47b3", "pubmedqa.json": "eff9b6fee7879a0f22bd07b926e7389daaf3bc841daeac368543c09be7653a4e"}, "count": 900}, {"id": "nimble", "name": "Nimble", "note": "固定公共评测集的13个子集，展示官方转换后的原始评测输入与人工标签。", "source": "https://github.com/bespokelabsai/nimble/tree/dcfdbd9a64f0d869f658d7a72f1beaee32737773", "subsets": [{"id": "aegis2", "count": 250, "file": "nimble--aegis2.json"}, {"id": "boolq", "count": 300, "file": "nimble--boolq.json"}, {"id": "civil_comments", "count": 300, "file": "nimble--civil_comments.json"}, {"id": "helpsteer2", "count": 249, "file": "nimble--helpsteer2.json"}, {"id": "massive-de-DE", "count": 350, "file": "nimble--massive-de-DE.json"}, {"id": "massive-en-US", "count": 350, "file": "nimble--massive-en-US.json"}, {"id": "multinli", "count": 299, "file": "nimble--multinli.json"}, {"id": "paws", "count": 250, "file": "nimble--paws.json"}, {"id": "pubmedqa", "count": 250, "file": "nimble--pubmedqa.json"}, {"id": "squad2", "count": 299, "file": "nimble--squad2.json"}, {"id": "summeval-consistency", "count": 144, "file": "nimble--summeval-consistency.json"}, {"id": "summeval-relevance", "count": 240, "file": "nimble--summeval-relevance.json"}, {"id": "vitaminc-dev", "count": 599, "file": "nimble--vitaminc-dev.json"}], "source_sha256": {"aegis2/all.jsonl": "2d10424f7d2b06e9c38fe443f9cfb10eb958b4eb37cbec2bed4d990d109374b2", "boolq/all.jsonl": "2c239fdc3e4d5f2d015a7ab9def82d0c2ff6fb49d39c96dc233d3e5911583b58", "civil_comments/all.jsonl": "7f76c916faa51a8e67325dd4a8a1b70ee678ef124f1a551f5a32f26ebd66234e", "helpsteer2/all.jsonl": "c2395b2f794217ee080ec3ef89fbd6d67fd8c8c6f9f1c8d47d127301929a2ca3", "massive-de-DE/all.jsonl": "6eacfdfd5f55ee664ddf5d385deda17cbed248c18aabc06be0c643518b74ab28", "massive-en-US/all.jsonl": "f173a34108c1f785f5e5bf1d83534c34393651e7f7b0b2eba19deb0d5d0f2681", "multinli/all.jsonl": "e0349ce46c796b08ecddbfc3b525dd4528e02595cc64921911babc7e3620b2f1", "paws/all.jsonl": "ffc7388bbf027272b1c2175cd8d4d3591b63006696b2f9889bf70fccd457d167", "pubmedqa/all.jsonl": "8ee766a759a60280373f45a19a62c9e36462b1176508f193621095e102403a40", "squad2/all.jsonl": "95316d9d810d4827d86053e9199e15e865bad3fa4b65cbcb742a54433fcdfdd7", "summeval-consistency/all.jsonl": "86cc3627a2ddd8ca5ab10c1af43a9ee9e007b8d7d25dbf952f1a7452246e9e00", "summeval-relevance/all.jsonl": "e10be11770eeaf34b6b39e529796de89d2a2341e05805071c47e716bc90f2255", "vitaminc-dev/all.jsonl": "6144a345cb8846b6594f07a0037b1221b2d9633b20d8a9bfd14f9111d15965bc"}, "count": 3880}, {"id": "eikos", "name": "Eikos 评测套件", "note": "公开 builder 生成或从公开数据转换的评测题；不是四十二套独立原创数据。保留42任务，排除重复的JevBench副本。", "source": "https://github.com/caiovicentino/eikos/tree/8902fbe9e06e10da50d3ed5d27bb52fcf8ddd900", "subsets": [{"id": "assin2_pt", "count": 300, "file": "eikos--assin2_pt.json"}, {"id": "banking77", "count": 300, "file": "eikos--banking77.json"}, {"id": "boolq", "count": 300, "file": "eikos--boolq.json"}, {"id": "clinc150", "count": 300, "file": "eikos--clinc150.json"}, {"id": "cuad_clause", "count": 296, "file": "eikos--cuad_clause.json"}, {"id": "db_hard", "count": 293, "file": "eikos--db_hard.json"}, {"id": "db_medium", "count": 293, "file": "eikos--db_medium.json"}, {"id": "fin_sentiment", "count": 300, "file": "eikos--fin_sentiment.json"}, {"id": "findver", "count": 300, "file": "eikos--findver.json"}, {"id": "finqa_judge", "count": 294, "file": "eikos--finqa_judge.json"}, {"id": "gsm8k_judge", "count": 300, "file": "eikos--gsm8k_judge.json"}, {"id": "legalbench_consumer_contracts_qa", "count": 37, "file": "eikos--legalbench_consumer_contracts_qa.json"}, {"id": "legalbench_contract_qa", "count": 37, "file": "eikos--legalbench_contract_qa.json"}, {"id": "legalbench_diversity_3", "count": 37, "file": "eikos--legalbench_diversity_3.json"}, {"id": "legalbench_hearsay", "count": 37, "file": "eikos--legalbench_hearsay.json"}, {"id": "legalbench_overruling", "count": 37, "file": "eikos--legalbench_overruling.json"}, {"id": "legalbench_personal_jurisdiction", "count": 37, "file": "eikos--legalbench_personal_jurisdiction.json"}, {"id": "legalbench_privacy_policy_qa", "count": 37, "file": "eikos--legalbench_privacy_policy_qa.json"}, {"id": "legalbench_ucc_v_common_law", "count": 37, "file": "eikos--legalbench_ucc_v_common_law.json"}, {"id": "mmlu_pro", "count": 300, "file": "eikos--mmlu_pro.json"}, {"id": "rewardbench", "count": 300, "file": "eikos--rewardbench.json"}, {"id": "rules_book", "count": 300, "file": "eikos--rules_book.json"}, {"id": "rules_holdout", "count": 600, "file": "eikos--rules_holdout.json"}, {"id": "rules_seen", "count": 500, "file": "eikos--rules_seen.json"}, {"id": "trade_accrued", "count": 60, "file": "eikos--trade_accrued.json"}, {"id": "trade_chargeback", "count": 60, "file": "eikos--trade_chargeback.json"}, {"id": "trade_concentration", "count": 60, "file": "eikos--trade_concentration.json"}, {"id": "trade_gst", "count": 29, "file": "eikos--trade_gst.json"}, {"id": "trade_incoterm", "count": 57, "file": "eikos--trade_incoterm.json"}, {"id": "trade_lc_presentation", "count": 60, "file": "eikos--trade_lc_presentation.json"}, {"id": "trade_limit_fill", "count": 60, "file": "eikos--trade_limit_fill.json"}, {"id": "trade_maintenance_call", "count": 60, "file": "eikos--trade_maintenance_call.json"}, {"id": "trade_pdt", "count": 60, "file": "eikos--trade_pdt.json"}, {"id": "trade_pix_noturno", "count": 60, "file": "eikos--trade_pix_noturno.json"}, {"id": "trade_price_band", "count": 60, "file": "eikos--trade_price_band.json"}, {"id": "trade_sanctions", "count": 4, "file": "eikos--trade_sanctions.json"}, {"id": "trade_stop_fill", "count": 60, "file": "eikos--trade_stop_fill.json"}, {"id": "trade_suitability", "count": 60, "file": "eikos--trade_suitability.json"}, {"id": "trade_vat", "count": 58, "file": "eikos--trade_vat.json"}, {"id": "trade_wash_sale", "count": 60, "file": "eikos--trade_wash_sale.json"}, {"id": "wcb_stance", "count": 400, "file": "eikos--wcb_stance.json"}, {"id": "xnli_es", "count": 300, "file": "eikos--xnli_es.json"}], "source_sha256": {"suite.jsonl": "6e11764061921b2ee94d4a2f1d00890814ff761e4bc38bb5e09ac1b54b56c463", "suite_db.jsonl": "028e4a89c2e2bcd5670c29426a3b423d7e8c4f11b278898639f7afd0a78b42d3", "suite_fin.jsonl": "b1d97b0530693d228754b7bc721cd5ea721781601a95d204ae42bbccaf773ec8", "suite_fin2.jsonl": "72ce19501a0162451ff96d2caf58b670d7a63bcaa93fb238efb2661b86919d5c", "suite_rules.jsonl": "55345e9f9d833ac359cf601078790cc87089bdcb8cfc86f09501fbb982b8abf5", "suite_trade.jsonl": "52bb9fb8eb73fa4b1c7cfcd4ef8c1f78bc57ae21765caad30134435885d0b2d6"}, "upstream_manifest": {"upstream": "8902fbe9e06e10da50d3ed5d27bb52fcf8ddd900", "repos": {"jevbench": "bb05a335bc809e61b20c0f745d25499a82b326fc", "FinDVer": "e8bb237def4ce555a606a45edba22666e31df248"}, "dataset_revisions": {"akhilaaa3/decision-bench": "19334fec40b54b693a63e1ffd91636651d39e847", "google/boolq": "35b264d03638db9f4ce671b711558bf7ff0f80d5", "mteb/banking77": "18072d2685ea682290f7b8924d94c62acc19c0b2", "clinc/clinc_oos": "155b9c710419136e17307b80d0a13e68cd46b4ec", "openai/gsm8k": "740312add88f781978c0658806c59bc2815b9866", "TIGER-Lab/MMLU-Pro": "b189ec765aa7ed75c8acfea42df31fdae71f97be", "nguha/legalbench": "daec8237410aa23e3faf4bc41ad8b3a7e1696826", "allenai/reward-bench": "168d848cdbbea9764fae4a544dc9ca1e6cca4931", "nilc-nlp/assin2": "0ff9c86779e06855536d8775ce5550550e1e5a2d", "facebook/xnli": "b8dd5d7af51114dbda02c0e3f6133f332186418e", "zeroshot/twitter-financial-news-sentiment": "ccbe24de388e287beb92dd393a335c376b350ac3", "ChanceFocus/flare-finqa": "4343aee8c5d8d4469b411407f0e3fb3eaeba6bff", "gtfintechlab/central_bank_of_brazil": "535cf6dcb2643ca1c02895c0da82fba14cc430ac", "gtfintechlab/bank_of_mexico": "c281fab246270ad9c3f78864e6d9c3d7551fa3ad", "gtfintechlab/central_bank_of_chile": "c1ead3f6011bbc358d3ef94b598238b78b7b45fa", "gtfintechlab/bank_of_the_republic_colombia": "aa39f222471688328681f259105185dc93d16845", "gtfintechlab/central_reserve_bank_of_peru": "08b379679f0828a8df89f211f25b9fd63f9f3a5c", "gtfintechlab/european_central_bank": "867cee85784ce569826e0104797b6e017205867b", "gtfintechlab/bank_of_england": "de1123cf9d747dbb3e0c2224467f501692d5a310", "gtfintechlab/reserve_bank_of_india": "091ce9675e1613960dac16e2a073f92c972b2623", "gtfintechlab/bank_of_japan": "1885e21cf1c33c4aea19a824ba40eac886c7a122", "gtfintechlab/bank_of_canada": "ab15ea2271bfa3208874a5517afc439640fd9200"}, "statuses": {"suite_jb_public": "ready", "suite_db": "ready", "suite": "ready", "suite_fin": "ready", "suite_fin2": "ready", "suite_trade": "ready", "suite_rules": "ready"}, "suite_sha256": {"suite_jb_public": "5ae09d8e536d6dce30f6db361e9e34445fbedf2826b684ab2f2364e50a3632ef", "suite_db": "028e4a89c2e2bcd5670c29426a3b423d7e8c4f11b278898639f7afd0a78b42d3", "suite": "6e11764061921b2ee94d4a2f1d00890814ff761e4bc38bb5e09ac1b54b56c463", "suite_fin": "b1d97b0530693d228754b7bc721cd5ea721781601a95d204ae42bbccaf773ec8", "suite_fin2": "72ce19501a0162451ff96d2caf58b670d7a63bcaa93fb238efb2661b86919d5c", "suite_trade": "52bb9fb8eb73fa4b1c7cfcd4ef8c1f78bc57ae21765caad30134435885d0b2d6", "suite_rules": "55345e9f9d833ac359cf601078790cc87089bdcb8cfc86f09501fbb982b8abf5"}, "status": "ready"}, "count": 7140}]};
+const questionCache = new Map();
+let questionRequest = 0;
+let questionRows = [], questionMatches = [], questionPage = 0, questionPayload;
+let activeQuestionBench = 'jevbench', activeQuestionSubset = '', activeQuestionId = '';
+const questionSize = 20;
+const pretty = value => typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+function questionUrl(id = '') {
+  return '#questions/' + [activeQuestionBench, activeQuestionSubset, id].map(encodeURIComponent).join('/');
+}
+function questionFields(raw) {
+  if (activeQuestionBench === 'nimble') return {id:raw.id, state:raw.input.state, question:raw.input.questions, gold:raw.reference};
+  if (activeQuestionBench === 'jevals') {
+    const task = questionPayload.task;
+    let target = raw.target;
+    if (task.primitive === 'choice' && Number.isInteger(target)) target = {index:target, label:task.options[target]};
+    return {id:raw.item_id, state:raw.state, question:Object.fromEntries(Object.entries(task).filter(([key]) => ["primitive","instructions","options","criteria","scale","min","max","labels"].includes(key))), gold:target};
+  }
+  return {id:raw.id, state:raw.state, question:raw.question, gold:raw.expected};
+}
+function showQuestion(id, scroll = false) {
+  const raw = questionRows.find(row => questionFields(row).id === id);
+  if (!raw) return;
+  const row = questionFields(raw);
+  activeQuestionId = id;
+  history.replaceState(null, '', questionUrl(id));
+  $('question-detail').innerHTML = `<div class="row"><h3>原题全文 · ${esc(id)}</h3><a href="${esc(questionUrl(id))}">本题直达链接 ↗</a></div><p class="muted">下方保留原始语言与字段，不用摘要替代完整题面。</p><h4>输入 / State</h4><pre>${esc(pretty(row.state))}</pre><h4>问题、选项与判断标准 / Question</h4><pre>${esc(pretty(row.question))}</pre><details><summary>查看答案 / Gold</summary><pre>${esc(pretty(row.gold))}</pre></details>${activeQuestionBench === 'jevals' ? `<details><summary>子集元数据 / Task metadata</summary><pre>${esc(JSON.stringify(questionPayload.task,null,2))}</pre></details>` : ''}<details><summary>完整原始记录 / Raw JSON</summary><pre>${esc(JSON.stringify(raw,null,2))}</pre></details><button id="question-copy">复制原始 JSON</button>`;
+  $('question-copy').onclick = async () => {
+    try { await navigator.clipboard.writeText(JSON.stringify(raw,null,2)); $('question-copy').textContent = '已复制'; }
+    catch { $('question-copy').textContent = '复制不可用，请展开 Raw JSON 手动复制'; }
+  };
+  document.querySelectorAll('[data-question-id]').forEach(button => button.closest('tr').classList.toggle('selected-question', button.dataset.questionId === id));
+  if (scroll) $('question-detail').scrollIntoView({block:'start',behavior:'smooth'});
+}
+function renderQuestionRows() {
+  const start = questionPage * questionSize;
+  const rows = questionMatches.slice(start, start + questionSize);
+  $('question-count').textContent = `${questionMatches.length.toLocaleString()} / ${questionRows.length.toLocaleString()} 题 · 第 ${questionPage+1} / ${Math.max(1,Math.ceil(questionMatches.length/questionSize))} 页`;
+  $('question-prev').disabled = questionPage === 0;
+  $('question-next').disabled = start + questionSize >= questionMatches.length;
+  $('question-table').innerHTML = rows.map(raw => {
+    const row = questionFields(raw);
+    const state = pretty(row.state);
+    const question = row.question.instructions || pretty(row.question);
+    return `<tr class="${row.id === activeQuestionId ? 'selected-question' : ''}"><td><button data-question-id="${esc(row.id)}">${esc(row.id)}<br>展开全文 →</button></td><td><div class="question-preview">${esc(state.slice(0,350))}${state.length>350?'…':''}</div></td><td><div class="question-preview">${esc(question.slice(0,180))}${question.length>180?'…':''}</div></td><td><details><summary>答案</summary><pre>${esc(pretty(row.gold))}</pre></details></td></tr>`;
+  }).join('') || '<tr><td colspan="4">没有匹配题目。请修改搜索词。</td></tr>';
+  document.querySelectorAll('[data-question-id]').forEach(button => button.onclick = () => showQuestion(button.dataset.questionId,true));
+}
+async function openQuestions(bench = 'jevbench', subset = '', item = '') {
+  const request = ++questionRequest;
+  activeQuestionBench = bench;
+  activeQuestionId = '';
+  go('questions');
+  $('questions').scrollIntoView({block:'start'});
+  $('question-bench').value = bench;
+  $('question-detail').innerHTML = '';
+  $('question-table').innerHTML = '';
+  $('question-search').value = '';
+  $('question-search').disabled = true;
+  $('question-prev').disabled = true;
+  $('question-next').disabled = true;
+  $('question-download').hidden = true;
+  const meta = QM.benchmarks.find(b => b.id === bench);
+  if (!meta) {
+    const catalog = D.catalog.find(c => c.id === bench);
+    $('question-subset').innerHTML = '<option>尚未接入</option>';
+    $('question-subset').disabled = true;
+    $('question-meta').innerHTML = `<b>这套评测的原题尚未接入本浏览器。</b>已有榜单不代表已有题库，也不表示上游没有公开数据。${catalog ? `<a href="${esc(S[catalog.source].url)}" target="_blank" rel="noopener">打开已核对来源 ↗</a>` : ''}`;
+    $('question-count').textContent = '已接入：JevBench、Jevals、Nimble、Eikos。';
+    history.replaceState(null,'','#questions/'+encodeURIComponent(bench));
+    return;
+  }
+  const selectedSubset = meta.subsets.find(s => s.id === subset) || meta.subsets[0];
+  activeQuestionSubset = selectedSubset.id;
+  $('question-subset').disabled = false;
+  $('question-subset').innerHTML = meta.subsets.map(s => `<option value="${esc(s.id)}">${esc(s.id)} · ${s.count.toLocaleString()}题</option>`).join('');
+  $('question-subset').value = selectedSubset.id;
+  $('question-meta').innerHTML = `<b>${esc(meta.name)} · ${meta.count.toLocaleString()}题 / ${meta.subsets.length}子集</b><p>${esc(meta.note)}</p><a href="${esc(meta.source)}" target="_blank" rel="noopener">固定版本与来源 ↗</a> · 接入日期 ${esc(QM.updated)}`;
+  $('question-count').textContent = '正在加载原题…';
+  history.replaceState(null,'',questionUrl(item));
+  const path = 'jev-benchmark-data/questions/'+selectedSubset.file;
+  try {
+    let payload = questionCache.get(path);
+    if (!payload) {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error('HTTP '+response.status);
+      payload = await response.json();
+      questionCache.set(path,payload);
+    }
+    if (request !== questionRequest) return;
+    questionPayload = payload;
+    questionRows = payload.rows;
+    questionMatches = questionRows;
+    const index = questionRows.findIndex(raw => questionFields(raw).id === item);
+    questionPage = index < 0 ? 0 : Math.floor(index/questionSize);
+    $('question-search').disabled = false;
+    $('question-download').hidden = false;
+    $('question-download').href = path;
+    renderQuestionRows();
+    showQuestion(index < 0 ? questionFields(questionRows[0]).id : item);
+  } catch(error) {
+    if (request !== questionRequest) return;
+    $('question-count').textContent = '加载失败：'+error.message+'。可重新选择子集重试。';
+  }
+}
+$('question-bench').innerHTML = QM.benchmarks.map(b=>`<option value="${b.id}">${esc(b.name)} · ${b.count.toLocaleString()}题</option>`).join('') + '<optgroup label="其他评测 · 尚未接入原题">'+D.catalog.filter(c=>!QM.benchmarks.some(b=>b.id===c.id)).map(c=>`<option value="${esc(c.id)}">${esc(c.name)} · 未接入</option>`).join('')+'</optgroup>';
+$('question-bench').onchange = () => openQuestions($('question-bench').value);
+$('question-subset').onchange = () => openQuestions(activeQuestionBench,$('question-subset').value);
+$('question-search').oninput = () => {
+  const query = $('question-search').value.toLowerCase();
+  questionMatches = questionRows.filter(raw => JSON.stringify(raw).toLowerCase().includes(query));
+  questionPage=0;
+  renderQuestionRows();
+  if (questionMatches.length) showQuestion(questionFields(questionMatches[0]).id);
+  else $('question-detail').innerHTML='';
+};
+$('question-prev').onclick = () => {questionPage--;renderQuestionRows();showQuestion(questionFields(questionMatches[questionPage*questionSize]).id);};
+$('question-next').onclick = () => {questionPage++;renderQuestionRows();showQuestion(questionFields(questionMatches[questionPage*questionSize]).id);};
+
       function route() {
         let hash = decodeURIComponent(location.hash.slice(1));
-        if (hash.startsWith("board/") && B[hash.slice(6)]) {
+        if (hash.startsWith("questions")) {
+          const parts = location.hash.slice(1).split("/").map(decodeURIComponent);
+          openQuestions(parts[1] || "jevbench", parts[2] || "", parts[3] || "");
+        } else if (hash.startsWith("board/") && B[hash.slice(6)]) {
           selected = hash.slice(6);
           metricKey = B[selected].metrics[0].key;
           go("boards");
