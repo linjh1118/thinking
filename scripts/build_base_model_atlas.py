@@ -1858,8 +1858,10 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"<em>\1</em>", text)
     text = re.sub(r"~~([^~]+)~~", r"<del>\1</del>", text)
-    for i, value in enumerate(tokens):
-        text = text.replace(f"\x00{i}\x00", value)
+    # Later tokens (for example a link label) can contain earlier inline-code
+    # tokens. Restore the outer token first so its nested token is visited next.
+    for i in range(len(tokens) - 1, -1, -1):
+        text = text.replace(f"\x00{i}\x00", tokens[i])
     return text
 
 
@@ -1867,6 +1869,9 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
     original_raw = raw
+    # Keep the immutable source snapshot, but invalid NUL characters must not
+    # leak into readable HTML (some historical clippings contain them).
+    raw = raw.replace("\x00", "")
     # Resolve explicitly linked sibling posters/manifests from the source, even
     # when the destination is created later in this publishing pass.
     targets = dict(targets)
@@ -2133,7 +2138,7 @@ def sync_source_archive(
         destination = destination_root / rel
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
-        if incremental_manifest and source.suffix.lower() == ".html":
+        if source.suffix.lower() == ".html":
             # The vault retains the byte-exact response. Published snapshots
             # expose a text download and a script-free reading view; they must
             # not run copied analytics or depend on broken root-relative URLs.
@@ -2141,7 +2146,10 @@ def sync_source_archive(
             parser = SourceTextReader()
             parser.feed(source.read_text(encoding="utf-8", errors="replace"))
             body_text = "".join(parser.parts).strip()
-            entry = next((item for item in manifest_data if item.get("file") == source.name), {})
+            if incremental_manifest:
+                entry = next((item for item in manifest_data if item.get("file") == source.name), {})
+            else:
+                entry = manifest_data.get("documents", {}).get(str(rel), {})
             source_url = entry.get("url", "")
             limitation = "若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。"
             destination.write_text(
@@ -2202,9 +2210,9 @@ def sync_source_archive(
                 })
             elif source.suffix.lower() == ".html":
                 source_docs.append({
-                    "label": f"{label} · 原始 HTML",
+                    "label": f"{label} · 网页静态阅读",
                     "path": str(published.relative_to(ATLAS)),
-                    "kind": "raw-html",
+                    "kind": "static-html",
                     "name": source.name,
                 })
             elif source.suffix.lower() == ".json" and selectable_repo_metadata:
