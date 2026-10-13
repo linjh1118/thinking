@@ -1,0 +1,389 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://github.com/strands-labs/strands-decider">打开官方原文 ↗</a> · <a href="official_01.html.txt">原始HTML响应源码（不运行脚本）</a></p><pre>GitHub - strands-labs/strands-decider: A small, fast decision model, or system one model, for agentic workflows. Pick between options or rate on a scale faster than an LLM, with a calibrated confidence on every decision. · GitHub Skip to content 
+Navigation Menu Sign in Appearance settings 
+Platform 
+AI CODE CREATION 
+GitHub Copilot Write better code with AI 
+GitHub Copilot app Direct agents from issue to merge 
+MCP Registry Integrate external tools 
+DEVELOPER WORKFLOWS 
+Actions Automate any workflow 
+Codespaces Instant dev environments 
+Issues Plan and track work 
+Code Review Manage code changes 
+Code Quality Enforce quality at merge 
+APPLICATION SECURITY 
+GitHub Advanced Security Find and fix vulnerabilities 
+Code security Secure your code as you build 
+Secret protection Stop leaks before they start 
+EXPLORE 
+Why GitHub 
+Documentation 
+Blog 
+Changelog 
+Marketplace View all features 
+Solutions 
+BY COMPANY SIZE 
+Enterprises 
+Small and medium teams 
+Startups 
+Nonprofits 
+BY USE CASE 
+App Modernization 
+DevSecOps 
+DevOps 
+CI/CD 
+View all use cases 
+BY INDUSTRY 
+Healthcare 
+Financial services 
+Manufacturing 
+Government 
+View all industries View all solutions 
+Resources 
+EXPLORE BY TOPIC 
+AI 
+Software Development 
+DevOps 
+Security 
+View all topics 
+EXPLORE BY TYPE 
+Customer stories 
+Events &amp; webinars 
+Ebooks &amp; reports 
+Business insights 
+GitHub Skills 
+SUPPORT &amp; SERVICES 
+Documentation 
+Customer support 
+Community forum 
+Trust center 
+Partners View all resources 
+Open Source 
+COMMUNITY 
+GitHub Sponsors Fund open source developers 
+PROGRAMS 
+Security Lab 
+Maintainer Community 
+GitHub Stars 
+Archive Program 
+REPOSITORIES 
+Topics 
+Trending 
+Collections 
+Enterprise 
+ENTERPRISE SOLUTIONS 
+Enterprise platform AI-powered developer platform 
+AVAILABLE ADD-ONS 
+GitHub Advanced Security Enterprise-grade security features 
+Copilot for Business Enterprise-grade AI features 
+Premium Support Enterprise-grade 24/7 support 
+Pricing Search / Sign in Sign up Appearance settings You signed in with another tab or window. Reload to refresh your session. You signed out in another tab or window. Reload to refresh your session. You switched accounts on another tab or window. Reload to refresh your session. Dismiss alert {{ message }} 
+strands-labs 
+strands-decider 
+Repository navigation 
+
+Code 
+Issues 17 ( 17 ) 
+Pull requests 15 ( 15 ) 
+Actions 
+Security and quality 
+Insights More items strands-decider Public 
+Notifications You must be signed in to change notification settings 
+Fork 79 ( 79 ) 
+Star 599 ( 599 ) You must be signed in to star a repository 
+About 
+A small, fast decision model, or system one model, for agentic workflows. Pick between options or rate on a scale faster than an LLM, with a calibrated confidence on every decision. strandsagents.com/docs/labs/ 
+Topics ai machine-learning natural-language-understanding python strands-agents strands-labs system-one system-one-models 
+Resources Readme Apache-2.0 license 
+Code of conduct Code of conduct 
+Contributing Contributing 
+Security policy Security policy Activity Custom properties 
+Stars 599 stars 
+Watchers 5 watching 
+Forks 79 forks Report repository main Branches Tags Go to file Code Open more actions menu 
+Latest commit 
+History 23 Commits 23 Commits 
+Folders and files 
+Name Name Last commit message Last commit date 
+.context .context 
+.github .github 
+configs configs 
+data data 
+docs docs 
+evaluation evaluation 
+examples/ strands examples/ strands 
+research research 
+src/ strands_decider src/ strands_decider 
+tests tests 
+training training 
+.gitattributes .gitattributes 
+.gitignore .gitignore 
+.pre-commit-config.yaml .pre-commit-config.yaml 
+CHANGELOG.md CHANGELOG.md 
+CODE_OF_CONDUCT.md CODE_OF_CONDUCT.md 
+CONTRIBUTING.md CONTRIBUTING.md 
+LICENSE LICENSE 
+MAINTAINING.md MAINTAINING.md 
+NOTIFY.md NOTIFY.md 
+README.md README.md 
+SECURITY.md SECURITY.md 
+THIRD_PARTY_NOTICES.md THIRD_PARTY_NOTICES.md 
+pyproject.toml pyproject.toml 
+View all files 
+Repository files navigation 
+
+README 
+Code of conduct 
+Contributing 
+Apache-2.0 license 
+Security More items 
+Strands Decider 
+A small, fast decision model for agentic AI. 
+Strands decider is one of a new class of decision models , or &quot;system one&quot; models. Unlike an
+LLM, which can generate arbitrary text, a decision model picks between sets of options and
+rates things on a scale. This class of model works best for problems that fall between LLMs
+and traditional classification models: it is a general-purpose classification and scoring
+model that responds faster than an LLM and does not take the time and expertise to train
+that a traditional classifier does. That makes it a natural fit for the decisions inside
+agentic workflows built with the Strands Agents SDK . 
+Pick from options — &quot;Are there three r&#x27;s in strawberry? Yes or no.&quot; &quot;What language is
+the phrase &#x27;sihamba ngokushesha&#x27; in? English, Zulu, or Dutch.&quot; 
+Rate on a scale — &quot;How positive is &#x27;this is the best doc I&#x27;ve ever read&#x27;? Between 0 and 1.&quot; 
+Calibrated reliability scores — every decision carries a confidence. On short
+classification tasks it has never seen, answers at a confidence of 0.9 or more are right
+about 95% of the time ( evaluation/results.md ); below that,
+confirm or ask a person. Frontier LLM inference APIs do not expose anything equivalent. 
+Getting Started 
+The easiest place to get started is through the strands-decider cli: pip install strands-decider 
+On an Apple-silicon Mac, --device mlx runs the model through MLX, 1.4 to 1.6x faster than MPS.
+It needs the mlx extra, which ships with the next release; until then, install from a clone with pip install -e &quot;.[mlx]&quot; . The cuda , mps and cpu extras name the other devices
+( docs/inference.md ).
+The example outputs below are from strands-decider-2B-qwen3.5-v1-2610 , recorded with --device cpu ; other devices differ in the last digits. 
+Choice question 
+You can ask the model to choose based on some state and a question: strands-decider ask StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 \
+  --state &quot; Help! My payouts have been failing for 3 days! &quot; \
+  --choice &quot; Which team should handle this?=billing,sales,retail &quot; 
+Example Output: choice_0 - &gt; billing (confidence 0.659)
+  billing                  0.773
+  sales                    0.121
+  retail                   0.106 
+Noul question 
+You can also ask the model a Yes/No question: strands-decider ask StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 \
+  --state &quot; Help! My payouts have been failing for 3 days! &quot; \
+  --noul &quot; Does this convey urgency? &quot; 
+Example Output: noul_0 noul = 0.858 
+Closer to 1 is leaning more toward Yes 
+Score question 
+Or give a question a score: strands-decider ask StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 \
+  --state &quot; Help! My payouts have been failing for 3 days! &quot; \
+  --score &quot; How frustrated is the writer?=calm,frustrated,depressed &quot; 
+Example Output: score_0 score = 1.03 (confidence 0.509)
+  0: calm                                     0.196
+  1: frustrated                               0.574
+  2: depressed                                0.230 
+Multiple question types 
+You can combine multiple questions into a single command. This is more efficient as you only need to load the state for the model once: strands-decider ask StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 \
+  --state &quot; Help! My payouts have been failing for 3 days! &quot; \
+  --choice &quot; Which team should handle this?=billing,sales,retail &quot; \
+  --noul &quot; Does this convey urgency? &quot; \
+  --score &quot; How frustrated is the writer?=calm,frustrated,depressed &quot; Example Output noul_0 noul = 0.858
+choice_0 - &gt; billing (confidence 0.659)
+  billing                  0.773
+  sales                    0.121
+  retail                   0.106
+score_0 score = 1.03 (confidence 0.509)
+  0: calm                                     0.196
+  1: frustrated                               0.574
+  2: depressed                                0.230 
+Running as a server 
+You can also run the model as a server, and ask questions via http requests: strands-decider serve StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 --port 8000 curl -s localhost:8000/v1/systemone \
+  -H &#x27; content-type: application/json &#x27; \
+  -d &#x27; { &quot;state&quot;: &quot;Help! My payouts have been failing for 3 days!&quot;, &quot;questions&quot;: { &quot;is_urgent&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Does this convey urgency?&quot;} } } &#x27; Example Output { &quot; model &quot; : &quot; strands-decider-2B-qwen3.5-v1-2610 &quot; , &quot; answers &quot; : { &quot; is_urgent &quot; : { &quot; type &quot; : &quot; noul &quot; , &quot; noul &quot; : 0.8581
+    }
+  }, &quot; usage &quot; : { &quot; input_tokens &quot; : 86, &quot; output_tokens &quot; : 1
+  }, &quot; latency_ms &quot; : 489.01
+} 
+Images 
+Qwen3.5-2B-Base is natively multimodal. With --vision the server keeps its vision tower,
+and a request may carry images (base64) as part of the state; the published checkpoints
+(v1, and hobson-v21 and v19 before it) answer over them with no image training. Needs pip install &quot;strands-decider[vision]&quot; and
+transformers 5.18 or later. strands-decider serve StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 --vision --port 8000
+strands-decider ask StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 --state &quot; &quot; --image page.png \
+  --noul &quot; Is the signature block filled in? &quot; 
+v19 matches an image-trained 2B decider on accuracy, and on NaturalBench is much better
+calibrated (ECE 0.014 against 0.080). v21 has v19&#x27;s image accuracy, is better calibrated on
+POPE, and is more confident than v19 when the image is missing. v1 has v21&#x27;s image accuracy;
+with the image missing it is more overconfident than v21 on POPE
+( docs/vision.md ). See docs/vision.md for the request shape, how it works and the measurements. 
+Model names 
+Model names now use the pattern strands-decider-&lt;size&gt;-&lt;base&gt;-v&lt;N&gt;-&lt;YYMM&gt; : 
+&lt;size&gt; is the size of the base model, as its Hugging Face id writes it ( 2B , E4B ). 
+&lt;base&gt; is the base model family ( qwen3.5 , gemma4 ). 
+v&lt;N&gt; counts the releases on one base family: v1 is the first release on each base.
+Releases with the same N on different bases can use different recipes; each model card says
+what its model trained on. 
+&lt;YYMM&gt; is the release month. 
+Examples: strands-decider-2B-qwen3.5-v1-2610 (Qwen3.5) and strands-decider-E4B-gemma4-v1-2610 (Gemma 4). The earlier models keep their names: strands-decider-2B-hobson-v19 and strands-decider-2B-hobson-v21 . A second release in the same month updates the same Hub
+repository and adds a revision tag YYMMDD . docs/naming.md has the full rules. 
+The models live in the StrandsAgents organization on
+Hugging Face, their main home. The five v1 models are also in the amazon organization, with the same files and the same names:
+for example amazon/strands-decider-E4B-gemma4-v1-2610 . 
+Gemma 4 models 
+Four models on the Gemma 4 instruction-tuned base models ( google/gemma-4-*-it , Apache-2.0). They
+have the same pointer head and answer the same three question types as the Qwen3.5 model. 
+model JevBench (231) Brier held-out short tasks held-out code tasks Decision Index GPU memory for the weights (bf16) median latency per JevBench question, one H100 
+strands-decider-E2B-gemma4-v1-2610 180 0.313 0.652 0.773 29.78 about 9 GB 102 ms 
+strands-decider-E4B-gemma4-v1-2610 187 0.243 0.684 0.815 39.42 about 15 GB 139 ms 
+strands-decider-12B-gemma4-v1-2610 200 0.173 0.708 0.870 47.14 about 23 GB 136 ms 
+strands-decider-26B-A4B-gemma4-v1-2610 207 0.162 0.708 0.859 48.69 about 51 GB 245 ms 
+For comparison, strands-decider-2B-qwen3.5-v1-2610 scores 180, Brier 0.280. The E2B Decision Index
+was measured before the E2B attention fix (see docs/inference.md ),
+so it may be off. Every model is a soup of three training runs, calibrated afterwards
+( evaluation/results.md ). 
+Choose a size. A larger model is more accurate and better calibrated, and needs more memory.
+The 12B and the 26B-A4B are the most accurate; the 26B-A4B is better calibrated, but needs about
+twice the memory and twice the latency of the 12B. The E4B is a good choice when the model
+must share one GPU with other work. The E2B is the smallest: use it where memory is tightest, or on
+CPU. All four serve on CPU ( docs/inference.md ). 
+Install. Gemma 4 support is on main and not yet in the package on PyPI: pip install &quot; strands-decider @ git+https://github.com/strands-labs/strands-decider &quot; strands-decider ask StrandsAgents/strands-decider-E4B-gemma4-v1-2610 \
+  --state &quot; Help! My payouts have been failing for 3 days! &quot; \
+  --choice &quot; Which team should handle this?=billing,sales,retail &quot; \
+  --noul &quot; Does this convey urgency? &quot; \
+  --score &quot; How frustrated is the writer?=calm,frustrated,depressed &quot; Example Output (`--device cpu`) noul_0 noul = 0.959
+choice_0 - &gt; billing (confidence 0.951)
+  billing                  0.967
+  sales                    0.019
+  retail                   0.013
+score_0 score = 0.97 (confidence 0.848)
+  0: calm                                     0.102
+  1: frustrated                               0.823
+  2: depressed                                0.075 
+What they train on. The Gemma 4 models do not use the Qwen3.5 v1 data mix. They train on
+hobson-v21&#x27;s data (123,339 rows) plus 12,263 code-task rows, 135,602 rows in all. Qwen3.5-4B is the
+teacher, where its answer agrees with the gold label, and training keeps the answers close to the
+released v19. The rows come from 25 public Hugging Face datasets, five of them code datasets, and from
+ContractNLI, MuSiQue, generated rows and generated code tasks. data/sources.md lists every source with its licence. 
+The Gemma 4 models read text only: --vision is for the Qwen3.5 model. 
+About the model 
+strands-decider-2B , the first model of the family, has 1.9 billion parameters. It answers a
+question in a median 115 ms on an RTX 3090 and also serves on an Apple-silicon Mac or on CPU,
+and many questions about one text are cheap, because the text is read once and each question
+adds only its own tokens
+( docs/inference.md ). Its
+accuracy and calibration are measured on JevBench, a third-party benchmark for this class of
+model ( Performance ). 
+Model Architecture 
+The core idea: take a pretrained decoder LLM torso ( Qwen3.5-2B-Base ), discard its language-modelling head — taking away its ability to generate text — and
+replace it with a small pointer head of about a million parameters. The head scores each
+option by comparing the hidden state at the &lt;answer&gt; position against the hidden state at
+that option&#x27;s own last token. One forward pass, no generation, no decoding loop. The torso is
+adapted with a rank-16 LoRA adapter, and the head runs in fp32. 
+Because the head holds no per-option parameters, nothing can learn that &quot;the first option is
+usually right&quot;, nothing caps how many options a question may carry, and label sets are
+defined by the request rather than baked into the weights. Three question types come out of
+the same masked softmax, read back differently: noul (yes/no), choice (one of N) and score (an ordered rubric). 
+As you browse the research, you will find that this is the second major iteration of the
+architecture. The first used a slot head, which mapped the final hidden state to a fixed set
+of slots and performed significantly worse. Every change since is captured in the research
+so you can follow along with the work. The reference model today is v1 ( strands-decider-2B-qwen3.5-v1-2610 ; docs/naming.md explains the name).
+It trains on a new, balanced data mix of 246,678 rows, about twice v21&#x27;s: it adds code tasks,
+new rule-application rows (apply a written policy to a case) and rows from more public datasets,
+so that the mix follows the kinds of decisions in the evaluations. Its teacher is
+gemma-4-31B-it, and training keeps its answers close to the released v19. The released
+checkpoint is a soup of three training runs: their LoRA updates and head scores averaged
+exactly, then calibrated
+( evaluation/results.md ). strands-decider-2B-hobson-v21 and -v19 stay published. docs/architecture.md has the full design, the
+training objective, and the decisions behind them. 
+Performance 
+Three targets matter: accuracy , calibration and latency . v1, v21 and v19 measure: 
+Measurement v1 v21 v19 Source 
+JevBench v1 public set, 231 tasks, accuracy 0.779 (180 of 231); its three seeds 179.7 ± 3.8 0.762 (176 of 231); six-seed mean 0.758 (175.0, SD 2.4) 0.723 (167 of 231) evaluation/results.md 
+JevBench Brier score / expected calibration error 0.280 / 0.072 0.323 / 0.064 0.342 / 0.052 evaluation/README.md 
+Tiers (this repository&#x27;s split of the public tasks): easy / standard / hard 1.000 / 0.931 / 0.586 1.000 / 0.931 / 0.550 1.000 / 0.875 / 0.505 evaluation/jevbench.md 
+Latency per JevBench question, RTX 3090 under WSL2, median / 95th percentile same architecture and size as v19 same architecture and size as v19 115 ms / 299 ms evaluation/results.md 
+Latency per question, M3 Pro (Apple silicon), warm median, under 300 tokens / all tasks same architecture and size as v19 same architecture and size as v19 153 ms / 234 ms evaluation/results.md 
+Every task in the easy tier is answered correctly, and the nearest comparison is decider-2b , which shares v19&#x27;s torso with a different recipe
+( evaluation/jevbench.md ). 
+v1&#x27;s column is measured through main (the training harness gives 181; one task is a near tie).
+v1 also answers code questions: 0.836 on 1,996 held-out code tasks
+( evaluation/results.md ). 
+Read the v21 and v19 columns as two single runs, not as a measured gain. Trained on one
+host with six seeds each, the v19 recipe and v21&#x27;s average 172.8 and 172.3 JevBench tasks:
+the same accuracy. v21&#x27;s Brier score is lower on that host (0.331 against 0.341), and the
+two recipes differ by the paraphrases and the distillation only. 
+v19&#x27;s JevBench figures are at the 3072-token window the run was preregistered at; the recipe
+saves a 4096-token window, at which v19 scores 168. And 231 tasks are few: six retrains of
+the v17 recipe had a standard deviation of 3.2 tasks, so treat a difference under about 10
+tasks between two single runs as unresolved. evaluation/README.md has the scripts and the limitations, and links the results by version and the board
+position with its caveats. 
+Why 2B? 
+Two reasons. First, experimentation : at 1.9 billion parameters you can serve the model,
+and retrain the whole recipe, on hardware you already have — about 11 hours on one RTX 3090,
+and serving works on an Apple-silicon Mac. That makes trying an idea fast and low-risk.
+Second, ~2B parameters looks like a sweet spot: small enough to experiment with, large enough
+to do meaningful work. 
+What can I do with it? 
+The decisions inside an agentic workflow are the natural target: 
+Model routing — pick the right LLM for a task 
+Tool selection — decide which tool an agent should call next 
+Argument checking — verify a tool call&#x27;s arguments before it runs 
+Triage — route an incoming request to the team or queue that should own it 
+Guardrails — grounding checks, safety classification, policy classification 
+Evaluations — score model outputs, and check whether an answer is adequate, at low cost 
+Hybrid agents — let the LLM make the hard decisions and a decider make the rote ones,
+reducing cost and latency 
+Trying it in an Agent 
+The repository includes a worked example of strands decider inside a Strands agent, under examples/strands/ : a before_tool_call intervention that gates a
+weather-tool call on two yes/no decisions, so the agent asks which city instead of guessing. See
+the example&#x27;s README for setup and the walk-through. 
+Training 
+Two entry points, both on a Linux or WSL2 host with NVIDIA GPUs and the training
+environment of training/README.md (the train extra, the
+pinned torch and flash-linear-attention ): 
+training/recipe.sh all : one host, local, 1 to 8 GPUs ( NGPU=8 for eight). It builds
+the corpora, trains, calibrates and evaluates. 
+training/run_recipe.sh all with training/aws/ : a distributed
+8-GPU host. It adds per-stage timing and logs, row-count checks, the S3 copy of the
+outputs ( PY and S3_PREFIX must be set), and FAST=1 , which trades 24 GB
+compatibility for speed on 80 GB GPUs. 
+About 11 hours on one RTX 3090 (24 GiB), or 1 hour 10 minutes on eight H100s with FAST=1 . training/README.md has the setup, the stages, the settings and the
+hardware notes; data/sources.md lists every source and its licence, and data/README.md states the reproduction contract. 
+The research 
+The record of the work is in the repository. Since v9, every training run states its
+predictions and its failure conditions before training, and the outcome is appended after
+the run without editing what came before. By that rule, a run that misses its bar does not
+replace the reference model; five runs were promoted by the maintainers&#x27; decision anyway,
+and the record says so. Most runs missed their bar, v20 among them: 169 of 231 at the
+4096-token window against v19&#x27;s 168, inside the retrain noise, with four predictions
+failed. research/README.md lists each run and its outcome, and research/history.md tells what moved the benchmark and what did
+not. To propose an experiment, open an issue with a preregistration ( CONTRIBUTING.md ). 
+Community 
+To ask questions and talk about Strands Decider, join the Strands Decider channel on Discord . 
+License 
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details. 
+Security 
+See CONTRIBUTING for more information. 
+About 
+A small, fast decision model, or system one model, for agentic workflows. Pick between options or rate on a scale faster than an LLM, with a calibrated confidence on every decision. strandsagents.com/docs/labs/ 
+Topics ai machine-learning natural-language-understanding python strands-agents strands-labs system-one system-one-models 
+Resources Readme Apache-2.0 license 
+Code of conduct Code of conduct 
+Contributing Contributing 
+Security policy Security policy Activity Custom properties 
+Stars 599 stars 
+Watchers 5 watching 
+Forks 79 forks Report repository 
+Used by 
+Contributors 
+Languages 
+Footer © 2026 GitHub, Inc. 
+Footer navigation 
+Terms 
+Privacy 
+Security 
+Status 
+Community 
+Docs 
+Contact 
+Manage cookies 
+Do not share my personal information You can’t perform that action at this time.</pre></body></html>

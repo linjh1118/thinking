@@ -15,6 +15,7 @@ import os
 import re
 import shutil
 from datetime import datetime
+from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import quote
@@ -1866,6 +1867,15 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
     original_raw = raw
+    # Resolve explicitly linked sibling posters/manifests from the source, even
+    # when the destination is created later in this publishing pass.
+    targets = dict(targets)
+    for match in re.finditer(r"\[\[([^\]|#]+)", raw):
+        relative = Path(match.group(1).strip())
+        sibling = (source_file.parent / relative).resolve()
+        if relative.suffix.lower() in {".html", ".json"} and sibling.is_file():
+            if sibling.is_relative_to(SOURCE):
+                targets[str(relative)] = destination.parent / relative
     meta: dict[str, str] = {}
     if raw.startswith("---\n"):
         end = raw.find("\n---\n", 4)
@@ -1882,11 +1892,18 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     if "huggingface_model_cards" in source_file.parts:
         repo = source_file.stem
         hf_asset_base = f"https://huggingface.co/deepseek-ai/{repo}/resolve/main/"
-    elif source_file.name == "hf_model_card.md":
+    elif (source_file.parent / "retrieval_manifest.json").is_file():
         manifest = source_file.parent / "retrieval_manifest.json"
         if manifest.is_file():
             try:
-                raw_url = json.loads(manifest.read_text(encoding="utf-8"))["documents"]["hf_model_card.md"]["url"]
+                manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+                if isinstance(manifest_data, list):
+                    entry = next((item for item in manifest_data if item.get("file") == source_file.name), {})
+                    raw_url = entry.get("retrievalUrl", "")
+                    if not raw_url.endswith("/raw/main/README.md"):
+                        raw_url = ""
+                else:
+                    raw_url = manifest_data["documents"]["hf_model_card.md"]["url"]
                 hf_asset_base = raw_url.replace("/raw/main/README.md", "/resolve/main/")
             except (KeyError, TypeError, json.JSONDecodeError):
                 pass
@@ -1910,14 +1927,21 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             hf_asset_base = f"https://huggingface.co/{repo}/resolve/main/"
     if hf_asset_base:
         raw = re.sub(
+            r'(?<!!)(\[[^\]]*\]\()(?!https?://|data:|#|/)([^)]+)',
+            lambda match: match.group(1) + (
+                match.group(2) if (source_file.parent / match.group(2)).is_file()
+                else hf_asset_base.replace('/resolve/main/', '/blob/main/') + match.group(2)
+            ), raw,
+        )
+        raw = re.sub(
             r'(<img\b[^>]*?\bsrc=["\'])(?!https?://|data:|/)([^"\']+)',
-            lambda match: match.group(1) + hf_asset_base + match.group(2),
+            lambda match: match.group(1) + (match.group(2) if (source_file.parent / match.group(2)).is_file() else hf_asset_base + match.group(2)),
             raw,
             flags=re.I,
         )
         raw = re.sub(
             r'(!\[[^\]]*\]\()(?!https?://|data:|/)([^)]+)',
-            lambda match: match.group(1) + hf_asset_base + match.group(2),
+            lambda match: match.group(1) + (match.group(2) if (source_file.parent / match.group(2)).is_file() else hf_asset_base + match.group(2)),
             raw,
         )
     raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S)
@@ -2062,6 +2086,28 @@ NOTE_CSS = r'''
 '''
 
 
+class SourceTextReader(HTMLParser):
+    """Extract saved first-party HTML text without executing archived scripts."""
+    def __init__(self) -> None:
+        super().__init__()
+        self.hidden = 0
+        self.parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list) -> None:
+        if tag in {"script", "style"}:
+            self.hidden += 1
+        if tag in {"p", "h1", "h2", "h3", "li", "tr"}:
+            self.parts.append("\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style"}:
+            self.hidden = max(0, self.hidden - 1)
+
+    def handle_data(self, data: str) -> None:
+        if not self.hidden and data.strip():
+            self.parts.append(data.strip() + " ")
+
+
 def sync_source_archive(
     model_root: Path,
     dest_root: Path,
@@ -2076,6 +2122,9 @@ def sync_source_archive(
     destination_root.mkdir(parents=True, exist_ok=True)
     rows = []
     source_docs = []
+    manifest_path = source_root / "retrieval_manifest.json"
+    manifest_data = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    incremental_manifest = isinstance(manifest_data, list)
     sources = (p for p in source_root.rglob("*") if p.is_file())
     if include_relative is not None:
         sources = (p for p in sources if p.relative_to(source_root) in include_relative)
@@ -2084,6 +2133,28 @@ def sync_source_archive(
         destination = destination_root / rel
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+        if incremental_manifest and source.suffix.lower() == ".html":
+            # The vault retains the byte-exact response. Published snapshots
+            # expose a text download and a script-free reading view; they must
+            # not run copied analytics or depend on broken root-relative URLs.
+            shutil.copy2(source, Path(str(destination) + ".txt"))
+            parser = SourceTextReader()
+            parser.feed(source.read_text(encoding="utf-8", errors="replace"))
+            body_text = "".join(parser.parts).strip()
+            entry = next((item for item in manifest_data if item.get("file") == source.name), {})
+            source_url = entry.get("url", "")
+            limitation = "若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。"
+            destination.write_text(
+                '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
+                '<meta name="viewport" content="width=device-width,initial-scale=1">'
+                '<title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;'
+                'padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}'
+                'a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body>'
+                '<h1>官方网页响应 · 静态阅读</h1><p>' + html.escape(limitation) + '</p>'
+                '<p><a href="' + html.escape(source_url, quote=True) + '">打开官方原文 ↗</a> · '
+                '<a href="' + quote(source.name + '.txt') + '">原始HTML响应源码（不运行脚本）</a></p>'
+                '<pre>' + html.escape(body_text) + '</pre></body></html>', encoding="utf-8"
+            )
         published = destination
         kind = source.suffix.lower().lstrip(".") or "file"
         if source.suffix.lower() == ".md":
@@ -2256,13 +2327,13 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 model_root,
                 dest_root,
                 targets,
-                include_relative={Path("hf_model_card.md")},
+                include_relative=None if record.get("incrementalRelease") else {Path("hf_model_card.md")},
             )
             if source_archive:
                 record["sources"] = source_archive["index"]
                 record["sourceReader"] = source_archive["reader"]
                 record["sourceDocs"] = source_archive["docs"]
-        elif record["team"] in {"minimax", "mimo", "longcat", "openai", "anthropic", "google"}:
+        elif record.get("incrementalRelease") or record["team"] in {"minimax", "mimo", "longcat", "openai", "anthropic", "google"}:
             # These families are maintained as first-party research packs in
             # BrainHao. Publish the complete local source tree so the public
             # atlas does not degrade to external links plus copied figures.
@@ -2280,7 +2351,14 @@ def validate_top8_mainline_contract(records: list[dict]) -> None:
     if len(all_slugs) != len(set(all_slugs)):
         errors.append("duplicate model slugs")
 
-    for team_id, expected_oldest_first in TOP8_MAINLINE_CONTRACT.items():
+    release_path = SOURCE / "src/verified_releases.json"
+    verified_releases = json.loads(release_path.read_text()) if release_path.exists() else []
+    for team_id, historical_contract in TOP8_MAINLINE_CONTRACT.items():
+        expected_oldest_first = list(historical_contract)
+        for release in verified_releases:
+            if release["team"] == team_id and release["lineageType"] == "mainline":
+                if release["name"] not in expected_oldest_first:
+                    expected_oldest_first.append(release["name"])
         mainline = [
             record for record in records
             if record["team"] == team_id
@@ -2451,6 +2529,39 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "variants": VARIANT_FAMILIES.get(team["id"], []),
                 "_assets": discover_branch_assets(team["dir"], name, raw_date),
             })
+    # Incremental official-release inventory shares the same renderer and asset
+    # discovery as the historical timeline. Keep dates and evidence in the vault.
+    release_path = SOURCE / "src/verified_releases.json"
+    if release_path.exists():
+        release_rows = json.loads(release_path.read_text(encoding="utf-8"))
+        team_lookup = {team["id"]: team for team in ordered_teams}
+        for release in release_rows:
+            team = team_lookup[release["team"]]
+            slug = f"{team['id']}-{slugify(release['name'])}"
+            if slug in seen_slugs:
+                continue
+            seen_slugs.add(slug)
+            model_root = SOURCE / release["folder"]
+            notes = sorted(model_root.glob("*.md"))
+            posters = sorted(model_root.glob("*poster*.html"))
+            raw_date = release["date"].replace("-", "")[2:]
+            records.append({
+                "slug": slug, "team": team["id"], "teamName": team["name"],
+                "teamDir": team["dir"], "region": team["region"], "color": team["color"],
+                "date": release["date"], "rawDate": raw_date, "name": release["name"],
+                "summary": release["summary"], "source": release["sources"][0]["url"],
+                "sourceType": release["sources"][0]["label"], "thesis": team["thesis"],
+                "lineageType": release["lineageType"], "lineageLabel": release["label"],
+                "officialSources": release["sources"],
+                "incrementalRelease": True,
+                "variants": VARIANT_FAMILIES.get(team["id"], []),
+                "_assets": {"dir": model_root, "note": notes[0] if notes else None, "posters": posters},
+            })
+        # A new mainline must precede older mainlines even when inserted from the
+        # incremental inventory, and every branch retains newest-first order.
+        rank = {team["id"]: index for index, team in enumerate(ordered_teams)}
+        records.sort(key=lambda record: record["rawDate"], reverse=True)
+        records.sort(key=lambda record: rank[record["team"]])
     return ordered_teams, records
 
 
