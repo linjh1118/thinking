@@ -14,6 +14,8 @@ import json
 import os
 import re
 import shutil
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import quote
 
@@ -2698,6 +2700,60 @@ def write_legacy_compatibility() -> None:
     (THINKING / "404.html").write_text(not_found, encoding="utf-8")
 
 
+def add_recent_releases(page: str, records: list[dict]) -> str:
+    """Embed an independent, Beijing-calendar 30-day release ledger above the tree."""
+    watch_path = SOURCE / "src/release_watch.json"
+    watch = json.loads(watch_path.read_text()) if watch_path.exists() else {}
+    rows = [
+        {key: record.get(key) for key in (
+            "slug", "date", "name", "teamName", "region", "summary",
+            "lineageLabel", "note", "posters", "source", "officialSources",
+        )}
+        for record in records if record.get("timelineVisible", True)
+    ]
+    payload = json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")
+    checked = watch.get("lastCheck") or "尚未执行定时巡检"
+    successful = watch.get("lastSuccessfulCheck") or "尚未完成全量官方核查"
+    failures = watch.get("failures", [])
+    status = f"最近检查：{checked} · 最近全量成功：{successful}"
+    if failures:
+        status += f" · {len(failures)} 项核查失败待重试"
+    panel = f'''<section class="recent-releases" aria-labelledby="recent-title">
+<div class="recent-heading"><div><div class="kicker">Release Radar · Rolling 30 Days</div><h2 id="recent-title">近 30 天新模型</h2></div><span id="recent-count"></span></div>
+<p id="recent-range"></p><p class="recent-status">{html.escape(status)}</p>
+<p class="recent-status">涵盖全部团队的主干与专项支线；按官方发布日期倒序。按月记录的模型单列为日期待核实，同族尺寸与重复 SKU 合并。</p>
+<div class="recent-scroll"><table><thead><tr><th>发布日期</th><th>团队</th><th>模型 / 类型</th><th>这次变化</th><th>阅读资料</th><th>官方来源</th></tr></thead><tbody id="recent-body"></tbody></table></div>
+<details id="recent-uncertain" hidden><summary>发布日期待核实</summary><ul id="recent-uncertain-list"></ul></details></section>'''
+    style = '''<style>.recent-releases{padding:24px;border:1px solid #354568;border-radius:22px;background:linear-gradient(125deg,#18223a,#0e1523);margin:0 0 30px}.recent-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}.recent-heading h2{font-size:28px;margin:9px 0}.recent-heading>span{color:#8fe6ff;font-size:14px}.recent-releases p{color:#aebbd2;font-size:13px;line-height:1.6}.recent-status{color:#8293b1!important;font-size:12px!important}.recent-scroll{overflow-x:auto;margin-top:18px;border:1px solid #2b3b58;border-radius:14px}.recent-scroll table{border-collapse:collapse;width:100%;min-width:850px;font-size:13px}.recent-scroll th,.recent-scroll td{padding:15px;text-align:left;border-bottom:1px solid #29354a;vertical-align:top;line-height:1.6}.recent-scroll th{background:#18233a;color:#a8bad8;font-size:11px;white-space:nowrap}.recent-scroll td:nth-child(4){min-width:240px;max-width:400px}.recent-scroll a{color:#9cbfff;text-decoration:none}.recent-scroll small{display:block;color:#8293b1}.recent-links{display:flex;gap:9px;flex-wrap:wrap;min-width:155px}.recent-links .recent-note{color:#9cf2d0;font-weight:700}.recent-empty{text-align:center!important;color:#94a5bf;padding:30px!important}.recent-releases details{margin-top:15px;color:#a5b5cc;font-size:12px}</style>'''
+    script = r'''<script>(() => {
+const releases = __RELEASES__;
+const escapeText = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const link = (path, label, css = '') => `<a class="${css}" href="${escapeText(path)}">${escapeText(label)}</a>`;
+const dateParts = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+const part = kind => dateParts.find(value => value.type === kind).value;
+const today = `${part('year')}-${part('month')}-${part('day')}`;
+const end = new Date(`${today}T00:00:00Z`);
+const start = new Date(end); start.setUTCDate(start.getUTCDate() - 29);
+const first = start.toISOString().slice(0,10);
+const exact = releases.filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && row.date >= first && row.date <= today).sort((a,b) => b.date.localeCompare(a.date) || a.teamName.localeCompare(b.teamName));
+const uncertain = releases.filter(row => /^\d{4}-\d{2}$/.test(row.date) && row.date >= first.slice(0,7) && row.date <= today.slice(0,7));
+document.querySelector('#recent-range').textContent = `${first} — ${today} · 北京时间，含今天在内的 30 个日历日`;
+document.querySelector('#recent-count').textContent = `${exact.length} 个模型`;
+document.querySelector('#recent-body').innerHTML = exact.length ? exact.map(row => {
+    const materials = [link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,'Overview')];
+    if (row.note) materials.push(link(`base-model-atlas/${row.note}`,'📖 笔记','recent-note'));
+    for (const poster of row.posters || []) materials.push(link(`base-model-atlas/${poster}`,'🖼️ Poster'));
+    const sources = row.officialSources?.length ? row.officialSources : [{url:row.source,label:'官方发布'}];
+    return `<tr><td>${escapeText(row.date)}</td><td>${escapeText(row.teamName)}<small>${escapeText(row.region)}</small></td><td>${link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,row.name)}<small>${escapeText(row.lineageLabel)}</small></td><td>${escapeText(row.summary)}</td><td><div class="recent-links">${materials.join('')}</div></td><td>${sources.map(source => link(source.url,source.label)).join('<br>')}</td></tr>`;
+}).join('') : '<tr><td class="recent-empty" colspan="6">当前已归档资料中没有日期明确、落在此窗口内的模型。官方巡检完成后会自动补入；此处为空不代表近期没有新发布。</td></tr>';
+document.querySelector('#recent-uncertain').hidden = !uncertain.length;
+document.querySelector('#recent-uncertain-list').innerHTML = uncertain.map(row => `<li>${escapeText(row.date)} · ${link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,row.name)} · ${escapeText(row.teamName)}（仅知月份，未计入上表）</li>`).join('');
+})();</script>'''.replace("__RELEASES__", payload)
+    page = page.replace("</head>", style + "</head>", 1)
+    page = page.replace('<div class="controls">', panel + '<div class="controls">', 1)
+    return page.replace("</body>", script + "</body>", 1)
+
+
 def main() -> None:
     add_missing_brainhao_packs()
     teams, records = build_records()
@@ -2728,6 +2784,9 @@ def main() -> None:
         "filter();</script></body></html>",
         1,
     )
+    index_page = add_recent_releases(index_page, records)
+    build_date = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    index_page = index_page.replace("更新时间：2026-09-04", f"页面生成：{build_date}")
     (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
     (ATLAS / "model.html").write_text(
         add_typed_official_source_links(render_detail(records)), encoding="utf-8"
