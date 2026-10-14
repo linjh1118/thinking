@@ -48,6 +48,16 @@ OFFICIAL_PAGES = {
     'ibm': 'https://www.ibm.com/granite/docs/changelog',
 }
 
+# HF inventories miss closed-source releases, and legacy entry pages can lag
+# behind a team's current research or service-release channel. Snapshot these
+# additional first-party directories; a human still verifies first-release dates
+# and excludes provider onboarding, API changes, and repeated family SKUs.
+ADDITIONAL_PAGES = {
+    'meta-current': ('meta', 'https://research.meta.ai/'),
+    'zhipu-autoclaw': ('zhipu', 'https://autoclaw.z.ai/blog/'),
+    'qwen-model-studio': ('qwen', 'https://help.aliyun.com/zh/model-studio/newly-released-models'),
+}
+
 
 class VisibleText(HTMLParser):
     """Extract static text without executing downloaded scripts."""
@@ -125,6 +135,8 @@ def main():
         jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org}),
                      '.json', 'collections', team['team']))
         jobs.append(('blog-' + team['team'], OFFICIAL_PAGES[team['team']], '.html', 'page', team['team']))
+    for key, (team, url) in ADDITIONAL_PAGES.items():
+        jobs.append(('blog-' + key, url, '.html', 'page', team))
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
         results = list(pool.map(lambda job: fetch_job(job, output, args.previous, start), jobs))
     manifest = {'windowStart': start, 'windowEnd': now.date().isoformat(), 'previous': str(args.previous),

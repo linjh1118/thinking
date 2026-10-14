@@ -1,0 +1,285 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Granite-4.2-3B · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Granite-4.2-3B</h2><div class="meta">note · <br>granite, granite-4.2, reasoning, thinking, tool-calling, ibm</div><nav><a class="toc-l1" href="#granite-4-2-3b">Granite-4.2-3B</a><a class="toc-l2" href="#model-summary">Model Summary</a><a class="toc-l2" href="#model-overview">Model Overview</a><a class="toc-l3" href="#what-is-ibm-granite">What is IBM Granite?</a><a class="toc-l3" href="#description">Description</a><a class="toc-l2" href="#model-design">Model Design</a><a class="toc-l2" href="#training-methodology">Training Methodology</a><a class="toc-l3" href="#stage-1-pre-training">Stage 1: Pre-Training</a><a class="toc-l3" href="#stage-2-supervised-fine-tuning">Stage 2: Supervised Fine-Tuning</a><a class="toc-l3" href="#stage-3-reinforcement-learning">Stage 3: Reinforcement Learning</a><a class="toc-l2" href="#evaluation-results">Evaluation Results</a><a class="toc-l2" href="#inference">Inference</a><a class="toc-l3" href="#generation-parameters">Generation Parameters</a><a class="toc-l3" href="#thinking-modes">Thinking Modes</a><a class="toc-l3" href="#how-it-works">How It Works</a><a class="toc-l3" href="#history-truncation">History Truncation</a><a class="toc-l2" href="#serving-with-vllm">Serving with vLLM</a><a class="toc-l3" href="#starting-the-server">Starting the Server</a><a class="toc-l3" href="#openai-compatible-api-usage">OpenAI-Compatible API Usage</a><a class="toc-l3" href="#tool-calling-via-vllm">Tool Calling via vLLM</a><a class="toc-l2" href="#serving-with-sglang">Serving with SGLang</a><a class="toc-l3" href="#starting-the-server-2">Starting the Server</a><a class="toc-l3" href="#openai-compatible-api-usage-2">OpenAI-Compatible API Usage</a><a class="toc-l3" href="#tool-calling-via-sglang">Tool Calling via SGLang</a><a class="toc-l2" href="#using-with-agentic-coding-harnesses">Using with Agentic Coding Harnesses</a><a class="toc-l3" href="#opencode">OpenCode</a><a class="toc-l3" href="#pi">Pi</a><a class="toc-l3" href="#openhands">OpenHands</a><a class="toc-l2" href="#quick-start-transformers">Quick Start (Transformers)</a><a class="toc-l3" href="#installation">Installation</a><a class="toc-l3" href="#basic-inference-thinking-mode">Basic Inference (Thinking Mode)</a><a class="toc-l3" href="#non-thinking-mode">Non-Thinking Mode</a><a class="toc-l3" href="#low-effort-thinking">Low-Effort Thinking</a><a class="toc-l2" href="#tool-calling">Tool Calling</a><a class="toc-l3" href="#basic-tool-calling">Basic Tool Calling</a><a class="toc-l3" href="#multi-turn-with-tool-response">Multi-Turn with Tool Response</a><a class="toc-l2" href="#multi-turn-conversations">Multi-Turn Conversations</a><a class="toc-l3" href="#history-thinking-truncation">History Thinking Truncation</a><a class="toc-l3" href="#parsing-thinking-vs-final-answer">Parsing Thinking vs. Final Answer</a><a class="toc-l2" href="#ethical-considerations-and-limitations">Ethical Considerations and Limitations</a><a class="toc-l2" href="#resources">Resources</a></nav></aside><main class="note"><h1 id="granite-4-2-3b">Granite-4.2-3B</h1><p><a href="https://huggingface.co/collections/ibm-granite/granite-42-language-models" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Granite_4.2-Collection-3B82F6?style=flat-square" alt="Collection"></a> <a href="https://huggingface.co/blog/ibm-granite/granite-4-2" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Technical-Blog-10B981?style=flat-square" alt="Blog"></a> <a href="https://github.com/ibm-granite/granite-4.2-language-models" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&amp;amp;logo=github" alt="GitHub"></a> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/License-Apache_2.0-EAB308?style=flat-square" alt="License"></a></p><p>---</p><h2 id="model-summary">Model Summary</h2><div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><strong>Developers</strong></td><td>Granite Team, IBM</td></tr><tr><td><strong>Model Type</strong></td><td>Decoder-only Dense Transformer (Reasoning)</td></tr><tr><td><strong>Architecture</strong></td><td>GraniteForCausalLM</td></tr><tr><td><strong>Base Model</strong></td><td><a href="https://huggingface.co/ibm-granite/granite-4.1-3b-base" target="_blank" rel="noopener">Granite-4.1-3B-Base</a></td></tr><tr><td><strong>Parameters</strong></td><td>3B</td></tr><tr><td><strong>Context Length</strong></td><td>Natively Supports 128K (Long-context extension to 512K)</td></tr><tr><td><strong>Precision</strong></td><td>bfloat16</td></tr><tr><td><strong>Tested Languages</strong></td><td>English, German, Spanish, French, Japanese, Portuguese, Arabic, Czech, Italian, Korean, Dutch, Chinese (other languages may work but have not been fully tested)</td></tr><tr><td><strong>Reasoning Mode</strong></td><td>Built-in <code>&lt;think&gt;...&lt;/think&gt;</code> chain-of-thought</td></tr><tr><td><strong>Best For</strong></td><td>Reasoning, Code Generation, Tool Calling, Agentic Workflows, Multilingual Dialog</td></tr><tr><td><strong>License</strong></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Apache 2.0</a></td></tr><tr><td><strong>HF Collection</strong></td><td><a href="https://huggingface.co/collections/ibm-granite/granite-42-language-models" target="_blank" rel="noopener">Granite 4.2 Language Models</a></td></tr><tr><td><strong>Release Date</strong></td><td>August 25, 2026</td></tr></tbody></table></div><p>---</p><h2 id="model-overview">Model Overview</h2><h3 id="what-is-ibm-granite">What is IBM Granite?</h3><p>Granite is a family of open-source large language models developed by IBM, designed for enterprise and research use. Granite models are built to be versatile, safe, and efficient — covering a range of sizes and capabilities from compact edge-deployable models to large-scale reasoning systems. All Granite models are released under the Apache 2.0 license, enabling unrestricted commercial and academic use.</p><p>The Granite 4.2 generation introduces native reasoning (thinking) capabilities, allowing models to perform step-by-step chain-of-thought reasoning before producing final answers. This significantly improves performance on complex math, coding, multi-step logic, and agentic tool-calling tasks.</p><h3 id="description">Description</h3><p><strong>Granite-4.2-3B</strong> is the compact reasoning model in the Granite 4.2 family. Despite its small parameter count, it delivers strong performance on reasoning-intensive tasks by leveraging built-in <code>&lt;think&gt;...&lt;/think&gt;</code> chain-of-thought. It supports flexible thinking modes — full thinking (default), non-thinking, and low-effort — allowing users to balance depth vs. latency on a per-query basis.</p><p>Key capabilities:</p><ul><li><strong>Built-in Reasoning:</strong> Native chain-of-thought that significantly improves performance on math, coding, and complex multi-step problems.</li><li><strong>Flexible Thinking Modes:</strong> Seamlessly switch between full thinking, non-thinking, and low-effort modes within a single model.</li><li><strong>Reasoning-Augmented Tool Calling:</strong> The model reasons about which tools to invoke and why, producing more accurate function calls.</li><li><strong>512K Context Window:</strong> Supports long documents, multi-turn conversations, and complex agentic workflows.</li><li><strong>Apache 2.0 Licensed:</strong> Fully open for commercial and research use.</li></ul><p>---</p><h2 id="model-design">Model Design</h2><p>Granite-4.2-3B is built on a decoder-only dense transformer architecture with the following core components:</p><ul><li><strong>Attention:</strong> Grouped Query Attention (GQA) with 40 attention heads and 8 KV heads</li><li><strong>Position Embedding:</strong> Rotary Position Embedding (RoPE) with θ = 10,000,000</li><li><strong>Feed-Forward:</strong> MLP with SwiGLU activation (hidden size 8192)</li><li><strong>Normalization:</strong> RMSNorm (ε = 1e-5)</li><li><strong>Embeddings:</strong> Separate input/output embeddings (not tied)</li><li><strong>Precision:</strong> bfloat16</li></ul><p>&lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th style="text-align:left; background-color: #001d6c; color: white;"&gt;Component&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;3B Dense&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;8B Dense&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;30B Dense&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Embedding size&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;2560&lt;/td&gt; &lt;td style="text-align:center;"&gt;4096&lt;/td&gt; &lt;td style="text-align:center;"&gt;4096&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Number of layers&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;40&lt;/td&gt; &lt;td style="text-align:center;"&gt;40&lt;/td&gt; &lt;td style="text-align:center;"&gt;64&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Attention head size&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;64&lt;/td&gt; &lt;td style="text-align:center;"&gt;128&lt;/td&gt; &lt;td style="text-align:center;"&gt;128&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Number of attention heads&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;40&lt;/td&gt; &lt;td style="text-align:center;"&gt;32&lt;/td&gt; &lt;td style="text-align:center;"&gt;32&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Number of KV heads&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;8&lt;/td&gt; &lt;td style="text-align:center;"&gt;8&lt;/td&gt; &lt;td style="text-align:center;"&gt;8&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;MLP hidden size&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;8192&lt;/td&gt; &lt;td style="text-align:center;"&gt;12800&lt;/td&gt; &lt;td style="text-align:center;"&gt;32768&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;MLP activation&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;SwiGLU&lt;/td&gt; &lt;td style="text-align:center;"&gt;SwiGLU&lt;/td&gt; &lt;td style="text-align:center;"&gt;SwiGLU&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Sequence length&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;131072&lt;/td&gt; &lt;td style="text-align:center;"&gt;131072&lt;/td&gt; &lt;td style="text-align:center;"&gt;131072&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;Position embedding&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;RoPE&lt;/td&gt; &lt;td style="text-align:center;"&gt;RoPE&lt;/td&gt; &lt;td style="text-align:center;"&gt;RoPE&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td style="text-align:left;"&gt;# Parameters&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;3B&lt;/td&gt; &lt;td style="text-align:center;"&gt;8B&lt;/td&gt; &lt;td style="text-align:center;"&gt;30B&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt;&lt;/table&gt;</p><p>---</p><h2 id="training-methodology">Training Methodology</h2><p>Granite-4.2-3B is post-trained from <a href="https://huggingface.co/ibm-granite/granite-4.1-3b-base" target="_blank" rel="noopener">Granite-4.1-3B-Base</a> through a rigorous multi-stage pipeline that progressively unlocks reasoning, tool use, and instruction-following capabilities. A full listing of training datasets is available in the <a href="https://github.com/ibm-granite/granite-4.2-language-models" target="_blank" rel="noopener">Granite 4.2 GitHub repository</a>. The training pipeline consists of three stages:</p><h3 id="stage-1-pre-training">Stage 1: Pre-Training</h3><p>Granite-4.2-3B builds on <a href="https://huggingface.co/ibm-granite/granite-4.1-3b-base" target="_blank" rel="noopener">Granite-4.1-3B-Base</a>, which was pre-trained on a large-scale English as well as multilingual corpus. For full pre-training details (data composition, training recipe, and infrastructure), refer to our <a href="https://huggingface.co/blog/ibm-granite/granite-4-1" target="_blank" rel="noopener">Granite 4.1 Technical Blog</a>.</p><h3 id="stage-2-supervised-fine-tuning">Stage 2: Supervised Fine-Tuning</h3><p>The SFT stage draws on instruction-following, chain-of-thought, and reasoning data to cultivate the model's reasoning and thinking abilities. For all the three, 3B, 8B and 30B models, the training corpus comprises four sources: (1) publicly available datasets under permissive licenses, (2) internally generated synthetic data targeting reasoning, tool calling, and chain-of-thought capabilities, (3) agentic traces collected across a diverse range of tasks, and (4) a curated selection of human-authored data. Hyperparameters were tuned before training was scaled to all three model sizes. For the 30B model, we conducted a second SFT phase, in which the agentic data was up-sampled while a smaller share of general replay data was retained. This phase trained for a single epoch, starting from a lower learning rate than Phase 1.</p><h3 id="stage-3-reinforcement-learning">Stage 3: Reinforcement Learning</h3><p>The final stage of training applies multi-phase, multi-environment reinforcement learning using Group Relative Policy Optimization (GRPO). Training spans a broad mix of environments including math, code, science, instruction following, tool use, general chat and structured output. Most environments provide verifiable rewards, while open-ended prompts are scored by a generative reward model. Training runs asynchronously: generation and policy updates occupy separate GPU pools rather than proceeding in lockstep, and weights are refreshed in flight.</p><p>After the reward-driven phases, a preference-alignment (RLHF) phase tunes helpfulness, conversational quality, and safety. Reinforcement learning is carried out with NeMo RL, and the RL environments run on NeMo Gym.</p><p>---</p><p><strong>Infrastructure:</strong> We trained the Granite 4.2 Language Models utilizing an NVIDIA GB200 NVL72 cluster hosted in CoreWeave. Intra-rack communication occurs via the 72-GPU NVLink domain, and a non-blocking, full Fat-Tree NDR 400 Gb/s InfiniBand network provides inter-rack communication.</p><p>For further details on the post-training methodology, please refer to the <a href="https://huggingface.co/blog/ibm-granite/granite-4-2" target="_blank" rel="noopener">Granite-4.2 Technical Blog</a>.</p><p>---</p><h2 id="evaluation-results">Evaluation Results</h2><p>&lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th style="text-align:left; background-color: #001d6c; color: white;"&gt;Task&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;3B Dense&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;8B Dense&lt;/th&gt; &lt;th style="text-align:center; background-color: #001d6c; color: white;"&gt;30B Dense&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td colspan="4" style="text-align:center; font-style:italic;"&gt;Agentic (Coding)&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;SWE Bench Multilingual&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;30.78&lt;/td&gt;&lt;td style="text-align:center;"&gt;41.89&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;SWE Bench Pro&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;19.11&lt;/td&gt;&lt;td style="text-align:center;"&gt;33.29&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;SWE Bench Verified&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;47.67&lt;/td&gt;&lt;td style="text-align:center;"&gt;57&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;Terminal-Bench 2.1&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;20.56&lt;/td&gt;&lt;td style="text-align:center;"&gt;29.24&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td colspan="4" style="text-align:center; font-style:italic;"&gt;Agentic (General)&lt;/td&gt; &lt;/tr&gt;</p><p>&lt;tr&gt; &lt;td&gt;τ³-bench (AVG)&lt;/td&gt; &lt;td style="text-align:center;background-color: #DAE8FF;"&gt;45.78&lt;/td&gt; &lt;td style="text-align:center;"&gt;58.06&lt;/td&gt;&lt;td style="text-align:center;"&gt;62.00&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;BFCL (v4)&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;52.41&lt;/td&gt; &lt;td style="text-align:center;"&gt;52.39&lt;/td&gt;&lt;td style="text-align:center;"&gt;61.39&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;ProfBench&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;32.10&lt;/td&gt; &lt;td style="text-align:center;"&gt;41.20&lt;/td&gt;&lt;td style="text-align:center;"&gt;42.90&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;BirdBench&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;41.07&lt;/td&gt;&lt;td style="text-align:center;"&gt;41.85&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;GDPval&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;NA&lt;/td&gt; &lt;td style="text-align:center;"&gt;1189&lt;/td&gt;&lt;td style="text-align:center;"&gt;1225&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td colspan="4" style="text-align:center; font-style:italic;"&gt;Reasoning&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;AIME25&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;78.33&lt;/td&gt; &lt;td style="text-align:center;"&gt;86.67&lt;/td&gt;&lt;td style="text-align:center;"&gt;89.17&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;HMMT Feb25&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;66.67&lt;/td&gt; &lt;td style="text-align:center;"&gt;78.33&lt;/td&gt;&lt;td style="text-align:center;"&gt;89.17&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;GPQA&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;54.80&lt;/td&gt; &lt;td style="text-align:center;"&gt;64.14&lt;/td&gt;&lt;td style="text-align:center;"&gt;66.41&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;LiveCodeBench v6&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;69.71&lt;/td&gt; &lt;td style="text-align:center;"&gt;73.24&lt;/td&gt;&lt;td style="text-align:center;"&gt;75.77&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;SciCode&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;24.11&lt;/td&gt; &lt;td style="text-align:center;"&gt;36.09&lt;/td&gt;&lt;td style="text-align:center;"&gt;38.76&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td colspan="4" style="text-align:center; font-style:italic;"&gt;Chat &amp; Instruction Following&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;MMLU-Pro&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;67.84&lt;/td&gt; &lt;td style="text-align:center;"&gt;74.04&lt;/td&gt;&lt;td style="text-align:center;"&gt;77.60&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;MMLU-ProX lite (IBM)&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;27.78&lt;/td&gt; &lt;td style="text-align:center;"&gt;61.06&lt;/td&gt;&lt;td style="text-align:center;"&gt;66.64&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;Arena-Hard-V2&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;34.96&lt;/td&gt; &lt;td style="text-align:center;"&gt;65.19&lt;/td&gt;&lt;td style="text-align:center;"&gt;67.93&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;IFBench (prompt)&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;74.33&lt;/td&gt; &lt;td style="text-align:center;"&gt;79.33&lt;/td&gt;&lt;td style="text-align:center;"&gt;77.17&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td colspan="4" style="text-align:center; font-style:italic;"&gt;Long Context&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;RULER 64K&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;67.52&lt;/td&gt; &lt;td style="text-align:center;"&gt;80.99&lt;/td&gt;&lt;td style="text-align:center;"&gt;89.96&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;RULER 128K&lt;/td&gt; &lt;td style="text-align:center; background-color: #DAE8FF;"&gt;55.30&lt;/td&gt; &lt;td style="text-align:center;"&gt;71.41&lt;/td&gt;&lt;td style="text-align:center;"&gt;81.38&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt;&lt;/table&gt;</p><p>Evaluations are run with an evaluation framework based on NeMo <a href="https://github.com/NVIDIA-NeMo/Evaluator" target="_blank" rel="noopener">Evaluator SDK</a>.</p><p>---</p><h2 id="inference">Inference</h2><h3 id="generation-parameters">Generation Parameters</h3><blockquote><strong>Important:</strong> Use <code>temperature=1.0</code> and <code>top_p=0.95</code> across <strong>all tasks and serving backends</strong>, including general chat, reasoning, and tool calling.</blockquote><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr></thead><tbody><tr><td><code>temperature</code></td><td><code>1.0</code></td><td>Required for all modes</td></tr><tr><td><code>top_p</code></td><td><code>0.95</code></td><td>Nucleus sampling threshold</td></tr><tr><td><code>max_new_tokens</code></td><td><code>8192</code></td><td>Thinking mode (increase for complex reasoning)</td></tr><tr><td><code>max_new_tokens</code></td><td><code>2048</code></td><td>Non-thinking mode</td></tr><tr><td><code>do_sample</code></td><td><code>True</code></td><td>Required when temperature &gt; 0</td></tr></tbody></table></div><h3 id="thinking-modes">Thinking Modes</h3><div class="table-wrap"><table><thead><tr><th>Mode</th><th>Template Parameters</th><th>Behavior</th></tr></thead><tbody><tr><td><strong>Thinking</strong> (default)</td><td><code>enable_thinking=True</code></td><td>Full chain-of-thought reasoning inside <code>&lt;think&gt;...&lt;/think&gt;</code></td></tr><tr><td><strong>Non-thinking</strong></td><td><code>enable_thinking=False</code></td><td>Direct answer with no reasoning overhead</td></tr><tr><td><strong>Low-effort</strong></td><td><code>enable_thinking=True, low_effort=True</code></td><td>Brief reasoning for simpler queries</td></tr></tbody></table></div><h3 id="how-it-works">How It Works</h3><ul><li><strong>Thinking enabled</strong> — The generation prompt ends with <code>&lt;|im_start|&gt;assistant\n&lt;think&gt;\n</code>, causing the model to reason until it emits <code>&lt;/think&gt;</code>, then produce the final answer.</li><li><strong>Thinking disabled</strong> — The prompt ends with <code>&lt;|im_start|&gt;assistant\n&lt;think&gt;&lt;/think&gt;</code>, bypassing reasoning entirely.</li><li><strong>Low-effort</strong> — Appends <code>{reasoning effort: low}</code> to the user message, signaling shorter reasoning chains.</li></ul><h3 id="history-truncation">History Truncation</h3><p>In multi-turn conversations, thinking content from previous assistant turns is automatically stripped (<code>truncate_history_thinking=True</code> by default) to conserve context window space. Only the current generation produces full reasoning. Set <code>truncate_history_thinking=False</code> to preserve full reasoning history.</p><p>---</p><h2 id="serving-with-vllm">Serving with vLLM</h2><p>Granite-4.2-3B is optimized for deployment with <a href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener">vLLM</a>.</p><blockquote><strong>Reasoning parser:</strong> Use the custom <code>granite_thinking_parser</code> included in this repository (requires vLLM v0.20+). The model also works with the built-in <code>nemotron_v3</code> parser, but <code>granite_thinking_parser</code> provides better formatting of reasoning output. Native support for granite_thinking_parser will be added to vLLM and SGLang very soon.<br><strong>Tool calling parser:</strong> Use <code>qwen3_coder</code>.</blockquote><h3 id="starting-the-server">Starting the Server</h3><pre><div class="code-lang">bash</div><code>vllm serve ibm-granite/granite-4.2-3b \
+    --served-model-name granite-4.2-3b \
+    --dtype bfloat16 \
+    --max-model-len 131072 \
+    --reasoning-parser granite_thinking_parser \
+    --reasoning-parser-plugin ./granite_thinking_parser.py \
+    --tool-call-parser qwen3_coder \
+    --enable-auto-tool-choice</code></pre><h3 id="openai-compatible-api-usage">OpenAI-Compatible API Usage</h3><pre><div class="code-lang">python</div><code>from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:8000/v1&quot;, api_key=&quot;unused&quot;)
+
+response = client.chat.completions.create(
+    model=&quot;granite-4.2-3b&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the Riemann hypothesis in simple terms.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=8192,
+)
+
+print(response.choices[0].message.content)</code></pre><h3 id="tool-calling-via-vllm">Tool Calling via vLLM</h3><pre><div class="code-lang">python</div><code>from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:8000/v1&quot;, api_key=&quot;unused&quot;)
+
+tools = [
+    {
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: {
+            &quot;name&quot;: &quot;get_current_weather&quot;,
+            &quot;description&quot;: &quot;Get the current weather for a specified city.&quot;,
+            &quot;parameters&quot;: {
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: {
+                    &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Name of the city&quot;}
+                },
+                &quot;required&quot;: [&quot;city&quot;]
+            }
+        }
+    }
+]
+
+response = client.chat.completions.create(
+    model=&quot;granite-4.2-3b&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather like in Boston right now?&quot;}],
+    tools=tools,
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=4096,
+)
+
+print(response.choices[0].message.tool_calls)</code></pre><h2 id="serving-with-sglang">Serving with SGLang</h2><p>Granite-4.2-3B can also be served with <a href="https://github.com/sgl-project/sglang" target="_blank" rel="noopener">SGLang</a> (v0.5.18+) for high-throughput inference.</p><blockquote><strong>Reasoning parser:</strong> Use <code>--reasoning-parser auto</code>, which resolves to the built-in <code>nemotron_3</code> parser for this checkpoint. It separates the thinking trace into <code>reasoning_content</code> and the final answer into <code>content</code>, and it handles all three thinking modes (<code>enable_thinking=True/False</code>, <code>low_effort=True</code>) described in <a href="#thinking-modes">Thinking Modes</a>.<br><strong>Tool calling parser:</strong> Use <code>--tool-call-parser auto</code>, which resolves to <code>qwen3_coder</code> for this checkpoint.</blockquote><h3 id="starting-the-server-2">Starting the Server</h3><pre><div class="code-lang">bash</div><code>python3 -m sglang.launch_server \
+    --model-path ibm-granite/granite-4.2-3b \
+    --dtype bfloat16 \
+    --context-length 131072 \
+    --reasoning-parser auto \
+    --tool-call-parser auto</code></pre><h3 id="openai-compatible-api-usage-2">OpenAI-Compatible API Usage</h3><pre><div class="code-lang">python</div><code>from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:30000/v1&quot;, api_key=&quot;unused&quot;)
+
+response = client.chat.completions.create(
+    model=&quot;ibm-granite/granite-4.2-3b&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the Riemann hypothesis in simple terms.&quot;}],
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=8192,
+)
+
+print(response.choices[0].message.reasoning_content)
+print(response.choices[0].message.content)</code></pre><h3 id="tool-calling-via-sglang">Tool Calling via SGLang</h3><pre><div class="code-lang">python</div><code>from openai import OpenAI
+
+client = OpenAI(base_url=&quot;http://localhost:30000/v1&quot;, api_key=&quot;unused&quot;)
+
+tools = [
+    {
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: {
+            &quot;name&quot;: &quot;get_current_weather&quot;,
+            &quot;description&quot;: &quot;Get the current weather for a specified city.&quot;,
+            &quot;parameters&quot;: {
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: {
+                    &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Name of the city&quot;}
+                },
+                &quot;required&quot;: [&quot;city&quot;]
+            }
+        }
+    }
+]
+
+response = client.chat.completions.create(
+    model=&quot;ibm-granite/granite-4.2-3b&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather like in Boston right now?&quot;}],
+    tools=tools,
+    temperature=1.0,
+    top_p=0.95,
+    max_tokens=4096,
+)
+
+print(response.choices[0].message.tool_calls)</code></pre><p>For a full deployment recipe (Docker, H200/B200 launch matrix, thinking-mode examples, and benchmark data), see the <a href="https://docs.sglang.io/cookbook/autoregressive/IBM/Granite-4.2" target="_blank" rel="noopener">SGLang Granite 4.2 cookbook</a>.</p><p>---</p><h2 id="using-with-agentic-coding-harnesses">Using with Agentic Coding Harnesses</h2><p>Granite-4.2-3B can be used as the backbone model for agentic coding tools. Since it supports reasoning and tool calling via the OpenAI-compatible API, it integrates with popular agentic harnesses out of the box. Start the vLLM server as shown in the <a href="#serving-with-vllm">Serving with vLLM</a> section above, then follow the harness-specific instructions below.</p><h3 id="opencode">OpenCode</h3><p><a href="https://opencode.ai" target="_blank" rel="noopener">OpenCode</a> is an AI coding agent that runs in your terminal.</p><p><strong>Install:</strong></p><pre><div class="code-lang">bash</div><code>curl -fsSL https://opencode.ai/install | bash</code></pre><p><strong>Configure</strong> <code>~/.config/opencode/opencode.json</code>:</p><pre><div class="code-lang">json</div><code>{
+  &quot;$schema&quot;: &quot;https://opencode.ai/config.json&quot;,
+  &quot;model&quot;: &quot;local/granite-4.2-3b&quot;,
+  &quot;provider&quot;: {
+    &quot;local&quot;: {
+      &quot;npm&quot;: &quot;@ai-sdk/openai-compatible&quot;,
+      &quot;name&quot;: &quot;vLLM (local)&quot;,
+      &quot;options&quot;: {
+        &quot;baseURL&quot;: &quot;http://localhost:8000/v1&quot;,
+        &quot;apiKey&quot;: &quot;EMPTY&quot;
+      },
+      &quot;models&quot;: {
+        &quot;granite-4.2-3b&quot;: {
+          &quot;name&quot;: &quot;Granite 4.2 3B&quot;,
+          &quot;limit&quot;: {
+            &quot;context&quot;: 131072,
+            &quot;output&quot;: 8192
+          }
+        }
+      }
+    }
+  }
+}</code></pre><p><strong>Run:</strong></p><pre><div class="code-lang">bash</div><code>opencode
+opencode run &quot;your task description&quot;</code></pre><p>For full documentation, see <a href="https://opencode.ai/docs" target="_blank" rel="noopener">opencode.ai/docs</a>.</p><h3 id="pi">Pi</h3><p><a href="https://pi.dev" target="_blank" rel="noopener">Pi</a> is a minimal agent harness for AI-powered coding that runs in your terminal. It supports custom providers via a <code>models.json</code> configuration file.</p><p><strong>Install:</strong></p><pre><div class="code-lang">bash</div><code>curl -fsSL https://pi.dev/install.sh | sh</code></pre><p><strong>Configure</strong> <code>~/.pi/agent/models.json</code>:</p><pre><div class="code-lang">json</div><code>{
+  &quot;providers&quot;: {
+    &quot;vllm&quot;: {
+      &quot;baseUrl&quot;: &quot;http://localhost:8000/v1&quot;,
+      &quot;api&quot;: &quot;openai-completions&quot;,
+      &quot;apiKey&quot;: &quot;EMPTY&quot;,
+      &quot;compat&quot;: {
+        &quot;supportsDeveloperRole&quot;: false,
+        &quot;supportsReasoningEffort&quot;: false
+      },
+      &quot;models&quot;: [
+        {
+          &quot;id&quot;: &quot;granite-4.2-3b&quot;,
+          &quot;name&quot;: &quot;Granite 4.2 3B&quot;,
+          &quot;reasoning&quot;: true,
+          &quot;input&quot;: [&quot;text&quot;],
+          &quot;contextWindow&quot;: 131072,
+          &quot;maxTokens&quot;: 8192,
+          &quot;samplingParams&quot;: {
+            &quot;temperature&quot;: 1.0,
+            &quot;top_p&quot;: 0.95
+          },
+          &quot;cost&quot;: { &quot;input&quot;: 0, &quot;output&quot;: 0, &quot;cacheRead&quot;: 0, &quot;cacheWrite&quot;: 0 }
+        }
+      ]
+    }
+  }
+}</code></pre><p><strong>Run:</strong></p><pre><div class="code-lang">bash</div><code>pi</code></pre><p>Then select the <code>granite-4.2-3b</code> model with <code>/model</code> or <code>Ctrl+L</code> in the interactive session.</p><p>For full documentation, see <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener">pi.dev/docs</a>.</p><h3 id="openhands">OpenHands</h3><p><a href="https://www.openhands.dev" target="_blank" rel="noopener">OpenHands</a> is an AI software engineer that can plan, write code, and execute commands.</p><ol><li><strong>Install and launch OpenHands</strong> following the <a href="https://docs.openhands.dev/openhands/usage/agent-canvas/setup" target="_blank" rel="noopener">official installation guide</a>.</li></ol><ol><li><strong>Configure the LLM</strong> in the OpenHands settings with:</li></ol><ul><li><strong>Model:</strong> <code>granite-4.2-3b</code></li><li><strong>Base URL:</strong> <code>http://localhost:8000/v1</code></li><li><strong>API Key:</strong> your vLLM <code>--api-key</code> value</li></ul><blockquote><strong>Note:</strong> The <code>openai/</code> prefix is required when connecting to OpenAI-compatible endpoints like vLLM. Refer to the <a href="https://docs.openhands.dev/openhands/usage/llms/local-llms" target="_blank" rel="noopener">OpenHands local LLM documentation</a> for detailed setup instructions, troubleshooting, and alternative installation methods.</blockquote><p>---</p><h2 id="quick-start-transformers">Quick Start (Transformers)</h2><h3 id="installation">Installation</h3><pre><div class="code-lang">bash</div><code>pip install torch torchvision torchaudio
+pip install accelerate transformers</code></pre><h3 id="basic-inference-thinking-mode">Basic Inference (Thinking Mode)</h3><pre><div class="code-lang">python</div><code>import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_path = &quot;ibm-granite/granite-4.2-3b&quot;
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path, device_map=&quot;cuda&quot;, torch_dtype=torch.bfloat16)
+model.eval()
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How many r&#x27;s are in the word &#x27;strawberry&#x27;?&quot;},
+]
+
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+inputs = tokenizer(text, return_tensors=&quot;pt&quot;).to(model.device)
+
+with torch.no_grad():
+    output = model.generate(**inputs, max_new_tokens=8192, temperature=1.0, top_p=0.95, do_sample=True)
+
+print(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=False))</code></pre><p>&lt;b&gt;Example Output&lt;/b&gt;</p><pre><div class="code-lang">code</div><code>&lt;think&gt;
+Okay, let&#x27;s see. The problem is to find how many &#x27;r&#x27;s are in the word &#x27;strawberry&#x27;.
+
+First, I need to write out the word: s t r a w b e r r y.
+
+Now, I need to count the number of &#x27;r&#x27; letters. Let&#x27;s list each letter and check for &#x27;r&#x27;.
+
+1. s – not r
+2. t – not r
+3. r – yes, that&#x27;s one
+4. a – no
+5. w – no
+6. b – no
+7. e – no
+8. r – yes, that&#x27;s two
+9. r – yes, that&#x27;s three
+10. y – no
+
+Total r&#x27;s = 3.
+&lt;/think&gt;
+There are **3** r&#x27;s in the word &quot;strawberry&quot;.&lt;|im_end|&gt;</code></pre><h3 id="non-thinking-mode">Non-Thinking Mode</h3><pre><div class="code-lang">python</div><code>messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is the capital of France?&quot;},
+]
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+inputs = tokenizer(text, return_tensors=&quot;pt&quot;).to(model.device)
+
+output = model.generate(**inputs, max_new_tokens=2048, temperature=1.0, top_p=0.95, do_sample=True)
+print(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=False))</code></pre><p>&lt;b&gt;Example Output&lt;/b&gt;</p><pre><div class="code-lang">code</div><code>&lt;think&gt;&lt;/think&gt;The capital of France is Paris.&lt;|im_end|&gt;</code></pre><h3 id="low-effort-thinking">Low-Effort Thinking</h3><pre><div class="code-lang">python</div><code>messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 2 + 2?&quot;},
+]
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
+                                     enable_thinking=True, low_effort=True)
+inputs = tokenizer(text, return_tensors=&quot;pt&quot;).to(model.device)
+
+output = model.generate(**inputs, max_new_tokens=4096, temperature=1.0, top_p=0.95, do_sample=True)
+print(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=False))</code></pre><p>&lt;b&gt;Example Output&lt;/b&gt;</p><pre><div class="code-lang">code</div><code>&lt;think&gt;
+Simple answer.
+&lt;/think&gt;
+2 + 2 = 4.&lt;|im_end|&gt;</code></pre><p>---</p><h2 id="tool-calling">Tool Calling</h2><p>Granite-4.2-3B supports tool calling with integrated reasoning — the model thinks about which tool to call and why before making the call. Tools are defined using the <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener">OpenAI function definition schema</a>.</p><h3 id="basic-tool-calling">Basic Tool Calling</h3><pre><div class="code-lang">python</div><code>tools = [
+    {
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: {
+            &quot;name&quot;: &quot;get_current_weather&quot;,
+            &quot;description&quot;: &quot;Get the current weather for a specified city.&quot;,
+            &quot;parameters&quot;: {
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: {
+                    &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Name of the city&quot;}
+                },
+                &quot;required&quot;: [&quot;city&quot;]
+            }
+        }
+    }
+]
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather like in Boston right now?&quot;},
+]
+text = tokenizer.apply_chat_template(messages, tokenize=False, tools=tools,
+                                     add_generation_prompt=True, enable_thinking=True)
+inputs = tokenizer(text, return_tensors=&quot;pt&quot;).to(model.device)
+
+output = model.generate(**inputs, max_new_tokens=4096, temperature=1.0, top_p=0.95, do_sample=True)
+print(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=False))</code></pre><p>&lt;b&gt;Example Output&lt;/b&gt;</p><pre><div class="code-lang">code</div><code>&lt;think&gt;
+Okay, the user is asking for the weather in Boston right now. Let me check the tools
+available. There&#x27;s a function called get_current_weather that takes a city parameter.
+I need to call that with the city set to Boston.
+&lt;/think&gt;
+&lt;tool_call&gt;
+&lt;function=get_current_weather&gt;
+
+Boston
+
+&lt;/function&gt;
+&lt;/tool_call&gt;
+&lt;|im_end|&gt;</code></pre><h3 id="multi-turn-with-tool-response">Multi-Turn with Tool Response</h3><pre><div class="code-lang">python</div><code>messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#x27;s the weather like in Boston right now?&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;think&gt;\nThe user wants to know the current weather in Boston. I should call get_current_weather.\n&lt;/think&gt;&quot;,
+     &quot;tool_calls&quot;: [{&quot;function&quot;: {&quot;name&quot;: &quot;get_current_weather&quot;, &quot;arguments&quot;: {&quot;city&quot;: &quot;Boston&quot;}}}]},
+    {&quot;role&quot;: &quot;tool&quot;, &quot;content&quot;: &#x27;{&quot;temperature&quot;: &quot;72°F&quot;, &quot;condition&quot;: &quot;Partly cloudy&quot;, &quot;humidity&quot;: &quot;65%&quot;}&#x27;},
+]
+text = tokenizer.apply_chat_template(messages, tokenize=False, tools=tools,
+                                     add_generation_prompt=True, enable_thinking=True)
+inputs = tokenizer(text, return_tensors=&quot;pt&quot;).to(model.device)
+
+output = model.generate(**inputs, max_new_tokens=4096, temperature=1.0, top_p=0.95, do_sample=True)
+print(tokenizer.decode(output[0][inputs.input_ids.shape[-1]:], skip_special_tokens=False))</code></pre><p>&lt;b&gt;Example Output&lt;/b&gt;</p><pre><div class="code-lang">code</div><code>&lt;think&gt;
+The tool returned the weather data for Boston: temperature 72°F, partly cloudy, humidity 65%.
+I need to present this information clearly to the user.
+&lt;/think&gt;
+The current weather in Boston is 72°F, partly cloudy, with 65% humidity.&lt;|im_end|&gt;</code></pre><p>---</p><h2 id="multi-turn-conversations">Multi-Turn Conversations</h2><h3 id="history-thinking-truncation">History Thinking Truncation</h3><pre><div class="code-lang">python</div><code>messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 15 * 37?&quot;},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;think&gt;\nLet me calculate 15 * 37.\n15 * 37 = 15 * 30 + 15 * 7 = 450 + 105 = 555\n&lt;/think&gt;\n15 * 37 = 555&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Now divide that by 5&quot;},
+]
+
+# Default: previous thinking is stripped to save context
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
+                                     enable_thinking=True, truncate_history_thinking=True)
+
+# To preserve full history:
+text_full = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True,
+                                          enable_thinking=True, truncate_history_thinking=False)</code></pre><h3 id="parsing-thinking-vs-final-answer">Parsing Thinking vs. Final Answer</h3><pre><div class="code-lang">python</div><code>import re
+
+def parse_model_output(text):
+    &quot;&quot;&quot;Separate thinking content from final answer.&quot;&quot;&quot;
+    think_match = re.search(r&#x27;&lt;think&gt;(.*?)&lt;/think&gt;&#x27;, text, re.DOTALL)
+    if think_match:
+        thinking = think_match.group(1).strip()
+        answer_start = text.find(&#x27;&lt;/think&gt;&#x27;) + len(&#x27;&lt;/think&gt;&#x27;)
+        answer_end = text.find(&#x27;&lt;|im_end|&gt;&#x27;, answer_start)
+        answer = text[answer_start:answer_end].strip() if answer_end != -1 else text[answer_start:].strip()
+    else:
+        thinking, answer = &quot;&quot;, text.strip()
+    return thinking, answer
+
+thinking, answer = parse_model_output(output_text)</code></pre><p>---</p><h2 id="ethical-considerations-and-limitations">Ethical Considerations and Limitations</h2><p>Granite 4.2 models are primarily finetuned using instruction-response pairs mostly in English, but also multilingual data covering the supported languages listed above. Although this model handles multilingual dialog, its performance may vary compared to English. Few-shot examples can help in such cases.</p><p>While aligned for safety, the model may occasionally produce inaccurate, biased, or unsafe responses. The content within <code>&lt;think&gt;...&lt;/think&gt;</code> tags represents internal reasoning and may contain unpolished or intermediate thoughts that do not represent final conclusions.</p><p>To enhance safety in deployments, we recommend using Granite 4.2 alongside <a href="https://huggingface.co/ibm-granite/granite-guardian-4.1-8b" target="_blank" rel="noopener">Granite Guardian</a> to detect and flag risks across key dimensions outlined in the IBM AI Risk Atlas.</p><p>---</p><h2 id="resources">Resources</h2><ul><li><strong>Product Page:</strong> https://www.ibm.com/granite</li><li><strong>Documentation:</strong> https://www.ibm.com/granite/docs/</li><li><strong>Learning Resources:</strong> https://ibm.biz/granite-learning-resources</li><li><strong>Technical Blog:</strong> https://huggingface.co/blog/ibm-granite/granite-4-2</li><li><strong>GitHub:</strong> https://github.com/ibm-granite/granite-4.2-language-models</li><li><strong>HF Collection:</strong> https://huggingface.co/collections/ibm-granite/granite-42-language-models</li></ul></main></div></body></html>

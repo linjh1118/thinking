@@ -1,0 +1,189 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://help.aliyun.com/en/model-studio/decision-model-api">打开官方原文 ↗</a> · <a href="decision_api.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Decision Model System One API-Alibaba Cloud Model Studio(Model Studio)-阿里云帮助中心 Models Products Solutions Benefits Pricing AI Marketplace Partners Services About Docs ICP Filing Console Documentation 
+User Guide (Models) 
+User Guide (Agent) 
+API Reference (Models) 
+API Reference (Agent) 
+CLI Home Page Alibaba Cloud Model Studio API Reference (Models) Decision Model Decision Model 
+Decision Model API Updated at: Copy as MD Product My Favorites 
+Call POST /compatible-mode/v1/systemone to use the Bailian decision model (decision-model-preview), which returns classification, scoring, and yes/no decisions with full probability distributions and confidence in a single forward pass, without generating text. Suitable for high-frequency structured decisions such as ticket routing, content moderation, agent routing, and result verification. 
+Prerequisites 
+You have created an API Key and set it as the environment variable DASHSCOPE_API_KEY . For configuration, see Configure the API key in environment variables . 
+Important Try it online : Before writing code, try the decision model in the Playground . Pick a demo scenario (customer service judgment, agent verification, ticket routing, content moderation, agent task routing, or medical triage), enter your business content, run the model, and review decisions, probability distributions, and token usage. Modify inputs to observe how results change. 
+Request 
+Protocol : TypeSafe System One ( POST /compatible-mode/v1/systemone ) 
+A single request carries the business state and several typed questions ( choice / noul / score ). The model returns the decision result and probability distribution for each question in one forward pass, with choice and score additionally returning confidence, and does not generate text , so latency and cost are independent of output length. Endpoint 
+Replace {WorkspaceId} with your workspace ID. See Regions and endpoints . 
+
+Region 
+Endpoint 
+
+China (Beijing) 
+https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/systemone 
+
+Singapore 
+https://{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1/systemone 
+
+Request Parameters 
+Content-Type · String · Header · Required 
+Request type: application/json . 
+Authorization · String · Header · Required 
+API key, in the format: Bearer $DASHSCOPE_API_KEY . 
+model · String · Body · Required 
+Model name: decision-model-preview . 
+state · String / Object / Array · Body · Required 
+The business state to make decisions on: ticket text, a conversation, or a structured object (objects are serialized before being sent to the model). 
+questions · Object · Body · Required 
+A map of questions. The key is a caller-defined question id; the value is a question object with the following fields. 
+Question object properties 
+type · String · Required 
+Question type: 
+choice : single choice 
+noul : yes/no 
+score : ordinal scale 
+instructions · String · Optional 
+Question description or judgment criteria. 
+criteria · Object / Array · Depends on type 
+choice : a map of option name → option description (1–255 items; providing all options and an other fallback is recommended). 
+noul : optional {&quot;true&quot;:…, &quot;false&quot;:…} descriptions. 
+score : an array of level descriptions from low to high (2–10 levels; 3–7 clearly distinguishable levels recommended). Limits and recommendations 
+No hard limit on the number of questions (recommended: ≤ 16; latency grows near-linearly with the number of questions). 
+choice options: ≤ 255. 
+score levels: 2–255 (3–7 recommended). 
+Context: maximum 65536 tokens; overlong state is rejected or truncated. 
+Request Examples 
+The Python examples use the TypeSafe SDK ( typesafe-sdk ) with base_url pointing to the Bailian gateway. The SDK automatically appends /v1/systemone and parses the response. Install: pip install typesafe-sdk . Ticket routing 
+A single request handles three decisions at once: team assignment ( choice ), escalation ( noul ), and severity ( score ). The example below uses the China (Beijing) region. curl curl -sS -X POST https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/systemone \
+  -H &quot;Authorization: Bearer $DASHSCOPE_API_KEY&quot; \
+  -H &#x27;Content-Type: application/json&#x27; \
+  -d &#x27;{
+    &quot;model&quot;: &quot;decision-model-preview&quot;,
+    &quot;state&quot;: {&quot;ticket_id&quot;: &quot;T-1001&quot;, &quot;content&quot;: &quot;More than 24 hours after payment, the order has not been credited. The user cannot continue using core services and demands immediate handling.&quot;},
+    &quot;questions&quot;: {
+      &quot;department&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
+                     &quot;criteria&quot;: {&quot;billing&quot;: &quot;Payment, refund, and billing issues&quot;, &quot;technical&quot;: &quot;Product failure and integration issues&quot;}},
+      &quot;escalate&quot;:   {&quot;type&quot;: &quot;noul&quot;,  &quot;instructions&quot;: &quot;Should on-call staff be notified immediately?&quot;},
+      &quot;severity&quot;:   {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How severe is this issue?&quot;,
+                     &quot;criteria&quot;: [&quot;Minor issue, no impact on functionality&quot;, &quot;Some functionality affected, but a workaround exists&quot;,
+                                  &quot;Core functionality unavailable, no workaround&quot;, &quot;Severe business or security impact&quot;]}
+    }
+  }&#x27; Python import os
+from typesafe_sdk import TypeSafeClient
+
+client = TypeSafeClient(
+    api_key=os.environ[&quot;DASHSCOPE_API_KEY&quot;],
+    base_url=&quot;https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode&quot;,
+)
+
+result = client.system_one(
+    model=&quot;decision-model-preview&quot;,
+    state={&quot;ticket_id&quot;: &quot;T-1001&quot;, &quot;content&quot;: &quot;More than 24 hours after payment, the order has not been credited.&quot;},
+    questions={
+        &quot;department&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
+                       &quot;criteria&quot;: {&quot;billing&quot;: &quot;Payment, refund, and billing issues&quot;, &quot;technical&quot;: &quot;Product failure and integration issues&quot;}},
+        &quot;escalate&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Should on-call staff be notified immediately?&quot;},
+        &quot;severity&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How severe is this issue?&quot;,
+                     &quot;criteria&quot;: [&quot;Minor issue, no impact on functionality&quot;, &quot;Some functionality affected, but a workaround exists&quot;,
+                                  &quot;Core functionality unavailable, no workaround&quot;, &quot;Severe business or security impact&quot;]},
+    },
+)
+
+print(result.answers[&quot;department&quot;])   # choice, confidence, probabilities
+print(result.answers[&quot;escalate&quot;])     # noul P(yes)
+print(result.answers[&quot;severity&quot;])     # score, legend, probabilities Yes/no decision 
+A noul question returns P(yes), where 0 = no and 1 = yes. The example below uses the China (Beijing) region. curl curl -sS -X POST https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/systemone \
+  -H &quot;Authorization: Bearer $DASHSCOPE_API_KEY&quot; \
+  -H &#x27;Content-Type: application/json&#x27; \
+  -d &#x27;{
+    &quot;model&quot;: &quot;decision-model-preview&quot;,
+    &quot;state&quot;: &quot;Is this comment asking for a refund?&quot;,
+    &quot;questions&quot;: {
+      &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the user asking for a refund?&quot;}
+    }
+  }&#x27; Python import os
+from typesafe_sdk import TypeSafeClient
+
+client = TypeSafeClient(
+    api_key=os.environ[&quot;DASHSCOPE_API_KEY&quot;],
+    base_url=&quot;https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode&quot;,
+)
+
+result = client.system_one(
+    model=&quot;decision-model-preview&quot;,
+    state=&quot;Is this comment asking for a refund?&quot;,
+    questions={&quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the user asking for a refund?&quot;}},
+)
+
+print(result.answers[&quot;refund&quot;])   # noul P(yes) 
+
+Response Parameters 
+model · String 
+Model name echoed back. 
+request_id · String 
+Request ID, for troubleshooting. 
+answers · Object 
+A map of answers. The key corresponds to the question id in the request; the value is an answer object with the following fields. 
+Answer object properties 
+type · String 
+Matches the question type ( choice / noul / score ). 
+choice · String 
+For choice : the selected option name. 
+noul · Float 
+For noul : P(yes), where 0 = no and 1 = yes. 
+score · Float 
+For score : the probability-weighted expectation of the level index, which can fall between two levels (e.g. 1.43 ). 
+probabilities · Object 
+The probability of each option / level (sums to 1). 
+confidence · Float 
+The confidence of the answer (returned for choice / score ). 
+legend · Object 
+For score : a map of level index → level description. 
+usage · Object 
+Metering information: 
+input_tokens (Integer): number of input tokens. 
+latency_ms · Float 
+Server-side latency (milliseconds). 
+Response Example 
+The following is the response for the ticket routing example (abbreviated). Probabilities and confidence depend on the actual result. {
+  &quot;model&quot;: &quot;decision-model-preview&quot;,
+  &quot;request_id&quot;: &quot;7b986c65-b223-9341-b5f0-b988e27ecaac&quot;,
+  &quot;answers&quot;: {
+    &quot;department&quot;: {
+      &quot;type&quot;: &quot;choice&quot;,
+      &quot;choice&quot;: &quot;billing&quot;,
+      &quot;confidence&quot;: 0.88,
+      &quot;probabilities&quot;: {&quot;billing&quot;: 0.94, &quot;technical&quot;: 0.06}
+    },
+    &quot;escalate&quot;: {
+      &quot;type&quot;: &quot;noul&quot;,
+      &quot;noul&quot;: 0.99
+    },
+    &quot;severity&quot;: {
+      &quot;type&quot;: &quot;score&quot;,
+      &quot;score&quot;: 2.25,
+      &quot;confidence&quot;: 0.91,
+      &quot;legend&quot;: {
+        &quot;0&quot;: &quot;Minor issue, no impact on functionality&quot;,
+        &quot;1&quot;: &quot;Some functionality affected, but a workaround exists&quot;,
+        &quot;2&quot;: &quot;Core functionality unavailable, no workaround&quot;,
+        &quot;3&quot;: &quot;Severe business or security impact&quot;
+      },
+      &quot;probabilities&quot;: {&quot;0&quot;: 0.0, &quot;1&quot;: 0.01, &quot;2&quot;: 0.73, &quot;3&quot;: 0.26}
+    }
+  },
+  &quot;usage&quot;: {&quot;input_tokens&quot;: 125},
+  &quot;latency_ms&quot;: 52.9
+} 
+Error Codes 
+If the call fails, an error message is returned. For more error codes and solutions, see Error messages . Previous：Decision Model Next：More Models Is this page helpful? Feedback 
+Why Choose Alibaba Cloud What is Cloud Computing Global Infrastructure Technology Leadership Stability &amp; Reliability Security &amp; Compliance Analyst Reports 
+Models Model Services Qwen Series Model Marketplace 
+Products &amp; Pricing All Products Free Trials Product Updates Pricing Pricing Calculator Cost Management 
+Technical Resources Solutions Documentation Community Tianchi Competitions Alibaba Cloud Certification 
+Benefits Free Trials Solution Trials Academic Program Referral Program 
+Support 24/7 Support Enterprise Support Plans Cloud Migration Services Service Notices Status Dashboard Trust Center 
+Follow Us 
+Follow the Alibaba Cloud official account or download the app to stay updated. Manage and monitor your cloud services anytime, anywhere. 
+Contact us：4008013260 Legal Notice Cookie Policy Integrity Reporting Security Reporting Contact Us Careers 
+Friendly Links Alibaba Group Taobao Qwen AI Platform QwenWork Tmall AliExpress Alibaba International 1688 Alimama Fliggy Alibaba Cloud HiChina Amap UC Umeng Youku DingTalk Alipay DAMO Academy Taobao Global Alibaba Cloud Drive 
+© 2009- Present Aliyun.com. All rights reserved. alue-Added Telecommunications Business Operating License: Zhe B2-20080101 Domain Name Registration Service Provider License： Zhe D3-20210002 
+Zhejiang Public Security Bureau Record No. 33010602009975 Zhejiang B2-20080101-4</pre></body></html>

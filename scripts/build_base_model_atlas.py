@@ -1800,9 +1800,14 @@ def note_targets() -> dict[str, Path]:
     """Resolve wikilinks to published library notes before legacy archive aliases."""
     targets: dict[str, Path] = {}
     published_by_stem: dict[str, list[Path]] = {}
+    published_posters: dict[str, list[Path]] = {}
     published_path = ATLAS / "models.json"
     if published_path.is_file():
         for record in json.loads(published_path.read_text(encoding="utf-8")):
+            for poster in record.get("posters", []):
+                published_poster = ATLAS / poster
+                if published_poster.is_file():
+                    published_posters.setdefault(published_poster.name, []).append(published_poster)
             if record.get("note"):
                 published_note = ATLAS / record["note"]
                 if published_note.is_file():
@@ -1821,6 +1826,15 @@ def note_targets() -> dict[str, Path]:
         keys = {note.stem, str(note.relative_to(SOURCE).with_suffix("")), str(note.relative_to(BRAINHAO).with_suffix(""))}
         for key in keys:
             targets.setdefault(key.replace("\\", "/"), target)
+    for poster in SOURCE.rglob("*poster*.html"):
+        if "src" in poster.relative_to(SOURCE).parts:
+            continue
+        matches = list(dict.fromkeys(published_posters.get(poster.name, [])))
+        if len(matches) != 1:
+            continue
+        keys = {poster.name, str(poster.relative_to(SOURCE)), str(poster.relative_to(BRAINHAO))}
+        for key in keys:
+            targets.setdefault(key.replace("\\", "/"), matches[0])
     return targets
 
 
@@ -2155,7 +2169,10 @@ def sync_source_archive(
             # The vault retains the byte-exact response. Published snapshots
             # expose a text download and a script-free reading view; they must
             # not run copied analytics or depend on broken root-relative URLs.
-            shutil.copy2(source, Path(str(destination) + ".txt"))
+            raw_download_name = source.name + ".raw.txt"
+            # Some archives already contain *.html.txt extracted prose. Keep
+            # that file separate from the byte-exact HTML response download.
+            shutil.copy2(source, destination.parent / raw_download_name)
             parser = SourceTextReader()
             parser.feed(source.read_text(encoding="utf-8", errors="replace"))
             body_text = "".join(parser.parts).strip()
@@ -2173,7 +2190,7 @@ def sync_source_archive(
                 'a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body>'
                 '<h1>官方网页响应 · 静态阅读</h1><p>' + html.escape(limitation) + '</p>'
                 '<p><a href="' + html.escape(source_url, quote=True) + '">打开官方原文 ↗</a> · '
-                '<a href="' + quote(source.name + '.txt') + '">原始HTML响应源码（不运行脚本）</a></p>'
+                '<a href="' + quote(raw_download_name) + '">原始HTML响应源码（不运行脚本）</a></p>'
                 '<pre>' + html.escape(body_text) + '</pre></body></html>', encoding="utf-8"
             )
         published = destination
