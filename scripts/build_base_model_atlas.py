@@ -1797,14 +1797,27 @@ def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) 
 
 
 def note_targets() -> dict[str, Path]:
-    """Resolve Obsidian wikilinks to their rendered archive HTML page."""
+    """Resolve wikilinks to published library notes before legacy archive aliases."""
     targets: dict[str, Path] = {}
+    published_by_stem: dict[str, list[Path]] = {}
+    published_path = ATLAS / "models.json"
+    if published_path.is_file():
+        for record in json.loads(published_path.read_text(encoding="utf-8")):
+            if record.get("note"):
+                published_note = ATLAS / record["note"]
+                if published_note.is_file():
+                    published_by_stem.setdefault(published_note.stem, []).append(published_note)
     for note in SOURCE.rglob("*.md"):
         rel_parts = note.relative_to(SOURCE).parts
         if "src" in rel_parts or "QA" in rel_parts:
             continue
         rel = note.relative_to(SOURCE).with_suffix(".html")
         target = ATLAS / "archive" / rel
+        published_matches = list(dict.fromkeys(published_by_stem.get(note.stem, [])))
+        if len(published_matches) == 1:
+            target = published_matches[0]
+        elif note.stem == "Base Model MOC":
+            target = THINKING / "base_model_atlas.html"
         keys = {note.stem, str(note.relative_to(SOURCE).with_suffix("")), str(note.relative_to(BRAINHAO).with_suffix(""))}
         for key in keys:
             targets.setdefault(key.replace("\\", "/"), target)
@@ -2665,7 +2678,7 @@ def add_typed_official_source_links(page: str) -> str:
 const actionIcon=label=>{
   if(/HF Model Card/i.test(label)) return '🤗 ';
   if(/Tech Blog|Announcement|Product Blog/i.test(label)) return '📝 ';
-  if(/System Card|Tech Report|PDF/i.test(label)) return '📄 ';
+  if(/Model Card|System Card|Tech Report|PDF/i.test(label)) return '📄 ';
   if(/Platform Docs|API Model|Model Guide|Official Docs/i.test(label)) return '🧭 ';
   return '🔗 ';
 };
@@ -2866,7 +2879,7 @@ document.querySelector('#recent-body').innerHTML = exact.length ? exact.map(row 
     return `<tr><td>${escapeText(row.date)}</td><td>${escapeText(row.teamName)}<small>${escapeText(row.region)}</small></td><td>${link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,row.name)}<small>${escapeText(row.lineageLabel)}</small></td><td>${escapeText(row.summary)}</td><td><div class="recent-links">${materials.join('')}</div></td><td>${sources.map(source => link(source.url,source.label)).join('<br>')}</td></tr>`;
 }).join('') : '<tr><td class="recent-empty" colspan="6">当前已归档资料中没有日期明确、落在此窗口内的模型。官方巡检完成后会自动补入；此处为空不代表近期没有新发布。</td></tr>';
 document.querySelector('#recent-uncertain').hidden = !uncertain.length;
-document.querySelector('#recent-uncertain-list').innerHTML = uncertain.map(row => `<li>${escapeText(row.date)} · ${link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,row.name)} · ${escapeText(row.teamName)}（仅知月份，未计入上表）</li>`).join('');
+document.querySelector('#recent-uncertain-list').innerHTML = uncertain.map(row => `<li>${escapeText(row.date)} · ${link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,row.name)} · ${escapeText(row.teamName)}（首发日待核实，月份仅为归档线索，未计入上表）</li>`).join('');
 })();</script>'''.replace("__RELEASES__", payload)
     page = page.replace("</head>", style + "</head>", 1)
     page = page.replace('<div class="controls">', panel + '<div class="controls">', 1)
