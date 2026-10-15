@@ -13,6 +13,20 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_poster_keeps_generated_note_and_vault_backlink(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'source'
+            root.mkdir()
+            (root / 'Note.md').write_text('# Model note')
+            poster = root / 'poster.html'
+            poster.write_text('<a href="Note.html">渲染笔记</a><a href="obsidian://open?vault=BrainHao">源笔记</a><a href="missing.html">Legacy missing</a>')
+            destination = Path(directory) / 'published/poster.html'
+            atlas.copy_file_with_refs(poster, destination, root)
+            rendered = destination.read_text()
+            self.assertIn('href="Note.html"', rendered)
+            self.assertIn('href="obsidian://open?vault=BrainHao"', rendered)
+            self.assertIn('href="#">Legacy missing', rendered)
+
     def test_explicit_release_slug_preserves_plus_generation(self):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory)

@@ -1769,10 +1769,15 @@ def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) 
     refs = re.findall(r'''(?:src|href)=["']([^"'#?]+)|url\(["']?([^"')]+)|!\[[^\]]*\]\(([^)#?]+)|!\[\[([^\]|#]+)''', content, re.I)
     for pair in refs:
         ref = next((x for x in pair if x), "").strip()
-        if not ref or re.match(r"^(?:https?:|data:|javascript:|mailto:)", ref): continue
+        if not ref or re.match(r"^(?:https?:|data:|javascript:|mailto:|obsidian:|file:)", ref): continue
         candidate = (source_file.parent / ref).resolve()
         try: rel = candidate.relative_to(model_root.resolve())
         except ValueError: continue
+        # A poster can link to the HTML view of a sibling Markdown note. The
+        # view is generated in the published library, not in the source vault;
+        # its absence here is not a broken control and must not become '#'.
+        if candidate.suffix.lower() == ".html" and candidate.with_suffix(".md").is_file():
+            continue
         if candidate.is_file():
             out = destination.parent / rel
             out.parent.mkdir(parents=True, exist_ok=True)
