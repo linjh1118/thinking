@@ -13,6 +13,27 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_explicit_release_slug_preserves_plus_generation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)
+            (source / 'src').mkdir()
+            release = {
+                'team': 'cohere', 'name': 'Command A+',
+                'slug': 'cohere-command-a-plus', 'folder': 'Cohere/260520_A_Plus',
+                'date': '2026-05-20', 'lineageType': 'mainline',
+                'label': '主干正代', 'summary': 'Distinct generation',
+                'sources': [{'label': 'Tech Blog', 'url': 'https://cohere.com/blog/command-a-plus'}],
+            }
+            (source / 'src/verified_releases.json').write_text(json.dumps([release]))
+            team = {
+                'id': 'cohere', 'name': 'Cohere', 'dir': 'Cohere',
+                'region': '海外', 'color': '#abc', 'thesis': 'Enterprise',
+                'models': [('2503', 'Command A', 'Original', 'https://cohere.com/')],
+            }
+            with patch.object(atlas, 'SOURCE', source), patch.object(atlas, 'TEAMS', [team]), patch.object(atlas, 'PINNED_TIMELINE_VARIANTS', {}), patch.object(atlas, 'BRANCH_MODEL_NODES', {}):
+                _, records = atlas.build_records()
+            self.assertEqual({r['slug'] for r in records}, {'cohere-command-a', 'cohere-command-a-plus'})
+
     def test_inline_code_in_external_link(self):
         rendered = render_inline_md(
             '[`model-name`](https://huggingface.co/org/model)', Path('/tmp/note.html'), {}

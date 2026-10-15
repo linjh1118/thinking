@@ -2575,7 +2575,10 @@ def build_records() -> tuple[list[dict], list[dict]]:
         team_lookup = {team["id"]: team for team in ordered_teams}
         for release in release_rows:
             team = team_lookup[release["team"]]
-            slug = f"{team['id']}-{slugify(release['name'])}"
+            # Punctuation-only differences can be real model generations
+            # (Command A versus Command A+). Preserve historical URLs and let
+            # the reviewed registry provide a stable, explicit disambiguation.
+            slug = release.get("slug") or f"{team['id']}-{slugify(release['name'])}"
             if slug in seen_slugs:
                 continue
             seen_slugs.add(slug)

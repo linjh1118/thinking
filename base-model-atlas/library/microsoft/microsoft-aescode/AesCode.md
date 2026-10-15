@@ -8,7 +8,7 @@ tags: [model-note, base-model, microsoft]
 topic: "13_base_model"
 status: read
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-15
 ---
 
 # AesCode
@@ -50,6 +50,13 @@ updated: 2026-10-13
 > [!warning] 阅读与日期边界
 > 已读HF model card；报告的完整源码尚未精读，不依据under-review声明推断正式会议接收。仓库9月29日创建，正式首发日尚未独立核实，暂按9月待核实。
 
+### 2026-10-15：官方模型卡新增技术报告链接
+
+最新HF卡已明确链接 [Tech Report：AesCode](https://arxiv.org/pdf/2610.18860) 与 [官方项目页](https://microsoft.github.io/AesCode/)。arXiv v1提交记录为2026-10-13 17:59:31 UTC，即北京时间10月14日01:59:31。这是**报告公开时间**，不证明模型权重在同一时间首次发布，故本模型仍不进入精确日期的30天表。
+
+> [!warning] 技术深度尚未达标
+> 当前新增的报告全文与源码尚未完成精读，原有笔记仍主要依赖HF卡，达不到完整报告的图表、训练消融和失败分析深度。本次先保存更新后的原始卡与报告摘要页并加入明确的Tech Report链接；不把“链接已发现”写成“全文已读”，也不下载PDF。
+
 ## 对 Agent Training 的启发
 
 > [!insight]
@@ -60,6 +67,8 @@ updated: 2026-10-13
 ## 一手资料与导航
 
 - [S1] [HF Model Card](https://huggingface.co/microsoft/AesCode-32B)
+- [S2] [Tech Report（PDF，仅链接）](https://arxiv.org/pdf/2610.18860)
+- [S3] [官方项目页](https://microsoft.github.io/AesCode/)
 
 原始下载文件与SHA-256见 [[src/retrieval_manifest.json|抓取记录]]。报告保留链接，不抓PDF；动态网页响应若只有壳文件，不将其标成完整离线正文。
 
