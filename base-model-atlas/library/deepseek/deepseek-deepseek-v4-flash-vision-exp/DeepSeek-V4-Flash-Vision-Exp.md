@@ -2,7 +2,7 @@
 title: "DeepSeek-V4-Flash-Vision-Exp — V4 的实验多模态 checkpoint"
 type: model-note
 organization: "DeepSeek-AI"
-release: 2026-08-31
+release: 2026-08-21
 year: 2026
 model_code: "DeepSeek-V4-Flash-Vision-Exp"
 url: "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
@@ -17,6 +17,8 @@ updated: 2026-09-01
 ---
 
 # DeepSeek-V4-Flash-Vision-Exp
+
+> 发布日期核验（2026-10-15）：官方更新日志明确首发为 **2026-08-21**。此前8月31日记录有误；目录与旧链接保留不变。
 
 > [!tldr]
 > **Vision-Exp 是 DeepSeek-V4 家族第一个官方多模态实验 checkpoint：它在 Flash 主体上加入视觉模块并继续训练，在保住文本 agent 能力的同时，把图片/图表输入转化为 agent 可用的观察。** 它属于 V4 的多模态支线，而不是取代 Flash-0731 的文本主线。

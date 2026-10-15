@@ -3,6 +3,7 @@ title: "Qwen3 Technical Report"
 type: paper
 authors: ["An Yang", "Anfeng Li", "Baosong Yang", "Beichen Zhang", "Binyuan Hui", "Bo Zheng", "Bowen Yu", "Chang Gao", "Chengen Huang", "Chenxu Lv", "Chujie Zheng", "Dayiheng Liu", "Fan Zhou", "Fei Huang", "Feng Hu", "Hao Ge", "Haoran Wei", "Huan Lin", "Jialong Tang", "Jian Yang", "Jianhong Tu", "Jianwei Zhang", "Jianxin Yang", "Jiaxi Yang", "Jing Zhou", "Jingren Zhou", "Junyang Lin", "Kai Dang", "Keqin Bao", "Kexin Yang", "Le Yu", "Lianghao Deng", "Mei Li", "Mingfeng Xue", "Mingze Li", "Pei Zhang", "Peng Wang", "Qin Zhu", "Rui Men", "Ruize Gao", "Shixuan Liu", "Shuang Luo", "Tianhao Li", "Tianyi Tang", "Wenbiao Yin", "Xingzhang Ren", "Xinyu Wang", "Xinyu Zhang", "Xuancheng Ren", "Yang Fan", "Yang Su", "Yichang Zhang", "Yinger Zhang", "Yu Wan", "Yuqiong Liu", "Zekun Wang", "Zeyu Cui", "Zhenru Zhang", "Zhipeng Zhou", "Zihan Qiu"]
 year: 2025
+release: 2025-04-29
 venue: arXiv
 arxiv: "2505.09388"
 url: "https://arxiv.org/abs/2505.09388"
@@ -15,6 +16,8 @@ updated: 2026-09-01
 ---
 
 # Qwen3 Technical Report — 深度技术分析
+
+> 日期核验（2026-10-15）：[官方首发博客](https://qwenlm.github.io/blog/qwen3/)为 **2025-04-29**；2025年5月是技术报告月份，不是模型首发。保留旧目录和链接。
 
 > [!TL;DR]
 > Qwen3 核心贡献：**单一模型统一 thinking/non-thinking 双模式** + **Thinking Budget 机制**实现推理资源动态分配。MoE 架构（235B总参/22B激活）以 60% 激活参数在 17/23 基准上超越 DeepSeek-R1。后训练四阶段设计（冷启动→推理RL→模式融合→蒸馏）是关键技术路径。

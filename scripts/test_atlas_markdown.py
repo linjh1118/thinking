@@ -14,6 +14,26 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_model_local_source_wikilink_resolves_to_rendered_card(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); (root/'src').mkdir()
+            (root/'src/Model-card.md.html').write_text('Card')
+            rendered=render_inline_md('[[src/Model-card|原始MD]]',root/'Note.html',{})
+            self.assertIn('href="src/Model-card.md.html"',rendered)
+
+    def test_archived_card_links_keep_raw_card_but_resolve_repository_base(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            source=root/'Model-model-card.md'; source.write_text('Original README')
+            (root/'assets').mkdir(); (root/'assets/chart.png').write_bytes(b'image')
+            published=root/'Model-model-card.md.html'
+            published.write_text('<img src="figures/chart.png"><a href="Guide.md.html">Guide</a>')
+            atlas.resolve_archived_card_links(source,published,'https://huggingface.co/org/Model/resolve/main/README.md')
+            result=published.read_text()
+            self.assertIn('src="assets/chart.png"',result)
+            self.assertIn('https://huggingface.co/org/Model/blob/main/Guide.md',result)
+            self.assertEqual(source.read_text(),'Original README')
+
     def test_poster_keeps_generated_note_and_vault_backlink(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'

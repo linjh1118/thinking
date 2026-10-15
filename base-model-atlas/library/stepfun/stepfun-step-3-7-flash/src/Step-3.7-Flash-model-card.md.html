@@ -1,0 +1,153 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Step-3.7-Flash-model-card · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="https://huggingface.co/library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Step-3.7-Flash-model-card</h2><div class="meta">note · <br></div><nav><a class="toc-l2" href="#1-introduction">1. Introduction</a><a class="toc-l2" href="#2-capabilities-performance">2. Capabilities &amp; Performance</a><a class="toc-l3" href="#multimodal-perception-and-verification">Multimodal Perception and Verification</a><a class="toc-l3" href="#workflow-integrity-and-tool-orchestration">Workflow Integrity and Tool Orchestration</a><a class="toc-l3" href="#code-engineering-and-professional-baselines">Code Engineering and Professional Baselines</a><a class="toc-l2" href="#3-pricing">3. Pricing</a><a class="toc-l2" href="#4-availability-deployment-and-ecosystem">4. Availability, Deployment, and Ecosystem</a><a class="toc-l2" href="#5-examples">5. Examples</a><a class="toc-l3" href="#5-1-chat-example">5.1 Chat Example</a><a class="toc-l3" href="#5-2-text-and-image-input-example">5.2 Text and Image Input Example</a><a class="toc-l2" href="#6-local-deployment">6. Local Deployment</a><a class="toc-l3" href="#6-1-vllm">6.1 vLLM</a><a class="toc-l3" href="#6-2-sglang">6.2 SGLang</a><a class="toc-l3" href="#6-3-transformers-debug-verification">6.3 Transformers (Debug / Verification)</a><a class="toc-l3" href="#6-4-llama-cpp">6.4 llama.cpp</a><a class="toc-l2" href="#7-using-step-3-7-flash-on-agent-platforms">7. Using Step 3.7 Flash on Agent Platforms</a><a class="toc-l2" href="#8-getting-in-touch">8. Getting in Touch</a><a class="toc-l2" href="#license">📄 License</a></nav></aside><main class="note"><p><strong>[ModelPage]</strong>: https://static.stepfun.com/blog/step-3.7-flash/</p><h2 id="1-introduction">1. Introduction</h2><p>Step 3.7 Flash is a 198B-parameter sparse Mixture-of-Experts (MoE) vision-language model that combines a 196B-parameter language backbone with a 1.8B-parameter vision encoder for native image understanding. Engineered for high-frequency production workloads, it activates approximately 11B parameters per token and delivers a throughput of up to 400 tokens per second. Step 3.7 Flash supports a 256k context window and offers three selectable reasoning levels (low, medium, and high) so developers can easily balance speed, cost, and cognitive depth.</p><p>We built Step 3.7 Flash for developers who need to scale agentic workflows that combine perception, search, and reasoning. It is designed to handle intensive tasks such as parsing massive financial reports in one pass, running multi-step search loops with cross-source verification, or operating concurrent coding agents in high-throughput pipelines.</p><h2 id="2-capabilities-performance">2. Capabilities &amp; Performance</h2><h3 id="multimodal-perception-and-verification">Multimodal Perception and Verification</h3><p>The model delivers top-tier visual intelligence, securing first place on SimpleVQA (Search) with a 79.2 and achieving frontier parity on V* (Python) at 95.3. These metrics reflect strong visual grounding and retrieval-augmented reasoning beyond basic image description. The model accurately processes dense visual interfaces, such as UI wireframes, application GUIs, and data charts, to map them into structured code. When it encounters an incomplete visual asset, it can independently identify missing data and execute lookups to verify context before returning a factually verified conclusion.</p><h3 id="workflow-integrity-and-tool-orchestration">Workflow Integrity and Tool Orchestration</h3><p>Execution reliability is critical for autonomous agents. Step 3.7 Flash leads the ClawEval-1.1 benchmark with a score of 67.1, which significantly outperforms the next closest competitor at 59.8. This performance demonstrates high resistance to adversarial traps and strict adherence to system policies during multi-turn orchestration. Backed by scores of 49.5 on Toolathlon and 48.1 on HLE w. Tool, this profile ensures high trajectory integrity. Step 3.7 Flash reliably interacts with external APIs and executes long-horizon workflows without drifting from instructions or violating system constraints.</p><h3 id="code-engineering-and-professional-baselines">Code Engineering and Professional Baselines</h3><p>Step 3.7 Flash is built for live engineering tasks and secured a definitive second-place finish on SWE-Bench PRO with a score of 56.3. It can independently trace multi-file repositories, isolate bugs from raw issue reports, and generate functional patches that pass automated unit tests. While evaluations like Terminal-Bench 2.1 (59.5) and GDPVal-AA (45.8) show clear areas for future optimization compared to the absolute peak of the cohort, they establish a dependable baseline for system interactions and structured professional deliverables.</p><p><img src="assets/benchmarks.png" alt="Step 3.7 Flash benchmark results across General Agent, Agentic Coding, and Multimodal evaluations"></p><h2 id="3-pricing">3. Pricing</h2><div class="table-wrap"><table><thead><tr><th>Token Type</th><th>Price</th></tr></thead><tbody><tr><td>Input (cache miss)</td><td>$0.20 / M tokens</td></tr><tr><td>Input (cache hit)</td><td>$0.04 / M tokens</td></tr><tr><td>Output</td><td>$1.15 / M tokens</td></tr></tbody></table></div><h2 id="4-availability-deployment-and-ecosystem">4. Availability, Deployment, and Ecosystem</h2><ul><li>Availability: Step 3.7 Flash is available on the StepFun Open Platform — <a href="https://platform.stepfun.ai" target="_blank" rel="noopener">platform.stepfun.ai</a> (Global) and <a href="https://platform.stepfun.com" target="_blank" rel="noopener">platform.stepfun.com</a> (China), OpenRouter, and NVIDIA NIM. StepFun is also partnering with DeepInfra, Fireworks AI, and Modal to expand availability soon.</li><li>Deployment: Step 3.7 Flash supports flexible deployment across cloud, data center, and local environments. For large-scale production and enterprise use cases, Step 3.7 Flash can be deployed on modern data center infrastructure. For local and workstation scenarios, it can also run on high-memory devices such as NVIDIA DGX Station, AMD Ryzen AI Max+ 395-based systems, and Mac Studio / Macbook Pro devices with at least 128GB unified memory.</li><li>Ecosystem: Step 3.7 Flash is supported across popular open-source infrastructure for both inference and model development. For inference and serving, developers can use vLLM, SGLang, Hugging Face Transformers, and llama.cpp. For model development &amp; customization workflows, StepFun model support has landed in the NVIDIA Nemo ecosystem, including AutoModel, Megatron Core and Megatron Bridge. Step 3.7 Flash is also available as an NVIDIA NIM inference microservice for on-prem, cloud, or hybrid deployment.</li></ul><h2 id="5-examples">5. Examples</h2><p>You can get started with Step 3.7 Flash in minutes using StepFun's API or via other inference providers.</p><blockquote>Pick the right <code>base_url</code> for your region. StepFun operates two regional platforms with separate API hosts. The <code>base_url</code> you pass to the OpenAI client must match the platform where your API key was issued, otherwise requests will be rejected as unauthorized.<br><br>- <strong>Global</strong>: <a href="https://platform.stepfun.ai" target="_blank" rel="noopener">platform.stepfun.ai</a> — <code>base_url=https://api.stepfun.ai/v1</code><br>- <strong>China</strong>: <a href="https://platform.stepfun.com" target="_blank" rel="noopener">platform.stepfun.com</a> — <code>base_url=https://api.stepfun.com/v1</code><br><br>To avoid hard-coding the wrong region, the examples below read both the API key and base URL from environment variables. Export them once before running:<br><br>```bash<br>export STEP_API_KEY="sk-..."<br>export STEP_BASE_URL="https://api.stepfun.ai/v1"   # use https://api.stepfun.com/v1 for the China platform<br>```</blockquote><h3 id="5-1-chat-example">5.1 Chat Example</h3><pre><div class="code-lang">python</div><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;STEP_API_KEY&quot;],
+    base_url=os.environ[&quot;STEP_BASE_URL&quot;],
+)
+
+completion = client.chat.completions.create(
+    model=&quot;step-3.7-flash&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;system&quot;,
+            &quot;content&quot;: &quot;You are an AI assistant provided by StepFun. You are good at Chinese, English, and many other languages, and you can see, think, and act to help users get things done.&quot;,
+        },
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: &quot;Introduce StepFun&#x27;s artificial intelligence capabilities.&quot;
+        },
+    ],
+)
+
+print(completion)</code></pre><h3 id="5-2-text-and-image-input-example">5.2 Text and Image Input Example</h3><pre><div class="code-lang">python</div><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ[&quot;STEP_API_KEY&quot;],
+    base_url=os.environ[&quot;STEP_BASE_URL&quot;],
+)
+
+completion = client.chat.completions.create(
+    model=&quot;step-3.7-flash&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is in this picture?&quot;},
+                {
+                    &quot;type&quot;: &quot;image_url&quot;,
+                    &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/photo.jpg&quot;},
+                },
+            ],
+        },
+    ],
+)
+
+print(completion)</code></pre><h2 id="6-local-deployment">6. Local Deployment</h2><p>Step 3.7 Flash is optimized for local inference and supports industry-standard backends including vLLM, SGLang, Hugging Face Transformers and llama.cpp.</p><h3 id="6-1-vllm">6.1 vLLM</h3><p>We recommend using StepFun's prebuilt vLLM Docker image with Step 3.7 support.</p><ol><li>Install vLLM.</li></ol><pre><div class="code-lang">bash</div><code># via Docker
+docker pull vllm/vllm-openai:stepfun37</code></pre><ol><li>Launch the server.</li></ol><ul><li>For FP8 model</li></ul><p>``<code>bash vllm serve &lt;MODEL_PATH_OR_HF_ID&gt; \ --served-model-name step3p7-flash \ --tensor-parallel-size 8 \ --enable-expert-parallel \ --disable-cascade-attn \ --reasoning-parser step3p5 \ --enable-auto-tool-choice \ --tool-call-parser step3p5 \ --speculative_config &#x27;{&quot;method&quot;: &quot;mtp&quot;, &quot;num_speculative_tokens&quot;: 3}&#x27; \ --trust-remote-code </code>``</p><ul><li>For BF16 model</li></ul><p>``<code>bash vllm serve &lt;MODEL_PATH_OR_HF_ID&gt; \ --served-model-name step3p7-flash-bf16 \ --tensor-parallel-size 8 \ --enable-expert-parallel \ --disable-cascade-attn \ --reasoning-parser step3p5 \ --enable-auto-tool-choice \ --tool-call-parser step3p5 \ --speculative_config &#x27;{&quot;method&quot;: &quot;mtp&quot;, &quot;num_speculative_tokens&quot;: 3}&#x27; \ --trust-remote-code </code>``</p><ul><li>For NVFP4 model</li></ul><p>Compared to standard precisions, running the FP4 quantized version requires modelopt activation and FP8 KV Cache alignment. ``<code>bash python3 -m vllm.entrypoints.openai.api_server \ --host 0.0.0.0 \ --port ${PORT} \ --model stepfun-ai/Step-3.7-Flash-NVFP4 \ --served-model-name step3p7 \ --tensor-parallel-size 4 \ --gpu-memory-utilization 0.9 \ --enable-expert-parallel \ --trust-remote-code \ --quantization modelopt \ --kv-cache-dtype fp8 \ --max-model-len 8192 \ --reasoning-parser step3p5 \ --enable-auto-tool-choice \ --tool-call-parser step3p5 \ --async-scheduling </code>``</p><h3 id="6-2-sglang">6.2 SGLang</h3><ol><li>Install SGLang.</li></ol><pre><div class="code-lang">bash</div><code># via Docker
+docker pull lmsysorg/sglang:dev-step-3.7-flash
+
+# or from source (pip)
+pip install &quot;sglang[all] @ git+https://github.com/sgl-project/sglang.git&quot;</code></pre><ol><li>Launch the server.</li></ol><blockquote><strong>Note:</strong> For Blackwell GPUs, <code>--mm-attention-backend fa4</code> may be used.</blockquote><ul><li>For BF16 model</li></ul><pre><div class="code-lang">bash</div><code>sglang serve --model-path stepfun-ai/Step-3.7-Flash \
+  --tp 8 \
+  --reasoning-parser step3p5 \
+  --tool-call-parser step3p5 \
+  --enable-multimodal \
+  --speculative-algorithm EAGLE \
+  --speculative-num-steps 3 \
+  --speculative-eagle-topk 1 \
+  --speculative-num-draft-tokens 4 \
+  --enable-multi-layer-eagle \
+  --trust-remote-code \
+  --host 0.0.0.0 \
+  --port 8000</code></pre><ul><li>For FP8 model</li></ul><pre><div class="code-lang">bash</div><code>sglang serve --model-path stepfun-ai/Step-3.7-Flash-FP8 \
+  --tp 8 \
+  --ep 4 \
+  --reasoning-parser step3p5 \
+  --tool-call-parser step3p5 \
+  --enable-multimodal \
+  --speculative-algorithm EAGLE \
+  --speculative-num-steps 3 \
+  --speculative-eagle-topk 1 \
+  --speculative-num-draft-tokens 4 \
+  --enable-multi-layer-eagle \
+  --trust-remote-code \
+  --host 0.0.0.0 \
+  --port 8000</code></pre><ul><li>For NVFP4 model</li></ul><pre><div class="code-lang">bash</div><code>sglang serve --model-path stepfun-ai/Step-3.7-Flash-NVFP4 \
+  --tp 4 --ep 4 \
+  --moe-runner-backend flashinfer_trtllm \
+  --kv-cache-dtype fp8_e4m3 \
+  --quantization modelopt_fp4 \
+  --trust-remote-code \
+  --reasoning-parser step3p5 \
+  --tool-call-parser step3p5 \
+  --attention-backend trtllm_mha</code></pre><h3 id="6-3-transformers-debug-verification">6.3 Transformers (Debug / Verification)</h3><p>Use this snippet for quick functional verification. For high-throughput serving, use vLLM or SGLang.</p><blockquote><strong>Note:</strong> Deployment of this model requires <code>transformers</code> 5.0 or later.</blockquote><pre><div class="code-lang">python</div><code>from transformers import AutoProcessor, AutoModelForCausalLM
+
+MODEL_PATH = &quot;&lt;MODEL_PATH_OR_HF_ID&gt;&quot;
+
+# 1. Setup
+processor = AutoProcessor.from_pretrained(MODEL_PATH, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_PATH,
+    device_map=&quot;auto&quot;,
+    dtype=&quot;auto&quot;,
+    trust_remote_code=True
+)
+
+# 2. Prepare Input
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;url&quot;: &quot;https://example.com/photo.jpg&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is in this picture?&quot;}
+        ]
+    },
+]
+inputs = processor.apply_chat_template(
+    messages,
+    tokenize=True,
+    add_generation_prompt=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device)
+
+# 3. Generate
+generated_ids = model.generate(**inputs, max_new_tokens=128, do_sample=False)
+output_text = processor.decode(generated_ids[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
+
+print(output_text)</code></pre><h3 id="6-4-llama-cpp">6.4 llama.cpp</h3><p><strong>System Requirements</strong></p><p>GGUF Model Weights:</p><div class="table-wrap"><table><thead><tr><th>Component</th><th>Quantization</th><th>File Size</th></tr></thead><tbody><tr><td>Language Model</td><td>Q4_K_S</td><td>111.5 GB</td></tr><tr><td>Language Model</td><td>IQ4_XS</td><td>104.99 GB</td></tr><tr><td>Language Model</td><td>Q3_K_L</td><td>102.5 GB</td></tr><tr><td>Multimodal Projector</td><td>FP16</td><td>3.97 GB</td></tr></tbody></table></div><ul><li><strong>Runtime Overhead:</strong> ~7 GB</li><li><strong>Minimum unified memory / VRAM:</strong> 120 GB (e.g., Mac Studio, NVIDIA DGX Station, AMD Ryzen AI Max+ 395)</li><li><strong>Recommended:</strong> 128 GB unified memory</li></ul><p><strong>Steps</strong></p><ol><li>Use llama.cpp:</li></ol><pre><div class="code-lang">bash</div><code>git clone https://github.com/stepfun-ai/llama.cpp.git
+cd llama.cpp
+git checkout -b step3.7 origin/step3.7</code></pre><ol><li>Build llama.cpp on Mac:</li></ol><pre><div class="code-lang">bash</div><code>cmake -B build-macos -S . \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=ON \
+    -DLLAMA_BUILD_SERVER=ON \
+    -DLLAMA_BUILD_TESTS=ON \
+    -DGGML_METAL=ON \
+    -DGGML_METAL_EMBED_LIBRARY=ON \
+    -DGGML_BLAS=ON \
+    -DGGML_BLAS_VENDOR=Apple \
+    -DGGML_ACCELERATE=ON \
+    -DGGML_NATIVE=ON
+cmake --build build-macos -j8</code></pre><ol><li>Build llama.cpp on DGX-Spark:</li></ol><pre><div class="code-lang">bash</div><code>cmake -S . -B build-cuda \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DGGML_CUDA=ON \
+  -DGGML_CUDA_GRAPHS=ON \
+  -DGGML_CUDA_FORCE_MMQ=ON \
+  -DLLAMA_OPENSSL=OFF \
+  -DLLAMA_BUILD_COMMON=ON \
+  -DLLAMA_BUILD_TOOLS=ON \
+  -DLLAMA_BUILD_SERVER=ON \
+  -DLLAMA_BUILD_EXAMPLES=OFF \
+  -DLLAMA_BUILD_TESTS=OFF
+cmake --build build-cuda -j8</code></pre><ol><li>Build llama.cpp on AMD Windows:</li></ol><pre><div class="code-lang">bash</div><code>cmake -S . -B build-vulkan \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DGGML_VULKAN=ON \
+  -DGGML_NATIVE=ON \
+  -DLLAMA_BUILD_SERVER=ON \
+  -DLLAMA_BUILD_UI=OFF \
+  -DLLAMA_BUILD_TOOLS=ON
+cmake --build build-vulkan -j8</code></pre><ol><li>Run with <code>llama-cli</code>:</li></ol><pre><div class="code-lang">bash</div><code>./llama-cli -m Step3.7_Q4_K_S.gguf -b 2048 -ub 2048 -fa on --temp 1.0 -p &quot;What&#x27;s your name?&quot;</code></pre><ol><li>Test performance with <code>llama-batched-bench</code>:</li></ol><pre><div class="code-lang">bash</div><code>./llama-batched-bench -m step3.7_Q4_K_S.gguf -c 32768 -b 2048 -ub 2048 -npp 0,2048,8192,16384,32768 -ntg 128 -npl 1</code></pre><h2 id="7-using-step-3-7-flash-on-agent-platforms">7. Using Step 3.7 Flash on Agent Platforms</h2><p>You can use Step 3.7 Flash on Agent platforms such as Hermes Agent, OpenClaw, Kilo Code, and more.</p><h2 id="8-getting-in-touch">8. Getting in Touch</h2><p>As we work to shape the future of AGI by expanding broad model capabilities, we want to ensure we are solving the right problems. We invite you to be part of this continuous feedback loop — your insights directly influence our priorities.</p><ul><li><strong>Join the Conversation:</strong> Our <a href="https://discord.gg/RcMJhNVAQc" target="_blank" rel="noopener">Discord</a> community is the primary hub for brainstorming future architectures, proposing capabilities, and getting early access updates 🚀</li><li><strong>Report Friction:</strong> Encountering limitations? You can open an issue or start a discussion on GitHub / HuggingFace, or flag it directly in our Discord support channels.</li></ul><h2 id="license">📄 License</h2><p>This project is open-sourced under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Apache 2.0 License</a>.</p></main></div></body></html>

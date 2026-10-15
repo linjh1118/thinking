@@ -12,10 +12,11 @@ Example:
 import argparse
 import concurrent.futures
 import hashlib
-import gzip
 import json
+import re
+import subprocess
+import tempfile
 import urllib.parse
-import urllib.request
 from datetime import datetime, timedelta
 from html.parser import HTMLParser
 from pathlib import Path
@@ -56,7 +57,39 @@ ADDITIONAL_PAGES = {
     'meta-current': ('meta', 'https://research.meta.ai/'),
     'zhipu-autoclaw': ('zhipu', 'https://autoclaw.z.ai/blog/'),
     'qwen-model-studio': ('qwen', 'https://help.aliyun.com/zh/model-studio/newly-released-models'),
+    'kimi-code-models': ('kimi', 'https://www.kimi.ai/help/kimi-code/models'),
+    'hunyuan-models': ('hunyuan', 'https://hunyuan.tencent.com/model/hy-model'),
+    'seed-models': ('seed', 'https://seed.bytedance.com/en/models'),
+    'stepfun-current': ('stepfun', 'https://platform.stepfun.com/developer-community'),
+    'baidu-current': ('baidu', 'https://ernie.baidu.com/blog/'),
 }
+
+
+def fetch_response(url):
+    """Use a total wall-time bound; a socket timeout alone permits slow drips."""
+    with tempfile.TemporaryDirectory(prefix='atlas-http-') as temporary:
+        headers_path = Path(temporary) / 'headers.txt'
+        result = subprocess.run(
+            ['curl', '-fsSL', '--compressed', '--max-time', '25',
+             '-A', 'Mozilla/5.0 Atlas release evidence', '-D', str(headers_path), url],
+            capture_output=True, timeout=35,
+        )
+        if result.returncode:
+            raise RuntimeError(result.stderr.decode(errors='replace').strip())
+        headers = headers_path.read_text(errors='replace')
+    types = re.findall(r'^content-type:\s*(.+)$', headers, flags=re.I | re.M)
+    links = re.findall(r'^link:\s*(.+)$', headers, flags=re.I | re.M)
+    content_type = types[-1].strip() if types else ''
+    if 'pdf' in content_type.lower():
+        raise ValueError('Unexpected PDF response; do not archive it')
+    return result.stdout, content_type, links[-1].strip() if links else ''
+
+
+def next_page(link_header):
+    for part in link_header.split(','):
+        if re.search(r'rel=["\']next["\']', part):
+            return part.split('>')[0].strip().lstrip('<')
+    return None
 
 
 class VisibleText(HTMLParser):
@@ -84,16 +117,27 @@ def fetch_job(job, output, previous, window_start):
     result = {'key': key, 'team': team, 'kind': kind, 'url': url,
               'checkedAt': datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')}
     try:
-        request = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 Atlas release evidence'})
-        with urllib.request.urlopen(request, timeout=25) as response:
-            content_type = response.headers.get('Content-Type', '')
-            if 'pdf' in content_type.lower():
-                raise ValueError('PDF response is link-only; not downloaded')
-            data = response.read()
-            if data.startswith(b'\x1f\x8b'):
-                data = gzip.decompress(data)
-            result.update(status='fetched', finalUrl=response.geturl(), contentType=content_type,
-                          bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+        data, content_type, links = fetch_response(url)
+        if kind in {'inventory', 'collections'}:
+            rows = json.loads(data)
+            pages = 1
+            seen_urls = {url}
+            following = next_page(links)
+            while following:
+                parsed = urllib.parse.urlsplit(following)
+                if parsed.scheme != 'https' or parsed.netloc != 'huggingface.co' or not parsed.path.startswith('/api/'):
+                    raise RuntimeError('Unexpected HF pagination destination; inventory incomplete')
+                if following in seen_urls or pages >= 100:
+                    raise RuntimeError('HF pagination loop/limit; inventory incomplete')
+                seen_urls.add(following)
+                payload, _, links = fetch_response(following)
+                rows.extend(json.loads(payload))
+                pages += 1
+                following = next_page(links)
+            data = (json.dumps(rows, ensure_ascii=False, indent=2) + '\n').encode()
+            result.update(pages=pages, itemCount=len(rows), paginationComplete=True)
+        result.update(status='fetched', contentType=content_type,
+                      bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
         (output / (key + suffix)).write_bytes(data)
         prior = previous / (key + suffix)
         if kind == 'inventory':
@@ -101,6 +145,7 @@ def fetch_job(job, output, previous, window_start):
             old = json.loads(prior.read_text()) if prior.exists() else []
             old_ids = {row['id'] for row in old}
             result['newRepositories'] = [row['id'] for row in rows if row['id'] not in old_ids]
+            result['comparisonNote'] = 'Newly observed IDs may be historical backfill, not new releases; verify the original announcement.'
             result['recentCandidates'] = [row['id'] for row in rows if row.get('createdAt', '') >= window_start]
         elif kind == 'page':
             parser = VisibleText()
@@ -130,9 +175,9 @@ def main():
     jobs = []
     for team in state['checkedTeams']:
         org = team['hfOrg']
-        query = urllib.parse.urlencode({'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 100})
+        query = urllib.parse.urlencode({'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 1000})
         jobs.append((org, 'https://huggingface.co/api/models?' + query, '.json', 'inventory', team['team']))
-        jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org}),
+        jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org, 'limit': 100}),
                      '.json', 'collections', team['team']))
         jobs.append(('blog-' + team['team'], OFFICIAL_PAGES[team['team']], '.html', 'page', team['team']))
     for key, (team, url) in ADDITIONAL_PAGES.items():
@@ -142,7 +187,7 @@ def main():
     manifest = {'windowStart': start, 'windowEnd': now.date().isoformat(), 'previous': str(args.previous),
                 'checkedAt': now.isoformat(timespec='seconds'), 'results': results}
     (output / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
-    print(json.dumps({'evidence': str(output), 'newRepositories': {row['team']: row.get('newRepositories')
+    print(json.dumps({'evidence': str(output), 'newRepositoryCounts': {row['team']: len(row.get('newRepositories', []))
         for row in results if row.get('newRepositories')}, 'pageChanges': [row['team'] for row in results
         if row.get('staticTextChanged')], 'failures': [{'key':row['key'],'error':row['error']}
         for row in results if row['status'] == 'failed']}, ensure_ascii=False))

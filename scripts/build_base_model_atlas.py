@@ -18,7 +18,7 @@ from datetime import datetime
 from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urljoin, urlsplit
 
 
 THINKING = Path(__file__).resolve().parents[1]
@@ -264,6 +264,7 @@ QWEN_OFFICIAL_SOURCES = {
         {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3.6-35b-a3b"},
     ],
     "Qwen3.7": [
+        {"label": "Tech Blog", "url": "https://qwen.ai/blog?id=qwen3.7"},
         {"label": "Family Repo", "url": "https://github.com/QwenLM/Qwen3.8"},
         {"label": "Later Tech Blog · Evidence", "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"},
     ],
@@ -624,11 +625,11 @@ TEAMS = [
         ["2402","Qwen1.5","多尺寸、MoE 与部署生态扩展。","https://qwenlm.github.io/blog/qwen1.5/"],
         ["2406","Qwen2","多语言、GQA 与长上下文升级。","https://qwenlm.github.io/blog/qwen2/"],
         ["2409","Qwen2.5","大规模 family 与 coder/math 支线成熟。","https://qwenlm.github.io/blog/qwen2.5/"],
-        ["2505","Qwen3","thinking/non-thinking 单模型统一。","https://qwenlm.github.io/blog/qwen3/"],
+        ["250429","Qwen3","thinking/non-thinking 单模型统一；2025-04-29 正式发布。","https://qwenlm.github.io/blog/qwen3/"],
         ["2509","Qwen3-Next","以超稀疏 MoE 和 hybrid attention 预演 Qwen3.5 架构。","https://qwen.ai/blog?id=qwen3-next"],
         ["2602","Qwen3.5","原生多模态、hybrid Gated DeltaNet + MoE 与大规模 Agent RL 合流。","https://qwen.ai/blog?id=qwen3.5"],
         ["2604","Qwen3.6","35B-A3B / 27B 开放家族，重点强化真实 Agentic Coding。","https://qwen.ai/blog?id=qwen3.6-35b-a3b"],
-        ["2606","Qwen3.7","托管正代检查点；官方未发布独立技术报告或开放权重。","https://github.com/QwenLM/Qwen3.8"],
+        ["260520","Qwen3.7","正式发布博客披露环境扩展、Task/Harness/Verifier 解耦与长程 Agent 案例；托管 family。","https://qwen.ai/blog?id=qwen3.7"],
         ["2608","Qwen3.8","2.4T-A95B Max 级开放权重、27B Dense 与长程 Agent 家族。","https://github.com/QwenLM/Qwen3.8"]]},
     {"id":"deepseek","dir":"DeepSeek_AI","name":"DeepSeek AI","region":"国内","color":"#5aa8ff","thesis":"MLA/MoE 训练效率、开放 reasoning RL 与 agentic tool-use 是三条主轴。","models":[
         ["2401","DeepSeek LLM","开放 dense 基模与训练 recipe 起点。","https://huggingface.co/deepseek-ai/deepseek-llm-67b-base"],
@@ -882,7 +883,7 @@ PINNED_TIMELINE_VARIANTS = {
             "label": "V4 release checkpoint",
         },
         {
-            "date": "260831",
+            "date": "260821",
             "name": "DeepSeek-V4-Flash-Vision-Exp",
             "summary": "V4 family 首个实验多模态 checkpoint：在 Flash 上加入视觉模块，强化多模态 agent 能力。",
             "source": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
@@ -944,6 +945,8 @@ PINNED_TIMELINE_VARIANTS = {
 # Family folders may contain a dedicated note/poster for a sibling SKU.  Keep
 # the generic family leaf on its own assets after those sibling files are added.
 MODEL_ASSET_OVERRIDES = {
+    "Qwen3": {"folder": "2505_Qwen3"},
+    "Qwen3.7": {"folder": "2606_qwen3_7"},
     "MiniMax-M3": {
         "assetNote": "MiniMax-M3-Frontier-Coding-1M-Context-Native-Multimodality.md",
         "assetPosters": ["MiniMax_M3_poster_zh.html"],
@@ -1871,6 +1874,13 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
         target = target.split("#", 1)[0].strip()
         label = alias.strip() or Path(target).name
         resolved = targets.get(target) or targets.get(Path(target).name)
+        if not resolved and target.startswith("src/"):
+            # Model-local source wikilinks are intentionally absent from the
+            # global note map (different models often have a README). Resolve
+            # against this published package, never a different team's card.
+            local = destination.parent / target
+            candidates = [local, Path(str(local) + ".md.html")]
+            resolved = next((p for p in candidates if p.is_file()), None)
         if resolved:
             href = os.path.relpath(resolved, destination.parent).replace(os.sep, "/")
             return hold(f'<a class="wikilink" href="{html.escape(href, quote=True)}">{html.escape(label)}</a>')
@@ -2148,6 +2158,40 @@ class SourceTextReader(HTMLParser):
             self.parts.append(data.strip() + " ")
 
 
+def resolve_archived_card_links(source: Path, published: Path, source_url: str) -> None:
+    """Keep byte-exact HF cards while making their rendered links usable.
+
+    A saved README loses its repository-relative base. Prefer archived local
+    images/files, otherwise point explicitly to the original official repo;
+    never invent a local page for a file that was not archived.
+    """
+    parsed = urlsplit(source_url)
+    if parsed.netloc != "huggingface.co" or "/resolve/" not in parsed.path:
+        return
+    repo_path, revision_path = parsed.path.split("/resolve/", 1)
+    revision, _, original_path = revision_path.partition("/")
+    base_dir = str(Path(original_path).parent)
+    def rewrite(match):
+        attr, quotes, value = match.groups()
+        value = html.unescape(value)
+        if not value or value.startswith(("#", "?", "data:")) or urlsplit(value).scheme:
+            return match.group(0)
+        raw = value[:-5] if value.endswith(".md.html") else value
+        path = unquote(urlsplit(raw).path)
+        local = source.parent / path
+        if local.is_file():
+            return match.group(0)
+        image = source.parent / "assets" / Path(path).name
+        if attr.lower() == "src" and image.is_file():
+            target = "assets/" + quote(image.name)
+        else:
+            operation = "resolve" if attr.lower() == "src" else "blob"
+            target = urljoin(f"https://huggingface.co{repo_path}/{operation}/{revision}/{base_dir}/", raw)
+        return attr + "=" + quotes + html.escape(target, quote=True) + quotes
+    text = re.sub(r'(href|src)=(["\'])([^"\']*)\2', rewrite, published.read_text(), flags=re.I)
+    published.write_text(text, encoding="utf-8")
+
+
 def sync_source_archive(
     model_root: Path,
     dest_root: Path,
@@ -2210,6 +2254,11 @@ def sync_source_archive(
             if stale_render != published and stale_render.exists() and not raw_html_peer.is_file():
                 stale_render.unlink()
             render_markdown(source, published, targets)
+            if incremental_manifest:
+                entry = next((item for item in manifest_data if item.get("file") == str(rel)), {})
+            else:
+                entry = manifest_data.get("documents", {}).get(str(rel), {})
+            resolve_archived_card_links(source, published, entry.get("url", ""))
             kind = "markdown · rendered"
         href = quote(os.path.relpath(published, dest_root).replace(os.sep, "/"), safe="/#?=&")
         rows.append(
@@ -2220,6 +2269,7 @@ def sync_source_archive(
         selectable_model_card = (
             (rel.parts and rel.parts[0] in {"huggingface_model_cards", "model_cards"})
             or normalized_name in {"hf_model_card", "hugging_face_model_card"}
+            or normalized_name.endswith("_model_card")
         )
         selectable_repo_metadata = rel.parts and rel.parts[0] == "huggingface_repository_metadata"
         if (
@@ -2373,7 +2423,7 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                 model_root,
                 dest_root,
                 targets,
-                include_relative=None if record.get("incrementalRelease") else {Path("hf_model_card.md")},
+                include_relative=None if record.get("incrementalRelease") or record["name"] == "Qwen3.7" else {Path("hf_model_card.md")},
             )
             if source_archive:
                 record["sources"] = source_archive["index"]
