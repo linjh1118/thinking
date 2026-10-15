@@ -1799,6 +1799,9 @@ def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) 
     rewritten = re.sub(r'''href=(["'])([^"']+?)\.md(?:#[^"']*)?\1''', r'href=\1\2.html\1', rewritten, flags=re.I)
     if rewritten != content:
         destination.write_text(rewritten, encoding="utf-8")
+    # copy2 can restore a source mtime older than a previously rewritten page.
+    # HTTP If-Modified-Since would then keep the obsolete '#' link in browsers.
+    os.utime(destination, None)
 
 
 def note_targets() -> dict[str, Path]:
@@ -2326,7 +2329,7 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
             dest_text = dest.read_text(encoding="utf-8", errors="ignore") if dest.exists() else ""
             source_is_fallback = "Base Model Atlas 补齐页" in source_text
             dest_is_fallback = "Base Model Atlas 补齐页" in dest_text
-            if not dest.exists() or dest_is_fallback or (not source_is_fallback and poster.stat().st_size > dest.stat().st_size):
+            if not dest.exists() or dest_is_fallback or not source_is_fallback:
                 copy_file_with_refs(poster, dest, model_root)
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
         if record["team"] == "deepseek":

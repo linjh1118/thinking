@@ -4,6 +4,7 @@ Run: python3 -m unittest discover -s scripts -p test_atlas_markdown.py
 """
 import unittest
 import json
+import os
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -20,12 +21,44 @@ class InlineMarkdownTests(unittest.TestCase):
             (root / 'Note.md').write_text('# Model note')
             poster = root / 'poster.html'
             poster.write_text('<a href="Note.html">渲染笔记</a><a href="obsidian://open?vault=BrainHao">源笔记</a><a href="missing.html">Legacy missing</a>')
+            os.utime(poster, (1, 1))
             destination = Path(directory) / 'published/poster.html'
             atlas.copy_file_with_refs(poster, destination, root)
             rendered = destination.read_text()
             self.assertIn('href="Note.html"', rendered)
             self.assertIn('href="obsidian://open?vault=BrainHao"', rendered)
             self.assertIn('href="#">Legacy missing', rendered)
+            self.assertGreater(destination.stat().st_mtime, poster.stat().st_mtime)
+
+    def test_shorter_authored_poster_replaces_previous_version(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'source'
+            root.mkdir()
+            poster = root / 'poster.html'
+            poster.write_text('<h1>Updated, concise poster</h1>')
+            library = Path(directory) / 'library'
+            destination = library / 'test/test-model/poster.html'
+            destination.parent.mkdir(parents=True)
+            destination.write_text('<h1>Old authored poster with much longer obsolete content</h1>')
+            record = {'team': 'test', 'slug': 'test-model', '_assets': {'dir': root, 'posters': [poster]}}
+            with patch.object(atlas, 'LIBRARY', library), patch.object(atlas, 'ATLAS', Path(directory)):
+                atlas.sync_library([record], {})
+            self.assertEqual(destination.read_text(), poster.read_text())
+
+    def test_fallback_does_not_replace_authored_poster(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'source'
+            root.mkdir()
+            poster = root / 'poster.html'
+            poster.write_text('Base Model Atlas 补齐页')
+            library = Path(directory) / 'library'
+            destination = library / 'test/test-model/poster.html'
+            destination.parent.mkdir(parents=True)
+            destination.write_text('<h1>Authored poster</h1>')
+            record = {'team': 'test', 'slug': 'test-model', '_assets': {'dir': root, 'posters': [poster]}}
+            with patch.object(atlas, 'LIBRARY', library), patch.object(atlas, 'ATLAS', Path(directory)):
+                atlas.sync_library([record], {})
+            self.assertEqual(destination.read_text(), '<h1>Authored poster</h1>')
 
     def test_explicit_release_slug_preserves_plus_generation(self):
         with tempfile.TemporaryDirectory() as directory:
