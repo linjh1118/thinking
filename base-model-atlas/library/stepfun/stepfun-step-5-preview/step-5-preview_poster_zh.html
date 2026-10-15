@@ -1,1 +1,310 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Step 5 Preview · 中文研究Poster</title><style>*{box-sizing:border-box}body{margin:0;background:#0c111c;color:#edf3ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.75}.wrap{max-width:1250px;margin:auto;padding:40px 32px 70px}.brand{color:#93a9c9;font-size:13px}.kicker{color:#98d9fb;letter-spacing:.14em;font-size:12px}h1{font-size:clamp(40px,7vw,78px);line-height:1.08;letter-spacing:-.04em;margin:18px 0 26px}.lead{font-size:20px;color:#bdcbe2;max-width:1000px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0}.stat,.card{border:1px solid #32425f;border-radius:18px;background:#121d31;padding:22px}.stat{color:#9fecd3;font-weight:650}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card h2{font-size:23px;color:#9cbaff;margin-top:0}.card p{margin:0;color:#c0cee2}.wide{grid-column:1/-1}.map{width:100%;height:auto;display:block;margin:30px 0}.note{margin-top:28px;padding:15px 20px;background:#352d21;border:1px solid #64563c;border-radius:14px;color:#e7d3aa}a{color:#95d8ff;text-decoration:none}.button{display:inline-block;margin:18px 0 25px;padding:12px 20px;border-radius:100px;background:#a6ebd6;color:#102a2c;font-weight:700}.source{font-size:13px;color:#a2b2cb}.backlinks{font-size:12px;margin-bottom:20px}@media(max-width:750px){.stats,.grid{grid-template-columns:1fr}.wrap{padding:25px 16px}.wide{grid-column:auto}}</style></head><body><main class="wrap"><div class="brand">ω BrainHao · Research Atlas</div><div class="backlinks">📚 源笔记：<a href="#">Step 5 Preview</a></div><div class="kicker">2026-09-20 · 主干正代</div><h1>Step 5 Preview</h1><p class="lead">旗舰 Preview；官方强调能力、效率与长期 Agent 工作的平衡。</p><div class="stats"><div class="stat">正式发布：2026-09-20</div><div class="stat">Preview 阶段</div><div class="stat">长期工具交互与复杂工程</div></div><img class="map" src="src/assets/reading-map.svg" alt="整理研读路径，非官方架构图"><div class="grid"><section class="card wide"><h2>核心理解</h2><p>官方发布入口能够确认新旗舰；本轮直抓发布正文仅返回 JavaScript 外壳，尚不能核验全部架构和训练细节。保存新闻入口与模型页，明确保留精读待补状态。</p></section><section class="card"><h2>值得做的实验</h2><p>取得完整正文和报告后再校验参数、上下文、benchmark 与硬件条件；Preview 任务应记录版本漂移，不把当前宣传数字当稳定服务保证。</p></section><section class="card"><h2>证据与验收边界</h2><p>只使用已取得的官方资料。不把不同harness、数据子集、推理预算或服务SKU当作同口径横评；确切发布日期未证实的节点单列待核实。</p></section></div><p class="note">本Poster是研究研读摘要，不是完整技术报告或已复现实验。全文笔记显著标明资料不足、未读报告和归档缺口，请以其证据边界为准。</p><a class="button" href="#">📖 阅读完整渲染笔记</a><div class="source"><p>[S1] <a href="https://www.stepfun.com/step-5-preview">Official Model Page</a></p></div></main></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step 5 Preview — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=stepfun-step-5-preview">Overview</a><a class="active" href="#">渲染笔记</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2Fstepfun%2F260920_Step_5_Preview%2FStep-5-Preview" style="text-decoration: none;">Step 5 Preview · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/stepfun-ai/Step-5-Preview" target="_blank" style="text-decoration: none;">🤗 HF Model Card</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">2026-09-20 首发 | 2026-10-15 权重可用性核验</span>
+    <div class="zh-title">Step 5 Preview：长程 Agent 旗舰与多精度部署边界</div>
+    <h1>Step 5 Preview <span>Agentic Work · Open Weights</span></h1>
+    <div class="authors">StepFun AI · ω BrainHao 研读 · 三种格式共用一个 family</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">600B</div><div class="sub">总参数<br>稀疏 MoE</div></div>
+    <div class="score-box"><div class="num">27B</div><div class="sub">每 token<br>激活参数</div></div>
+    <div class="score-box"><div class="num">1M</div><div class="sub">输入 + 输出<br>总预算上限</div></div>
+    <div class="score-box"><div class="num">3</div><div class="sub">权重格式<br>不是三个新正代</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与基础：权重可见 ≠ 已复现</h2></div>
+  <p class="body">Step 5 Preview针对仓库级工程和专业知识工作，尤其强调金融。9月20日服务首发与10月观察到公开权重是两个事件；本轮不新增正代节点，也不改变原发布日期。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">日期与family：同一正代的三种格式</div>
+      <p>默认FP8与BF16分别28个safetensors分片；NVFP4为95个。分片数量和量化U8存储元素数不等于模型的总参数规模，更不是代际划分依据。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">上下文与模态：不能把最大值广播</div>
+      <p>1M覆盖输入与输出合计。卡简介提视频，规格表只列text/image；具体视频接口仍须验证。预填充、KV和并发预算会限制可用长度。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">公开可访问的证据</div>
+      <p>10月15日读取HF API：三个仓库private=false、gated=false，真实权重文件可列出；这不代表已经本地加载或测过输出质量。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">三种权重，三个revision</div>
+      <p>FP8：364b3b03；BF16：7734b7ff；NVFP4：bc246cc2。完整hash见笔记与src/清单，避免latest漂移误配实验结果。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">材料深度仍然不足</div>
+      <p>三份模型卡主体相同，NVFP4没有独立完整性能/显存消融。完整训练报告、数据配方与RL奖励仍未核实，达不到GLM/Kimi报告级深度。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/cost-chart-DsHOPdKv.jpeg" alt="官方任务成本前沿图">
+    <div class="fig-cap">官方发布图：任务成本与能力的关系，不是本地重测</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与部署：格式、并行、解析器</h2></div>
+  <p class="body">三份官方README与LICENSE已读；私有与门控标记均为false，文件清单可见。只归档卡、许可、图与revision，未下载权重、运行远程代码或复现模型。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/hf-benchmarks-20261015.png" alt="官方HF卡完整八面板基准图">
+    <div class="fig-cap">HF原卡完整图：High / Max不同；GDPval快照截至9月20日</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">服务机制不是训练配方</div>
+      <p>MTP/EAGLE、prefix cache、MegaMoE和TP/EP/DP是推理系统配置，不能据此猜RL算法、reward、训练数据或网络层数。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">许可证：不能直接标Apache-2.0</div>
+    <p>StepFun Model License1.0为Apache-style但另有归属和商业许可条件。硬件厂商、特定MaaS场景及门槛须查原条款；这里只作来源定位，不是法律意见。量化和蒸馏并不自动豁免原许可。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">上下文总预算：官方部署约束，不是训练损失</div>$$N_{\mathrm{input}} + N_{\mathrm{output}} \leq 1{,}048{,}576$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">卡内两项“up to 1M”不能相加成2M；服务显存不足时仍需降上下文或并发。</p></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">保持部署兼容性</div>
+      <p>FP8服务用适配Step5的reasoning/tool-call parser。B300的MegaMoE与H200默认后端不同；每DP rank的请求上限不是全局并发总数。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">受控比较而非宣传加速</div>
+      <p>固定harness、revision、任务和推理预算，对比格式的终态成功、工具解析失败、长链误差、KV占用与每成功GPU秒。量化或MTP加速均未由本笔记实测。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验与发现：保留比较口径</h2></div>
+  <p class="body">官方图为Step5 <b>High</b>与对照模型<b>Max</b>；GDPval-AA2.1截至9月20日。DeepSWE使用SWE-agent、temperature1.0、top_p0.95。不同预算不能当严格同成本横评。</p>
+
+  <table class="rtable"><tr><th class="left">指标 / 规格</th><th>Step5</th><th>GLM5.3</th><th>KimiK3</th></tr><tr class="cat"><td colspan="4">编码与软件工程</td></tr><tr><td class="left">DeepSWE1.1</td><td>67.7</td><td>66.9</td><td>67.5</td></tr><tr><td class="left">StepCodeBench</td><td>49.0</td><td>40.2</td><td>43.9</td></tr><tr><td class="left">ProgramBench</td><td>80.5</td><td>72.0</td><td>77.8</td></tr><tr class="cat"><td colspan="4">长程行动与专业工作</td></tr><tr><td class="left">Terminal-Bench4</td><td>33.3</td><td>41.9</td><td>12.6</td></tr><tr><td class="left">ALE-CLI</td><td>29.5</td><td>28.6</td><td>27.6</td></tr><tr><td class="left">GDPval-AA2.1</td><td>1566</td><td>1645</td><td>1524</td></tr><tr class="cat"><td colspan="4">其他结果与规格边界</td></tr><tr><td class="left">FrontierFinance</td><td>66.4</td><td>64.1</td><td>62.6</td></tr><tr><td class="left">DRACO</td><td>83.3</td><td>82.3</td><td>78.5</td></tr><tr><td class="left">总参数</td><td>600B</td><td>未在此列</td><td>未在此列</td></tr><tr><td class="left">激活参数</td><td>27B</td><td>未在此列</td><td>未在此列</td></tr><tr><td class="left">上下文预算</td><td>1M合计</td><td>非同口径</td><td>非同口径</td></tr><tr><td class="left">推理设置</td><td>High</td><td>Max</td><td>Max</td></tr></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">关键反例：不是每个工程基准都领先</div>
+      <p>TB4：Step5 33.3%，低于GLM5.3的41.9%；与GPT6Astra57.9%、Opus5 52.3%仍有差距。专业指标与工程指标也不应混成单一排名。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">部署对照：以下是官方示例，不是任意上下文与并发下的显存保证。</p>
+  <table class="ood-table"><tr><th>格式/引擎</th><th>B300</th><th>H200</th><th>并行</th><th>边界</th></tr><tr><td>FP8 / vLLM</td><td>4 B300</td><td>8 H200</td><td>TP/TEP/DEP</td><td>示例</td></tr><tr><td>BF16 / vLLM</td><td>8 B300</td><td>16 H200</td><td>两节点可选</td><td>独立权重</td></tr><tr><td>FP8 / SGLang</td><td>4 B300</td><td>8 H200</td><td>TP+EP</td><td>后端不同</td></tr><tr><td>BF16 / TF</td><td>未列</td><td>16 H200</td><td>TP16/EP16</td><td>全流程待验</td></tr></table>
+
+  <div class="trick-box">
+    <div class="trick-title">长任务：记录预算和完成边界</div>
+    <p>Kernel案例是单H100、特定MLA配置、24小时、best-of-4；约22小时达到508TFLOPS。Pokémon案例仅第三枚徽章，不是通关；AIME24数据改进也不能概括成无成本自提升。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">必须纠正的旧表述</div>
+      <div class="adelta">权重可见</div>
+      <div class="adesc">不再保留“截至10月13日尚无权重”的过期状态；公开可见≠本地已复现。</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">仍然未解决的缺口</div>
+      <div class="adelta">训练证据</div>
+      <div class="adesc">未核实完整训练Tech Report；动态发布页离线正文仍不完整。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">代际与日期</div>
+    <p><span class="hl">9月20日family</span>不改日期。10月15日核验公开权重，FP8/BF16/NVFP4不是三代。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">部署与质量</div>
+    <p><span class="hl">权重能列出不等于能跑满1M</span>。检查KV、并发、parser与实际端到端路径。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">专业任务</div>
+    <p><span class="hl">不要只保留领先项</span>。StepCodeBench为avg@4，TB4仍落后；专业评分不等于决策授权。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">证据与下一步</div>
+    <p><span class="hl">训练报告仍不足</span>。保存原卡/许可证/revision与完整官方图，不下载PDF、不编造RL配方。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

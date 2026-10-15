@@ -1,0 +1,187 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>hf_model_card_NVFP4_20261015 · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>hf_model_card_NVFP4_20261015</h2><div class="meta">note · <br></div><nav><a class="toc-l2" href="#introduction">Introduction</a><a class="toc-l2" href="#key-capabilities">Key Capabilities</a><a class="toc-l3" href="#software-engineering">Software Engineering</a><a class="toc-l3" href="#long-horizon-agentic-execution">Long-Horizon Agentic Execution</a><a class="toc-l3" href="#professional-knowledge-work">Professional Knowledge Work</a><a class="toc-l3" href="#a-focus-on-finance">A Focus on Finance</a><a class="toc-l2" href="#model-specifications">Model Specifications</a><a class="toc-l2" href="#performance">Performance</a><a class="toc-l3" href="#evaluation-notes">Evaluation Notes</a><a class="toc-l2" href="#deployment">Deployment</a><a class="toc-l3" href="#deployment-configurations">Deployment Configurations</a><a class="toc-l3" href="#vllm">vLLM</a><a class="toc-l3" href="#transformers">Transformers</a><a class="toc-l3" href="#sglang">SGLang</a><a class="toc-l3" href="#send-a-request">Send a Request</a><a class="toc-l2" href="#resources">Resources</a><a class="toc-l2" href="#license">License</a></nav></aside><main class="note"><p><img src="https://cdn-uploads.huggingface.co/production/uploads/65dc9de42a6348b052a3286e/-R9DERgmQiBfO2cF0HXoD.png" alt="StepFun logo"></p><p>&lt;h1 align="center"&gt;Step 5 Preview&lt;/h1&gt;</p><p>&lt;strong&gt;StepFun's flagship model for agentic work&lt;/strong&gt;</p><p>600B total parameters &amp;nbsp;·&amp;nbsp; 27B active parameters &amp;nbsp;·&amp;nbsp; Up to 1M context</p><p><img src="https://img.shields.io/badge/Hugging_Face-FP8-FFD21E?style=flat-square" alt="Hugging Face FP8"> <img src="https://img.shields.io/badge/Hugging_Face-BF16-FFD21E?style=flat-square" alt="Hugging Face BF16"> <img src="https://img.shields.io/badge/ModelScope-FP8-624AFF?style=flat-square" alt="ModelScope FP8"> <img src="https://img.shields.io/badge/ModelScope-BF16-624AFF?style=flat-square" alt="ModelScope BF16"></p><p><img src="https://img.shields.io/badge/Model_Page-00BFA5?style=flat-square" alt="Model Page"> <img src="https://img.shields.io/badge/Documentation-2563EB?style=flat-square" alt="Documentation"> <img src="https://img.shields.io/badge/API_Platform-7C3AED?style=flat-square" alt="API Platform"></p><p>Introduction &amp;nbsp;·&amp;nbsp; Capabilities &amp;nbsp;·&amp;nbsp; Specifications &amp;nbsp;·&amp;nbsp; Performance &amp;nbsp;·&amp;nbsp; Deployment &amp;nbsp;·&amp;nbsp; Resources &amp;nbsp;·&amp;nbsp; License</p><p>---</p><h2 id="introduction">Introduction</h2><p>Step 5 Preview is StepFun's flagship model for agentic work. It delivers frontier-level performance across software engineering and professional knowledge work, with particular strength in finance.</p><p>Step 5 Preview is a sparse Mixture-of-Experts (MoE) model with 600B total parameters and 27B active parameters. It supports up to 1 million tokens of context and accepts text, images, and video, enabling sustained reasoning and tool use across complex tasks.</p><h2 id="key-capabilities">Key Capabilities</h2><h3 id="software-engineering">Software Engineering</h3><p>Step 5 Preview supports repository-level software engineering, frontend and visual development, and programming for devices. It can navigate large codebases, coordinate changes across files, run and verify code, and iterate on the results.</p><h3 id="long-horizon-agentic-execution">Long-Horizon Agentic Execution</h3><p>Step 5 Preview can carry out tasks that require repeated tool calls, execution, verification, and revision, drawing on long-context information throughout the workflow.</p><h3 id="professional-knowledge-work">Professional Knowledge Work</h3><p>The model combines research, multimodal understanding, and tool use to analyze long documents, charts, screenshots, images, and video, and produce structured reports and analyses.</p><h3 id="a-focus-on-finance">A Focus on Finance</h3><p>Step 5 Preview is particularly strong in financial tasks that combine quantitative reasoning with analysis of financial data and supporting documents.</p><h2 id="model-specifications">Model Specifications</h2><div class="table-wrap"><table><thead><tr><th>Specification</th><th>Step 5 Preview</th></tr></thead><tbody><tr><td>Architecture</td><td>Sparse Mixture-of-Experts (MoE)</td></tr><tr><td>Total Parameters</td><td>600B</td></tr><tr><td>Active Parameters</td><td>27B</td></tr><tr><td>Context Window</td><td>Up to 1M tokens</td></tr><tr><td>Maximum Output</td><td>Up to 1M tokens</td></tr><tr><td>Input</td><td>Text, image</td></tr><tr><td>Output</td><td>Text</td></tr></tbody></table></div><h2 id="performance">Performance</h2><p>The following results summarize Step 5 Preview's performance across coding, agentic tasks, professional knowledge work, and finance.</p><p><img src="https://cdn-uploads.huggingface.co/production/uploads/65dc9de42a6348b052a3286e/mfY2eltwq9TlXWlK6lx7K.png" alt="Step 5 Preview benchmark results across coding, agentic tasks, professional knowledge work, and finance"></p><h3 id="evaluation-notes">Evaluation Notes</h3><ul><li>Recommended inference settings: <code>temperature=1.0</code>, <code>top_p=0.95</code>, <code>top_k=0</code>.</li><li>Step 5 Preview results shown above use the <strong>High</strong> reasoning setting.</li><li>GDPval-AA v2.1 scores are based on results from <a href="https://artificialanalysis.ai/" target="_blank" rel="noopener">Artificial Analysis</a> as of September 20, 2026.</li><li>DeepSWE v1.1 evaluations use the <a href="https://github.com/SWE-agent/SWE-agent" target="_blank" rel="noopener">SWE-agent</a> harness with <code>temperature=1.0</code> and <code>top_p=0.95</code>.</li></ul><p>For evaluation context, methodology, and detailed case studies, see the <a href="https://www.stepfun.com/step-5-preview" target="_blank" rel="noopener">Step 5 Preview Model Page</a>.</p><h2 id="deployment">Deployment</h2><p>Step 5 Preview can be served through an OpenAI-compatible API with vLLM or SGLang, or used for offline generation with the standalone Transformers implementation. The examples below cover FP8 and BF16 checkpoints.</p><p>Use a framework build that includes Step 5 Preview support, including the reasoning, tool-call, and speculative decoding features used in the serving commands.</p><h3 id="deployment-configurations">Deployment Configurations</h3><div class="table-wrap"><table><thead><tr><th>Framework</th><th>Precision</th><th>Hardware</th><th>Parallelism</th><th>Interface</th></tr></thead><tbody><tr><td>vLLM</td><td>FP8</td><td>One B300 node, 4 GPUs</td><td>TP4, TEP4, or DEP4</td><td>OpenAI-compatible API</td></tr><tr><td>vLLM</td><td>FP8</td><td>One H200 node, 8 GPUs</td><td>TP8, TEP8, or DEP8</td><td>OpenAI-compatible API</td></tr><tr><td>vLLM</td><td>BF16</td><td>One B300 node, 8 GPUs</td><td>TP8, TEP8, or DEP8</td><td>OpenAI-compatible API</td></tr><tr><td>vLLM</td><td>BF16</td><td>Two H200 nodes, 16 GPUs</td><td>TP16, TEP16, or DEP16</td><td>OpenAI-compatible API</td></tr><tr><td>Transformers</td><td>FP8</td><td>One H200 node, 8 GPUs</td><td>TP8 / EP8</td><td>Offline generation</td></tr><tr><td>Transformers</td><td>BF16</td><td>Two H200 nodes, 16 GPUs</td><td>TP16 / EP16</td><td>Offline generation (see validation note below)</td></tr><tr><td>SGLang</td><td>FP8</td><td>One B300 node, 4 GPUs</td><td>TP4/EP4</td><td>OpenAI-compatible API</td></tr><tr><td>SGLang</td><td>FP8</td><td>One H200 node, 8 GPUs</td><td>TP8/EP8</td><td>OpenAI-compatible API</td></tr></tbody></table></div><p>DP, TP, and EP refer to data, tensor, and expert parallelism, respectively. TEP combines tensor and expert parallelism; DEP combines data and expert parallelism. These example configurations are sized for the deployments below. Actual memory requirements, usable context length, and concurrency vary with the checkpoint, inference framework, and KV cache allocation.</p><p><strong>Deployment guides:</strong> <a href="#vllm">vLLM</a> · <a href="#transformers">Transformers</a> · <a href="#sglang">SGLang</a> · <a href="#send-a-request">Send a Request</a></p><h3 id="vllm">vLLM</h3><p>The examples below expose Step 5 Preview through an OpenAI-compatible API at port <code>18000</code>, with <code>step5</code> as the model name used in requests.</p><h4 id="environment-setup">Environment Setup</h4><p>Pull the Step 5 Preview image and start an interactive container with GPU access:</p><pre><div class="code-lang">bash</div><code>docker pull vllm/vllm-openai:step-5-preview
+
+docker run --rm -it \
+    --gpus all \
+    --ipc=host \
+    --network=host \
+    --volume &quot;$HOME/.cache/huggingface:/root/.cache/huggingface&quot; \
+    --entrypoint /bin/bash \
+    vllm/vllm-openai:step-5-preview</code></pre><p>Run the serving commands below inside the container. If the checkpoint requires authentication, sign in with <code>hf auth login</code> before starting the server.</p><p>&lt;strong&gt;FP8: Single Node on 4 B300 GPUs&lt;/strong&gt;</p><p>Choose one of the following parallel configurations for a single node with four B300 GPUs:</p><div class="table-wrap"><table><thead><tr><th>Mode</th><th>Tensor parallel</th><th>Data parallel</th><th>Expert parallel</th></tr></thead><tbody><tr><td>TP4</td><td>4</td><td>1</td><td>Disabled</td></tr><tr><td>TEP4</td><td>4</td><td>1</td><td>4</td></tr><tr><td>DEP4</td><td>1</td><td>4</td><td>4</td></tr></tbody></table></div><p>Make all four GPUs visible, then run the command for your chosen configuration:</p><pre><div class="code-lang">bash</div><code>export CUDA_VISIBLE_DEVICES=0,1,2,3</code></pre><p>On B300 (Blackwell), the TEP4 and DEP4 commands select MegaMoE with <code>--moe-backend deep_gemm_mega_moe</code>. The TP4 command uses the default MoE backend, since MegaMoE requires expert parallelism.</p><h5 id="tp4-tensor-parallelism">TP4: Tensor Parallelism</h5><pre><div class="code-lang">bash</div><code>vllm serve stepfun-ai/Step-5-Preview \
+    --host 0.0.0.0 \
+    --port 18000 \
+    --served-model-name &quot;step5&quot; \
+    --tensor-parallel-size 4 \
+    --data-parallel-backend mp \
+    --distributed-executor-backend mp \
+    --disable-custom-all-reduce \
+    --max-model-len 1048576 \
+    --max-num-batched-tokens 16384 \
+    --max-num-seqs 64 \
+    --gpu-memory-utilization 0.85 \
+    --enable-prefix-caching \
+    --spec-method mtp \
+    --spec-tokens 3 \
+    --reasoning-parser step5 \
+    --enable-auto-tool-choice \
+    --tool-call-parser step5</code></pre><h5 id="tep4-tensor-and-expert-parallelism">TEP4: Tensor and Expert Parallelism</h5><pre><div class="code-lang">bash</div><code>vllm serve stepfun-ai/Step-5-Preview \
+    --host 0.0.0.0 \
+    --port 18000 \
+    --served-model-name &quot;step5&quot; \
+    --tensor-parallel-size 4 \
+    --enable-expert-parallel \
+    --moe-backend deep_gemm_mega_moe \
+    --data-parallel-backend mp \
+    --distributed-executor-backend mp \
+    --disable-custom-all-reduce \
+    --max-model-len 1048576 \
+    --max-num-batched-tokens 16384 \
+    --max-num-seqs 64 \
+    --gpu-memory-utilization 0.85 \
+    --enable-prefix-caching \
+    --spec-method mtp \
+    --spec-tokens 3 \
+    --reasoning-parser step5 \
+    --enable-auto-tool-choice \
+    --tool-call-parser step5</code></pre><h5 id="dep4-data-and-expert-parallelism">DEP4: Data and Expert Parallelism</h5><pre><div class="code-lang">bash</div><code>vllm serve stepfun-ai/Step-5-Preview \
+    --host 0.0.0.0 \
+    --port 18000 \
+    --served-model-name &quot;step5&quot; \
+    --tensor-parallel-size 1 \
+    --data-parallel-size 4 \
+    --enable-expert-parallel \
+    --moe-backend deep_gemm_mega_moe \
+    --data-parallel-backend mp \
+    --distributed-executor-backend mp \
+    --disable-custom-all-reduce \
+    --max-model-len 1048576 \
+    --max-num-batched-tokens 16384 \
+    --max-num-seqs 64 \
+    --gpu-memory-utilization 0.85 \
+    --enable-prefix-caching \
+    --spec-method mtp \
+    --spec-tokens 3 \
+    --reasoning-parser step5 \
+    --enable-auto-tool-choice \
+    --tool-call-parser step5</code></pre><h5 id="fp8-on-h200">FP8 on H200</h5><p>For a single node with eight H200 GPUs, adapt one of the B300 commands above:</p><ol><li>Set <code>CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7</code>.</li><li>For TP8 or TEP8, set <code>--tensor-parallel-size 8</code>. For DEP8, keep <code>--tensor-parallel-size 1</code> and set <code>--data-parallel-size 8</code>.</li><li>For TEP8 or DEP8, retain <code>--enable-expert-parallel</code> and remove <code>--moe-backend deep_gemm_mega_moe</code>; H200 (Hopper) uses the default MoE backend.</li></ol><p>TP and TEP use DP=1; DEP uses TP=1. In all configurations, <code>--max-num-seqs</code> applies per DP rank. The 1M-token context limit covers input and output combined. If KV cache memory is insufficient, reduce <code>--max-model-len</code> or concurrency.</p><p>&lt;strong&gt;BF16&lt;/strong&gt;</p><p>BF16 deployments require a BF16 checkpoint. Setting <code>--dtype bfloat16</code> on the FP8 checkpoint does not convert its quantized weights to BF16.</p><p>Mount the BF16 checkpoint directory at the same path inside the container, then set <code>MODEL</code> to that path:</p><pre><div class="code-lang">bash</div><code>export MODEL=&quot;&lt;STEP5_BF16_MODEL_PATH&gt;&quot;</code></pre><p>Choose a configuration for your hardware:</p><div class="table-wrap"><table><thead><tr><th>Hardware</th><th>BF16 layout</th><th>MoE backend</th></tr></thead><tbody><tr><td>8 B300 GPUs</td><td>TP8, TEP8, or DEP8</td><td>MegaMoE for TEP/DEP; default for TP</td></tr><tr><td>2 × 8 H200 GPUs</td><td>TP16, TEP16, or DEP16</td><td>Default</td></tr></tbody></table></div><p>These configurations provide a starting point for loading the BF16 weights. They do not guarantee enough memory for a 1M-token request; KV cache and runtime buffers also require GPU memory.</p><h5 id="b300-one-node-8-gpus">B300: One Node, 8 GPUs</h5><p>Set <code>CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7</code> inside the container. Start from the <a href="#tp4-tensor-parallelism">TP4 command</a>, replace <code>stepfun-ai/Step-5-Preview</code> with <code>&quot;$MODEL&quot;</code>, and replace <code>--tensor-parallel-size 4</code> with one of the argument sets below:</p><div class="table-wrap"><table><thead><tr><th>Mode</th><th>Parallel arguments</th></tr></thead><tbody><tr><td>TP8</td><td><code>--tensor-parallel-size 8</code></td></tr><tr><td>TEP8</td><td><code>--tensor-parallel-size 8 --enable-expert-parallel --moe-backend deep_gemm_mega_moe</code></td></tr><tr><td>DEP8</td><td><code>--tensor-parallel-size 1 --data-parallel-size 8 --enable-expert-parallel --moe-backend deep_gemm_mega_moe</code></td></tr></tbody></table></div><p>Retain the remaining serving arguments, including <code>--served-model-name &quot;step5&quot;</code>, <code>--reasoning-parser step5</code>, and <code>--tool-call-parser step5</code>.</p><h5 id="h200-two-nodes-16-gpus">H200: Two Nodes, 16 GPUs</h5><p>Use the same BF16 checkpoint path and container image on both nodes. Replace <code>&lt;NODE_0_IP&gt;</code> below with node 0's high-speed-network IP, reachable from node 1. H200 uses the default MoE backend; omit <code>--moe-backend deep_gemm_mega_moe</code>.</p><p>On each node:</p><ol><li>Set <code>MODEL</code> to the mounted BF16 checkpoint path and <code>CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7</code>.</li><li>Start from the <a href="#tp4-tensor-parallelism">TP4 command</a> and replace <code>stepfun-ai/Step-5-Preview</code> with <code>&quot;$MODEL&quot;</code>.</li><li>Remove <code>--host</code>, <code>--port</code>, and <code>--tensor-parallel-size</code> from that command, then insert the argument block for your configuration and node below. These blocks contain arguments to append to <code>vllm serve</code>, rather than standalone commands.</li></ol><p>Keep all other serving arguments, including <code>--data-parallel-backend mp</code>, <code>--distributed-executor-backend mp</code>, the model name, and both parsers. Run one completed command per node. Only node 0 exposes the API, on port <code>18000</code>.</p><p><strong>TP16 / TEP16</strong></p><p>For TP16, use the following arguments. For TEP16, also add <code>--enable-expert-parallel</code> on both nodes. Both configurations use DP=1.</p><p>Node 0:</p><pre><div class="code-lang">text</div><code>--host 0.0.0.0 \
+--port 18000 \
+--tensor-parallel-size 16 \
+--nnodes 2 \
+--node-rank 0 \
+--master-addr &lt;NODE_0_IP&gt;</code></pre><p>Node 1:</p><pre><div class="code-lang">text</div><code>--tensor-parallel-size 16 \
+--nnodes 2 \
+--node-rank 1 \
+--master-addr &lt;NODE_0_IP&gt; \
+--headless</code></pre><p><strong>DEP16</strong></p><p>DEP16 uses TP=1 and distributes the experts across 16 data-parallel ranks, with eight ranks on each node. Use the same data-parallel address and RPC port on both nodes.</p><p>Node 0:</p><pre><div class="code-lang">text</div><code>--host 0.0.0.0 \
+--port 18000 \
+--tensor-parallel-size 1 \
+--data-parallel-size 16 \
+--data-parallel-size-local 8 \
+--data-parallel-address &lt;NODE_0_IP&gt; \
+--data-parallel-rpc-port 29550 \
+--enable-expert-parallel</code></pre><p>Node 1:</p><pre><div class="code-lang">text</div><code>--tensor-parallel-size 1 \
+--data-parallel-size 16 \
+--data-parallel-size-local 8 \
+--data-parallel-start-rank 8 \
+--data-parallel-address &lt;NODE_0_IP&gt; \
+--data-parallel-rpc-port 29550 \
+--enable-expert-parallel \
+--headless</code></pre><h3 id="transformers">Transformers</h3><p>The standalone implementation converts checkpoints into shards for offline generation. With its dependencies installed, run the following commands from the <code>inference/</code> directory:</p><pre><div class="code-lang">bash</div><code>cd inference</code></pre><p>Use separate checkpoints and output directories for FP8 and BF16. Conversion preserves the source dtype, and generation runs offline without an API server.</p><p>&lt;strong&gt;FP8: One H200 Node, 8 GPUs&lt;/strong&gt;</p><p>Convert the FP8 checkpoint once, then launch eight local processes for TP8 / EP8 generation:</p><pre><div class="code-lang">bash</div><code>export STEP5_FP8_CHECKPOINT=&quot;&lt;FP8_CHECKPOINT_DIRECTORY&gt;&quot;
+export STEP5_FP8_OUT=&quot;&lt;FP8_SHARD_OUTPUT_DIRECTORY&gt;&quot;
+
+python3 convert.py \
+  --checkpoint &quot;$STEP5_FP8_CHECKPOINT&quot; \
+  --tp-size 8 --ep-size 8 --check-only
+
+python3 convert.py \
+  --checkpoint &quot;$STEP5_FP8_CHECKPOINT&quot; \
+  --out-dir &quot;$STEP5_FP8_OUT&quot; \
+  --tp-size 8 --ep-size 8
+
+torchrun --standalone --nproc-per-node=8 generate.py \
+  --tp-dir &quot;$STEP5_FP8_OUT/tp8&quot; --ep-size 8 \
+  --prompt &quot;Please introduce tensor parallelism.&quot; \
+  --max-new-tokens 128</code></pre><p>&lt;strong&gt;BF16: Two H200 Nodes, 16 GPUs&lt;/strong&gt;</p><p>For TP16 / EP16 generation across two nodes, first convert the BF16 checkpoint into 16 shards. Make the resulting <code>tp16/</code> and <code>tokenizer_files/</code> directories accessible to both nodes:</p><pre><div class="code-lang">bash</div><code>export STEP5_BF16_CHECKPOINT=&quot;&lt;BF16_CHECKPOINT_DIRECTORY&gt;&quot;
+export STEP5_BF16_OUT=&quot;&lt;BF16_SHARD_OUTPUT_DIRECTORY&gt;&quot;
+
+python3 convert.py \
+  --checkpoint &quot;$STEP5_BF16_CHECKPOINT&quot; \
+  --tp-size 16 --ep-size 16 --check-only
+
+python3 convert.py \
+  --checkpoint &quot;$STEP5_BF16_CHECKPOINT&quot; \
+  --out-dir &quot;$STEP5_BF16_OUT&quot; \
+  --tp-size 16 --ep-size 16</code></pre><p>Then run the command below on each node, using the same <code>MASTER_ADDR</code>, <code>MASTER_PORT</code>, and shard output path. Set <code>NODE_RANK=0</code> on node 0 and <code>NODE_RANK=1</code> on node 1:</p><pre><div class="code-lang">bash</div><code>export STEP5_BF16_OUT=&quot;&lt;BF16_SHARD_OUTPUT_DIRECTORY&gt;&quot;
+export MASTER_ADDR=&quot;&lt;NODE_0_REACHABLE_IP_OR_HOSTNAME&gt;&quot;
+export MASTER_PORT=29500
+export NODE_RANK=0  # Set to 1 on node 1.
+
+torchrun --nnodes=2 --nproc-per-node=8 \
+  --node-rank=&quot;$NODE_RANK&quot; \
+  --master-addr=&quot;$MASTER_ADDR&quot; \
+  --master-port=&quot;$MASTER_PORT&quot; \
+  generate.py \
+  --tp-dir &quot;$STEP5_BF16_OUT/tp16&quot; --ep-size 16 \
+  --prompt &quot;Please introduce tensor parallelism.&quot; \
+  --max-new-tokens 128</code></pre><p>This launches 16 processes across the two nodes, matching the 16-shard checkpoint and <code>--ep-size 16</code>. The two-node launch uses a shared rendezvous address rather than <code>--standalone</code>.</p><p><strong>BF16 validation:</strong> The full BF16 <code>convert.py → generate.py --tp-dir</code> file-shard workflow has not yet been validated end to end. The reference implementation has validated checkpoint names and shapes, BF16 small-model conversion, loading and generation, and full-model streaming-weight inference.</p><h3 id="sglang">SGLang</h3><h4 id="environment-setup-2">Environment Setup</h4><p>Pull the Step 5 Preview SGLang Docker image:</p><pre><div class="code-lang">bash</div><code>docker pull lmsysorg/sglang:step-5-preview</code></pre><p>Then, launch the server using the configuration for your hardware. For more optimized configurations, including MegaMoE, attention data parallelism and HiCache, see the <a href="https://docs.sglang.io/cookbook/autoregressive/StepFun/Step-5-Preview" target="_blank" rel="noopener">SGLang Cookbook for Step 5 Preview</a>.</p><p>&lt;strong&gt;B300: TP4/EP4, 4 GPUs&lt;/strong&gt;</p><p>Uses MegaMoE for the FP8 routed experts.</p><pre><div class="code-lang">bash</div><code>export CUDA_VISIBLE_DEVICES=0,1,2,3
+
+python -m sglang.launch_server \
+  --trust-remote-code \
+  --model-path stepfun-ai/Step-5-Preview \
+  --served-model-name step5 \
+  --tp 4 \
+  --ep-size 4 \
+  --moe-runner-backend flashinfer_trtllm \
+  --moe-a2a-backend megamoe \
+  --attention-backend fa4 \
+  --page-size 64 \
+  --kv-cache-dtype bfloat16 \
+  --mem-fraction-static 0.9 \
+  --swa-full-tokens-ratio 0.03 \
+  --chunked-prefill-size 16384 \
+  --max-running-requests 64 \
+  --cuda-graph-backend-prefill breakable \
+  --flashinfer-allreduce-fusion-backend trtllm \
+  --speculative-algorithm EAGLE \
+  --speculative-num-steps 3 \
+  --speculative-eagle-topk 1 \
+  --speculative-num-draft-tokens 4 \
+  --enable-multi-layer-eagle \
+  --reasoning-parser step5 \
+  --tool-call-parser step5 \
+  --host 0.0.0.0 \
+  --port 30000</code></pre><p>&lt;strong&gt;H200: TP8/EP8, 8 GPUs&lt;/strong&gt;</p><p>For single-node H200 serving with Triton MoE and FA3 attention.</p><pre><div class="code-lang">bash</div><code>export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+
+python -m sglang.launch_server \
+  --trust-remote-code \
+  --model-path stepfun-ai/Step-5-Preview \
+  --served-model-name step5 \
+  --tp 8 \
+  --ep-size 8 \
+  --moe-runner-backend triton \
+  --attention-backend fa3 \
+  --page-size 64 \
+  --kv-cache-dtype bfloat16 \
+  --mem-fraction-static 0.9 \
+  --swa-full-tokens-ratio 0.03 \
+  --chunked-prefill-size 16384 \
+  --max-running-requests 64 \
+  --cuda-graph-backend-prefill breakable \
+  --flashinfer-allreduce-fusion-backend trtllm \
+  --speculative-algorithm EAGLE \
+  --speculative-num-steps 3 \
+  --speculative-eagle-topk 1 \
+  --speculative-num-draft-tokens 4 \
+  --enable-multi-layer-eagle \
+  --reasoning-parser step5 \
+  --tool-call-parser step5 \
+  --host 0.0.0.0 \
+  --port 30000</code></pre><h3 id="send-a-request">Send a Request</h3><p>Once the server is ready, use the base URL for your deployment:</p><div class="table-wrap"><table><thead><tr><th>Serving configuration</th><th>Base URL on the server host</th></tr></thead><tbody><tr><td>vLLM FP8</td><td><code>http://localhost:18000</code></td></tr><tr><td>vLLM BF16</td><td><code>http://localhost:18000</code> (node 0)</td></tr><tr><td>SGLang FP8</td><td><code>http://localhost:30000</code></td></tr></tbody></table></div><p>The example below targets vLLM FP8:</p><pre><div class="code-lang">bash</div><code>curl http://127.0.0.1:18000/v1/chat/completions \
+    --header &#x27;Content-Type: application/json&#x27; \
+    --data &#x27;{
+      &quot;model&quot;: &quot;step5&quot;,
+      &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}],
+      &quot;max_tokens&quot;: 4096,
+      &quot;stream&quot;: true
+    }&#x27;</code></pre><h2 id="resources">Resources</h2><ul><li><a href="https://www.stepfun.com/step-5-preview" target="_blank" rel="noopener">Step 5 Preview Model Page</a> — Model overview, evaluation context, and long-horizon case studies.</li><li><a href="https://platform.stepfun.ai/docs/en/guides/models/step-5-preview" target="_blank" rel="noopener">Documentation</a> — Official documentation and developer guides.</li><li><a href="https://platform.stepfun.ai/" target="_blank" rel="noopener">API Platform</a> — Model access and platform services.</li><li><a href="https://www.stepfun.com/" target="_blank" rel="noopener">StepFun Website</a> — Company information and model announcements.</li></ul><h2 id="license">License</h2><p>This model, including its weights, parameters, configuration, tokenizer, model-specific code, and documentation, is licensed under the StepFun Model License 1.0. The full text of the License is available in the <a href="https://huggingface.co/stepfun-ai/Step-5-Preview/blob/main/LICENSE.txt" target="_blank" rel="noopener">LICENSE.txt</a> file in this repository. The StepFun Model License 1.0 is an Apache-2.0-Style license, with additional attribution and commercial-license conditions specific to model use, modification and distribution.</p><p>Where accompanying materials in this repository, including sample code, datasets, third-party components and other documentation, are separately marked as subject to a different license, such materials are licensed under that license.</p></main></div></body></html>
