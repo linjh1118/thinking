@@ -1,0 +1,93 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://research.nvidia.com/labs/sil/projects/kimodo/">打开官方原文 ↗</a> · <a href="official-project.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Kimodo: Scaling Controllable Human Motion Generation Spatial Intelligence Lab 
+Overview 
+Features 
+Model 
+Contributors 
+Kimodo: Scaling Controllable Human Motion Generation 
+Kimodo is a ki nematic mo tion d iffusi o n model trained on large-scale optical mocap data. It is 
+                controlled through text and constraints to generate high-quality 3D human and robot motions. Code Models Demo Tech Report Your browser does not support the video tag. 
+High-quality human motion data is becoming increasingly important for applications in robotics, simulation, and entertainment. 
+                Recent generative models offer a potential data source, enabling human motion synthesis through intuitive inputs like text prompts 
+                or kinematic constraints on poses. However, the small scale of public mocap datasets has limited the motion quality, control accuracy, 
+                and generalization of these models. In this work, we introduce Kimodo , an expressive and controllable ki nematic mo tion d iffusi o n model trained on 700 hours of optical motion capture data. Our model generates high-quality 
+                motions while being easily controlled through text 
+                and a comprehensive suite of kinematic constraints including full-body keyframes, sparse joint positions/rotations, 2D waypoints, and dense 
+                2D paths. This is enabled through a carefully designed motion representation and two-stage denoiser architecture that decomposes root and body 
+                prediction to minimize motion artifacts while allowing for flexible constraint conditioning. Experiments on the large-scale mocap dataset 
+                justify key design decisions and analyze how the scaling of dataset size and model size affect performance. 
+Key Capabilities of Kimodo ❮ ❯ 
+Text-to-Motion Generation 
+Kimodo can be intuitively controlled through text prompts to generate a wide range of behaviors. 
+Locomotion 
+Compositional Locomotion 
+Object Interactions 
+Dancing 
+Stunts 
+Gestures 
+Stylized Motion 
+Diverse Samples 
+Sequence of Prompts 
+Full Body Constraints 
+The model can be conditioned on kinematic pose constraints on the motion. For example, constraining the full body joint positions at specific frames. 
+                    Constraints are visualized as red skeletons. 
+Sparse Keyframes 
+Inbetweening 
+Environment Interaction 
+End-Effector Constraints 
+Various combinations of hands and feet (end-effectors) can also be constrained through joint positions and rotations. 
+                    In these videos, the red color indicates the constrained joints. 
+Hands + Feet 
+Hands Only 
+Feet Only 
+Root Constraints 
+The global translation of the character can be controlled through 2D waypoints and dense paths. Our smoothed root motion representation 
+                    enables following straight and curved paths closely with motion that has natural pelvis motion. 
+Waypoints (SOMA) 
+Waypoints (G1) 
+Dancing Waypoints 
+Dense Path 
+Mixed Constraints 
+Kimodo Code and Authoring Demo 
+Our code includes a motion authoring demo as a reference implementation for using the model in practice. 
+                    The demo supports local generation on SOMA and G1 skeletons and allows for easy authoring with constraints and prompt sequences.
+                    We provide simple examples of how to use the Python API to generate and export motions for downstream applications. View Code on GitHub ❮ ❯ 
+Application: Data for Robotics 
+Kimodo trained on the G1 skeleton can generate humanoid demonstration data more quickly and easily than teleoperation.
+                    Motions can be exported to formats compatible with ProtoMotions and Mujoco for training physics-based policies. ❮ ❯ 
+As a proof of concept, we have also incorporated Kimodo into the interactive GEAR-SONIC demo . 
+                    In the demo, Kimodo can be used to generate a kinematic motion on the G1 robot skeleton, then GEAR-SONIC tracks the motion in simulation. Your browser does not support the video tag. 
+Kimodo : Kinematic Motion Diffusion 
+
+Kimodo is an explicit motion diffusion model that generates 3D human motion by denoising a sequence of skeleton poses. 
+                        The model operates on a carefully designed motion representation that enables precise control over generated motion while minimizing 
+                        common artifacts, such as floating and foot skating. The motion representation features a smoothed root that 
+                        emulates paths drawn in practical animation tools, along with global joint rotations and positions amenable to sparse keyframe constraints. At each step of the denoising process, the model takes in an embedding of the text prompt, a set of kinematic constraints, and 
+                        the current noisy motion. Constraints are specified using the same motion representation as the input motion, and are used to overwrite 
+                        the corresponding values in the noisy motion. Additionally, a mask indicating which elements are constrained is concatentated to the input motion. Given these inputs, the two-stage transformer denoiser predicts a clean motion that aligns with the text and constraints. 
+                        The two-stage denoiser decomposes root and body motion prediction: the root denoiser first predicts global root motion, which is 
+                        transformed into a local representation as input to the body denoiser. The final output is the concatenation of the two stages. A key component to effectively train Kimodo is the Bones Rigplay dataset , a large studio mocap dataset containing over 700 hours 
+                        of production-quality human motion with corresponding text descriptions. 
+                        This large dataset also enables the construction of a comprehensive benchmark to evaluate various design decisions 
+                        on a wide range of behaviors and scenarios. Please see the paper for more details. 
+Humanoid Motion at NVIDIA 
+Kimodo is a part of a larger research effort at NVIDIA to support humanoid robotics and Physical AI by developing models and tools for 3D humanoid motion. 
+                    It relies on and interoperates with the projects shown below. ARDY 
+Builds on top of Kimodo to enable real-time controllable motion generation for interactive applications. MotionBricks 
+Real-time motion generation framework that specializes in fast and robust motion in-betweening. SOMA Body Model 
+Kimodo is trained on the skeleton of the SOMA parametric body model. BONES-SEED Dataset 
+Some versions of Kimodo are trained on the publicly available BONES-SEED dataset, which contains hundreds of hours of production-quality motion capture data on SOMA and G1. ProtoMotions 
+The generated motions from Kimodo can be exported to the ProtoMotions framework for training physics-based policies for humanoids. SOMA Retargeter 
+The G1 training data for Kimodo was retargeted using the Newton-based SOMA retargeter. GEM 
+In a similar spirit to Kimodo, GEM is a motion diffusion model that reconstructs motion from monocular videos. GEAR SONIC 
+Motions generated by Kimodo can be used as demonstrations for training robot tracking policies such as GEAR-SONIC. 
+Contributors 
+Project Lead: Davis Rempe 
+Model: Mathis Petrovich, Davis Rempe, Ye Yuan, Haotian Zhang, Xue Bin (Jason) Peng, Yifeng Jiang, Tingwu Wang, Umar Iqbal, David Minor, Michael de Ruyter, Jiefeng Li, Chen Tessler 
+Data: Edy Lim, Eugene Jeong, Sam Wu, Ehsan Hassani, Michael Huang, Jin-Bey Yu, Chaeyeon Chung, Lina Song, Olivier Dionne 
+Advising: Sanja Fidler, Simon Yuen, Jan Kautz 
+Acknowledgments 
+We would like to thank John Malaska, Will Telford, Jon Shepard, and Anna Minx for helpful guidance throughout development. 
+                    Thanks to Or Litany, Zhengyi Luo, Yeongho Seol, Jun Saito, and Michael Buttner for their insightful discussions on human motion. 
+                    Thanks to Cyrus Hogg, Lindsey Pavao, Jenna Diamond, Rizwan Khan, Samantha Shinagawa, and Akanksha Shukla for their efforts on 
+                    data acquisition and labeling. Thanks to Kaifeng Zhao and Sunmin Lee for research discussions and testing and feedback of the model and code. 
+Results are for illustrative purposes and actual performance may vary.</pre></body></html>

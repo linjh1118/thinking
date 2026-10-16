@@ -2127,8 +2127,11 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             note_html = note_html[:h1_end] + quality_banner + note_html[h1_end:]
         else:
             note_html = quality_banner + note_html
+    mathjax = ""
+    if "$$" in raw:
+        mathjax = '<script>window.MathJax={tex:{displayMath:[["$$","$$"]]},svg:{fontCache:"global"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>'
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style></head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{note_html}</main></div></body></html>''', encoding="utf-8")
+    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style>{mathjax}</head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{note_html}</main></div></body></html>''', encoding="utf-8")
 
 
 NOTE_CSS = r'''
@@ -2159,17 +2162,27 @@ class SourceTextReader(HTMLParser):
 
 
 def resolve_archived_card_links(source: Path, published: Path, source_url: str) -> None:
-    """Keep byte-exact HF cards while making their rendered links usable.
+    """Keep byte-exact HF/GitHub cards while making rendered links usable.
 
     A saved README loses its repository-relative base. Prefer archived local
     images/files, otherwise point explicitly to the original official repo;
     never invent a local page for a file that was not archived.
     """
     parsed = urlsplit(source_url)
-    if parsed.netloc != "huggingface.co" or "/resolve/" not in parsed.path:
+    if parsed.netloc == "huggingface.co" and "/resolve/" in parsed.path:
+        repo_path, revision_path = parsed.path.split("/resolve/", 1)
+        revision, _, original_path = revision_path.partition("/")
+        file_base = f"https://huggingface.co{repo_path}/blob/{revision}/"
+        asset_base = f"https://huggingface.co{repo_path}/resolve/{revision}/"
+    elif parsed.netloc == "raw.githubusercontent.com":
+        parts = parsed.path.strip("/").split("/", 3)
+        if len(parts) != 4:
+            return
+        owner, repository, revision, original_path = parts
+        file_base = f"https://github.com/{owner}/{repository}/blob/{revision}/"
+        asset_base = f"https://raw.githubusercontent.com/{owner}/{repository}/{revision}/"
+    else:
         return
-    repo_path, revision_path = parsed.path.split("/resolve/", 1)
-    revision, _, original_path = revision_path.partition("/")
     base_dir = str(Path(original_path).parent)
     def rewrite(match):
         attr, quotes, value = match.groups()
@@ -2185,8 +2198,8 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
         if attr.lower() == "src" and image.is_file():
             target = "assets/" + quote(image.name)
         else:
-            operation = "resolve" if attr.lower() == "src" else "blob"
-            target = urljoin(f"https://huggingface.co{repo_path}/{operation}/{revision}/{base_dir}/", raw)
+            original_base = asset_base if attr.lower() == "src" else file_base
+            target = urljoin(original_base + base_dir + "/", raw)
         return attr + "=" + quotes + html.escape(target, quote=True) + quotes
     text = re.sub(r'(href|src)=(["\'])([^"\']*)\2', rewrite, published.read_text(), flags=re.I)
     published.write_text(text, encoding="utf-8")

@@ -1,0 +1,42 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/">打开官方原文 ↗</a> · <a href="official-bolt-blog.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB - NVIDIA Nemotron 
+NVIDIA Nemotron 
+Projects 
+NVIDIA Follow 
+NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB 
+Published: October 15, 2026 Technical Report Figure 1. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB result overview. 
+
+We are releasing NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB , a Mixture-of-Experts hybrid Mamba-Transformer model designed to run everyday agentic tasks locally on NVIDIA RTX/DGX Spark. A compelling local agent experience requires a memory-efficient language model that can run alongside other user applications, and optimizes speed and intelligence per GB of memory used. 
+We designed Nemotron 3.5 Bolt 74B-A9B to fit into 24GB of memory and achieve a decoding speed of at least 80 TPS, while maximizing intelligence. We show that by applying structured compression on the larger Super 3.5 VL model and aggressively quantizing the network to 2 bit, the resulting model is better than similarly sized models that are trained from scratch and quantized to 4 bit. 
+Key Features 
+Nemotron 3.5 Bolt is compressed from Nemotron 3.5 Super VL. Our experiments show that for a given size-limit, it is better to compress a large model to fit in the 24GB memory budget, compared to training a smaller one from scratch. 
+We use Star Elastic to compress the parent 120B-A12B model into our 74B-A9B model. We further do more post-training to recover model capabilities as much as possible. 
+We further compress all experts to 2.0625 bits per element IQ2_XXS, and use quantization-aware distillation (QAD) to recover accuracy. 
+We train LiLiCorr speculative decoding drafter which increases acceptance rate and reduces latency compared to similar approaches like DSpark and DFlash2 to achieve 84 TPS on the AIPerf SPEED-Bench benchmark on RTX Spark, resulting in a model that serves as a well-balanced option on the Pareto frontier of intelligence &amp; speed for small models (Figure 1). 
+We achieve a higher accuracy than leading models with similar memory footprints and speed such as Qwen3.6 35B-A3B and Gemma 4 26B-A4B, across many benchmarks for general agentic capabilities, web browsing, and terminal use (Figure 2). On public leaderboards, Nemotron 3.5 Bolt 74B-A9B 24GB is #1 in PinchBench , #2 in WebArena , and #2 in BrowseComp when compared to models with a similar memory footprint. Figure 2. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB Benchmark accuracy across open MoE models. Comparative models selected based on their ability to fit within 24 GB of memory with 4-bit quantization. Nemotron 3.5 Bolt 74B-A9B 24GB scores are labeled. Higher is better. 
+Compressing Nemotron 3.5 VL Compression 
+The Nemotron 3.5 Bolt 74B-A9B 24GB model is compressed from Nemotron Super 3.5 VL, with 12B active and 120B total parameter to 9B active and 74B total parameters. For compression, we use Star Elastic , a push-button, router-guided architecture search and end-to-end compression framework invented at NVIDIA. 
+Star Elastic uses a budget-conditioned router that selects both routed-expert counts and the MoE intermediate widths across layers. The target expert top-K is fixed at 9, down from 22 in the parent model. The router’s architecture search targets a deployment footprint below 24 GB, with the sizing taking into account further quantization downstream. The architecture is then jointly optimized for compression and accuracy. Results from compression can be found in the plot below. Post-training 
+Following compression of the core LLM architecture, we apply additional post-training stages to regain lost vision functionality. Subsequent alignment leverages end-to-end reinforcement learning within simulated environments to cultivate robust local agent capabilities. A final RL optimization step further refines reasoning paths and tool execution, enhancing task completion speeds while maximizing overall token efficiency. Quantization 
+The compressed network is further quantized with quantization-aware-distillation (QAD). Several papers (see e.g. ParetoQ / Quest ) have shown that larger networks at 1-2 bit quantization are more pareto-optimal than smaller networks in higher bit quantization at the same memory size. We conclude the same. Specifically, the weights of the FC1 and FC2 layers, both routed and shared, which constitute the majority of the model weights are quantized to IQ2_XXS at 2.0625 bits per element. The Mamba linear layers are further quantized to NVFP4, and the lm_head, token embeddings, attention, Latent MoE weights are quantized to Q8_0 format. We only quantize the weights, as the execution of the network on RTX/DGX Spark is mostly weight bandwidth dominated. Results in the plot below. Figure 3. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB results from compression to quantization. The compressed and quantized model is more accurate than models of similar size. 
+Speculative Decoding 
+We provide a LiLiCorr parallel drafter for Nemotron 3.5 Bolt 74B-A9B 24GB to accelerate local inference at low concurrency. LiLiCorr accelerates speculative decoding by jointly scoring token candidates across an entire draft in one lightweight network pass. This improves on DFlash’s independent token selection while avoiding DSpark’s token-by-token neural correction, producing more coherent drafts with little overhead. We train the drafter body and the LiLiCorr head jointly. The resulting drafter has 1.13B parameters, excluding shared target embeddings and the LM head.
+With seven drafted tokens and concurrency 64 in vLLM, the NVFP4 drafter achieves mean acceptance lengths of 4.68 with greedy decoding and 4.25 with probabilistic sampling. 
+Efficient Inference 
+We measure the final model performance with two complementary benchmarks: AIPerf SPEED-Bench-Coding for throughput with controlled ISL, and AA-AgentPerf Local for end-to-end replay duration across realistic heterogeneous agent trajectories. All measurements were done with llama.cpp on Windows 11 ARM x64, with the same RTX Spark hardware (Surface Laptop Ultra, 128GB). 
+Benchmark Metric Nemotron 3.5 Bolt 74B-A9B 24GB IQ2_XXS w. LiLiCorr Qwen3.6 35B-A3B UD-Q4_K_M w. MTP Gemma 4 26B-A4B UD-Q4_K_M w. MTP Qwen3.8 27B UD-Q4_K_M w. DFlash 
+AIPerf SPEED-Bench-Coding TPS 83.99 96.63 100.56 28.26 
+AA AgentPerf Local Replay Duration (s) 600.80 453.97 480.68 1043.28 
+Open Source 
+We release our main 24GB model together with its speculative drafter for inference, and the unquantized BF16 checkpoint for further customization. The quantized checkpoint is optimized for use on RTX Spark with llama.cpp and DGX Spark with vLLM. Checkpoints 
+Nemotron 3.5 Super VL 74B-A9B 24GB — The main model for Local AI 
+Nemotron 3.5 Super VL 74B-A9B BF16 — The BF16 checkpoint before quantization 
+Nemotron 3.5 Super VL 74B-A9B 24GB GGUF — The main model GGUF checkpoint 
+Nemotron 3.5 Super VL 74B-A9B 24GB LiLiCorr — Speculative Drafter checkpoint 
+Nemotron 3.5 Super VL 74B-A9B 24GB LiLiCorr GGUF — Speculative Drafter GGUF checkpoint Technical Report 
+The Nemotron 3.5 Bolt 74B-A9B 24GB Technical Report provides full details on compression, post-training, quantization, inference optimization, evaluation methodology, and benchmark results. Share on Twitter Facebook LinkedIn Previous Next 
+Privacy Policy 
+Your Privacy Choices 
+Terms of Service 
+Accessibility 
+Corporate Policies 
+Contact © 2026 NVIDIA. Powered by Jekyll &amp; AcademicPages , a fork of Minimal Mistakes .</pre></body></html>

@@ -1,0 +1,490 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB - NVIDIA Nemotron</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="NVIDIA Nemotron">
+<meta property="og:title" content="NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB">
+
+
+  <link rel="canonical" href="https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/">
+  <meta property="og:url" content="https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/">
+
+
+
+  <meta property="og:description" content="We are releasing NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB, a Mixture-of-Experts hybrid Mamba-Transformer model designed to run everyday agentic tasks locally on NVIDIA RTX/DGX Spark.">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-10-15T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Organization",
+      "name" : "NVIDIA",
+      "url" : "https://research.nvidia.com/labs/nemotron",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://research.nvidia.com/labs/nemotron/feed.xml" type="application/atom+xml" rel="alternate" title="NVIDIA Nemotron Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://research.nvidia.com/labs/nemotron/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+<base href="https://research.nvidia.com/labs/nemotron/">
+
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://research.nvidia.com/labs/nemotron/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://research.nvidia.com/labs/nemotron/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://research.nvidia.com/labs/nemotron/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://research.nvidia.com/labs/nemotron/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://research.nvidia.com/labs/nemotron/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://research.nvidia.com/labs/nemotron/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://research.nvidia.com/labs/nemotron/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://research.nvidia.com/labs/nemotron/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://research.nvidia.com/labs/nemotron/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://research.nvidia.com/labs/nemotron/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+    <script>
+  let otId = '3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5';
+
+  if (window.location.host !== 'research.nvidia.com') {
+    otId = `${otId}-test`;
+  }
+
+  let script = document.createElement('script');
+
+  script.src = 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js';
+  script.charset = 'UTF-8';
+  script.type = 'text/javascript';
+  script.setAttribute('data-document-language', 'true');
+  script.setAttribute('data-domain-script', otId);
+
+  document.head.appendChild(script);
+</script>
+
+<script type="text/javascript">
+  function OptanonWrapper() {
+    var event = new Event('bannerLoaded');
+    window.dispatchEvent(event);
+  }
+</script>
+<!-- OneTrust Cookies Consent Notice end for nvidia.com -->
+<script type="text/javascript" src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://research.nvidia.com/labs/nemotron/">NVIDIA Nemotron</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://research.nvidia.com/labs/nemotron/projects/">Projects</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://research.nvidia.com/labs/nemotron/images/nvidia-ai.jpg" class="author__avatar" alt="NVIDIA">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">NVIDIA</h3>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+      
+      
+      
+      
+       
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB">
+    <meta itemprop="description" content="We are releasing NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB, a Mixture-of-Experts hybrid Mamba-Transformer model designed to run everyday agentic tasks locally on NVIDIA RTX/DGX Spark.">
+    <meta itemprop="datePublished" content="October 15, 2026">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB
+</h1>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2026-10-15T00:00:00-07:00">October 15, 2026</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <h4 id="technical-report"><a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-Technical-Report.pdf">Technical Report</a></h4>
+
+<div align="center">
+  <img src="images/nvidia-nemotron-3.5/nemotron-3.5-bolt.png" alt="NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB Overview" width="60%" />
+  <br />
+  <em>Figure 1. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB result overview.</em>
+</div>
+
+<p><br /></p>
+
+<p>We are releasing <strong>NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB</strong>, a Mixture-of-Experts hybrid Mamba-Transformer model designed to run everyday agentic tasks locally on NVIDIA RTX/DGX Spark. A compelling local agent experience requires a memory-efficient language model that can run alongside other user applications, and optimizes speed and intelligence per GB of memory used.</p>
+
+<p>We designed Nemotron 3.5 Bolt 74B-A9B to fit into 24GB of memory and achieve a decoding speed of at least 80 TPS, while maximizing intelligence. We show that by applying structured compression on the larger Super 3.5 VL model and aggressively quantizing the network to 2 bit, the resulting model is better than similarly sized models that are trained from scratch and quantized to 4 bit.</p>
+
+<h3 id="key-features">Key Features</h3>
+
+<ol>
+  <li>Nemotron 3.5 Bolt is compressed from Nemotron 3.5 Super VL. Our experiments show that for a given size-limit, it is better to compress a large model to fit in the 24GB memory budget, compared to training a smaller one from scratch.</li>
+  <li>We use <a href="https://arxiv.org/abs/2605.07182">Star Elastic</a> to compress the parent 120B-A12B model into our 74B-A9B model. We further do more post-training to recover model capabilities as much as possible.</li>
+  <li>We further compress all experts to 2.0625 bits per element IQ2_XXS, and use <a href="https://arxiv.org/abs/2601.20088">quantization-aware distillation</a> (QAD) to recover accuracy.</li>
+  <li>We train <a href="https://arxiv.org/abs/2608.20530">LiLiCorr</a> speculative decoding drafter which increases acceptance rate and reduces latency compared to similar approaches like DSpark and DFlash2 to achieve 84 TPS on the AIPerf SPEED-Bench benchmark on RTX Spark, resulting in a model that serves as a well-balanced option on the Pareto frontier of intelligence &amp; speed for small models (Figure 1).</li>
+  <li>We achieve a higher accuracy than leading models with similar memory footprints and speed such as Qwen3.6 35B-A3B and Gemma 4 26B-A4B, across many benchmarks for general agentic capabilities, web browsing, and terminal use (Figure 2). On public leaderboards, Nemotron 3.5 Bolt 74B-A9B 24GB is #1 in <a href="https://pinchbench.com/?slm=true">PinchBench</a>, #2 in <a href="https://leaderboard.steel.dev/leaderboards/webarena/?weights=open&amp;sizes=tiny%2Csmall%2Cmedium">WebArena</a>, and #2 in <a href="https://leaderboard.steel.dev/leaderboards/browsecomp/?weights=open&amp;sizes=tiny%2Csmall%2Cmedium">BrowseComp</a> when compared to models with a similar memory footprint.</li>
+</ol>
+
+<div align="center">
+  <img src="images/nvidia-nemotron-3.5/IQ2_competitor_benchmark_comparison.png" alt="NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB Benchmark accuracy across open MoE models" />
+  <br />
+  <em>Figure 2. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB Benchmark accuracy across open MoE models. Comparative models selected based on their ability to fit within 24 GB of memory with 4-bit quantization. Nemotron 3.5 Bolt 74B-A9B 24GB scores are labeled. Higher is better.</em>
+</div>
+
+<h3 id="compressing-nemotron-35-vl">Compressing Nemotron 3.5 VL</h3>
+
+<h4 id="compression">Compression</h4>
+
+<p>The Nemotron 3.5 Bolt 74B-A9B 24GB model is compressed from Nemotron Super 3.5 VL, with 12B active and 120B total parameter to 9B active and 74B total parameters. For compression, we use <a href="https://arxiv.org/pdf/2605.07182">Star Elastic</a>, a push-button, router-guided architecture search and end-to-end compression framework invented at NVIDIA. 
+Star Elastic uses a budget-conditioned router that selects both routed-expert counts and the MoE intermediate widths across layers. The target expert top-K is fixed at 9, down from 22 in the parent model. The router’s architecture search targets a deployment footprint below 24 GB, with the sizing taking into account further quantization downstream. The architecture is then jointly optimized for compression and accuracy. Results from compression can be found in the plot below.</p>
+
+<h4 id="post-training">Post-training</h4>
+
+<p>Following compression of the core LLM architecture, we apply additional post-training stages to regain lost vision functionality. Subsequent alignment leverages end-to-end reinforcement learning within simulated environments to cultivate robust local agent capabilities. A final RL optimization step further refines reasoning paths and tool execution, enhancing task completion speeds while maximizing overall token efficiency.</p>
+
+<h4 id="quantization">Quantization</h4>
+
+<p>The compressed network is further quantized with <a href="https://arxiv.org/pdf/2601.20088">quantization-aware-distillation</a> (QAD). Several papers (see e.g. <a href="https://arxiv.org/pdf/2502.02631">ParetoQ</a>/<a href="https://arxiv.org/pdf/2502.05003">Quest</a>) have shown that larger networks at 1-2 bit quantization are more pareto-optimal than smaller networks in higher bit quantization at the same memory size. We conclude the same. Specifically, the weights of the FC1 and FC2 layers, both routed and shared, which constitute the majority of the model weights are quantized to <a href="https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes">IQ2_XXS</a> at 2.0625 bits per element. The Mamba linear layers are further quantized to NVFP4, and the lm_head, token embeddings, attention, Latent MoE weights are quantized to <a href="https://github.com/ggml-org/llama.cpp/wiki/Tensor-Encoding-Schemes">Q8_0</a> format. We only quantize the weights, as the execution of the network on RTX/DGX Spark is mostly weight bandwidth dominated. Results in the plot below.</p>
+
+<div align="center">
+  <img src="images/nvidia-nemotron-3.5/accuracy_deployment.png" alt="Nemotron 3.5 Bolt accuracy across deployment sizes" />
+  <br />
+  <em>Figure 3. NVIDIA Nemotron 3.5 Bolt 74B-A9B 24GB results from compression to quantization. The compressed and quantized model is more accurate than models of similar size.</em>
+</div>
+
+<h1 id="speculative-decoding">Speculative Decoding</h1>
+
+<p>We provide a LiLiCorr parallel drafter for Nemotron 3.5 Bolt 74B-A9B 24GB to accelerate local inference at low concurrency. LiLiCorr accelerates speculative decoding by jointly scoring token candidates across an entire draft in one lightweight network pass. This improves on DFlash’s independent token selection while avoiding DSpark’s token-by-token neural correction, producing more coherent drafts with little overhead. We train the drafter body and the LiLiCorr head jointly. The resulting drafter has 1.13B parameters, excluding shared target embeddings and the LM head.
+With seven drafted tokens and concurrency 64 in vLLM, the NVFP4 drafter achieves mean acceptance lengths of 4.68 with greedy decoding and 4.25 with probabilistic sampling.</p>
+
+<h3 id="efficient-inference">Efficient Inference</h3>
+
+<p>We measure the final model performance with two complementary benchmarks: <a href="https://docs.nvidia.com/aiperf/tutorials/datasets-inputs/profile-with-speed-bench-dataset">AIPerf SPEED-Bench-Coding</a> for throughput with controlled ISL, and <a href="https://github.com/ArtificialAnalysis/aa-agentperf-local">AA-AgentPerf Local</a> for end-to-end replay duration across realistic heterogeneous agent trajectories. All measurements were done with llama.cpp on Windows 11 ARM x64, with the same RTX Spark hardware (Surface Laptop Ultra, 128GB).</p>
+
+<table style="width: 90%; margin: 0 auto; font-size: 0.8em;">
+  <thead>
+    <tr>
+      <th>Benchmark</th>
+      <th>Metric</th>
+      <th>Nemotron 3.5 Bolt 74B-A9B 24GB<br />IQ2_XXS w. LiLiCorr</th>
+      <th>Qwen3.6 35B-A3B<br />UD-Q4_K_M w. MTP</th>
+      <th>Gemma 4 26B-A4B<br />UD-Q4_K_M w. MTP</th>
+      <th>Qwen3.8 27B<br />UD-Q4_K_M w. DFlash</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AIPerf SPEED-Bench-Coding</td>
+      <td>TPS</td>
+      <td align="right">83.99</td>
+      <td align="right">96.63</td>
+      <td align="right">100.56</td>
+      <td align="right">28.26</td>
+    </tr>
+    <tr>
+      <td>AA AgentPerf Local</td>
+      <td>Replay Duration (s)</td>
+      <td align="right">600.80</td>
+      <td align="right">453.97</td>
+      <td align="right">480.68</td>
+      <td align="right">1043.28</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="open-source">Open Source</h3>
+
+<p>We release our main 24GB model together with its speculative drafter for inference, and the unquantized BF16 checkpoint for further customization. The quantized checkpoint is optimized for use on RTX Spark with llama.cpp and DGX Spark with vLLM.</p>
+
+<h4 id="checkpoints">Checkpoints</h4>
+
+<ul>
+  <li><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB"><strong>Nemotron 3.5 Super VL 74B-A9B 24GB</strong></a> — The main model for Local AI</li>
+  <li><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-BF16"><strong>Nemotron 3.5 Super VL 74B-A9B BF16</strong></a> — The BF16 checkpoint before quantization</li>
+  <li><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF"><strong>Nemotron 3.5 Super VL 74B-A9B 24GB GGUF</strong></a> — The main model GGUF checkpoint</li>
+  <li><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr"><strong>Nemotron 3.5 Super VL 74B-A9B 24GB LiLiCorr</strong></a> — Speculative Drafter checkpoint</li>
+  <li><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr-GGUF"><strong>Nemotron 3.5 Super VL 74B-A9B 24GB LiLiCorr GGUF</strong></a> — Speculative Drafter GGUF checkpoint</li>
+</ul>
+
+<h4 id="technical-report-1">Technical Report</h4>
+
+<p>The <a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-Technical-Report.pdf"><strong>Nemotron 3.5 Bolt 74B-A9B 24GB Technical Report</strong></a> provides full details on compression, post-training, quantization, inference optimization, evaluation methodology, and benchmark results.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/" class="btn btn--twitter" title="Share on Twitter"><i class="fab fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/" class="btn btn--facebook" title="Share on Facebook"><i class="fab fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Bolt-24GB/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://research.nvidia.com/labs/nemotron/Nemotron-3.5-Super-and-Lightning/" class="pagination--pager" title="NVIDIA Nemotron 3.5 Super and Lightning
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<!--<a href="/sitemap/">Sitemap</a> -->
+<div class="page__footer-legal">
+  <ul>
+    <li><a href="https://www.nvidia.com/en-us/about-nvidia/privacy-policy/">Privacy Policy</a></li>
+    <li><a href="https://www.nvidia.com/en-us/about-nvidia/privacy-center/">Your Privacy Choices</a></li>
+    <li><a href="https://www.nvidia.com/en-us/about-nvidia/terms-of-service/">Terms of Service</a></li>
+    <li><a href="https://www.nvidia.com/en-us/about-nvidia/accessibility/">Accessibility</a></li>
+    <li><a href="https://www.nvidia.com/en-us/about-nvidia/company-policies/">Corporate Policies</a></li>
+    <li><a href="https://www.nvidia.com/en-us/contact/">Contact</a></li>
+  </ul>
+</div>
+<!-- end custom footer snippets -->
+
+        
+<!--
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+    
+    <li><a href="https://research.nvidia.com/labs/nemotron/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+-->
+<div class="page__footer-copyright">&copy; 2026 NVIDIA. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://research.nvidia.com/labs/nemotron/assets/js/main.min.js"></script>
+
+
+
+
+
+  </body>
+</html>
+

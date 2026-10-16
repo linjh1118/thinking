@@ -14,6 +14,33 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_note_display_math_loads_renderer_only_when_needed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'Note.md'
+            destination = root / 'Note.html'
+            source.write_text('# Note\n\n$$P(t)=1.$$\n')
+            atlas.render_markdown(source, destination, {})
+            self.assertIn('tex-svg.js', destination.read_text())
+            self.assertIn('$$P(t)=1.$$', destination.read_text())
+            source.write_text('# Note\n\nNo formula.\n')
+            atlas.render_markdown(source, destination, {})
+            self.assertNotIn('tex-svg.js', destination.read_text())
+
+    def test_github_archive_resolves_remote_links_without_changing_raw(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'official-repository.md'
+            source.write_text('Original README')
+            published = root / 'official-repository.md.html'
+            published.write_text('<img src="assets/demo.png"><a href="CHANGELOG.md.html">Changes</a><a href="LICENSE">License</a>')
+            atlas.resolve_archived_card_links(source, published, 'https://raw.githubusercontent.com/nv-tlabs/kimodo/main/README.md')
+            rendered = published.read_text()
+            self.assertIn('https://raw.githubusercontent.com/nv-tlabs/kimodo/main/assets/demo.png', rendered)
+            self.assertIn('https://github.com/nv-tlabs/kimodo/blob/main/CHANGELOG.md', rendered)
+            self.assertIn('https://github.com/nv-tlabs/kimodo/blob/main/LICENSE', rendered)
+            self.assertEqual(source.read_text(), 'Original README')
+
     def test_model_local_source_wikilink_resolves_to_rendered_card(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); (root/'src').mkdir()

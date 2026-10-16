@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nemotron 3.5 · Super VL / Bolt — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-nemotron-3-5-super-vl-bolt">Overview</a><a class="active" href="Nemotron-3.5-Super-Bolt.html">渲染笔记</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FNVIDIA_Nemotron%2F261015_Nemotron_3_5_Super_Bolt%2FNemotron-3.5-Super-Bolt" style="text-decoration: none;">Nemotron 3.5 · Super VL / Bolt · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16" target="_blank" style="text-decoration: none;">🤗 HF Model Card</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">2026-10-15 发布阶段 · BF16/量化/drafter 合并</span>
+    <div class="zh-title">结构压缩、能力恢复与部署预算是一条链</div>
+    <h1>Nemotron 3.5 · Super VL / Bolt <span>Architecture · Evidence · Agent Training</span></h1>
+    <div class="authors">官方一手材料研读 · ω BrainHao · 2026-10-16</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">120/12B</div><div class="sub">Super总/active</div></div>
+    <div class="score-box"><div class="num">74/9B</div><div class="sub">Bolt总/active</div></div>
+    <div class="score-box"><div class="num">1M</div><div class="sub">Super共享窗口</div></div>
+    <div class="score-box"><div class="num">24GB</div><div class="sub">Bolt版本设计目标</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与定位：看清family与证据</h2></div>
+  <p class="body">Super是多模态父模型，Bolt是74B/A9B结构压缩派生；本次合并为一个3.5发布阶段，不把文件格式另算新正代。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">总参数与激活不同</div>
+      <p>Super120B/12B、Bolt74B/9B；全部权重仍要存储，不能按active配显存。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">不是全模型2bit</div>
+      <p>专家FC1/FC2 IQ2_XXS2.0625bit；Mamba线性NVFP4，其他指定模块Q8_0。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">Super训练链</div>
+      <p>蒸馏、Indic CPT、1M扩展、SWE中训、视觉联合SFT、RL与教师蒸馏。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Star Elastic压结构</div>
+      <p>按部署预算搜索专家数量与中间宽度；top-k22→9，120B→74B。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">恢复视觉与Agent</div>
+      <p>压缩后恢复视觉、模拟环境RL，再优化推理路径和工具token效率。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/super-accuracy.png" alt="官方Super能力总览，非本地复测">
+    <div class="fig-cap">官方Super能力总览，非本地复测</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与边界：公开什么、缺什么</h2></div>
+  <p class="body">读取7份原卡与Bolt博客，保留两份Tech Report链接。未完成报告全文/消融精读，达不到GLM/Kimi完整报告深度。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/bolt-accuracy.png" alt="官方Bolt24GB能力图，保留其筛选口径">
+    <div class="fig-cap">官方Bolt24GB能力图，保留其筛选口径</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">量化差异按任务验收</div>
+      <p>Super WebVoyager下降11.41pp，而Terminal-Bench2.1略高；不宣称全无损。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">LiLiCorr单独记账</div>
+    <p>1.13B drafter不含共享embedding/head；接受长度与llama.cpp速度不是同一实验。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">结构压缩路径：不是量化收益公式</div>$$P_{\mathrm{Super}}=120\mathrm{B}\ \rightarrow\ P_{\mathrm{Bolt}}=74\mathrm{B}$$</div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">QAD混合量化</div>
+      <p>不同模块精度不同；BF16参考、NVFP4/24GB部署与GGUF不拆代。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">独立比较系统成本</div>
+      <p>固定harness、effort、parser、硬件；记录终态、重复工具、token、峰值内存。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>结果与判断：保留比较口径</h2></div>
+  <p class="body">下面保留量化退步与变强的反例；不同checkpoint、harness与预算不可混成总排行榜。</p>
+
+  <table class="rtable"><tr><th class="left">指标 / 规格</th><th>本模型</th><th>边界 / 对照</th></tr><tr class="cat"><td colspan="3">结构 / 结果</td></tr><tr><td class="left">Super SWE-V/BF16</td><td>71.10</td><td>NVFP4:71.07</td></tr><tr><td class="left">Super TB2.1/BF16</td><td>60.67</td><td>NVFP4:62.78</td></tr><tr><td class="left">Super Browse/BF16</td><td>78.00</td><td>NVFP4:77.50</td></tr><tr><td class="left">Super WebVoyager</td><td>77.72</td><td>NVFP4:66.31</td></tr><tr class="cat"><td colspan="3">评测与证据</td></tr><tr><td class="left">Bolt TB2.1/24GB</td><td>50.98</td><td>BF16:53.93</td></tr><tr><td class="left">Bolt GPQA/24GB</td><td>86.43</td><td>BF16:88.83</td></tr><tr><td class="left">Bolt MCP/24GB</td><td>52.20</td><td>BF16:55.60</td></tr><tr><td class="left">Bolt Browse/24GB</td><td>66.75</td><td>BF16:70.00</td></tr><tr class="cat"><td colspan="3">比较口径</td></tr><tr><td class="left">Bolt TPS</td><td>83.99</td><td>RTX Spark</td></tr><tr><td class="left">Qwen3.6 TPS</td><td>96.63</td><td>同博客对照</td></tr><tr><td class="left">Bolt replay秒</td><td>600.80</td><td>越低越好</td></tr><tr><td class="left">Qwen3.6 replay秒</td><td>453.97</td><td>同博客对照</td></tr></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">84TPS并非最快</div>
+      <p>同博客Qwen3.6与Gemma4约97/101TPS更快；质量—成本需一起看。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">24GB并非BF16大小，也非任意长上下文总显存保证；drafter、KV、视觉和运行时另计。</p>
+  <table class="ood-table"><tr><th>维度</th><th>官方规格</th><th>边界</th></tr><tr><td>许可</td><td>OpenMDW1.1</td><td>非Apache2</td></tr><tr><td>Super</td><td>1M共享窗口</td><td>输入输出合计</td></tr><tr><td>Bolt</td><td>256K</td><td>KV另计</td></tr><tr><td>格式</td><td>BF16/低比特</td><td>同family</td></tr></table>
+
+  <div class="trick-box">
+    <div class="trick-title">报告链接已补齐</div>
+    <p>Super/Lightning与Bolt两份报告；只列官方PDF，不下载、不冒充全文精读。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">复现边界</div>
+      <div class="adelta">部分开放</div>
+      <div class="adesc">部分视觉scaffold待开源。</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">训练启发</div>
+      <div class="adelta">压缩后RL</div>
+      <div class="adesc">比较长链错误放大。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">代际与日期</div>
+    <p>一个3.5发布阶段，Super父模型与Bolt压缩派生合读。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">架构与成本</div>
+    <p>压缩结构、恢复能力、量化部署不能混成一步。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">评测与反例</div>
+    <p>保留WebVoyager退步、同内存对照更快项。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">证据与下一步</div>
+    <p>原卡深入、完整报告未精读；两份链接可继续读。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>
