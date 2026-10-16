@@ -55,6 +55,7 @@ OFFICIAL_PAGES = {
 # and excludes provider onboarding, API changes, and repeated family SKUs.
 ADDITIONAL_PAGES = {
     'meta-current': ('meta', 'https://research.meta.ai/'),
+    'meta-developer': ('meta', 'https://dev.meta.ai/resources/blog'),
     'zhipu-autoclaw': ('zhipu', 'https://autoclaw.z.ai/blog/'),
     'qwen-model-studio': ('qwen', 'https://help.aliyun.com/zh/model-studio/newly-released-models'),
     'kimi-code-models': ('kimi', 'https://www.kimi.ai/help/kimi-code/models'),
@@ -174,11 +175,13 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     jobs = []
     for team in state['checkedTeams']:
-        org = team['hfOrg']
-        query = urllib.parse.urlencode({'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 1000})
-        jobs.append((org, 'https://huggingface.co/api/models?' + query, '.json', 'inventory', team['team']))
-        jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org, 'limit': 100}),
-                     '.json', 'collections', team['team']))
+        # Teams may move new model families to a second verified publisher.
+        # Keep the old account too: replacing it would lose historical coverage.
+        for org in dict.fromkeys([team['hfOrg'], *team.get('hfAdditionalOrgs', [])]):
+            query = urllib.parse.urlencode({'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 1000})
+            jobs.append((org, 'https://huggingface.co/api/models?' + query, '.json', 'inventory', team['team']))
+            jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org, 'limit': 100}),
+                         '.json', 'collections', team['team']))
         jobs.append(('blog-' + team['team'], OFFICIAL_PAGES[team['team']], '.html', 'page', team['team']))
     for key, (team, url) in ADDITIONAL_PAGES.items():
         jobs.append(('blog-' + key, url, '.html', 'page', team))

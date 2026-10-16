@@ -3,6 +3,8 @@
 Run: python3 -m unittest discover -s scripts -p test_atlas_release_watch.py
 """
 import json
+import contextlib
+import io
 import tempfile
 import unittest
 from pathlib import Path
@@ -48,6 +50,22 @@ class InventoryTests(unittest.TestCase):
     def test_visible_text_ignores_scripts(self):
         parser=watch.VisibleText(); parser.feed('<h1>Release</h1><script>fake model</script><p>2026-10-15</p>')
         self.assertEqual(parser.parts,['Release','2026-10-15'])
+
+    def test_primary_and_additional_publishers_are_checked_once(self):
+        with tempfile.TemporaryDirectory() as directory:
+            topic=Path(directory)
+            (topic/'src').mkdir()
+            (topic/'src/release_watch.json').write_text(json.dumps({'checkedTeams':[
+                {'team':'meta','hfOrg':'meta-llama','hfAdditionalOrgs':['meta-models','meta-llama','meta-models']}
+            ]}))
+            def inspect(job, *unused):
+                return {'key':job[0], 'team':job[4], 'kind':job[3], 'status':'fetched'}
+            with patch.object(watch,'TOPIC',topic), patch.object(watch,'ADDITIONAL_PAGES',{}), \
+                 patch.object(watch,'fetch_job',side_effect=inspect) as fetch, \
+                 patch('sys.argv',['check_base_model_releases.py','--previous',str(topic)]), contextlib.redirect_stdout(io.StringIO()):
+                watch.main()
+            keys=[call.args[0][0] for call in fetch.call_args_list]
+            self.assertCountEqual(keys,['meta-llama','collections-meta-llama','meta-models','collections-meta-models','blog-meta'])
 
 
 if __name__=='__main__':unittest.main()
