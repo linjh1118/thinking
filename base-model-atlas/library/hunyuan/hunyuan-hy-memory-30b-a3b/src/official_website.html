@@ -1,0 +1,66 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://memory.hunyuan.tencent.com">打开官方原文 ↗</a> · <a href="official_website.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Hy-Memory 2.0 — 模型、框架、应用三层全开源 | 腾讯混元 三层开源 2.0 新特性 框架评测 模型 MemHub 业务落地 开始使用 1.0 版 → GitHub Tencent Hunyuan · 开源发布 · 2026.10.16 
+Hy-Memory 2.0 模型、框架、应用三层全开源 
+让 AI 记得你说过什么、事情如何发展、工作做到哪里，以及代码为什么这样改。三层能力既能独立使用，也能组合成一套完整的 Memory 解决方案，打造私人记忆管家。 GitHub · Hy-Memory HuggingFace 论文 3 类 记忆场景 聊天 · 工作 · 代码 3 层 全部开源 模型 · 框架 · 应用 4 个 Benchmark 开源框架第一 覆盖三类记忆场景 10 种 AI 工具共享记忆 MemHub 一处管理 MODEL Hy-Memory-30B-A3B 四套记忆系统平均 55.49，超过 Opus5 ENGINE Hy-Memory 三类记忆、4 个 benchmark 开源框架第一 APP MemHub 10 种 AI 工具，共享一份个人记忆 Hy-Memory 2.0 · Open-Source Memory Stack 
+三层开源，各有侧重，彼此配合 01 MODEL 面向记忆系统开发者与研究者 READ &amp; WRITE Hy-Memory-30B-A3B 专为记忆训练，负责记忆的读写 A3B 激活规模 · 四套记忆系统验证 · 可迁移 记 02 ENGINE 面向 Agent 开发者 MANAGE Hy-Memory 管理记忆的存储、更新与召回，通过 SDK 接入 聊天记忆 · 工作记忆 · 代码记忆 管 03 APP 面向 AI 工具用户 USE MemHub 把记忆带到你正在使用的 AI 工具里 历史导入 · 持续同步 · 插件化召回 用 USE EACH LAYER ALONE, OR COMBINE THEM 三层可以独立使用，也可以组合成完整的 Agent Memory 方案 What&#x27;s New · From 1.0 to 2.0 
+聊天记忆升级，新增工作记忆与代码记忆 
+Hy-Memory 是业界首个提出工作记忆与代码记忆的记忆框架。 CHAT MEMORY 升级 聊天记忆 从零散事实，升级为完整的事件脉络 
+跨时间、跨对话的内容被关联整理：以事件为主体梳理时间、地点、人物等关键要素，并关联事件的后续发展。需要多条线索才能回答时，先合并重复信息、剥离前后冲突，再把清晰的记忆交给模型。 WORKING MEMORY 新增 工作记忆 记住任务做到哪里、经验何时适用 
+多维度记忆一项任务，并按时间规整所有更新：任务目标、已确定的做法和阶段结果，以及可复用的经验与适用条件。复用经验前先判断当前是否满足适用条件，只在符合时精准采用。 CODING MEMORY 新增 代码记忆 记住代码为什么这样改 
+针对长程任务，每次继续前先判断当前在处理哪一件事，再找回相关决定、仍然适用的经验和历史工作过程，精准获取最相关的记忆辅助任务执行。 1.0 2026.05 记忆场景 聊天记忆 核心机制 分层结构 · 演化链
+双路径机制 开源范围 未开源 发布形态 论文 · 产品 2.0 2026.10 记忆场景 聊天记忆升级
+新增工作与代码记忆 核心机制 延续 1.0 基础
+Session · Tags · Graph 开源范围 模型 · 引擎 · 应用 发布形态 模型 · SDK · MemHub 
+注 · 1.0 底层设计见论文 arXiv 2606.09483 ，论文中以 DCPM 命名。 Engine · Hy-Memory Framework 
+三类记忆场景占用很少存储空间，效果达到开源框架第一 
+在聊天、工作、代码三类场景的 4 个 benchmark 上，对比 Mem0、MemOS、EverOS、OpenViking、RepoMemory 和 Simple RAG，Hy-Memory 均为开源框架第一。更重要的是，在三个场景中 Hy-Memory 占用的存储空间均很小。 #1 LoCoMo 72.6% 聊天记忆 · 准确率 #1 MemoryArena 55.31% 工作记忆 · 平均分 #1 CodeMemoryBench 64.2% / 35.6% 代码记忆 · 问答 / 解决率 #1 SWE-ContextBench 28.3% 代码记忆 · 解决率 工作记忆 · Working 代码记忆 · Coding 聊天记忆 · Chat WORKING MEMORY 
+MemoryArena 
+在 MemoryArena 的旅行规划与组合购物任务上，平均分为 55.31%，领先次优的 EverOS 10.2 个百分点。 MEMORYARENA · 平均分 55.31 % 旅行规划与组合购物 · 开源框架第一 GROUP TRAVEL PLANNER · SPS 59.04 % 旅行规划 · 270 题 BUNDLED SHOPPING · PS 51.57 % 组合购物 · 149 题 
+注 · 平均分 = Group Travel Planner SPS 与 Bundled Shopping PS 的均值。 Working：效果与 Memory 存储占用 高效果、低占用 高效果、高占用 低效果、低占用 低效果、高占用 30 35 40 45 50 55 60 5 % 10 % 20 % 50 % 100 % 效 果 Memory 存储占用 Simple RAG† 41.22% Mem0 38.78% MemOS 37.30% EverOS 31.90% Hy-Memory 55.31% 存储占用 6.06% 
+横轴为 Memory 存储占用（Bank tokens ÷ Input tokens），纵轴为该场景效果。† Simple RAG 为原文切窗、无 LLM 抽取，存储占用不可与抽取型记忆直接横比。 Model · Hy-Memory-30B-A3B 
+约 3B 激活参数，平均分超过 Opus5 
+专为记忆场景训练，具备很强的记忆更新、管理能力。接入 Hy-Memory、Mem0、MemOS、EverMemOS 四套记忆系统测试，Hy-Memory-30B-A3B 得分 55.49，高于 Opus5 的 54.62、DeepSeek V4.1 Flash 的 53.64，以及 Qwen3-30B-A3B 的 44.37。 OVERALL · 四套系统总均分 55.49 参评 7 个模型中排名第一，高于闭源 Opus5（54.62） TRAINING GAIN · 相比 Base + 7.8 分 记忆专项训练：HY3-A3B Base 47.66 → 55.49 GENERALIZATION · 四套均领先 Hy-Memory 60.55 Mem0 54.02 MemOS 50.51 EverMemOS 56.89 在每一套记忆系统上都是第一；EverMemOS 训练未见，同样领先 OVERALL · 四套系统总均分 Hy-Memory-30B-A3B 记忆专用 55.49 Opus5 闭源 54.62 DeepSeek V4.1 Flash 开源 53.64 HY3 通用 51.63 Qwen3.6-35B-A3B 开源 50.37 HY3-A3B Base 基座 47.66 Qwen3-30B-A3B 同尺寸开源 44.37 BY MEMORY SYSTEM · 分系统平均分 Hy-Memory-30B-A3B Opus5 DeepSeek V4.1 Flash Qwen3-30B-A3B 核心 4 个 全部 7 个 60.55 Hy-Memory-30B-A3B · 60.55 60.53 Opus5 · 60.53 60.20 DeepSeek V4.1 Flash · 60.20 45.67 Qwen3-30B-A3B · 45.67 Hy-Memory 最佳组合 54.02 Hy-Memory-30B-A3B · 54.02 53.43 Opus5 · 53.43 49.73 DeepSeek V4.1 Flash · 49.73 39.80 Qwen3-30B-A3B · 39.80 Mem0 50.51 Hy-Memory-30B-A3B · 50.51 50.50 Opus5 · 50.50 49.17 DeepSeek V4.1 Flash · 49.17 45.44 Qwen3-30B-A3B · 45.44 MemOS 56.89 Hy-Memory-30B-A3B · 56.89 54.04 Opus5 · 54.04 55.47 DeepSeek V4.1 Flash · 55.47 46.57 Qwen3-30B-A3B · 46.57 EverMemOS 训练未见 BY METRIC · 六项指标明细 四套系统平均 Hy-Memory（最佳组合） Mem0 MemOS EverMemOS（训练未见） 
+模型 LoCoMo LongMemEval PersonaMem v2 Travel Shopping CMB 均分 
+Hy-Memory-30B-A3B 记忆专用 67.27 77.75 52.09 48.22 19.90 67.74 55.49 
+Opus5 闭源 70.23 78.87 51.58 40.59 21.11 65.36 54.62 
+DeepSeek V4.1 Flash 开源 66.32 77.77 49.75 41.65 20.00 66.36 53.64 
+HY3 通用 60.59 78.75 48.88 40.32 19.30 61.95 51.63 
+Qwen3.6-35B-A3B 开源 61.35 77.96 48.72 37.45 18.58 58.16 50.37 
+HY3-A3B Base 基座 59.83 72.00 48.41 34.27 18.47 52.95 47.66 
+Qwen3-30B-A3B 同尺寸开源 59.35 67.75 44.69 33.16 17.64 43.64 44.37 
+单位 %。色块越深表示该列得分越高，蓝色加粗为该列最高分。均分为六项指标等权平均；“四套系统平均”为四套系统逐项平均。 
+注 · 六项为 LoCoMo、LongMemEval、PersonaMem v2、Travel、Shopping、CMB，等权平均，数值越高越好。Hy-Memory、Mem0、MemOS 用于 RL 训练，EverMemOS 训练未见，用于检验泛化。 App · MemHub 
+All your agents. One Memory. 
+10 种 AI 工具，共享一份个人记忆。在 Cursor 中交代过的偏好，Codex 并不知道；在 OpenCode 中定下的规范，到了 WorkBuddy 又要重新说明。MemHub 让记忆成为你的长期资产，不被任何单一工具限定——每次开口，都从懂你开始。 章节 
+0:00 开场 
+0:15 一个记忆中枢 
+0:30 一键接入 · 持续同步 
+1:00 跨工具召回偏好 
+1:15 后台传输记忆 
+1:30 手动添加记忆 
+1:45 CLI 命令行 
+2:00 Persistent. Connected. 01 历史导入 
+在 MemHub 中授权关联应用，即可导入各工具的历史会话，通过内置的 Hy-Memory SDK 沉淀为本地记忆，不用从零开始。 02 持续同步 
+此后各工具中产生的新会话都可实时同步，汇入同一份记忆；任一工具里产生的新记忆，其他工具随即可见。 03 插件化召回 
+以插件形式一键接入各个 AI 工具。在任何已关联工具内发起任务，MemHub 都会管理和使用相关记忆，作为上下文补充。 已支持 10 种 AI 工具 涵盖商业编程工具与开源 Agent CLI 与 Mac App 均可使用 WorkBuddy Cursor Codex Claude Code OpenCode OpenClaw Qwen Code Pi Hermes DeepSeek Harness 获取 MemHub 
+使用 MemHub，让“ 对话常新，默契常在 ” In Production · Hy-Memory at Tencent 
+已接入腾讯多个业务，专项评测表现出色 
+Hy-Memory 已接入腾讯自选股、iWiki、腾讯新闻等多个业务，显著提升记忆召回与回答的准确性，让 AI 助手更好地理解并延续用户的长期偏好。 腾讯自选股 · AI 助手 多跳召回提升 40 个百分点 
+需要跨天、跨会话记住用户交代的关注方向、分析习惯和规则，例如“这周只盯有色和半导体”“分析先报 PE 历史百分位”。用户调整关注方向后，旧方向归档但可追溯，助手不会再把已放弃的板块推回来。 原有记忆方案 接入 Hy-Memory +15.3 相对提升 23.8% 64.3 79.6 综合得分 +17 pt 64 81 整体通过率 % +40 pt 50 90 多跳召回 % +16 pt 67 83 冲突消解 % 
+注 · A 股投研记忆专项评测。记忆模型为 DeepSeek V4 Flash，基线为原有记忆方案。综合得分 64.3 → 79.6，相对提升 23.8%。 iWiki · CTX 记忆插件 只用记忆，回答正确率高于完整原文 
+基于 Hy-Memory 推出 CTX 记忆插件，让多个 Agent 共享同一份长期记忆。251 道问题，同一模型、同一套提示词。 相对提升 +48.6 % 全部原始对话 24.7 仅 Hy-Memory 记忆 36.7 腾讯新闻 · 智声 / 新闻妹 长期偏好理解评测平均 91.68 分 
+AI 能记住用户关注的话题和偏好的称呼，开场时主动提及用户关心的内容，多轮对话中延续上次聊过的话题。 91.68 平均得分（满分 100） 87.8 % 案例得分在 90 分以上 
+智声场景离线评测：10 位用户的 41 个复杂对话案例。 已在以下领域完成接入与评测： 金融 资讯 知识管理 办公 Agent 社交娱乐 游戏 Hy-Memory 2.0 · Get Started 
+使用方式 
+三种方式，从应用、框架或模型开始 APP 01 想快速上手，从 MemHub 开始 
+一键同步多个 AI 应用的会话，经 Hy-Memory 链路沉淀后，汇聚为一份完整的个人记忆。之后在每个 App 内发起任务，都会自动召回相关记忆，为回答补充 Context 信息。 GitHub · MemHub 01 GitHub · MemHub FRAMEWORK 02 想给自己的 Agent 加上记忆，接入 Hy-Memory 框架 
+通过 SDK，就能管理跨会话的信息、任务进度和经验。 GitHub · Hy-Memory 02 GitHub · Hy-Memory MODEL 03 想给记忆系统换上专用模型，获取 Hy-Memory-30B-A3B 
+它专为记忆读写训练，可以和 Hy-Memory 配合使用，也可以接入 Mem0、MemOS 等其他记忆系统。 HuggingFace 03 HuggingFace Hy-Memory 2.0 
+让 Agent 在更长的任务、更多的工具之间保持连续。 访问 Hy-Memory 1.0 开源与使用地址 
+框架 · Hy-Memory github.com/Tencent-Hunyuan/Hy-Memory ↗ 
+应用 · MemHub github.com/Tencent-Hunyuan/MemHub ↗ 
+模型 · Hy-Memory-30B-A3B huggingface.co/tencent/Hy-Memory-30B-A3B ↗ 
+论文 · Hy-Memory 2.0 arxiv.org/pdf/2610.22196 ↗ 
+论文 · Hy-Memory 1.0（DCPM） arXiv 2606.09483 ↗ 
+评测口径 · 框架对照：Mem0、MemOS、EverOS、OpenViking、RepoMemory、Simple RAG；Memory LLM = DeepSeek V4.1 Flash，answer / judge = GPT-5.6-sol。Chat：LoCoMo 1,527 道非 adversarial 问题；Working：MemoryArena（Group Travel Planner SPS + Bundled Shopping PS 均值）；Coding 综合：CMB QA + Code + SWE 均值。存储占用 = Bank tokens ÷ Input tokens，Bank 只计生成记忆，不含原始对话。 
+模型评测 · 四套记忆系统 × 六项指标（LoCoMo、LongMemEval、PersonaMem v2、Travel、Shopping、CMB）等权平均；Hy-Memory、Mem0、MemOS 用于 RL 训练，EverMemOS 为训练未见的 OOD 系统。业务数据来自腾讯自选股、iWiki、腾讯新闻内部专项评测。 
+© 2026 Tencent Hunyuan. All rights reserved.</pre></body></html>

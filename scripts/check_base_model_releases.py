@@ -60,6 +60,7 @@ ADDITIONAL_PAGES = {
     'qwen-model-studio': ('qwen', 'https://help.aliyun.com/zh/model-studio/newly-released-models'),
     'kimi-code-models': ('kimi', 'https://www.kimi.ai/help/kimi-code/models'),
     'hunyuan-models': ('hunyuan', 'https://hunyuan.tencent.com/model/hy-model'),
+    'hunyuan-memory': ('hunyuan', 'https://memory.hunyuan.tencent.com'),
     'seed-models': ('seed', 'https://seed.bytedance.com/en/models'),
     'stepfun-current': ('stepfun', 'https://platform.stepfun.com/developer-community'),
     'baidu-current': ('baidu', 'https://ernie.baidu.com/blog/'),
