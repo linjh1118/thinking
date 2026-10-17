@@ -2191,6 +2191,11 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
             return match.group(0)
         raw = value[:-5] if value.endswith(".md.html") else value
         path = unquote(urlsplit(raw).path)
+        # The renderer adds its own navigation (for example, library.html).
+        # Those links are relative to the published site, not the HF README.
+        published_target = (published.parent / unquote(urlsplit(value).path)).resolve()
+        if published_target.is_relative_to(ATLAS.resolve()) and published_target.is_file():
+            return match.group(0)
         local = source.parent / path
         if local.is_file():
             return match.group(0)

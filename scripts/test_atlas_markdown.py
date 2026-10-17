@@ -14,6 +14,24 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_archived_card_preserves_renderer_navigation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'vault/Model/src/card.md'
+            source.parent.mkdir(parents=True)
+            source.write_text('Original README')
+            published_root = root / 'atlas'
+            published = published_root / 'library/team/model/src/card.md.html'
+            published.parent.mkdir(parents=True)
+            (published_root / 'library.html').write_text('Library')
+            published.write_text('<a href="../../../../library.html">← 资料馆</a><a href="LICENSE">License</a>')
+            with patch.object(atlas, 'ATLAS', published_root):
+                atlas.resolve_archived_card_links(source, published, 'https://huggingface.co/org/Model/resolve/main/README.md')
+            rendered = published.read_text()
+            self.assertIn('href="../../../../library.html"', rendered)
+            self.assertIn('https://huggingface.co/org/Model/blob/main/LICENSE', rendered)
+            self.assertNotIn('https://huggingface.co/library.html', rendered)
+
     def test_note_display_math_loads_renderer_only_when_needed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
