@@ -11,7 +11,7 @@ updated: 2026-10-17
 
 # DeepSeek-V4.1-Flash — KV Cache Compression for Million-Token Agents
 
-> [!success] 资料充分度：充足｜达到完整精读标准
+> [!info] 资料充分度：9 月 family 充分；1017 更新资料有限
 > 9 月 family 的架构精读沿用此前归档。**10 月 17 日增补**已逐项读取新 HF Model Card、官方带日期发布记录、encoding / inference README 与配置；更新部分单独注明证据边界，不把共享报告误写成 1017 新报告。
 
 > [!tldr]
