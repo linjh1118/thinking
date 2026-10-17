@@ -2412,6 +2412,14 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
                     Path("hf_collection_manifest.json"),
                     Path("retrieval_manifest.json"),
                 }
+                if record.get("releaseUpdates"):
+                    # Keep minor-checkpoint originals in the same family pack,
+                    # without recopying historical PDFs or unrelated sources.
+                    compact_v4_source.update(
+                        path.relative_to(model_root / "src")
+                        for path in (model_root / "src" / "updates").rglob("*")
+                        if path.is_file() and path.suffix.lower() != ".pdf"
+                    )
             source_archive = sync_source_archive(
                 model_root,
                 dest_root,
@@ -2679,6 +2687,21 @@ def build_records() -> tuple[list[dict], list[dict]]:
         rank = {team["id"]: index for index, team in enumerate(ordered_teams)}
         records.sort(key=lambda record: record["rawDate"], reverse=True)
         records.sort(key=lambda record: rank[record["team"]])
+    # A dated checkpoint update belongs to its existing family. Keep the
+    # family's first release date and stable URL, but expose the separately
+    # evidenced update in the rolling release ledger.
+    updates_path = SOURCE / "src/verified_release_updates.json"
+    if updates_path.exists():
+        by_slug = {record["slug"]: record for record in records}
+        for update in json.loads(updates_path.read_text(encoding="utf-8")):
+            record = by_slug[update["slug"]]
+            record.setdefault("releaseUpdates", []).append(update)
+            record["summary"] += f" 最新同族更新（{update['date']}）：{update['summary']}"
+            existing_urls = {source["url"] for source in record.get("officialSources", [])}
+            record["officialSources"] = [
+                source for source in update["officialSources"]
+                if source["url"] not in existing_urls
+            ] + record.get("officialSources", [])
     return ordered_teams, records
 
 
@@ -2928,17 +2951,33 @@ def write_legacy_compatibility() -> None:
     (THINKING / "404.html").write_text(not_found, encoding="utf-8")
 
 
+def recent_release_rows(records: list[dict]) -> list[dict]:
+    """Represent releases and dated family updates without duplicating leaves."""
+    keys = (
+        "slug", "date", "name", "teamName", "region", "summary",
+        "lineageLabel", "note", "posters", "source", "officialSources",
+    )
+    rows = []
+    seen_updates = set()
+    for record in records:
+        if not record.get("timelineVisible", True):
+            continue
+        base = {key: record.get(key) for key in keys}
+        rows.append(base)
+        for update in record.get("releaseUpdates", []):
+            identity = (record["slug"], update["date"], update["name"])
+            if identity in seen_updates:
+                continue
+            seen_updates.add(identity)
+            rows.append({**base, **update, "lineageLabel": "同族小版本升级（非新正代）"})
+    return rows
+
+
 def add_recent_releases(page: str, records: list[dict]) -> str:
     """Embed an independent, Beijing-calendar 30-day release ledger above the tree."""
     watch_path = SOURCE / "src/release_watch.json"
     watch = json.loads(watch_path.read_text()) if watch_path.exists() else {}
-    rows = [
-        {key: record.get(key) for key in (
-            "slug", "date", "name", "teamName", "region", "summary",
-            "lineageLabel", "note", "posters", "source", "officialSources",
-        )}
-        for record in records if record.get("timelineVisible", True)
-    ]
+    rows = recent_release_rows(records)
     payload = json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")
     checked = watch.get("lastCheck") or "尚未执行定时巡检"
     successful = watch.get("lastSuccessfulCheck") or "尚未完成全量官方核查"
@@ -2947,9 +2986,9 @@ def add_recent_releases(page: str, records: list[dict]) -> str:
     if failures:
         status += f" · {len(failures)} 项核查失败待重试"
     panel = f'''<section class="recent-releases" aria-labelledby="recent-title">
-<div class="recent-heading"><div><div class="kicker">Release Radar · Rolling 30 Days</div><h2 id="recent-title">近 30 天新模型</h2></div><span id="recent-count"></span></div>
+<div class="recent-heading"><div><div class="kicker">Release Radar · Rolling 30 Days</div><h2 id="recent-title">近 30 天模型发布与更新</h2></div><span id="recent-count"></span></div>
 <p id="recent-range"></p><p class="recent-status">{html.escape(status)}</p>
-<p class="recent-status">涵盖全部团队的主干与专项支线；按官方发布日期倒序。按月记录的模型单列为日期待核实，同族尺寸与重复 SKU 合并。</p>
+<p class="recent-status">涵盖全部团队的主干与专项支线；按官方发布日期倒序。同族小版本单列更新事件、不新增正代叶子；按月记录的模型单列为日期待核实，尺寸与重复 SKU 合并。</p>
 <div class="recent-scroll"><table><thead><tr><th>发布日期</th><th>团队</th><th>模型 / 类型</th><th>这次变化</th><th>阅读资料</th><th>官方来源</th></tr></thead><tbody id="recent-body"></tbody></table></div>
 <details id="recent-uncertain" hidden><summary>发布日期待核实</summary><ul id="recent-uncertain-list"></ul></details></section>'''
     style = '''<style>.recent-releases{padding:24px;border:1px solid #354568;border-radius:22px;background:linear-gradient(125deg,#18223a,#0e1523);margin:0 0 30px}.recent-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}.recent-heading h2{font-size:28px;margin:9px 0}.recent-heading>span{color:#8fe6ff;font-size:14px}.recent-releases p{color:#aebbd2;font-size:13px;line-height:1.6}.recent-status{color:#8293b1!important;font-size:12px!important}.recent-scroll{overflow-x:auto;margin-top:18px;border:1px solid #2b3b58;border-radius:14px}.recent-scroll table{border-collapse:collapse;width:100%;min-width:850px;font-size:13px}.recent-scroll th,.recent-scroll td{padding:15px;text-align:left;border-bottom:1px solid #29354a;vertical-align:top;line-height:1.6}.recent-scroll th{background:#18233a;color:#a8bad8;font-size:11px;white-space:nowrap}.recent-scroll td:nth-child(4){min-width:240px;max-width:400px}.recent-scroll a{color:#9cbfff;text-decoration:none}.recent-scroll small{display:block;color:#8293b1}.recent-links{display:flex;gap:9px;flex-wrap:wrap;min-width:155px}.recent-links .recent-note{color:#9cf2d0;font-weight:700}.recent-empty{text-align:center!important;color:#94a5bf;padding:30px!important}.recent-releases details{margin-top:15px;color:#a5b5cc;font-size:12px}</style>'''
@@ -2966,7 +3005,7 @@ const first = start.toISOString().slice(0,10);
 const exact = releases.filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && row.date >= first && row.date <= today).sort((a,b) => b.date.localeCompare(a.date) || a.teamName.localeCompare(b.teamName));
 const uncertain = releases.filter(row => /^\d{4}-\d{2}$/.test(row.date) && row.date >= first.slice(0,7) && row.date <= today.slice(0,7));
 document.querySelector('#recent-range').textContent = `${first} — ${today} · 北京时间，含今天在内的 30 个日历日`;
-document.querySelector('#recent-count').textContent = `${exact.length} 个模型`;
+document.querySelector('#recent-count').textContent = `${exact.length} 条发布 / 更新`;
 document.querySelector('#recent-body').innerHTML = exact.length ? exact.map(row => {
     const materials = [link(`base-model-atlas/model.html?id=${encodeURIComponent(row.slug)}`,'Overview')];
     if (row.note) materials.push(link(`base-model-atlas/${row.note}`,'📖 笔记','recent-note'));

@@ -6,18 +6,98 @@ url: "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"
 tags: [model-note, base-model, deepseek, multimodal, agentic-workflow, long-context]
 status: read
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-10-17
 ---
 
 # DeepSeek-V4.1-Flash — KV Cache Compression for Million-Token Agents
 
 > [!success] 资料充分度：充足｜达到完整精读标准
-> 本笔记已逐项核对官方 HF Model Card、完整 Tech Report、官方架构图与评测表；正文中的架构、训练规模、KV 压缩和 benchmark 数字均可回溯到本目录 `src/` 的一手资料。
+> 9 月 family 的架构精读沿用此前归档。**10 月 17 日增补**已逐项读取新 HF Model Card、官方带日期发布记录、encoding / inference README 与配置；更新部分单独注明证据边界，不把共享报告误写成 1017 新报告。
 
 > [!tldr]
 > **V4.1-Flash 不是 V4-Flash 的小修版，而是一次围绕“超长输入 agent 的真实服务成本”重构的 552B 多模态 MoE。** Causal Encoder–Decoder、CSA2、FP4 KV 与 bounded replay 把全局 KV 压到 890 bytes/token，约为 V4-Flash 的 1/4；模型以 45T multimodal tokens 从头训练，支持 1M context、最高 256K+ 输出建议和 1–100 连续 reasoning effort。我的判断：它把 DeepSeek 的竞争焦点从单纯 active parameters 推向了 **prefill、KV 常驻成本与长轨迹可持续性**。
 
 ![DeepSeek-V4.1-Flash agentic performance](src/assets/dsv41_agentic_performance.png)
+
+> 上图为 **9 月 10 日 family 首发图**，不是 1017 的新评测。1017 的完整对照见下表；两版数字不要混用。
+
+## 2026-10-17 更新：V4.1-Flash-1017
+
+> [!tldr] 同一个 family，新的 checkpoint
+> 官方原卡明确称 1017 为 **minor update**。这次最值得关注的是 agent 成功率与执行经济性的共同改善，而不是一个新架构名字：Terminal-Bench 4.0 从 31.2 到 42.3，ProgramBench 从 20.3 到 29.1；官方同时报告运行时间和输出长度减少，但没有公布降幅。Atlas 保留 9 月 10 日的 family 首发日与原链接，在近 30 天表格另记 10 月 17 日更新，不拆新正代。
+
+### 发布、权重与资料范围
+
+| 项目 | 已核实事实 | 不应作出的推断 |
+|---|---|---|
+| 日期 | 官方 Change Log 明确写 2026-10-17 并发布 1017 升级 | 不用 HF createdAt / lastModified 代替日期 |
+| 归属 | HF 卡写明是 V4.1-Flash 的小版本 | 不是 V4.2，也不是新的专项支线 |
+| 线上 | 网页、App、API 已切换；API 名仍为 `deepseek-flash`，调用方式和价格不变 | 同一个别名并不保证实验 checkpoint 恒定 |
+| 权重与许可 | 官方独立 HF 仓库、MIT；公开配置仍为 `deepseek_v41` | 不能由相同配置证明训练过程、权重或行为不变 |
+| 报告 | 新卡直接链接原 V4.1-Flash 报告 | 没有核实到一份独立的“1017 Tech Report” |
+| 开源代码 | 提供 prompt encoding、最小推理参考；生产协议工具另指向 deepseek-recipe | 参考推理实现不等于生产服务或完整 RL 训练代码 |
+
+### 全部 11 项官方对照：先比同表的前后版本
+
+以下数值逐项来自 **1017 HF 原卡**，均为官方报告、不是本地复现。Δ 是两列直接相减的分数差，不是相对百分比。表中的横向竞品分数同样是 DeepSeek 报告，不能当作各家统一条件下的独立测评。
+
+| Benchmark | V4.1-Flash | 1017 | Δ | 必须保留的口径 |
+|---|---:|---:|---:|---|
+| HLE w/o tools | 36.8 | 42.6 | +5.8 | 完整集合；纯文本子集另为 39.1 → 44.0（+4.9） |
+| Terminal-Bench 4.0 | 31.2 | 42.3 | +11.1 | Claude Code harness |
+| DeepSWE v1.1 | 74.2 | 77.0 | +2.8 | Mini-SWE-V2 harness |
+| ProgramBench | 20.3 | 29.1 | +8.8 | 不与不同版本基准拼接 |
+| NL2Repo-Bench | 65.4 | 68.2 | +2.8 | 此处旧值取本次原卡同表，不覆盖旧报告的 64.0 |
+| Automation-Bench v1.0.6 | 54.8 | 60.5 | +5.7 | 显式保留 v1.0.6 |
+| Agents’ Last Exam | 31.8 | 35.4 | +3.6 | 无新增协议细节披露 |
+| Apex Bench v1.1 | 64.6 | 72.1 | +7.5 | 显式保留 v1.1 |
+| Chartography w/tools | 78.9 | 83.0 | +4.1 | 有工具，不能写成无工具视觉能力 |
+| BabyVision w/tools | 89.6 | 92.5 | +2.9 | 有工具 |
+| ZeroBench-main w/tools | 49.0 | 51.0 | +2.0 | 官方发布记录注明 Pass@5，不是 Pass@1 |
+
+**我的判断：**最大的绝对跃升出现在更难的终端与程序任务，但不能据此断言某种新 RL 算法起作用。原卡没有 1017 训练配方、消融、置信区间或重复次数。即使同一张表有跨厂商排名，也应先做自己 harness 中的前后版本受控对照。
+
+### 更快、更短、更省：目前能说到哪一步
+
+官方称在多个 harness 上改善性能—成本 Pareto 前沿，并特别适配 DeepSeek Harness、腾讯 CodeBuddy 与 WorkBuddy；建议 DeepSeek Harness 升级到 **0.2.1-rc.1 或更新版本**。这是官方部署建议，不是本文已验证所有工具兼容的承诺。
+
+“API 单价不变”与“每个成功任务更省”不是一回事。更短输出可能减少输出费用，更快任务可能减少工具等待与重复轮次，但失败重试、缓存、输入、工具费用也会改变结果。建议报告：
+
+$$
+\begin{gathered}
+C_{\mathrm{success}}=\frac{\sum_i C_i}{\sum_i\mathbf{1}[\mathrm{verified\ success}_i]}\\
+T_{\mathrm{success}}=\frac{\sum_i T_i}{\sum_i\mathbf{1}[\mathrm{verified\ success}_i]}
+\end{gathered}
+$$
+
+这是本文建议的验收统计量，不是官方训练目标；失败样本成本也进分子，不能只统计成功样本的平均 token。总成功数为零时不计算比值。
+
+### 部署细节：协议本身就是实验条件
+
+- 新卡仍建议 `temperature=1.0`、`top_p=1.0`、1M context、`max_tokens ≥ 256K`。预算是建议，不代表每次都必须消耗 256K 输出。
+- 没有 Jinja chat template；应使用 `encoding/encoding.py` 或官方维护的 deepseek-recipe。不要把 V4 的旧 template 硬套给 V4.1。
+- 已读的 encoding README 明确：DSML 的 ` calls` / ` invoke` / ` parameter` 标签名前有空格；numeric effort 范围 1–100，别名 `low/high/max` 分别映射 **50/75/100**，默认 75，不是默认最大预算。
+- effort 前缀仅在 thinking 模式、会话起始注入；中途 system message 有单独 `<｜System｜>` token。带 tools 声明时默认保留历次 thinking，否则早于最新用户请求的 thinking 默认去除。历史处理差异会影响长轨迹对照。
+- README 说明解析器只面向格式良好的输出，生产环境需额外错误处理；最小 inference 的 generation 是普通自回归采样，虽含 DSpark forward path，也不能据此声称默认已运行推测解码。
+- deepseek-recipe 负责协议转换、prompt 编码及输出解析，**不负责模型推理、工具执行和 HTTP transport**。把这些职责区分清楚，才不会把 harness 失败误判成模型失败。
+
+### 可以立即落地的对照实验
+
+1. 固定 9 月与 1017 的实际权重 revision、同一任务快照、harness commit、工具和 parser；仅记 `deepseek-flash` 别名不足以复现。
+2. 分别复测终端、仓库修复和带图任务；ZeroBench 保持 Pass@5 并报告总采样预算，不与单次结果混排。
+3. 记录终态成功、工具重复率、输出 token、总花费及 P50/P95 时间；排查更短推理是否带来隐性漏步骤。
+4. 固定 effort 50/75/100 的三点比较，再画任务成功率—总成本曲线；不能拿旧版低 effort 与新版 max 对比。
+5. 同日搜索 API 开放属于服务更新，不另建模型。若测试中接入它，应明确把“模型更新”与“搜索工具更新”拆成两个变量。
+
+> [!warning] 1017 更新资料不足，未达到完整报告级精读深度
+> **因为原始资料较少，本次 1017 升级无法达到 GLM-5.3-Flash / Kimi-K3 那种完整训练报告级的分析深度。** 已有明确日期、完整指标对照和部署参考，但没有独立 1017 训练报告、训练数据与奖励配方、消融、成本降幅、显著性或安全评测。下文架构与训练内容属于 9 月 family 报告，不能用来填补 1017 的新增机制空白。两张原官方图也均标为首发图；不伪造更新图或新训练结论。
+
+### 1017 一手资料与离线原件
+
+- [🤗 HF Model Card · 1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017)
+- [🌐 Tech Blog · 10 月 17 日发布记录](https://api-docs.deepseek.com/updates/#date-2026-10-17)
+- [📄 Tech Report · V4.1 共享报告](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf)（本轮仅保留链接，未下载 PDF）
+- [[src/updates/2026-10-17/HF-Model-Card|1017 原始模型卡]] · [[src/updates/2026-10-17/Encoding|编码协议 README]] · [[src/updates/2026-10-17/Inference|最小推理 README]]
 
 ## 老板速览
 

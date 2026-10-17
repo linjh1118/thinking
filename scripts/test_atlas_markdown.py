@@ -14,6 +14,25 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_family_update_keeps_first_release_and_stable_leaf(self):
+        record = {'slug':'family','date':'2026-09-10','name':'Family','releaseUpdates':[
+            {'slug':'family','date':'2026-10-17','name':'Family-1017','summary':'Minor update'}
+        ]}
+        rows = atlas.recent_release_rows([record])
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]['date'], '2026-09-10')
+        self.assertEqual(rows[1]['slug'], 'family')
+        self.assertEqual(rows[1]['date'], '2026-10-17')
+        self.assertIn('非新正代', rows[1]['lineageLabel'])
+        self.assertEqual(record['date'], '2026-09-10')
+
+    def test_family_updates_are_deduplicated_and_hidden_families_stay_hidden(self):
+        update = {'date':'2026-10-17','name':'Family-1017'}
+        record = {'slug':'family','date':'2026-09-10','releaseUpdates':[update, update]}
+        self.assertEqual(len(atlas.recent_release_rows([record])), 2)
+        record['timelineVisible'] = False
+        self.assertEqual(atlas.recent_release_rows([record]), [])
+
     def test_archived_card_preserves_renderer_navigation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
