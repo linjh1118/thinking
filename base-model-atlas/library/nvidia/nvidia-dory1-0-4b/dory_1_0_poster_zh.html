@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dory1.0-4B — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-dory1-0-4b">Overview</a><a class="active" href="Dory-1.0.html">渲染笔记</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+  <span style="color: #78716c;">源文档：</span>
+  <a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FNVIDIA_Nemotron%2F261016_Dory_1_0%2FDory-1.0" style="text-decoration: none;">Dory1.0-4B · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16" target="_blank" style="text-decoration: none;">🤗 HF Model Card</a>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">2026-10-16 官方首发 · 四种精度合并一个 family</span>
+    <div class="zh-title">共享权重的潜空间循环：更多内部计算，不保证更快或单调变强</div>
+    <h1>Dory1.0-4B <span>Architecture · Evidence · Agent Training</span></h1>
+    <div class="authors">官方一手材料研读 · ω BrainHao · 2026-10-17</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">4B</div><div class="sub">参数容量</div></div>
+    <div class="score-box"><div class="num">256K</div><div class="sub">验证上下文</div></div>
+    <div class="score-box"><div class="num">2</div><div class="sub">建议默认循环</div></div>
+    <div class="score-box"><div class="num">61.8</div><div class="sub">SWE Verified / 四循环</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与定位：看清family与证据</h2></div>
+  <p class="body">Dory把每个token的计算深度变成可调旋钮。Input→共享Recurrent多轮→Output；每轮重注入输入。同一权重可跑1、2、4轮，不等于换三个checkpoint。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">共享权重≠共享所有状态</div>
+      <p>标准循环可能为每轮保留KV。last-loop降低循环层缓存，但质量仅称接近，缺少完整逐任务与方差表，不写无损。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">资料深度尚未达标</div>
+      <p>原卡和图不足完整报告级拆解，达不到GLM/Kimi标准；专属Tech Report/Blog未核实，4份安全子卡404，不能编造训练细节。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">预训练与精度</div>
+      <p>6T tokens前约4.5T原生NVFP4，剩余BF16；不是全程4bit。之后300B做256K上下文扩展。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">数据筛选与SFT</div>
+      <p>curated合成和多源数据、结构/重复过滤、compiler与数值验证。混合比例和loop训练分布未完整披露。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">多环境异步GRPO</div>
+      <p>NeMo RL/Gym覆盖数学、代码、工具和多轮；训练推理解耦。reward/KL/rollout超参不从通用框架猜。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/dory_arch.png" alt="官方完整架构图：共享循环块与输入重注入">
+    <div class="fig-cap">官方完整架构图：共享循环块与输入重注入</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与边界：公开什么、缺什么</h2></div>
+  <p class="body">nGPT、局部与全注意力交错。per-loop KV随循环增大；last-loop只保留循环层最后一轮缓存，不代表全模型没有KV或计算不增加。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/aa432_dory1_4b_vs_models_v10.png" alt="官方AA v4.3.2内部估计，非AA官方认证">
+    <div class="fig-cap">官方AA v4.3.2内部估计，非AA官方认证</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">图注与配置两种层口径</div>
+      <p>图注8/20/8个block；配置16/40/16个attention或MLP条目，共72。不能直接相乘当FLOPs。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">推理框架仍有版本边界</div>
+    <p>vLLM支持在PR60149；llama.cpp在PR30306。锁定模型、代码revision与parser，不能认为任意正式版本都支持。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">研读抽象：非官方完整前向公式</div>$$\begin{gathered}h^{(0)}=I(x)\\h^{(\ell+1)}=R(h^{(\ell)},x)\\y=O(h^{(L)})\end{gathered}$$</div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">显式输出与潜计算分开</div>
+      <p>循环更多通常输出token更少，但每token计算更重。需要量实际端到端延迟，不能只计tokens/s。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">固定六格实验</div>
+      <p>loops1/2/4×两种KV，锁定精度/服务/预算；测终态成功、无效工具、token、延迟与峰值显存，再单独测试量化。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>结果与判断：保留比较口径</h2></div>
+  <p class="body">下列是BF16官方自报，不是本地实测。代码/工具指标多数改善，知识不变；GPQA和HLE从两轮到四轮均有下降，不能挑最高分宣称单调提升。</p>
+
+  <table class="rtable"><tr><th class="left">指标 / 规格</th><th>本模型</th><th>边界 / 对照</th></tr><tr class="cat"><td colspan="3">结构 / 结果</td></tr><tr><td class="left">SWE / 1→2→4</td><td>50.3/59.5/61.8</td><td>BF16自报</td></tr><tr><td class="left">TB2.1 / 1→2→4</td><td>12.5/18.1/22.2</td><td>Terminus-2</td></tr><tr><td class="left">SciCode / 1→2→4</td><td>27.3/34.94/35.11</td><td>8次重复</td></tr><tr><td class="left">IFBench / 1→2→4</td><td>74.29/77.94/79</td><td>非全约束保证</td></tr><tr class="cat"><td colspan="3">评测与证据</td></tr><tr><td class="left">GPQA / 2→4</td><td>72.41→72.16</td><td>反而下降</td></tr><tr><td class="left">HLE / 2→4</td><td>10.89→10.43</td><td>无工具文本</td></tr><tr><td class="left">AA-LCR / 1→2→4</td><td>63/71/73</td><td>旧judge</td></tr><tr><td class="left">Omniscience / 1→4</td><td>10.03→10.03</td><td>几乎不变</td></tr><tr class="cat"><td colspan="3">比较口径</td></tr><tr><td class="left">GDPval Elo</td><td>815/946/967</td><td>非百分比</td></tr><tr><td class="left">预训练</td><td>6T tokens</td><td>约4.5T NVFP4</td></tr><tr><td class="left">上下文扩展</td><td>300B tokens</td><td>256K验证</td></tr><tr><td class="left">τ³ Banking</td><td>11.6/12.89/14.69</td><td>1/2/4loops</td></tr></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">更多loop不是全面胜过9B</div>
+      <p>四轮TB2.1为22.2，低于Qwen3.5-9B的24；GPQA72.16低于80.93，HLE10.43低于15.43。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">四格式BF16/MXFP8/NVFP4/GGUF不拆代。GGUF准确率不能冒用BF16表，DGX Spark量化速度也不能冒充循环数加速。</p>
+  <table class="ood-table"><tr><th>维度</th><th>官方规格</th><th>边界</th></tr><tr><td>格式</td><td>4种同family</td><td>非4个正代</td></tr><tr><td>许可</td><td>OpenMDW1.1</td><td>非Apache/MIT</td></tr><tr><td>部署</td><td>2loops起点</td><td>非固定最优</td></tr><tr><td>KV</td><td>last_loop可选</td><td>非零缓存</td></tr></table>
+
+  <div class="trick-box">
+    <div class="trick-title">同框架仍需保留评测口径</div>
+    <p>TB2.1用Terminus-2；AA-LCR修正答案但用旧judge。重复数1至16不同，GDPval是Elo，不能跨列求统一均值。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">两到四循环</div>
+      <div class="adelta">非单调</div>
+      <div class="adesc">GPQA−0.25、HLE−0.46，不能只写提升。</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">报告/子卡</div>
+      <div class="adelta">不足</div>
+      <div class="adesc">完整训练报告待核；四安全子卡404。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">代际与日期</div>
+    <p>10月16日官方明确首发，四种格式合并；不是3.5精度升级。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">架构与成本</div>
+    <p>潜空间循环扩展计算，不扩权重；缓存与FLOPs要分开计。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">评测与反例</div>
+    <p>少输出不保证更快，知识弱项与非单调结果必须保留。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">证据与下一步</div>
+    <p>卡级研读不冒充报告精读；固定成功率比较每任务成本。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>
