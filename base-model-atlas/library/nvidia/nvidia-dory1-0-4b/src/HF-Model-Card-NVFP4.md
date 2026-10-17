@@ -17,7 +17,7 @@ datasets:
 track_downloads: true
 ---
 
-# NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16
+# NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4
 
 <div align="center" style="line-height: 1;">
   <a href="https://developer.nvidia.com/nemotron" target="_blank" style="margin: 2px;">
@@ -44,7 +44,7 @@ track_downloads: true
 |:---|:---|
 | **Total Parameters** | 4B |
 | **Architecture** | Looped (latent-recurrent) normalized-GPT with interleaved sliding-window attention (SWA) and full-attention layers |
-| **Precision** | BF16 |
+| **Precision** | NVFP4 |
 | **Context Length** | Up to 256K tokens |
 | **Supported Languages** | English |
 | **Best For** | General-purpose reasoning on a small footprint |
@@ -60,7 +60,7 @@ track_downloads: true
 * The post-training data has a cutoff date of May 2026.
 -->
 
-**NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16** is a looped (latent-recurrent) large language model (LLM) trained by NVIDIA. The model employs a normalized-GPT architecture with interleaved hybrid sliding window attention (SWA) and full attention layers. By repeatedly applying a shared block of layers, Dory1.0-4B can spend more compute per token allowing it to scale intelligence. This model is ready for commercial or non-commercial use.
+**NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4** is a looped (latent-recurrent) large language model (LLM) trained by NVIDIA. The model employs a normalized-GPT architecture with interleaved hybrid sliding window attention (SWA) and full attention layers. By repeatedly applying a shared block of layers, Dory1.0-4B can spend more compute per token allowing it to scale intelligence. This model is ready for commercial or non-commercial use.
 
 <div align="center">
   <img src="./dory_arch.png" alt="Looped LM architecture" width="800">
@@ -256,7 +256,7 @@ VLLM_USE_PRECOMPILED=1 pip install "git+https://github.com/vllm-project/vllm.git
 #### **Launch the Server**
 
 ```shell
-vllm serve --model nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 \
+vllm serve --model nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4 \
     --hf-overrides '{"n_recurrent_loops": 2, "recurrent_kv_cache_mode": "per_loop"}' \
     --max-model-len 262144 \
     --max-num-seqs 128 \
@@ -317,7 +317,7 @@ The build uses Metal and a prebuilt browser UI; no Python environment or JavaScr
 
 #### **Download the GGUF Checkpoint**
 
-llama.cpp loads GGUF files rather than the BF16 Hugging Face checkpoint directly. Download the reference [`dory-q5_k_m.gguf` export (Q5_K_M)](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF) in your browser and place it in `llama.cpp-dory/`. This is a quantized export; the benchmark results above are for BF16.
+llama.cpp loads GGUF files rather than the Hugging Face checkpoint directly. Download the reference [`dory-q5_k_m.gguf` export (Q5_K_M)](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF) in your browser and place it in `llama.cpp-dory/`. This is a quantized export; the benchmark results above are for BF16.
 
 The expected file size is **3,673,288,864 bytes**. Verify its SHA-256 checksum before launching:
 
@@ -362,12 +362,12 @@ The command above uses per-loop KV caching. To keep the KV cache footprint at th
 
 The examples below use the OpenAI-compatible client. Recommended sampling settings are **Temperature 1.0** and **Top_P 0.95**. Reasoning is always on in vLLM and enabled with `--reasoning on` in the llama.cpp command above. Choose the client configuration for your server before running the examples.
 
-**vLLM** registers the model under the identifier passed to `--model` (`nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16`) since `--served-model-name` is not set. If you add a `--served-model-name` of your own, copy the identifier returned by `GET /v1/models` into MODEL below.
+**vLLM** registers the model under the identifier passed to `--model` (`nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4`) since `--served-model-name` is not set. If you add a `--served-model-name` of your own, copy the identifier returned by `GET /v1/models` into MODEL below.
 
 ```python
 from openai import OpenAI
 client = OpenAI(base_url="http://localhost:8000/v1", api_key="EMPTY")
-MODEL = "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16"
+MODEL = "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4"
 MAX_TOKENS = 16000
 ```
 
@@ -464,7 +464,7 @@ The model was pre-trained with 6T tokens, using NVFP4 for the first ~4.5T tokens
 
 Stage 1: Pre-Training
 
-* NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 model was pre-trained on 6T tokens using NVFP4 for the first ~4.5T tokens and BF16 for the remainder, with crawled and synthetic code, math, science, and general knowledge data.
+* NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4 model was pre-trained on 6T tokens using NVFP4 for the first ~4.5T tokens and BF16 for the remainder, with crawled and synthetic code, math, science, and general knowledge data.
 * The context length was extended to 256K tokens over 300B tokens.
 * Software used for pre-training: [Megatron-LM](https://github.com/NVIDIA/Megatron-LM)
 
@@ -477,7 +477,7 @@ Stage 3: Reinforcement Learning
 * The model underwent multi-environment reinforcement learning using GRPO (Group Relative Policy Optimization) across math, code, science, instruction following, multi-step tool use, multi-turn conversations, and structured output environments. It utilized an asynchronous RL architecture that decouples training from inference.
 * Software used for reinforcement learning: [NeMo RL](https://github.com/NVIDIA-NeMo/RL), [NeMo Gym](https://github.com/NVIDIA-NeMo/Gym)
 
-NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 is a result of the above work.
+NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4 is a result of the above work.
 
 ## Input
 
@@ -520,9 +520,9 @@ The integration of foundation and fine-tuned models into AI systems requires add
 **Data Collection Method by dataset:** Hybrid: Automated, Manually-Collected, Synthetic
 **Labeling Method by dataset:** Hybrid: Automated, Manually-Labeled, Synthetic
 
-NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 is pre-trained on a large corpus of high-quality curated and synthetically-generated data. It is trained in the English language and 43 programming languages. Our sources cover a variety of document types such as: webpages, dialogue, articles, and other written materials. The corpus spans domains including legal, math, science, finance, and more. We also include a small portion of question-answering, and alignment style data to improve model accuracy. The model was pre-trained for 6 trillion tokens, followed by 300 billion tokens of context extension.
+NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4 is pre-trained on a large corpus of high-quality curated and synthetically-generated data. It is trained in the English language and 43 programming languages. Our sources cover a variety of document types such as: webpages, dialogue, articles, and other written materials. The corpus spans domains including legal, math, science, finance, and more. We also include a small portion of question-answering, and alignment style data to improve model accuracy. The model was pre-trained for 6 trillion tokens, followed by 300 billion tokens of context extension.
 
-The post-training corpus for NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 consists of high-quality curated and synthetically-generated data. The primary language used for post-training is English.
+The post-training corpus for NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4 consists of high-quality curated and synthetically-generated data. The primary language used for post-training is English.
 
 These datasets, such as FinePDFs, EssentialWeb, HotpotQA, SQuAD, and HelpSteer3, do not collectively or exhaustively represent all demographic groups (and proportionally therein). For instance, these datasets do not contain explicit mentions of demographic classes such as age, gender, or ethnicity in 64-99% of samples, depending on the source. In the subset where such terms are present, document-based datasets (FinePDFs and EssentialWeb) contain representational skews, such as references to "male" outnumbering those to "female", and mentions of "White" as the most frequent among ethnic identifiers (comprising 43-44% of ethnicity mentions). To mitigate these imbalances, we recommend considering evaluation techniques such as bias audits, fine-tuning with demographically balanced datasets, and mitigation strategies like counterfactual data augmentation to align with the desired model behavior. This evaluation used a 3,000-sample subset per dataset, identified as the optimal threshold for maximizing embedder accuracy.
 
@@ -563,7 +563,7 @@ For detailed dataset information on the pre-training and reinforcement-learning 
 
 ### Quantized Checkpoints
 
-In addition to this BF16 checkpoint, quantized versions of Dory1.0-4B are available for lower memory use and faster inference:
+Dory1.0-4B is available in multiple precisions for lower memory use and faster inference:
 * [**NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16**](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16): 16-bit weights (W16A16).
 * [**NVIDIA-Nemotron-Labs-Dory1.0-4B-MXFP8**](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-MXFP8): 8-bit weights (W8A16).
 * [**NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4**](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-NVFP4): 4-bit weights (W4A16).

@@ -17,7 +17,7 @@ datasets:
 track_downloads: true
 ---
 
-# NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16
+# NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF
 
 <div align="center" style="line-height: 1;">
   <a href="https://developer.nvidia.com/nemotron" target="_blank" style="margin: 2px;">
@@ -44,7 +44,7 @@ track_downloads: true
 |:---|:---|
 | **Total Parameters** | 4B |
 | **Architecture** | Looped (latent-recurrent) normalized-GPT with interleaved sliding-window attention (SWA) and full-attention layers |
-| **Precision** | BF16 |
+| **Precision** | Q5_K_M |
 | **Context Length** | Up to 256K tokens |
 | **Supported Languages** | English |
 | **Best For** | General-purpose reasoning on a small footprint |
@@ -60,7 +60,7 @@ track_downloads: true
 * The post-training data has a cutoff date of May 2026.
 -->
 
-**NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16** is a looped (latent-recurrent) large language model (LLM) trained by NVIDIA. The model employs a normalized-GPT architecture with interleaved hybrid sliding window attention (SWA) and full attention layers. By repeatedly applying a shared block of layers, Dory1.0-4B can spend more compute per token allowing it to scale intelligence. This model is ready for commercial or non-commercial use.
+**NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF** is a looped (latent-recurrent) large language model (LLM) trained by NVIDIA. The model employs a normalized-GPT architecture with interleaved hybrid sliding window attention (SWA) and full attention layers. By repeatedly applying a shared block of layers, Dory1.0-4B can spend more compute per token allowing it to scale intelligence. This model is ready for commercial or non-commercial use.
 
 <div align="center">
   <img src="./dory_arch.png" alt="Looped LM architecture" width="800">
@@ -243,46 +243,6 @@ track_downloads: true
 
 ## **Quick Start Guide**
 
-### **vLLM**
-
-**Note:** Dory support in vLLM is under review in [vllm-project/vllm#60149](https://github.com/vllm-project/vllm/pull/60149). Until it is included in a vLLM release, install vLLM from that PR:
-
-```shell
-VLLM_USE_PRECOMPILED=1 pip install "git+https://github.com/vllm-project/vllm.git@refs/pull/60149/head"
-```
-
-`VLLM_USE_PRECOMPILED=1` reuses compatible prebuilt vLLM kernels, avoiding local CUDA compilation. This section will be updated once a vLLM release supports Dory.
-
-#### **Launch the Server**
-
-```shell
-vllm serve --model nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 \
-    --hf-overrides '{"n_recurrent_loops": 2, "recurrent_kv_cache_mode": "per_loop"}' \
-    --max-model-len 262144 \
-    --max-num-seqs 128 \
-    --enable-prefix-caching \
-    --async-scheduling \
-    --reasoning-parser nemotron_v3 \
-    --tool-call-parser qwen3_coder \
-    --enable-auto-tool-choice
-```
-
-**Validated context:** 256K tokens. Lower `--max-model-len` if you are memory-constrained or want more KV-cache headroom at higher concurrency.
-
-#### **Choosing the Loop Count**
-
-We recommend **two loops** as the default starting point for a good balance between accuracy and compute. Most of the accuracy gain from looping comes from the second loop, with smaller gains beyond that (see the [loop-count comparison](#highlights)).
-
-Use **one loop** when minimizing compute per token is the priority. Consider **four loops** when additional accuracy matters more, particularly for agentic tasks such as Terminal-Bench and SWE-bench (see [benchmark results](#benchmarks)). Because higher loop counts can also reduce the number of generated tokens, evaluate the end-to-end latency and cost on your workload when choosing a setting.
-
-To use a different loop count, update `n_recurrent_loops` in `--hf-overrides` in the command above.
-
-#### **Reducing the KV Cache Memory Overhead**
-
-The command above uses per-loop caching, which stores a separate KV cache for each recurrent loop, so KV cache memory grows with the loop count. **Last-loop KV caching** instead keeps a single cache per recurrent attention layer where each loop overwrites the previous loop's entries, so the cache holds only the final loop's keys and values. This keeps the KV cache footprint at the one-loop size for any loop count, leaving more capacity for longer contexts or concurrent requests.
-
-To enable it, set `recurrent_kv_cache_mode` to `"last_loop"`. In our experiments, the accuracy with last-loop caching stays close to the per-loop mode with nearly unchanged output lengths.
-
 ### **llama.cpp**
 
 **Note:** Dory support in llama.cpp is available in [ggml-org/llama.cpp#30306](https://github.com/ggml-org/llama.cpp/pull/30306). Until it is included in a llama.cpp release, build from the Dory-enabled source below. This example pins revision `98a74c97ea09ac72f6ceda1559808fc0a2f447ce`, used by the local macOS reference setup, rather than following the moving PR head.
@@ -348,11 +308,19 @@ From `llama.cpp-dory/`, start a local server with two loops and reasoning enable
 Once the server is ready, open **http://127.0.0.1:8080** on the same Mac for the chat interface. The server is local-only and unauthenticated. Its OpenAI-compatible API is at **http://127.0.0.1:8080/v1**, with model identifier `dory` from `--alias`.
 
 
-#### **Loop Count and KV Cache**
+#### **Choosing the Loop Count**
 
-Set `dory.num_loops` in `--override-kv` to `1`, `2`, `3`, or `4`. As with vLLM, start with **two loops**, use **one loop** to minimize compute per token, or consider **four loops** when accuracy matters more.
+We recommend **two loops** as the default starting point for a good balance between accuracy and compute. Most of the accuracy gain from looping comes from the second loop, with smaller gains beyond that (see the [loop-count comparison](#highlights)).
 
-The command above uses per-loop KV caching. To keep the KV cache footprint at the one-loop size, replace its `--override-kv` argument with:
+Use **one loop** when minimizing compute per token is the priority. Consider **four loops** when additional accuracy matters more, particularly for agentic tasks such as Terminal-Bench and SWE-bench (see [benchmark results](#benchmarks)). Because higher loop counts can also reduce the number of generated tokens, evaluate the end-to-end latency and cost on your workload when choosing a setting.
+
+Set `dory.num_loops` in `--override-kv` to `1`, `2`, `3`, or `4`.
+
+#### **Reducing the KV Cache Memory Overhead**
+
+The command above uses per-loop caching, which stores a separate KV cache for each recurrent loop, so KV cache memory grows with the loop count. **Last-loop KV caching** instead keeps a single cache per recurrent attention layer where each loop overwrites the previous loop's entries, so the cache holds only the final loop's keys and values. This keeps the KV cache footprint at the one-loop size for any loop count, leaving more capacity for longer contexts or concurrent requests.
+
+To keep the KV cache footprint at the one-loop size, replace its `--override-kv` argument with:
 
 ```shell
 --override-kv "dory.num_loops=int:2,dory.recurrent_kv_cache_mode=str:last_loop"
@@ -360,16 +328,7 @@ The command above uses per-loop KV caching. To keep the KV cache footprint at th
 
 ### **API Client**
 
-The examples below use the OpenAI-compatible client. Recommended sampling settings are **Temperature 1.0** and **Top_P 0.95**. Reasoning is always on in vLLM and enabled with `--reasoning on` in the llama.cpp command above. Choose the client configuration for your server before running the examples.
-
-**vLLM** registers the model under the identifier passed to `--model` (`nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16`) since `--served-model-name` is not set. If you add a `--served-model-name` of your own, copy the identifier returned by `GET /v1/models` into MODEL below.
-
-```python
-from openai import OpenAI
-client = OpenAI(base_url="http://localhost:8000/v1", api_key="EMPTY")
-MODEL = "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16"
-MAX_TOKENS = 16000
-```
+The examples below use the OpenAI-compatible client. Recommended sampling settings are **Temperature 1.0** and **Top_P 0.95**. Reasoning can be enabled with `--reasoning on` in the llama.cpp command above. Choose the client configuration for your server before running the examples.
 
 For **llama.cpp**, use port `8080` and the `dory` alias instead. The smaller output limit below leaves room for the prompt in the 4,096-token context; always keep prompt, history, and generated tokens within `--ctx-size`.
 
@@ -464,7 +423,7 @@ The model was pre-trained with 6T tokens, using NVFP4 for the first ~4.5T tokens
 
 Stage 1: Pre-Training
 
-* NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 model was pre-trained on 6T tokens using NVFP4 for the first ~4.5T tokens and BF16 for the remainder, with crawled and synthetic code, math, science, and general knowledge data.
+* NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF model was pre-trained on 6T tokens using NVFP4 for the first ~4.5T tokens and BF16 for the remainder, with crawled and synthetic code, math, science, and general knowledge data.
 * The context length was extended to 256K tokens over 300B tokens.
 * Software used for pre-training: [Megatron-LM](https://github.com/NVIDIA/Megatron-LM)
 
@@ -477,7 +436,7 @@ Stage 3: Reinforcement Learning
 * The model underwent multi-environment reinforcement learning using GRPO (Group Relative Policy Optimization) across math, code, science, instruction following, multi-step tool use, multi-turn conversations, and structured output environments. It utilized an asynchronous RL architecture that decouples training from inference.
 * Software used for reinforcement learning: [NeMo RL](https://github.com/NVIDIA-NeMo/RL), [NeMo Gym](https://github.com/NVIDIA-NeMo/Gym)
 
-NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 is a result of the above work.
+NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF is a result of the above work.
 
 ## Input
 
@@ -520,9 +479,9 @@ The integration of foundation and fine-tuned models into AI systems requires add
 **Data Collection Method by dataset:** Hybrid: Automated, Manually-Collected, Synthetic
 **Labeling Method by dataset:** Hybrid: Automated, Manually-Labeled, Synthetic
 
-NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 is pre-trained on a large corpus of high-quality curated and synthetically-generated data. It is trained in the English language and 43 programming languages. Our sources cover a variety of document types such as: webpages, dialogue, articles, and other written materials. The corpus spans domains including legal, math, science, finance, and more. We also include a small portion of question-answering, and alignment style data to improve model accuracy. The model was pre-trained for 6 trillion tokens, followed by 300 billion tokens of context extension.
+NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF is pre-trained on a large corpus of high-quality curated and synthetically-generated data. It is trained in the English language and 43 programming languages. Our sources cover a variety of document types such as: webpages, dialogue, articles, and other written materials. The corpus spans domains including legal, math, science, finance, and more. We also include a small portion of question-answering, and alignment style data to improve model accuracy. The model was pre-trained for 6 trillion tokens, followed by 300 billion tokens of context extension.
 
-The post-training corpus for NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 consists of high-quality curated and synthetically-generated data. The primary language used for post-training is English.
+The post-training corpus for NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF consists of high-quality curated and synthetically-generated data. The primary language used for post-training is English.
 
 These datasets, such as FinePDFs, EssentialWeb, HotpotQA, SQuAD, and HelpSteer3, do not collectively or exhaustively represent all demographic groups (and proportionally therein). For instance, these datasets do not contain explicit mentions of demographic classes such as age, gender, or ethnicity in 64-99% of samples, depending on the source. In the subset where such terms are present, document-based datasets (FinePDFs and EssentialWeb) contain representational skews, such as references to "male" outnumbering those to "female", and mentions of "White" as the most frequent among ethnic identifiers (comprising 43-44% of ethnicity mentions). To mitigate these imbalances, we recommend considering evaluation techniques such as bias audits, fine-tuning with demographically balanced datasets, and mitigation strategies like counterfactual data augmentation to align with the desired model behavior. This evaluation used a 3,000-sample subset per dataset, identified as the optimal threshold for maximizing embedder accuracy.
 
@@ -563,7 +522,7 @@ For detailed dataset information on the pre-training and reinforcement-learning 
 
 ### Quantized Checkpoints
 
-In addition to this BF16 checkpoint, quantized versions of Dory1.0-4B are available for lower memory use and faster inference:
+Dory1.0-4B is available in multiple precisions for lower memory use and faster inference:
 
 * [**NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16**](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16): 16-bit weights (W16A16).
 * [**NVIDIA-Nemotron-Labs-Dory1.0-4B-MXFP8**](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-MXFP8): 8-bit weights (W8A16).

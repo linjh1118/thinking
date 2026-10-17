@@ -121,6 +121,8 @@ $$
 
 ## 部署与安全边界
 
+2026-10-17 午间复核：官方修正了 MXFP8 / NVFP4 / GGUF 原卡的模型名、精度与对应启动示例，GGUF 卡改为独立的 llama.cpp 快启。资料包已更新原文；这是同一 family 的文档修订，不是新模型，表中基准仍为 BF16，不转移给量化版本。
+
 原卡 vLLM 支持仍处于 [PR #60149](https://github.com/vllm-project/vllm/pull/60149)，llama.cpp 参考 [PR #30306](https://github.com/ggml-org/llama.cpp/pull/30306)，不能假设任意正式版开箱即用。原卡另给固定 llama.cpp revision；复现时需锁定实际代码、模型 revision 和 chat template。
 
 - 起点：两循环；根据任务测试一/四循环与 `per_loop` / `last_loop`，不要改多项后无法归因。
