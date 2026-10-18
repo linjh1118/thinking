@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nemotron 3.5 Parse — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-nemotron-3-5-parse">Overview</a><a class="active" href="Nemotron-3.5-Parse.html">渲染笔记</a></div>
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FNVIDIA_Nemotron%2FVariants%2F261017_Nemotron_3_5_Parse%2FNemotron-3.5-Parse" style="text-decoration: none;">Nemotron 3.5 Parse · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/nvidia/Nemotron-3.5-Parse" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
+</div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">2026-10-17 官方发布 · NVIDIA · Document / OCR 支线</span>
+<div class="zh-title">小型文档解析器：保留结构，明确每一遍推理的代价</div>
+<h1>Nemotron 3.5 Parse <span>Quality · Throughput · Evidence</span></h1>
+<div class="authors">官方模型卡与复现协议研读 · ω BrainHao · 2026-10-18</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">0.631B</div><div class="sub">唯一参数<br/>含MTP头</div></div>
+<div class="score-box"><div class="num">75.20</div><div class="sub">ParseBench<br/>三遍结果</div></div>
+<div class="score-box"><div class="num">15.42</div><div class="sub">单遍pages/s<br/>H100</div></div>
+<div class="score-box"><div class="num">83.73</div><div class="sub">Indic OCR<br/>ANLS-char</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与架构：OCR之后还剩什么</h2></div>
+<p class="body">不是新通用聊天正代，而是约0.631B的文档专项。文本、语义类别、框与阅读顺序共同决定下游数据能否用。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">日期取发布说明，不取建仓时间</div>
+<p>模型卡两处写10月17日；HF建仓9月3日，10月18日发现。不把single/double/triple拆成三个模型。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">视觉前缀，而非泛称encoder-decoder</div>
+<p>C-RADIOv4-SO400M编码动态矩形NaViT图像，经卷积与归一化压缩，作为10层mBART因果解码前缀。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">输入与词表</div>
+<p>建议最大1664×2048；72,505词项，embedding补齐72,512；保留bbox/class/Chart控制token。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">注意力与参数</div>
+<p>16Q/8KV的GQA；630,800,496唯一可训练参数，包含一步MTP，共享embedding/output只计一次。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">结构化输出</div>
+<p>输出content-normalized框、语义类型与序列顺序。格式转换后仍须留raw output，避免清理时丢掉监督结构。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="根据官方模型卡重绘的解析架构" src="src/assets/parse_architecture.svg"/>
+<div class="fig-cap">图1：依据官方架构与协议重绘，非官方原图</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>推理流程：预算必须一起比较</h2></div>
+<p class="body">同一checkpoint的三种预算点。双遍获得大部分质量增益；额外检测和crop请求不免费，后处理版本也属于系统。</p>
+<div class="fig-box">
+<img alt="按官方表重绘的速度质量图" src="src/assets/parse_tradeoff.svg"/>
+<div class="fig-cap">图2：官方数字重绘；质量轴72起，非整链延迟</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">裁切union：更全，不代表一定更准</div>
+<p>整页→Table/Chart精读；三遍另做检测并合并区域。IoU0.85去近重复，新增同类框重叠0.5时抑制，最多80区，crop加4%+12px边。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">后处理决定监督信号是否保真</div>
+<p><b>(1) 保留</b>阅读顺序、spans、空格与单元格内换行。<br/><b>(2) 分开</b>raw序列、结构化blocks、HTML/JSON与平面CSV。<br/><b>(3) 审计</b>full-page/crop冲突、启发式表头与重复；不得发明图中数值。</p>
+</div>
+<div class="formula-box"><div class="flabel">由官方三行结果计算的预算权衡</div>$$\begin{aligned}\Delta S&amp;=75.20-74.92=0.28\\\Delta T/T&amp;=10.62/11.65-1\approx-8.8\%\end{aligned}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">三遍对双遍只多0.28分，吞吐下降约8.8%；观察不是显著性结论。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">复现协议不等于新训练recipe</div>
+<p>固定权重/data/scorer revision；2,078个源文档各首张页，150DPI。复现包72.72/74.88/75.14/75.20与新helper三行不混拼。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">部署与数据安全</div>
+<p>MTP加速需vLLM插件；Transformers正常解码不能照搬。自定义代码先review/pin，不执行下载代码；机密页和文档恶意指令隔离。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>实验结果：条件与反例都保留</h2></div>
+<p class="body">全部为官方自报，本次未复测。比较accuracy来自已发布分数，速度同页重测；跨模型scorer/协议可能不同，不包装成完全同协议横评。</p>
+<table class="rtable"><tr><th class="left">模型/流程</th><th>Score↑</th><th>pages/s↑</th><th>来源</th></tr><tr class="cat"><td colspan="4">同卡H100 / 2,078 prepared pages</td></tr><tr class="ours"><td class="left">Nemotron3.5 triple</td><td>75.20</td><td>10.62</td><td>官方</td></tr><tr><td class="left">LightOnOCR3-4B</td><td>75.10</td><td>2.76</td><td>官方</td></tr><tr class="ours"><td class="left">Nemotron3.5 double</td><td>74.92</td><td>11.65</td><td>官方</td></tr><tr><td class="left">LightOnOCR3-0.8B</td><td>74.60</td><td>5.69</td><td>官方</td></tr><tr><td class="left">Infinity2-Flash</td><td>73.25</td><td>3.06</td><td>官方</td></tr><tr><td class="left">MinerU2.5-Pro</td><td>72.78</td><td>4.13</td><td>官方</td></tr><tr class="ours"><td class="left">Nemotron3.5 single</td><td>72.74</td><td>15.42</td><td>官方</td></tr><tr class="cat"><td colspan="4">完整比较表，不省略弱项</td></tr><tr><td class="left">KDL-nano</td><td>72.38</td><td>2.98</td><td>官方</td></tr><tr><td class="left">LightOnOCR3-1B</td><td>71.40</td><td>2.44</td><td>官方</td></tr><tr><td class="left">Chandra2</td><td>70.10</td><td>2.01</td><td>官方</td></tr><tr><td class="left">PaddleOCR1.6</td><td>67.43</td><td>3.11</td><td>官方</td></tr><tr><td class="left">PaddleOCR1.5</td><td>65.95</td><td>3.40</td><td>官方</td></tr><tr><td class="left">NemotronParse2</td><td>63.91</td><td>3.95</td><td>官方</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">75.20不是单次调用；0.10也不是显著领先</div>
+<p>三遍比LightOnOCR3-4B仅+0.10，缺置信区间。计时含队列/传输/依赖crop，排除页面准备、启动、warmup、最终渲染与写盘。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">多语言：真实页与合成页不可互换</p>
+<table class="ood-table"><tr><th>数据/切片</th><th>指标</th><th>2.0</th><th>3.5</th><th>范围</th></tr><tr><td>Indic总体</td><td>ANLS↑</td><td>72.12</td><td>83.73</td><td>876页</td></tr><tr><td>Gujarati</td><td>ANLS↑</td><td>40.70</td><td>66.96</td><td>90页</td></tr><tr><td>Malayalam</td><td>ANLS↑</td><td>48.89</td><td>63.15</td><td>88页</td></tr><tr><td>MOSCAR</td><td>bagF1↑</td><td>97.44</td><td>99.51</td><td>合成8111页</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">资料不足：训练分析达不到完整报告深度</div>
+<p>已读原卡未给独立Tech Report、精确训练量/配比和关键消融。原卡无图，本页两图明确重绘。MOSCAR忽略字符顺序，163entries≠163种复杂扫描可靠率。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">复现证据</div>
+<div class="adelta">版本固定</div>
+<div class="adesc">权重、数据、scorer分开追溯。</div>
+</div>
+<div class="abl-card">
+<div class="aname">研究判断</div>
+<div class="adelta">留原始页</div>
+<div class="adesc">解析与推理错误分开归因。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">模型定位</div>
+<p>文档专项，不是通用3.5新正代。首发10月17日，建仓和发现日不替代。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">质量与预算</div>
+<p>双遍74.92拿走大部分增益；三遍75.20须一起报告10.62pages/s。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">评测边界</div>
+<p>原卡公开分数与同页速度，非所有模型同协议准确率；合成OCR不冒充扫描。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">训练数据验收</div>
+<p>同时保留原页、raw、box与renderer；测字段保真和每成功文档全链成本。</p>
+</div>
+</div>
+</div><!-- /poster -->
+</body>
+</html>
