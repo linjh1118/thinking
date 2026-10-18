@@ -5,7 +5,7 @@ company: Tencent Hunyuan
 model: Hy-Memory-30B-A3B
 release: 2026-10-16
 created: 2026-10-16
-updated: 2026-10-16
+updated: 2026-10-18
 tags: [base-model, hunyuan, memory, agent-training, on-policy-distillation, grpo]
 status: read
 url: "https://memory.hunyuan.tencent.com"
@@ -170,6 +170,18 @@ RL 使用 16 节点×8 H20（128 GPU），64 windows×8 rollouts＝512 trajector
 还需冻结 gold 数据的来源与拆分、做人审和 judge 敏感性分析；测试跨用户 / workspace 隔离、记忆删除、过期与隐私，不能只看个性化成功。跨应用历史导入需要单独授权，本次没有访问用户的聊天历史或启动任何同步产品。
 
 ## 官方链接与本地材料
+
+### 2026-10-18 巡检补充：官方 FP8 分发，不是新模型
+
+官方 `Hy-Memory-30B-A3B-FP8` 原卡明确写它是原模型的 **FP8-quantized version**，用于高效 vLLM 部署，`base_model` 指回本 family。因此它与原 BF16 共用本笔记、Poster 和 10 月 16 日首发日期；10 月 18 日只是本次发现并归档的日期，不据仓库创建时间新增发布事件。
+
+已读 FP8 原卡与配置：`quant_method=fp8`，activation 与 KV cache scheme 为 static；KV 使用 E4M3、per-tensor 静态量化，Q 是 E4M3、per-token-per-head 动态量化，embedding 和 lm_head 列为 ignored layers。原卡示例仍使用 vLLM v0.31.0 与 `reasoning_effort=no_think`。这些是分发配置，不是新训练算法或已验证的加速倍数。
+
+> [!warning] FP8 独立测量缺失
+> FP8 卡复用了原模型评测表，表中结果行仍标为 **Hy-Memory-30B-A3B**，没有单列 FP8 的质量、延迟、显存或量化误差对照。**因为原始资料较少，FP8 部署效果无法达到独立实测或完整量化报告级分析深度**；不能将 55.49 宏平均无条件转作 FP8 已验证成绩，也不能直接宣称质量无损。建议固定任务、bank、harness 与解码，配对比较 BF16/FP8 的写入保真、下游分数、KV/显存及每成功任务成本。
+
+- [🤗 HF Model Card · FP8](https://huggingface.co/tencent/Hy-Memory-30B-A3B-FP8)；[[src/hf_fp8_model_card|本地原卡阅读版]]。
+- 原始配置归档于 `src/hf_fp8_config.json`；不下载权重与 PDF，报告链接仍共享原 family。
 
 - 🤗 [HF Model Card](https://huggingface.co/tencent/Hy-Memory-30B-A3B)：`src/hf_model_card.md`。
 - 🌐 [Official Release · 2026-10-16](https://memory.hunyuan.tencent.com)：`src/official_website.html`；模型、框架、应用口径分开。
