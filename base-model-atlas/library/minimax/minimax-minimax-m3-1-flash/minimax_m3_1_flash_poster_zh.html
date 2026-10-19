@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MiniMax M3.1 Flash — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=minimax-minimax-m3-1-flash">Overview</a><a class="active" href="MiniMax-M3.1-Flash.html">渲染笔记</a></div>
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FMiniMax%2F261019_MiniMax_M3_1_Flash%2FMiniMax-M3.1-Flash" style="text-decoration: none;">M3.1 Flash · 本地笔记</a>
+   · 
+  <a href="https://www.minimax.io/blog/minimax-m31f" style="text-decoration: none;" target="_blank">📰 Tech Blog</a>
+</div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">MiniMax · 2026-10-19 正式发布阶段 · 通用主线</span>
+<div class="zh-title">把 Agent 成功率、推理预算和任务成本一起读</div>
+<h1>MiniMax M3.1 Flash <span>Capability · Budget · Cost</span></h1>
+<div class="authors">官方 Tech Blog 与四张原图研读 · BrainHao · 2026-10-19</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">62.2</div><div class="sub">Automation<br/>总表</div></div>
+<div class="score-box"><div class="num">73.7</div><div class="sub">DeepSWE v1.1<br/>官方自报</div></div>
+<div class="score-box"><div class="num">170+</div><div class="sub">输出TPS P50<br/>非整链延迟</div></div>
+<div class="score-box"><div class="num">$0.60</div><div class="sub">每百万输出<br/>token费率</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与产品阶段</h2></div>
+<p class="body">价值在更低费用下执行多步任务，而非所有榜单第一。正式发布10月19日；早期Preview首次开放日未核实，不与GA拆成多个正代。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">不是训练token数</div>
+<p>Space Bunny处理超过200T tokens是匿名服务使用量，不等于训练量；不据此补写训练数据规模。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">权重和Pro尚未发布</div>
+<p>API、M Plan、MiniMax Code已可用；权重以后开放，Pro以后到来。不生成假的HF原卡或技术报告链接。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">企业工具任务</div>
+<p>Automation覆盖600公开任务；BankerToolBench 76.2采用OpenCode1.17.18、M2.7 judge。金融正确性还需算式/引用核验。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">代码与计算机执行</div>
+<p>DeepSWE73.7、OSWorld61.7、ALE29.6。长序列工具能力必须通过最终状态与测试验收，不能只读输出文案。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">吞吐不是任务延迟</div>
+<p>官方称可达200+TPS，P50 170+。排除工具等待、重试和TTFT的输出速度，不等于所有任务端到端3×。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="官方原图：Automation不同effort的成本曲线" src="src/assets/official_figure_2.png"/>
+<div class="fig-cap">官方原图：Automation不同effort的成本曲线</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>方法披露与预算核算</h2></div>
+<p class="body">已读正文只说更激进的稀疏性，没有router、专家数、训练loss或RL配方。这里的方法分析是预算核算，不伪装成训练机制复现。</p>
+<div class="fig-box">
+<img alt="官方原图：DeepSWE；保留原图脚注与全部对照" src="src/assets/official_figure_3.png"/>
+<div class="fig-cap">官方原图：DeepSWE；保留原图脚注与全部对照</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">同模型不同预算，不是不同正代</div>
+<p>Automation成本图low/medium/high/xhigh/max：52.8/57.7/59.2/61.2/62.8。总表62.2与max62.8分开引用，正文未解释差异。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">固定三件事再比较</div>
+<p><b>(1) 冻结</b>任务、harness、effort与修题版本。<br/><b>(2) 记录</b>输入/输出/缓存tokens、工具、重试和成功。<br/><b>(3) 分开</b>每任务、每成功任务、整套费用；不同图不混口径。</p>
+</div>
+<div class="formula-box"><div class="flabel">按发布费率计算；不是实测账单</div>$$C=\frac{0.15N_{in}+0.015N_{cache}+0.60N_{out}}{10^6}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">未缓存与缓存输入分开计数；工具、重试、沙箱另计。单位USD。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">成本与最高成绩不是一回事</div>
+<p>DeepSWE high/xhigh/max为68.1/72.1/73.7，1017对照更高。图脚注截至9月22日却含1017，时间标注疑点保留。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">ALE的111美元是整套</div>
+<p>152任务Overall、max effort、Claude Code；29.6%与整套估算$111。不是每题111，也不承诺每个业务降本70%。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>实验结果与证据边界</h2></div>
+<p class="body">全部为发布方自报，未本地复测。总表15项完整列出；原图与脚注见笔记。空白不是0，未披露置信区间，不称小差距显著。</p>
+<table class="rtable"><tr><th class="left">Benchmark</th><th>分数</th><th>限定口径</th></tr><tr><td class="left">Automation v1.0.6</td><td>62.2</td><td>600公开任务</td></tr><tr><td class="left">BankerToolBench</td><td>76.2</td><td>M2.7 judge</td></tr><tr><td class="left">GDP.pdf AA</td><td>20.8</td><td>AA来源</td></tr><tr><td class="left">Terminal4.0</td><td>38.1</td><td>Codex0.149.1</td></tr><tr><td class="left">LOCA256K</td><td>60.3</td><td>官方实现</td></tr><tr><td class="left">ALE</td><td>29.6</td><td>Overall全集</td></tr><tr><td class="left">OSWorld2.0</td><td>61.7</td><td>0808Full</td></tr><tr><td class="left">PostTrain1.1</td><td>39.3</td><td>512K</td></tr><tr><td class="left">DeepSWE1.1</td><td>73.7</td><td>miniSWE2.4.5</td></tr><tr><td class="left">NL2Repo</td><td>61.2</td><td>修正两题</td></tr><tr><td class="left">SWERefactor</td><td>23.0</td><td>200K</td></tr><tr><td class="left">CyberGym</td><td>82.2</td><td>1M</td></tr><tr><td class="left">BabyVision</td><td>91.0</td><td>含tools</td></tr><tr><td class="left">HLE</td><td>43.4</td><td>2158text子集</td></tr><tr><td class="left">CharXivRQ</td><td>82.5</td><td>GPT5.5judge</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">不是全面第一：弱项同样需要保留</div>
+<p>总表对照：DeepSWE 1017为77.0；GDP.pdf GPT5.6Sol为27.2；CyberGym GLM5.3为84.5；OSWorld Opus5为70.6。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">三套图的费用单位与harness</p>
+<table class="ood-table"><tr><th>图</th><th>费用单位</th><th>注意</th></tr><tr><td>Automation</td><td>每任务</td><td>Claude Code</td></tr><tr><td>DeepSWE</td><td>每任务</td><td>mini-swe-agent</td></tr><tr><td>ALE</td><td>整套152任务</td><td>best harness/effort</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">原始资料不足：未达完整训练精读深度</div>
+<p>当前仅发布博客与原图；缺独立Tech Report、GA原卡、架构细节、数据配比与关键消融。不能把旧Preview规格直接迁移，不能编造稀疏/效率RL算法。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">已公开</div>
+<div class="adelta">4张原图</div>
+<div class="adesc">完整离线保存，图中疑点注明。</div>
+</div>
+<div class="abl-card">
+<div class="aname">未公开</div>
+<div class="adelta">训练配方</div>
+<div class="adesc">模型机制深度不足，显著留白。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">阶段口径</div>
+<p>10月19日正式rollout，不冒充早期Preview首次可用日；同family不重复拆叶。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">预算口径</div>
+<p>token费率、输出TPS、每任务与整套费用分开；不外推所有场景70%收益。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">证据边界</div>
+<p>总表62.2与成本图62.8并列，Cyber正文约82与原图82.2保留精度差。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">研究启发</div>
+<p>固定任务/harness/effort，测成功率、重复工具、每成功任务成本与长尾延迟。</p>
+</div>
+</div>
+</div><!-- /poster -->
+</body>
+</html>
