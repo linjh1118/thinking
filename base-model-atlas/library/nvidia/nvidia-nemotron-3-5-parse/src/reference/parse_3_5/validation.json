@@ -1,0 +1,99 @@
+{
+  "status": "scored_and_verified",
+  "scope": "Fresh quick20/full500 predictions and released Table-body conversion",
+  "model": "nvidia/Nemotron-3.5-Parse",
+  "model_revision": "dca5b2df89d00a671509204501d8f1f379d5e94f",
+  "model_safetensors_sha256": "81dd7609c589f3694ce75520c25af5010953231358de6aec4d03e8c6aac787e9",
+  "package_version": "3.5.0.post7",
+  "scheduler": {
+    "job_id": 7482504,
+    "state": "COMPLETED",
+    "exit_code": "0:0"
+  },
+  "runtime": {
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "gpu_count": 1,
+    "dtype": "bfloat16",
+    "vllm": "0.26.0",
+    "transformers": "5.14.1",
+    "huggingface_hub": "1.24.0",
+    "pillow": "12.3.0",
+    "dependency_lock_reproduction": false,
+    "deviation": "Measured serving container used Pillow 12.3.0; source package pins 12.2.0."
+  },
+  "generation": {
+    "prompt": "</s><s><predict_bbox><predict_classes><output_markdown><predict_text_in_pic>",
+    "concurrency": 128,
+    "warmup_count": 16,
+    "preload_images": true,
+    "temperature": 0,
+    "repetition_penalty": 1.1,
+    "max_tokens": 8744,
+    "max_model_len": 16384,
+    "max_num_seqs": 192,
+    "max_num_batched_tokens": 16384,
+    "prefix_caching": false,
+    "one_token_mtp": true,
+    "attention": "FA3, automatic compatible scheduler",
+    "coordinate_frame": "content_normalized"
+  },
+  "scoring": {
+    "version": 3,
+    "table_mode": "released",
+    "conversion": "nemotron_parse.postprocessing.postprocess_text(Table,table_format=HTML,PostprocessOptions(render_charts=False))",
+    "ground_truth_changed": false,
+    "geometry_changed": false,
+    "non_table_blocks_changed": false,
+    "malformed_outputs": "retained"
+  },
+  "regression": {
+    "quick20": {
+      "pages": 20,
+      "request_errors": 0,
+      "finish_reasons": {
+        "length": 1,
+        "stop": 19
+      },
+      "table_conversion": {
+        "changed_blocks": 13,
+        "pages_with_predicted_tables": 10,
+        "table_blocks": 14,
+        "unconverted_latex_blocks": 1
+      }
+    },
+    "full500": {
+      "pages": 500,
+      "request_errors": 0,
+      "finish_reasons": {
+        "length": 19,
+        "stop": 481
+      },
+      "table_conversion": {
+        "changed_blocks": 364,
+        "pages_with_predicted_tables": 255,
+        "table_blocks": 375,
+        "unconverted_latex_blocks": 2
+      }
+    }
+  },
+  "verification": [
+    {
+      "split": "quick20",
+      "pages": 20,
+      "matches_measured_metrics_and_every_page": true,
+      "tolerance": 1e-12
+    },
+    {
+      "split": "full500",
+      "pages": 500,
+      "matches_measured_metrics_and_every_page": true,
+      "tolerance": 1e-12
+    }
+  ],
+  "limitations": [
+    "Full500 is a lightweight regression harness, not official OmniDocBench TEDS or ParseBench.",
+    "Token-capped predictions and 2 unconverted malformed Table bodies are retained.",
+    "Timing excludes preload, warmup, startup, conversion, and scoring.",
+    "Historical inference.constraints.txt and transformers.constraints.txt describe the older rc3 validation; they are not locks for this measured environment."
+  ]
+}

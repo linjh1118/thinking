@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Nemotron-3.5-Parse"
 tags: [base-model, nemotron, document-parsing, ocr, data-construction]
 status: read
 created: 2026-10-18
-updated: 2026-10-18
+updated: 2026-10-19
 ---
 
 # Nemotron 3.5 Parse：不只是读出文字，还要保留可用结构
@@ -102,6 +102,26 @@ updated: 2026-10-18
 官方计时从首个模型调用到最终响应，包含 queue、传输和依赖裁切准备/派发，**排除**初始页面准备、服务启动、warmup、最终文档渲染和写盘。每模型一张 H100，全部 2,078 页包括达到 token limit 的输出；空成功响应也保留为空预测，不偷偷删掉。官方给的是已测 serving profile，不是最大硬件吞吐。
 
 复现 README 另报 72.72 /74.88 /75.14 /75.20（single/double/triple/union），与新 general helpers 的 72.74 /74.92 /75.20 不完全一致。**不同运行与 renderer 的结果不要拼成一套**；本页速度—质量图严格使用模型卡 matched-run 三行，复现说明另作来源追踪。
+
+## 10 月 18 日回归资料更新：不是新 checkpoint，也不是推理进步
+
+10 月 19 日巡检发现官方模型卡新增 quick20/full500 引用。已继续阅读并归档 [官方回归说明](https://huggingface.co/nvidia/Nemotron-3.5-Parse/blob/main/reference/parse_3_5/README.md)、`validation.json`、`expected_results.json` 和文件哈希清单。官方明确：这是 **10 月 18 日的评测参考刷新，不是新模型首发**，不为它另建叶子或发布事件。
+
+Full500 使用 OmniDocBench v1.5 的固定 500 页子集，其中 250 页表格、250 页图片/图示；quick20 为 20 页。`layout_lite` 回归工具不等于官方 OmniDocBench TEDS 或 ParseBench，不能把下表与前面的 2,078 页成绩混排。
+
+| Full500 指标 | 历史 raw parsing | Released table parsing |
+|---|---:|---:|
+| Overall | 70.17% | 74.49% |
+| Table quality | 70.41% | 83.38% |
+| Layout class F1 @ IoU 0.50 | 66.10% | 66.10% |
+| Table recall @ IoU 0.50 | 93.36% | 93.36% |
+| Picture recall @ IoU 0.50 | 74.01% | 74.01% |
+
+**两列使用同一批 raw predictions**。Version 3 只将预测的 Table bodies 通过已发布 HTML 后处理器转换后，再使用原有指标公式；框、类别、ground truth 与其他 block 文本不变。74.49 − 70.17 = +4.32 个百分点是解析兼容性修正后的计分差，不能说模型推理能力提高 4.32 分。Table quality 平均字符袋 F1、单元格袋 F1、网格形状相似度；Overall 平均 class F1、table quality、picture recall，也不是标准 TEDS。
+
+官方记录 500/500 页无请求失败，**19 页达到 token cap、2 个 malformed Table bodies 仍计分**；quick20 有 1 页达到 cap。单 H100 80GB、BF16、单 token MTP、并发 128、16 次 warmup 与预加载图片时，请求阶段 55.35890 秒、9.03197 pages/s；排除启动、预加载、warmup、转换和计分，不与前表混称端到端速度。
+
+记录的模型 revision 为 `dca5b2df89d00a671509204501d8f1f379d5e94f`，package 为 `3.5.0.post7`；应按各自 reference 文件固定版本，不能把另一套 ParseBench revision 自动移植过来。对照允许绝对误差 0.02，不要求不同 GPU batch schedule 逐字节一致。实际环境 Pillow 12.3.0 偏离源包的 12.2.0 pin，官方明确这不是完全干净的 dependency-lock 复现。本次仅归档与解读，没有安装包或运行推理。
 
 ## 多语言：真实页与简单合成页分开读
 

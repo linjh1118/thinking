@@ -467,6 +467,8 @@ Both comparisons use the [released Parse 2.0 weights](https://huggingface.co/nvi
 
 Inference reference outputs and verification instructions are available in [reference/](https://huggingface.co/nvidia/Nemotron-3.5-Parse/blob/main/reference/README.md).
 
+The [quick20/full500 regression references](reference/parse_3_5/README.md) were refreshed for the released checkpoint on October 18, 2026. Full500 completed 500/500 pages without request failures and scored **74.49% overall** and **83.38% table quality** with the released table parser. These are lightweight regression metrics, separate from official ParseBench or OmniDocBench TEDS. Raw outputs, legacy scores and the updated scorer are included.
+
 ## Inference:
 **Acceleration Engine:** Transformers, vLLM <br>
 **Test Hardware:** <br>
