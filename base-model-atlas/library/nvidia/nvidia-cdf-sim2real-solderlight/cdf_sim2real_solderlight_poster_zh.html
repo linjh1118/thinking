@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CDF Sim2Real Solderlight — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-cdf-sim2real-solderlight">Overview</a><a class="active" href="CDF-Sim2Real-Solderlight.html">渲染笔记</a></div>
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/NVIDIA_Nemotron/Variants/261020_CDF_Sim2Real_Solderlight/CDF-Sim2Real-Solderlight" style="text-decoration: none;">CDF Sim2Real Solderlight · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/nvidia/cdf-sim2real-smt-solderlight" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
+</div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">NVIDIA · 2026-10-20 · 专项支线</span>
+<div class="zh-title">伪目标风格迁移，不能冒充真实相机泛化</div>
+<h1>CDF Sim2Real Solderlight <span>Evidence · Method · Limits</span></h1>
+<div class="authors">官方 Model Card 逐段研读 · BrainHao · 非本地复测</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">364</div><div class="sub">配对训练crop</div></div>
+<div class="score-box"><div class="num">3000</div><div class="sub">训练步数</div></div>
+<div class="score-box"><div class="num">170M</div><div class="sub">LoRA训练参数约数</div></div>
+<div class="score-box"><div class="num">0</div><div class="sub">独立留出split</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型定位</h2></div>
+<p class="body">把Omniverse PCB crop编辑为特定solder-light AOI照明风格；底座Qwen-Image-Edit，归NVIDIA专项，不是Qwen正代。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">pseudo-target不是真实相机真值</div>
+<p>364对输入是合成渲染，目标为Qwen-Image-Edit生成的伪照片。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">保持几何是目标，不是保证</div>
+<p>高光不应改变焊盘/引脚/标记；最终质检pass/fail交给下游检测和人工。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">固定工业指令</div>
+<p>金属处橙红/钴蓝反光；塑料陶瓷保持暗与平。不得新增文字、logo或装饰。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">成对小数据</div>
+<p>364对按文件名匹配；9个视觉不合适样本剔除。收集于2026年9–10月。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">范围有限</div>
+<p>单个PCB元件crop，固定指令；不能外推成自由图像编辑或任意工业材质模型。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="依据原卡整理的研读示意，非官方原图" src="src/assets/architecture.svg"/>
+<div class="fig-cap">依据原卡整理的研读示意，非官方原图</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>方法与复现契约</h2></div>
+<p class="body">Qwen-Image-Edit transformer做rank16/alpha16 LoRA，覆盖attention、cross-attention、img/txt MLP；Qwen2.5-VL与VAE为上游组件。</p>
+<div class="fig-box">
+<img alt="依据原卡整理的验收示意，非实测结果" src="src/assets/protocol.svg"/>
+<div class="fig-cap">依据原卡整理的验收示意，非实测结果</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">发布融合pipeline，不是只发adapter</div>
+<p>训练后scale1.0融合至bf16 transformer；model/包含各组件。约170M训练参数不等于完整推理显存。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">训练与面积口径</div>
+<p>3000步、batch1、LR1e−4、seed0、bf16。目标262144像素≈512²=0.262MP；原卡“~0.5MP”算术不一致。</p>
+</div>
+<div class="formula-box"><div class="flabel">训练目标面积核算；指出原卡0.5MP表述差异</div>$$262144=512^2\approx0.262\times10^6$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">机制概括或算术说明，不冒充未披露的论文公式。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">固定prompt不是安全证明</div>
+<p>减少自由文本入口不等于没有误用/依赖/图像输入风险；不照抄绝对安全结论。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">分辨率限制</div>
+<p>其他尺寸可被底座接受，但这套微调未验证；几何保持与风格稳定性都要复核。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>结果边界与研究判断</h2></div>
+<p class="body">仅有preview对照和内部目视审核；未打包独立验证/测试或真实摄影ground truth，不提供可外推的检测准确率。</p>
+<table class="rtable"><tr><th>项目</th><th>已披露</th><th>限制</th></tr><tr><td>训练数据</td><td>364对</td><td>合成→伪目标</td></tr><tr><td>剔除</td><td>9样本</td><td>选择偏差需保留</td></tr><tr><td>训练</td><td>3000步</td><td>batch1</td></tr><tr><td>LoRA</td><td>rank16</td><td>scale1融合</td></tr><tr><td>真实测试</td><td>未提供</td><td>不承诺sim2real收益</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">像照片，不等于物理正确</div>
+<p>可能改变引脚、焊点或字符，导致标签失效；漂亮输出不能覆盖几何错误。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">下一步验收：不是已有实测结果</p>
+<table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td>对照</td><td>原渲染/原底座/微调</td><td>相同输入</td></tr><tr><td>保真</td><td>几何/标记/高光</td><td>逐字段验</td></tr><tr><td>下游</td><td>真实相机留出</td><td>召回/误报</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">原始资料不足：明确未达到完整精读深度</div>
+<p>原始资料不足：无公开本模型效果图、独立报告、真实相机留出结果或量化消融，未达完整报告级深度。两图是研读示意，非模型输出。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">已知</div>
+<div class="adelta">配方/数据量</div>
+<div class="adesc">不是完整真实域证明</div>
+</div>
+<div class="abl-card">
+<div class="aname">待验</div>
+<div class="adelta">标签不变量</div>
+<div class="adesc">审查被剔除的坏样本</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">定位</div>
+<p>特定PCB照明迁移，不承担最终质检判定。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">机制</div>
+<p>小数据伪目标LoRA，融合后发完整pipeline。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">边界</div>
+<p>真实相机数据没有独立量化结果，不外推收益。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">研究</div>
+<p>教师修复/蒸馏要守住任务不变量，验证器独立于生成器。</p>
+</div>
+</div>
+</div><!-- /poster -->
+</body>
+</html>
