@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BioEmu-2 — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=microsoft-bioemu-2">Overview</a><a class="active" href="BioEmu-2.html">渲染笔记</a></div>
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/Microsoft/Variants/2610_BioEmu_2/BioEmu-2" style="text-decoration: none;">BioEmu-2 · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/microsoft/bioemu2" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
+</div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">Microsoft · 2026-10（首发日待核） · 科学模型支线</span>
+<div class="zh-title">结构、构象集合与时间推进，不是同一种输出</div>
+<h1>BioEmu-2 <span>Evidence · Method · Limits</span></h1>
+<div class="authors">官方 Model Card 逐段研读 · BrainHao · 非本地复测</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">~500M</div><div class="sub">模型参数</div></div>
+<div class="score-box"><div class="num">2026-10</div><div class="sub">仅明确发布月份</div></div>
+<div class="score-box"><div class="num">200</div><div class="sub">默认去噪步数</div></div>
+<div class="score-box"><div class="num">1 B200</div><div class="sub">官方性能图口径</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型定位</h2></div>
+<p class="body">Microsoft Research全原子扩散研究模型；多链/配体/核酸输入产生坐标集合。不生成新序列，不输出结合亲和力，非聊天正代。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">不能把发现日当首发日</div>
+<p>HF只写2026年10月，首发日待核。默认checkpoint为bioemu2-preview，同family不拆两个叶子。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">样本频率不等于自由能</div>
+<p>原卡明确ensemble未校准；不能把采样频次直接解释为Boltzmann概率或绝对自由能。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">结构/平衡采样</div>
+<p>多帧是构象候选集合，不天然表示时间先后。静态折叠正确不等于状态权重正确。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">未来端点</div>
+<p>给定同一起点与lag抽独立端点；不是第一帧演化成第二帧。训练lag主要1–1000ns。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">时间rollout</div>
+<p>显式逐步推进才有时间顺序；物理性失败样本仍保留，不自动重试或修复。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="官方原图：1 B200，trunk与200步去噪墙钟时间" src="src/assets/wall-clock-time-vs-tokens-b200.png"/>
+<div class="fig-cap">官方原图：1 B200，trunk与200步去噪墙钟时间</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>方法与复现契约</h2></div>
+<p class="body">先按系统计算MSA与trunk single/pair表示，再对每个batch反复去噪。固定输入/模型设置可复用trunk；不能把去噪速度当全链耗时。</p>
+<div class="fig-box">
+<img alt="官方原图：去噪吞吐，排除trunk；完整图例保留" src="src/assets/denoiser-throughput-vs-batch-size-b200.png"/>
+<div class="fig-cap">官方原图：去噪吞吐，排除trunk；完整图例保留</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">复杂度与瓶颈要分阶段</div>
+<p>Trunk约O(RN²+N³)计算，pair表示O(N²)；denoiser每步O(BN²)。少量样本可能由trunk主导，大量样本由去噪主导。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">保留性能图的分母</div>
+<p>一张B200、200步。吞吐图按每步时间折算samples/s，排除trunk；batch增大到饱和，不等于任意系统线性加速。</p>
+</div>
+<div class="formula-box"><div class="flabel">研读成本分解；不是未公开训练loss</div>$$T_{total}=T_{prep}+T_{trunk}+n_b n_s T_{step}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">机制概括或算术说明，不冒充未披露的论文公式。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">精度不是一个开关</div>
+<p>bf16-mixed作用trunk；denoising仍float32。TF32改计算而不改tensor存储，显存不因此等比例下降。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">原卡/README范围不一致</div>
+<p>卡写最小测试80GB A100，README列V100/T4等；小卡能否容纳具体系统须另验，不能无条件保证。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>结果边界与研究判断</h2></div>
+<p class="body">原卡列结构、多构象、MD留出与大复合物评估方法，但没有具体精度数值表。两张性能原图不能替代生物结构质量与长程动态证据。</p>
+<table class="rtable"><tr><th>项目</th><th>已披露</th><th>限制</th></tr><tr><td>PDB</td><td>189745</td><td>实验结构</td></tr><tr><td>cath2</td><td>886</td><td>MD系统</td></tr><tr><td>cath3</td><td>4136</td><td>MD系统</td></tr><tr><td>cath_dimers</td><td>7164</td><td>MD系统</td></tr><tr><td>heterodimers</td><td>1272</td><td>MD系统</td></tr><tr><td>pdbbind2020</td><td>3036</td><td>MD系统</td></tr><tr><td>apo_free</td><td>2770</td><td>MD系统</td></tr><tr><td>megasim</td><td>170</td><td>MD系统</td></tr><tr><td>AFDB monomer</td><td>7231107</td><td>AI预测结构</td></tr><tr><td>AFDB homo</td><td>753271</td><td>AI预测结构</td></tr><tr><td>AFDB hetero</td><td>22157</td><td>AI预测结构</td></tr><tr><td>Teddymer</td><td>50651</td><td>AI预测结构</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">数据量不等于独立物理证据</div>
+<p>表内量纲是各集sequences/systems，非统一轨迹帧数。AFDB/Teddymer有教师预测偏差，不与实验结构混称。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">下一步验收：不是已有实测结果</p>
+<table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td>结构</td><td>RMSD/TM/lDDT</td><td>无数值表</td></tr><tr><td>界面</td><td>DockQ/物理性</td><td>无数值表</td></tr><tr><td>集合</td><td>覆盖/权重散度</td><td>无数值表</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">原始资料不足：明确未达到完整精读深度</div>
+<p>原始资料不足：未核实首发日、独立本版报告、完整精度表与消融，未达到完整技术报告精读深度。不迁移BioEmu-1的速度/自由能结论给2。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">用途</div>
+<div class="adelta">研究假设</div>
+<div class="adesc">不是实验测量或临床工具</div>
+</div>
+<div class="abl-card">
+<div class="aname">验收</div>
+<div class="adelta">独立验证</div>
+<div class="adesc">保存全部失败，不只看好样例</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">日期</div>
+<p>只到2026-10；列日期待核，不冒充10月20日首发。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">表示</div>
+<p>坐标样本集合、端点、连续轨迹三种语义分开。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">成本</div>
+<p>MSA、trunk、去噪分开；B200吞吐不代表整链。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">研究</div>
+<p>学习型模拟器与reward分开验收，一步/长程误差各测。</p>
+</div>
+</div>
+</div><!-- /poster -->
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Propagate structures through time · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Propagate structures through time</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#propagate-structures-through-time">Propagate structures through time</a><a class="toc-l2" href="#contents">Contents</a><a class="toc-l2" href="#use-the-cli">Use the CLI</a><a class="toc-l2" href="#use-emusession">Use EmuSession</a><a class="toc-l2" href="#use-an-external-starting-structure">Use an external starting structure</a><a class="toc-l2" href="#sample-one-endpoint-per-frame-or-several-from-one-frame">Sample one endpoint per frame or several from one frame</a><a class="toc-l2" href="#choose-a-sampler">Choose a sampler</a><a class="toc-l2" href="#sample-endpoints-at-different-future-times">Sample endpoints at different future times</a><a class="toc-l2" href="#build-a-time-ordered-trajectory">Build a time-ordered trajectory</a><a class="toc-l2" href="#customize-each-trajectory-step">Customize each trajectory step</a></nav></aside><main class="note"><h1 id="propagate-structures-through-time">Propagate structures through time</h1><h2 id="contents">Contents</h2><ul><li><a href="#use-the-cli">Use the CLI</a></li><li><a href="#use-emusession">Use EmuSession</a></li><li><a href="#use-an-external-starting-structure">Use an external starting structure</a></li><li><a href="#sample-one-endpoint-per-frame-or-several-from-one-frame">Sample one endpoint per frame or several from one frame</a></li><li><a href="#choose-a-sampler">Choose a sampler</a></li><li><a href="#sample-endpoints-at-different-future-times">Sample endpoints at different future times</a></li><li><a href="#build-a-time-ordered-trajectory">Build a time-ordered trajectory</a></li><li><a href="#customize-each-trajectory-step">Customize each trajectory step</a></li></ul><p>Propagation samples a structure <code>x_t</code> at a future time <code>t</code> from a starting structure (<code>x0</code>), where <code>t</code> is the time lag (<code>lag_time_ns</code>). Each result is an <strong>endpoint</strong>, not an intermediate frame in a trajectory. To build a time-ordered trajectory, use <a href="#build-a-time-ordered-trajectory"><code>simulate_trajectory()</code></a>.</p><p>Use lags from 1 to 1000 ns (1 ns to 1 µs), the range the model mostly saw during training. At longer lags, endpoints approach the equilibrium ensemble; beyond a few milliseconds, use <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsampling.md#choose-a-sampling-mode" target="_blank" rel="noopener">equilibrium sampling</a> instead. For repeated sampling and propagation of the same system, use <code>EmuSession.propagate()</code> to keep trunk embeddings in memory; see <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdreuse-embeddings.md" target="_blank" rel="noopener">reuse embeddings</a>.</p><h2 id="use-the-cli">Use the CLI</h2><p>First sample a starting conformation for adenylate kinase (PDB 1AKE):</p><pre><div class="code-lang">bash</div><code>bioemu2 sample-equilibrium \
+  --pdb-id 1AKE \
+  --num-samples 1 \
+  --out outputs/adk-start</code></pre><p>Then draw eight independent endpoints from that starting structure at a 1 ns lag:</p><pre><div class="code-lang">bash</div><code>bioemu2 propagate \
+  --x0-cif outputs/adk-start/topology.cif \
+  --num-samples 8 \
+  --lag-time-ns 1 \
+  --out outputs/adk-propagated</code></pre><p>Pass the CIF and a matching system YAML to retain custom definitions and contacts:</p><pre><div class="code-lang">bash</div><code>bioemu2 propagate \
+  --x0-cif initial.cif \
+  --system system.yaml \
+  --num-samples 8 \
+  --lag-time-ns 1 \
+  --out outputs/from-external-cif</code></pre><p>The CLI requires every starting atom to be present and in system order; it cannot reorder atoms or select chains. Chain ID strings may differ because chains are matched by position. For chain selection, define a system using <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsystem.md#load-a-deposited-structure-definition" target="_blank" rel="noopener"><code>System.from_pdb_id()</code></a> and <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsystem.md#read-and-write-yaml" target="_blank" rel="noopener">save it to YAML</a> for <code>--system</code>. You can instead use <code>--pdb-id</code> to load an RCSB system, or omit both system options when the CIF has sufficient <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsystem.md#metadata-used-when-importing-mmcif" target="_blank" rel="noopener">mmCIF metadata</a>. See the <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsystem.md" target="_blank" rel="noopener">system guide</a> for custom entities, bonds, and contacts.</p><p>To sample one endpoint for each of N starting structures, store the starting frames in an XTC file and pass <code>--x0-xtc starts.xtc</code> instead of <code>--num-samples</code>. Also pass <code>--x0-cif starts.cif</code> as the XTC topology; their atom order must match.</p><p>The CLI writes <code>samples.xtc</code> with endpoints in input order, without the starting frames; load it with the output <code>topology.cif</code>. When the starting structure comes from <code>sample-equilibrium</code>, its <code>topology.cif</code> contains the coordinates of frame 0 in the starting <code>samples.xtc</code>, whether or not that frame passed physicality checks. <code>physicality.json</code> has one entry per endpoint, in the <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsampling.md#use-the-cli" target="_blank" rel="noopener">same format as for sampling</a>. Rejected frames remain in the XTC, so report index <code>i</code> describes frame <code>i</code>. Use a new <code>--out</code> directory for each run: the CLI refuses to overwrite <code>samples.xtc</code>, <code>physicality.json</code>, or <code>samples_*.xtc</code>.</p><h2 id="use-emusession">Use EmuSession</h2><p>Sample a starting structure, then propagate it by 1 ns using the same <code>EmuSession</code>. <code>EmuSession.propagate()</code> reuses the session's trunk embeddings:</p><pre><div class="code-lang">python</div><code>from pathlib import Path
+
+from bioemu2 import EmuSession, System, load_model, save_frames
+
+system = System.from_pdb_id(&quot;1AKE&quot;)
+model = load_model()
+emu = EmuSession(system, model=model, mode=&quot;equilibrium&quot;)
+x0 = emu.sample(num_samples=1)
+x_tau = emu.propagate(x0, lag_time_ns=1.0)
+save_frames(x_tau, Path(&quot;outputs/adk-endpoint&quot;))</code></pre><p><code>save_frames()</code> writes <code>samples.xtc</code> and <code>topology.cif</code> to the output directory. To use <code>EmuSession.propagate()</code> with a structure from a CIF file, such as one downloaded from the PDB, see <a href="#use-an-external-starting-structure">use an external starting structure</a>. To change how endpoints are sampled, see <a href="#choose-a-sampler">choose a sampler</a>.</p><p>See <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.md../examples/simulate_a_trajectory.py" target="_blank" rel="noopener"><code>examples/simulate_a_trajectory.py</code></a> for a complete adenylate kinase workflow. For more control and configurability, see the <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdfunctional-api.md#low-level-functional-api" target="_blank" rel="noopener">low-level functional API</a>.</p><h2 id="use-an-external-starting-structure">Use an external starting structure</h2><p>You can propagate structures starting from a <code>.cif</code> file downloaded from the PDB or saved by BioEmu2. The file must contain coordinates for every chain, residue, and atom in the system; BioEmu2 cannot fill in missing atoms. For modified residues, ligands, branched entities, or explicit bonds, provide a matching <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsystem.md" target="_blank" rel="noopener">system definition</a> rather than relying on inference from the CIF.</p><p>Before passing a structure from a CIF file to <code>EmuSession.propagate()</code>, map its coordinates to the system's atom order. The mapper can reorder atoms but cannot fill in missing ones:</p><pre><div class="code-lang">python</div><code>from pathlib import Path
+
+from bioemu2 import EmuSession, System, load_model, map_cif_atom_order, save_frames
+
+system = System.from_yaml(&quot;system.yaml&quot;)
+x0 = map_cif_atom_order(system, &quot;initial.cif&quot;)
+emu = EmuSession(system, model=load_model(), mode=&quot;equilibrium&quot;)
+endpoints = emu.propagate(x0, lag_time_ns=1.0)
+save_frames(endpoints, Path(&quot;outputs/from-external-cif&quot;))</code></pre><p>For the functional API, pass the CIF path directly to <code>propagate()</code> as in the <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdfunctional-api.md#propagate-structures" target="_blank" rel="noopener">functional example</a>, with <code>system=system</code> if the CIF alone cannot define the system. To propagate from mapped coordinates instead, pass <code>x0</code> and the matching <code>system</code>. For the CLI, see <a href="#use-the-cli">use the CLI</a>.</p><h2 id="sample-one-endpoint-per-frame-or-several-from-one-frame">Sample one endpoint per frame or several from one frame</h2><p><strong>One endpoint each for N starting frames:</strong> Pass an <code>mdtraj.Trajectory</code> containing N frames. Propagation draws one independent endpoint per frame in input order: endpoint <code>i</code> is conditioned on starting frame <code>i</code>. The <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdfunctional-api.md#propagate-structures" target="_blank" rel="noopener">functional API example</a> shows this with four starting frames. These endpoints are not consecutive points in a time-ordered trajectory.</p><p><strong>N endpoints from one starting frame:</strong> With <code>EmuSession.propagate()</code>, repeat that frame: <code>emu.propagate(x0[[0] * 8], lag_time_ns=1.0)</code> draws eight endpoints from <code>x0[0]</code>. With functional <code>propagate()</code>, pass <code>num_samples=8</code> for a CIF path or single-frame trajectory. With the CLI, pass <code>--num-samples 8</code> for a CIF path.</p><h2 id="choose-a-sampler">Choose a sampler</h2><p><code>propagate()</code> accepts the <code>&quot;edm&quot;</code>, <code>&quot;edm_gd&quot;</code>, <code>&quot;edm_fk&quot;</code>, and <code>&quot;edm_fkc&quot;</code> presets. <code>EmuSession.propagate()</code> accepts those presets and configured <code>EDMSampler</code>, <code>GuidedFKSampler</code>, and <code>FKCSampler</code> instances. For a functional call with a configured sampler, use the <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdfunctional-api.md#low-level-functional-api" target="_blank" rel="noopener">low-level functional API</a>. Both <code>GuidedFKSampler</code> and <code>FKCSampler</code> can use custom steering potentials. For what each sampler does, see <a href="https://huggingface.co/microsoft/bioemu2/blob/main/README.mdsteering.md#choose-a-sampler" target="_blank" rel="noopener">choose a sampler</a> in the steering guide.</p><p>The <code>&quot;edm_fk&quot;</code> and <code>&quot;edm_fkc&quot;</code> presets resample particles. With resampling enabled, starting frames must be identical within each resampling group (the entire batch by default), because resampling can copy particles between them. Resampling samplers cannot be used for <a href="#build-a-time-ordered-trajectory">time-ordered trajectories</a>.</p><h2 id="sample-endpoints-at-different-future-times">Sample endpoints at different future times</h2><p>To explore different timescales, sample endpoints from the <strong>same</strong> starting frame at several lags. Reuse one <code>EmuSession</code> so its trunk embeddings are computed only once:</p><pre><div class="code-lang">python</div><code>from pathlib import Path
+
+from bioemu2 import EmuSession, System, load_model, save_frames
+
+system = System.from_pdb_id(&quot;1AKE&quot;)
+emu = EmuSession(system, model=load_model(), mode=&quot;equilibrium&quot;)
+x0 = emu.sample(num_samples=1)
+
+for lag_time_ns in (1.0, 10.0, 100.0, 1000.0):
+    endpoints = emu.propagate(x0[[0] * 8], lag_time_ns=lag_time_ns)
+    save_frames(endpoints, Path(&quot;outputs/propagation&quot;) / f&quot;lag_{lag_time_ns:g}ns&quot;)</code></pre><p>Each output directory contains eight independent endpoints at its named lag, not successive time points.</p><h2 id="build-a-time-ordered-trajectory">Build a time-ordered trajectory</h2><aside class="callout note"><div class="callout-title">NOTE</div><div>Unlike elsewhere in BioEmu2, an <code>mdtraj.Trajectory</code> returned by <code>simulate_trajectory()</code> really is a time-ordered trajectory. Other sampling APIs use <code>mdtraj.Trajectory</code> as a convenient container for a bag of samples: their frame order does not represent elapsed time.</div></aside><p>Use <code>simulate_trajectory()</code> for successive propagation steps, such as when making a video. For endpoints at independent future times, use the <a href="#sample-endpoints-at-different-future-times">multiple-lag recipe</a> instead. Samplers with particle resampling are not supported for multi-step rollouts: copying particles between trajectories makes their starting-frame correspondence ambiguous. Gradient-guided steering without resampling remains supported. Each frame in <code>x0</code> starts one trajectory; repeat a frame to simulate several trajectories from the same conformation:</p><pre><div class="code-lang">python</div><code>from bioemu2 import System, load_model, sample_equilibrium, simulate_trajectory
+
+system = System.from_pdb_id(&quot;1AKE&quot;)
+model = load_model()
+x0 = sample_equilibrium(system, model=model, num_samples=1)
+num_trajectories = 4
+repeated_x0 = x0[[0] * num_trajectories]
+
+trajectories = simulate_trajectory(
+    system,
+    model=model,
+    x0=repeated_x0,
+    lag_time_ns=1.0,
+    num_trajectory_steps=10,
+    seed=42,
+)
+
+assert len(trajectories) == num_trajectories
+assert all(trajectory.n_frames == 11 for trajectory in trajectories)</code></pre><p>The function computes one equilibrium embedding and reuses it for every propagation step. Each returned trajectory includes its starting frame at time zero, and MDTraj frame times are stored in picoseconds. Endpoints are aligned to their own preceding frames.</p><p>After the rollout, BioEmu2 reports how many frames pass the <code>high_quality</code> physicality thresholds and the aggregate violation counts. It does not remove or retry failed frames, so every returned trajectory contains the requested number of frames.</p><h2 id="customize-each-trajectory-step">Customize each trajectory step</h2><p>Pass a preset to <code>simulate_trajectory()</code>, or a configured sampler to <code>simulate_trajectory_with_embeddings()</code>, when every trajectory step uses the same settings. The presets use <code>step_scale=1.0</code>; the embedding-based operation uses the supplied sampler unchanged.</p><p>Use <code>propagate_with_embeddings()</code> directly when sampler settings or steering potentials must change between trajectory steps, including umbrella windows that move over time. Compute the embedding once, then construct the sampler for each step:</p><pre><div class="code-lang">python</div><code>from bioemu2 import (
+    GuidedFKSampler,
+    System,
+    get_msa,
+    join_trajectory_steps,
+    load_model,
+    propagate_with_embeddings,
+    sample_equilibrium,
+)
+from bioemu2.denoising.steering.potentials import get_default_potentials
+
+system = System.from_pdb_id(&quot;1AKE&quot;)
+model = load_model()
+msa = get_msa(system)
+x0 = sample_equilibrium(system, model=model, num_samples=1)
+num_trajectory_steps = 10
+lag_time_ns = 1.0
+
+
+def potentials_for_step(step):
+    # Replace with potentials that depend on `step`, such as a moving umbrella window.
+    return get_default_potentials()
+
+
+trunk_embeddings = model.embed(
+    system,
+    msa=msa,
+    mode=&quot;equilibrium&quot;,
+)
+
+step_frames = [x0]
+for step in range(num_trajectory_steps):
+    sampler = GuidedFKSampler(
+        potentials=potentials_for_step(step),
+        resampling_interval=None,
+    )
+    step_frames.append(
+        propagate_with_embeddings(
+            system,
+            trunk_embeddings,
+            x0=step_frames[-1],
+            lag_time_ns=lag_time_ns,
+            model=model,
+            sampler=sampler,
+            seed=42 + step,
+            progress=False,
+        )
+    )
+
+trajectories = join_trajectory_steps(step_frames, lag_time_ns=lag_time_ns)</code></pre><p><code>join_trajectory_steps()</code> joins frame <code>i</code> from every element of <code>step_frames</code> and assigns frame times in picoseconds.</p></main></div></body></html>
