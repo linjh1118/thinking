@@ -11,8 +11,8 @@ updated: 2026-10-21
 > [!tldr] 我的判断
 > Embed 负责可预计算的粗召回，Rerank 将文本查询与一份图文文档联合编码再输出相关性 logit。它是不同计算位置上的专项模型，不是 Embed 的更大尺寸，也不是负责回答问题的聊天模型。核心代价是对每个候选重新计算，因此应与候选数量、页面分辨率和端到端收益一起看。
 
-> [!warning] 原始资料不足，未达到完整报告级实验剖析
-> 原卡本轮新增NDCG@10结果与top50召回协议，已更新下文，撤销旧“未给分数”描述。独立Tech Report、官方结构图、延迟对照和消融仍不足，未达到完整报告级分析。两张插图为研读示意，不冒充官方实验图或本地复测。
+> [!warning] 资料仍不足以复建完整训练与因果消融
+> 已补读10月21日官方Tech Blog，新增官方图与训练/系统证据；原先“只有示意图/没有相关结果”的描述不再适用。仍缺本版独立Tech Report、完整训练recipe、预算与关键因果消融，因此达不到完整技术报告精读深度。图1、2是研读重绘，图3为官方原图；本轮不下载权重、PDF或执行推理。
 
 ## 版本与一手来源
 
@@ -64,6 +64,20 @@ Transformers 示例用5.20.0，vLLM示例用0.32.0搭配5.19.0独立环境；原
 
 > [!insight] 对 Agent Training 的启发
 > 重排分数适合帮助观察选择，不应直接当事实正确的 RL reward。高相关页面仍可能错误或带提示注入；把检索选择、引用证据和最终任务验证分层保存，才能区分“找到信息”和“正确使用信息”。
+
+## 10月21日官方Tech Blog：重排收益必须带候选与成本口径
+
+[📰 NVIDIA官方Tech Blog](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval)补充了训练与Agentic RAG成本说明，原网页/正文已归档。它是资料更新，模型首发仍为10月20日。
+
+![官方原图：Embed1B召回后，不同重排器的结果](src/assets/official-rerank-comparison.png)
+
+*图3｜官方原图，非本地复测。这里是模型卡同口径四项NDCG@10，不与博客另一张ViDoRe v3.1表合并。*
+
+博客解释cross-encoder最后以MLP产生scalar relevance logit；相关性不是答案正确概率。训练最终发布模型使用checkpoint ensembling，未给足够细节复建选择、混合权重与训练步数。
+
+固定LLM、工具、任务、语料与执行策略，仅换检索组件后，加入该Rerank使Embed8B/1B组合的Agent输入输出token成本分别约降14%/13%；同样agentic cost附近，8B召回时相对Qwen重排约+0.9 nDCG。它描述特定系统配置下的效率，不代表所有Agent完成率或总基础设施成本同比提升。
+
+博客另报ViDoRe **v3.1**图文组合60.49，对照Qwen59.17。前表V3同top50协议的67.56/66.03必须继续保留；两个评测版本与聚合口径不同，不能拼接挑最好值。复现实验应锁定retriever、候选K、图像预算、最终上下文预算和reranker revision，再报告任务完成率、token、延迟与每成功任务成本。
 
 ## 关联与交付
 

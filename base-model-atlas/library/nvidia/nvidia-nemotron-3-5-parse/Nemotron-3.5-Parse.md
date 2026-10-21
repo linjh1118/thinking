@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Nemotron-3.5-Parse"
 tags: [base-model, nemotron, document-parsing, ocr, data-construction]
 status: read
 created: 2026-10-18
-updated: 2026-10-19
+updated: 2026-10-21
 ---
 
 # Nemotron 3.5 Parse：不只是读出文字，还要保留可用结构
@@ -15,8 +15,8 @@ updated: 2026-10-19
 > [!tldr] 我的判断
 > 真正值得关注的是小型专用 parser 与多遍裁切、合并和可追溯评测组成的系统，而不是把 75.20 当成裸模型单次推理成绩。0.631B 模型在官方 2,078 页 ParseBench 上，单遍 72.74 / 15.42 pages/s，双遍 74.92 / 11.65，三遍 75.20 / 10.62；双遍拿到了大部分增益。适合作为文档训练数据构建的前端，不能据此推导通用推理或 Agent 能力。
 
-> [!warning] 原始资料与分析深度
-> 本笔记亲自阅读官方模型卡、架构/processor 源码片段、ParseBench 比较与复现说明、多语言评测协议、后处理与安全说明。**已读材料没有给出独立的 Parse 3.5 Tech Report 链接、完整训练 recipe、逐数据源配比、训练预算或关键组件因果消融；因为这部分原始资料较少，训练机制分析达不到完整技术报告精读的深度。** 不拿其他 Nemotron 3.5 报告冒充本模型报告。原卡没有配图，两张图由本文根据官方规格和数字重新绘制，均非官方原图；本次没有下载权重、PDF，也没有本地复测。
+> [!warning] 资料仍不足以复建完整训练与因果消融
+> 已补读10月21日官方Tech Blog，新增官方图与训练/系统证据；原先“只有示意图/没有相关结果”的描述不再适用。仍缺本版独立Tech Report、完整训练recipe、预算与关键因果消融，因此达不到完整技术报告精读深度。图1、2是研读重绘，图3为官方原图；本轮不下载权重、PDF或执行推理。
 
 ## 日期与谱系：10 月 17 日，而非发现日或建仓日
 
@@ -154,6 +154,26 @@ Malayalam 63.15、Gujarati 66.96 仍明显低于总体，不能把平均提升�
 训练说明只给“1M–1B images”“1B–10T tokens”等宽区间，以及数字文档、科学论文、表格与合成材料、自动/人工标注混合。**不能据区间上界推测真实训练量**，也不能声称可完整复训。NaViT、GQA、tokenizer 与 MTP 各自增益、精确训练拆分与泄漏审计并未在已读材料充分披露。
 
 部署示例包含 `trust_remote_code=True`。本次只归档阅读，不执行下载的代码、不安装模型服务。真正部署前应 pin revision、review 自定义代码、隔离服务并核验所有依赖许可；OpenMDW1.1、tokenizer MIT 及 benchmark/组件许可分别处理，不能因为“可商用”就把所有材料视为同一许可证。
+
+## 10月21日官方Tech Blog：补充GRPO训练与另一套吞吐结果
+
+[📰 NVIDIA官方Tech Blog](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval)补充0.631B Parse的训练机制与质量–吞吐图；保留10月17日首发，不另建模型。原网页和正文在`src/retriever_tech_blog.html`、`.txt`。
+
+![官方原图：Parse质量和吞吐权衡](src/assets/official-parse-tradeoff.png)
+
+*图3｜官方原图。H100 80GB、并发128；Paddle对照另用并发192并包含其完整pipeline。NIM、vLLM及各模型执行链差异仍须分别看，不能仅凭位置宣布全业务等价加速。*
+
+博客明确提到**GRPO与自定义reward**：强化可解析格式，惩罚重复循环、未闭合结构，约束表格一致性与chart schema。但没有公开精确奖励公式、采样与权重、完整训练预算或独立GRPO因果消融；不能根据这些机制描述补造算法公式或独立收益。
+
+| 流程 | 博客ParseBench | 博客pages/s | 原卡matched-run pages/s |
+|---|---:|---:|---:|
+| Single | 72.74 | 16.1 | 15.42 |
+| Double | 74.92 | 11.2 | 11.65 |
+| Triple | 75.20 | 10.5 | 10.62 |
+
+质量数相同，速度来自不同运行/展示口径。上文图2和完整比较继续保留原卡matched-run三行，不把博客速度替换进去制造checkpoint进步。多遍裁切收益、GRPO训练收益和服务后端差异是三个不同变量。
+
+对数据构建更值得做的是：固定checkpoint和原页，单独替换格式reward、postprocessor或多遍预算；统计数值保真、可解析率、重复/截断与最终任务成功，不把“表格能解析”当作内容就一定正确。
 
 ## 对数据构建与 Agent Training 的启发
 

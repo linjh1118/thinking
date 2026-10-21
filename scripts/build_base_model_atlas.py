@@ -1953,8 +1953,16 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                     if not raw_url.endswith("/raw/main/README.md"):
                         raw_url = ""
                 else:
-                    raw_url = manifest_data["documents"]["hf_model_card.md"]["url"]
-                hf_asset_base = raw_url.replace("/raw/main/README.md", "/resolve/main/")
+                    # A pack can archive several repositories. Never resolve a
+                    # sibling card's links against the family's primary repo.
+                    entry = manifest_data.get("documents", {}).get(source_file.name, {})
+                    raw_url = entry.get("url", "")
+                match = re.fullmatch(
+                    r"(https://huggingface\.co/[^/]+/[^/]+)/(?:raw|resolve)/main/README\.md",
+                    raw_url,
+                )
+                if match:
+                    hf_asset_base = match.group(1) + "/resolve/main/"
             except (KeyError, TypeError, json.JSONDecodeError):
                 pass
     if not hf_asset_base:

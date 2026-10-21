@@ -43,6 +43,8 @@ pipeline_tag: visual-document-retrieval
 **Nemotron-3.5-Embed-1B-NVFP4** is the quantized version of the [Nemotron-3.5-Embed-1B-BF16](https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16) model, developed for multimodal and multilingual question-answering retrieval. The model can embed document pages in the form of image, text, or combined image–text inputs. Documents can be retrieved given a user query in text form. The model supports page images containing text, tables, charts, and infographics. The model is quantized with NVIDIA Model Optimizer, using nvidia-modelopt v0.47.0.
 For text retrieval, the model was evaluated across 34 languages: English, Arabic, Assamese, Bengali, Bulgarian, Chinese, Danish, Dutch, Finnish, French, German, Hindi, Hinglish, Indonesian, Italian, Japanese, Korean, Malay, Marathi, Nepali, Norwegian, Persian, Portuguese, Romanian, Russian, Spanish, Swahili, Swedish, Tamil, Telugu, Thai, Ukrainian, Urdu, and Vietnamese. For image retrieval, it was evaluated across 18 languages: Arabic, Bengali, Chinese, English, Persian, Finnish, French, German, Hindi, Indonesian, Japanese, Korean, Russian, Spanish, Swahili, Telugu, Thai, and Yoruba. The model may support additional languages beyond these evaluation sets.
 
+Read more details about Nemotron-3.5-Embed-1B-NVFP4 and other models in the family in our [Blog Post](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval).
+
 This model is ready for commercial or non-commercial use.
 
 

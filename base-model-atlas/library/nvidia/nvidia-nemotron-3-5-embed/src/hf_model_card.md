@@ -76,6 +76,8 @@ pipeline_tag: visual-document-retrieval
 ## Description:  
 **Nemotron-3.5-Embed-8B-BF16** is a state-of-the-art, versatile embedding model developed by NVIDIA for multimodal and multilingual question-answering retrieval. The model can embed a document page in the form of an image, text, or combined image–text input. Documents can be retrieved given a user query in text form. The model supports page images containing text, tables, charts, and infographics. For text retrieval, the model was evaluated across 34 languages: English, Arabic, Assamese, Bengali, Bulgarian, Chinese, Danish, Dutch, Finnish, French, German, Hindi, Hinglish, Indonesian, Italian, Japanese, Korean, Malay, Marathi, Nepali, Norwegian, Persian, Portuguese, Romanian, Russian, Spanish, Swahili, Swedish, Tamil, Telugu, Thai, Ukrainian, Urdu, and Vietnamese. For image retrieval, it was evaluated across 18 languages: Arabic, Bengali, Chinese, English, Persian, Finnish, French, German, Hindi, Indonesian, Japanese, Korean, Russian, Spanish, Swahili, Telugu, Thai, and Yoruba. The model may support additional languages beyond these evaluation sets.
 
+Nemotron-3.5-Embed-8B-BF16 achieves state-of-the-art results across multiple multilingual and multimodal retrieval benchmarks. Read more details in our [Blog Post](https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval).
+
 This model is ready for commercial or non-commercial use.
 
 

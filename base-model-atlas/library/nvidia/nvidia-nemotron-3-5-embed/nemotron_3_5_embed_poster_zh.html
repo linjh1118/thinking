@@ -152,7 +152,7 @@ mjx-container svg, mjx-container svg * {
 <a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/NVIDIA_Nemotron/Variants/261020_Nemotron_3_5_Embed/Nemotron-3.5-Embed" style="text-decoration: none;">Nemotron 3.5 Embed · 本地笔记</a>
    · 
   <a href="https://huggingface.co/nvidia/Nemotron-3.5-Embed-8B-BF16" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
-</div>
+<a href="https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval">📰 Tech Blog · 10月21日</a></div>
 </div>
 <!-- HEADER -->
 <div class="header">
@@ -207,10 +207,10 @@ mjx-container svg, mjx-container svg * {
 <!-- COLUMN 2: 方法流程 -->
 <div class="col">
 <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与复现契约</h2></div>
-<p class="body">核心是视觉对齐，不把已训练文本表示推倒重来。2.3M含图数据与旧文本阶段的8.5M+/50M+不能直接相加当作本次去重规模。</p>
+<p class="body">冻结文本塔、训练视觉与投影；博客补充checkpoint ensembling。领域合成查询微调1B nDCG@10从37.34到44.12，但未证明按源图分组隔离。</p>
 <div class="fig-box">
-<img alt="依据原卡整理的验收示意，非实测结果" src="src/assets/protocol.svg"/>
-<div class="fig-cap">依据原卡整理的验收示意，非实测结果</div>
+<img alt="NVIDIA官方原图，非本地复测" src="src/assets/official-agent-cost.png"/>
+<div class="fig-cap">官方原图：指定Agent配置下质量–token美元成本，不含所有系统成本。</div>
 </div>
 <div class="gap-boxes">
 <div class="gap-box g1">
@@ -249,7 +249,7 @@ mjx-container svg, mjx-container svg * {
 <table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td>质量</td><td>NDCG/证据召回</td><td>固定候选</td></tr><tr><td>成本</td><td>p50/p95/成功成本</td><td>固定预算</td></tr><tr><td>迁移</td><td>语言/页面类型</td><td>分层报告</td></tr></table>
 <div class="trick-box">
 <div class="trick-title">原始资料不足：明确未达到完整精读深度</div>
-<p>原卡已补检索分数，旧无分数表述撤销；独立报告、消融与置信区间仍不足，未达完整训练精读。两图为研读示意。</p>
+<p>已补官方Tech Blog和原图，仍缺独立本版报告、完整recipe/预算及关键因果消融，未达到完整报告精读深度。图1为研读示意，图2为官方图；不同版本和计时协议不混用，非本地复测。</p>
 </div>
 <div class="abl-grid">
 <div class="abl-card">

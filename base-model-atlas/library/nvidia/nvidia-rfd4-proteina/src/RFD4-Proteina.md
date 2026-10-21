@@ -111,6 +111,13 @@ pip install --extra-index-url https://download.pytorch.org/whl/cu132 "rfd4-prote
 
 **Diffusers:** see [Loading the model](#diffusers) below.
 
+**Container images** (no build needed): prebuilt RFD4-Proteína runtime images for Linux x86_64 are in [`runtime/`](runtime), as Apptainer (`.sif`) and SquashFS for Enroot/Pyxis (`.sqsh`) files with SHA-256 sidecars. `cu13` (CUDA 13), `cu12` (CUDA 12) and `cpu` (no GPU; imports, CLI and CPU metrics only) variants exist, built from the public [Apptainer recipe](https://github.com/RosettaCommons/RFD4-Proteina/blob/main/apptainer/rfd4-proteina.def). They contain the code and its dependencies, not model weights or the AF2/AF3 oracles; pass `hf_ckpt_path=nvidia/RFD4-Proteina` and a writable `HF_HOME`.
+
+```bash
+hf download nvidia/RFD4-Proteina runtime/rfd4-proteina-cu13-amd64.sif runtime/rfd4-proteina-cu13-amd64.sif.sha256 --local-dir .
+apptainer exec --nv runtime/rfd4-proteina-cu13-amd64.sif rfd4-generate hf_ckpt_path=nvidia/RFD4-Proteina inputs=in.cif out_dir=./runs
+```
+
 Setup caches the paired model bundle; downloads use `HF_HOME` when set. You do not need the training dataset for generation. If access to this repository is restricted, run `hf auth login` first. See [installation](https://rfd4-proteina.org/latest/installation.html) for hardware and build requirements.
 
 ### 2. Generate a small protein

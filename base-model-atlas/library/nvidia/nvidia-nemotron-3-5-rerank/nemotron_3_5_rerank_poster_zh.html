@@ -152,7 +152,7 @@ mjx-container svg, mjx-container svg * {
 <a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/NVIDIA_Nemotron/Variants/261020_Nemotron_3_5_Rerank/Nemotron-3.5-Rerank" style="text-decoration: none;">Nemotron 3.5 Rerank · 本地笔记</a>
    · 
   <a href="https://huggingface.co/nvidia/Nemotron-3.5-Rerank-8B-BF16" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
-</div>
+<a href="https://huggingface.co/blog/nvidia/nemotron-retriever-world-class-agentic-retrieval">📰 Tech Blog · 10月21日</a></div>
 </div>
 <!-- HEADER -->
 <div class="header">
@@ -207,10 +207,10 @@ mjx-container svg, mjx-container svg * {
 <!-- COLUMN 2: 方法流程 -->
 <div class="col">
 <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与复现契约</h2></div>
-<p class="body">文本/图/图文document与文本query联合编码；更多候选增加算力，应与延迟、K和端到端任务成功率一起验收。</p>
+<p class="body">query与document联合编码，MLP输出scalar logit。最终权重做checkpoint ensembling，混合选择细节未披露；不能套用Embed冻结结论。</p>
 <div class="fig-box">
-<img alt="依据原卡整理的验收示意，非实测结果" src="src/assets/protocol.svg"/>
-<div class="fig-cap">依据原卡整理的验收示意，非实测结果</div>
+<img alt="NVIDIA官方原图，非本地复测" src="src/assets/official-rerank-comparison.png"/>
+<div class="fig-cap">官方原图：Embed1B召回top50后的V3结果，勿与博客v3.1混表。</div>
 </div>
 <div class="gap-boxes">
 <div class="gap-box g1">
@@ -249,7 +249,7 @@ mjx-container svg, mjx-container svg * {
 <table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td>不重排</td><td>同一Embed/K</td><td>基线</td></tr><tr><td>文本重排</td><td>同一候选集</td><td>控制模态</td></tr><tr><td>图文重排</td><td>同一预算</td><td>测成本收益</td></tr></table>
 <div class="trick-box">
 <div class="trick-title">原始资料不足：明确未达到完整精读深度</div>
-<p>原卡已补NDCG表与top50协议；独立报告、同预算延迟及消融仍缺，未达完整实证精读。两图为研读示意。</p>
+<p>已补官方Tech Blog和原图，仍缺独立本版报告、完整recipe/预算及关键因果消融，未达到完整报告精读深度。图1为研读示意，图2为官方图；不同版本和计时协议不混用，非本地复测。</p>
 </div>
 <div class="abl-grid">
 <div class="abl-card">
