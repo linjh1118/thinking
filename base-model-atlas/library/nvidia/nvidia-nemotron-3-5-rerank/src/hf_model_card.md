@@ -104,8 +104,18 @@ Create a Python 3.12 environment for the Transformers and Sentence Transformers 
 ```bash
 uv venv --python 3.12 .venv-transformers
 source .venv-transformers/bin/activate
-uv pip install torch "transformers==5.20.0" accelerate pillow packaging ninja
+uv pip install torch "transformers==5.20.0" accelerate pillow
+```
+
+And to install FlashAttention 2, you can either build it from source like so:
+
+```bash
+uv pip install packaging ninja
 uv pip install flash-attn --no-build-isolation
+```
+or use a pre-built FlashAttention 2 kernel via the `kernels` package:
+```bash
+uv pip install kernels
 ```
 
 The examples use Flash Attention 2 and were tested with `transformers==5.20.0`. The checkpoint uses `TokenizersBackend` and does not require `mistral_common`.
@@ -237,70 +247,44 @@ Rank 4: document=biology_text, score=-2.964395
 In the same environment, install Sentence Transformers:
 
 ```bash
-uv pip install "sentence-transformers[image]>5.4" "transformers==5.20.0"
+uv pip install "sentence-transformers[image]==6.1.0"
 ```
 
-Using Sentence Transformers, this model can rank text-only, image-only, and combined image-text inputs.
+Rank text, images, or combined text and images. Image URLs are loaded automatically.
 
 ```python
-import torch
 from sentence_transformers import CrossEncoder
-from transformers.image_utils import load_image
 
-MODEL_PATH = "nvidia/Nemotron-3.5-Rerank-8B-BF16"  # Or a local checkpoint directory.
-DOCUMENT_NAMES = ["nemo_image_text", "nemo_text", "nemo_image", "biology_text"]
-MAX_MODEL_LEN = 32768
-DEVICE = "cuda:0"
-IMAGE_URL = "https://docs.nvidia.com/nemo-framework/user-guide/24.07/_images/nemo-llm-mm-stack.png"
+model = CrossEncoder(
+    "nvidia/Nemotron-3.5-Rerank-8B-BF16",
+    device="cuda",
+    model_kwargs={"dtype": "bfloat16", "attn_implementation": "flash_attention_2"},
+)
 
+query = "What is NVIDIA NeMo Framework?"
+image_url = "https://docs.nvidia.com/nemo-framework/user-guide/24.07/_images/nemo-llm-mm-stack.png"
+nemo_text = "NeMo Framework offers comprehensive functionalities for developing both LLMs and Multimodal Models."
+biology_text = "A biological foundation model designed to analyze and generate DNA, RNA, and protein sequences."
+document_names = ["nemo_image_text", "nemo_text", "nemo_image", "biology_text"]
+documents = [
+    {"image": image_url, "text": nemo_text},
+    nemo_text,
+    {"image": image_url},
+    biology_text,
+]
 
-def main() -> None:
-    if not torch.cuda.is_available():
-        raise RuntimeError("This bfloat16 example requires a CUDA GPU.")
-
-    model = CrossEncoder(
-        MODEL_PATH,
-        device=DEVICE,
-        max_length=MAX_MODEL_LEN,
-        model_kwargs={
-            "attn_implementation": "flash_attention_2",
-            "dtype": torch.bfloat16,
-        },
-    )
-
-    query = "What is NVIDIA NeMo Framework?"
-    nemo_text = "NeMo Framework offers comprehensive functionalities for developing both LLMs and Multimodal Models."
-    biology_text = "A biological foundation model designed to analyze and generate DNA, RNA, and protein sequences."
-    image = load_image(IMAGE_URL)
-
-    documents = [
-        {"image": image, "text": nemo_text},
-        nemo_text,
-        image,
-        biology_text,
-    ]
-
-    rankings = model.rank(
-        query,
-        documents,
-        batch_size=1,
-        show_progress_bar=False,
-    )
-
-    for rank, result in enumerate(rankings, start=1):
-        document_index = result["corpus_id"]
-        print(f"Rank {rank}: document={DOCUMENT_NAMES[document_index]}, score={result['score']:.6f}")
-
-
-if __name__ == "__main__":
-    main()
+rankings = model.rank(query, documents, batch_size=1)
+for rank, result in enumerate(rankings, start=1):
+    name = document_names[result["corpus_id"]]
+    print(f"Rank {rank}: document={name}, score={result['score']:.6f}")
 ```
 
-Example output (higher scores indicate greater predicted relevance; values can vary with hardware and runtime):
+Example output (BF16 scores can vary slightly with hardware, batching, and runtime):
+
 ```text
-Rank 1: document=nemo_image_text, score=-1.796875
+Rank 1: document=nemo_image_text, score=-1.804688
 Rank 2: document=nemo_image, score=-1.820312
-Rank 3: document=nemo_text, score=-2.093750
+Rank 3: document=nemo_text, score=-2.109375
 Rank 4: document=biology_text, score=-2.968750
 ```
 
@@ -642,6 +626,43 @@ Synthetic text and image datasets were created either by generating queries from
 - [MIRACL-VISION ](https://huggingface.co/datasets/nvidia/miracl-vision) <br>
 
 **Benchmark Score:** NDCG@10 <br>
+
+The `Nemotron-3.5-Rerank-8B-BF16` model was evaluated with the model's default image `longest_edge` set to 1,120 pixels. `Qwen3-VL-Reranker-8B` was evaluated with the model's default `max_pixels` set to 1,310,720. Both models reranked the top 50 candidates retrieved by the [Nemotron-3.5-Embed-1B-BF16](https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16) model. 
+
+<table>
+  <tr>
+    <th rowspan="2">Model</th>
+    <th colspan="3" style="text-align: center">ViDoRe V3</th>
+    <th>MIRACL-VISION</th>
+  </tr>
+  <tr>
+    <th>image</th>
+    <th>text</th>
+    <th>image + text</th>
+    <th>image</th>
+  </tr>
+  <tr>
+    <td><a href="https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16">Nemotron-3.5-Embed-1B-BF16</a></td>
+    <td>58.02</td>
+    <td>57.80</td>
+    <td>58.82</td>
+    <td>68.93</td>
+  </tr>
+  <tr>
+    <td><a href="https://huggingface.co/Qwen/Qwen3-VL-Reranker-8B">Qwen3-VL-Reranker-8B</a></td>
+    <td>66.02</td>
+    <td>64.88</td>
+    <td>66.03</td>
+    <td>75.06</td>
+  </tr>
+  <tr>
+    <td><strong>Nemotron-3.5-Rerank-8B-BF16</strong></td>
+    <td><strong>67.22</strong></td>
+    <td><strong>66.89</strong></td>
+    <td><strong>67.56</strong></td>
+    <td><strong>78.69</strong></td>
+  </tr>
+</table>
 
 **Data Collection Method by dataset:** Automated, Manually-Labeled, Synthetic <br>
 **Labeling Method by dataset:** Automated, Manually-Labeled, Synthetic <br>

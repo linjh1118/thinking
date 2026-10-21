@@ -1,0 +1,142 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://rfd4-proteina.org/">打开官方原文 ↗</a> · <a href="project.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>RFD4-Proteina Home ▾ Quickstart Overview Abstract Latent reasoning In silico results Wet lab Code &amp; weights Citation Latent space Architecture Benchmarks Documentation Dark mode ☰ 
+Biomolecular design through latent reasoning with RFD4-Proteina Nathaniel Corley 1,2,3 * , Kieran Didi 1,4,5 * ✉ , Maxwell W. Kazman 1,2,6 * , Rafael I. Brent 1,2,7 * Yuyang Zhang 1,8,9 ‡ , Magnus S. Bauer 1,2 ‡ , Riti Biswas 1,2,7 ‡ , Julia E. Bonzanini 1,2,3 ‡ , Adam M. Chazin-Gray 1,2,7 ‡ , Jie Chen 1,2,10 ‡ , Maximilian Gantz 1 ‡ , Henry A. Jones 11,12 ‡ , Margaret C. Lunn-Halbert 1,2,6 ‡ , Nora K. McNamara-Bordewick 1,2 ‡ , Saman Salike 1,2,22 ‡ , DéJenaé L. See 1,2,3 ‡ , Shajesh Sharma 1,3 ‡ , Eric Sun 1,13 ‡ , Preetham Venkatesh 1,2,6 ‡ , Seth M. Woodbury 1,2,14 ‡ , Kejia Wu 1,2 ‡ , Joel D. Allen 15 , Jasper Butcher 1,2,10 , Lemuel Chang 1,2 , Yehlin Cho 4 , Alexis Courbet 1,2,17,18 , Brian Coventry 1,2 , Christian Dallago 4,19 , Elliot S. Delfosse 1,2,6 , Helen E. Eisenach 1,2 , Tomas Geffner 4 , Inna Goreshnik 1,2,17 , Per Greisen 20,21 , David E. Kim 1,2,17 , Donghyo Kim 1,2 , Brianne R. King 1,2 , Rohith Krishna 1,2 , Yanjing Li 1,2,10 , Zi Ming Li 1,3 , Mariana Marigs 1,2 , Aiko Muraishi 1,2,10 , Edin Muratspahić 1,2 , Oliver Nagl 1 , Griffin H. Rangel 1,16 , Antonia Ruder 1 , Hojeong Shin 1,2 , Zefei Xu 11,12 , Yuwei Yang 4 , Max Crispin 15 , Neil P. King 1,2 , Frank DiMaio 1,2 , Gaurav Bhardwaj 1,16 , Michael Bronstein 5,23 , Karsten Kreis 4 , Donald Hilvert 24 , Anthony P. Green 11,12 , Arash Vahdat 4 , David Baker 1,2,17 ✉ . Show 24 affiliations 
+Institute for Protein Design, University of Washington, Seattle, WA, USA 
+Department of Biochemistry, University of Washington, Seattle, WA, USA 
+Department of Bioengineering, University of Washington, Seattle, WA, USA 
+NVIDIA Corporation, Santa Clara, CA, USA 
+Department of Computer Science, University of Oxford, Oxford, UK 
+Graduate Program in Biological Physics, Structure and Design, University of Washington, Seattle, WA, USA 
+Graduate Program in Molecular Engineering, University of Washington, Seattle, WA, USA 
+MOE Key Laboratory of Bioinformatics, School of Life Sciences, Tsinghua University, Beijing, China 
+Beijing Frontier Research Center for Biological Structure, Tsinghua University, Beijing, China 
+Paul G. Allen School of Computer Science and Engineering, University of Washington, Seattle, WA, USA 
+Manchester Institute of Biotechnology, The University of Manchester, Manchester, UK 
+Department of Chemistry, The University of Manchester, Manchester, UK 
+Howard Hughes Medical Institute, Department of Biochemistry, University of Washington, Seattle, WA, USA 
+Graduate Program in Bioengineering, University of Washington, Seattle, WA, USA 
+School of Biological Sciences, University of Southampton, Southampton, UK 
+Department of Medicinal Chemistry, University of Washington, Seattle, WA, USA 
+Howard Hughes Medical Institute, University of Washington, Seattle, WA, USA 
+Centre de Biologie Structurale, Université de Montpellier, CNRS, INSERM, Montpellier, France 
+Department of Biostatistics and Bioinformatics, Duke University, Durham, NC, USA 
+BioMap Research, Haidian District, Beijing, China 
+BioMap Research, Palo Alto, CA, USA 
+Department of Chemical Engineering, University of Washington, Seattle, WA, USA 
+AITHYRA, Research Institute for Biomedical Artificial Intelligence, Austrian Academy of Sciences, Vienna, Austria 
+Laboratory of Organic Chemistry, ETH Zurich, Zurich, Switzerland 
+* Equal contribution, shown in random order (reload the page) ‡ Equal contribution as co-second authors ✉ Correspondence: Kieran Didi (kdidi@nvidia.com) and David Baker (dbaker@uw.edu) Paper (soon) Code Weights Diffusers PyPI Quickstart Quickstart 
+RFD4-Proteina is available as a Python package on PyPI and as a Hugging Face Diffusers pipeline. Both need Python 3.12 and an NVIDIA GPU with a CUDA 13-compatible driver; the PyPI release and the Hugging Face repositories go public with the release. The quickstart in the docs covers the pip package, a git clone with make setup , and Diffusers. 
+PyPI package pip install &quot;rfd4-proteina[metrics-cuda13]&quot; 
+rfd4-proteina on PyPI · Quickstart · Running the model 
+Hugging Face Diffusers pip install diffusers \
+    git+https://huggingface.co/nvidia/RFD4-Proteina-prep
+
+import torch
+from diffusers import RFD4ProteinaPipeline
+from rfd4_proteina_prep import prepare_cif, write_cif
+
+pipe = RFD4ProteinaPipeline.from_pretrained(
+    &quot;nvidia/RFD4-Proteina-Diffusers&quot;, dtype=torch.bfloat16).to(&quot;cuda:0&quot;)
+features, atoms = prepare_cif(&quot;input.cif&quot;, seed=42, device=pipe.device)
+output = pipe(features, generator=torch.Generator(&quot;cuda:0&quot;).manual_seed(42))
+write_cif(output, features, atoms, &quot;design.cif&quot;) 
+RFD4-Proteina-Diffusers on Hugging Face 
+Overview. We present RFD4-Proteina , a biomolecular design model that reasons in a shared chemical and conformational latent space covering standard and modified amino acids, sugars, DNA and RNA. Recurrent refinement lets it spend more computation where denoising is hard, and search lets it satisfy arbitrary constraints. Below are the model and its in silico benchmarks, followed by wet-lab validation. 
+Shared Latent Space 
+Amino acids, sugars, DNA and RNA in one representation, supervised with force-field energies. 
+Latent Reasoning 
+Recurrent refinement (intrinsic) and constraint-guided search (extrinsic). 
+Enzymes 
+89 of 288 phosphotriesterase designs active. A designed ligase for a lenacapavir synthesis step. 
+Specific Binders 
+158 of 188 sub-micromolar hTrkA designs. 112 pM to a disordered YAP1 peptide. 
+Model Highlights 
+One latent space for standard and modified amino acids, sugars, DNA and RNA, trained against force-field energies for physically plausible conformations. 
+Intrinsic reasoning: recurrent passes give hard denoising steps more computation than easy ones. 
+Extrinsic reasoning: search steered by any score, such as energetics or geometric criteria. 
+Higher in silico design success rates at greater throughput than all methods evaluated. 
+No additional training for side-chain packing, fixed-backbone sequence design, conformational sampling and design refinement. 
+Go to model details · Benchmarks 
+Wet Lab Validation 
+Calcium-dependent calmodulin binders: 12 of 18 designs below 1 µM with no binding without calcium. 
+Peptide–MHC binders with over 100-fold on-target specificity, including one- and two-residue off-targets. 
+First de novo binders to the tested YAP1 and Tau epitopes (112 pM, 527 pM). 
+TrkA binders that discriminate species and paralogues; 158 of 188 sub-micromolar for unconstrained hTrkA. 
+Glycan shielding (8 of 9 designs above 90% oligomannose) and phospho-specific binders to histone H3. 
+Bimetallic phosphotriesterases and a cysteine-based ligase for one step of lenacapavir synthesis. 
+Go to validation details 1. The RFD4-Proteina Model Abstract 
+Biomolecular design requires finding chemically and geometrically compatible arrangements of interacting atoms and molecules. The complexity of problems which can be tackled by deep learning design models is limited by both the molecular landscape encompassed by the model and the ability to explore that landscape effectively. Here we introduce RFD4-Proteina, which addresses these limitations through intrinsic and extrinsic reasoning in a shared, physics-informed chemical and conformational latent space. The latent space encompasses standard and modified amino acids, sugars, DNA, and RNA, supervised with force-field energies to favor physically plausible conformations. Within this space, intrinsic reasoning uses recurrent refinement to adaptively allocate computation, while extrinsic reasoning guides search with arbitrary constraints such as energetics or geometric criteria. Across in silico protein design benchmarks, RFD4-Proteina achieves higher design success rates at greater generation throughput than all methods evaluated, with further gains from conformational flexibility, recurrent refinement, and search. Without additional training, the same model performs equivalently to or better than state-of-the-art specialist methods for related tasks, including side-chain packing, fixed-backbone sequence design, conformational sampling, and design refinement. Experimental validation spans specific and cross-reactive binding to therapeutically relevant targets, modified and glycosylated proteins, and catalysis of both bond-breaking and bond-forming reactions, including a first proof-of-concept demonstration of a de novo designed enzyme for active pharmaceutical ingredient synthesis. By uniting diverse molecular chemistry, conformational flexibility, scalable reasoning, and physical modeling with machine-learning generation, RFD4-Proteina expands the frontier of protein design. Unified Latent Reasoning 
+RFD4-Proteina designs inside one latent space. Pick a tab to see the space itself, a full generation trajectory, and the two kinds of reasoning that run on top of it. Shared latent space Full trajectory Intrinsic reasoning Extrinsic reasoning 
+An autoencoder represents amino acids, sugars, and nucleotides in
+              a shared 32-dimensional chemical and conformational space. A
+              decoder reconstructs their atoms, with Rosetta-energy supervision
+              to favor physically plausible conformations. Full size ↗ 
+An enzyme-design trajectory for cleavage of a peptide–DNA linkage.
+              Circular arrows mark recurrent passes; search criteria are applied
+              at successive stages. Full size ↗ 
+Recurrent updates refine each denoising step. 
+Recycling schedules 
+60 denoising steps · 110, 185 and 295 trunk evaluations 
+Trunk evaluations per step 
+Branches are selected by interface area, then hydrogen bonding,
+              then AF3 confidence, as these properties become resolved. Full size ↗ In Silico Benchmarks 
+Design methods usually trade accuracy for speed. Hallucination methods such as BindCraft reach good pass rates but produce only tens of designs per GPU-hour; diffusion models produce hundreds to thousands but pass less often. On all four benchmarks, RFD4-Proteina is better on both counts: even at its lowest thinking setting, it has a higher pass rate and higher throughput than every other method we compared. In the figure below, the green region marks methods that are better on both counts. 
+What counts as a pass. We refold each designed sequence with AF3 and check it against the intended structure and task-specific criteria. The clustered pass rate counts distinct folds only, so repeating one success earns nothing. 
+Better and faster. For protein binding, single-shot RFD4-Proteina passes 9.8% of the time versus 5.9% for the next-best model (BindCraft), at 58-fold higher throughput. For small molecules it is 3.7-fold higher than the next-best model (8.7% versus 2.4%) and passes for all 77 targets versus 64. For enzyme scaffolding it reaches 8.9% versus 5.7%, and for DNA binding 2.2% versus 0.8%. 
+Thinking longer helps. From low to high thinking, the protein-binding pass rate rises from 7.0% to 9.8% while throughput halves, from 2,716 to 1,363 designs per GPU-hour. 
+Search pushes further. Search guided by a structure predictor raises pass rates to 11.9% (protein binding), 12.9% (small molecules), 12.4% (enzymes) and 3.5% (DNA), at 19- to 57-fold fewer passing clusters per GPU-hour. 
+Figure 2. Clustered pass rate against generation throughput (designs per GPU-hour) for protein binding (24 targets), small-molecule binding (77), enzyme active-site scaffolding (37) and DNA binding (3). Right-hand bars show target coverage and passing clusters per GPU-hour including AF3 evaluation. Diamonds denote search guided by a structure predictor. 
+Open the benchmark explorer 2. Wet-Lab Validation 
+The structures below are computational models of designs we tested in the lab (designs, refolded structures or Protenix predictions), not experimental structures. Drag to rotate, scroll to zoom, and use the buttons to switch designs or states. Calmodulin: calcium-dependent binders Best binder 4.24 pM* 
+Calmodulin switches conformation when it binds Ca 2+ , and many of its partners recognize only one state. We asked RFD4-Proteina for binders to the calcium-bound form only. 
+Hit rate. 12 of 18 designs bound with an apparent K D below 1 µM and showed no detectable binding without calcium. 
+Affinity. Apparent K D from 4.24 pM to 37.0 nM. *The 4.24 pM value comes from a model-dependent fit to BLI data and is not a precisely resolved affinity. 
+Figure 4a. Calcium-dependent calmodulin binding: the design concept, the distribution of apparent K D across designs, a designed binder on calmodulin, and the BLI response of the strongest binder with Ca 2+ (teal) and with EGTA (gray). Full figure Peptide–MHC binders MART-1 340 pM SARS-CoV-1 710 pM Phox2B 1.60 nM 
+A binder to a peptide–MHC complex has to read a few exposed peptide residues and ignore the conserved MHC around them. Cancerous and infected cells are flagged this way, which is why look-alike peptides from healthy cells are the main risk. 
+Targets. MART-1, SARS-CoV-1 membrane-protein and Phox2B peptides. 
+Affinity. Yeast-display titrations with pMHC tetramers gave apparent half-maximal binding concentrations of 340 pM, 710 pM and 1.60 nM. 
+Specificity. Over 100-fold preference for the on-target peptide in all cases. The Phox2B and SARS-CoV-1 off-targets differ from the target peptide by only one and two residues. 
+Figure 4b. Binders to MART-1, SARS-CoV-1 and Phox2B peptide–MHC complexes: design models, yeast-display titrations, and binding to the six peptide–MHC targets in the specificity screen. Full figure Disordered peptide binders 
+Intrinsically disordered regions are involved in neurodegeneration, chronic pain and cancer, but they have no fixed structure to design against. We targeted eight disordered peptides: five known to fold when bound and three without that tendency. 
+Hit rate. Tight binders for all but one peptide in each group. 
+First binders. To our knowledge, the first de novo binders to the tested YAP1 and Tau epitopes. The strongest hits have SPR affinities of 112 pM and 527 pM. 
+Specificity. All-by-all tests of the best hits against five targets showed a preference for the intended peptide in every case, with varying strength. 
+Figure 4c,d. Binders to four disordered peptides (YAP1, Tau153, N17, PER2) with SPR sensorgrams and 1:1 fits (c), and all-by-all SPR specificity of the best binders against five peptides (d). Full figure TrkA: species and paralogue specificity C10 human only B8 human + mouse 
+Trk receptors are targets in neuropathic pain and in cancers such as neuroblastoma. Human TrkA is an established benchmark, so we asked for more: binders that avoid mouse TrkA (86% sequence identity over the modeled region) and the human paralogues TrkB and TrkC. 
+Human-specific. The four strongest hTrkA binders showed no binding to any off-target. 
+Cross-reactive. 18 of 94 designs bound human and mouse TrkA but not TrkB or TrkC. The best was sub-nanomolar for hTrkA and 37.7 nM for mTrkA. 
+Unconstrained hTrkA. 158 of 188 designs (84%) were sub-micromolar, against 18 of 60 for the next most successful campaign. 
+TrkB and TrkC. One sub-micromolar TrkB binder (30.2 nM) and 20 TrkC screening hits. To our knowledge, the first designed binders to either. 
+Figure 4e,f. Human-specific and human/mouse cross-reactive TrkA campaigns with BLI against human and mouse TrkA (e), and the experimental hit rate of unconstrained human TrkA design compared with other campaigns (f). Full figure Glycan shielding B10 
+N-linked glycans are trimmed by enzymes in the ER and Golgi. Blocking that processing triggers an immune response to the underprocessed glycan, which makes it usable as a vaccine adjuvant. A design has to shield the core GlcNAc while keeping the terminal mannose accessible. 
+Previous work. Designs retained Man5–Man8 glycans; none fully blocked processing to Man9 or Glc1Man9. 
+In silico. Higher design success rates than the earlier RFDAA-based method. 
+Plate-scale screen. Glycoproteins retained mostly Man9 and Glc1Man9. 8 of 9 designs had more than 90% oligomannose on occupied sites, with smaller proteins than before. 
+Figure 5a–c. Shielding the core of an N-linked glycan while exposing the terminal mannose (a), design B10 with its glycan composition (b), and the extent of underprocessing across design campaigns (c). Full figure Phosphopeptide binders H3pT11 138 nM H3pS10 1.03 µM 
+Phosphorylation regulates molecular interactions across all domains of life. We targeted three phosphorylated variants of the histone H3 tail: pS10, pT11 and pS28. 
+Binders. Phosphorylation-dependent binders for all three sites. 
+Selectivity. The pT11 and pS10 hits preferred their phosphorylated targets and stayed selective against phosphorylation at the adjacent site. 
+Affinity. Half-maximal binding concentrations of about 138 nM (pT11) and 1.03 µM (pS10), measured on yeast without avidity. Natural readers of these marks report mid-micromolar affinities. 
+Figure 5d–f. Binders to histone H3 pT11 (d) and pS10 (e) with yeast-display titrations of the phosphorylated and unmodified peptides, and selectivity between adjacent phosphorylation sites by NGS recovery (f). Full figure Phosphotriesterases p2H11 3,600 p1D10 290 p2G6 180 p3D1 90 p2H7 ~1,400 p2H10 ~50 
+Paraoxon is an organophosphate pesticide and a potent neurotoxin. Our earlier RFD3 designs scaffolded six catalytic residues around two metal ions and reached k cat / K M of only 4 ± 3 M −1 s −1 . We added two catalytic residues, which makes the active site harder to scaffold. 
+In silico. 111 of 1,000 RFD4-Proteina designs passed the computational filters, against 1 of 10,000 for RFD3. 
+Screening. 89 of 288 designs were active, spanning 25 of 47 scaffold families. None of 192 RFD3 designs were. 
+Best design. Of six characterized designs, the best reached k cat / K M = 3,600 ± 500 M −1 s −1 and k cat = 0.9 s −1 , a 1.5 × 10 7 -fold rate enhancement. All six beat the earlier phosphotriesterases by 10- to 1,000-fold. The numbers on the viewer buttons are each design’s k cat / K M in M −1 s −1 . 
+Figure 6a–d. Paraoxon hydrolysis (a), the eight-residue active-site theozyme (b), in silico success rates for RFD3 and RFD4-Proteina (c), and four designs with their backbone and motif RMSDs and catalytic efficiencies (d). Full figure Ligase for lenacapavir synthesis Design 52 79% (S) 
+Lenacapavir is an HIV-prevention drug whose manufacturing cost limits access. One step joins an activated ester to the ( S )-enantiomer of a hindered chiral amine, so the enzyme has to favor aminolysis over hydrolysis of the ester. 
+Design. We scaffolded a cysteine-protease catalytic triad and used multi-state AF3 filtering to bias designs toward aminolysis. 
+Hit rate. Four of 67 designs formed the amide above background. An earlier RFD3 campaign found none in 72. 
+Best design. Design 52 converted 79.0% of the ( S )-amine and 8.8% of the ( R )-amine, with acid at the no-enzyme level (0.29 vs 0.26 mM). Design 58 gave 61.7% vs 14.6%. 
+First. To our knowledge, the first proof of concept of a de novo enzyme for a step in active pharmaceutical ingredient synthesis. 
+Figure 6i–o. The lenacapavir amide-forming step (i), the cysteine-protease theozyme (j), in silico success rates (k), designs 52 and 58 (l), HPLC traces (m), and conversion of the ( S )- and ( R )-amine (n,o). Full figure Code &amp; Weights 
+Run RFD4-Proteina 
+Code on GitHub : inference, reward-guided search, training and evaluation. 
+Weights on Hugging Face . 
+Documentation : inputs, running, search, metrics and the API reference. 
+Benchmarks : every model on every task through one metric code path, with sampling cost. Citation 
+RFD4-Proteina: Copy BibTeX @article{corley2026rfd4proteina,
+  title        = {Biomolecular design through latent reasoning with {RFD4-Proteina}},
+  author       = {Corley, Nathaniel and Didi, Kieran and Kazman, Maxwell W. and Brent, Rafael I. and others},
+  year         = {2026},
+  note         = {Preprint forthcoming}
+} Privacy Policy - Manage My Privacy - Do Not Sell or Share My Data - Terms of Service - Accessibility - Corporate Policies - Contact</pre></body></html>

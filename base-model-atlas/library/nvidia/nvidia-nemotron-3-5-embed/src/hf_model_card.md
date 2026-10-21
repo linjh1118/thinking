@@ -124,8 +124,18 @@ Create a Python 3.12 environment for the Transformers and Sentence Transformers 
 ```bash
 uv venv --python 3.12 .venv-transformers
 source .venv-transformers/bin/activate
-uv pip install torch "transformers==5.20.0" accelerate pillow packaging ninja
+uv pip install torch "transformers==5.20.0" accelerate pillow
+```
+
+And to install FlashAttention 2, you can either build it from source like so:
+
+```bash
+uv pip install packaging ninja
 uv pip install flash-attn --no-build-isolation
+```
+or use a pre-built FlashAttention 2 kernel via the `kernels` package:
+```bash
+uv pip install kernels
 ```
 
 The examples use Flash Attention 2 and were tested with `transformers==5.20.0`. The checkpoint uses `TokenizersBackend` and does not require `mistral_common`.
@@ -236,73 +246,51 @@ biology_text_similarity=0.247357
 In the same environment, install Sentence Transformers:
 
 ```bash
-uv pip install "sentence-transformers[image]>5.4" "transformers==5.20.0"
+uv pip install "sentence-transformers[image]==6.1.0"
 ```
-Generate embeddings for text, images, or combined text and images with Sentence Transformers.
+
+Encode text, images, or combined text and images. Image URLs are loaded automatically, and `encode_query` and `encode_document` apply the saved retrieval prefixes.
+
 ```python
-import torch
 from sentence_transformers import SentenceTransformer
-from transformers.image_utils import load_image
 
-MODEL_PATH = "nvidia/Nemotron-3.5-Embed-8B-BF16"  # Or a local checkpoint directory.
-DOCUMENT_NAMES = ["nemo_image_text", "nemo_text", "nemo_image", "biology_text"]
-DEVICE = "cuda:0"
-IMAGE_URL = "https://docs.nvidia.com/nemo-framework/user-guide/24.07/_images/nemo-llm-mm-stack.png"
+model = SentenceTransformer(
+    "nvidia/Nemotron-3.5-Embed-8B-BF16",
+    device="cuda",
+    model_kwargs={"dtype": "bfloat16", "attn_implementation": "flash_attention_2"},
+)
 
+query = "What is NVIDIA NeMo Framework?"
+image_url = "https://docs.nvidia.com/nemo-framework/user-guide/24.07/_images/nemo-llm-mm-stack.png"
+nemo_text = "NeMo Framework offers comprehensive functionalities for developing both LLMs and Multimodal Models."
+biology_text = "A biological foundation model designed to analyze and generate DNA, RNA, and protein sequences."
+document_names = ["nemo_image_text", "nemo_text", "nemo_image", "biology_text"]
+documents = [
+    {"image": image_url, "text": nemo_text},
+    nemo_text,
+    {"image": image_url},
+    biology_text,
+]
 
-def main() -> None:
-    """Run text and multimodal retrieval with the exported Sentence Transformers checkpoint."""
-    if not torch.cuda.is_available():
-        raise RuntimeError("This bfloat16 example requires a CUDA GPU.")
+query_embedding = model.encode_query([query])
+document_embeddings = model.encode_document(documents, batch_size=1)
+scores = model.similarity(query_embedding, document_embeddings)
 
-    model = SentenceTransformer(
-        MODEL_PATH,
-        device=DEVICE,
-        model_kwargs={
-            "attn_implementation": "flash_attention_2",
-            "dtype": torch.bfloat16,
-        },
-    )
-
-    query = "What is NVIDIA NeMo Framework?"
-    nemo_text = "NeMo Framework offers comprehensive functionalities for developing both LLMs and Multimodal Models."
-    biology_text = "A biological foundation model designed to analyze and generate DNA, RNA, and protein sequences."
-    image = load_image(IMAGE_URL)
-
-    query_embedding = model.encode_query([query], convert_to_tensor=True)
-    text_embeddings = model.encode_document([nemo_text, biology_text], convert_to_tensor=True)
-    image_embedding = model.encode_document([image], convert_to_tensor=True)
-    multimodal_embedding = model.encode_document([{"image": image, "text": nemo_text}], convert_to_tensor=True)
-
-    document_embeddings = torch.cat(
-        [
-            multimodal_embedding,
-            text_embeddings[:1],
-            image_embedding,
-            text_embeddings[1:],
-        ]
-    )
-    scores = model.similarity(query_embedding, document_embeddings)
-
-    print(f"query_embedding.shape={tuple(query_embedding.shape)}")
-    print(f"document_embeddings.shape={tuple(document_embeddings.shape)}")
-    for name, score in zip(DOCUMENT_NAMES, scores[0]):
-        print(f"{name}_similarity={score.item():.6f}")
-
-
-if __name__ == "__main__":
-    main()
+print(f"query_embedding.shape={query_embedding.shape}")
+print(f"document_embeddings.shape={document_embeddings.shape}")
+for name, score in zip(document_names, scores[0]):
+    print(f"{name}_similarity={score.item():.6f}")
 ```
 
-Example output (scores can vary with hardware and runtime):
+Example output (BF16 scores can vary slightly with hardware, batching, and runtime):
 
 ```text
 query_embedding.shape=(1, 4096)
 document_embeddings.shape=(4, 4096)
-nemo_image_text_similarity=0.540280
-nemo_text_similarity=0.587345
-nemo_image_similarity=0.515825
-biology_text_similarity=0.247227
+nemo_image_text_similarity=0.539371
+nemo_text_similarity=0.586795
+nemo_image_similarity=0.516469
+biology_text_similarity=0.247530
 ```
 
 ### vLLM Usage
@@ -615,6 +603,50 @@ Synthetic datasets were created either by generating queries from seed documents
 - [MIRACL-VISION](https://huggingface.co/datasets/nvidia/miracl-vision) <br>
 
 **Benchmark Score:** NDCG@10 <br>
+
+The **Nemotron-3.5-Embed-8B-BF16** and **Nemotron-3.5-Embed-1B-BF16** were evaluated with the models' default image `longest_edge` of 1,120 pixels. [Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B) and [Qwen3-VL-Embedding-2B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-2B) were evaluated with `max_pixels` set to 1,843,200. <br>
+
+<table>
+  <tr>
+    <th rowspan="2">Model</th>
+    <th colspan="3" style="text-align: center">ViDoRe V3</th>
+    <th colspan="1">MIRACL-VISION</th>
+  </tr>
+  <tr>
+    <th>image</th>
+    <th>text</th>
+    <th>image + text</th>
+    <th>image</th>
+  </tr>
+  <tr>
+    <td><a href="https://huggingface.co/Qwen/Qwen3-VL-Embedding-2B">Qwen3-VL-Embedding-2B</a></td>
+    <td>52.89</td>
+    <td>48.31</td>
+    <td>51.97</td>
+    <td>58.42</td>
+  </tr>
+  <tr>
+    <td><a href="https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16">Nemotron-3.5-Embed-1B-BF16</a></td>
+    <td><strong>58.02</strong></td>
+    <td><strong>57.80</strong></td>
+    <td><strong>58.82</strong></td>
+    <td><strong>68.93</strong></td>
+  </tr>
+  <tr>
+    <td><a href="https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B">Qwen3-VL-Embedding-8B</a></td>
+    <td>58.29</td>
+    <td>53.69</td>
+    <td>57.03</td>
+    <td>68.33</td>
+  </tr>
+  <tr>
+    <td><strong>Nemotron-3.5-Embed-8B-BF16</strong></td>
+    <td><strong>60.39</strong></td>
+    <td><strong>60.65</strong></td>
+    <td><strong>61.47</strong></td>
+    <td><strong>72.64</strong></td>
+  </tr>
+</table>
 
 **Data Collection Method by dataset:** Automated, Manually-Labeled, Synthetic <br>
 **Labeling Method by dataset:** Automated, Manually-Labeled, Synthetic <br>
