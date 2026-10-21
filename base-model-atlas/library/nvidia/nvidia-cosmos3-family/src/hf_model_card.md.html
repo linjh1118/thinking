@@ -1,0 +1,466 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cosmos 3: Omnimodal World Models for Physical AI · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Cosmos 3: Omnimodal World Models for Physical AI</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#cosmos-3-omnimodal-world-models-for-physical-ai">Cosmos 3: Omnimodal World Models for Physical AI</a><a class="toc-l1" href="#model-overview-cosmos3-nano">Model Overview: Cosmos3-Nano</a><a class="toc-l2" href="#description">Description</a><a class="toc-l3" href="#model-versions">Model Versions</a><a class="toc-l3" href="#license">License</a><a class="toc-l3" href="#deployment-geography">Deployment Geography</a><a class="toc-l3" href="#use-case">Use Case</a><a class="toc-l3" href="#release-date">Release Date</a><a class="toc-l2" href="#model-architecture">Model Architecture</a><a class="toc-l2" href="#input-output-specifications">Input/Output Specifications</a><a class="toc-l2" href="#software-integration">Software Integration</a><a class="toc-l2" href="#training-testing-and-evaluation-datasets">Training, Testing, and Evaluation Datasets</a><a class="toc-l3" href="#dataset-overview">Dataset Overview</a><a class="toc-l3" href="#public-datasets">Public Datasets</a><a class="toc-l3" href="#private-datasets">Private Datasets</a><a class="toc-l3" href="#synthetic-datasets">Synthetic Datasets</a><a class="toc-l2" href="#evaluation-datasets">Evaluation Datasets</a><a class="toc-l2" href="#benchmarks">Benchmarks</a><a class="toc-l3" href="#overall">Overall</a><a class="toc-l3" href="#reasoning-benchmarks">Reasoning Benchmarks</a><a class="toc-l3" href="#generation-benchmarks">Generation Benchmarks</a><a class="toc-l2" href="#usage">Usage</a><a class="toc-l3" href="#prompt-upsampling">Prompt upsampling</a><a class="toc-l3" href="#vllm-omni">vLLM-Omni</a><a class="toc-l3" href="#vllm">vLLM</a><a class="toc-l3" href="#diffusers">Diffusers</a><a class="toc-l3" href="#sglang">SGLang</a><a class="toc-l2" href="#limitations">Limitations</a><a class="toc-l2" href="#inference">Inference</a><a class="toc-l2" href="#ethical-considerations">Ethical Considerations</a></nav></aside><main class="note"><h1 id="cosmos-3-omnimodal-world-models-for-physical-ai"><strong>Cosmos 3: Omnimodal World Models for Physical AI</strong></h1><p><strong><a href="https://huggingface.co/collections/nvidia/cosmos3" target="_blank" rel="noopener">Model Collection</a></strong> | <strong><a href="https://github.com/nvidia/cosmos" target="_blank" rel="noopener">Code</a></strong> | <strong><a href="https://research.nvidia.com/labs/cosmos-lab/cosmos3/technical-report.pdf" target="_blank" rel="noopener">White Paper</a></strong> | <strong><a href="https://research.nvidia.com/labs/cosmos-lab/cosmos3/" target="_blank" rel="noopener">Website</a></strong></p><p><a href="https://github.com/nvidia/cosmos" target="_blank" rel="noopener">NVIDIA Cosmos™</a> is a world foundation model platform designed to accelerate the development of Physical AI by enabling machines to understand, simulate, and interact with the physical world across robotics, autonomous driving, and smart space environments, including industrial and factory-scale applications.</p><h1 id="model-overview-cosmos3-nano">Model Overview: Cosmos3-Nano</h1><h2 id="description">Description</h2><p>Cosmos3 is a collection of Omnimodal world models capable of generating dynamic, high-quality video, image, audio, and action commands from combinations of text, image, video, and action trajectory inputs. It serves as a foundational building block for a broad range of Physical AI applications and research spanning world understanding, world generation, simulation, and embodied policy learning.</p><p>This model is ready for commercial and non-commercial use.</p><p><strong>Model Developer:</strong> NVIDIA</p><h3 id="model-versions">Model Versions</h3><ul><li>Cosmos3-Nano:</li><li>Given multimodal inputs including text, images, video, audio, and action trajectories, generate coherent text, images, video, audio, and action outputs for multimodal understanding, world simulation, future prediction, action reasoning, and Physical AI applications.</li></ul><h3 id="license">License</h3><p>This model is released under the <a href="https://openmdw.ai/license/1-1/" target="_blank" rel="noopener">OpenMDW1.1</a></p><h3 id="deployment-geography">Deployment Geography</h3><p>Global</p><h3 id="use-case">Use Case</h3><p>Physical AI: Encompassing robotics, autonomous vehicles (AV), and smart space environments, including industrial and factory-scale applications.</p><h3 id="release-date">Release Date</h3><p>Hugging Face 05/31/2026 via <a href="https://huggingface.co/collections/nvidia/cosmos3" target="_blank" rel="noopener">https://huggingface.co/collections/nvidia/cosmos3</a> GitHub 05/31/2026 via <a href="https://github.com/nvidia/cosmos" target="_blank" rel="noopener">https://github.com/nvidia/cosmos</a></p><h2 id="model-architecture">Model Architecture</h2><p><strong>Architecture Type:</strong> Transformer</p><p><strong>Network Architecture:</strong> Mixture-of-Transformers (MoT)</p><p>Cosmos3 is an Omni-modal foundation model built on a Mixture-of-Transformers (MoT) architecture consisting of two complementary transformer towers: an autoregressive transformer for discrete token generation and a diffusion transformer for continuous multimodal generation. During inference, text is generated through standard next-token autoregressive decoding, while non-text modalities, such as images, video, audio, and actions, are synthesized through iterative denoising. This unified architecture enables Cosmos3 to model heterogeneous modalities within a single framework while preserving generation mechanisms best suited to each modality.</p><p><strong>This model was developed based on:</strong>  <a href="https://github.com/nvidia/cosmos-framework" target="_blank" rel="noopener">Cosmos Framework</a></p><p><strong>Number of trainable model parameters:</strong></p><ul><li>Cosmos3-Nano: 16B</li></ul><h2 id="input-output-specifications">Input/Output Specifications</h2><ul><li><strong>Generator Input</strong></li><li><strong>Input Type(s)</strong>: Text, Image, Video (with audio or without audio), Action Trajectory</li><li><strong>Input Format(s)</strong>:</li><li>Text: String</li><li>Image: jpg, png, jpeg, webp</li><li>Video (with or without audio): mp4</li><li>Action: json (1D list)</li><li><strong>Input Parameters</strong>:</li><li>Text: One-dimensional (1D)</li><li>Image: Two-dimensional (2D)</li><li>Video: Three-dimensional (3D)</li><li>Audio: One-dimensional (1D)</li><li>Action trajectory: One-dimensional (1D)</li><li><strong>Other Properties Related to Input</strong>:</li><li>For video inputs, we accept various resolutions, including 720p, 480p, and 256p.</li><li>When using input video with audio muxed into the video MP4 file, the audio should have 2 channels (stereo) and a 48 kHz sample rate.</li><li>Image and video inputs are RGB color (8 bits per channel, sRGB color space); grayscale inputs are not supported.</li><li>Action input is a per-frame sequence of robot/agent state or control values (e.g., joint positions, gripper state, camera pose). The full input is a 2D array shaped (T, D), where T is the number of frames and D is the embodiment-specific dimensionality listed below.</li><li>Input action is only supported for compatible embodiments, including general camera motion (9D), autonomous vehicle (9D), egocentric motion (57D), single Franka Panda arm with RobotiQ gripper (10D), dual Franka Panda arm with RobotiQ gripper (20D), Agibot (29D), UR (10D), Google robot (10D), WidowX 250 (10D), UMI (9D).</li><li><strong>Input Size and Length limits:</strong></li><li><strong>Text:</strong> 4096 tokens</li><li><strong>Image:</strong> 256p, 480p, and 720p resolution at one of these aspect ratios (16:9, 4:3, 1:1, 3:4, 9:16)</li><li><strong>Video:</strong> 256p, 480p, and 720p resolution at one of these aspect ratios (16:9, 4:3, 1:1, 3:4, 9:16). Max number of frames = 5.</li><li><strong>Audio:</strong> Max 0.5 second</li><li><strong>Action:</strong> 16 – 400 video frames</li><li><strong>Generator Output</strong></li><li><strong>Output Type(s)</strong>: Image, video, audio, action, text</li><li><strong>Output Format(s)</strong>:</li><li>Image: JPG</li><li>Video: MP4</li><li>Audio: Advanced Audio Coding (AAC) stream (muxed within the MP4)</li><li>Action: 1D list (.json)</li><li>Text: string</li><li><strong>Output Parameters</strong>:</li><li>Image: Two-dimensional (2D)</li><li>Video: Three-dimensional (3D)</li><li>Audio: One-dimensional (1D)</li><li>Action: One-dimensional (1D)</li><li>Text: One-dimensional (1D)</li><li><strong>Other Properties Related to Output</strong>:</li><li>The generated video is an MP4 file, with the resolution, frame rate, and duration specified in the input. The generated audio is encoded in AAC format, muxed into the video MP4 file with 2 channels (stereo) and a 48 kHz sample rate.</li><li>Video generation supports durations from 5 to 400 frames, with 189 frames as the default generation duration.</li><li>The generated action is only supported for compatible embodiments, including general camera motion (9D), autonomous vehicle (9D), egocentric motion (57D), single Franka Panda arm with RobotiQ gripper (10D), dual Franka Panda arm with RobotiQ gripper (20D), Agibot (29D), UR (10D), Google robot (10D), WidowX 250 (10D), UMI (9D).</li><li>Audio: 48 kHz stereo AAC stream muxed into video mp4</li><li>Video: mp4 at the FPS specified in input</li><li>Image: JPEG</li><li><strong>Reasoner Input</strong></li><li><strong>Input Type(s)</strong>: Text, Text+Image, Text+Video</li><li><strong>Input Format(s)</strong>:</li><li>Text: String</li><li>Image: jpg, png, jpeg, webp</li><li>Video: mp4</li><li><strong>Input Parameters</strong>:</li><li>Text: One-dimensional (1D)</li><li>Image: Two-dimensional (2D)</li><li>Video: Three-dimensional (3D)</li><li><strong>Other Properties Related to Input</strong>:</li><li>Video inputs are recommended at a frame rate of 4 fps.</li><li>Long-context inputs supported up to 256K tokens.</li><li><strong>Input Size and Length limits:</strong></li><li><strong>Text:</strong> Up to 256K tokens (context window).</li><li><strong>Image:</strong> Standard input image formats; passed as file or URL.</li><li><strong>Video:</strong> mp4 at the recommended 4 fps.</li><li><strong>Reasoner Output</strong></li><li><strong>Output Type(s)</strong>: Text</li><li><strong>Output Format(s)</strong>:</li><li>Text: string</li><li><strong>Output Parameters</strong>:</li><li>Text: One-dimensional (1D)</li><li><strong>Other Properties Related to Output</strong>:</li><li>Default <code>max_tokens=4096+</code> is recommended for reasoning outputs; longer outputs may be requested.</li><li>Reasoning outputs may include structured chain-of-thought, 2D/3D point localization, and bounding-box coordinates for vision-based tasks.</li></ul><p>The video content visualizes the input text description as a short animated scene, capturing key elements within the specified time constraints.</p><p>Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated systems. By leveraging NVIDIA's hardware (e.g., GPU cores) and software frameworks (e.g., CUDA libraries), the model achieves faster training and inference times compared to CPU-only solutions.</p><h2 id="software-integration">Software Integration</h2><p><strong>Runtime Engine(s):</strong></p><ul><li><a href="https://github.com/nvidia/cosmos3" target="_blank" rel="noopener">PyTorch</a></li><li><a href="https://github.com/vllm-project/vllm-omni" target="_blank" rel="noopener">vLLM-Omni</a></li><li><a href="https://huggingface.co/docs/diffusers/en/index" target="_blank" rel="noopener">Hugging Face Diffusers</a></li><li><a href="https://github.com/sgl-project/sglang" target="_blank" rel="noopener">SGLang</a></li></ul><p><strong>Supported Hardware Microarchitecture Compatibility:</strong></p><ul><li>NVIDIA Ampere</li><li>NVIDIA Blackwell</li><li>NVIDIA Hopper</li></ul><p><strong>Operating System(s):</strong></p><ul><li>Linux</li></ul><p><strong>Note:</strong> Only BF16 precision is tested. Other precisions like FP4, FP8, and FP16 are not officially supported.</p><p>The integration of foundation and fine-tuned models into AI systems requires additional testing using use-case-specific data to ensure safe and effective deployment. Following the V-model methodology, iterative testing and validation at both unit and system levels are essential to mitigate risks, meet technical and functional requirements, and ensure compliance with safety and ethical standards before deployment.</p><h2 id="training-testing-and-evaluation-datasets">Training, Testing, and Evaluation Datasets</h2><h3 id="dataset-overview">Dataset Overview</h3><ul><li><strong>Total Size:</strong> 1.3B data points</li><li><strong>Total Number of Datasets:</strong> 393 dataset entries</li><li><strong>Dataset partition:</strong> Training [100%], Testing [N/A — evaluation benchmarks used separately], Validation [N/A — evaluation benchmarks used separately]</li><li><strong>Time period for training data collection:</strong> 2024–2026</li><li><strong>Time period for testing data collection:</strong> N/A (standard public benchmarks)</li><li><strong>Time period for validation data collection:</strong> N/A (standard public benchmarks)</li></ul><p>Raw data from internal and external sources is transformed into training-ready data through multiple stages of curation, filtering, and quality review. Data acquisition spans diverse multimodal sources — robotics, autonomous driving, industrial environments, indoor and outdoor scenes, varied lighting and weather conditions, camera viewpoints, object categories, and human activities — to broaden coverage across Physical AI operating environments. Automated filtering pipelines remove corrupted, duplicate, low-quality, and restricted content. Metadata analysis, heuristic rules, and model-assisted classifiers are applied during preprocessing to flag anomalous distributions and low-diversity subsets. Human review supplements automated filtering for selected datasets, benchmark construction, and targeted quality analysis. Datasets are balanced across modalities and task categories — visual reasoning, text-to-image, text-to-video, image-to-video, audio generation, video transfer, action-conditioned generation, and action command generation — to reduce overrepresentation of narrow domains. Synthetic and simulation-based augmentation supplements coverage of rare physical interactions and edge-case scenarios. Deduplication and provenance tracking are applied across the corpus. The resulting processed data is converted into model-ready tokenized or encoded representations through modality-specific preprocessors before training begins.</p><p>Training datasets passed through multiple layers of automated and manual safeguards designed to reduce the presence of harmful or policy-violating content across categories including weapons and weapons-related instructional content, criminal planning, child sexual abuse material (CSAM), non-consensual intimate imagery (NCII), sexual content involving minors, harassment, hate speech, profanity, threats and incitement to violence, self-harm or suicide-related content, and graphic violence. Data sources are reviewed for licensing compatibility, provenance, and alignment with internal data governance and safety policies before admission into training corpora. Automated filtering pipelines combine multiple detection strategies: hash-matching against known CSAM and NCII reference databases; classifier-based moderation models trained for explicit sexual content, hate speech, violence, weapons imagery, and other restricted categories; keyword and regex-based screening for criminal-planning, threats, and self-harm phrases in text data; metadata and provenance heuristics for source-level risk signals; and embedding-based anomaly detection to surface samples that fall outside expected distributions. Human review and targeted audits supplement automated filtering for selected datasets, benchmark construction, and safety-sensitive evaluation. For multimodal Physical AI data (robotics, autonomous driving, industrial scenes), additional filtering targets invalid action trajectories, physically implausible interactions, and unsafe control sequences. Synthetic and simulation-generated data are evaluated through internal validation before inclusion. Benchmark evaluations and red-team testing are applied post-training to surface remaining safety gaps across world generation, reasoning, audio, and action tasks. No large-scale data-filtering process can guarantee complete removal of all harmful content; residual risks may remain, particularly in rare edge cases or open-world deployment settings. Ongoing monitoring and dataset review continue post-release.</p><ul><li>For more information about the datasets used to train this model, please see the <a href="https://docs.nvidia.com/cosmos/latest/_downloads/e482b7114ce8dbfbb07d2d4b42cafe4e/training-content-Cosmos-3.pdf" target="_blank" rel="noopener">Public Summary of Training Content</a>.</li></ul><p><strong>Data Modality and Training Data Size</strong></p><div class="table-wrap"><table><thead><tr><th>Modality</th><th>Reasoning Data Sample Count</th><th>Generation Data Sample Count</th></tr></thead><tbody><tr><td>Text</td><td>22M</td><td>Not Applicable</td></tr><tr><td>Image</td><td>19M</td><td>767M</td></tr><tr><td>Video</td><td>1M</td><td>348M</td></tr><tr><td>Audio</td><td>Not Applicable</td><td>139M</td></tr><tr><td>Action</td><td>Not Applicable</td><td>8M</td></tr></tbody></table></div><p><strong>Data Collection Method by dataset</strong></p><ul><li>Hybrid: Automatic/Sensors, Synthetic, Automated</li></ul><p><strong>Labeling Method by dataset</strong></p><ul><li>Hybrid: Human, Automated</li></ul><p><strong>Properties:</strong> The training, testing, and evaluation datasets consist of diverse multimodal video, image, audio, action, synthetic, and sensor-conditioned data sourced from NVIDIA-owned data and publicly available, commercially permissive datasets. These datasets are curated to exclude known restricted content and to support building an Omni model that learns to generate and reason about dynamic physical environments across world reasoning and generation tasks.</p><h3 id="public-datasets">Public Datasets</h3><div class="table-wrap"><table><thead><tr><th>Dataset&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th><th>Samples&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th></tr></thead><tbody><tr><td>OpenImage</td><td>1.2M</td></tr><tr><td>Coyo700M</td><td>100M</td></tr><tr><td>YouTube Video</td><td>340M</td></tr><tr><td>UMI</td><td>4.5M</td></tr></tbody></table></div><h3 id="private-datasets">Private Datasets</h3><div class="table-wrap"><table><thead><tr><th>Dataset&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th><th>Samples&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</th></tr></thead><tbody><tr><td>Egocentric</td><td>7M</td></tr><tr><td>Nexar</td><td>0.6M</td></tr><tr><td>AgiBot</td><td>0.2M</td></tr><tr><td>HOI</td><td>0.3M</td></tr></tbody></table></div><h3 id="synthetic-datasets">Synthetic Datasets</h3><div class="table-wrap"><table><thead><tr><th>Dataset</th><th>Samples</th></tr></thead><tbody><tr><td>synthetic images generated using HiDream-I1</td><td>15M</td></tr><tr><td>synthetic images generated using Qwen-Image-2512</td><td>14M</td></tr><tr><td>synthetic captions generated using Qwen3-VL</td><td>1115M</td></tr></tbody></table></div><h2 id="evaluation-datasets">Evaluation Datasets</h2><p><strong>Data Collection Method by dataset</strong></p><ul><li>Hybrid: Automatic/Sensors, Synthetic, Automated</li></ul><p><strong>Labeling Method by dataset</strong></p><ul><li>Hybrid: Human, Automated</li></ul><p><strong>Properties:</strong> The training, testing, and evaluation datasets consist of diverse multimodal video, image, audio, action, synthetic, and sensor-conditioned data sourced from NVIDIA-owned data and publicly available, commercially permissive datasets. These datasets are curated to exclude known restricted content and to support building an Omni model that learns to generate and reason about dynamic physical environments across world reasoning and generation tasks.</p><h2 id="benchmarks">Benchmarks</h2><p>Please see our <a href="https://research.nvidia.com/labs/cosmos-lab/cosmos3/technical-report.pdf" target="_blank" rel="noopener">technical paper</a> for detailed evaluations of the base model.</p><h3 id="overall">Overall</h3><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/README.mdimages/benchmark-overall.png" alt="Overall benchmark results"></p><h3 id="reasoning-benchmarks">Reasoning Benchmarks</h3><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/README.mdimages/benchmark-reasoning.png" alt="Reasoning benchmarks"></p><h3 id="generation-benchmarks">Generation Benchmarks</h3><h4 id="visual-audio-generation">Visual-Audio Generation</h4><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/README.mdimages/benchmark-visual-audio.png" alt="Visual &amp;amp; audio generation benchmarks"></p><h4 id="action">Action</h4><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/README.mdimages/benchmark-action-1.png" alt="Action benchmarks — forward and inverse dynamics"></p><h2 id="usage">Usage</h2><ul><li>See <a href="https://github.com/nvidia/cosmos" target="_blank" rel="noopener">Cosmos</a> for details.</li></ul><h3 id="prompt-upsampling">Prompt upsampling</h3><p>For optimal quality, text prompts should be upsampled into a specific JSON structure. Description and code can be found <a href="https://github.com/nvidia/cosmos-framework/blob/main/docs/prompt_upsampling.md" target="_blank" rel="noopener">here</a>.</p><p>For example, for text-to-video upsampling using Opus-4.6:</p><pre><div class="code-lang">bash</div><code>git clone https://github.com/NVIDIA/cosmos-framework.git packages/cosmos-framework
+pip install -e packages/cosmos-framework
+
+export PROMPT_UPSAMPLER_ENDPOINT_URL=&quot;https://api.anthropic.com/v1/&quot;
+export PROMPT_UPSAMPLER_MODEL_NAME=&quot;claude-opus-4-6&quot;
+export PROMPT_UPSAMPLER_API_TOKEN=&quot;&lt;you_token&gt;&quot;
+
+python -m cosmos_framework.inference.prompt_upsampling \
+    --input assets/example_t2v_prompt_short.txt \
+    --output /tmp/upsampled_t2v_opus/ \
+    --mode text2video \
+    --endpoint-url &quot;${PROMPT_UPSAMPLER_ENDPOINT_URL}&quot; \
+    --model &quot;${PROMPT_UPSAMPLER_MODEL_NAME}&quot; \
+    --api-token &quot;${PROMPT_UPSAMPLER_API_TOKEN}&quot; \
+    --resolution 720 \
+    --aspect-ratio &quot;16,9&quot;</code></pre><p>The JSON-upsampled version of <code>assets/example_t2v_prompt_short.txt</code> is saved in <code>assets/example_t2v_prompt.json</code> for convenience, and is used for the video generation examples below.</p><h3 id="vllm-omni">vLLM-Omni</h3><h4 id="container">Container</h4><pre><div class="code-lang">code</div><code>docker pull vllm/vllm-omni:cosmos3</code></pre><h4 id="general-invocation">General Invocation</h4><p>You can use the release-tested <code>vllm-omni</code> package for deploying an OpenAI-compatible API inference endpoint. The recommended vLLM-Omni serving configuration for nvidia/Cosmos3-Nano on H200 is:</p><pre><div class="code-lang">bash</div><code>vllm serve nvidia/Cosmos3-Nano \
+  --omni \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --init-timeout 1800</code></pre><p>To speed up inference with additional GPUs, enable context parallelism with <code>--ulysses-degree</code> or switch to tensor parallelism with <code>--tensor-parallel-size</code>. Setting <code>--enable-layerwise-offload</code> can help reduce memory usage on GPUs with less available memory.</p><h4 id="examples">Examples</h4><h5 id="download-example-prompts">Download example prompts</h5><p>The example inputs (<code>assets/</code>) live in this model repo. Download just this folder with the Hugging Face CLI:</p><pre><div class="code-lang">bash</div><code>pip install -U &quot;huggingface_hub[cli]&quot;
+hf download nvidia/Cosmos3-Nano assets/ --local-dir Cosmos3-Nano
+cd Cosmos3-Nano</code></pre><p>Run all commands below from the downloaded repo root.</p><p>---</p><h5 id="image-to-video-generation">Image to video generation</h5><pre><div class="code-lang">python</div><code>import json
+import mimetypes
+from pathlib import Path
+
+import requests
+
+# 1. Read JSON-upsampled prompt and negative prompt
+json_prompt = json.load(open(&quot;assets/example_i2v_prompt.json&quot;))
+negative_prompt = json.load(open(&quot;assets/negative_prompt.json&quot;))
+
+# 2. Build and send the multipart API request
+url = &quot;http://localhost:8000/v1/videos/sync&quot;
+image_path = Path(&quot;assets/example_i2v_input.jpg&quot;)
+mime_type = mimetypes.guess_type(image_path)[0] or &quot;image/png&quot;
+data = {
+    &quot;prompt&quot;: json.dumps(json_prompt),
+    &quot;negative_prompt&quot;: json.dumps(negative_prompt),
+    &quot;size&quot;: &quot;1280x720&quot;,
+    &quot;num_frames&quot;: &quot;189&quot;,
+    &quot;fps&quot;: &quot;24&quot;,
+    &quot;num_inference_steps&quot;: &quot;35&quot;,
+    &quot;guidance_scale&quot;: &quot;6.0&quot;,
+    &quot;max_sequence_length&quot;: &quot;4096&quot;,
+    &quot;flow_shift&quot;: &quot;10.0&quot;,
+    &quot;extra_params&quot;: json.dumps(
+        {
+          &quot;use_resolution_template&quot;: False,
+          &quot;use_duration_template&quot;: False,
+          &quot;guardrails&quot;: True,
+        }
+    ),
+    &quot;seed&quot;: &quot;1111&quot;,
+}
+
+with image_path.open(&quot;rb&quot;) as image_file:
+    files = {
+        &quot;input_reference&quot;: (image_path.name, image_file, mime_type),
+    }
+    print(&quot;Sending request to server...&quot;)
+    response = requests.post(
+        url,
+        data=data,
+        files=files,
+        headers={&quot;Accept&quot;: &quot;video/mp4&quot;},
+    )
+    response.raise_for_status()
+
+# 3. Save the generated video
+output_path = Path(&quot;/tmp/cosmos3_nano_i2v.mp4&quot;)
+output_path.write_bytes(response.content)
+print(f&quot;Saved video to {output_path}&quot;)</code></pre><p>Example output:</p><p>&lt;video controls width="1280" height="720" src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_i2v_output.mp4"&gt;&lt;/video&gt;</p><p>---</p><h5 id="text-to-video-generation">Text to video generation</h5><pre><div class="code-lang">python</div><code>import json
+from pathlib import Path
+
+import requests
+
+# 1. Read JSON-upsampled prompt and negative prompt
+json_prompt = json.load(open(&quot;assets/example_t2v_prompt.json&quot;))
+negative_prompt = json.load(open(&quot;assets/negative_prompt.json&quot;))
+
+# 2. Build your API payload
+data = {
+    &quot;prompt&quot;: json.dumps(json_prompt),
+    &quot;negative_prompt&quot;: json.dumps(negative_prompt),
+    &quot;size&quot;: &quot;1280x720&quot;,
+    &quot;num_frames&quot;: &quot;189&quot;,
+    &quot;fps&quot;: &quot;24&quot;,
+    &quot;num_inference_steps&quot;: &quot;35&quot;,
+    &quot;guidance_scale&quot;: &quot;6.0&quot;,
+    &quot;max_sequence_length&quot;: &quot;4096&quot;,
+    &quot;flow_shift&quot;: &quot;10.0&quot;,
+    &quot;extra_params&quot;: json.dumps(
+        {
+          &quot;use_resolution_template&quot;: False,
+          &quot;use_duration_template&quot;: False,
+          &quot;guardrails&quot;: True,
+        }
+    ),
+    &quot;seed&quot;: &quot;123&quot;,
+}
+
+# 3. Send the POST request
+url = &quot;http://localhost:8000/v1/videos/sync&quot;
+print(&quot;Sending request to server...&quot;)
+response = requests.post(
+    url,
+    data=data,
+    headers={&quot;Accept&quot;: &quot;video/mp4&quot;},
+)
+response.raise_for_status()
+
+# 4. Save the generated video
+output_path = Path(&quot;/tmp/cosmos3_nano_t2v.mp4&quot;)
+output_path.write_bytes(response.content)
+print(f&quot;Saved video to {output_path}&quot;)</code></pre><p>Example output:</p><p>&lt;video controls width="1280" height="720" src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_t2v_output.mp4"&gt;&lt;/video&gt;</p><p>---</p><h5 id="image-to-video-audio-generation">Image to Video + Audio generation</h5><pre><div class="code-lang">python</div><code>import json
+import mimetypes
+from pathlib import Path
+
+import requests
+
+# 1. Read JSON-upsampled prompt and negative prompt
+json_prompt = json.load(open(&quot;assets/example_i2v_prompt.json&quot;))
+negative_prompt = json.load(open(&quot;assets/negative_prompt.json&quot;))
+
+# 2. Build and send the multipart API request
+url = &quot;http://localhost:8000/v1/videos/sync&quot;
+image_path = Path(&quot;assets/example_i2v_input.jpg&quot;)
+mime_type = mimetypes.guess_type(image_path)[0] or &quot;image/png&quot;
+data = {
+    &quot;prompt&quot;: json.dumps(json_prompt),
+    &quot;negative_prompt&quot;: json.dumps(negative_prompt),
+    &quot;size&quot;: &quot;1280x720&quot;,
+    &quot;num_frames&quot;: &quot;189&quot;,
+    &quot;fps&quot;: &quot;24&quot;,
+    &quot;num_inference_steps&quot;: &quot;35&quot;,
+    &quot;guidance_scale&quot;: &quot;6.0&quot;,
+    &quot;max_sequence_length&quot;: &quot;4096&quot;,
+    &quot;generate_sound&quot;: &quot;true&quot;,
+    &quot;sound_duration&quot;: &quot;7.875&quot;,
+    &quot;flow_shift&quot;: &quot;10.0&quot;,
+    &quot;extra_params&quot;: json.dumps(
+        {
+          &quot;use_resolution_template&quot;: False,
+          &quot;use_duration_template&quot;: False,
+          &quot;guardrails&quot;: True,
+        }
+    ),
+    &quot;seed&quot;: &quot;0&quot;,
+}
+
+with image_path.open(&quot;rb&quot;) as image_file:
+    files = {
+        &quot;input_reference&quot;: (image_path.name, image_file, mime_type),
+    }
+    print(&quot;Sending request to server...&quot;)
+    response = requests.post(
+        url,
+        data=data,
+        files=files,
+        headers={&quot;Accept&quot;: &quot;video/mp4&quot;},
+    )
+    response.raise_for_status()
+
+# 3. Save the generated video
+output_path = Path(&quot;/tmp/cosmos3_nano_i2vs.mp4&quot;)
+output_path.write_bytes(response.content)
+print(f&quot;Saved video to {output_path}&quot;)</code></pre><p>Example output:</p><p>&lt;video controls width="1280" height="720" src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_i2vs_output.mp4"&gt;&lt;/video&gt;</p><p>---</p><h5 id="text-to-video-audio-generation">Text to Video + Audio generation</h5><pre><div class="code-lang">python</div><code>import json
+from pathlib import Path
+
+import requests
+
+# 1. Read JSON-upsampled prompt and negative prompt
+json_prompt = json.load(open(&quot;assets/example_t2vs_prompt.json&quot;))
+negative_prompt = json.load(open(&quot;assets/negative_prompt.json&quot;))
+
+# 2. Build your API payload
+data = {
+    &quot;prompt&quot;: json.dumps(json_prompt),
+    &quot;negative_prompt&quot;: json.dumps(negative_prompt),
+    &quot;size&quot;: &quot;1280x720&quot;,
+    &quot;num_frames&quot;: &quot;189&quot;,
+    &quot;fps&quot;: &quot;24&quot;,
+    &quot;num_inference_steps&quot;: &quot;35&quot;,
+    &quot;guidance_scale&quot;: &quot;6.0&quot;,
+    &quot;max_sequence_length&quot;: &quot;4096&quot;,
+    &quot;generate_sound&quot;: &quot;true&quot;,
+    &quot;sound_duration&quot;: &quot;7.875&quot;,
+    &quot;flow_shift&quot;: &quot;10.0&quot;,
+    &quot;extra_params&quot;: json.dumps(
+        {
+          &quot;use_resolution_template&quot;: False,
+          &quot;use_duration_template&quot;: False,
+          &quot;guardrails&quot;: True,
+        }
+    ),
+    &quot;seed&quot;: &quot;0&quot;,
+}
+
+# 3. Send the POST request
+url = &quot;http://localhost:8000/v1/videos/sync&quot;
+print(&quot;Sending request to server...&quot;)
+response = requests.post(
+    url,
+    data=data,
+    headers={&quot;Accept&quot;: &quot;video/mp4&quot;},
+)
+response.raise_for_status()
+
+# 4. Save the generated video
+output_path = Path(&quot;/tmp/cosmos3_nano_t2vs.mp4&quot;)
+output_path.write_bytes(response.content)
+print(f&quot;Saved video to {output_path}&quot;)</code></pre><p>Example output:</p><p>&lt;video controls width="1280" height="720" src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_t2vs_output.mp4"&gt;&lt;/video&gt;</p><p>---</p><h5 id="action-generation">Action generation</h5><p>The forward-dynamics example uses AgiBotWorld-Beta robotics action trajectories, and the inverse-dynamics examples use autonomous-vehicle (AV) action trajectories. Source files:</p><ul><li>Forward dynamics first frame: <code>assets/example_action_fd_agibotworld_first_frame.png</code></li><li>Forward dynamics action chunks: <code>assets/example_action_fd_agibotworld_action_chunks.json</code></li><li>Forward dynamics output video: <code>assets/example_action_fd_agibotworld_4chunk_output.mp4</code></li><li>Inverse dynamics source videos: <code>assets/example_action_id_av_0_input.mp4</code>, <code>assets/example_action_id_av_1_input.mp4</code></li><li>Inverse dynamics predicted actions: <code>assets/example_action_id_av_0_output.json</code>, <code>assets/example_action_id_av_1_output.json</code></li></ul><h6 id="action-forward-dynamics">Action forward dynamics</h6><p>The example below performs a 4-chunk AgiBotWorld-Beta robotics rollout with the vLLM-Omni <code>/v1/videos/sync</code> inference endpoint. Each request sends one conditioning frame through <code>input_reference</code> and one 16-step normalized 29-D action chunk through <code>extra_params[&quot;action&quot;]</code>. The request also sets the top-level <code>size</code> field to the input image resolution, so vLLM-Omni returns each chunk at the same resolution as the conditioning image without reflection padding. The stitched output drops each chunk's conditioning frame, producing 64 generated frames. The script extracts the last generated frame from each chunk and uses it as the next chunk's conditioning frame.</p><pre><div class="code-lang">python</div><code>import json
+import mimetypes
+from pathlib import Path
+
+import imageio.v3 as iio
+import numpy as np
+import requests
+from PIL import Image
+
+url = &quot;http://localhost:8000/v1/videos/sync&quot;
+first_frame_path = Path(&quot;assets/example_action_fd_agibotworld_first_frame.png&quot;)
+action_spec = json.loads(Path(&quot;assets/example_action_fd_agibotworld_action_chunks.json&quot;).read_text())
+action_chunks = action_spec[&quot;action_chunks&quot;]
+
+prompt = action_spec.get(&quot;prompt&quot;, &quot;Pickup items in the supermarket&quot;)
+fps = int(action_spec.get(&quot;fps&quot;, 10))
+action_chunk_size = int(action_spec.get(&quot;action_chunk_size&quot;, 16))
+current_frame_path = first_frame_path
+input_width, input_height = Image.open(first_frame_path).size
+chunk_video_paths = []
+stitch_frames = []
+
+for chunk_idx, action_chunk in enumerate(action_chunks):
+    mime_type = mimetypes.guess_type(current_frame_path)[0] or &quot;image/png&quot;
+    extra_params = {
+        &quot;action_mode&quot;: &quot;forward_dynamics&quot;,
+        &quot;domain_name&quot;: action_spec.get(&quot;domain_name&quot;, &quot;agibotworld&quot;),
+        &quot;action_chunk_size&quot;: action_chunk_size,
+        &quot;image_size&quot;: action_spec.get(&quot;image_size&quot;, 480),
+        &quot;view_point&quot;: action_spec.get(&quot;view_point&quot;, &quot;concat_view&quot;),
+        &quot;action&quot;: action_chunk,
+        &quot;guardrails&quot;: True,
+    }
+    data = {
+        &quot;prompt&quot;: prompt,
+        &quot;num_frames&quot;: str(action_chunk_size + 1),  # conditioning frame + generated frames
+        &quot;fps&quot;: str(fps),
+        &quot;size&quot;: f&quot;{input_width}x{input_height}&quot;,  # return chunks at input resolution
+        &quot;num_inference_steps&quot;: &quot;30&quot;,
+        &quot;guidance_scale&quot;: &quot;1.0&quot;,
+        &quot;flow_shift&quot;: &quot;10.0&quot;,
+        &quot;seed&quot;: &quot;0&quot;,
+        &quot;extra_params&quot;: json.dumps(extra_params),
+    }
+
+    with current_frame_path.open(&quot;rb&quot;) as image_file:
+        files = {&quot;input_reference&quot;: (current_frame_path.name, image_file, mime_type)}
+        print(f&quot;Sending action FD chunk {chunk_idx} to vLLM-Omni...&quot;)
+        response = requests.post(
+            url,
+            data=data,
+            files=files,
+            headers={&quot;Accept&quot;: &quot;video/mp4&quot;},
+            timeout=600,
+        )
+        response.raise_for_status()
+
+    chunk_video_path = Path(f&quot;/tmp/cosmos3_nano_action_fd_chunk_{chunk_idx:02d}.mp4&quot;)
+    chunk_video_path.write_bytes(response.content)
+    chunk_video_paths.append(chunk_video_path)
+
+    # The returned chunk contains the conditioning frame followed by generated frames.
+    # Drop the conditioning frame when stitching the generated-only rollout.
+    frames = iio.imread(chunk_video_path)
+    stitch_frames.extend(frames[1:])
+
+    # Autoregressive conditioning: use the final generated frame from this chunk
+    # as the input image for the next vLLM-Omni request.
+    if chunk_idx + 1 &lt; len(action_chunks):
+        current_frame_path = Path(f&quot;/tmp/cosmos3_nano_action_fd_ar_frame_{chunk_idx + 1:02d}.png&quot;)
+        iio.imwrite(current_frame_path, frames[-1])
+
+stitched_path = Path(&quot;/tmp/cosmos3_nano_action_fd_agibotworld_4chunk.mp4&quot;)
+iio.imwrite(stitched_path, np.asarray(stitch_frames), fps=fps)
+print(&quot;Generated chunk videos:&quot;, chunk_video_paths)
+print(&quot;Saved stitched rollout:&quot;, stitched_path)
+print(&quot;stitched resolution:&quot;, f&quot;{input_width}x{input_height}&quot;)</code></pre><p>Example output:</p><p>&lt;video width="640" controls src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_action_fd_agibotworld_4chunk_output.mp4"&gt;&lt;/video&gt;</p><h6 id="action-inverse-dynamics">Action inverse dynamics</h6><pre><div class="code-lang">python</div><code>import json
+import time
+from pathlib import Path
+
+import requests
+
+base_url = &quot;http://localhost:8000&quot;
+input_videos = {
+    &quot;av_inverse_0&quot;: Path(&quot;assets/example_action_id_av_0_input.mp4&quot;),
+    &quot;av_inverse_1&quot;: Path(&quot;assets/example_action_id_av_1_input.mp4&quot;),
+}
+
+for name, video_path in input_videos.items():
+    extra_params = {
+        &quot;action_mode&quot;: &quot;inverse_dynamics&quot;,
+        &quot;domain_name&quot;: &quot;av&quot;,
+        &quot;action_chunk_size&quot;: 60,
+        &quot;image_size&quot;: 480,
+        &quot;view_point&quot;: &quot;ego_view&quot;,
+        &quot;raw_action_dim&quot;: 9,
+        &quot;guardrails&quot;: True,
+    }
+    data = {
+        &quot;prompt&quot;: &quot;You are an autonomous vehicle planning system.&quot;,
+        &quot;num_frames&quot;: &quot;61&quot;,
+        &quot;fps&quot;: &quot;10&quot;,
+        &quot;num_inference_steps&quot;: &quot;30&quot;,
+        &quot;guidance_scale&quot;: &quot;1.0&quot;,
+        &quot;flow_shift&quot;: &quot;10.0&quot;,
+        &quot;seed&quot;: &quot;0&quot;,
+        &quot;extra_params&quot;: json.dumps(extra_params),
+    }
+
+    with video_path.open(&quot;rb&quot;) as video_file:
+        files = {
+            &quot;input_reference&quot;: (video_path.name, video_file, &quot;video/mp4&quot;),
+        }
+        print(f&quot;Submitting {name} request to server...&quot;)
+        response = requests.post(f&quot;{base_url}/v1/videos&quot;, data=data, files=files)
+        response.raise_for_status()
+    initial = response.json()
+
+    while True:
+        response = requests.get(f&quot;{base_url}/v1/videos/{initial[&#x27;id&#x27;]}&quot;, timeout=30)
+        response.raise_for_status()
+        final = response.json()
+        print(initial[&quot;id&quot;], final.get(&quot;status&quot;), f&quot;{final.get(&#x27;progress&#x27;, 0)}%&quot;)
+        if final.get(&quot;status&quot;) == &quot;completed&quot;:
+            break
+        if final.get(&quot;status&quot;) in {&quot;failed&quot;, &quot;cancelled&quot;}:
+            raise RuntimeError(json.dumps(final, indent=2))
+        time.sleep(2)
+
+    action = final.get(&quot;action&quot;)
+    if not action or &quot;data&quot; not in action:
+        raise RuntimeError(f&quot;Response did not include action data: {json.dumps(final, indent=2)}&quot;)
+
+    output_path = Path(f&quot;/tmp/cosmos3_nano_action_id_{name}.json&quot;)
+    output_path.write_text(json.dumps(action, indent=2))
+    print(f&quot;Saved predicted action to {output_path}&quot;)
+    print(&quot;action shape:&quot;, action.get(&quot;shape&quot;), &quot;dtype:&quot;, action.get(&quot;dtype&quot;))</code></pre><p>Example outputs:</p><ul><li><a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/assets/example_action_id_av_0_output.json" target="_blank" rel="noopener">av_inverse_0 predicted action JSON</a></li><li><a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/assets/example_action_id_av_1_output.json" target="_blank" rel="noopener">av_inverse_1 predicted action JSON</a></li></ul><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_action_id_av_0_output.png" alt=""></p><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_action_id_av_1_output.png" alt=""></p><h3 id="vllm">vLLM</h3><h4 id="general-invocation-2">General Invocation</h4><p>You can use the release-tested <code>vllm</code> package for deploying an OpenAI-compatible API endpoint:</p><pre><div class="code-lang">shell</div><code>uv venv --python 3.13 --seed --managed-python
+source .venv/bin/activate
+uv pip install --torch-backend=cu130 &quot;vllm==0.21.0&quot; \
+  &quot;vllm-cosmos3 @ git+https://github.com/NVIDIA/cosmos-framework.git#subdirectory=packages/vllm-cosmos3&quot; \
+  openai</code></pre><p>Use <code>--torch-backend=cu130 &quot;vllm==0.21.0&quot;</code> for CUDA 13 drivers. For CUDA 12.8 drivers, use <code>--torch-backend=cu128 &quot;vllm==0.19.1&quot;</code>.</p><p>Start the Reasoner server:</p><pre><div class="code-lang">shell</div><code>CUDA_VISIBLE_DEVICES=0 \
+vllm serve nvidia/Cosmos3-Nano \
+  --hf-overrides &#x27;{&quot;architectures&quot;: [&quot;Cosmos3ReasonerForConditionalGeneration&quot;]}&#x27; \
+  --tensor-parallel-size 1 \
+  --mm-encoder-tp-mode data \
+  --async-scheduling \
+  --allowed-local-media-path / \
+  --media-io-kwargs &#x27;{&quot;video&quot;: {&quot;num_frames&quot;: -1}}&#x27; \
+  --port 8000</code></pre><h4 id="examples-2">Examples</h4><h5 id="reasoning">Reasoning</h5><p>Run this example from the model repository root. It reads the robot planning prompt from <code>assets/example_reasoning_prompt.json</code> and sends <code>assets/example_reasoning_input.png</code> to the local vLLM server.</p><pre><div class="code-lang">python</div><code>import json
+from pathlib import Path
+
+import openai
+
+# 1. Read the image reasoning prompt
+example = json.load(open(&quot;assets/example_reasoning_prompt.json&quot;))
+image_path = Path(&quot;assets/example_reasoning_input.png&quot;).resolve()
+image_url = image_path.as_uri()
+
+# 2. Query the OpenAI-compatible vLLM server
+client = openai.OpenAI(
+    api_key=&quot;EMPTY&quot;,
+    base_url=&quot;http://localhost:8000/v1&quot;,
+)
+
+response = client.chat.completions.create(
+    model=client.models.list().data[0].id,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: image_url}},
+                {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: example[&quot;prompt&quot;]},
+            ],
+        },
+    ],
+    max_tokens=example[&quot;max_tokens&quot;],
+    seed=0,
+)
+
+# 3. Print the generated reasoning output
+print(response.choices[0].message.content)</code></pre><p>Example input:</p><p><img src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/README.mdassets/example_reasoning_input.png" alt=""></p><p>Prompt:</p><pre><div class="code-lang">text</div><code>The task is to put flower into the red bottle. Generate a plan consisting of subtasks for accomplish the task.</code></pre><p>Example output from the command above:</p><pre><div class="code-lang">text</div><code>Move your arm to the flower. Grasp the flower. Move your arm to the red bottle. Place the flower in the red bottle.</code></pre><h3 id="diffusers">Diffusers</h3><p>Cosmos3 is fully supported within the popular HuggingFace Diffusers package. This integration makes it a supported inference backend, allowing developers to easily incorporate Cosmos3's capabilities — such as text-to-video generation — into their pipelines using the <code>Cosmos3OmniPipeline</code> class, as demonstrated by the provided code examples (see examples for other modalities on the HuggingFace Cosmos3 page).</p><h4 id="container-2">Container</h4><p>To install diffusers with Cosmos3OmniPipeline:</p><pre><div class="code-lang">code</div><code>uv venv --python 3.13 --seed --managed-python
+source .venv/bin/activate
+uv pip install \
+  &quot;diffusers @ git+https://github.com/huggingface/diffusers.git&quot; \
+  accelerate \
+  av \
+  cosmos_guardrail \
+  huggingface_hub \
+  imageio \
+  imageio-ffmpeg \
+  torch \
+  torchvision \
+  transformers
+</code></pre><h4 id="examples-3">Examples</h4><h5 id="text-to-video-generation-2">Text to video generation</h5><p>Run this example from the model repository root. It reads the JSON-upsampled prompt from <code>assets/example_t2v_prompt.json</code> and the negative prompt from <code>assets/negative_prompt.json</code>. It then loads the pipeline and generate the video, then save it to an MP4 file.</p><pre><div class="code-lang">python</div><code>import json
+import torch
+from diffusers import Cosmos3OmniPipeline
+from diffusers.schedulers.scheduling_unipc_multistep import UniPCMultistepScheduler
+from diffusers.utils import export_to_video
+
+# Read JSON-upsampled prompt and negative prompt
+json_prompt = json.load(open(&quot;assets/example_t2v_prompt.json&quot;))
+negative_prompt = json.load(open(&quot;assets/negative_prompt.json&quot;))
+
+pipe = Cosmos3OmniPipeline.from_pretrained(
+    &quot;nvidia/Cosmos3-Nano&quot;,
+    torch_dtype=torch.bfloat16,
+    device_map=&quot;cuda&quot;,
+    enable_safety_checker=True,
+)
+pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config, flow_shift=10.0)
+
+result = pipe(
+    prompt=json.dumps(json_prompt),
+    negative_prompt=json.dumps(negative_prompt),
+    num_frames=189,
+    height=720,
+    width=1280,
+    num_inference_steps=35,
+    guidance_scale=6.0,
+    generator=torch.Generator(device=&quot;cuda&quot;).manual_seed(123),
+)
+
+export_to_video(result.video, &quot;/tmp/cosmos3_nano_t2v_diffusers.mp4&quot;, fps=24)
+print(&quot;Saved video to /tmp/cosmos3_nano_t2v_diffusers.mp4&quot;)</code></pre><p>Example output:</p><p>&lt;video controls width="1280" height="720" src="https://huggingface.co/nvidia/Cosmos3-Nano/resolve/main/assets/example_t2v_diffusers_output.mp4"&gt;&lt;/video&gt;</p><h3 id="sglang">SGLang</h3><p><a href="https://docs.sglang.io/docs/sglang-diffusion/index" target="_blank" rel="noopener">SGLang Diffusion</a> can serve <code>nvidia/Cosmos3-Nano</code> through OpenAI-compatible image and video generation endpoints. Install SGLang from the main branch with diffusion dependencies, then start a server:</p><pre><div class="code-lang">shell</div><code>git clone --branch main https://github.com/sgl-project/sglang.git
+cd sglang
+pip install -e &quot;python[diffusion]&quot;
+pip install &quot;cosmos-guardrail==0.3.1&quot;
+
+sglang serve --model-path nvidia/Cosmos3-Nano</code></pre><p>Cosmos 3 support in SGLang Diffusion currently requires the SGLang main branch. Switch to a stable SGLang release once Cosmos 3 support is included there.</p><p>For a video-specialized checkpoint, use <code>Cosmos3-Super-Image2Video</code> with multiple GPUs:</p><pre><div class="code-lang">shell</div><code>sglang serve \
+  --model-path nvidia/Cosmos3-Super-Image2Video \
+  --num-gpus 4</code></pre><p>Supported SGLang endpoints:</p><div class="table-wrap"><table><thead><tr><th>Mode</th><th>Endpoint</th><th>Notes</th></tr></thead><tbody><tr><td>Text to image</td><td><code>POST /v1/images/generations</code></td><td>Returns base64 image data by default</td></tr><tr><td>Text to video</td><td><code>POST /v1/videos</code></td><td>Creates an async job; poll <code>GET /v1/videos/{id}</code> and download <code>/content</code></td></tr><tr><td>Image to video</td><td><code>POST /v1/videos</code></td><td>Upload the conditioning image with <code>input_reference</code></td></tr></tbody></table></div><p>Example text-to-video request:</p><pre><div class="code-lang">shell</div><code>job_id=$(curl -sS -X POST http://localhost:30000/v1/videos \
+  --form-string &quot;prompt=A small warehouse robot moves a blue box across a clean floor.&quot; \
+  --form-string &quot;negative_prompt=blurry, distorted, low quality&quot; \
+  --form-string &quot;size=1280x720&quot; \
+  --form-string &quot;num_frames=81&quot; \
+  --form-string &quot;fps=24&quot; \
+  --form-string &quot;num_inference_steps=35&quot; \
+  --form-string &quot;guidance_scale=4.0&quot; \
+  --form-string &quot;flow_shift=10.0&quot; \
+  --form-string &quot;seed=42&quot; \
+  --form-string &#x27;extra_params={&quot;guardrails&quot;:true,&quot;use_resolution_template&quot;:false,&quot;use_duration_template&quot;:false}&#x27; \
+  | python -c &#x27;import json, sys; print(json.load(sys.stdin)[&quot;id&quot;])&#x27;)
+
+while true; do
+  status=$(curl -sS &quot;http://localhost:30000/v1/videos/${job_id}&quot; \
+    | python -c &#x27;import json, sys; print(json.load(sys.stdin)[&quot;status&quot;])&#x27;)
+  [ &quot;$status&quot; = &quot;completed&quot; ] &amp;&amp; break
+  [ &quot;$status&quot; = &quot;failed&quot; ] &amp;&amp; exit 1
+  sleep 1
+done
+
+curl -sS -L &quot;http://localhost:30000/v1/videos/${job_id}/content&quot; \
+  -o cosmos3_t2v_output.mp4</code></pre><p>SGLang accepts Cosmos 3 request options including <code>max_sequence_length</code>, <code>flow_shift</code>, <code>extra_params.guardrails</code>, <code>extra_params.use_resolution_template</code>, and <code>extra_params.use_duration_template</code>. Video-to-video, video-with-sound, and action generation are not supported by SGLang yet.</p><p>For complete serving instructions and request examples, see the <a href="https://docs.sglang.io/cookbook/diffusion/Cosmos/Cosmos3" target="_blank" rel="noopener">Cosmos3 SGLang cookbook</a>.</p><h2 id="limitations">Limitations</h2><p>Cosmos3 may produce imperfect outputs in challenging scenarios. Generation artifacts include temporal inconsistency, unstable camera or object motion, imprecise physical interactions, inaccurate audio-video synchronization, and action-state drift — especially in long-horizon or high-resolution outputs. Reasoning may also be incorrect: object states, causal relationships, spatial geometry, temporal ordering, agent intent, and future outcomes can be misinferred, and complex or long-context inputs may yield hallucinated entities, inconsistent interpretations, or implausible predictions. Because the model lacks an explicit physics simulator, 3D geometry, 4D space-time evolution, object permanence, contact dynamics, and physical laws are only approximated — producing artifacts such as disappearing or morphing objects, unrealistic collisions, and physically implausible motions. Quality further degrades in out-of-distribution environments, safety-critical edge cases, and domains underrepresented in training.</p><p>Cosmos3 outputs should not be treated as physically accurate simulation, reliable ground-truth reasoning, or safety-certified decision making. Applications involving robotics control, autonomous systems, scientific simulation, or safety-critical planning require additional validation, external constraints, system-level safety analysis, and domain-specific guardrails before deployment.</p><h2 id="inference">Inference</h2><p><strong>Acceleration Engine:</strong> <a href="https://pytorch.org/" target="_blank" rel="noopener">PyTorch</a>, <a href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener">vLLM</a>, <a href="https://github.com/vllm-project/vllm-omni" target="_blank" rel="noopener">vLLM-Omni</a>, <a href="https://github.com/huggingface/diffusers" target="_blank" rel="noopener">Hugging Face Diffusers</a>, <a href="https://github.com/sgl-project/sglang" target="_blank" rel="noopener">SGLang</a>, <a href="https://docs.sglang.io/docs/sglang-diffusion/index" target="_blank" rel="noopener">SGLang Diffusion</a></p><p><strong>Test Hardware:</strong> GB200 and H100</p><h2 id="ethical-considerations">Ethical Considerations</h2><p>NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications.  Developers should work with their internal model team to ensure this model meets requirements for the relevant industry and use case and addresses unforeseen product misuse.</p><p>Please make sure you have proper rights and permissions for all input image and video content; if image or video includes people, personal health information, or intellectual property, the image or video generated will not blur or maintain proportions of image subjects included.</p><p>Users are responsible for model inputs and outputs. Users are responsible for ensuring safe integration of this model, including implementing guardrails as well as other safety mechanisms, prior to deployment.</p><p>For more detailed information on ethical considerations for this model, please see the Model Card++ <a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/README.mdEXPLAINABILITY.md" target="_blank" rel="noopener">Explainability</a>, <a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/README.mdBIAS.md" target="_blank" rel="noopener">Bias</a>, <a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/README.mdSAFETY.md" target="_blank" rel="noopener">Safety &amp; Security</a>, and <a href="https://huggingface.co/nvidia/Cosmos3-Nano/blob/main/README.mdPRIVACY.md" target="_blank" rel="noopener">Privacy</a> subcards. Please report model quality, risk, security vulnerabilities or NVIDIA AI Concerns <a href="https://www.nvidia.com/en-us/support/submit-security-vulnerability/" target="_blank" rel="noopener">here</a>.</p></main></div></body></html>

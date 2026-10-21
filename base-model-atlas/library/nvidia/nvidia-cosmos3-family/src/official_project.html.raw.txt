@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cosmos 3 — Cosmos Lab</title>
+  <meta property="og:title"       content="Cosmos 3">
+  <meta property="og:description" content="Omnimodal World Models for Physical AI">
+  <meta property="og:image"       content="">
+  <link rel="icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://images.nvidia.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://images.nvidia.com/etc/designs/nvidiaGDC/clientlibs_base/fonts/nvidia-sans/NALA/var/NVIDIASansVF_NALA_W_Wght.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../project.css">
+  <link rel="stylesheet" href="style.css?v=20260604-0008">
+</head>
+<body>
+
+  <main class="project-page cosmos3-page" id="content">
+
+    <section class="project-hero cosmos3-hero" id="top" aria-label="Cosmos 3 overview">
+      <h1 class="project-title">
+        <span class="title-special">Cosmos <span class="title-accent">3</span></span>
+      </h1>
+      <p class="project-subtitle">
+        Omnimodal World Models <span>for Physical AI</span>
+      </p>
+
+      <div class="project-links" aria-label="Research links">
+        <a class="link-btn secondary" href="technical-report.pdf" target="_blank" rel="noopener">Technical Report</a>
+        <a class="link-btn secondary" href="https://huggingface.co/collections/nvidia/cosmos3" target="_blank" rel="noopener">Model Cards</a>
+        <a class="link-btn secondary" href="https://github.com/NVIDIA/cosmos" target="_blank" rel="noopener">GitHub Code</a>
+        <a class="link-btn secondary" href="https://www.nvidia.com/en-us/ai/cosmos/" target="_blank" rel="noopener">Product Website</a>
+      </div>
+
+      <div class="cosmos3-hero-bg" aria-hidden="true">
+        <video
+          id="cosmos3-hero-video"
+          src="assets/backdrop.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+        ></video>
+      </div>
+
+      <button class="hero-scroll cosmos3-hero-scroll" type="button" data-scroll-target="omni-model" aria-label="Scroll to Omni Model">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    </section>
+
+    <section class="cosmos3-section omni-section" id="omni-model" aria-labelledby="omni-title">
+      <div class="section-heading-block centered">
+        <h2 id="omni-title"><span class="omni-title-modality">Multiple modalities,</span><span class="omni-title-desktop-copy"> many applications.</span><span class="omni-title-mobile-copy">many applications.</span><br><span class="nvidia-green">One single model.</span></h2>
+        <p>Cosmos 3 connects understanding, generation, simulation, and action through a shared omnimodal world model that moves fluidly across text, images, video, audio, and actions.</p>
+      </div>
+
+      <div class="omni-diagram-panel">
+        <div class="omni-diagram" aria-label="Interactive Cosmos3 modality diagram">
+          <div class="omni-modality" data-side="input" data-modality="text" aria-label="Language input"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Language</span></div>
+          <div class="omni-modality" data-side="input" data-modality="image" aria-label="Image input"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Image</span></div>
+          <div class="omni-modality" data-side="input" data-modality="video" aria-label="Video input"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Video</span></div>
+          <div class="omni-modality" data-side="input" data-modality="audio" aria-label="Audio input"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Audio</span></div>
+          <div class="omni-modality" data-side="input" data-modality="action" aria-label="Action input"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Action</span></div>
+
+          <div class="omni-arrow omni-arrow--in" data-modality="text" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--in" data-modality="image" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--in" data-modality="video" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--in" data-modality="audio" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--in" data-modality="action" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+
+          <div class="omni-core" role="img" aria-label="Cosmos3 Unified MoT architecture">
+            <div class="omni-core-base" aria-hidden="true">
+              <span class="omni-core-title">Cosmos 3</span>
+              <span class="omni-core-subtitle">Unified MoT architecture</span>
+              <span class="omni-core-label omni-core-label--left is-center-inactive">Autoregressive</span>
+              <span class="omni-core-label omni-core-label--right is-center-inactive">Diffusion</span>
+            </div>
+            <div class="omni-core-layer omni-transformer omni-transformer--left is-center-inactive" data-transformer="left" aria-hidden="true">
+              <img class="omni-transformer-img" src="assets/omni-model/transformer.png" alt="">
+            </div>
+            <div class="omni-core-layer omni-transformer omni-transformer--right is-center-inactive" data-transformer="right" aria-hidden="true">
+              <img class="omni-transformer-img" src="assets/omni-model/transformer.png" alt="">
+            </div>
+            <img class="omni-core-layer omni-shared is-center-inactive" src="assets/omni-model/shared.png" alt="" aria-hidden="true">
+          </div>
+
+          <div class="omni-arrow omni-arrow--out" data-modality="text" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--out" data-modality="image" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--out" data-modality="video" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--out" data-modality="audio" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+          <div class="omni-arrow omni-arrow--out" data-modality="action" aria-hidden="true"><img src="assets/omni-model/arrow.png" alt=""></div>
+
+          <div class="omni-modality" data-side="output" data-modality="text" aria-label="Language output"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Language</span></div>
+          <div class="omni-modality" data-side="output" data-modality="image" aria-label="Image output"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Image</span></div>
+          <div class="omni-modality" data-side="output" data-modality="video" aria-label="Video output"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Video</span></div>
+          <div class="omni-modality" data-side="output" data-modality="audio" aria-label="Audio output"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Audio</span></div>
+          <div class="omni-modality" data-side="output" data-modality="action" aria-label="Action output"><span class="omni-modality-icon" aria-hidden="true"></span><span class="omni-modality-label">Action</span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="cosmos3-section omni-controls-section" aria-label="Cosmos3 application presets">
+      <p class="omni-controls-intro">Explore how Cosmos 3 couples different modalities with each capability.<br>Check out the results by selecting the task.</p>
+      <div class="omni-controls" aria-label="Cosmos3 application presets">
+        <button class="omni-control" type="button" data-omni-task="vision-language"><span>Vision-Language Reasoning</span></button>
+        <button class="omni-control" type="button" data-omni-task="image-generation"><span>Image Generation</span></button>
+        <button class="omni-control" type="button" data-omni-task="audio-visual"><span>Audio-Visual Generation</span></button>
+        <button class="omni-control" type="button" data-omni-task="policy"><span>Robot Policy</span></button>
+        <button class="omni-control" type="button" data-omni-task="forward-dynamics"><span>Forward Dynamics</span></button>
+        <button class="omni-control" type="button" data-omni-task="inverse-dynamics"><span>Inverse Dynamics</span></button>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="vision-language" aria-labelledby="vision-language-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Vision-Language Reasoning</div>
+        <h3 id="vision-language-title">Reason through the physical world.</h3>
+        <p>Cosmos 3 grounds language in images and video, reading spatial relationships, temporal cues, object states, and actions as shared context for deeper physical reasoning.</p>
+      </div>
+
+      <div class="cosmos3-carousel vision-language-carousel js-carousel" aria-label="Vision-Language Reasoning examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+            <figure class="carousel-slide is-active">
+              <div class="vision-language-card">
+                <div class="vision-language-media">
+                  <video src="assets/vision-language/next-action-reasoning.mp4" muted loop playsinline preload="metadata" aria-label="Next action reasoning result video"></video>
+                  <button class="video-caption-reveal vision-language-prompt" type="button" aria-label="Show prompt">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Prompt:</strong> You are an autonomous vehicle planning system. The video shows observations from the vehicle's camera. You need to identify critical objects in the environment and reason about your next action and driving trajectory.</span>
+                  </button>
+                </div>
+                <div class="vision-language-output">
+                  <p>I am decelerating and keeping my lane as I approach an intersection with traffic lights and other vehicles. The presence of traffic lights and vehicles ahead necessitates that I slow down to ensure safety and compliance with traffic rules. The lane markings indicate a straight path, and I am maintaining my lane position.</p>
+                </div>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="vision-language-card">
+                <div class="vision-language-media">
+                  <img src="assets/vision-language/action-cot-input.png" alt="Robot gripper trajectory reasoning input image">
+                  <div class="vision-annotation-layer" data-vision-annotation aria-hidden="true">
+                    <span class="vision-annotation-dot"></span>
+                    <span class="vision-annotation-box"></span>
+                    <span class="vision-annotation-label"></span>
+                  </div>
+                  <button class="video-caption-reveal vision-language-prompt" type="button" aria-label="Show prompt">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Prompt:</strong> You are given the task "Put the flower into the red bottle." Specify the 2D trajectory your end-effector should follow in pixel space. Return the trajectory as (x, y) coordinates. Answer using the following format: <code>&lt;think&gt; Your reasoning. &lt;/think&gt;</code><br>Write your final answer immediately after the <code>&lt;/think&gt;</code> tag.</span>
+                  </button>
+                </div>
+                <div class="vision-language-output">
+                  <div class="vision-language-output-text">
+                    <p><code>&lt;think&gt;</code></p>
+                    <p>I will move my gripper from its current position at <code>[490, 419]</code><button class="vision-tuple-pin" type="button" data-vision-point="490,419" data-vision-label="Current gripper position" aria-label="Visualize current gripper position at (490, 419)">Visualize</button> to the red flower at <code>[390, 700]</code><button class="vision-tuple-pin" type="button" data-vision-point="390,700" data-vision-label="Red flower" aria-label="Visualize red flower at (390, 700)">Visualize</button> to grasp it. After securely picking up the flower, I will lift it and move it to the red bottle at <code>[710, 605]</code><button class="vision-tuple-pin" type="button" data-vision-point="710,605" data-vision-label="Red bottle" aria-label="Visualize red bottle at (710, 605)">Visualize</button>, positioning the gripper above the bottle&#8217;s opening at <code>[710, 500]</code><button class="vision-tuple-pin" type="button" data-vision-point="710,500" data-vision-label="Bottle opening" aria-label="Visualize bottle opening at (710, 500)">Visualize</button> so I can place the flower inside. This trajectory gives me a direct and efficient path from the flower to the target container while avoiding obstacles on the wooden table.</p>
+                    <p>The trajectory is: <code>[490, 419]</code><button class="vision-tuple-pin" type="button" data-vision-point="490,419" data-vision-label="Start trajectory" aria-label="Visualize trajectory point (490, 419)">Visualize</button>, <code>[388, 672]</code><button class="vision-tuple-pin" type="button" data-vision-point="388,672" data-vision-label="Move to flower" aria-label="Visualize trajectory point (388, 672)">Visualize</button>, <code>[411, 411]</code><button class="vision-tuple-pin" type="button" data-vision-point="411,411" data-vision-label="Lift flower" aria-label="Visualize trajectory point (411, 411)">Visualize</button>, <code>[690, 364]</code><button class="vision-tuple-pin" type="button" data-vision-point="690,364" data-vision-label="Move above bottle" aria-label="Visualize trajectory point (690, 364)">Visualize</button>, <code>[690, 364]</code><button class="vision-tuple-pin" type="button" data-vision-point="690,364" data-vision-label="Place flower" aria-label="Visualize trajectory point (690, 364)">Visualize</button></p>
+                    <p><code>&lt;/think&gt;</code></p>
+                    <ol class="vision-language-step-list">
+                      <li>(490, 419) <button class="vision-tuple-pin" type="button" data-vision-point="490,419" data-vision-label="Start trajectory" data-vision-trajectory="true" aria-label="Visualize trajectory point (490, 419)">Visualize</button> Start trajectory</li>
+                      <li>(388, 672) <button class="vision-tuple-pin" type="button" data-vision-point="388,672" data-vision-label="Move to flower" data-vision-trajectory="true" aria-label="Visualize trajectory point (388, 672)">Visualize</button> Move to flower</li>
+                      <li>(411, 411) <button class="vision-tuple-pin" type="button" data-vision-point="411,411" data-vision-label="Lift flower" data-vision-trajectory="true" aria-label="Visualize trajectory point (411, 411)">Visualize</button> Lift flower</li>
+                      <li>(690, 364) <button class="vision-tuple-pin" type="button" data-vision-point="690,364" data-vision-label="Move above bottle" data-vision-trajectory="true" aria-label="Visualize trajectory point (690, 364)">Visualize</button> Move above bottle</li>
+                      <li>(690, 364) <button class="vision-tuple-pin" type="button" data-vision-point="690,364" data-vision-label="Place flower" data-vision-trajectory="true" aria-label="Visualize trajectory point (690, 364)">Visualize</button> Place flower</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="vision-language-card">
+                <div class="vision-language-media">
+                  <video src="assets/vision-language/temporal-localization.mp4" muted loop playsinline preload="metadata" aria-label="Temporal localization result video"></video>
+                  <button class="video-caption-reveal vision-language-prompt" type="button" aria-label="Show prompt">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Prompt:</strong> List all action segments in the video. For each detected event, provide the start and end times in seconds. List multiple events if applicable.</span>
+                  </button>
+                </div>
+                <div class="vision-language-output">
+                  <ul class="vision-language-event-list">
+                    <li><span class="vision-language-time">(0.3, 3.4)</span>: "A humanoid robot with a sleek white and black design stands beside a red popcorn dispenser filled with golden popcorn. The robot uses its right arm to pick up a green paper cup from the table in front of it, preparing to fill it."</li>
+                    <li><span class="vision-language-time">(3.4, 14.8)</span>: "The robot holds the green cup steady with its left arm while using its right arm to maneuver a metal scoop into the popcorn dispenser. It scoops popcorn twice, carefully transferring each portion into the cup and ensuring the cup is adequately filled."</li>
+                    <li><span class="vision-language-time">(14.8, 18.7)</span>: "After filling the cup, the robot places it back on the table and returns the scoop to its original position inside the dispenser. It then retracts both arms slightly, completing the task with precision and efficiency."</li>
+                  </ul>
+                </div>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="vision-language-card">
+                <div class="vision-language-media">
+                  <img src="assets/vision-language/2d-grounding-impossible.jpg" alt="2D grounding input image with IMPOSSIBLE labels on stacked boxes">
+                  <div class="vision-annotation-layer" data-vision-annotation aria-hidden="true">
+                    <span class="vision-annotation-dot"></span>
+                    <span class="vision-annotation-box"></span>
+                  </div>
+                  <button class="video-caption-reveal vision-language-prompt" type="button" aria-label="Show prompt">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Prompt:</strong> Localize all boxes with the &quot;IMPOSSIBLE&quot; label on their sides.</span>
+                  </button>
+                </div>
+                <div class="vision-language-output">
+                  <ol class="vision-language-step-list">
+                    <li><strong>IMPOSSIBLE</strong>: (495, 92, 708, 272) <button class="vision-tuple-pin" type="button" data-vision-box="495,92,708,272" aria-label="Visualize box (495, 92, 708, 272)">Visualize</button></li>
+                    <li><strong>IMPOSSIBLE</strong>: (497, 267, 712, 462) <button class="vision-tuple-pin" type="button" data-vision-box="497,267,712,462" aria-label="Visualize box (497, 267, 712, 462)">Visualize</button></li>
+                    <li><strong>IMPOSSIBLE</strong>: (499, 462, 727, 662) <button class="vision-tuple-pin" type="button" data-vision-box="499,462,727,662" aria-label="Visualize box (499, 462, 727, 662)">Visualize</button></li>
+                  </ol>
+                </div>
+              </div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="image-generation" aria-labelledby="image-generation-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Image Generation</div>
+        <h3 id="image-generation-title">Create scenes with physical detail.</h3>
+        <p>Cosmos 3 turns language descriptions into realistic images, preserving object detail, spatial layout, and physical cues for downstream generation.</p>
+      </div>
+
+      <div class="cosmos3-carousel image-generation-carousel js-carousel" aria-label="Image Generation examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+            <figure class="carousel-slide is-active">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi182.webp" alt="Fixed-wing survey drone banking over a mountain forest" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic aerial photo of a fixed-wing survey drone banking left above a dense mountain forest. The drone&#8217;s white composite fuselage shows a small GPS antenna and a belly-mounted mapping camera pod; its wings cast a faint shadow on the treetops below. Evergreen canopy fills the frame with occasional rocky clearings, while ridgelines show patchy snow. Soft morning light and thin haze sit in the valleys, with distant peaks fading blue. The camera is positioned slightly above and ahead of the drone, with crisp detail and natural exposure.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi109.webp" alt="Laser cutting gantry tracing pattern lines on black fabric" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic textile workshop: an overhead gantry system moves a laser cutting head across a large flat vacuum table covered with matte black fabric. The laser traces sharp pattern lines, leaving clean-cut edges and a thin glowing point at the cut. A faint wisp of smoke rises toward an extraction hood, and amber safety lighting mixes with cool ambient light. A top-down camera angle shows grid markings on the table, cable chains on the gantry, and neatly stacked fabric rolls along the wall.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi101.webp" alt="Gantry robot applying adhesive to an automotive windshield" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic factory photograph: an overhead gantry robot with a stainless dispensing nozzle lays a smooth, continuous bead of black polyurethane adhesive along the perimeter of a clear automotive windshield resting on a padded jig. Cool fluorescent lighting reflects as long white streaks across the glass. The adhesive bead is glossy and slightly raised. A wide shot from slightly above shows linear rails, cable carriers, and a clean assembly bay with yellow floor markings.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi113.webp" alt="Two industrial robot arms lifting an engine block" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic automotive assembly bay: two industrial robot arms, one blue and one orange, lift a heavy cast-iron engine block together using synchronized grippers attached to lifting brackets. The block hangs centered above a scratched steel workbench, with torque tools and bolts scattered below. Cool white high-bay lighting reflects off oily metal surfaces and safety glass panels. The camera is at chest height with a slight 3/4 view, deep depth of field, and sharp details on casting texture and grease.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi102.webp" alt="Surgical robot arm holding a scalpel above a phantom model" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic operating room scene: a white surgical robot arm with multiple joints holds a stainless scalpel in a steady hover 2 cm above a flesh-toned silicone phantom model. Blue sterile drapes cover the table; a tray of instruments sits to the left. Soft, shadowless surgical lights illuminate the scene, producing clean highlights on the scalpel blade. The camera is at chest height in a medium close-up, with shallow depth of field and monitors softly blurred in the background.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi124.webp" alt="Autonomous forklift moving a wrapped pallet in cold storage" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic industrial photo inside a cold storage facility: visible frosty haze hangs in the air as an autonomous forklift, yellow with black safety stripes, drives between tall insulated racks. The forklift&#8217;s forks lift a shrink-wrapped pallet of boxed goods, plastic wrap glinting under blue-tinted LED fixtures. The concrete floor shows wet patches and tire tracks, with breath-like condensation near the mast. The camera is at the aisle end with strong depth perspective, crisp signage and temperature gauges on the wall, and slight motion blur on the moving wheels.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi129.webp" alt="Automated guided cart carrying totes through a factory lane" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic industrial factory photo with bright overhead LED panels and a slightly oily concrete floor. An automated guided cart, low and rectangular with a blue chassis, moves along a black magnetic strip embedded in the floor; it carries stacked gray totes secured with a strap. Yellow safety lines and hazard chevrons mark the lane edges, with CNC machines and tool cabinets on both sides. The camera is at hip height in a three-quarter rear view, showing the cart&#8217;s guidance sensor near the front, subtle motion blur on the wheels, realistic reflections and scuff marks on the floor, and light haze from coolant mist in the distance.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="image-generation-card">
+                <img src="assets/image-generation/phi293.webp" alt="Robotic grippers lacing a brown leather sneaker" loading="lazy">
+                <button class="video-caption-reveal" type="button" aria-label="Show prompt">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Photorealistic factory workstation photo: a pair of compact robotic grippers on a small gantry lace a brown leather sneaker mounted on a blue plastic shoe last. The shoelaces are white and slightly frayed, threaded through shiny metal eyelets; one gripper pulls a lace end taut while the other guides it into the next hole. Neutral overhead lighting, clean gray background, fine stitching, and leather grain are sharply visible. The camera is at a 30-degree angle in a medium close-up, with a bin of spare laces blurred behind.</span>
+                </button>
+              </div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="audio-visual" aria-labelledby="audio-visual-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Audio-Visual Generation</div>
+        <h3 id="audio-visual-title">Generate worlds with sight and sound.</h3>
+        <p>Cosmos 3 creates physically aware video from text, images, or clips, and can pair motion with audio that follows visible events, source movement, and scene context.</p>
+      </div>
+
+      <div class="cosmos3-carousel js-carousel" aria-label="Video and Audio-Visual Generation examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+            <figure class="carousel-slide is-active">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/driving.mp4" muted loop playsinline preload="metadata" aria-label="Racing car navigating winding turns"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A high-speed racing event in which a car navigates multiple winding turns.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/796dd67452f73da3b01bb6f288833dda.mp4" muted loop playsinline preload="metadata" aria-label="Robot arm slicing a tomato"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> The robot arm slices the tomato and then retracts.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/humanoids_in_mars.mp4" muted loop playsinline preload="metadata" aria-label="Three humanoid robots collecting samples on Mars"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Three humanoid robots on the surface of Mars collect samples and walk toward a Mars base.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/b110f94aebae746d79f17ff462a90984053ab12610238e1c609cc78e.mp4" muted loop playsinline preload="metadata" aria-label="Delivery robot rolling through a rainy puddle"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A street-level camera shows a delivery robot rolling over one shallow puddle in a rainy neon alley, with realistic water ripples.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/cosmos3_t2vs_20260531-010553.mp4" muted loop playsinline preload="metadata" aria-label="Robotic arm driving screws into an aluminum chassis"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A multi-jointed robotic arm uses a pneumatic tool to drive screws into an aluminum chassis on a brightly lit assembly line.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/af23426be38b7ceabe390a36fad2e5b7.mp4" muted loop playsinline preload="metadata" aria-label="Robot arm placing an apple on a plate"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> The robot arm picks up the apple and places it on the plate.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/6c97573625f00293710b8a48b0014fbf.mp4" muted loop playsinline preload="metadata" aria-label="Cockpit view of an airplane landing on a runway"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A realistic cockpit view from inside an airplane as it approaches the runway and makes a smooth, successful landing.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/physics_ball_rolling.mp4" muted loop playsinline preload="metadata" aria-label="Red ball rolling down and hitting a bell"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> The red ball rolls downward according to the laws of physics. Finally, it hits the bell.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/falling_rocks2.mp4" muted loop playsinline preload="metadata" aria-label="Car stopping as rocks fall near a falling rocks sign"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> The car drives forward. As it drives, a new signboard reading &quot;Falling Rocks&quot; appears. Suddenly, rocks fall from the cliff, and the car stops.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/fc0c1243576a2bf65687ebe2a3721ebb984bda848eaed47ed97f2ca3.mp4" muted loop playsinline preload="metadata" aria-label="Tiny desk robot pushing a chess pawn"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A macro tabletop shot shows a tiny desk robot pushing one chess pawn forward under dramatic tournament lighting.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/humanoid_running.mp4" muted loop playsinline preload="metadata" aria-label="Humanoid robot sprinting on an athletic track"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A humanoid robot sprinting on an athletic track.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/28bf6eb5bc15f4fc6398e2857a5ee4efd4c89f36dff142158e3aa653.mp4" muted loop playsinline preload="metadata" aria-label="Bimanual robot cutting a cake"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> Ego-view footage from a bimanual robot's camera as it cuts a cake, with smooth, precise motion, soft indoor light, and no background hum.</span>
+                </button>
+              </div>
+            </figure>
+            <figure class="carousel-slide">
+              <div class="video-overlay-card">
+                <video src="assets/audio-visual-gen/3c51053702351bcdbeac5ad475aa1507.mp4" muted loop playsinline preload="metadata" aria-label="Cockpit view of a jet maneuvering in the sky"></video>
+                <button class="video-caption-reveal" type="button" aria-label="Show description">
+                  <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                  <span class="video-caption-text"><strong>Prompt:</strong> A cockpit view of a jet performing maneuvers in the sky.</span>
+                </button>
+              </div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="policy" aria-labelledby="policy-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Robot Policy</div>
+        <h3 id="policy-title">Turn perception into action.</h3>
+        <p>Cosmos 3 adapts the same omnimodal backbone to follow instructions and translate visual context into purposeful planning and manipulation.</p>
+      </div>
+
+      <div class="cosmos3-carousel js-carousel" aria-label="Policy examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+              <figure class="carousel-slide is-active">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/20260520_01_put_the_screwdriver_and_the_glove_in_the_purple_container_view_1_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Put the screwdriver and the glove in the purple container.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/20260520_02_put_the_screwdriver_on_the_top_shelf_view_1_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Put the screwdriver on the top shelf.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4553_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Fold the towel in half.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4535_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Throw the blue bottle into the trash bin.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4531_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Stack the orange bowl on top of the black bowl.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4542_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Pick up the middle block and place it into the orange bowl.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4546_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Rotate the banana by 90 degrees.</span>
+                  </button>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/robot-policy/IMG_4526_trim_4x.mp4" muted loop playsinline></video>
+                  <button class="video-caption-reveal" type="button" aria-label="Show description">
+                    <img class="video-caption-icon" src="assets/icons/t.png" alt="" aria-hidden="true">
+                    <span class="video-caption-text"><strong>Task:</strong> Put all bananas on the plate.</span>
+                  </button>
+                </div>
+              </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="forward-dynamics" aria-labelledby="forward-dynamics-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Forward Dynamics</div>
+        <h3 id="forward-dynamics-title">Simulate the future world.</h3>
+        <p>Cosmos 3 conditions on observations and controls to roll out future videos, helping agents preview outcomes for planning, evaluation, and data generation.</p>
+      </div>
+
+      <div class="cosmos3-carousel js-carousel" aria-label="Forward Dynamics examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+              <figure class="carousel-slide is-active">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/egocentric-002.mp4?v=20260531-720p" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/egocentric-002-camera-trajectory.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Camera trajectory video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                  <video class="inset-placeholder-video inset-placeholder-video--right" src="assets/forward-dynamics/egocentric-002-hand-pose.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Hand pose video"></video>
+                  <span class="inset-video-label inset-video-label--right">Input hand pose</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/egocentric-008.mp4?v=20260531-720p" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/egocentric-008-camera-trajectory.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Camera trajectory video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                  <video class="inset-placeholder-video inset-placeholder-video--right" src="assets/forward-dynamics/egocentric-008-hand-pose.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Hand pose video"></video>
+                  <span class="inset-video-label inset-video-label--right">Input hand pose</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/egocentric-011.mp4?v=20260531-720p" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/egocentric-011-camera-trajectory.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Camera trajectory video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                  <video class="inset-placeholder-video inset-placeholder-video--right" src="assets/forward-dynamics/egocentric-011-hand-pose.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Hand pose video"></video>
+                  <span class="inset-video-label inset-video-label--right">Input hand pose</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/egocentric-038.mp4?v=20260531-720p" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/egocentric-038-camera-trajectory.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Camera trajectory video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                  <video class="inset-placeholder-video inset-placeholder-video--right" src="assets/forward-dynamics/egocentric-038-hand-pose.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Hand pose video"></video>
+                  <span class="inset-video-label inset-video-label--right">Input hand pose</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/egocentric-043.mp4?v=20260531-720p" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/egocentric-043-camera-trajectory.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Camera trajectory video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                  <video class="inset-placeholder-video inset-placeholder-video--right" src="assets/forward-dynamics/egocentric-043-hand-pose.mp4?v=20260531-720p" muted loop playsinline preload="auto" aria-label="Hand pose video"></video>
+                  <span class="inset-video-label inset-video-label--right">Input hand pose</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi180_s_curve_indoor.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi180_s_curve_indoor_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi180_traj1.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi180_traj1_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi391_s_curve_indoor.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi391_s_curve_indoor_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi391_traj1.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi391_traj1_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi526_s_curve_indoor.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi526_s_curve_indoor_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video src="assets/forward-dynamics/phi526_traj2.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/forward-dynamics/phi526_traj2_traj_viz.mp4" muted loop playsinline preload="auto" aria-label="Trajectory visualization video"></video>
+                  <span class="inset-video-label">Input camera</span>
+                </div>
+              </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section" id="inverse-dynamics" aria-labelledby="inverse-dynamics-title">
+      <div class="section-heading-block">
+        <div class="result-task-label">Inverse Dynamics</div>
+        <h3 id="inverse-dynamics-title">Infer the action behind change.</h3>
+        <p>Cosmos 3 reads observed states and recovers the trajectory or control that explains how the scene changed, turning video evidence into actions.</p>
+      </div>
+
+      <div class="cosmos3-carousel js-carousel" aria-label="Inverse Dynamics examples">
+        <div class="carousel-viewport" tabindex="0">
+          <div class="carousel-track">
+              <figure class="carousel-slide is-active">
+                <div class="result-video-card">
+                  <video class="inverse-urdf-video" src="assets/inverse-dynamics/bridge_lerobot_id_driven_urdf.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/inverse-dynamics/bridge_lerobot_gt_stitched.mp4" muted loop playsinline preload="auto" aria-label="Ground truth input video"></video>
+                  <span class="inset-video-label">Input video</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video class="inverse-urdf-video" src="assets/inverse-dynamics/agibotworld_beta_id_driven_urdf.mp4?v=20260604-native80" muted loop playsinline preload="auto"></video>
+                  <div class="inverse-input-decomposed inverse-input-decomposed--native" aria-label="Decomposed ground truth input views">
+                    <video class="sync-companion-video inverse-input-pane inverse-input-pane--top" src="assets/inverse-dynamics/agibotworld_beta_lerobot_gt_stitched_top.mp4?v=20260604-native80" muted loop playsinline preload="auto" aria-label="Input top view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/agibotworld_beta_lerobot_gt_stitched_bottom_left.mp4?v=20260604-native80" muted loop playsinline preload="auto" aria-label="Input bottom-left view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/agibotworld_beta_lerobot_gt_stitched_bottom_right.mp4?v=20260604-native80" muted loop playsinline preload="auto" aria-label="Input bottom-right view"></video>
+                  </div>
+                  <span class="inset-video-label">Input video</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video class="inverse-urdf-video" src="assets/inverse-dynamics/droid_lerobot_id_driven_urdf.mp4" muted loop playsinline preload="auto"></video>
+                  <div class="inverse-input-decomposed inverse-input-decomposed--balanced" aria-label="Decomposed ground truth input views">
+                    <video class="sync-companion-video inverse-input-pane inverse-input-pane--top" src="assets/inverse-dynamics/droid_lerobot_gt_stitched_top.mp4" muted loop playsinline preload="auto" aria-label="Input top view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/droid_lerobot_gt_stitched_bottom_left.mp4" muted loop playsinline preload="auto" aria-label="Input bottom-left view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/droid_lerobot_gt_stitched_bottom_right.mp4" muted loop playsinline preload="auto" aria-label="Input bottom-right view"></video>
+                  </div>
+                  <span class="inset-video-label">Input video</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video class="inverse-urdf-video" src="assets/inverse-dynamics/robomind_franka_dual_id_driven_urdf.mp4" muted loop playsinline preload="auto"></video>
+                  <div class="inverse-input-decomposed inverse-input-decomposed--balanced" aria-label="Decomposed ground truth input views">
+                    <video class="sync-companion-video inverse-input-pane inverse-input-pane--top" src="assets/inverse-dynamics/robomind_franka_dual_lerobot_gt_stitched_top.mp4" muted loop playsinline preload="auto" aria-label="Input top view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/robomind_franka_dual_lerobot_gt_stitched_bottom_left.mp4" muted loop playsinline preload="auto" aria-label="Input bottom-left view"></video>
+                    <video class="sync-companion-video inverse-input-pane" src="assets/inverse-dynamics/robomind_franka_dual_lerobot_gt_stitched_bottom_right.mp4" muted loop playsinline preload="auto" aria-label="Input bottom-right view"></video>
+                  </div>
+                  <span class="inset-video-label">Input video</span>
+                </div>
+              </figure>
+              <figure class="carousel-slide">
+                <div class="result-video-card">
+                  <video class="inverse-av-video" src="assets/inverse-dynamics/av_idx92_seed0_traj.mp4" muted loop playsinline preload="auto"></video>
+                  <video class="inset-placeholder-video" src="assets/inverse-dynamics/av_idx92_seed0_rgb.mp4" muted loop playsinline preload="auto" aria-label="Real input video"></video>
+                  <span class="inset-video-label">Input video</span>
+                </div>
+              </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cosmos3-section result-section reason2gen-section" id="reason-to-generation" aria-labelledby="reason2gen-title">
+      <div class="section-heading-block centered">
+        <div class="result-task-label">Reasoning + Generation</div>
+        <h3 id="reason2gen-title">Plan first, then bring it to life.</h3>
+        <p>Cosmos 3 can reason over an input scene, produce an actionable trajectory, and use that structured intent to generate the resulting physical interaction.</p>
+      </div>
+
+      <div class="reason2gen-demo">
+        <article class="reason2gen-card">
+          <div class="reason2gen-panel reason2gen-prompt">
+            <p>You are given the task &quot;pick the Cosmos 3 Omni block from the bottom drawer and place it on the counter&quot;. First, identify all relevant objects and free spaces in the scene, and then specify the 2D trajectory your end-effector should follow in pixel space. Return the trajectory as <code>(x, y)</code> coordinates. Answer the question using the following format: <code>&lt;think&gt; Your reasoning. &lt;/think&gt;</code> Write the final 2D end-effector trajectory immediately after the <code>&lt;/think&gt;</code> tag.</p>
+          </div>
+
+          <div class="reason2gen-video-frame">
+            <video class="reason2gen-video" src="assets/reason2gen-final.mp4" muted playsinline preload="auto" aria-label="Reasoning to generation demo video"></video>
+            <div class="reason2gen-annotation-layer" data-reason2gen-annotation aria-hidden="true">
+              <span class="reason2gen-annotation-dot"></span>
+              <span class="reason2gen-annotation-label"></span>
+            </div>
+          </div>
+
+          <div class="reason2gen-panel reason2gen-output">
+            <div class="reason2gen-output-text">
+              <p><code>&lt;think&gt;</code><br>I can see the Cosmos 3 Omni block inside the bottom drawer, which is the object I need to pick up. My gripper is positioned to reach into the drawer and grasp the block. The bottom drawer provides the storage space where the block is located, and I need to access it to complete the task. Once I retrieve the block, I will place it on the counter surface, which is the designated target area. The open space inside the bottom drawer allows me to reach and grasp the block, while the clear surface area on the counter near the drawer opening provides the necessary space to place the block after retrieval. The other objects on the counter are not directly involved in the task but help define the workspace layout.</p>
+              <p>Based on this analysis, I need to locate the robot gripper, the Cosmos 3 Omni block, the bottom drawer, the counter surface, the yellow-and-black forklift, the white SUV, the white truck, and the robot with the <code>&quot;Physical AI Builder&quot;</code> sign. Their coordinates are as follows: robot gripper <code>(514, 769)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="514,769" data-reason2gen-label="Robot gripper" aria-label="Visualize robot gripper at (514, 769)">Visualize</button>, Cosmos 3 Omni block <code>(471, 780)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="471,780" data-reason2gen-label="Cosmos 3 Omni block" aria-label="Visualize Cosmos 3 Omni block at (471, 780)">Visualize</button>, bottom drawer <code>(400, 760)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="400,760" data-reason2gen-label="Bottom drawer" aria-label="Visualize bottom drawer at (400, 760)">Visualize</button>, counter surface <code>(460, 310)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="460,310" data-reason2gen-label="Counter surface" aria-label="Visualize counter surface at (460, 310)">Visualize</button>, yellow-and-black forklift <code>(235, 304)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="235,304" data-reason2gen-label="Yellow-and-black forklift" aria-label="Visualize yellow-and-black forklift at (235, 304)">Visualize</button>, white SUV <code>(605, 105)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="605,105" data-reason2gen-label="White SUV" aria-label="Visualize white SUV at (605, 105)">Visualize</button>, white truck <code>(720, 163)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="720,163" data-reason2gen-label="White truck" aria-label="Visualize white truck at (720, 163)">Visualize</button>, robot with <code>&quot;Physical AI Builder&quot;</code> sign <code>(790, 254)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="790,254" data-reason2gen-label="Robot with Physical AI Builder sign" aria-label="Visualize robot with Physical AI Builder sign at (790, 254)">Visualize</button>. The open space inside the bottom drawer is at <code>(380, 760)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="380,760" data-reason2gen-label="Open space inside bottom drawer" aria-label="Visualize open space inside bottom drawer at (380, 760)">Visualize</button>, and the clear surface area on the counter near the drawer opening is at <code>(400, 760)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="400,760" data-reason2gen-label="Clear surface area near drawer opening" aria-label="Visualize clear surface area near drawer opening at (400, 760)">Visualize</button>. These free-space locations are the relevant points for reaching and placing the block.</p>
+              <p>I will move my gripper from its current position at <code>(514, 769)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="514,769" data-reason2gen-label="Robot gripper" aria-label="Visualize robot gripper at (514, 769)">Visualize</button> to the Cosmos 3 Omni block at <code>(471, 780)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="471,780" data-reason2gen-label="Cosmos 3 Omni block" aria-label="Visualize Cosmos 3 Omni block at (471, 780)">Visualize</button> to grasp it. After securing the block, I will lift it and move it upward and slightly forward to clear the bottom drawer, which is located at <code>(400, 760)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="400,760" data-reason2gen-label="Bottom drawer" aria-label="Visualize bottom drawer at (400, 760)">Visualize</button>. Then I will carry the block to the counter surface at <code>(460, 310)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="460,310" data-reason2gen-label="Counter surface" aria-label="Visualize counter surface at (460, 310)">Visualize</button>, making sure to place it on the clear area near the drawer opening at <code>(400, 760)</code><button class="reason2gen-pin" type="button" data-reason2gen-point="400,760" data-reason2gen-label="Clear surface area near drawer opening" aria-label="Visualize clear surface area near drawer opening at (400, 760)">Visualize</button> to complete the task.</p>
+              <p>The planned trajectory is as follows: <code>[514, 769]</code><button class="reason2gen-pin" type="button" data-reason2gen-point="514,769" data-reason2gen-label="Move the gripper to the Cosmos 3 Omni block" aria-label="Visualize trajectory point (514, 769)">Visualize</button>, <code>[507, 783]</code><button class="reason2gen-pin" type="button" data-reason2gen-point="507,783" data-reason2gen-label="Grasp the Cosmos 3 Omni block" aria-label="Visualize trajectory point (507, 783)">Visualize</button>, <code>[500, 471]</code><button class="reason2gen-pin" type="button" data-reason2gen-point="500,471" data-reason2gen-label="Lift the block out of the bottom drawer" aria-label="Visualize trajectory point (500, 471)">Visualize</button>, <code>[464, 278]</code><button class="reason2gen-pin" type="button" data-reason2gen-point="464,278" data-reason2gen-label="Move the block toward the counter surface" aria-label="Visualize trajectory point (464, 278)">Visualize</button>, <code>[460, 275]</code><button class="reason2gen-pin" type="button" data-reason2gen-point="460,275" data-reason2gen-label="Place the block on the counter surface" aria-label="Visualize trajectory point (460, 275)">Visualize</button><code>&lt;/think&gt;</code></p>
+              <ol class="reason2gen-step-list">
+                <li>(514, 769) <button class="reason2gen-pin" type="button" data-reason2gen-point="514,769" data-reason2gen-label="Move the gripper to the Cosmos 3 Omni block" data-reason2gen-trajectory="true" aria-label="Visualize trajectory point (514, 769)">Visualize</button> Move the gripper to the Cosmos 3 Omni block</li>
+                <li>(507, 783) <button class="reason2gen-pin" type="button" data-reason2gen-point="507,783" data-reason2gen-label="Grasp the Cosmos 3 Omni block" data-reason2gen-trajectory="true" aria-label="Visualize trajectory point (507, 783)">Visualize</button> Grasp the Cosmos 3 Omni block</li>
+                <li>(500, 471) <button class="reason2gen-pin" type="button" data-reason2gen-point="500,471" data-reason2gen-label="Lift the block out of the bottom drawer" data-reason2gen-trajectory="true" aria-label="Visualize trajectory point (500, 471)">Visualize</button> Lift the block out of the bottom drawer</li>
+                <li>(464, 278) <button class="reason2gen-pin" type="button" data-reason2gen-point="464,278" data-reason2gen-label="Move the block toward the counter surface" data-reason2gen-trajectory="true" aria-label="Visualize trajectory point (464, 278)">Visualize</button> Move the block toward the counter surface</li>
+                <li>(460, 275) <button class="reason2gen-pin" type="button" data-reason2gen-point="460,275" data-reason2gen-label="Place the block on the counter surface" data-reason2gen-trajectory="true" aria-label="Visualize trajectory point (460, 275)">Visualize</button> Place the block on the counter surface</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="reason2gen-action">
+            <div class="reason2gen-mode-controls" aria-label="Reasoning to generation preview mode">
+              <button class="reason2gen-mode-btn link-btn is-active" type="button" data-reason2gen-mode="input" aria-pressed="true">Show Input Image</button>
+              <button class="reason2gen-mode-btn link-btn" type="button" data-reason2gen-mode="video" aria-pressed="false">Play Generated Video + Audio</button>
+              <button class="media-control volume-control carousel-volume-toggle reason2gen-volume-toggle is-muted" type="button" data-reason2gen-volume aria-label="Unmute generated video" aria-pressed="false" title="Audio muted">
+                <img class="volume-on-icon" src="assets/icons/speaker-high.svg?v=20260531-0001" alt="" aria-hidden="true">
+                <img class="volume-muted-icon" src="assets/icons/speaker-mute.svg?v=20260531-0001" alt="" aria-hidden="true">
+                <span class="carousel-volume-label">Muted</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="cosmos3-section benchmark-section" id="benchmarks" aria-labelledby="benchmark-title">
+      <div class="section-heading-block centered benchmark-heading">
+        <h2 id="benchmark-title">Top open foundation for Physical AI.</h2>
+        <p>Cosmos 3 brings leading reasoning, generation, and action performance into open models researchers and builders can inspect, adapt, and deploy.</p>
+      </div>
+
+      <div class="benchmark-card-grid">
+        <article class="benchmark-card">
+          <span class="benchmark-card-label">
+            <span class="benchmark-card-label-icon" aria-hidden="true">🏆</span>
+            Reasoning
+          </span>
+          <h3>Leading Open Reasoner for Physical AI</h3>
+          <p>
+            Cosmos 3 ranks <span class="benchmark-rank-highlight">#1</span> among open models on Robotics, Smart Space, and Driving benchmark averages, showing strong physical-world understanding.
+          </p>
+          <a class="benchmark-card-link link-btn secondary" href="technical-report.pdf" target="_blank" rel="noopener">View Benchmark Results</a>
+        </article>
+
+        <article class="benchmark-card is-featured">
+          <span class="benchmark-card-label">
+            <span class="benchmark-card-label-icon" aria-hidden="true">🏆</span>
+            Generation
+          </span>
+          <h3>Leading Open Generator for Physical AI</h3>
+          <p>
+            Cosmos 3 ranks <span class="benchmark-rank-highlight">#1</span> among open models for text-to-image, image-to-video, and robot policy across R-Bench, Artificial Analysis, RoboLab, and RoboArena benchmarks.
+          </p>
+          <a class="benchmark-card-link link-btn secondary" href="technical-report.pdf" target="_blank" rel="noopener">View Benchmark Results</a>
+        </article>
+
+        <article class="benchmark-card benchmark-summary-card">
+          <p class="benchmark-link-prompt">
+            Learn more and get started with Cosmos 3.
+          </p>
+          <div class="benchmark-summary-links" aria-label="Detailed benchmark links">
+            <div class="citation-segmented-link" aria-label="Technical report and citation">
+              <a class="link-btn secondary citation-segment citation-segment--report" href="technical-report.pdf" target="_blank" rel="noopener">Technical Report</a>
+              <button class="link-btn secondary citation-toggle-btn citation-segment" type="button" data-citation-toggle aria-expanded="false" aria-controls="cosmos3-citation-drawer">Citation</button>
+            </div>
+            <a class="link-btn secondary" href="https://huggingface.co/collections/nvidia/cosmos3" target="_blank" rel="noopener">Model Cards</a>
+            <a class="link-btn secondary" href="https://github.com/NVIDIA/cosmos" target="_blank" rel="noopener">GitHub Code</a>
+            <a class="link-btn secondary" href="https://www.nvidia.com/en-us/ai/cosmos/" target="_blank" rel="noopener">Product Website</a>
+          </div>
+          <div class="citation-drawer" id="cosmos3-citation-drawer" data-citation-drawer aria-hidden="true">
+            <div class="citation-drawer-header">
+              <div>
+                <h3>Cosmos 3: Omnimodal World Models for Physical AI</h3>
+              </div>
+              <button class="citation-copy-btn" type="button" data-citation-copy>Copy BibTeX</button>
+            </div>
+            <p class="citation-note">Please cite as NVIDIA et al. using the following BibTex:</p>
+            <pre class="citation-bibtex"><code data-citation-text>@article{nvidia2026cosmos3,
+  title = {Cosmos 3: Omnimodal World Models for Physical AI},
+  author = {{NVIDIA}},
+  journal = {arXiv preprint arXiv:2606.02800},
+  year = {2026},
+  url = {https://research.nvidia.com/labs/cosmos-lab/cosmos3/technical-report.pdf}
+}</code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <nav class="page-nav" aria-label="Page navigation">
+      <button class="page-nav-btn" type="button" data-scroll-target="top">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        Top
+      </button>
+    </nav>
+  </main>
+
+  <script src="script.js?v=20260604-0001"></script>
+</body>
+</html>
