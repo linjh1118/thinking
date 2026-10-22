@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EgoHand v1 — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-egohand-v1">Overview</a><a class="active" href="EgoHand-v1.html">渲染笔记</a></div>
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_EgoHand_v1/EgoHand-v1" style="text-decoration: none;">EgoHand v1 · 本地笔记</a>
+   · 
+  <a href="https://huggingface.co/nvidia/EgoHand-v1" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
+</div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">NVIDIA · 首发日期待核 · 专项支线</span>
+<div class="zh-title">单帧手部裁切到可变形三维手，而非直接动作策略</div>
+<h1>EgoHand v1 <span>Method · Evidence · Limits</span></h1>
+<div class="authors">官方一手资料研读 · BrainHao · 非本地复测</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">883.5M</div><div class="sub">模型参数</div></div>
+<div class="score-box"><div class="num">256×256</div><div class="sub">手部裁切输入</div></div>
+<div class="score-box"><div class="num">27D</div><div class="sub">MHR形状/尺度</div></div>
+<div class="score-box"><div class="num">未披露</div><div class="sub">benchmark分数</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型定位</h2></div>
+<p class="body">883.5M单图手部重建：DINOv3+TransformerDecoder预测SOMA/MHR pose、27维shape/scale及相机平移。无首发日/月和公开benchmark分数。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">前置检测不能消失</div>
+<p>模型输入手框裁切+内参，不是整幅图像端到端检测器。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">形状与姿态分开</div>
+<p>MHR描述rest-pose identity，SOMA rig按pose运动，不能只留mesh不留来源。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">视觉骨干</div>
+<p>DINOv3初始化自SAM3DBody，进入SOMAHandTransformerDecoderHeadV2。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">可学习queries</div>
+<p>pose/shape/camera查询预测参数；根据输入内参估计full-perspective平移。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">训练监督</div>
+<p>crop-frame 2D/3D关键点与MHR/SOMA参数loss，合成+真实数据。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="依据官方原卡重绘的研读示意，非官方效果图" src="src/assets/architecture.svg"/>
+<div class="fig-cap">依据官方原卡重绘的研读示意，非官方效果图</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>机制与推理契约</h2></div>
+<p class="body">卡提及下游机器人训练，不证明时间连续、可执行或retarget成功。</p>
+<div class="fig-box">
+<img alt="依据官方协议整理的验收示意，非本地实测" src="src/assets/protocol.svg"/>
+<div class="fig-cap">依据官方协议整理的验收示意，非本地实测</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">单帧不是稳定轨迹</div>
+<p>DINOv3初始化自SAM3DBody，进入SOMAHandTransformerDecoderHeadV2。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">协议与归因边界</div>
+<p>pose/shape/camera查询预测参数；根据输入内参估计full-perspective平移。</p>
+</div>
+<div class="formula-box"><div class="flabel">原始定义或机制概括，不冒充训练loss</div>$$\hat M=\operatorname{FK}_{\rm SOMA}(\hat\theta,\hat\beta)$$</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">可学习queries</div>
+<p>pose/shape/camera查询预测参数；根据输入内参估计full-perspective平移。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">训练监督</div>
+<p>crop-frame 2D/3D关键点与MHR/SOMA参数loss，合成+真实数据。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>证据、边界与研究判断</h2></div>
+<p class="body">所有数值来自已读一手材料，非本地复测。完整原表与胜负保留在配套笔记；发布日期、模型更新、格式版本分别记录。</p>
+<table class="rtable"><tr><th>事项</th><th>官方证据</th><th>限制</th></tr><tr><td>输入</td><td>RGBcrop+3×3K</td><td>需保留crop变换</td></tr><tr><td>输出</td><td>pose/shape/camera</td><td>不是控制动作</td></tr><tr><td>测试定性</td><td>100K卡字段</td><td>EgoDex仅RGB定性</td></tr><tr><td>评估计数</td><td>231K vs227K+114K</td><td>统计口径待核</td></tr><tr><td>benchmark</td><td>Undisclosed</td><td>不写MPJPE/成功率</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">原始材料的缺失不能用猜测填上</div>
+<p>原卡缺明确首发日期、公开benchmark、完整recipe/独立报告与官方效果图；数据统计也不完全自洽，未达到完整技术报告深度。两图均为研读示意，不是重建效果或官方原图。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">下一步验收：研究建议，非已完成实验</p>
+<table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td>输入</td><td>锁定数据与预处理</td><td>保留失败样本</td></tr><tr><td>推理</td><td>固定revision与预算</td><td>分开测组件收益</td></tr><tr><td>任务</td><td>独立最终状态验证</td><td>不要用模型自评闭环</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">资料覆盖不足：未达完整报告深度</div>
+<p>原卡缺明确首发日期、公开benchmark、完整recipe/独立报告与官方效果图；数据统计也不完全自洽，未达到完整技术报告深度。两图均为研读示意，不是重建效果或官方原图。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">已归档</div>
+<div class="adelta">一手来源</div>
+<div class="adesc">原卡/网页/本地图片均可追溯</div>
+</div>
+<div class="abl-card">
+<div class="aname">仍待核</div>
+<div class="adelta">深度边界</div>
+<div class="adesc">不虚构日期、分数或消融</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">定位</div>
+<p>模型输入手框裁切+内参，不是整幅图像端到端检测器。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">机制</div>
+<p>DINOv3初始化自SAM3DBody，进入SOMAHandTransformerDecoderHeadV2。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">证据</div>
+<p>Undisclosed；不写MPJPE/成功率</p>
+</div>
+<div class="bstrip">
+<div class="bhead">研究</div>
+<p>固定观测、模型与预算，独立验证最终任务；相关性/几何/转写不等于任务成功。</p>
+</div>
+</div>
+</div><!-- /poster -->
+</body>
+</html>

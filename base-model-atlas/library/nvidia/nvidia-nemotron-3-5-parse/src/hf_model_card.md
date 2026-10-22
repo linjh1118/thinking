@@ -189,14 +189,16 @@ are enabled by default. Both preserve existing predicted values/text and can be 
 
 ## Inference with vLLM
 
-vLLM requires the Nemotron plugin for this architecture and its MTP head. In a fresh Python 3.12 environment, download the repository and install the serving extras:
+vLLM requires the Nemotron plugin for this architecture and its MTP head. The plugin accepts stable vLLM releases `>=0.25.0,<0.33` (0.25.x through 0.32.x). In a fresh Python 3.12 environment, download the repository and install the serving extras:
 
 ```bash
-python -m pip install "huggingface-hub==1.24.0"
+python -m pip install "huggingface-hub>=1.24.0,<2"
 hf download nvidia/Nemotron-3.5-Parse --local-dir nemotron-parse
 cd nemotron-parse
-python -m pip install ".[vllm,client]"
+python -m pip install ".[vllm,client]" "vllm>=0.25.0,<0.33"
 ```
+
+To select a specific vLLM release within this range, replace the final argument with your desired version (for example, `"vllm==0.32.0"`). Let pip resolve the compatible Torch, torchvision, and Transformers dependencies declared by the package.
 
 One-token MTP and the compatible FA3 scheduler are enabled automatically.
 

@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Nemotron-3.5-Parse"
 tags: [base-model, nemotron, document-parsing, ocr, data-construction]
 status: read
 created: 2026-10-18
-updated: 2026-10-21
+updated: 2026-10-22
 ---
 
 # Nemotron 3.5 Parse：不只是读出文字，还要保留可用结构
@@ -174,6 +174,10 @@ Malayalam 63.15、Gujarati 66.96 仍明显低于总体，不能把平均提升�
 质量数相同，速度来自不同运行/展示口径。上文图2和完整比较继续保留原卡matched-run三行，不把博客速度替换进去制造checkpoint进步。多遍裁切收益、GRPO训练收益和服务后端差异是三个不同变量。
 
 对数据构建更值得做的是：固定checkpoint和原页，单独替换格式reward、postprocessor或多遍预算；统计数值保真、可解析率、重复/截断与最终任务成功，不把“表格能解析”当作内容就一定正确。
+
+## 10月22日服务依赖文档更新：不是新权重
+
+官方卡补充插件接受稳定vLLM `>=0.25.0,<0.33`，安装示例同时固定该范围；huggingface-hub范围改为`>=1.24.0,<2`。这些是服务集成依赖说明，不改10月17日首发、不增加模型叶子。让安装器解析兼容Torch/torchvision/Transformers不等于任意未来版本可用；本轮未安装或运行服务。
 
 ## 对数据构建与 Agent Training 的启发
 

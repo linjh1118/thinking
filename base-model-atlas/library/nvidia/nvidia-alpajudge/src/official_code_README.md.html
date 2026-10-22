@@ -1,0 +1,65 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AlpaJudge · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>AlpaJudge</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#alpajudge">AlpaJudge</a><a class="toc-l2" href="#table-of-contents">Table of Contents</a><a class="toc-l2" href="#setup">Setup</a><a class="toc-l2" href="#checkpoints">Checkpoints</a><a class="toc-l2" href="#pai-example-notebook">PAI example notebook</a><a class="toc-l2" href="#reference-based-inference">Reference-based inference</a><a class="toc-l2" href="#reference-free-inference">Reference-free inference</a><a class="toc-l2" href="#public-api">Public API</a><a class="toc-l2" href="#tests">Tests</a><a class="toc-l2" href="#limitations">Limitations</a><a class="toc-l2" href="#license">License</a></nav></aside><main class="note"><h1 id="alpajudge">AlpaJudge</h1><p>Inference package for the reference-based and reference-free AlpaJudge checkpoints. The package contains the Hugging Face model classes, the exact scoring contracts, and small inference helpers. It does not include training code or data pipelines.</p><h2 id="table-of-contents">Table of Contents</h2><ul><li><a href="#setup">Setup</a></li><li><a href="#checkpoints">Checkpoints</a></li><li><a href="#pai-example-notebook">PAI example notebook</a></li><li><a href="#reference-based-inference">Reference-based inference</a></li><li><a href="#reference-free-inference">Reference-free inference</a></li><li><a href="#public-api">Public API</a></li><li><a href="#tests">Tests</a></li><li><a href="#limitations">Limitations</a></li><li><a href="#license">License</a></li></ul><h2 id="setup">Setup</h2><p>Python 3.12 and PyTorch 2.8 are required. From the repository root:</p><pre><div class="code-lang">bash</div><code>uv sync --locked --dev
+source .venv/bin/activate
+hf auth login --token &quot;$HF_TOKEN&quot;</code></pre><p>The Hugging Face account must have access to the model repository.</p><h2 id="checkpoints">Checkpoints</h2><p>Both checkpoints live in one Hugging Face repository:</p><div class="table-wrap"><table><thead><tr><th>Variant</th><th>Hugging Face subfolder</th><th>Input</th><th>Output</th></tr></thead><tbody><tr><td>AlpaJudge-RB</td><td><code>reference-based</code></td><td>Question, reference answer, candidate answer</td><td>One alignment probability</td></tr><tr><td>AlpaJudge-RF</td><td><code>reference-free</code></td><td>Six camera frames, ego meta-action history/future, candidate rationale</td><td>Five rubric probabilities and aggregate scores</td></tr></tbody></table></div><p>Both checkpoints are hosted at <a href="https://huggingface.co/nvidia/alpajudge" target="_blank" rel="noopener"><code>nvidia/alpajudge</code></a>.</p><h2 id="pai-example-notebook">PAI example notebook</h2><p>The <a href="https://github.com/NVlabs/alpajudge/blob/main/examples/alpajudge_pai.ipynb">PAI inference notebook</a> downloads both checkpoint subfolders, streams a fixed two-camera sample from the NVIDIA <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Autonomous-Vehicles" target="_blank" rel="noopener">PhysicalAI-AV Dataset</a>, and runs one RB and one RF score on a CUDA GPU:</p><pre><div class="code-lang">bash</div><code>uv run jupyter lab examples/alpajudge_pai.ipynb</code></pre><p>The default sample and PAI revision are pinned in the notebook. Set <code>ALPAJUDGE_MODEL_CACHE</code> or <code>ALPAJUDGE_PAI_CACHE</code> before starting Jupyter when the default Hugging Face cache is too small. <code>ALPAJUDGE_MODEL_REVISION</code>, <code>ALPAJUDGE_PAI_REVISION</code>, <code>ALPAJUDGE_PAI_CLIP_ID</code>, and <code>ALPAJUDGE_PAI_T0_US</code> provide explicit overrides.</p><p>PhysicalAI-AV supplies the images, while the example rationale and meta-action windows are manually authored for the displayed construction scene. Replace all text fields together when using another moment. The resulting values verify the inference path; they are not benchmark metrics or recommended thresholds.</p><h2 id="reference-based-inference">Reference-based inference</h2><p>AlpaJudge-RB is text-only. It compares each candidate answer against the supplied reference:</p><pre><div class="code-lang">python</div><code>from alpajudge.reference_based import load_reference_based, score_reference_based
+
+model, tokenizer = load_reference_based(device=&quot;cuda&quot;)
+scores = score_reference_based(
+    model,
+    tokenizer,
+    [
+        {
+            &quot;question&quot;: &quot;What is the reasoning process of driving?&quot;,
+            &quot;answer&quot;: &quot;The ego vehicle should stop and yield to the pedestrian.&quot;,
+            &quot;student&quot;: &quot;The ego vehicle should slow down for the pedestrian and stop.&quot;,
+        }
+    ],
+)
+print(scores[0].item())</code></pre><p>For driving CoT alignment, use the canonical question shown above, put the ground-truth CoT in <code>answer</code>, and put the generated CoT in <code>student</code>. General VQA should retain the original question.</p><h2 id="reference-free-inference">Reference-free inference</h2><p>AlpaJudge-RF consumes three front-wide frames and three front-tele frames at <code>[-1.0, -0.5, 0.0]</code> seconds, ordered oldest-first within each camera. Each tensor must have shape <code>[3, C, H, W]</code> and use either uint8 pixels or floating-point pixels in <code>[0, 1]</code>.</p><pre><div class="code-lang">python</div><code>import torch
+
+from alpajudge.reference_free import load_reference_free, score_reference_free
+
+model, processor = load_reference_free(device=&quot;cuda&quot;)
+
+# Replace these tensors with synchronized decoded frames.
+front_wide_frames = torch.zeros((3, 3, 720, 1280), dtype=torch.uint8)
+front_tele_frames = torch.zeros((3, 3, 720, 1280), dtype=torch.uint8)
+
+scores = score_reference_free(
+    model,
+    processor,
+    front_wide_frames=front_wide_frames,
+    front_tele_frames=front_tele_frames,
+    meta_action_history=(
+        &quot;  Longitudinal: [-1.6,0.0) Gentle Deceleration\n&quot;
+        &quot;  Lateral: [-1.6,0.0) Go Straight\n&quot;
+        &quot;  Lane: [-1.6,0.0) Lane Keep&quot;
+    ),
+    meta_action_future=(
+        &quot;  Longitudinal: [0.0,6.4) Gentle Deceleration\n&quot;
+        &quot;  Lateral: [0.0,6.4) Go Straight\n&quot;
+        &quot;  Lane: [0.0,6.4) Lane Keep&quot;
+    ),
+    rationale=(
+        &quot;Continue straight and slow slightly behind the white sedan because the work zone &quot;
+        &quot;narrows the usable lane.&quot;
+    ),
+)
+print(scores.overall)
+print(scores.subscores)</code></pre><p>The five probabilities are <code>action_matches_gt</code>, <code>action_safe</code>, <code>components_grounded</code>, <code>components_complete</code>, and <code>component_causal</code>. The soft aggregation is:</p><pre><div class="code-lang">text</div><code>action    = p_match * (1 + p_safe) / 2
+component = mean(p_grounded, p_complete, p_causal)
+overall   = 0.6 * action + 0.4 * component</code></pre><p>The processor verifies the checkpoint's instruction and full prompt-contract hashes before scoring.</p><h2 id="public-api">Public API</h2><pre><div class="code-lang">python</div><code>from alpajudge.reference_based import (
+    AlpaJudgeRB,
+    AlpaJudgeRBConfig,
+    load_reference_based,
+    score_reference_based,
+)
+from alpajudge.reference_free import (
+    AlpaJudgeRF,
+    AlpaJudgeRFConfig,
+    AlpaJudgeRFProcessor,
+    ReferenceFreeScores,
+    load_reference_free,
+    score_reference_free,
+)</code></pre><p>Pass a local checkpoint directory and <code>subfolder=None</code> to either loader when working without the Hugging Face repository.</p><h2 id="tests">Tests</h2><pre><div class="code-lang">bash</div><code>uv run pytest</code></pre><p>The tests cover import isolation, legacy RB checkpoint compatibility, the frozen RF prompt hash, input validation, and score aggregation.</p><h2 id="limitations">Limitations</h2><ul><li>AlpaJudge-RB requires a reference answer and measures agreement with that reference rather than</li></ul><p>independent scene correctness.</p><ul><li>AlpaJudge-RF requires correctly synchronized frames and preformatted meta-action interval text.</li></ul><p>The core package does not include a video decoder or meta-action extraction pipeline; the example notebook uses the optional development dependency <code>physical-ai-av</code> for its fixed input.</p><ul><li>The RF checkpoint is intended for GPU inference. A complete model load needs approximately</li></ul><p>5 GB for weights before runtime activations.</p><h2 id="license">License</h2><p>The source code in this repository is licensed under the <a href="https://github.com/NVlabs/alpajudge/blob/main/LICENSE">Apache License 2.0</a>. The model weights hosted at <a href="https://huggingface.co/nvidia/alpajudge" target="_blank" rel="noopener"><code>nvidia/alpajudge</code></a> are governed by the license on that model card. Third-party dependencies are listed in <a href="https://github.com/NVlabs/alpajudge/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</p></main></div></body></html>
