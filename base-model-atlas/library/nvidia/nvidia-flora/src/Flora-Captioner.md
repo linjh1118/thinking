@@ -1,4 +1,7 @@
 ---
+license: other
+license_name: nvidia-license
+license_link: https://huggingface.co/nvidia/Flora-Captioner/blob/main/LICENSE.pdf
 library_name: transformers
 base_model: Qwen/Qwen3.5-27B
 tags:

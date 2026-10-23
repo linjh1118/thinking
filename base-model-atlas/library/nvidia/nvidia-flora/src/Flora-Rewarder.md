@@ -1,4 +1,7 @@
 ---
+license: other
+license_name: nvidia-license
+license_link: https://huggingface.co/nvidia/Flora-Rewarder/blob/main/LICENSE.pdf
 base_model: Qwen/Qwen3.5-27B
 library_name: transformers
 pipeline_tag: video-text-to-text

@@ -1,4 +1,7 @@
 ---
+license: other
+license_name: nvidia-license
+license_link: https://huggingface.co/nvidia/Flora-TempSeg/blob/main/LICENSE.pdf
 library_name: peft
 base_model: Qwen/Qwen3.5-9B
 tags:

@@ -1,0 +1,4391 @@
+Rethinking Training Targets, Architectures and Data Quality for Universal Speech Enhancement
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Abstract
+1
+Introduction
+2
+Proposed Method
+2.1
+Shifted Anechoic Clean Speech as a Superior Learning Target
+2.2
+Bridging Fidelity and Quality: A Two-Stage Framework
+2.3
+Trade-off Between Training Data Scale and Quality
+3
+Experiments
+3.1
+Dataset
+3.2
+Model Architecture
+3.3
+Evaluation Metrics
+3.4
+Results on Training Data Filtering Based on Quality Estimation
+3.5
+Results of Applying Time-Shifted Anechoic Clean Speech as Learning Targets
+3.6
+Results of the Two-Stage Combination of Regression and Generative Models
+3.7
+Subjective Evaluation
+3.8
+Comparison with Other Open-Source USE Models
+3.9
+Evaluation on Unseen Languages
+3.10
+Application to TTS Training Data Cleaning
+4
+Conclusion
+References
+A
+Appendix
+A.1
+The Distortion-Perception Tradeoff
+A.2
+Ablation study
+A.3
+Limitations
+License: CC BY 4.0
+arXiv:2603.02641v4 [cs.SD] 06 Oct 2026
+Rethinking Training Targets, Architectures and Data Quality for Universal Speech Enhancement
+Szu-Wei Fu
+Affiliation:
+NVIDIA
+Email:
+szuweif@nvidia.com
+Rong Chao
+Affiliation:
+Academia Sinica
+Email:
+roychao19477@gmail.com
+Xuesong Yang
+Affiliation:
+NVIDIA
+Email:
+xueyang@nvidia.com
+Sung-Feng Huang
+Affiliation:
+NVIDIA
+Email:
+sungfengh@nvidia.com
+Ryandhimas E. Zezario
+Affiliation:
+Academia Sinica
+Email:
+ryandhimas@saturn.yzu.edu.tw
+Rauf Nasretdinov
+Affiliation:
+NVIDIA
+Email:
+rnasretdinov@nvidia.com
+Ante Jukić
+Affiliation:
+NVIDIA
+Email:
+ajukic@nvidia.com
+Yu Tsao
+Affiliation:
+Academia Sinica
+Email:
+yu.tsao@citi.sinica.edu.tw
+Yu-Chiang Frank Wang
+Affiliation:
+NVIDIA
+Email:
+frankwang@nvidia.com
+Abstract
+Universal Speech Enhancement (USE) aims to restore speech quality under diverse degradation conditions while preserving signal fidelity. Despite recent progress, key challenges in training target selection, the distortion–perception tradeoff, and data curation remain unresolved. In this work, we systematically address these three overlooked problems. First, we revisit the conventional practice of using early-reflected speech as the dereverberation target and show that it can degrade perceptual quality and downstream ASR performance. We instead demonstrate that time-shifted anechoic clean speech provides a superior learning target. Second, guided by the distortion–perception tradeoff theory, we propose a simple two-stage framework that achieves minimal distortion under a given level of perceptual quality. Third, we analyze the trade-off between training data scale and quality for USE, revealing that training on large uncurated corpora imposes a performance ceiling, as models struggle to remove subtle artifacts. Our method achieves state-of-the-art performance on the URGENT 2025 non-blind test set and exhibits strong language-agnostic generalization, making it effective for improving TTS training data. Model weights are available for download at:
+https://huggingface.co/nvidia/RE-USE
+.
+1
+Introduction
+Universal speech enhancement (USE)
+Serrà et al. (2022)
+aims to improve the intelligibility and perceptual quality of degraded speech across diverse conditions while preserving attributes such as speaker identity, emotion and accent
+(
+Babaev et al., 2024
+)
+.
+Recent research has increasingly shifted from task-specific methods toward generalized models capable of handling heterogeneous domains and conditions.
+For instance, VoiceFixer
+(
+Liu et al., 2021
+)
+combines a ResUNet-based analysis stage with a neural vocoder-based synthesis stage, while MaskSR
+(
+Li et al., 2024
+)
+employs a masked generative modeling objective to handle comparable conditions. More recently, AnyEnhance
+(
+Zhang et al., 2025a
+)
+introduced prompt-guidance and a self-critic mechanism, offering a unified framework capable of mitigating diverse degradations across speech and singing voice.
+To further advance this generalization, the URGENT 2025 Challenge
+(
+Saijo et al., 2025
+)
+established a standardized training data from diverse sources with varying quality covering seven distortion types (additive noise, reverberation, clipping, bandwidth limitation, codec artifacts, packet loss, and wind noise) across multiple sampling rates (8, 16, 22.05, 24, 32, 44.1, and 48 kHz) and five languages (English, German, French, Spanish, and Chinese). Adopting this rigorous setup, we investigate three previously overlooked bottlenecks: (1) training target selection, (2) the trade-off between fidelity and perceptual quality, and (3) training data curation.
+Training Targets
+: In the URGENT Challenge, six of the seven speech distortions use original anechoic clean speech as the training target. However, for
+dereverberation
+, the standard target is
+early-reflected speech
+, derived by convolving original anechoic clean speech with the early reflection component of the room impulse response (RIR).
+This convention stems from the common belief that ”removing early reflections is challenging and may introduce excessive artifacts”
+(
+Valin et al., 2022
+;
+Zhou et al., 2023
+;
+Zhao et al., 2020
+)
+.
+Contrary to this view, we found that retaining early reflections for training degrades both perceptual quality and machine intelligibility measured by downstream ASR performance.
+We argue that the primary difficulty in dereverberation is not the early reflections themselves, but the misalignment between the reverberant input and clean target caused by the implicit estimation of the
+direct-path time shift
+.
+We propose using time-shifted anechoic clean speech as the learning target, which resolved this misalignment and significantly boosts performance.
+While previous studies have used similar targets
+(
+Zhao et al., 2020
+;
+Wang et al., 2021
+)
+, we provide the first systematic, large-scale evaluation of these two targets under diverse degradation conditions and demonstrate the superiority of the time-shifted anechoic clean target.
+Model Architecture
+: Existing approaches often struggle to balance signal fidelity and perceptual quality. For example, in the URGENT Challenge,
+(
+Sun et al., 2025
+)
+proposes a regression model that introduces a channel-mixing module to bridge time- and frequency-domain modeling, together with progressive block extension to enable model training at different scales. Although effective overall, its quality is inherently limited, as it tends to produce over-smoothed outputs under severe bandwidth limitations and packet loss
+(
+Saijo et al., 2025
+)
+.
+In contrast, purely generative approaches may improve perceptual quality but risk introducing hallucinated contents
+(
+Saijo et al., 2025
+)
+.
+In this Challenge, hybrid methods therefore explore ways to integrate the outputs of regression and generative models.
+(
+Chao et al., 2025
+)
+combines the two outputs using a simple energy-based criterion computed from the noisy input. Both
+(
+Rong et al., 2025
+)
+and
+(
+Goswami and Harada, 2025
+)
+propose three-stage frameworks to generate the final USE output:
+(
+Rong et al., 2025
+)
+uses filling, separation, and restoration modules, while
+(
+Goswami and Harada, 2025
+)
+uses a fusion network that combines regression outputs with a token sampling-based generative model. Going further,
+(
+Le et al., 2025
+)
+applies a four-stage strategy composed of audio declipping, packet loss compensation, audio separation, and spectral inpainting.
+An important question, therefore, is which combination strategy is optimal and theoretically justified
+.
+Motivated by the theoretical distortion-perception tradeoff (see Section
+2.2
+and
+A.1
+in the Appendix), we propose a streamlined two-stage framework that effectively combines the strengths of both paradigms. We first train a regression model to convergence (ensuring high fidelity) and freeze it. Its output then serves as a conditional input to a generative model (restoring perceptual details). This approach eliminates the complex heuristics of prior multi-stage methods while achieving optimal signal fidelity under a perceptual-quality constraint, with theoretical support provided in Section
+A.1
+of the Appendix.
+Training Data Quality
+:
+Deep learning models are fundamentally constrained by their data. While scaling laws regarding data quantity are well-studied
+(
+Zhang et al., 2024a
+;
+Gonzalez et al., 2024
+)
+, the impact of data
+quality
+in large-scale USE remains underexplored, with only one concurrent work hinting at its importance
+(
+Li et al., 2025
+)
+. We analyze the URGENT Challenge data and find that despite organizer filtering, many “clean” samples contain significant residual degradations, not only due to the use of early-reflected speech (Section
+2.3
+). We demonstrate that training on such imperfect data imposes a hard performance ceiling, preventing models from removing subtle artifacts like electrical microphone hiss. We provide a detailed example of how data curation directly impacts performance to unseen real-world conditions (Section
+3.9
+).
+In summary, our work makes the following contributions:
+1. We critically reassess dereverberation learning targets, showing that time-shifted anechoic clean speech consistently outperforms early-reflection targets in USE settings.
+2. We propose a theoretically grounded two-stage framework that achieves an optimal fidelity–perception trade-off.
+3. We conduct a comprehensive analysis of the trade-off between training data quality and quantity, highlighting the importance of data curation.
+2
+Proposed Method
+In this section, we analyze key challenges in universal speech enhancement and present our proposed solutions.
+First, we address the limitations of conventional dereverberation targets and justify using time-shifted anechoic clean speech.
+Second, we introduce a two-stage framework that effectively combines regression and generative models to resovle the fidelity-quality dilemma.
+Finally, we investigate the critical trade-off between training data scale and quality, a relatively new topic that has been seldom explored.
+2.1
+Shifted Anechoic Clean Speech as a Superior Learning Target
+Given an anechoic clean speech
+s
+s
+and an RIR
+r
+r
+, the reverberant speech
+y
+y
+is modeled as the convolution between them:
+y
+⁡
+[
+n
+]
+\displaystyle y[n]
+=
+s
+⁡
+[
+n
+]
+∗
+r
+⁡
+[
+n
+]
+\displaystyle=s[n]\ast r[n]
+(1)
+where
+n
+n
+denotes the discrete time index,
+∗
+\ast
+denotes the convolution operator. The RIR
+r
+⁡
+[
+n
+]
+r[n]
+can be decomposed into the direct path
+δ
+⁡
+[
+n
+−
+n
+0
+]
+\delta[n-n_{0}]
+, early reflection
+r
+e
+​
+[
+n
+]
+r_{e}[n]
+, and late reflection
+r
+l
+​
+[
+n
+]
+r_{l}[n]
+(see Figure
+4
+in Appendix):
+r
+⁡
+[
+n
+]
+\displaystyle r[n]
+=
+δ
+⁡
+[
+n
+−
+n
+0
+]
+∗
+(
+r
+e
+​
+[
+n
+]
++
+r
+l
+​
+[
+n
+]
+)
+\displaystyle=\delta[n-n_{0}]\ast\left(r_{e}[n]+r_{l}[n]\right)
+(2)
+Here,
+δ
+⁡
+[
+n
+]
+\delta[n]
+is the Dirac delta function, and
+n
+0
+n_{0}
+represents the direct-path time shift (typically 5–30 ms). We estimate
+n
+0
+n_{0}
+based on the maximum magnitude of the RIR, i.e.,
+n
+0
+=
+arg
+⁡
+max
+n
+​
+|
+r
+⁡
+[
+n
+]
+|
+n_{0}=\arg\max_{n}|r[n]|
+. Early reflections are defined as RIR components occurring within 50 ms after the direct-path peak
+δ
+⁡
+[
+n
+−
+n
+0
+]
+\delta[n-n_{0}]
+as specified in the URGENT Challenge
+(
+Saijo et al., 2025
+;
+Zhang et al., 2024b
+)
+and other studies
+(
+Wang et al., 2021
+)
+, while subsequent impulses components constitute late reflections
+(
+Naylor and Gaubitch, 2010
+)
+.
+Conventional dereverberation approaches, including the URGENT Challenge, typically use early-reflected speech
+s
+e
+​
+[
+n
+]
+=
+s
+⁡
+[
+n
+]
+∗
+δ
+⁡
+[
+n
+−
+n
+0
+]
+∗
+r
+e
+​
+[
+n
+]
+s_{e}[n]=s[n]\ast\delta[n-n_{0}]\ast r_{e}[n]
+as the learning target. This convention stems from the belief that
+“early reflections are much harder to remove, and the difficulty of solving the problem leads to excessive artifacts in the enhanced speech”
+(
+Valin et al., 2022
+;
+Zhou et al., 2023
+;
+Zhao et al., 2020
+)
+. Indeed, we found that using the unshifted anechoic clean signal
+s
+⁡
+[
+n
+]
+s[n]
+directly as a target yields the poorest performance (Figure
+3
+(b)
+), aligning with prior findings.
+Although early reflections have a smaller impact on perceived quality compared to late reverberation
+(
+Valin et al., 2022
+)
+, we find that retaining early reflections still significantly degrades speech quality metrics (UTMOS
+(
+Saeki et al., 2022
+)
+, DNSMOS
+(
+Reddy et al., 2022
+)
+, NISQA
+(
+Mittag et al., 2021
+)
+).
+As shown in Figure
+3
+(b)
+, progressively reducing the early reflection window from 50 ms to 0 ms consistently improves quality scores of the enhanced speech.
+Setting the window to 0 ms reduces the target to the time-shifted anechoic signal of
+s
+s
+, as
+s
+⁡
+[
+n
+]
+∗
+δ
+⁡
+[
+n
+−
+n
+0
+]
+=
+s
+⁡
+[
+n
+−
+n
+0
+]
+s[n]\ast\delta[n-n_{0}]=s[n-n_{0}]
+. Consequently, in Equation (
+2
+), eliminating early reflections poses little difficulty for the model. The critical challenge is the implicit estimation of the
+direct-path time shift
+, which introduces a misalignment of
+n
+0
+n_{0}
+between the reverberant input and the clean target.
+By using the time-shifted target
+s
+⁡
+[
+n
+−
+n
+0
+]
+s[n-n_{0}]
+, we effectively bypass this alignment issue. This confirms that
+s
+⁡
+[
+n
+−
+n
+0
+]
+s[n-n_{0}]
+outperforms the conventional early-reflected target (
+s
+e
+​
+[
+n
+]
+=
+s
+⁡
+[
+n
+]
+∗
+δ
+⁡
+[
+n
+−
+n
+0
+]
+∗
+r
+e
+​
+[
+n
+]
+=
+s
+⁡
+[
+n
+−
+n
+0
+]
+∗
+r
+e
+​
+[
+n
+]
+s_{e}[n]=s[n]\ast\delta[n-n_{0}]\ast r_{e}[n]=s[n-n_{0}]\ast r_{e}[n]
+), and outperforms further the original clean speech
+s
+⁡
+[
+n
+]
+s[n]
+.
+2.2
+Bridging Fidelity and Quality: A Two-Stage Framework
+Figure 1
+:
+Motivated by the distortion–perception tradeoff theory, the proposed two-stage framework integrates a frozen regression model with a residual generative model.
+According to the distortion–perception tradeoff theory
+(
+Blau and Michaeli, 2018
+)
+shown in computer vision applications, speech restoration also faces a fundamental trade-off between
+fidelity
+(preserving linguistic content, speaker identity, emotion, and accent) and
+perceptual quality
+.
+Generative and regression (also called discriminative) models tackle the problem in distinct ways. The regression model outputs the conditional expectation,
+s
+^
+=
+E
+⁡
+[
+S
+∣
+Y
+=
+y
+]
+\hat{s}=E[S\mid Y=y]
+, whereas the generative model produces samples from the conditional distribution,
+s
+^
+∼
+p
+⁡
+(
+s
+∣
+y
+)
+\hat{s}\sim p(s\mid y)
+, where
+y
+y
+corresponds to the degraded input speech signal.
+Under severe degradation like packet loss, bandwidth limitation, and low SNR,
+y
+y
+contains little information about the true clean signal so that
+the regression output is biased towards prior mean
+E
+⁡
+[
+S
+∣
+Y
+=
+y
+]
+≈
+E
+⁡
+[
+S
+]
+E[S\mid Y=y]\approx E[S]
+. If the prior is multimodal (e.g., many plausible phonemes), the mean may be a blend of modes, which sounds muffled and unnatural, resulting in
+over-smoothing problem
+(
+Ren et al., 2022
+;
+Chao et al., 2025
+)
+. Conversely, in such a scenario, the generative model produces outputs drawn from the prior distribution,
+p
+⁡
+(
+s
+∣
+y
+)
+≈
+p
+⁡
+(
+s
+)
+p(s\mid y)\approx p(s)
+, enabling the generation of natural-sounding speech consistent with the prior. Nevertheless, the lexical/linguistic content or speaker characteristics are not guaranteed to match the original signal, resulting in
+hallucination problem
+as defined in
+(
+Saijo et al., 2025
+;
+Scheibler et al., 2024
+)
+. In summary, when
+y
+y
+is less informative, the regression model excels at preserving fidelity but may fail to improve quality, whereas the generative model enhances quality but often struggles to preserve fidelity.
+Specifically, posterior sampling from the posterior
+p
+⁡
+(
+s
+∣
+y
+)
+p(s\mid y)
+results in a mean squared error (MSE) that is twice the minimum MSE (MMSE), which is achieved by the regression model
+(
+Blau and Michaeli, 2018
+)
+.
+We address this trade-off by leveraging insights from
+Freirich et al. (2021)
+, which suggest that an optimal distortion-perception balance—minimizing MSE while satisfying the constraint of perfect perception—can be achieved by
+optimally transporting
+the posterior mean (MMSE estimate) toward the true data distribution (the derivation is provided in Appendix
+A.1
+).
+We further argue that
+preserving fidelity, particularly linguistic content, is usually paramount
+in applications of universal speech enhancement.
+Therefore, we propose a sequential strategy that first uses a regression model to estimate the posterior mean, and then applies a generative model to correct only the over-smoothed regions through optimal transport (see Figure
+1
+):
+1.
+Regression Stage:
+We first train a regression model to convergence to estimate the posterior mean (
+s
+^
+=
+E
+⁡
+[
+S
+∣
+Y
+=
+y
+]
+\hat{s}=E[S\mid Y=y]
+), maximizing fidelity. We then freeze its weights.
+2.
+Generative Stage:
+We then employ a generative model to optimally transport the posterior mean toward the true data distribution by minimizing the Wasserstein distance (
+W
+2
+​
+(
+p
+s
+^
+,
+p
+s
+)
+W_{2}(p_{\hat{s}},p_{s})
+).
+Crucially, we employ a residual connection between the regression model output and the final output, forcing the generative model to focus primarily on regions where characteristics diverge from those of real data to restore perceptual details.
+Previous work approximates the optimal transport using flow matching and achieves improved MSE in image restoration
+(
+Ohayon et al., 2025
+)
+. In addition to speech enhancement
+(
+Serbest et al., 2025
+)
+, SEStream
+(
+Huang et al., 2023
+)
+and StoRM
+(
+Lemercier et al., 2023
+)
+also achieve strong results in codec compression and dereverberation, respectively, by using a regression model to provide an initial prediction for a subsequent generative model. In this study, we leverage GAN-based methods to approximate optimal transport. Wasserstein GANs
+(
+Arjovsky et al., 2017
+)
+optimize an objective equivalent to the Wasserstein-1 distance between the source and target distributions, a principled metric from optimal transport theory. Furthermore, as future work toward adapting the model to real-time scenarios, the single forward-pass generation of GAN offers lower computational latency.
+Beyond the formal derivation in Appendix
+A.1
+, we offer an alternative explanation of why GANs can
+focus on correcting over-smoothed regions while leaving other parts unchanged
+. When a convolutional neural network (CNN) is employed as the discriminator, each element of the final feature map (the layer before the averaging operation used to produce the final prediction) has only a limited receptive field. Assuming the discriminator is Lipschitz continuous (e.g., via spectral normalization
+(
+Miyato et al., 2018
+)
+), the following constraint holds:
+‖
+D
+(
+l
+)
+​
+(
+s
+~
+)
+−
+D
+(
+l
+)
+​
+(
+s
+)
+‖
+≤
+L
+​
+‖
+s
+~
+−
+s
+‖
+,
+∀
+l
+\displaystyle\|D^{(l)}(\tilde{s})-D^{(l)}(s)\|\leq L\|\tilde{s}-s\|,\quad\forall l
+(3)
+where
+D
+(
+l
+)
+(
+.
+)
+D^{(l)}(.)
+is the
+l
+l
+-th discriminator layer,
+L
+L
+is the Lipschitz constant, and
+s
+~
+\tilde{s}
+is the final model output. Here, let us focus on the receptive field of one element in the final feature map. The distance between the receptive field
+s
+~
+\tilde{s}
+and the corresponding clean speech
+s
+s
+serves as an
+upper bound
+on the left-hand side of Equation (
+3
+), which corresponds to the
+feature-matching loss
+used during generator training
+Salimans et al. (2016)
+.
+When the model accurately predicts the clean target within the receptive field (i.e.,
+∥
+s
+~
+−
+s
+∥
+≈
+0
+\lVert\tilde{s}-s\rVert\approx 0
+), Equation (
+3
+) ensures that the feature-matching loss does not contribute gradients for these regions. Therefore, the generative model can mainly focus on correcting the over-smoothed regions of the regression model output (see Figures
+5
+and
+6
+in the Appendix for spectrogram visualization). Consequently, this two-stage framework can keep the fidelity while improving speech quality.
+2.3
+Trade-off Between Training Data Scale and Quality
+Figure 2
+:
+Histogram of VQScore for URGENT 2025 Challenge Track 1 subsets. Dashed lines indicate median scores.
+The URGENT 2025 Challenge (Track 1) provides approximately 2,500 hours of speech from diverse sources, including CommonVoice
+(
+Ardila et al., 2020
+)
+, DNS5
+(
+Dubey et al., 2024
+)
+, MLS
+(
+Pratap et al., 2020
+)
+, LibriTTS
+(
+Zen et al., 2019
+)
+, VCTK
+(
+Veaux et al., 2013
+)
+, WSJ
+(
+Garofolo et al., 1993
+)
+, and EARS
+(
+Richter et al., 2024
+)
+as summarized in Table
+8
+(Appendix). Although the organizers have already filtered out non-speech samples using voice activity detection (VAD) and removed noisy samples based on the DNSMOS score, many recordings with audible background noise remain there
+(
+Saijo et al., 2025
+)
+. Leveraging its high correlation with subjective scores
+(
+Zhang et al., 2025b
+)
+and fast inference capability (processing 2,500 hours of speech in less than 8 hours on a single NVIDIA A100 GPU), we employ VQScore
+(
+Fu et al., 2024
+)
+to analyze the quality distribution of each training data source. Figure
+2
+illustrates the VQScore distribution for each speech source (individual source histograms are provided in Figure
+7
+in the Appendix).
+We observe a clear quality hierarchy: CommonVoice, the largest subset (1,300 hours), exhibits the lowest quality due to its crowdsourced nature.
+Conversely, datasets like WSJ, EARS, and VCTK show consistently top-3 highest quality.
+Manual inspection reveals that low-VQScore samples often contain stationary background noise or entirely non-speech artifacts (examples are provided in the supplementary material).
+These training targets can confuse the speech enhancement model and degrade its performance.
+To mitigate this, we apply a VQScore threshold to
+further
+filter low-quality samples. Finally, we leverage the high quality of the EARS dataset for a final fine-tuning stage. (Section
+3.9
+). Note that some extremely expressive EARS samples (e.g., whispering) receive low VQScore ratings, however, the dataset remains the cleanest overall source available.
+3
+Experiments
+3.1
+Dataset
+As noted earlier, the URGENT 2025 Challenge training dataset comprises multi-condition speech recordings across five languages (English, German, French, Spanish, and Chinese) with diverse sampling frequencies (8, 16, 22.05, 24, 32, 44.1, and 48 kHz), along with noise samples and RIRs. Seven types of distortions are considered: additive noise, reverberation, clipping, bandwidth limitation, codec artifacts, packet loss, and wind noise. We followed the organizers’ guidelines to simulate the validation set using the validation splits of the corpora
+(
+Saijo et al., 2025
+)
+. The non-blind test set of URGENT 2025, consisting of 1,000 utterances, is used for evaluation.
+3.2
+Model Architecture
+To enable a single model to operate across different sampling rates, we employ sampling frequency-independent (SFI) STFT
+(
+Zhang et al., 2023a
+)
+, which dynamically adjusts the FFT window and hop size according to the input sampling rate, ensuring a fixed time duration and consistent feature frame length across all sampling rates. To ensure that inputs with different sampling rates yield an integer number of frequency bins, we set the FFT window size to 320 points for the 8 kHz case
+(corresponding to a 40 ms window for all sampling rates).
+Since the model architecture is not the primary focus of this paper, we adopt USEMamba with 30 layers
+(
+Chao et al., 2025
+;
+Chao et al., 2024
+)
+as the regression model. USEMamba alternates between two types of sequence modeling modules (i.e., Mamba) applied to frequency features and time features in the time-frequency domain. For GAN training, we use a 6-layer USEMamba as the generator and CNN-based discriminators.
+To account for distinct feature patterns across frequency bands and support speech with varying sampling rates, we propose an
+adaptive multi-band discriminator
+, inspired by
+Kumar et al. (2023)
+. For each band corresponding to the input sampling rate (e.g., for 8 kHz, a single sub-band from 0-4 kHz; for 22.05 kHz, three sub-bands: 0-4 kHz, 4-8 kHz, and 8-11.025 kHz), we use a 5-layer 2-D convolutional network for local feature extraction. Sub-band features are concatenated along the frequency axis and passed through a final 2-layer 2-D convolution followed by global average pooling to produce the discriminator output. All models are trained on 8 NVIDIA A100 GPUs with a batch size of 1, allowing longer utterances to be processed without memory issues. We use AdamW with a learning rate of 0.0002 for the regression model, generator, and discriminator. The code will be released upon acceptance to facilitate reproducibility.
+3.3
+Evaluation Metrics
+To address the dual objectives of improving perceptual quality and maintaining signal fidelity, we employ a comprehensive suite of metrics.
+For standard reference-based evaluation, we report Perceptual Evaluation of Speech Quality (PESQ) for perceptual quality
+(
+Rix et al., 2001
+)
+, Extended Short-Time Objective Intelligibility (ESTOI) for intelligibility
+(
+Jensen and Taal, 2016
+)
+, and Signal-to-Distortion Ratio (SDR) for time-domain waveform distortion
+(
+Roux et al., 2019
+)
+. Spectral deviation is further assessed using Mel Cepstral Distortion (MCD) and Log-Spectral Distance (LSD).
+We also evaluate performance on downstream tasks using both task-independent and task-dependent measures. Task-independent metrics include SpeechBERTScore (SBERT)
+(
+Saeki et al., 2024
+)
+, which utilizes self-supervised models to quantify enhancement quality, and Levenshtein Phoneme Similarity (LPS)
+(
+Pirklbauer et al., 2023
+)
+for phoneme sequence similarity. Task-dependent metrics include speaker similarity (SpkSim) to measure speaker identity preservation and character accuracy (CAcc) to reflect ASR performance
+Peng et al. (2024)
+. Finally, we report non-intrusive metrics, including DNSMOS
+(
+Reddy et al., 2022
+)
+, NISQA
+(
+Mittag et al., 2021
+)
+, and UTMOS
+(
+Saeki et al., 2022
+)
+, which estimate perceptual quality without requiring a clean reference.
+Most Metrics (excluding non-intrusive ones and CAcc) require a clean speech reference. However, for the speech dereverberation task, the organizers provide
+early-reflected speech
+as the clean reference
+(
+Saijo et al., 2025
+)
+. This creates a definition mismatch, as our model is trained on time-shifted anechoic clean speech.
+Consequently, this discrepancy may penalize our leaderboard scores on reference-based metrics such as PESQ, ESTOI, SDR, MCD, LSD, SBERT, LPS, and SpkSim
+, underestimating performance compared to the actual perceptual quality and fidelity obtained when using the original anechoic speech as the reference, as reported in Table
+6
+in the Appendix.
+3.4
+Results on Training Data Filtering Based on Quality Estimation
+Based on the observations in Section
+2.3
+, we first determine an appropriate VQScore threshold, such that training samples with scores below the threshold are excluded. We consider three thresholds: 0.50 (no filtering), 0.65, and 0.72, corresponding to 2,518 (original size), 2,506, and 629 hours of training data, respectively. We then train three models on these datasets using time-shifted anechoic clean speech as targets and plot the UTMOS learning curves on the validation set in Figure
+3
+(a)
+. Without VQScore filtering (
+blue line
+), the model performs the worst,
+even though the Challenge organizers already removed speech samples with DNSMOS scores below 3
+(
+Saijo et al., 2025
+)
+. With a threshold of 0.72 (
+green line
+), the model initially achieves the best performance in the early stage of training due to the higher data quality, but later lags behind the model trained with a threshold of 0.65 (
+orange line
+), likely due to the reduced data volumn. Based on these results,
+we adopt a threshold of 0.65 in subsequent experiments, as it provides a good balance between training data quality and quantity.
+(a)
+(b)
+Figure 3
+:
+Learning curves of UTMOS scores on the validation set under (a) different VQScore filtering thresholds and (b) different learning targets.
+3.5
+Results of Applying Time-Shifted Anechoic Clean Speech as Learning Targets
+We first examine the UTMOS learning curves under different training targets, shown in Figure
+3
+(b)
+. As discussed in Section
+2.1
+, directly using the original anechoic clean speech
+s
+⁡
+[
+n
+]
+s[n]
+(
+blue line
+) as the learning target yields the worst performance, consistent with previous studies
+(
+Valin et al., 2022
+;
+Zhao et al., 2020
+)
+. Therefore, we exclude this learning target from subsequent evaluations.
+Table
+1
+reports the non-blind test results of our proposed approach, which uses time-shifted anechoic clean speech
+s
+⁡
+[
+n
+−
+n
+0
+]
+s[n-n_{0}]
+as the dereverberation target, alongside the baseline TF-GridNet
+(
+Wang et al., 2023
+)
+and the top three ranked systems in the challenge
+(Rank 1: Team Bobbsun
+(
+Sun et al., 2025
+)
+, Rank 2: Team rc
+(
+Chao et al., 2025
+)
+, Rank 3: Team Xiaobin
+(
+Rong et al., 2025
+)
+).
+The full leaderboard is publicly available
+1
+1
+1
+https://urgent-challenge.github.io/urgent2025/leaderboard/
+and as presented in Table
+9
+in the Appendix. Compared with the early-reflected target, replacing it with time-shifted anechoic clean targets yields substantial improvements on non-intrusive quality metrics (DNSMOS from 3.06 to 3.25, NISQA from 3.23 to 3.85, and UTMOS from 2.26 to 2.76) and ASR performance (CAcc from 87.62 to 89.41). The improvement in CAcc indicates that these quality gains do not come at the expense of hallucination.
+As noted in Section
+3.3
+, the intrusive and downstream metrics on the official leaderboard may not accurately reflect the performance of models trained with shifted anechoic speech targets, because the evaluation uses early-reflected speech as the reference. To correct for this, Table
+6
+(Appendix) presents the same metrics computed using
+the original anechoic clean speech as the reference
+. Under this consistent definition, shifted anechoic speech targets significantly outperform early-reflected ones. These findings indicate that using early-reflected speech as the learning target still degrades the output quality of USE models, leading to enhanced audio that remains noticeably
+reverberant
+. Spectrogram comparison in Figure
+8
+(Appendix) and audio examples on our demo page further illustrate this effect.
+Table 1
+:
+Non-blind test set results of the URGENT 2025 Challenge. All metrics are “higher is better”, except MCD and LSD. Rank
+N
+N
+denotes the system ranked
+N
+t
+​
+h
+N^{th}
+in the challenge. Note that shaded metrics are not directly comparable across the two learning targets due to mismatches in the definition of the “clean” reference. See Tables
+5
+to
+7
+in the Appendix for the ablation studies using the original anechoic clean speech as the reference.
+Team /
+Non-intrusive SE metrics
+Intrusive SE metrics
+Task-ind.
+Task-dep.
+Rank
+DNSMOS
+NISQA
+UTMOS
+PESQ
+ESTOI
+SDR
+MCD
+↓
+\downarrow
+LSD
+↓
+\downarrow
+SBERT
+LPS
+SpkSim
+CAcc
+Noisy
+1.84
+1.69
+1.56
+1.37
+0.61
+2.53
+7.92
+5.51
+0.75
+0.62
+0.63
+81.29
+Baseline
+2.94
+2.89
+2.11
+2.43
+0.80
+11.29
+3.32
+2.85
+0.86
+0.79
+0.80
+84.96
+Rank 3
+3.00
+3.45
+2.31
+2.74
+0.84
+13.06
+3.30
+3.08
+0.89
+0.84
+0.83
+87.94
+Rank 2
+3.01
+3.21
+2.30
+2.79
+0.85
+13.11
+2.93
+2.94
+0.90
+0.85
+0.84
+88.05
+Rank 1
+3.01
+3.41
+2.40
+2.95
+0.86
+14.33
+3.01
+2.83
+0.91
+0.86
+0.85
+88.92
+Early reflected
+3.06
+3.23
+2.26
+2.81
+0.85
+12.28
+2.87
+2.66
+0.90
+0.84
+0.82
+87.62
++GAN correction
+3.04
+3.53
+2.30
+2.78
+0.84
+12.25
+2.97
+2.75
+0.90
+0.84
+0.85
+88.13
+Shifted anechoic
+3.25
+3.85
+2.76
+2.41
+0.77
+8.23
+3.63
+3.28
+0.89
+0.84
+0.82
+89.41
++GAN correction
+3.26
+4.12
+2.80
+2.38
+0.76
+8.18
+3.73
+3.51
+0.89
+0.84
+0.83
+89.88
+3.6
+Results of the Two-Stage Combination of Regression and Generative Models
+To verify that the two-stage framework enables the GAN to focus primarily on correcting over-smoothed regions while leaving well-predicted region intact, we compute the average correlation coefficient between two magnitude-residual spectrograms on the non-blind test set: the ‘clean–regression residual’ (clean speech
+s
+s
+minus regression output
+s
+^
+\hat{s}
+) and the ‘final–regression residual’ (final output
+s
+~
+\tilde{s}
+minus regression output
+s
+^
+\hat{s}
+). We obtain a high correlation of 0.78, indicating that the GAN corrections are strongly aligned with the residual errors of the regression model and thus largely preserve signal fidelity (see Figures
+5
+and
+6
+in Appendix for spectrogram visualization).
+From Table
+1
+, we observe that applying GAN refinement to the regression output consistently and significantly improves NISQA, SpkSim, and CAcc, with moderate gains in UTMOS, while having only marginal or negligible impact on most intrusive SE metrics. This suggests that fidelity is well preserved while perceptual quality and downstream performance are enhanced. The overall ranking of the non-blind test set is summarized in Table
+9
+in the Appendix, where
+GAN correction leads to an improved leaderboard rank
+. To further compare our two-stage framework with other GAN training paradigm, Figure
+9
+(Appendix) plots the validation learning curves for a convention approach (pre-training with a regression loss followed by adversarial fine-tuning) versus our two-stage GAN correction. Across training, our two-stage framework consistently achieves lower magnitude, phase, and time-domain losses, as well as higher PESQ scores.
+In summary, the shifted anechoic target combined with GAN correction attains state-of-the-art performance across all non-intrusive metrics and ASR CAcc on the URGENT 2025 non-blind test set.
+Ablation studies evaluating the effects of the three proposed techniques, with the original anechoic clean speech as the reference, are reported in Appendix
+A.2
+.
+3.7
+Subjective Evaluation
+To subjectively evaluate audio quality under different USE settings, we conducted a listening test using a 5-point scale. A total of 23 participants listened to the audio samples and rated them from 1 (poor quality) to 5 (excellent quality).
+Ten English utterances were randomly selected for each condition: noisy input, USE using early reflected target, shifted anechoic target, and shifted anechoic target + GAN. The average quality scores for these conditions are 1.86, 3.00, 3.68, and 3.97, respectively, with 95% confidence intervals of 0.19, 0.26, 0.20, and 0.19. These results verify the effectiveness of the proposed method and are consistent with the trends observed in the corresponding objective metrics. Some audio samples are available at
+https://jasonswfu.github.io/USE/
+.
+3.8
+Comparison with Other Open-Source USE Models
+Table 2
+:
+Comparison with other open-source USE models on the subsets of the URGENT 2025 non-blind test set. All metrics are “higher is better,” except MCD and LSD.
+Team /
+Non-intrusive SE metrics
+Intrusive SE metrics
+Task-ind.
+Task-dep.
+Rank
+DNSMOS
+NISQA
+UTMOS
+PESQ
+ESTOI
+SDR
+MCD
+↓
+\downarrow
+LSD
+↓
+\downarrow
+SBERT
+LPS
+SpkSim
+CAcc
+48k Hz
+Noisy
+2.04
+1.83
+1.99
+1.28
+0.56
+2.29
+7.77
+5.50
+0.78
+0.77
+0.69
+90.60
+ClearerVoice
+2.97
+3.38
+3.02
+2.09
+0.72
+11.55
+5.08
+5.15
+0.85
+0.87
+0.63
+89.90
+Proposed
+3.31
+4.41
+3.55
+2.65
+0.77
+12.79
+3.93
+3.19
+0.89
+0.91
+0.87
+92.50
+44.1k Hz
+Noisy
+1.91
+1.79
+1.52
+1.33
+0.64
+3.34
+7.44
+5.62
+0.76
+0.63
+0.71
+83.60
+Resemble Enhance
+3.13
+3.68
+2.11
+1.33
+0.45
+-15.01
+11.02
+7.93
+0.69
+0.47
+0.61
+47.20
+Proposed
+3.32
+4.15
+2.68
+2.28
+0.78
+7.18
+3.91
+3.47
+0.90
+0.85
+0.88
+92.20
+We next compare our proposed USE model (shifted anechoic target + GAN correction) with other popular open-source USE models, ClearerVoice-Studio
+(
+Zhao et al., 2025
+)
+2
+2
+2
+https://github.com/modelscope/ClearerVoice-Studio
+and Resemble Enhance
+3
+3
+3
+https://github.com/resemble-ai/resemble-enhance
+. Although this comparison is not strictly controlled due to differing training data, it still offers useful insight into the relative strengths and limitations of existing approaches. Since ClearerVoice-Studio supports only 16 kHz and 48 kHz inputs, and Resemble Enhance only 44.1 kHz, we evaluate on the corresponding subsets of the URGENT 2025 non-blind test set, as reported in Table
+2
+.
+Our proposed method outperforms ClearerVoice-Studio, a regression-based model built on MossFormer2
+(
+Zhao et al., 2024
+)
+, although ClearerVoice-Studio still achieves reasonable enhancement quality. Resemble Enhance, based on latent conditional flow matching, substantially improves non-intrusive quality metrics but yields low intrusive scores and CAcc, suggesting a tendency to hallucinate content, which is consistent with prior findings on purely generative models
+(
+Saijo et al., 2025
+)
+.
+3.9
+Evaluation on Unseen Languages
+Table 3
+:
+Speech enhancement results for unseen languages from the FLEURS dataset.
+DNSMOS
+SpkSim
+CAcc
+Italian (it
+_
+\_
+it)
+Original
+3.12
+-
+97.28
+FLEURS-R
+3.37
+0.87
+97.69
+Proposed
+3.20
+0.98
+97.00
+Proposed (EARS)
+3.27
+0.97
+98.09
+Dutch (nl
+_
+\_
+nl)
+Original
+2.99
+-
+97.40
+FLEURS-R
+3.36
+0.88
+97.19
+Proposed
+3.13
+0.97
+97.18
+Proposed (EARS)
+3.28
+0.95
+97.26
+Japanese (ja
+_
+\_
+jp)
+Original
+2.96
+-
+95.34
+FLEURS-R
+3.36
+0.88
+95.14
+Proposed
+3.07
+0.98
+95.30
+Proposed (EARS)
+3.18
+0.95
+95.43
+One emerging application of USE is training data cleaning for downstream speech generative models (e.g., text-to-speech)
+(
+Koizumi et al., 2023c
+;
+Karita et al., 2025
+;
+Koizumi et al., 2023b
+;
+Ma et al., 2024
+)
+. This is particularly important for low-resource languages, where studio-quality recordings are scarce. To support this use case, the USE model must be
+language-agnostic
+.
+Saijo et al. (2025)
+report that regression models are relatively insensitive to language variations, whereas purely generative models (e.g., latent diffusion and neural vocoders) tend to be more language dependent. This observation also motivates our two-stage design, where the generative model is used only to refine over-smoothed regions of a regression model’s output.
+Following Miipher-2
+(
+Karita et al., 2025
+)
+, we use the FLEURS dataset
+(
+Conneau et al., 2023
+)
+to evaluate model performance on unseen languages. We select three languages (Italian, Dutch, and Japanese) and assess speech quality with DNSMOS, speaker similarity (relative to the original)
+(
+Desplanques et al., 2020
+)
+, and ASR CAcc
+(
+Radford et al., 2023
+)
+before and after different speech restoration, as summarized in Table
+3
+. We also include FLEURS-R
+(
+Ma et al., 2024
+)
+, a restored version of FLEURS processed by Miipher-2, obtained from the official release
+4
+4
+4
+https://huggingface.co/datasets/google/fleurs-r
+. Miipher-2 uses acoustic features extracted by the Universal Speech Model
+(
+Zhang et al., 2023b
+)
+, pre-trained on 12 million hours of speech across more than 300 languages, and reconstructs back with the WaveFit vocoder
+(
+Koizumi et al., 2023a
+)
+.
+We observe that some FLEURS samples contain only mild stationary wideband noise or electrical microphone hiss (see Figure
+10
+in the Appendix), artifacts that still appear in our training data even after VQScore filtering. Our original model (shifted anechoic target + GAN) does not fully remove such low-level background noise, likely because some “clean” training examples remain imperfect and the model learns to preserve these subtle distortions. To address this, we fine-tune the model solely on the highest-quality subset of our training data (EARS), and denote the result as Proposed (EARS) in Table
+3
+. Although FLEURS-R achieves slightly higher DNSMOS, its speaker characteristics deviate more from the original speech compared to our proposed methods, highlighting the fidelity-quality trade-off. Namely, some generative restoration may enhance perceptual quality at the expense of speaker similarity. Between our two proposed variants, Proposed (EARS) provides better speech quality and ASR accuracy, reinforcing the importance of training data quality for USE.
+3.10
+Application to TTS Training Data Cleaning
+Table 4
+:
+Zero-shot TTS evaluation after training data cleaning using our USE model on unseen languages. We report the 95% confidence intervals based on standard errors calculated from 10 independent runs per dataset.
+Language
+Context audio
+Train audio
+CER (%)
+WER (%)
+SpkSim
+FCD
+Dutch
+original
+original
+14.28
+±
+\pm
+0.98
+19.60
+±
+\pm
+0.76
+0.6064
+±
+\pm
+0.0080
+0.2444
+±
+\pm
+0.0155
+enhanced
+enhanced
+7.75
+±
+\pm
+0.83
+13.66
+±
+\pm
+0.71
+0.6603
+±
+\pm
+0.0047
+0.1837
+±
+\pm
+0.0086
+Italian
+original
+original
+11.13
+±
+\pm
+0.94
+19.20
+±
+\pm
+0.94
+0.6004
+±
+\pm
+0.0034
+0.1846
+±
+\pm
+0.0042
+enhanced
+enhanced
+8.30
+±
+\pm
+0.52
+15.98
+±
+\pm
+0.53
+0.6006
+±
+\pm
+0.0032
+0.1373
+±
+\pm
+0.0021
+The scarcity of studio-quality data hinders progress in TTS modeling, particularly for low-resource languages. We investigate the hypothesis that TTS training data restored by our USE can alleviate these bottlenecks. We exclude high-resource English and experiment with a training dataset comprised of four European languages: French (7.3k hours), German (5.5k hours), Dutch (760 hours), and Italian (123 hours), sourced from CML-TTS
+(
+Oliveira et al., 2023
+)
+and Emilia-YODAS
+(
+He et al., 2025
+)
+, with a sampling rate of 22.05 kHz.
+We employ Zero-Shot Koel-TTS
+(
+Hussain et al., 2025
+)
+, a state-of-the-art encoder-decoder Transformer TTS backbone. This model features an autoregressive decoder that generates speech tokens conditioned on a text transcript and a speaker audio prompt. The model contains approximately 378M parameters and operates on low-frame-rate (21.5 FPS) audio codec tokens encoded by NanoCodec
+(
+Casanova et al., 2025
+)
+. Text transcripts are processed using a ByT5 byte-level tokenizer
+(
+Xue et al., 2022
+)
+.
+We train the multilingual TTS model following the configurations of Koel-TTS
+(
+Hussain et al., 2025
+)
+. We then evaluate the model on Dutch and Italian (unseen language during our USE training) using character error rate (CER), word error rate (WER), speaker similarity between context and generated audio, and Fréchet codec distance
+5
+5
+5
+Fréchet codec distance (FCD) adapts FID
+(
+Heusel et al., 2017
+)
+to measure the distance between real and generated distributions in the codec’s dequantized embedding space.
+(FCD). Table
+4
+demonstrates substantial improvements across all metrics when both context and training target audio are enhanced by our USE model. Furthermore, we observe that the TTS model consistently benefits when either the context or target audio is enhanced, as detailed in Table
+10
+(Appendix). These experiments indicate that our USE model effectively unlocks the potential of existing large-scale, multilingual, noisy speech datasets for training high-quality TTS models.
+4
+Conclusion
+This paper systematically investigates three critical challenges in developing USE models.
+First, we show that time-shifted anechoic clean speech is a better dereverberation target than conventional early-reflected speech, improving both perceptual quality and downstream ASR performance. Second, motivated by the distortion–perception trade-off theory, we propose a simple two-stage framework that balances fidelity and perceptual quality by combining a regression model with a residual generative refinement model, correcting over-smoothed regions without hallucinations. Third, we demonstrate that USE performance is strongly limited by training data quality: rigorous filtering and fine-tuning on the cleanest subset consistently yields better enhancement. Finally, our model generalizes well across languages while preserving high fidelity, making it effective for improving training data for downstream speech generation tasks.
+References
+[1]
+J. Serrà, S. Pascual, J. Pons, R. O. Araz, and D. Scaini
+(2022)
+Universal speech enhancement with score-based diffusion
+.
+arXiv preprint arXiv:2206.03065
+.
+Cited by:
+§1
+.
+[2]
+N. Babaev, K. Tamogashev, A. Saginbaev, I. Shchekotov, H. Bae, H. Sung, W. Lee, H. Cho, and P. Andreev
+(2024)
+FINALLY: fast and universal speech enhancement with studio-like quality
+.
+In
+Neural Information Processing Systems
+,
+Vol.
+37
+,
+pp. 934–965
+.
+Cited by:
+§1
+.
+[3]
+H. Liu, Q. Kong, Q. Tian, Y. Zhao, D. Wang, C. Huang, and Y. Wang
+(2021)
+VoiceFixer: toward general speech restoration with neural vocoder
+.
+arXiv preprint arXiv:2109.13731
+.
+Cited by:
+§1
+.
+[4]
+X. Li, Q. Wang, and X. Liu
+(2024)
+MaskSR: masked language model for full-band speech restoration
+.
+In
+Proc. Interspeech
+,
+pp. 2275–2279
+.
+Cited by:
+§1
+.
+[5]
+J. Zhang, J. Yang, Z. Fang, Y. Wang, Z. Zhang, Z. Wang, F. Fan, and Z. Wu
+(2025)
+AnyEnhance: a unified generative model with prompt-guidance and self-critic for voice enhancement
+.
+arXiv preprint arXiv:2501.15417
+.
+Cited by:
+§1
+.
+[6]
+K. Saijo, W. Zhang, S. Cornell, R. Scheibler, C. Li, Z. Ni, A. Kumar, M. Sach, Y. Fu, W. Wang,
+et al.
+(2025)
+Interspeech 2025 URGENT speech enhancement challenge
+.
+In
+Proc. Interspeech
+,
+pp. 858–862
+.
+Cited by:
+§1
+,
+§1
+,
+§2.1
+,
+§2.2
+,
+§2.3
+,
+§3.1
+,
+§3.3
+,
+§3.4
+,
+§3.8
+,
+§3.9
+.
+[7]
+J. Valin, R. Giri, S. Venkataramani, U. Isik, and A. Krishnaswamy
+(2022)
+To dereverb or not to dereverb? Perceptual studies on real-time dereverberation targets
+.
+arXiv preprint arXiv:2206.07917
+.
+Cited by:
+§1
+,
+§2.1
+,
+§2.1
+,
+§3.5
+.
+[8]
+R. Zhou, W. Zhu, and X. Li
+(2023)
+Speech dereverberation with a reverberation time shortening target
+.
+In
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)
+,
+pp. 1–5
+.
+Cited by:
+§1
+,
+§2.1
+.
+[9]
+Y. Zhao, D. Wang, B. Xu, and T. Zhang
+(2020)
+Monaural speech dereverberation using temporal convolutional networks with self attention
+.
+IEEE/ACM Transactions on Audio, Speech, and Language Processing
+28
+,
+pp. 1598–1607
+.
+Cited by:
+§1
+,
+§2.1
+,
+§3.5
+.
+[10]
+Z. Wang, G. Wichern, and J. Le Roux
+(2021)
+Convolutive prediction for monaural speech dereverberation and noisy-reverberant speaker separation
+.
+IEEE/ACM Transactions on Audio, Speech, and Language Processing
+29
+,
+pp. 3476–3490
+.
+Cited by:
+§1
+,
+§2.1
+.
+[11]
+Z. Sun, A. Li, T. Lei, R. Chen, M. Yu, C. Zheng, Y. Zhou, and D. Yu
+(2025)
+Scaling beyond denoising: submitted system and findings in URGENT challenge 2025
+.
+In
+Proc. Interspeech
+,
+pp. 873–877
+.
+Cited by:
+§1
+,
+§3.5
+.
+[12]
+R. Chao, R. Nasretdinov, Y. F. Wang, A. Jukic, S. Fu, and Y. Tsao
+(2025)
+Universal speech enhancement with regression and generative Mamba
+.
+In
+Proc. Interspeech
+,
+pp. 888–892
+.
+External Links:
+ISSN 2958-1796
+Cited by:
+§1
+,
+§2.2
+,
+§3.2
+,
+§3.5
+.
+[13]
+X. Rong, D. Wang, Q. Hu, Y. Wang, Y. Hu, and J. Lu
+(2025)
+TS-URGENet: a three-stage universal robust and generalizable speech enhancement network
+.
+arXiv preprint arXiv:2505.18533
+.
+Cited by:
+§1
+,
+§3.5
+.
+[14]
+N. Goswami and T. Harada
+(2025)
+FUSE: universal speech enhancement using multi-stage fusion of sparse compression and token generation models for the urgent 2025 challenge
+.
+In
+Proc. Interspeech
+,
+Cited by:
+§1
+.
+[15]
+X. Le, Z. Chen, S. Sun, X. Xia, and C. Huang
+(2025)
+Multistage universal speech enhancement system for urgent challenge
+.
+In
+Proc. Interspeech
+,
+pp. 868–872
+.
+Cited by:
+§1
+.
+[16]
+W. Zhang, K. Saijo, J. Jung, C. Li, S. Watanabe, and Y. Qian
+(2024)
+Beyond performance plateaus: a comprehensive study on scalability in speech enhancement
+.
+In
+Proc. Interspeech
+,
+pp. 1740–1744
+.
+Cited by:
+§1
+.
+[17]
+P. Gonzalez, Z. Tan, J. Østergaard, J. Jensen, T. S. Alstrøm, and T. May
+(2024)
+The effect of training dataset size on discriminative and diffusion-based speech enhancement systems
+.
+IEEE Signal Processing Letters
+.
+Cited by:
+§1
+.
+[18]
+C. Li, W. Zhang, W. Wang, R. Scheibler, K. Saijo, S. Cornell, Y. Fu, M. Sach, Z. Ni, A. Kumar,
+et al.
+(2025)
+Less is more: data curation matters in scaling speech enhancement
+.
+arXiv preprint arXiv:2506.23859
+.
+Cited by:
+§1
+.
+[19]
+W. Zhang, R. Scheibler, K. Saijo, S. Cornell, C. Li, Z. Ni, A. Kumar, J. Pirklbauer, M. Sach, S. Watanabe,
+et al.
+(2024)
+URGENT Challenge: universality, robustness, and generalizability for speech enhancement
+.
+In
+Proc. Interspeech
+,
+Cited by:
+§2.1
+.
+[20]
+P. A. Naylor and N. D. Gaubitch
+(2010)
+Speech dereverberation
+.
+Springer Science & Business Media
+.
+Cited by:
+§2.1
+.
+[21]
+T. Saeki, D. Xin, W. Nakata, T. Koriyama, S. Takamichi, and H. Saruwatari
+(2022)
+UTMOS: utokyo-sarulab system for VoiceMOS challenge 2022
+.
+arXiv preprint arXiv:2204.02152
+.
+Cited by:
+§2.1
+,
+§3.3
+.
+[22]
+C. K. A. Reddy, V. Gopal, and R. Cutler
+(2022)
+DNSMOS P.835: a non-intrusive perceptual objective speech quality metric to evaluate noise suppressors
+.
+In
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)
+,
+Vol.
+,
+pp. 886–890
+.
+Cited by:
+§2.1
+,
+§3.3
+.
+[23]
+G. Mittag, B. Naderi, A. Chehadi, and S. Möller
+(2021)
+NISQA: a deep cnn-self-attention model for multidimensional speech quality prediction with crowdsourced datasets
+.
+In
+Proc. Interspeech
+,
+pp. 2127–2131
+.
+Cited by:
+§2.1
+,
+§3.3
+.
+[24]
+Y. Blau and T. Michaeli
+(2018)
+The perception-distortion tradeoff
+.
+In
+Proc. of the IEEE conference on computer vision and pattern recognition
+,
+pp. 6228–6237
+.
+Cited by:
+§A.1
+,
+§A.1
+,
+§2.2
+.
+[25]
+Y. Ren, X. Tan, T. Qin, Z. Zhao, and T. Liu
+(2022)
+Revisiting over-smoothness in text to speech
+.
+In
+Proc. Association for Computational Linguistics (ACL)
+,
+pp. 8197–8213
+.
+Cited by:
+§2.2
+.
+[26]
+R. Scheibler, Y. Fujita, Y. Shirahata, and T. Komatsu
+(2024)
+Universal score-based speech enhancement with high content preservation
+.
+In
+Proc. Interspeech
+,
+pp. 1165–1169
+.
+Cited by:
+§2.2
+.
+[27]
+D. Freirich, T. Michaeli, and R. Meir
+(2021)
+A theory of the distortion-perception tradeoff in Wasserstein space
+.
+In
+Neural Information Processing Systems
+,
+Vol.
+34
+,
+pp. 25661–25672
+.
+Cited by:
+§A.1
+,
+§A.1
+,
+§A.1
+,
+§2.2
+.
+[28]
+G. Ohayon, T. Michaeli, and M. Elad
+(2025)
+Posterior-mean rectified flow: towards minimum MSE photo-realistic image restoration
+.
+In
+International Conference on Learning Representations
+,
+Cited by:
+§2.2
+.
+[29]
+S. Serbest, T. Stojkovic, M. Cernak, and A. Harper
+(2025)
+DeepFilterGAN: a full-band real-time speech enhancement system with GAN-based stochastic regeneration
+.
+In
+Proc. Interspeech
+,
+Cited by:
+§2.2
+.
+[30]
+J. Huang, Z. Yan, W. Jiang, and F. Wen
+(2023)
+A two-stage training framework for joint speech compression and enhancement
+.
+arXiv preprint arXiv:2309.04132
+.
+Cited by:
+§2.2
+.
+[31]
+J. Lemercier, J. Richter, S. Welker, and T. Gerkmann
+(2023)
+StoRM: a diffusion-based stochastic regeneration model for speech enhancement and dereverberation
+.
+IEEE/ACM Transactions on Audio, Speech, and Language Processing
+31
+,
+pp. 2724–2737
+.
+Cited by:
+§2.2
+.
+[32]
+M. Arjovsky, S. Chintala, and L. Bottou
+(2017)
+Wasserstein generative adversarial networks
+.
+In
+Proc. of International Conference on Machine Learning
+,
+pp. 214–223
+.
+Cited by:
+§2.2
+.
+[33]
+T. Miyato, T. Kataoka, M. Koyama, and Y. Yoshida
+(2018)
+Spectral normalization for generative adversarial networks
+.
+In
+International Conference on Learning Representations
+,
+Cited by:
+§2.2
+.
+[34]
+T. Salimans, I. Goodfellow, W. Zaremba, V. Cheung, A. Radford, and X. Chen
+(2016)
+Improved techniques for training GANs
+.
+In
+Neural Information Processing Systems
+,
+Vol.
+29
+.
+Cited by:
+§2.2
+.
+[35]
+R. Ardila, M. Branson, K. Davis, M. Kohler, J. Meyer, M. Henretty, R. Morais, L. Saunders, F. Tyers, and G. Weber
+(2020)
+Common Voice: a massively-multilingual speech corpus
+.
+In
+Proc. of the Twelfth Language Resources and Evaluation Conference
+,
+pp. 4218–4222
+.
+Cited by:
+§2.3
+.
+[36]
+H. Dubey, A. Aazami, V. Gopal, B. Naderi, S. Braun, R. Cutler, A. Ju, M. Zohourian, M. Tang, M. Golestaneh,
+et al.
+(2024)
+ICASSP 2023 deep noise suppression challenge
+.
+IEEE Open Journal of Signal Processing
+5
+,
+pp. 725–737
+.
+Cited by:
+§2.3
+.
+[37]
+V. Pratap, Q. Xu, A. Sriram, G. Synnaeve, and R. Collobert
+(2020)
+MLS: a large-scale multilingual dataset for speech research
+.
+arXiv preprint arXiv:2012.03411
+.
+Cited by:
+§2.3
+.
+[38]
+H. Zen, V. Dang, R. Clark, Y. Zhang, R. J. Weiss, Y. Jia, Z. Chen, and Y. Wu
+(2019)
+LibriTTS: a corpus derived from librispeech for text-to-speech
+.
+In
+Proc. Interspeech
+,
+pp. 1526–1530
+.
+Cited by:
+§2.3
+.
+[39]
+C. Veaux, J. Yamagishi, and S. King
+(2013)
+The Voice Bank corpus: design, collection and data analysis of a large regional accent speech database
+.
+In
+IEEE Oriental COCOSDA International Conference on Speech Database and Assessments
+,
+pp. 1–4
+.
+Cited by:
+§2.3
+.
+[40]
+J. S. Garofolo, D. Graff, J. M. Baker, D. Paul, and D. Pallett
+(1993)
+CSR-I (WSJ0) Complete
+.
+Linguistic Data Consortium
+,
+Philadelphia, PA
+.
+Note:
+LDC93S6A
+Cited by:
+§2.3
+.
+[41]
+J. Richter, Y. Wu, S. Krenn, S. Welker, B. Lay, S. Watanabe, A. Richard, and T. Gerkmann
+(2024)
+EARS: an anechoic fullband speech dataset benchmarked for speech enhancement and dereverberation
+.
+In
+Proc. Interspeech
+,
+Cited by:
+§2.3
+.
+[42]
+W. Zhang, K. Saijo, S. Cornell, R. Scheibler, C. Li, Z. Ni, A. Kumar, M. Sach, W. Wang, Y. Fu, S. Watanabe, T. Fingscheidt, and Y. Qian
+(2025)
+Lessons learned from the URGENT 2024 speech enhancement challenge
+.
+In
+Proc. Interspeech
+,
+pp. 853–857
+.
+Cited by:
+§2.3
+.
+[43]
+S. Fu, K. Hung, Y. Tsao, and Y. F. Wang
+(2024)
+Self-supervised speech quality estimation and enhancement using only clean speech
+.
+In
+International Conference on Learning Representations
+,
+Cited by:
+§2.3
+.
+[44]
+W. Zhang, K. Saijo, Z. Wang, S. Watanabe, and Y. Qian
+(2023)
+Toward universal speech enhancement for diverse input conditions
+.
+In
+IEEE Automatic Speech Recognition and Understanding Workshop (ASRU)
+,
+pp. 1–6
+.
+Cited by:
+§3.2
+.
+[45]
+R. Chao, W. Cheng, M. L. Quatra, S. M. Siniscalchi, C. H. Yang, S. Fu, and Y. Tsao
+(2024)
+An investigation of incorporating Mamba for speech enhancement
+.
+In
+IEEE Spoken Language Technology Workshop (SLT)
+,
+Vol.
+,
+pp. 302–308
+.
+Cited by:
+§3.2
+.
+[46]
+R. Kumar, P. Seetharaman, A. Luebs, I. Kumar, and K. Kumar
+(2023)
+High-fidelity audio compression with improved RVQGAN
+.
+In
+Neural Information Processing Systems
+,
+Cited by:
+§3.2
+.
+[47]
+A. W. Rix, J. G. Beerends, M. P. Hollier, and A. P. Hekstra
+(2001)
+Perceptual evaluation of speech quality (PESQ)-a new method for speech quality assessment of telephone networks and codecs
+.
+In
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)
+,
+Cited by:
+§3.3
+.
+[48]
+J. Jensen and C. H. Taal
+(2016)
+An algorithm for predicting the intelligibility of speech masked by modulated noise maskers
+.
+IEEE/ACM Transactions on Audio, Speech, and Language Process.
+24
+(
+11
+),
+pp. 2009–2022
+.
+Cited by:
+§3.3
+.
+[49]
+J. L. Roux, S. Wisdom, H. Erdogan, and J. R. Hershey
+(2019)
+SDR – Half-baked or Well Done?
+.
+In
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)
+,
+Cited by:
+§3.3
+.
+[50]
+T. Saeki, S. Maiti, S. Takamichi, S. Watanabe, and H. Saruwatari
+(2024)
+SpeechBERTScore: reference-aware automatic evaluation of speech generation leveraging NLP evaluation metrics
+.
+In
+Proc. Interspeech
+,
+pp. 4943–4947
+.
+Cited by:
+§3.3
+.
+[51]
+J. Pirklbauer, M. Sach, K. Fluyt, W. Tirry, W. Wardah, S. Moeller, and T. Fingscheidt
+(2023)
+Evaluation metrics for generative speech enhancement methods: issues and perspectives
+.
+In
+IEEE Speech Communication; 15th ITG Conference
+,
+pp. 265–269
+.
+Cited by:
+§3.3
+.
+[52]
+Y. Peng, J. Tian, W. Chen, S. Arora, B. Yan, Y. Sudo, M. Shakeel, K. Choi, J. Shi, X. Chang,
+et al.
+(2024)
+Owsm v3.1: better and faster open whisper-style speech models based on e-branchformer
+.
+In
+Proc. Interspeech
+,
+Cited by:
+§3.3
+.
+[53]
+Z. Wang, S. Cornell, S. Choi, Y. Lee, B. Kim, and S. Watanabe
+(2023)
+TF-GridNet: integrating full-and sub-band modeling for speech separation
+.
+IEEE/ACM Transactions on Audio, Speech, and Language Processing
+31
+,
+pp. 3221–3236
+.
+Cited by:
+§3.5
+.
+[54]
+S. Zhao, Z. Pan, and B. Ma
+(2025)
+ClearerVoice-Studio: bridging advanced speech processing research and practical deployment
+.
+In
+Proc. Interspeech 2025
+,
+pp. 2980–2984
+.
+Cited by:
+§3.8
+.
+[55]
+S. Zhao, Y. Ma, C. Ni, C. Zhang, H. Wang, T. H. Nguyen, K. Zhou, J. Q. Yip, D. Ng, and B. Ma
+(2024)
+Mossformer2: combining Transformer and RNN-free recurrent network for enhanced time-domain monaural speech separation
+.
+In
+IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)
+,
+pp. 10356–10360
+.
+Cited by:
+§3.8
+.
+[56]
+Y. Koizumi, H. Zen, S. Karita, Y. Ding, K. Yatabe, N. Morioka, Y. Zhang, W. Han, A. Bapna, and M. Bacchiani
+(2023)
+Miipher: a robust speech restoration model integrating self-supervised speech and text representations
+.
+In
+IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA)
+,
+pp. 1–5
+.
+Cited by:
+§3.9
+.
+[57]
+S. Karita, Y. Koizumi, H. Zen, H. Ishikawa, R. Scheibler, and M. Bacchiani
+(2025)
+Miipher-2: a universal speech restoration model for million-hour scale data restoration
+.
+arXiv preprint arXiv:2505.04457
+.
+Cited by:
+§3.9
+,
+§3.9
+.
+[58]
+Y. Koizumi, H. Zen, S. Karita, Y. Ding, K. Yatabe, N. Morioka, M. Bacchiani, Y. Zhang, W. Han, and A. Bapna
+(2023)
+LibriTTS-R: a restored multi-speaker text-to-speech corpus
+.
+In
+Proc. Interspeech
+,
+pp. 5496–5500
+.
+Cited by:
+§3.9
+.
+[59]
+M. Ma, Y. Koizumi, S. Karita, H. Zen, J. Riesa, H. Ishikawa, and M. Bacchiani
+(2024)
+FLEURS-R: a restored multilingual speech corpus for generation tasks
+.
+In
+Proc. Interspeech
+,
+pp. 1835–1839
+.
+Cited by:
+§3.9
+,
+§3.9
+.
+[60]
+A. Conneau, M. Ma, S. Khanuja, Y. Zhang, V. Axelrod, S. Dalmia, J. Riesa, C. Rivera, and A. Bapna
+(2023)
+FLEURS: few-shot learning evaluation of universal representations of speech
+.
+In
+IEEE Spoken Language Technology Workshop (SLT)
+,
+pp. 798–805
+.
+Cited by:
+§3.9
+.
+[61]
+B. Desplanques, J. Thienpondt, and K. Demuynck
+(2020)
+ECAPA-TDNN: emphasized channel attention, propagation and aggregation in tdnn based speaker verification
+.
+In
+Proc. Interspeech
+,
+pp. 3830–3834
+.
+Cited by:
+§3.9
+.
+[62]
+A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever
+(2023)
+Robust speech recognition via large-scale weak supervision
+.
+In
+International Conference on Machine Learning
+,
+pp. 28492–28518
+.
+Cited by:
+§3.9
+.
+[63]
+Y. Zhang, W. Han, J. Qin, Y. Wang, A. Bapna, Z. Chen, N. Chen, B. Li, V. Axelrod, G. Wang,
+et al.
+(2023)
+Google USM: scaling automatic speech recognition beyond 100 languages
+.
+arXiv preprint arXiv:2303.01037
+.
+Cited by:
+§3.9
+.
+[64]
+Y. Koizumi, K. Yatabe, H. Zen, and M. Bacchiani
+(2023)
+WaveFit: an iterative and non-autoregressive neural vocoder based on fixed-point iteration
+.
+In
+IEEE Spoken Language Technology Workshop (SLT)
+,
+pp. 884–891
+.
+Cited by:
+§3.9
+.
+[65]
+F. S. Oliveira, E. Casanova, A. C. Junior, A. S. Soares, and A. R. Galvão Filho
+(2023)
+Cml-tts: a multilingual dataset for speech synthesis in low-resource languages
+.
+In
+International Conference on Text, Speech, and Dialogue
+,
+pp. 188–199
+.
+Cited by:
+§3.10
+.
+[66]
+H. He, Z. Shang, C. Wang, X. Li, Y. Gu, H. Hua, L. Liu, C. Yang, J. Li, P. Shi,
+et al.
+(2025)
+Emilia: a large-scale, extensive, multilingual, and diverse dataset for speech generation
+.
+arXiv preprint arXiv:2501.15907
+.
+Cited by:
+§3.10
+.
+[67]
+S. S. Hussain, P. Neekhara, X. Yang, E. Casanova, S. Ghosh, R. Fejgin, M. T. Desta, R. Valle, and J. Li
+(2025)
+Koel-tts: enhancing llm based speech generation with preference alignment and classifier free guidance
+.
+In
+Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing
+,
+pp. 21230–21245
+.
+Cited by:
+§3.10
+,
+§3.10
+.
+[68]
+E. Casanova, P. Neekhara, R. Langman, S. Hussain, S. Ghosh, X. Yang, A. Jukic, J. Li, and B. Ginsburg
+(2025)
+NanoCodec: towards high-quality ultra fast speech llm inference
+.
+In
+Proc. Interspeech 2025
+,
+pp. 5028–5032
+.
+Cited by:
+§3.10
+.
+[69]
+L. Xue, A. Barua, N. Constant, R. Al-Rfou, S. Narang, M. Kale, A. Roberts, and C. Raffel
+(2022)
+ByT5: towards a token-free future with pre-trained byte-to-byte models
+.
+Transactions of the Association for Computational Linguistics
+10
+,
+pp. 291–306
+.
+Cited by:
+§3.10
+.
+[70]
+M. Heusel, H. Ramsauer, T. Unterthiner, B. Nessler, and S. Hochreiter
+(2017)
+Gans trained by a two time-scale update rule converge to a local nash equilibrium
+.
+Advances in neural information processing systems
+30
+.
+Cited by:
+footnote 5
+.
+Appendix A
+Appendix
+A.1
+The Distortion-Perception Tradeoff
+The performance of a speech enhancement model can be characterized by two criteria: 1) fidelity, measured by the average proximity of estimated speech
+s
+~
+\tilde{s}
+to the clean speech
+s
+s
+, and 2) perceptual quality, the degree to which the distribution of
+s
+~
+\tilde{s}
+is close to that of
+s
+s
+. To alleviate the hallucination problem in generative models, our goal is to
+achieve minimal distortion under a given level of perceptual quality
+P
+P
+. Mathematically, we are dealing with
+the distortion-perception (DP) function
+[
+27
+]
+,
+D
+⁡
+(
+P
+)
+=
+min
+p
+s
+~
+|
+y
+⁡
+{
+𝔼
+⁡
+[
+d
+⁡
+(
+s
+,
+s
+~
+)
+]
+s.t.
+d
+p
+​
+(
+p
+s
+,
+p
+s
+~
+)
+≤
+P
+}
+,
+D(P)=\min_{p_{\tilde{s}\mid y}}\{\;\mathbb{E}\!\left[d(s,\tilde{s})\right]\quad\text{s.t.}\quad d_{p}\!\left(p_{s},p_{\tilde{s}}\right)\leq P\},
+(4)
+Here,
+d
+(
+.
+,
+.
+)
+d(.,.)
+denotes the distortion criterion and
+d
+p
+(
+.
+,
+.
+)
+d_{p}(.,.)
+denotes a divergence measure between two probability distributions. As shown in
+[
+24
+]
+,
+D
+⁡
+(
+P
+)
+D(P)
+is
+monotonically non-increasing and convex
+under most commonly used divergence measures. Thus, traversing this function (or near this region) reveals a
+trade-off between distortion and perceptual quality
+.
+Following
+[
+27
+]
+, we consider squared-error distortion
+d
+⁡
+(
+s
+,
+s
+~
+)
+=
+∥
+s
+−
+s
+~
+∥
+2
+2
+d(s,\tilde{s})=\lVert s-\tilde{s}\rVert_{2}^{2}
+and the Wasserstein
+distance
+d
+p
+​
+(
+p
+s
+,
+p
+s
+~
+)
+=
+W
+2
+​
+(
+p
+s
+,
+p
+s
+~
+)
+d_{p}\!\left(p_{s},p_{\tilde{s}}\right)=W_{2}\!\left(p_{s},p_{\tilde{s}}\right)
+.
+Then, Equation (
+4
+) can be written as:
+D
+⁡
+(
+P
+)
+=
+min
+p
+s
+~
+|
+y
+⁡
+{
+𝔼
+⁡
+[
+∥
+s
+−
+s
+~
+∥
+2
+2
+]
+s.t.
+W
+2
+​
+(
+p
+s
+,
+p
+s
+~
+)
+≤
+P
+}
+,
+D(P)=\min_{p_{\tilde{s}\mid y}}\{\;\mathbb{E}\!\left[\lVert s-\tilde{s}\rVert_{2}^{2}\right]\quad\text{s.t.}\quad W_{2}\!\left(p_{s},p_{\tilde{s}}\right)\leq P\},
+(5)
+Note that, without any constraints, the minimal distortion
+D
+∗
+D^{*}
+can be easily achieved by
+s
+∗
+=
+𝔼
+⁡
+[
+s
+∣
+y
+]
+s^{*}=\mathbb{E}[s\mid y]
+.
+If
+s
+~
+\tilde{s}
+is independent of
+s
+s
+given
+y
+y
+, the first term in Equation (
+5
+) can be written as
+𝔼
+⁡
+[
+∥
+s
+−
+s
+~
+∥
+2
+]
+=
+𝔼
+⁡
+[
+∥
+s
+−
+s
+∗
+∥
+2
+]
++
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+]
+=
+D
+∗
++
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+]
+\mathbb{E}\!\left[\lVert s-\tilde{s}\rVert^{2}\right]=\mathbb{E}\!\left[\lVert s-s^{*}\rVert^{2}\right]+\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert^{2}\right]=D^{*}+\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert^{2}\right]
+. The DP function can therefore be rewritten as:
+D
+⁡
+(
+P
+)
+=
+D
+∗
++
+min
+p
+s
+~
+|
+y
+⁡
+{
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+2
+]
+s.t.
+W
+2
+​
+(
+p
+s
+,
+p
+s
+~
+)
+≤
+P
+}
+,
+D(P)=D^{*}+\min_{p_{\tilde{s}\mid y}}\{\;\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert_{2}^{2}\right]\quad\text{s.t.}\quad W_{2}\!\left(p_{s},p_{\tilde{s}}\right)\leq P\},
+(6)
+The minimal distortion under perfect perceptual quality, denoted by
+D
+⁡
+(
+0
+)
+D(0)
+(i.e.,
+P
+P
+=0, which implies
+W
+2
+​
+(
+p
+s
+,
+p
+s
+~
+)
+=
+0
+W_{2}\!\left(p_{s},p_{\tilde{s}}\right)=0
+, and hence the constraint become
+p
+s
+~
+=
+p
+s
+p_{\tilde{s}}=p_{s}
+), is given by:
+D
+⁡
+(
+0
+)
+=
+D
+∗
++
+min
+p
+s
+~
+|
+y
+⁡
+{
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+2
+]
+s.t.
+p
+s
+~
+=
+p
+s
+}
+,
+D(0)=D^{*}+\min_{p_{\tilde{s}\mid y}}\{\;\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert_{2}^{2}\right]\quad\text{s.t.}\quad p_{\tilde{s}}=p_{s}\},
+(7)
+Since the objective (
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+2
+]
+\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert_{2}^{2}\right]
+) depends only on
+p
+s
+∗
+​
+s
+~
+p_{s^{*}\tilde{s}}
+, we can rewrite the constraint as:
+D
+⁡
+(
+0
+)
+=
+D
+∗
++
+min
+p
+s
+∗
+​
+s
+~
+⁡
+{
+𝔼
+⁡
+[
+∥
+s
+∗
+−
+s
+~
+∥
+2
+2
+]
+s.t.
+p
+s
+∗
+​
+s
+~
+∈
+Π
+⁡
+(
+p
+s
+,
+p
+s
+∗
+)
+}
+,
+D(0)=D^{*}+\min_{p_{s^{*}\tilde{s}}}\{\;\mathbb{E}\!\left[\lVert s^{*}-\tilde{s}\rVert_{2}^{2}\right]\quad\text{s.t.}\quad p_{s^{*}\tilde{s}}\in\;\Pi(p_{s},p_{s^{*}})\},
+(8)
+where
+Π
+⁡
+(
+p
+s
+,
+p
+s
+∗
+)
+\Pi(p_{s},p_{s^{*}})
+denotes the set of all joint distributions with marginals
+p
+s
+p_{s}
+and
+p
+s
+∗
+p_{s^{\ast}}
+. Because the second term in Equation
+8
+corresponds to the Wasserstein distance between
+p
+s
+p_{s}
+and
+p
+s
+∗
+p_{s^{*}}
+, we finally obtain:
+D
+⁡
+(
+0
+)
+=
+D
+∗
++
+W
+2
+​
+(
+p
+s
+∗
+,
+p
+s
+)
+,
+D(0)=D^{*}+W_{2}\!\left(p_{s^{*}},p_{s}\right),
+(9)
+Therefore, we can minimize the MSE while satisfying the perfect-perception constraint by
+optimally transporting
+the posterior mean prediction (
+p
+s
+∗
+p_{s^{\ast}}
+) to the real data distribution (
+p
+s
+p_{s}
+). Following this formulation, as illustrated in Figure
+1
+, our two-stage training first uses a frozen regression model to estimate the posterior mean, and then employs the GAN generator to optimally transport this estimate toward the real data distribution by minimizing the Wasserstein distance. For a more detailed discussion of the properties of the DP function, please refer to
+[
+24
+]
+and
+[
+27
+]
+.
+A.2
+Ablation study
+In the following tables, we evaluate the effects of the three proposed techniques on USE performance using the
+original anechoic clean speech
+as the reference on the non-blind test set of the URGENT 2025 Challenge.
+Table 5
+:
+Comparison of speech enhancement performance with and without training data filtering.
+Method
+DNSMOS
+NISQA
+UTMOS
+PESQ
+STOI
+SBERT
+LPS
+SpkSim
+CACC
+Unfiltered
+3.06
+3.18
+2.24
+2.36
+0.69
+0.87
+0.81
+0.79
+87.29
+Filtered
+3.06
+3.24
+2.26
+2.40
+0.70
+0.88
+0.82
+0.80
+87.70
+p
+p
+-value
+0.13
+0.0007
+2.36
+×
+10
+−
+7
+2.36\times 10^{-7}
+1.77
+×
+10
+−
+11
+1.77\times 10^{-11}
+4.23
+×
+10
+−
+31
+4.23\times 10^{-31}
+2.01
+×
+10
+−
+8
+2.01\times 10^{-8}
+5.24
+×
+10
+−
+8
+5.24\times 10^{-8}
+2.21
+×
+10
+−
+6
+2.21\times 10^{-6}
+0.46
+Table 6
+:
+Comparison between early-reflected and shifted anechoic training targets.
+Method
+DNSMOS
+NISQA
+UTMOS
+PESQ
+STOI
+SBERT
+LPS
+SpkSim
+CACC
+Early-reflected
+3.06
+3.24
+2.26
+2.40
+0.70
+0.88
+0.82
+0.80
+87.70
+Shifted anechoic
+3.23
+3.82
+2.76
+2.70
+0.78
+0.89
+0.85
+0.81
+89.16
+p
+p
+-value
+1.69
+×
+10
+−
+76
+1.69\times 10^{-76}
+6.89
+×
+10
+−
+98
+6.89\times 10^{-98}
+2.40
+×
+10
+−
+107
+2.40\times 10^{-107}
+2.34
+×
+10
+−
+84
+2.34\times 10^{-84}
+8.30
+×
+10
+−
+103
+8.30\times 10^{-103}
+1.59
+×
+10
+−
+60
+1.59\times 10^{-60}
+1.19
+×
+10
+−
+46
+1.19\times 10^{-46}
+2.82
+×
+10
+−
+6
+2.82\times 10^{-6}
+9.99
+×
+10
+−
+6
+9.99\times 10^{-6}
+Table 7
+:
+Comparison between single-stage and two-stage training with GAN correction.
+Method
+DNSMOS
+NISQA
+UTMOS
+PESQ
+STOI
+SBERT
+LPS
+SpkSim
+CACC
+Single-stage
+3.23
+3.82
+2.76
+2.70
+0.78
+0.89
+0.85
+0.81
+89.16
+Two-stage (+ GAN)
+3.26
+4.12
+2.80
+2.71
+0.78
+0.89
+0.86
+0.84
+89.88
+p
+p
+-value
+3.83
+×
+10
+−
+9
+3.83\times 10^{-9}
+3.20
+×
+10
+−
+68
+3.20\times 10^{-68}
+9.58
+×
+10
+−
+27
+9.58\times 10^{-27}
+7.28
+×
+10
+−
+60
+7.28\times 10^{-60}
+4.59
+×
+10
+−
+30
+4.59\times 10^{-30}
+2.23
+×
+10
+−
+10
+2.23\times 10^{-10}
+0.25
+2.40
+×
+10
+−
+23
+2.40\times 10^{-23}
+0.03
+A.3
+Limitations
+We conducted several internal tests of this model, including on real noisy speech recorded with our laptops and cellphones, and it generally performs reasonably well. However, we do observe some failure cases. For example, in packet loss concealment, when the loss duration is too long, the reconstructed phonemes are often incorrect. Without additional conditioning (e.g., phoneme-based speech infilling or audio-visual speech enhancement using visual cues), and especially in multilingual settings, long-duration packet loss concealment remains a challenging task. Furthermore, due to its non-causal design, the model is not suitable for real-time applications; extending the framework to a causal setting is an important direction for future work.
+Figure 4
+:
+An example of a room impulse response, highlighting the time shift
+n
+0
+n_{0}
+introduced by the direct path.
+Table 8
+:
+Dataset Composition for URGENT 2025 Challenge
+Type
+Corpus
+Condition
+Sampling (kHz)
+Duration (h)
+Speech
+LibriVox (DNS5)
+Audiobook
+8–48
+350
+LibriTTS
+Audiobook
+8–24
+200
+VCTK
+Newspaper-style
+48
+80
+WSJ
+WSJ news
+16
+85
+EARS
+Studio recording
+48
+100
+Multilingual Librispeech (de, en, es, fr)
+Audiobook
+8–48
+450
+CommonVoice 19.0 (de, en, es, fr, zh-CN)
+Crowd-sourced voices
+8–48
+1300
+Noise
+AudioSet+FreeSound (DNS5)
+Crowd-sourced + YouTube
+8–48
+180
+WHAM! Noise
+4 urban environments
+48
+70
+FSD50K (Filtered)
+Crowd-sourced
+8–48
+100
+Free Music Archive
+Directed by WFMU
+8–44.1
+200
+RIR
+Simulated RIRs (DNS5)
+SLR28
+48
+60k samples
+(a)
+(b)
+(c)
+(d)
+Figure 5
+:
+Example illustrating that GANs can focus on correcting over-smoothed regions while leaving other parts unchanged. The noisy speech is
+bandwidth-limited
+in the green box, corresponding to a less informative region.
+(a)
+(b)
+(c)
+(d)
+Figure 6
+:
+Example illustrating that GANs can focus on correcting over-smoothed regions while leaving other parts unchanged. The noisy speech contains
+strong noise
+in the green box, corresponding to a less informative region.
+(a)
+(b)
+(c)
+(d)
+(e)
+(f)
+(g)
+Figure 7
+:
+Histogram of VQScore across different speech sources in the URGENT 2025 Challenge Track 1. The median of each data source is indicated by a dashed vertical line.
+(a)
+(b)
+(c)
+(d)
+Figure 8
+:
+Enhanced spectrogram comparison between using time-shifted anechoic clean speech and early-reflected speech as learning targets. (a) and (b) correspond to the same noisy input, and (c) and (d) correspond to another noisy input. Both samples are drawn from the blind-test set.
+(a)
+(b)
+(c)
+(d)
+Figure 9
+:
+Learning curves comparison on validation-set between pre-training with a regression loss followed by adversarial fine-tuning and our two-stage GAN correction. (a) Magnitude loss, (b) Phase loss, (c) Time loss, and (d) PESQ score.
+(a)
+(b)
+(c)
+(d)
+Figure 10
+:
+Spectrogram comparison of a Japanese utterance (9997427445140542468.wav) from the FLEURS dataset. The original speech contains some very low-level stationary noise, which is commonly found in non-curated ’clean’ training data.
+Table 9
+:
+The overall ranking leaderboard for the non-blind test set of the URGENT 2025 Challenge (considering only the early reflected learning target for consistency).
+Team
+DNSMOS
+NISQA
+UTMOS
+PESQ
+ESTOI
+SDR
+MCD
+LSD
+SBERT
+LPS
+SpkSim
+CAcc
+Overall ranking
+Bobbsun
+3.01 (8)
+3.41 (6)
+2.40 (3)
+2.95 (1)
+0.86 (1)
+14.33 (1)
+3.01 (4)
+2.83 (5)
+0.91 (1)
+0.86 (1)
+0.85 (1)
+88.92 (1)
+2.516
+Our Early reflected + GAN
+3.04 (5)
+3.53 (3)
+2.30 (6)
+2.78 (4)
+0.84 (4)
+12.25 (5)
+2.97 (3)
+2.75 (4)
+0.90 (2)
+0.84 (3)
+0.85 (1)
+88.13 (2)
+3.166
+rc
+3.01 (8)
+3.21 (9)
+2.30 (6)
+2.79 (3)
+0.85 (2)
+13.11 (2)
+2.93 (2)
+2.94 (8)
+0.90 (2)
+0.85 (2)
+0.84 (3)
+88.05 (3)
+4.016
+Our Early reflected
+3.06 (4)
+3.23 (8)
+2.26 (8)
+2.81 (2)
+0.85 (2)
+12.28 (4)
+2.87 (1)
+2.66 (1)
+0.90 (2)
+0.84 (3)
+0.82 (5)
+87.62 (5)
+4.041
+Xiaobin
+3.00 (10)
+3.45 (4)
+2.31 (5)
+2.74 (5)
+0.84 (4)
+13.06 (3)
+3.30 (6)
+3.08 (11)
+0.89 (5)
+0.84 (3)
+0.83 (4)
+87.94 (4)
+5.033
+subatomicseer
+3.02 (6)
+3.28 (7)
+2.34 (4)
+2.63 (7)
+0.82 (6)
+12.18 (6)
+3.90 (12)
+3.06 (10)
+0.88 (7)
+0.82 (6)
+0.82 (5)
+86.15 (7)
+6.591
+poisonous
+3.02 (6)
+3.42 (5)
+2.26 (8)
+2.72 (6)
+0.82 (6)
+11.93 (8)
+3.36 (9)
+2.69 (2)
+0.89 (5)
+0.81 (8)
+0.80 (8)
+85.65 (8)
+6.758
+byti.shsy
+2.96 (12)
+3.15 (10)
+2.18 (10)
+2.44 (9)
+0.82 (6)
+12.09 (7)
+3.28 (5)
+3.27 (12)
+0.88 (7)
+0.82 (6)
+0.82 (5)
+86.46 (6)
+7.616
+Lam-Fung
+2.97 (11)
+2.95 (12)
+2.11 (15)
+2.43 (10)
+0.80 (9)
+11.37 (9)
+3.32 (7)
+2.84 (6)
+0.86 (10)
+0.79 (9)
+0.80 (8)
+84.93 (10)
+9.842
+urgent
+2.94 (13)
+2.89 (13)
+2.11 (15)
+2.43 (10)
+0.80 (9)
+11.29 (10)
+3.32 (7)
+2.85 (7)
+0.86 (10)
+0.79 (9)
+0.80 (8)
+84.96 (9)
+10.066
+cobalamin
+3.11 (3)
+2.70 (17)
+2.15 (11)
+2.22 (14)
+0.71 (16)
+6.22 (16)
+3.44 (10)
+2.72 (3)
+0.87 (9)
+0.79 (9)
+0.78 (12)
+83.73 (11)
+10.658
+alindborg
+3.28 (1)
+3.96 (2)
+2.49 (2)
+1.99 (15)
+0.76 (13)
+7.49 (15)
+4.51 (15)
+3.73 (14)
+0.84 (14)
+0.77 (14)
+0.77 (13)
+81.70 (14)
+10.891
+SQuad
+2.91 (16)
+2.89 (13)
+2.06 (17)
+2.35 (12)
+0.80 (9)
+10.93 (11)
+3.57 (11)
+3.03 (9)
+0.86 (10)
+0.79 (9)
+0.79 (11)
+83.71 (12)
+11.683
+dy
+2.93 (15)
+2.97 (11)
+2.14 (13)
+2.56 (8)
+0.78 (12)
+9.58 (12)
+4.40 (13)
+3.28 (13)
+0.85 (13)
+0.78 (13)
+0.77 (13)
+83.20 (13)
+12.650
+wataru9871
+3.18 (2)
+4.01 (1)
+2.78 (1)
+1.36 (19)
+0.56 (19)
+-13.88 (19)
+11.25 (19)
+7.98 (19)
+0.82 (17)
+0.73 (17)
+0.51 (19)
+79.70 (18)
+13.958
+IASP_Q
+2.94 (13)
+2.77 (16)
+2.14 (13)
+2.25 (13)
+0.76 (13)
+6.00 (17)
+5.21 (16)
+4.31 (15)
+0.83 (15)
+0.74 (15)
+0.69 (16)
+80.03 (17)
+15.075
+hanhw96
+2.63 (18)
+2.42 (18)
+1.87 (18)
+1.91 (17)
+0.72 (15)
+8.28 (13)
+4.41 (14)
+4.89 (16)
+0.83 (15)
+0.74 (15)
+0.70 (15)
+81.66 (15)
+15.750
+SEES
+2.88 (17)
+2.80 (15)
+2.15 (11)
+1.99 (15)
+0.68 (17)
+8.07 (14)
+5.78 (17)
+6.59 (18)
+0.79 (18)
+0.66 (18)
+0.54 (18)
+71.74 (19)
+16.758
+noisy
+1.84 (19)
+1.69 (19)
+1.56 (19)
+1.37 (18)
+0.61 (18)
+2.53 (18)
+7.92 (18)
+5.51 (17)
+0.75 (19)
+0.62 (19)
+0.63 (17)
+81.29 (16)
+18.075
+Table 10
+:
+Zero-shot TTS evaluation after training data cleaning using our USE model on unseen languages. We report the 95% confidence intervals based on standard errors calculated from 10 independent runs per dataset.
+Language
+Context Audio
+Train Audio
+CER (%)
+WER (%)
+SpkSim
+FCD
+Dutch
+original
+original
+14.28
+±
+\pm
+0.98
+19.60
+±
+\pm
+0.76
+0.6064
+±
+\pm
+0.0080
+0.2444
+±
+\pm
+0.0155
+enhanced
+original
+12.93
+±
+\pm
+0.48
+19.21
+±
+\pm
+0.63
+0.6643
+±
+\pm
+0.0096
+0.2282
+±
+\pm
+0.0135
+original
+enhanced
+8.24
+±
+\pm
+0.55
+14.31
+±
+\pm
+0.69
+0.6359
+±
+\pm
+0.0050
+0.1761
+±
+\pm
+0.0070
+enhanced
+enhanced
+7.75
+±
+\pm
+0.83
+13.66
+±
+\pm
+0.71
+0.6603
+±
+\pm
+0.0047
+0.1837
+±
+\pm
+0.0086
+Italian
+original
+original
+11.13
+±
+\pm
+0.94
+19.20
+±
+\pm
+0.94
+0.6004
+±
+\pm
+0.0034
+0.1846
+±
+\pm
+0.0042
+enhanced
+original
+12.18
+±
+\pm
+0.52
+20.41
+±
+\pm
+0.75
+0.6135
+±
+\pm
+0.0047
+0.1321
+±
+\pm
+0.0046
+original
+enhanced
+10.56
+±
+\pm
+0.45
+18.91
+±
+\pm
+0.43
+0.5869
+±
+\pm
+0.0054
+0.2045
+±
+\pm
+0.0041
+enhanced
+enhanced
+8.30
+±
+\pm
+0.52
+15.98
+±
+\pm
+0.53
+0.6006
+±
+\pm
+0.0032
+0.1373
+±
+\pm
+0.0021
+NeurIPS Paper Checklist
+1.
+Claims
+Question: Do the main claims made in the abstract and introduction accurately reflect the paper’s contributions and scope?
+Answer:
+[Yes]
+Justification: We have clearly described contributions and scope in the abstract and introduction.
+Guidelines:
+•
+The answer
+[N/A]
+means that the abstract and introduction do not include the claims made in the paper.
+•
+The abstract and/or introduction should clearly state the claims made, including the contributions made in the paper and important assumptions and limitations. A
+[No]
+or
+[N/A]
+answer to this question will not be perceived well by the reviewers.
+•
+The claims made should match theoretical and experimental results, and reflect how much the results can be expected to generalize to other settings.
+•
+It is fine to include aspirational goals as motivation as long as it is clear that these goals are not attained by the paper.
+2.
+Limitations
+Question: Does the paper discuss the limitations of the work performed by the authors?
+Answer:
+[Yes]
+Justification: We provide the limitations in the Appendix (see the “Limitations” section).
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper has no limitation while the answer
+[No]
+means that the paper has limitations, but those are not discussed in the paper.
+•
+The authors are encouraged to create a separate “Limitations” section in their paper.
+•
+The paper should point out any strong assumptions and how robust the results are to violations of these assumptions (e.g., independence assumptions, noiseless settings, model well-specification, asymptotic approximations only holding locally). The authors should reflect on how these assumptions might be violated in practice and what the implications would be.
+•
+The authors should reflect on the scope of the claims made, e.g., if the approach was only tested on a few datasets or with a few runs. In general, empirical results often depend on implicit assumptions, which should be articulated.
+•
+The authors should reflect on the factors that influence the performance of the approach. For example, a facial recognition algorithm may perform poorly when image resolution is low or images are taken in low lighting. Or a speech-to-text system might not be used reliably to provide closed captions for online lectures because it fails to handle technical jargon.
+•
+The authors should discuss the computational efficiency of the proposed algorithms and how they scale with dataset size.
+•
+If applicable, the authors should discuss possible limitations of their approach to address problems of privacy and fairness.
+•
+While the authors might fear that complete honesty about limitations might be used by reviewers as grounds for rejection, a worse outcome might be that reviewers discover limitations that aren’t acknowledged in the paper. The authors should use their best judgment and recognize that individual actions in favor of transparency play an important role in developing norms that preserve the integrity of the community. Reviewers will be specifically instructed to not penalize honesty concerning limitations.
+3.
+Theory assumptions and proofs
+Question: For each theoretical result, does the paper provide the full set of assumptions and a complete (and correct) proof?
+Answer:
+[Yes]
+Justification:
+Formal proofs are provided in Appendix A1.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not include theoretical results.
+•
+All the theorems, formulas, and proofs in the paper should be numbered and cross-referenced.
+•
+All assumptions should be clearly stated or referenced in the statement of any theorems.
+•
+The proofs can either appear in the main paper or the supplemental material, but if they appear in the supplemental material, the authors are encouraged to provide a short proof sketch to provide intuition.
+•
+Inversely, any informal proof provided in the core of the paper should be complemented by formal proofs provided in appendix or supplemental material.
+•
+Theorems and Lemmas that the proof relies upon should be properly referenced.
+4.
+Experimental result reproducibility
+Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
+Answer:
+[Yes]
+Justification:
+We have described the model architecture and experiment setting carefully.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not include experiments.
+•
+If the paper includes experiments, a
+[No]
+answer to this question will not be perceived well by the reviewers: Making the paper reproducible is important, regardless of whether the code and data are provided or not.
+•
+If the contribution is a dataset and/or model, the authors should describe the steps taken to make their results reproducible or verifiable.
+•
+Depending on the contribution, reproducibility can be accomplished in various ways. For example, if the contribution is a novel architecture, describing the architecture fully might suffice, or if the contribution is a specific model and empirical evaluation, it may be necessary to either make it possible for others to replicate the model with the same dataset, or provide access to the model. In general. releasing code and data is often one good way to accomplish this, but reproducibility can also be provided via detailed instructions for how to replicate the results, access to a hosted model (e.g., in the case of a large language model), releasing of a model checkpoint, or other means that are appropriate to the research performed.
+•
+While NeurIPS does not require releasing code, the conference does require all submissions to provide some reasonable avenue for reproducibility, which may depend on the nature of the contribution. For example
+(a)
+If the contribution is primarily a new algorithm, the paper should make it clear how to reproduce that algorithm.
+(b)
+If the contribution is primarily a new model architecture, the paper should describe the architecture clearly and fully.
+(c)
+If the contribution is a new model (e.g., a large language model), then there should either be a way to access this model for reproducing the results or a way to reproduce the model (e.g., with an open-source dataset or instructions for how to construct the dataset).
+(d)
+We recognize that reproducibility may be tricky in some cases, in which case authors are welcome to describe the particular way they provide for reproducibility. In the case of closed-source models, it may be that access to the model is limited in some way (e.g., to registered users), but it should be possible for other researchers to have some path to reproducing or verifying the results.
+5.
+Open access to data and code
+Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
+Answer:
+[No]
+Justification: We will release the code and model after the paper has been accepted.
+Guidelines:
+•
+The answer
+[N/A]
+means that paper does not include experiments requiring code.
+•
+Please see the NeurIPS code and data submission guidelines (
+https://neurips.cc/public/guides/CodeSubmissionPolicy
+) for more details.
+•
+While we encourage the release of code and data, we understand that this might not be possible, so
+[No]
+is an acceptable answer. Papers cannot be rejected simply for not including code, unless this is central to the contribution (e.g., for a new open-source benchmark).
+•
+The instructions should contain the exact command and environment needed to run to reproduce the results. See the NeurIPS code and data submission guidelines (
+https://neurips.cc/public/guides/CodeSubmissionPolicy
+) for more details.
+•
+The authors should provide instructions on data access and preparation, including how to access the raw data, preprocessed data, intermediate data, and generated data, etc.
+•
+The authors should provide scripts to reproduce all experimental results for the new proposed method and baselines. If only a subset of experiments are reproducible, they should state which ones are omitted from the script and why.
+•
+At submission time, to preserve anonymity, the authors should release anonymized versions (if applicable).
+•
+Providing as much information as possible in supplemental material (appended to the paper) is recommended, but including URLs to data and code is permitted.
+6.
+Experimental setting/details
+Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
+Answer:
+[Yes]
+Justification: The training and test details are provided in the Experiments section.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not include experiments.
+•
+The experimental setting should be presented in the core of the paper to a level of detail that is necessary to appreciate the results and make sense of them.
+•
+The full details can be provided either with the code, in appendix, or as supplemental material.
+7.
+Experiment statistical significance
+Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+Answer:
+[Yes]
+Justification: We report 95% confidence
+intervals for the TTS results and the subjective listening tests. Due to the high computational cost, we do not report statistical significance for the general USE results.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not include experiments.
+•
+The authors should answer
+[Yes]
+if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+•
+The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+•
+The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+•
+The assumptions made should be given (e.g., Normally distributed errors).
+•
+It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+•
+It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis of Normality of errors is not verified.
+•
+For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+•
+If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text.
+8.
+Experiments compute resources
+Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
+Answer:
+[Yes]
+Justification: We provide our computing requirements in the experiment section.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not include experiments.
+•
+The paper should indicate the type of compute workers CPU or GPU, internal cluster, or cloud provider, including relevant memory and storage.
+•
+The paper should provide the amount of compute required for each of the individual experimental runs as well as estimate the total compute.
+•
+The paper should disclose whether the full research project required more compute than the experiments reported in the paper (e.g., preliminary or failed experiments that didn’t make it into the paper).
+9.
+Code of ethics
+Question: Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics
+https://neurips.cc/public/EthicsGuidelines
+?
+Answer:
+[Yes]
+Justification: We follow NeurIPS Code of Ethics to keep anonymity, etc.
+Guidelines:
+•
+The answer
+[N/A]
+means that the authors have not reviewed the NeurIPS Code of Ethics.
+•
+If the authors answer
+[No]
+, they should explain the special circumstances that require a deviation from the Code of Ethics.
+•
+The authors should make sure to preserve anonymity (e.g., if there is a special consideration due to laws or regulations in their jurisdiction).
+10.
+Broader impacts
+Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
+Answer:
+[N/A]
+Justification: For USE, the primary application is to improve communication with limited or no societal impact.
+Guidelines:
+•
+The answer
+[N/A]
+means that there is no societal impact of the work performed.
+•
+If the authors answer
+[N/A]
+or
+[No]
+, they should explain why their work has no societal impact or why the paper does not address societal impact.
+•
+Examples of negative societal impacts include potential malicious or unintended uses (e.g., disinformation, generating fake profiles, surveillance), fairness considerations (e.g., deployment of technologies that could make decisions that unfairly impact specific groups), privacy considerations, and security considerations.
+•
+The conference expects that many papers will be foundational research and not tied to particular applications, let alone deployments. However, if there is a direct path to any negative applications, the authors should point it out. For example, it is legitimate to point out that an improvement in the quality of generative models could be used to generate Deepfakes for disinformation. On the other hand, it is not needed to point out that a generic algorithm for optimizing neural networks could enable people to train models that generate Deepfakes faster.
+•
+The authors should consider possible harms that could arise when the technology is being used as intended and functioning correctly, harms that could arise when the technology is being used as intended but gives incorrect results, and harms following from (intentional or unintentional) misuse of the technology.
+•
+If there are negative societal impacts, the authors could also discuss possible mitigation strategies (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of ML).
+11.
+Safeguards
+Question: Does the paper describe safeguards that have been put in place for responsible release of data or models that have a high risk for misuse (e.g., pre-trained language models, image generators, or scraped datasets)?
+Answer:
+[N/A]
+Justification: We don’t think our model needs safeguards to prevent misuse.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper poses no such risks.
+•
+Released models that have a high risk for misuse or dual-use should be released with necessary safeguards to allow for controlled use of the model, for example by requiring that users adhere to usage guidelines or restrictions to access the model or implementing safety filters.
+•
+Datasets that have been scraped from the Internet could pose safety risks. The authors should describe how they avoided releasing unsafe images.
+•
+We recognize that providing effective safeguards is challenging, and many papers do not require this, but we encourage authors to take this into account and make a best faith effort.
+12.
+Licenses for existing assets
+Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
+Answer:
+[Yes]
+Justification: The related information is explicitly mentioned and properly cited.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not use existing assets.
+•
+The authors should cite the original paper that produced the code package or dataset.
+•
+The authors should state which version of the asset is used and, if possible, include a URL.
+•
+The name of the license (e.g., CC-BY 4.0) should be included for each asset.
+•
+For scraped data from a particular source (e.g., website), the copyright and terms of service of that source should be provided.
+•
+If assets are released, the license, copyright information, and terms of use in the package should be provided. For popular datasets,
+paperswithcode.com/datasets
+has curated licenses for some datasets. Their licensing guide can help determine the license of a dataset.
+•
+For existing datasets that are re-packaged, both the original license and the license of the derived asset (if it has changed) should be provided.
+•
+If this information is not available online, the authors are encouraged to reach out to the asset’s creators.
+13.
+New assets
+Question: Are new assets introduced in the paper well documented and is the documentation provided alongside the assets?
+Answer:
+[Yes]
+Justification: All the audio demos provided on the demo page are properly cited.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not release new assets.
+•
+Researchers should communicate the details of the dataset/code/model as part of their submissions via structured templates. This includes details about training, license, limitations, etc.
+•
+The paper should discuss whether and how consent was obtained from people whose asset is used.
+•
+At submission time, remember to anonymize your assets (if applicable). You can either create an anonymized URL or include an anonymized zip file.
+14.
+Crowdsourcing and research with human subjects
+Question: For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots, if applicable, as well as details about compensation (if any)?
+Answer:
+[Yes]
+Justification:
+This information is provided in the Appendix related to the subjective test.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not involve crowdsourcing nor research with human subjects.
+•
+Including this information in the supplemental material is fine, but if the main contribution of the paper involves human subjects, then as much detail as possible should be included in the main paper.
+•
+According to the NeurIPS Code of Ethics, workers involved in data collection, curation, or other labor should be paid at least the minimum wage in the country of the data collector.
+15.
+Institutional review board (IRB) approvals or equivalent for research with human subjects
+Question: Does the paper describe potential risks incurred by study participants, whether such risks were disclosed to the subjects, and whether Institutional Review Board (IRB) approvals (or an equivalent approval/review based on the requirements of your country or institution) were obtained?
+Answer:
+[Yes]
+Justification: It is not required to get an IRB for our subjective test.
+Guidelines:
+•
+The answer
+[N/A]
+means that the paper does not involve crowdsourcing nor research with human subjects.
+•
+Depending on the country in which research is conducted, IRB approval (or equivalent) may be required for any human subjects research. If you obtained IRB approval, you should clearly state this in the paper.
+•
+We recognize that the procedures for this may vary significantly between institutions and locations, and we expect authors to adhere to the NeurIPS Code of Ethics and the guidelines for their institution.
+•
+For initial submissions, do not include any information that would break anonymity (if applicable), such as the institution conducting the review.
+16.
+Declaration of LLM usage
+Question: Does the paper describe the usage of LLMs if it is an important, original, or non-standard component of the core methods in this research? Note that if the LLM is used only for writing, editing, or formatting purposes and does
+not
+impact the core methodology, scientific rigor, or originality of the research, declaration is not required.
+Answer:
+[N/A]
+Justification: The core method development in this research does not involve LLMs as any important components.
+Guidelines:
+•
+The answer
+[N/A]
+means that the core method development in this research does not involve LLMs as any important, original, or non-standard components.
+•
+Please refer to our LLM policy in the NeurIPS handbook for what should or should not be described.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from
+        our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+(opens in new tab)
+Major funding support from

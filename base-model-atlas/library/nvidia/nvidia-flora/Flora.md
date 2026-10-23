@@ -3,7 +3,7 @@ title: "Flora — 机器人数据的时间、语义与奖励三层标注"
 type: model-note
 tags: [model, nvidia, agent-training, reward-model]
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-23
 url: "https://huggingface.co/nvidia/Flora-Rewarder"
 ---
 
@@ -61,6 +61,8 @@ WGO有100episodes（HomER25、DROID50、Galaxea25）、743gold segments。训练
 ## 许可、复现与研究判断
 
 NVIDIA OneWay **Noncommercial**用于研究开发；基座Apache2.0不覆盖这个后训练权重的限制。H100测试不等于吞吐或显存保证。原生推理混合BF16与FP32 Gated DeltaNet；TempSeg另有FP32 LoRA，不能把所有参数无条件cast成BF16。
+
+10月23日复核：三卡 frontmatter 新增 `license: other`、许可名称与仓库 `LICENSE.pdf` 链接，正文的非商业许可口径没有变化。这是文档元数据补齐，不作为新权重、能力升级或新发布日期。按当前不下载 PDF 的要求，仅保留官方许可链接，未宣称已经阅读该 PDF 或许可发生变更。
 
 > [!insight] 验证器应独立于被训练的数据引擎
 > 同一VLM既生成描述又打分容易形成自我确认。可把人工边界、物体状态或独立传感器作为外部检验，分别量化分段误差、语义误标和reward calibration，再追踪它们怎样影响SFT/RL。不可只保留高reward轨迹后宣称真实成功率提升。
