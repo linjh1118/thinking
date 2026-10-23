@@ -11,6 +11,7 @@ language:
 base_model:
 - ibm-granite/granite-4.0-1b-base
 library_name: transformers
+pipeline_tag: automatic-speech-recognition
 ---
 # Granite-Speech-5.0-2B
 
@@ -256,6 +257,44 @@ chat_completion_with_audio = client.chat.completions.create(
 
 print(f"Audio Example - Question: {question}")
 print(f"Generated text: {chat_completion_with_audio.choices[0].message.content}")
+```
+
+### Usage with the hosted Inference Endpoint
+
+A [Hugging Face Inference Endpoint](https://huggingface.co/docs/inference-endpoints) serving this model with vLLM is available, so you can try it without any local setup. It exposes the OpenAI-compatible API, so the same request format as the vLLM online mode above applies. The endpoint scales to zero when idle, so the first request may take a few minutes while it starts up.
+
+```python
+import os
+import base64
+
+import requests
+from openai import OpenAI
+
+hf_token = os.environ["HF_TOKEN"]
+
+client = OpenAI(
+    base_url="https://6ada5c5e69a00298cd4768e9.endpoints.huggingface.cloud/v1",
+    api_key=hf_token,
+)
+
+# 16 kHz mono audio, up to ~2 minutes
+audio_url = "https://huggingface.co/ibm-granite/granite-speech-5.0-2b/resolve/main/multilingual_sample.wav"
+audio_base64 = base64.b64encode(requests.get(audio_url).content).decode("utf-8")
+
+question = "transcribe the speech with proper punctuation and capitalization."
+chat_completion = client.chat.completions.create(
+    model="ibm-granite/granite-speech-5.0-2b",
+    messages=[{
+        "role": "user",
+        "content": [
+            {"type": "text", "text": question},
+            {"type": "audio_url", "audio_url": {"url": f"data:audio/wav;base64,{audio_base64}"}},
+        ],
+    }],
+    temperature=0.0,
+    max_tokens=512,
+)
+print(chat_completion.choices[0].message.content)
 ```
 
 ### Usage with `llama.cpp`

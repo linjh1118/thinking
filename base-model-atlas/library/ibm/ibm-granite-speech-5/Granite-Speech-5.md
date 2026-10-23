@@ -68,3 +68,7 @@ TurboCTC原卡英文WER由5.78到5.51；当前多语言checkpoint的速度–质
 
 
 > 📊 相关可视化：[[granite_speech_5_poster_zh.html|中文Poster]]
+
+## 10月23日文档补充：托管推理不算新模型
+
+官方2B原卡新增 `automatic-speech-recognition` 标签与 Hosted Inference Endpoint 的 OpenAI-compatible 示例。端点闲置时缩容到零，首次请求可能等待数分钟；这属于服务冷启动，不可当模型稳定推理延迟。示例限制16kHz单声道、约2分钟音频，仍沿用vLLM请求格式。HF_TOKEN由使用者环境提供，本轮未调用收费端点或提交音频。该变化仅同步原卡与说明，**没有确认新权重或能力升级，不新增family、叶子或近30天发布行**。

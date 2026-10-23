@@ -1,0 +1,40 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://tencent.github.io/WeVisOne-VL/">打开官方原文 ↗</a> · <a href="official_website.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>WeVisOne-VL: Unified Visual Perception from Objects to Pixels WeVisOne -VL Demo Method Training Results Citation Star on GitHub WeChat Vision · Tencent Inc. 
+WeVisOne -VL 
+Unified Visual Perception from Objects to Pixels &gt; Tianming Liang * Junyi Pan * Yuxi Li * Canmiao Fu Zhipeng Huang Chong Sun † Chen Li ‡ Jing Lyu WeChat Vision, Tencent Inc. * Equal contribution † Project leader ‡ Corresponding author Paper Code 🤗 Weights (4B) 🤗 Weights (2B) Live Demo 
+One model, every granularity: from points and boxes to binary masks and continuous alpha mattes — and a confident None when the target isn&#x27;t there. Abstract 
+Fine-grained perception, reliably . 
+Existing vision-language models remain unreliable for fine-grained visual perception. We present WeVisOne-VL ( We Chat Vis ion all-in- One ), a VLM that unifies object-level and pixel-level
+        perception through structured next-token prediction . It supports object detection, referring localization,
+        counting, pointing, OCR, segmentation and matting — localizing at any user-specified granularity, from points and
+        boxes to masks and alpha mattes. 
+A lightweight 9.6M-parameter pixel decoder is plugged into the VLM through a special &lt;OBJ&gt; token to produce instance-level pixel outputs. Trained with a three-stage curriculum SFT followed by mixed-task RL on ~100M images,
+        WeVisOne-VL leads 30+ benchmarks across object- and pixel-level tasks while robustly rejecting queries for absent objects. Interactive 
+Watch tokens become geometry . 
+Real outputs from WeVisOne-VL-4B , replayed token by token. Every coordinate is a single vocabulary token &lt;0&gt; … &lt;1000&gt; ; every &lt;OBJ&gt; wakes up the pixel decoder. wevisone_vl · model.predict() Replay task prompt response ready Method 
+A VLM that speaks coordinates — and paints pixels. 
+Built on Qwen3-VL. No SAM, no external segmentation backbone — the pixel decoder reuses the VLM&#x27;s own multi-level ViT features. Click to enlarge 01 
+Visual Feature Adapter 
+Taps four levels of pre-merge Qwen3-VL ViT features , projects and refines them with depthwise-conv blocks into a shared pixel feature pyramid. 02 
+Box-guided Query Decoder 
+Each &lt;OBJ&gt; hidden state + a Fourier-encoded box prior becomes an instance query, refined by 6 deformable cross-attention blocks . 03 
+Instance-conditioned Dense Head 
+Dynamic kernels predict masks, then a coarse-to-fine cascade (S/4 → S/2 → S/1) recovers hair-level, full-resolution alpha mattes. 
+Coordinates are just tokens. 
+1,001 dedicated tokens &lt;0&gt; … &lt;1000&gt; encode normalized positions. A box costs exactly four tokens; a point costs two. Absent target? The model simply writes None . &lt;ref&gt;dog&lt;/ref&gt; &lt;box&gt; &lt;13&gt; &lt;274&gt; &lt;399&gt; &lt;949&gt; &lt;OBJ&gt; &lt;/box&gt; dog 0 500 1000 Data &amp; Training 
+~100M images. A self-improving data engine. 
+A knowledge graph of categories and referring expressions drives targeted acquisition; complementary localization experts propose, a VLM verifies, SAM2 extends to masks, and a dedicated annotator produces continuous alpha. Model errors feed back into the next round. Click to enlarge SFT · Stage 1 Task alignment 
+Follow instructions, emit well-formed structured outputs. 90.2M samples SFT · Stage 2 High-res &amp; dense 
+Boost recall of small, crowded objects. 40.5M samples SFT · Stage 3 Pixel-level 
+Warm-up the decoder, then extend to masks &amp; mattes. 41.8M samples RL · GRPO Mixed-task RL 
+Uncertainty-selected samples; sharper boxes, fewer hallucinations. 178K samples Results 
+Leading 30+ benchmarks , from objects to pixels. 
+Compared with Qwen3-VL / Qwen3.5, Rex-Omni, LocateAnything, specialist detectors, OCR systems and segmentation / matting models. WeVisOne-VL (ours) Grounding VLMs General VLMs Specialists Citation 
+BibTeX bibtex Copy @article{liang2026wevisone,
+  title   = {WeVisOne-VL: Unified Visual Perception from Objects to Pixels},
+  author  = {Liang, Tianming and Pan, Junyi and Li, Yuxi and Fu, Canmiao and
+             Huang, Zhipeng and Sun, Chong and Li, Chen and Lyu, Jing},
+  journal = {arXiv preprint arXiv:2610.31329},
+  year    = {2026}
+} WeVisOne-VL 
+© 2026 WeChat Vision, Tencent Inc. Code released under the Apache License 2.0. 
+Intended for research in visual grounding, OCR, segmentation and matting. Not intended for identifying individuals. ×</pre></body></html>
