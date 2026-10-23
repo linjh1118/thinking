@@ -7,16 +7,16 @@ url: "https://www.minimax.io/blog/minimax-m31f"
 tags: [base-model, minimax, agent-training, coding, inference-efficiency]
 status: read
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-23
 ---
 
 # MiniMax M3.1 Flash：更值得研究的是每个成功任务的成本
 
 > [!tldr] 我的判断
-> M3.1 Flash 的主要价值不是“所有榜单第一”，而是把多步工具、软件开发和计算机任务推到更低成本区间。官方总表给 Automation-Bench 62.2、DeepSWE 73.7、ALE 29.6；它仍落后于若干模型的代码与通用能力成绩。应把推理 effort、成功率、实际账单和工具成本一起验收，而不是把 200+ TPS 当成所有 Agent 任务的端到端加速。
+> M3.1 Flash 的主要价值不是“所有榜单第一”，而是把多步工具、软件开发和计算机任务推到更低成本区间。10/23 巡检新增读到官方 HF 模型卡与公开权重文件：约 428B 总参数、23B 激活，全文稀疏注意力、量化感知训练和 DSpark；这些已能替换旧笔记的架构留白。Automation 博客总表 62.2、HF 表 62.8 仍应并列，DeepSWE 73.7、ALE 29.6 不变。推理 effort、成功率、账单和工具成本一起验收，不能把 200+ TPS 当整链加速。
 
 > [!warning] 资料充分度：训练精读未达到完整技术报告标准
-> **因为当前已读原始资料主要是发布 Tech Blog 和四张官方图，缺少独立技术报告、当前 GA 模型卡、完整架构与训练 recipe，本笔记的训练机制分析达不到 GLM-5.3-Flash / Kimi-K3 完整报告精读的深度。** 不补写未经披露的参数量、专家数、训练数据配比、RL 算法或组件消融。官网明确权重以后开放、Pro 以后到来；本次没有下载 PDF、权重，也没有运行模型或远程代码。四图均是原站原图，已离线保存，不是生成的示意图。
+> **现在已有 GA 原卡、配置、chat template、DSpark 配置和部署说明，但缺少独立 M3.1 训练报告、完整数据混合、RL recipe 和关键消融，本笔记仍达不到 GLM-5.3-Flash / Kimi-K3 完整报告精读的训练深度。** 原卡链接的 2606.13392 是《MiniMax Sparse Attention》，可以解释背景机制，不冒充 M3.1 全部后训练的独立报告。旧“无 HF 原卡、权重尚未开放”已纠正；本轮只做文本/配置归档与 HTTP HEAD 可达性核验，不下载 PDF 或权重、不执行远程代码。四张原图来自发布博客。
 
 ## 日期、Preview 与主线归属
 
@@ -26,11 +26,42 @@ updated: 2026-10-19
 
 M3.1 Flash 是 MiniMax 通用基模主线的发布阶段，不因 Flash 命名就降为专项支线。官网提到 Pro 后续推出，不代表现在已经发布，不能预建 Pro 叶子。匿名版本 Space Bunny 的“处理超过 200T tokens”描述的是运行使用量，**不是训练 token 数**。
 
+**10/23 可见性更新，不伪造首发日：** 本次 HF 完整目录发现 `MiniMaxAI/MiniMax-M3.1-Flash`；原卡可读，仓库 API 标 `gated=false / disabled=false`，权重索引可见，代表性主权重及 draft 文件 HEAD 核验见 manifest。10/23 是本轮确认可见的日期，README 没有写出独立的权重首次开放日，因此不把仓库 createdAt/lastModified 当发布日，不在近 30 天表里再造一个 10/23 正代。维持 10/19 正式发布节点，Preview 最早日和权重实际开放日分别待核。
+
 ## 为什么不是只看一个综合分
 
 Agent 的一次任务包含多轮生成、工具执行、文件操作、重试与验证。token 单价低并不必然让任务总成本低：更多推理 token、失败重试或昂贵工具都可能抵消优势。M3.1 Flash 的发布主张同时涉及能力、稀疏推理、吞吐与账单，应拆开核验。
 
-官方文字只披露“更激进的稀疏性”，没有给出当前 GA 的专家路由、稀疏模式、激活参数、稀疏率、训练损失和硬件 profile。不能从这个词直接推导成某种 MoE / Sparse Attention 的完整实现，也不能把旧 Preview 介绍中的规格无条件套给 GA。
+10/19 博客只披露“更激进的稀疏性”；现在新增原卡和配置能明确区分三种效率机制：**注意力只读部分历史块、MoE 每 token 只激活部分专家、draft 先提议再验证 token**。它们分别影响长上下文读取、FFN 计算与解码，不能把三者的收益简单相乘，也不能把 23B 激活量当成完整模型的显存占用。
+
+## 架构补充：本次 HF 原卡与配置能支撑的部分
+
+| 层面 | 已读一手证据 | 解读与边界 |
+|---|---|---|
+| 参数/接口 | 卡写约 428B total、23B activated；文本/图像/视频输入，文本输出 | 原生多模态通用 family，不另外造视觉支线 |
+| 文本主干 | 60 层、hidden 6144；64 query heads、4 KV heads、head dim 128 | 配置不等于完整训练 recipe，不能仅凭参数算术保证吞吐 |
+| MoE | 128 routed experts、每 token 4 个，另 1 shared；前 3 层 `moe_layer_freq=0`，后续为 1 | **前 3 层非 MoE 不等于前 3 层非稀疏注意力**，这是两套开关 |
+| 注意力 | 卡说原先前 3 层 full attention 改为 sparse；配置 60 个 `sparse_attention_freq` 均为 1 | MSA throughout 有当前配置支撑；不是从旧 Preview 猜测 |
+| 稀疏索引 | topk blocks 16、block size 128、4 index heads、index dim 128，另 local block | 不把 16×128 简写为全部可见上下文上限；具体索引/局部块组合依赖实现 |
+| 长上下文 | 卡写 up to 1,000,000；配置 max positions 1,048,576 | 规格/位置表上限不同口径；可用长度取决于显存、图像 tokens 与 serving |
+| 视觉 | 32 层、hidden 1280、patch 14；动态分辨率与 patch merge | 配置中的 image size、grid 与视频分段值不是任意图片/视频质量保证 |
+| 量化 | 主配置 `mxfp8`、activation dynamic；MoE 算法 `NVFP4`、group size 16 | 路由器、embedding、vision/projector 等有豁免列表，不能称“全模型所有张量都 FP4” |
+
+### QAT：能力与运行时格式是两件事
+
+新卡明确 routed MoE experts 和 attention paths 在训练中量化；配置进一步给出上述混合格式。因此已经能写“有 QAT”，但量化损失、校准数据、各模块精度消融以及不同硬件 kernel 的行为仍未披露完整。HF 表也明确按官方权重报告，不能把任意第三方量化的结果默认视为等价。
+
+### DSpark：发布了 draft，不代表自动拿到固定加速比
+
+卡写 DSpark 替换早期类 EAGLE 的 MTP，并随发布带 draft head。独立配置是 **5 层 draft**、block size 7、target layer IDs `[3,17,31,45,59]`、Markov rank 256；`use_mtp=false`、`num_mtp_modules=0`，与旧 MTP 方案分开。draft 的 sliding window 4096 不应误写为目标模型只有 4096 上下文。
+
+这里的直觉是：让较小组件提出候选，再由目标模型验证。实际加速还依赖接受率、batch、长上下文、采样与兼容实现；block size 7 **不等于每次固定接受 7 token，更不是 7 倍提速**。当前没有独立 DSpark 延迟/接受率曲线，不把部署配置写成已实测性能。
+
+部署卡推荐 SGLang、vLLM、TokenSpeed，另列 FlagOS 多芯片入口；同时注明 Transformers 等集成仍在进行。`library_name: transformers` 或配置中的版本号不能代替“标准 Transformers 已完整支持”的验证。生成配置建议 temperature 1.0 / top_p .95，chat template 接受 low/medium/high/xhigh/max；性能比较要记录实际模板与 effort。归档源码未执行，不提供未经测试的本机一键运行承诺。
+
+模板还有可直接影响 Agent 数据构造的契约：`root` 映射到高优先级 system，而输入的 system/developer 映射到 developer；不能把别的模型的 role 规则原样套用。tool arguments 递归转为 XML，mapping 中的 None 字段被省略，**缺字段与显式 null 不总等价**。effort 优先读 `reasoning_effort`，缺失时可读 `effort`；回放轨迹还需核对 reasoning 与工具响应的序列化。它们是已读模板的格式事实，不是安全隔离或任务成功保证。
+
+FlagOS 文档进一步说明九家芯片版本由原始 QAT NVFP4 **转换/重新量化为 W8A8**。这些是部署衍生格式，不是原始训练全部改成 W8A8，也不拆成九个新正代。文中的 T-Head TP=8 是该示例配置，不推广成所有芯片统一八卡；跨芯片吞吐、质量和 DSpark 支持仍须逐平台验证。
 
 ## 官方全表：优势、弱项与空白一起读
 
@@ -40,7 +71,7 @@ Agent 的一次任务包含多轮生成、工具执行、文件操作、重试�
 
 | 任务面 | Benchmark / 版本 | M3.1 Flash | 必须保留的解释 |
 |---|---|---:|---|
-| CoWork | Automation-Bench v1.0.6 | 62.2 | 600 个公开任务；与成本图 max 62.8 不混为同一运行 |
+| CoWork | Automation-Bench v1.0.6 | 博客 62.2 / HF 62.8 | 600 个公开任务；保留两份官方来源差异，不声称权重升分 |
 | CoWork | BankerToolBench | 76.2 | OpenCode 1.17.18；MiniMax-M2.7 作 judge |
 | CoWork | GDP.pdf AA | 20.8 | 来自 Artificial Analysis；低于图中 GPT-5.6 Sol 的 27.2 |
 | CoWork | Terminal-Bench 4.0 | 38.1 | Codex 0.149.1；低于 V4.1 Flash-1017 的 42.3 |
@@ -66,7 +97,7 @@ OSWorld 的脚注明确：通常取各模型发布时最高成绩，但 DS-V4.1 
 
 *图 2｜官方原图。横轴为每任务美元成本、对数刻度；公开模型数据截至 10 月 18 日，harness 为 Claude Code。DeepSeek-1017 使用特定 peak rates，其余模型按官方价格，不能外推为当前所有时段账单。*
 
-Automation 成本图中 effort 从 low→medium→high→xhigh→max 的 M3.1 分数分别为 **52.8 /57.7 /59.2 /61.2 /62.8%**。同一模型的额外预算可以带来明显变化，但 **总表 62.2 与图中 max 62.8 不一致**；正文没有给出足够运行细节来解释差异，应分开引用，不挑高者覆盖低者。图内未逐点给精确美元值，不从图片坐标猜造完整费用表。
+Automation 成本图中 effort 从 low→medium→high→xhigh→max 的 M3.1 分数分别为 **52.8 /57.7 /59.2 /61.2 /62.8%**。同一模型的额外预算可以带来明显变化，但 **博客总表 62.2 与图中 max 62.8 不一致；现在 HF 总表也写 62.8**。来源未充分解释这些运行是否完全相同，不能据此宣布一次新权重带来 +0.6 提升。图内未逐点给精确美元值，不从图片坐标猜造完整费用表。
 
 ![官方 DeepSWE 分数与单任务成本](src/assets/official_figure_3.png)
 
@@ -95,7 +126,9 @@ DeepSWE 曲线的高 effort 有收益，但发布图上 DeepSeek-1017 max 更高
 
 ## 读不到的训练部分，应明确留白
 
-这次 Tech Blog 可以支撑能力位置、价格与产品阶段判断，不能支撑完整训练机制复现。没有独立 GA 模型卡、具体训练 token、数据混合、RL reward/grader 方案、算法伪码、router/sparsity 消融或权重 checksum。当前官方 HF inventory 未出现 M3.1 对应公开仓库；官网明确未来开放权重，因此**不生成假的 HF Model Card 和 Tech Report 按钮**。
+这次原卡/配置补齐了参数、专家与稀疏结构、量化配置、draft 与运行时入口，旧“没有 GA 模型卡”的判断已失效。但它们仍不足以复现训练：具体训练 tokens、数据混合、RL reward/grader、QAT/DSpark 组件消融与统一硬件吞吐协议依然缺失。卡引用 MSA 报告可以列为背景报告，不假装已经有独立 M3.1 后训练报告。
+
+仓库使用自定义 **MiniMax Community License**，不写成 Apache/MIT 或无条件商业使用。完整条款归档于 `src/reference/LICENSE`；“权重能读”不等于无使用限制，实际使用前按具体 revision 核对条款及依赖。本轮未接受协议、申请授权或运行模型。
 
 Preview 相关产品页说明它早已可用，但不能单凭相似名字证明 GA 与 Preview 的参数、context、默认 reasoning effort 和 SDK 字段完全一致。上线前应以当前官方 API 文档与账号实测确认 model ID、输出上限、推理字段及错误行为。这里没有执行任何登录、付费调用或推理。
 
@@ -112,7 +145,9 @@ Preview 相关产品页说明它早已可用，但不能单凭相似名字证明
 
 - [Tech Blog｜M3.1 Flash 正式发布](https://www.minimax.io/blog/minimax-m31f)：本地 `src/official_release.html` 保留原始 HTML；`src/official_release.html.txt` 为静态正文。四张图片保存在 `src/assets/`，SHA256 见 `src/retrieval_manifest.json`。
 - [官方 M Plan](https://www.minimax.io/m-plan)：证明存在 Preview 产品阶段，不作为首次发布日期证据。
-- [官方 HF collections](https://huggingface.co/MiniMaxAI/collections)：本轮目录核查未见 M3.1 原卡；权重未来开放，不能把 M3 原卡冒充 M3.1。
+- 🤗 [HF Model Card｜M3.1 Flash](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash)：本地 `src/hf_model_card.md`；配置、DSpark、模板、许可证和芯片文档归档在 `src/reference/`。10/23 为本轮可见性确认日，非已核实首次开放日。
+- 📄 [Tech Report｜MiniMax Sparse Attention](https://arxiv.org/abs/2606.13392)：原卡直接链接的 MSA 背景报告，不当作 M3.1 独立后训练报告；不下载 PDF。
+- [官方 HF collections](https://huggingface.co/MiniMaxAI/collections)：本次已发现并归档当前官方原卡，不再保留“未见仓库”的旧状态。
 - [[Topics/13_base_model/MiniMax/2606_MiniMax_M3/MiniMax-M3-Frontier-Coding-1M-Context-Native-Multimodality|MiniMax M3]]：前代主线，架构与训练资料独立阅读，不直接迁移到 M3.1 GA。
 
 > 📊 相关可视化：[[Topics/13_base_model/MiniMax/261019_MiniMax_M3_1_Flash/minimax_m3_1_flash_poster_zh.html|MiniMax M3.1 Flash 中文 Poster]]

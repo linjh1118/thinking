@@ -1,0 +1,183 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://recipes.vllm.ai/MiniMaxAI/MiniMax-M3.1-Flash">打开官方原文 ↗</a> · <a href="vllm_recipe.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>MiniMaxAI/MiniMax-M3.1-Flash | vLLM Recipes / Recipes Browse Docs GitHub Providers Arcee AI Ernie (Baidu) BharatGen Black Forest Labs Boson AI Seed (ByteDance) DeepSeek Dots Fish Audio Google i ibm-granite IFM inclusionAI IndexTeam InternLM JetBrains Jina AI Lightricks Liquid AI LongCat (Meituan) Meta Muse (Meta) Microsoft MindLab Research MiniMax MiniMax-M3.1-Flash MiniMax-H3 MiniMax-M3 MiniMax-M2.7 MiniMax-M2.5 MiniMax-M2.1 MiniMax-M2 Mistral AI Moonshot AI NVIDIA OpenAI MiniCPM (OpenBMB) InternVL (OpenGVLab) OpenMOSS PaddlePaddle Preferred Networks Poolside Qwen R RecursiveSI Reflection AI Stability AI StepFun Hunyuan (Tencent) Thinking Machines Lab vLLM Semantic Router Wan (Alibaba) MiMo (Xiaomi) GLM (Z-AI) 
+MiniMaxAI / MiniMax-M3.1-Flash 
+MiniMax M3.1-Flash vision-language MoE (~428B total / 23B active) with MSA sparse attention throughout and a built-in DSpark draft; quantization-aware trained, MXFP8 dense layers and NVFP4 experts. Served TP4 on NVIDIA Blackwell or AMD MI355X (single node or prefill/decode disaggregated), and TP8 on NVIDIA Hopper. 
+MSA sparse attention, 1M context, DSpark speculative decoding built into the checkpoint View on HuggingFace moe 428B / 23B 1,048,576 ctx vLLM 0.33.0 + text multimodal Guide 
+Overview 
+MiniMax-M3.1-Flash is a
+vision-language MoE model from MiniMax that keeps
+the MoE architecture of MiniMax-M3 :
+about 428B total / 23B active parameters and a 1M-token context, with MSA
+sparse attention in every layer. 
+Quantization-aware training — the checkpoint stores MXFP8 dense layers
+and NVFP4 experts. 
+Built-in DSpark draft — the dspark/ directory of the checkpoint; --speculative-config needs no draft model path. 
+Native multimodal — image and video inputs. 
+Prerequisites 
+AMD: MI355X (gfx950), ROCm 7.2+, TP4. 
+NVIDIA Blackwell: GB200, GB300, B200 or B300, TP4; NVFP4 MoE runs
+natively on the FP4 tensor cores. 
+NVIDIA Hopper: H100 or H200, TP8 on a full node, with the FP8
+variant: FP8 KV and indexer caches, NVFP4 MoE on Marlin. 
+--block-size 128 is mandatory (MSA sparse/index cache). 
+Launching the Server 
+Single node (TP4, AMD MI355X) VLLM_ROCM_USE_AITER=1 VLLM_ROCM_USE_AITER_FUSION_SHARED_EXPERTS=1 \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;, &quot;indexer_decode_cp&quot;: true}&#x27; \
+  --quantization-config.moe mxfp8 \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;TRITON_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;}&#x27; \
+  --disable-hybrid-kv-cache-manager 
+--kv-cache-dtype nvfp4 and indexer_kv_dtype: nvfp4 store the KV cache
+and the sparse-attention indexer&#x27;s K cache in NVFP4. 
+indexer_decode_cp splits the indexer&#x27;s decode scoring across the TP ranks
+by context instead of by index head. 
+--quantization-config.moe mxfp8 re-quantizes the NVFP4 experts to MXFP8 at
+load for the AITER MoE. 
+Single node (TP4, NVIDIA GB200) VLLM_FLOAT32_MATMUL_PRECISION=high \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;, &quot;use_prefill_query_quantization&quot;: true}&#x27; \
+  --compilation-config &#x27;{&quot;cudagraph_mode&quot;: &quot;FULL_AND_PIECEWISE&quot;}&#x27; \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;FLASH_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;,&quot;rejection_sample_method&quot;:&quot;block&quot;}&#x27; \
+  --max-num-seqs 256 \
+  --disable-hybrid-kv-cache-manager 
+Blackwell runs the NVFP4 experts natively, so no --quantization-config.moe override is needed. 
+use_prefill_query_quantization quantizes the prefill query on the MSA
+indexer path (Q8KV4). 
+Single node (TP8, NVIDIA H100 / H200) vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  --tensor-parallel-size 8 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype fp8 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;fp8&quot;}&#x27; \
+  --compilation-config &#x27;{&quot;cudagraph_mode&quot;: &quot;FULL_AND_PIECEWISE&quot;}&#x27; \
+  --max-model-len 262144 \
+  --max-num-seqs 80 \
+  --limit-mm-per-prompt &#x27;{&quot;video&quot;: 0}&#x27; \
+  --gpu-memory-utilization 0.9 \
+  --no-enable-log-requests \
+  --disable-hybrid-kv-cache-manager \
+  --moe-backend marlin \
+  --enable-auto-tool-choice \
+  --tool-call-parser minimax_m3 
+Hopper has no FP4 tensor cores: the KV cache and the indexer K cache use
+FP8, and the NVFP4 experts run on the Marlin MoE kernel. 
+--limit-mm-per-prompt &#x27;{&quot;video&quot;: 0}&#x27; turns off video inputs; images
+still work. 
+DSpark speculative decoding is not enabled on Hopper. 
+Prefill/decode disaggregation (1P1D, TP4 + TP4, AMD MI355X) 
+Prefill node: VLLM_ROCM_USE_AITER=1 VLLM_ROCM_USE_AITER_FUSION_SHARED_EXPERTS=1 \
+VLLM_KV_CACHE_LAYOUT=BLHNC VLLM_NIXL_SIDE_CHANNEL_HOST=&lt;P_IP&gt; \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;}&#x27; \
+  --quantization-config.moe mxfp8 \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;TRITON_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;}&#x27; \
+  --disable-hybrid-kv-cache-manager \
+  --max-num-batched-tokens 32768 \
+  --port 8100 \
+  --kv-transfer-config &#x27;{&quot;kv_connector&quot;:&quot;MultiConnector&quot;,&quot;kv_role&quot;:&quot;kv_both&quot;,&quot;kv_connector_extra_config&quot;:{&quot;connectors&quot;:[
+    {&quot;kv_connector&quot;:&quot;NixlConnector&quot;,&quot;kv_role&quot;:&quot;kv_producer&quot;,&quot;kv_connector_extra_config&quot;:{&quot;num_threads&quot;:4}},
+    {&quot;kv_connector&quot;:&quot;SimpleCPUOffloadConnector&quot;,&quot;kv_role&quot;:&quot;kv_both&quot;,&quot;kv_connector_extra_config&quot;:{&quot;cpu_bytes_to_use_per_rank&quot;:601295421440,&quot;cpu_hugepage_block_size&quot;:&quot;1GB&quot;,&quot;lazy_offload&quot;:false}}]}}&#x27; 
+Decode node: VLLM_ROCM_USE_AITER=1 VLLM_ROCM_USE_AITER_FUSION_SHARED_EXPERTS=1 \
+VLLM_KV_CACHE_LAYOUT=BLHNC VLLM_NIXL_SIDE_CHANNEL_HOST=&lt;D_IP&gt; \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;, &quot;indexer_decode_cp&quot;: true}&#x27; \
+  --quantization-config.moe mxfp8 \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;TRITON_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;}&#x27; \
+  --disable-hybrid-kv-cache-manager \
+  --port 8200 \
+  --kv-transfer-config &#x27;{&quot;kv_connector&quot;:&quot;NixlConnector&quot;,&quot;kv_role&quot;:&quot;kv_consumer&quot;,&quot;kv_connector_extra_config&quot;:{&quot;num_threads&quot;:4}}&#x27; 
+
+&lt;P_IP&gt; and &lt;D_IP&gt; are each node&#x27;s own address, reachable from the
+other node (the NIXL side channel). 
+
+VLLM_KV_CACHE_LAYOUT=BLHNC goes on both nodes. It keeps all layers of a
+block contiguous, so NIXL reads one region per block instead of one per
+layer. 
+
+The prefill node never decodes, so it leaves indexer_decode_cp off. 
+
+The prefill node also offloads KV to host memory
+( SimpleCPUOffloadConnector ): 560 GiB per rank in 1 GiB HugeTLB pages, so
+2240 pages for the four ranks. Reserve them on the host before the start
+(and allow them in the container&#x27;s hugetlb limit), or the server fails at
+startup with Cannot map 560.00 GiB of 1024 MiB HugeTLB pages : echo 2240 | sudo tee /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages 
+Prefill/decode disaggregation (1P1D, TP4 + TP4, NVIDIA GB200) 
+The NVIDIA pair runs NVFP4 KV end to end over NIXL (kv_buffer_device cuda ); the prefill node skips CUDA graphs ( --enforce-eager ) and carries
+a 32768-token batch budget, the decode node runs FULL_DECODE_ONLY graphs. 
+Prefill node: VLLM_FLOAT32_MATMUL_PRECISION=high VLLM_NIXL_SIDE_CHANNEL_HOST=&lt;P_IP&gt; \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;}&#x27; \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;FLASH_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;,&quot;rejection_sample_method&quot;:&quot;block&quot;}&#x27; \
+  --max-num-seqs 16 \
+  --max-num-batched-tokens 32768 \
+  --gpu-memory-utilization 0.9 \
+  --enforce-eager \
+  --port 8100 \
+  --kv-transfer-config &#x27;{&quot;kv_connector&quot;:&quot;NixlConnector&quot;,&quot;kv_role&quot;:&quot;kv_producer&quot;,&quot;kv_load_failure_policy&quot;:&quot;fail&quot;,&quot;kv_buffer_device&quot;:&quot;cuda&quot;,&quot;kv_connector_extra_config&quot;:{&quot;enforce_handshake_compat&quot;:false,&quot;kv_lease_duration&quot;:120}}&#x27; 
+Decode node: VLLM_FLOAT32_MATMUL_PRECISION=high VLLM_NIXL_SIDE_CHANNEL_HOST=&lt;D_IP&gt; \
+vllm serve MiniMaxAI/MiniMax-M3.1-Flash \
+  -tp 4 \
+  --reasoning-parser minimax_m3 \
+  --block-size 128 \
+  --kv-cache-dtype nvfp4 \
+  --attention-config &#x27;{&quot;indexer_kv_dtype&quot;: &quot;nvfp4&quot;, &quot;use_prefill_query_quantization&quot;: true}&#x27; \
+  --compilation-config &#x27;{&quot;cudagraph_mode&quot;: &quot;FULL_DECODE_ONLY&quot;}&#x27; \
+  --speculative-config &#x27;{&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;attention_backend&quot;:&quot;FLASH_ATTN&quot;,&quot;kv_cache_dtype&quot;:&quot;fp8&quot;,&quot;draft_sample_method&quot;:&quot;probabilistic&quot;,&quot;rejection_sample_method&quot;:&quot;block&quot;}&#x27; \
+  --max-num-seqs 88 \
+  --max-num-batched-tokens 512 \
+  --gpu-memory-utilization 0.9 \
+  --disable-hybrid-kv-cache-manager \
+  --port 8200 \
+  --kv-transfer-config &#x27;{&quot;kv_connector&quot;:&quot;NixlConnector&quot;,&quot;kv_role&quot;:&quot;kv_consumer&quot;,&quot;kv_load_failure_policy&quot;:&quot;fail&quot;,&quot;kv_buffer_device&quot;:&quot;cuda&quot;,&quot;kv_connector_extra_config&quot;:{&quot;enforce_handshake_compat&quot;:false,&quot;kv_lease_duration&quot;:120}}&#x27; 
+For a quick test, put the toy NIXL proxy from the vLLM repository in front of
+the two nodes and send requests to port 8000: python tests/v1/kv_connector/nixl_integration/toy_proxy_server.py --port 8000 \
+  --prefiller-host &lt;P_IP&gt; --prefiller-port 8100 \
+  --decoder-host &lt;D_IP&gt; --decoder-port 8200 
+Client Usage 
+Recommended sampling parameters (from the model card): temperature = 1.0 , top_p = 0.95 . Set the reasoning effort per request with chat_template_kwargs: {&quot;reasoning_effort&quot;: &quot;&lt;level&gt;&quot;} : low , medium , high , xhigh or max . curl http://localhost:8000/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{
+    &quot;model&quot;: &quot;MiniMaxAI/MiniMax-M3.1-Flash&quot;,
+    &quot;temperature&quot;: 1.0,
+    &quot;top_p&quot;: 0.95,
+    &quot;messages&quot;: [
+      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain MSA sparse attention in 3 bullets.&quot;}
+    ]
+  }&#x27; 
+Benchmarking vllm bench serve \
+  --backend vllm \
+  --model MiniMaxAI/MiniMax-M3.1-Flash \
+  --endpoint /v1/completions \
+  --dataset-name random \
+  --random-input 8192 \
+  --random-output 1024 \
+  --max-concurrency 32 \
+  --num-prompts 320 
+Troubleshooting 
+--block-size mismatch. MSA&#x27;s sparse block size is 128; the vLLM KV
+cache block size must match (otherwise No common block size for 16 ). 
+Parsers. --tool-call-parser and --reasoning-parser both use minimax_m3 . 
+HugeTLB pages (PD prefill node). See the PD section above. 
+References 
+Model card 
+MiniMax-M3 recipe 
+MiniMax Updated 2026-10-23 Edit recipe vllm-project/vllm @ 0510bd6 Report issue Related: MiniMax-M3 GitHub Request a recipe Documentation Supported Models &amp; Hardware Install vLLM JSON API</pre></body></html>

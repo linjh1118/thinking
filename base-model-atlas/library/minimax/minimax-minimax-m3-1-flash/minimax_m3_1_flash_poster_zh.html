@@ -151,22 +151,22 @@ mjx-container svg, mjx-container svg * {
 <span style="color: #78716c;">源文档：</span>
 <a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FMiniMax%2F261019_MiniMax_M3_1_Flash%2FMiniMax-M3.1-Flash" style="text-decoration: none;">M3.1 Flash · 本地笔记</a>
    · 
-  <a href="https://www.minimax.io/blog/minimax-m31f" style="text-decoration: none;" target="_blank">📰 Tech Blog</a>
+  <a href="https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
 </div>
 </div>
 <!-- HEADER -->
 <div class="header">
 <div class="header-left">
-<span class="venue-pill">MiniMax · 2026-10-19 正式发布阶段 · 通用主线</span>
+<span class="venue-pill">MiniMax · 10/19正式阶段 · 10/23确认HF可见</span>
 <div class="zh-title">把 Agent 成功率、推理预算和任务成本一起读</div>
 <h1>MiniMax M3.1 Flash <span>Capability · Budget · Cost</span></h1>
-<div class="authors">官方 Tech Blog 与四张原图研读 · BrainHao · 2026-10-19</div>
+<div class="authors">官方 HF 原卡/配置 + Tech Blog 四张原图 · BrainHao · 10/23复核</div>
 </div>
 <div class="header-right">
-<div class="score-box"><div class="num">62.2</div><div class="sub">Automation<br/>总表</div></div>
-<div class="score-box"><div class="num">73.7</div><div class="sub">DeepSWE v1.1<br/>官方自报</div></div>
-<div class="score-box"><div class="num">170+</div><div class="sub">输出TPS P50<br/>非整链延迟</div></div>
-<div class="score-box"><div class="num">$0.60</div><div class="sub">每百万输出<br/>token费率</div></div>
+<div class="score-box"><div class="num">428B</div><div class="sub">卡片总参数约数</div></div>
+<div class="score-box"><div class="num">23B</div><div class="sub">每token激活约数</div></div>
+<div class="score-box"><div class="num">1M</div><div class="sub">卡片上下文上限</div></div>
+<div class="score-box"><div class="num">62.8</div><div class="sub">HF Automation表</div></div>
 </div>
 </div>
 <!-- MAIN 3-COLUMN GRID -->
@@ -174,15 +174,15 @@ mjx-container svg, mjx-container svg * {
 <!-- COLUMN 1: 问题 + 环境构建 -->
 <div class="col">
 <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与产品阶段</h2></div>
-<p class="body">价值在更低费用下执行多步任务，而非所有榜单第一。正式发布10月19日；早期Preview首次开放日未核实，不与GA拆成多个正代。</p>
+<p class="body">原生图文视频MoE、文本输出。10/19正式发布；10/23读到公开原卡与权重文件，但实际权重开放日、早期Preview首日分别待核，同family不拆代。</p>
 <div class="gap-boxes">
 <div class="gap-box g1">
 <div class="title">不是训练token数</div>
 <p>Space Bunny处理超过200T tokens是匿名服务使用量，不等于训练量；不据此补写训练数据规模。</p>
 </div>
 <div class="gap-box g2">
-<div class="title">权重和Pro尚未发布</div>
-<p>API、M Plan、MiniMax Code已可用；权重以后开放，Pro以后到来。不生成假的HF原卡或技术报告链接。</p>
+<div class="title">纠正旧“没有原卡、权重未来开放”</div>
+<p>官方仓库非gated；主权重和DSpark draft代表文件HEAD200，未下载权重。自定义Community License，不写成无条件Apache/MIT。Pro仍未核实已发。</p>
 </div>
 </div>
 <div class="stage-list">
@@ -207,15 +207,15 @@ mjx-container svg, mjx-container svg * {
 <!-- COLUMN 2: 方法流程 -->
 <div class="col">
 <div class="sec-head c-orange"><div class="nc">2</div><h2>方法披露与预算核算</h2></div>
-<p class="body">已读正文只说更激进的稀疏性，没有router、专家数、训练loss或RL配方。这里的方法分析是预算核算，不伪装成训练机制复现。</p>
+<p class="body">新原卡：前3层full attention也改为MSA；60层全稀疏注意力。MoE配置128路由专家取4+1共享，前3层非MoE；两个开关不能混淆。</p>
 <div class="fig-box">
 <img alt="官方原图：DeepSWE；保留原图脚注与全部对照" src="src/assets/official_figure_3.png"/>
 <div class="fig-cap">官方原图：DeepSWE；保留原图脚注与全部对照</div>
 </div>
 <div class="gap-boxes">
 <div class="gap-box g1">
-<div class="title">同模型不同预算，不是不同正代</div>
-<p>Automation成本图low/medium/high/xhigh/max：52.8/57.7/59.2/61.2/62.8。总表62.2与max62.8分开引用，正文未解释差异。</p>
+<div class="title">两份官方来源保留差异</div>
+<p>博客总表62.2，HF总表62.8；成本图max也62.8。没有版本/运行映射，不能宣布新权重提升0.6，更不能用createdAt当首发。</p>
 </div>
 </div>
 <div class="trick-box">
@@ -225,20 +225,20 @@ mjx-container svg, mjx-container svg * {
 <div class="formula-box"><div class="flabel">按发布费率计算；不是实测账单</div>$$C=\frac{0.15N_{in}+0.015N_{cache}+0.60N_{out}}{10^6}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">未缓存与缓存输入分开计数；工具、重试、沙箱另计。单位USD。</p></div>
 <div class="stage-list">
 <div class="stage-item">
-<div class="stitle">成本与最高成绩不是一回事</div>
-<p>DeepSWE high/xhigh/max为68.1/72.1/73.7，1017对照更高。图脚注截至9月22日却含1017，时间标注疑点保留。</p>
+<div class="stitle">QAT不等于所有张量FP4</div>
+<p>配置attention MXFP8、MoE NVFP4，router/vision等有豁免；FlagOS W8A8为再量化衍生。23B激活不等于仅需23B存储。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">ALE的111美元是整套</div>
-<p>152任务Overall、max effort、Claude Code；29.6%与整套估算$111。不是每题111，也不承诺每个业务降本70%。</p>
+<div class="stitle">DSpark是提议–验证，不是固定7倍</div>
+<p>5层draft、block7、target层3/17/31/45/59；use_mtp=false。接受率、batch和runtime决定收益，缺独立延迟/消融表。</p>
 </div>
 </div>
 </div>
 <!-- COLUMN 3: 实验结果 -->
 <div class="col">
 <div class="sec-head c-green"><div class="nc">3</div><h2>实验结果与证据边界</h2></div>
-<p class="body">全部为发布方自报，未本地复测。总表15项完整列出；原图与脚注见笔记。空白不是0，未披露置信区间，不称小差距显著。</p>
-<table class="rtable"><tr><th class="left">Benchmark</th><th>分数</th><th>限定口径</th></tr><tr><td class="left">Automation v1.0.6</td><td>62.2</td><td>600公开任务</td></tr><tr><td class="left">BankerToolBench</td><td>76.2</td><td>M2.7 judge</td></tr><tr><td class="left">GDP.pdf AA</td><td>20.8</td><td>AA来源</td></tr><tr><td class="left">Terminal4.0</td><td>38.1</td><td>Codex0.149.1</td></tr><tr><td class="left">LOCA256K</td><td>60.3</td><td>官方实现</td></tr><tr><td class="left">ALE</td><td>29.6</td><td>Overall全集</td></tr><tr><td class="left">OSWorld2.0</td><td>61.7</td><td>0808Full</td></tr><tr><td class="left">PostTrain1.1</td><td>39.3</td><td>512K</td></tr><tr><td class="left">DeepSWE1.1</td><td>73.7</td><td>miniSWE2.4.5</td></tr><tr><td class="left">NL2Repo</td><td>61.2</td><td>修正两题</td></tr><tr><td class="left">SWERefactor</td><td>23.0</td><td>200K</td></tr><tr><td class="left">CyberGym</td><td>82.2</td><td>1M</td></tr><tr><td class="left">BabyVision</td><td>91.0</td><td>含tools</td></tr><tr><td class="left">HLE</td><td>43.4</td><td>2158text子集</td></tr><tr><td class="left">CharXivRQ</td><td>82.5</td><td>GPT5.5judge</td></tr></table>
+<p class="body">博客15项完整保留；HF仅Automation总表变62.8，其余本模型分数一致。当前权重表非第三方量化保证；全为官方报告，未本地复测。</p>
+<table class="rtable"><tr><th class="left">Benchmark</th><th>分数</th><th>限定口径</th></tr><tr><td class="left">Automation v1.0.6</td><td>62.2 / 62.8</td><td>600公开任务</td></tr><tr><td class="left">BankerToolBench</td><td>76.2</td><td>M2.7 judge</td></tr><tr><td class="left">GDP.pdf AA</td><td>20.8</td><td>AA来源</td></tr><tr><td class="left">Terminal4.0</td><td>38.1</td><td>Codex0.149.1</td></tr><tr><td class="left">LOCA256K</td><td>60.3</td><td>官方实现</td></tr><tr><td class="left">ALE</td><td>29.6</td><td>Overall全集</td></tr><tr><td class="left">OSWorld2.0</td><td>61.7</td><td>0808Full</td></tr><tr><td class="left">PostTrain1.1</td><td>39.3</td><td>512K</td></tr><tr><td class="left">DeepSWE1.1</td><td>73.7</td><td>miniSWE2.4.5</td></tr><tr><td class="left">NL2Repo</td><td>61.2</td><td>修正两题</td></tr><tr><td class="left">SWERefactor</td><td>23.0</td><td>200K</td></tr><tr><td class="left">CyberGym</td><td>82.2</td><td>1M</td></tr><tr><td class="left">BabyVision</td><td>91.0</td><td>含tools</td></tr><tr><td class="left">HLE</td><td>43.4</td><td>2158text子集</td></tr><tr><td class="left">CharXivRQ</td><td>82.5</td><td>GPT5.5judge</td></tr></table>
 <div class="gap-boxes">
 <div class="gap-box g3">
 <div class="title">不是全面第一：弱项同样需要保留</div>
@@ -249,18 +249,18 @@ mjx-container svg, mjx-container svg * {
 <table class="ood-table"><tr><th>图</th><th>费用单位</th><th>注意</th></tr><tr><td>Automation</td><td>每任务</td><td>Claude Code</td></tr><tr><td>DeepSWE</td><td>每任务</td><td>mini-swe-agent</td></tr><tr><td>ALE</td><td>整套152任务</td><td>best harness/effort</td></tr></table>
 <div class="trick-box">
 <div class="trick-title">原始资料不足：未达完整训练精读深度</div>
-<p>当前仅发布博客与原图；缺独立Tech Report、GA原卡、架构细节、数据配比与关键消融。不能把旧Preview规格直接迁移，不能编造稀疏/效率RL算法。</p>
+<p>已有HF卡、架构/量化/DSpark配置和部署入口；仍缺M3.1独立训练报告、数据混合、RL recipe和效率消融，未达完整训练精读。MSA背景报告不冒充本版后训练报告。</p>
 </div>
 <div class="abl-grid">
 <div class="abl-card">
 <div class="aname">已公开</div>
-<div class="adelta">4张原图</div>
-<div class="adesc">完整离线保存，图中疑点注明。</div>
+<div class="adelta">原卡+4图</div>
+<div class="adesc">配置/模板归档，旧状态纠正。</div>
 </div>
 <div class="abl-card">
 <div class="aname">未公开</div>
 <div class="adelta">训练配方</div>
-<div class="adesc">模型机制深度不足，显著留白。</div>
+<div class="adesc">关键训练与延迟协议仍缺。</div>
 </div>
 </div>
 </div>
@@ -269,7 +269,7 @@ mjx-container svg, mjx-container svg * {
 <div class="bottom-strip">
 <div class="bstrip">
 <div class="bhead">阶段口径</div>
-<p>10月19日正式rollout，不冒充早期Preview首次可用日；同family不重复拆叶。</p>
+<p>保留10/19正式节点；10/23只是原卡/权重可见性确认，不伪造独立首发事件。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">预算口径</div>
@@ -277,7 +277,7 @@ mjx-container svg, mjx-container svg * {
 </div>
 <div class="bstrip">
 <div class="bhead">证据边界</div>
-<p>总表62.2与成本图62.8并列，Cyber正文约82与原图82.2保留精度差。</p>
+<p>博客62.2、HF与成本max62.8并列，不用来源差异制造一次新能力升级。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">研究启发</div>
