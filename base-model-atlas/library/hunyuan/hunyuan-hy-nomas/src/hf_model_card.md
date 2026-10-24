@@ -1,6 +1,6 @@
 ---
 license: apache-2.0
-pipeline_tag: text-to-video
+license_link: https://huggingface.co/tencent/Hy-Nomas/blob/main/LICENSE
 tags:
   - hy-nomas
   - world-model
@@ -13,7 +13,7 @@ tags:
 ---
 
 <p align="left">
-  <a href="README_CN.md">中文</a>&nbsp;｜&nbsp;English
+  <a href="https://huggingface.co/tencent/Hy-Nomas/blob/main/README_CN.md">中文</a>&nbsp;｜&nbsp;English
 </p>
 
 <p align="center">
@@ -26,12 +26,17 @@ tags:
   <a href="https://github.com/Tencent-Hunyuan/Hy-Nomas"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&amp;logo=github&amp;logoColor=white" alt="GitHub"/></a>
   <a href="https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf"><img src="https://img.shields.io/badge/Technical%20Report%20%28Coming%20Soon%29-B31B1B?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTQgMkg1djIwaDE0Vjd6TTE0IDJ2NWg1TTggMTJoOE04IDE2aDgiLz48L3N2Zz4%3D" alt="Technical Report (Coming Soon)"/></a>
   <a href="https://huggingface.co/datasets/tencent/Hy-Nomas-Bench"><img src="https://img.shields.io/badge/Benchmark-FFD21E?style=flat-square&amp;logo=huggingface&amp;logoColor=black" alt="Benchmark"/></a>
-  <a href="https://hy-nomas.hy.tencent.com/"><img src="https://img.shields.io/badge/Official%20Website-666666?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjEyIiByeD0iNCIgcnk9IjEwIi8%2BPHBhdGggZD0iTTIgMTJoMjAiLz48L3N2Zz4%3D" alt="Official Website"/></a>
+  <a href="https://hy-nomas.hy.tencent.com/"><img src="https://img.shields.io/badge/Project%20Website-666666?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjEyIiByeD0iNCIgcnk9IjEwIi8%2BPHBhdGggZD0iTTIgMTJoMjAiLz48L3N2Zz4%3D" alt="Project Website"/></a>
+  <a href="https://x.com/TencentHunyuan/status/2113676827114053892"><img src="https://img.shields.io/badge/X%20Post-000000?style=flat-square&amp;logo=x&amp;logoColor=white" alt="X Post"/></a>
 </p>
 
 <h3 align="center">
   🚀 <a href="https://hy-nomas.hy.tencent.com/">Try the Demo →</a>
 </h3>
+
+<br>
+
+<video controls playsinline preload="metadata" width="100%" src="https://hy-nomas.hy.tencent.com/gallery/hy_nomas_promo.mp4"></video>
 
 ## Model Introduction
 
@@ -175,7 +180,7 @@ Run the commands below from the Hy-Nomas **code repository root**. They use this
 
 ### Prepare Prompts
 
-Offline inference accepts a JSON list of video-generation requests. Each request can contain multiple `segments` with start and end timestamps in seconds. The first segment describes the initial world, and later segments use `description_change` to describe how it should evolve.
+Offline inference accepts a JSON list of video-generation requests. Each request can contain multiple `segments`. Both segments and their `contained_actions` use `start_time` and `end_time` strings in `MM:SS.mmm` format (minutes:seconds.milliseconds). The example below contains two 5-second segments covering 0–5 seconds and 5–10 seconds. The first segment describes the initial world, and later segments use `description_change` to describe how it should evolve.
 
 The inference commands below use the bundled [example prompt file](examples/prompts.json) in the model repository. For custom content, save a JSON file in the following format and set `inference.prompt=/path/to/prompts.json`:
 
@@ -194,19 +199,19 @@ The inference commands below use the bundled [example prompt file](examples/prom
     ],
     "segments": [
       {
-        "start_time": 0,
-        "end_time": 2,
+        "start_time": "00:00.000",
+        "end_time": "00:05.000",
         "visual_description_long": "A small orange fox stands on a stone path in a luminous forest. Blue fireflies drift between the trees.",
         "contained_actions": [
-          {"start_time": 0, "end_time": 2, "action_description": "The fox walks slowly along the path."}
+          {"start_time": "00:00.000", "end_time": "00:05.000", "action_description": "The fox walks slowly along the path."}
         ]
       },
       {
-        "start_time": 2,
-        "end_time": 4,
+        "start_time": "00:05.000",
+        "end_time": "00:10.000",
         "description_change": "Glowing blue flowers open beside the path as the fox continues forward.",
         "contained_actions": [
-          {"start_time": 2, "end_time": 4, "action_description": "The fox passes the flowers and looks around."}
+          {"start_time": "00:05.000", "end_time": "00:10.000", "action_description": "The fox passes the flowers and looks around."}
         ]
       }
     ]
@@ -277,7 +282,7 @@ For local deployment, follow the [web demo deployment guide](https://github.com/
 
 ## License
 
-Hy-Nomas is licensed under the [Apache License, Version 2.0](LICENSE). Third-party models and components remain subject to their respective licenses.
+Hy-Nomas is licensed under Apache-2.0. Please refer to this repository's [LICENSE](https://huggingface.co/tencent/Hy-Nomas/blob/main/LICENSE) file for the applicable terms. Third-party models and components remain subject to their respective licenses.
 
 ## Acknowledgement
 

@@ -1,0 +1,275 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://research.nvidia.com/labs/nemotron/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB/">打开官方原文 ↗</a> · <a href="official-e4b-blog.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>NVIDIA Nemotron 3.5 Bolt E4B 4GB - NVIDIA Nemotron 
+NVIDIA Nemotron 
+Projects 
+NVIDIA Follow 
+NVIDIA Nemotron 3.5 Bolt E4B 4GB 
+Published: October 23, 2026 Technical Report 
+Introducing NVIDIA Nemotron 3.5 Bolt E4B 4GB 
+Today, we’re excited to release Nemotron 3.5 Bolt E4B 4GB — our latest open small language model optimized for speed and intelligence per GB in conversational agents. 
+Bolt E4B builds on Gemma 4 E4B with Nemotron post-training. It combines natural conversation with multi-turn agentic capabilities to power voice/device assistants, interactive characters and robotic/IoT interfaces running on NVIDIA GeForce RTX , Jetson , RTX Spark and DGX Spark . 
+Bolt E4B offers ~40% higher average quality against our prior model on key conversational agent benchmarks and outputs up to ~80% fewer tokens vs peers. 
+Designed to pack conversational agent intelligence into as little as ~4GB in its target workloads, Bolt E4B enables responsive local experiences while preserving headroom for applications and other models in the same pipeline. 
+Model Features 
+Multi-turn tool use : call application APIs to carry out tasks across a conversation, with integration guidance for asynchronous tool calls 
+Conversational mode : toggle to encourage concise, speech-ready responses for natural back-and-forth interactions 
+Configurable reasoning : enable reasoning for complex requests or disable it for faster responses, with integration options to cap thinking to meet latency targets 
+64k context : accommodate conversation history, instructions, tool definitions, retrieved information and application state 
+Multilingual capability : support for 35 languages, building on a base model pre-trained on +140 languages 
+Agents On Every Device 
+We’re always learning from how NVIDIA Jetson, GeForce RTX and DGX Spark customers — enterprises and enthusiasts alike — use our hardware to accelerate their workloads. 
+As language models become more capable, we’re seeing growing customer interest in using them for experiences like: 
+Device &amp; Voice Assistants : Fast local assistants for PC, mobile, app, home or OS control; customer service; and in-cabin experiences for vehicles 
+Virtual &amp; Interactive Characters : In-game NPCs, companions, and other interactive characters that blend dialogue with actions while maintaining a persona 
+Embedded &amp; Industrial Agents : Human-machine interfaces for robotics and heavy machinery; system automation and industrial IoT 
+Reachy Mini running on Jetson Orin Nano 8GB. Cosmos 3 Edge supplies real-time visual understanding of the world to Bolt E4B, which calls scripts from the robot’s animation libraries and powers its spoken responses. 
+Testing Bolt E4B on a blacksmith trader NPC. The agent verifies correct payment for an item, then autonomously calls tools to check crafting recipes, collect ingredients, craft the item, and transfer it to the user. 
+Many large models are capable of powering these agents — but constraints around memory, latency, hardware compatibility, cost, or privacy concerns prevent developers from deploying these in production. 
+And so, they turn to faster, cheaper, smaller local models that can unlock these experiences. 
+Evaluating Real-Time Interactive Agents 
+Choosing a model for these experiences is not as simple as picking the highest score on today’s LLM leaderboards. 
+A model that excels at agentic coding is often not the best fit for a fast home assistant that’s fun to interact with — these agents need a different mix of capabilities. Through conversations with customers, several common characteristics emerge: 
+The model must often embody an agent that converses naturally with a human in the same physical or virtual space 
+It must know whether, when and how to interleave dialogue with correct tool calls to take actions 
+It must reliably honor explicit behavioral, persona, brand, or output constraints 
+It must understand its environment by interpreting supplied app/world telemetry, retrieved database payloads or tool results 
+And, it must ground all dialogue and actions in the relevant parts of all that context — especially amid distractors or as that context grows throughout a conversation 
+Current benchmarks only partially capture what makes these agents work well, and no individual benchmark covers every capability an application needs. Ultimately, benchmark gains must translate into better behavior in the target application. 
+Model Benchmarks &amp; Performance 
+We selected complementary benchmarks that closely reflect customer workloads or that customers already use, and grouped them into five capabilities. The chart below compares Bolt E4B with models of different sizes on representative benchmark quality, time to first token and VRAM usage: 
+Average Q4_K_M score across MultiChallenge, RoleMRC, BFCL-v3, IHEval, SysBench and RelyToolBench. Measured on RTX 5090 at ~3K/50 ISL/OSL. Cloud reference results (score/TTFT): Gemini 3.8 Flash (77.1 / 2,449.5ms); Claude Sonnet 5.5 (76.2 / 3,002.2ms). 
+Conversation &amp; Persona 
+
+Benchmark (metric) 
+Description 
+Nemotron 3.5 Bolt E4B 4GB 
+Nemotron 3 Nano 4B 
+Qwen 3.5 4B 
+Gemma 4 E4B 
+
+Brevity Bench (avg. quality / conciseness) 
+Answer quality &amp; conciseness 
+82.5 
+73.6 
+75.3 
+80.0 
+
+EQ-Bench v3 (Rubric) 
+Emotional intelligence in roleplay 
+39.4 
+19.3 
+32.9 
+41.1 
+
+MultiChallenge (Overall score) 
+Consistency across turns 
+53.1 
+35.3 
+51.8 
+42.1 
+
+RoleBench (Custom Win % vs. reference) 
+Character speaking style 
+67.0 
+12.0 
+53.7 
+49.9 
+
+RoleMRC (Judge avg., excl. multi-turn) 
+Role identity  adherence 
+80.6 
+47.0 
+65.8 
+74.6 
+Multi-turn Tool Use 
+
+Benchmark (metric) 
+Description 
+Nemotron 3.5 Bolt E4B 4GB 
+Nemotron 3 Nano 4B 
+Qwen 3.5 4B 
+Gemma 4 E4B 
+
+BFCL-v3 (Avg accuracy) 
+Correct tools &amp; arguments 
+68.5 
+61.1 
+70.9 
+66.4 
+
+Tau2-Bench (Avg accuracy) 
+Multi-turn customer tasks 
+55.1 
+29.2 
+75.1 
+38.5 
+
+ToolSandbox (Avg accuracy) 
+Tool use with changing state 
+68.8 
+57.9 
+69.5 
+65.4 
+
+When2Call-MT (Overall accuracy) 
+When to call, clarify or abstain 
+63.4 
+27.7 
+37.8 
+62.9 
+Instruction &amp; Control 
+
+Benchmark (metric) 
+Description 
+Nemotron 3.5 Bolt E4B 4GB 
+Nemotron 3 Nano 4B 
+Qwen 3.5 4B 
+Gemma 4 E4B 
+
+AgentIF (Instruction success rate) 
+Complex agentic instructions 
+25.8 
+20.1 
+20.4 
+21.9 
+
+IFBench (Prompt loose accuracy) 
+Precise output constraints 
+63.8 
+60.1 
+58.9 
+42.8 
+
+IHEval (Conflict accuracy) 
+Instruction hierarchy/priority 
+84.8 
+51.3 
+60.6 
+67.0 
+
+InverseIFEval (Overall accuracy) 
+Counterintuitive instructions 
+46.8 
+35.2 
+31.0 
+42.0 
+
+StructEval-T (Average accuracy) 
+Valid structured outputs 
+80.4 
+63.5 
+76.0 
+79.3 
+Context Robustness 
+
+Benchmark (metric) 
+Description 
+Nemotron 3.5 Bolt E4B 4GB 
+Nemotron 3 Nano 4B 
+Qwen 3.5 4B 
+Gemma 4 E4B 
+
+LongBench v2 (48K, Overall accuracy) 
+Understanding long prompts 
+50.5 
+31.4 
+59.9 
+49.3 
+
+LongMemEval (Overall accuracy) 
+Recall across conversations 
+72.1 
+25.2 
+66.8 
+70.9 
+
+RULER (64K) (Overall accuracy) 
+Context retrieval  &amp; reasoning 
+87.0 
+91.5 
+95.1 
+86.5 
+
+SysBench (Instruction success rate) 
+Maintain long prompt rules 
+67.9 
+60.9 
+67.3 
+65.8 
+State &amp; Action Grounding 
+
+Benchmark (metric) 
+Description 
+Nemotron 3.5 Bolt E4B 4GB 
+Nemotron 3 Nano 4B 
+Qwen 3.5 4B 
+Gemma 4 E4B 
+
+GaRAGe (Relevance-aware factuality) 
+Facts from supplied sources 
+42.6 
+25.2 
+24.7 
+34.7 
+
+RAGTruth (F1) 
+Avoiding unsupported claims 
+77.6 
+71.4 
+75.6 
+77.0 
+
+RelyToolBench (Native/real pass %) 
+Tool grounding &amp; hallucination 
+63.2 
+41.2 
+43.3 
+61.6 
+All results BF16. Every benchmark uses the same reasoning mode across models. Reasoning mode varies by benchmark. Brevity Bench and When2Call-MT address gaps in existing evaluations — to be released at a later date. 
+Across all these benchmarks, Bolt E4B achieves roughly 40% higher average scores than our prior model, Nano 4B, and roughly 10% higher scores than other peers evaluated. 
+These quality gains also come with fewer output tokens — up to 80% fewer in reasoning enabled comparisons. Reducing unnecessary generation lowers decoding work and costs, and can shorten response times. 
+Good responses still need to be fast responses in their target workloads — typically single session (batch size 1) envelopes between 2.5K and 16K input tokens and fewer than 500 output tokens. 
+The table below reports peak memory usage, time to first token, and generation throughput across representative hardware and workloads. 
+RTX 
+SKU Cache / ISL / OSL VRAM usage (GB) TTFT (ms) TPS (tokens/s) 
+RTX 5070 (12GB) 0 / 3K / 50 3.5 548 133.4 
+32k / 2K / 256 4.3 1,238 106.2 
+RTX Spark (32GB) 0 / 3K / 50 3.1 930 67.0 
+32k / 2K / 256 4.2 1,988 52.0 
+Inference performance across hardware. All configurations measured using Q4_K_M at batch size 1 on llama.cpp (CUDA) with AIPerf. Cache/ISL/OSL denotes cached context, new input, and output lengths in tokens. Results may vary with hardware, inference software, and configuration. 
+Jetson 
+SKU Cache / ISL / OSL VRAM usage (GB) TTFT (ms) TPS (tokens/s) 
+Jetson Orin Nano (8GB) 0 / 3K / 50 4.2 5,785 15.5 
+32k / 2K / 256 4.9 6,259 13.0 
+Jetson AGX Orin (32GB) 0 / 3K / 50 4.2 3,687 24.0 
+32k / 2K / 256 5.0 4,091 20.3 
+Inference performance across hardware. All configurations measured using Q4_K_M at batch size 1 on llama.cpp (CUDA) with AIPerf. Cache/ISL/OSL denotes cached context, new input, and output lengths in tokens. Results may vary with hardware, inference software, and configuration. 
+Training Methodologies &amp; Open Recipes 
+Bolt E4B builds on Gemma4-E4B-it through Nemotron post-training methods across environments targeting instruction following, multi-turn tool-calling and conversational capabilities. 
+We used reinforcement learning with verifiable rewards (RLVR) and from human feedback (RLHF), powered by NeMo-RL and NeMo-Gym . The training datasets are listed below, and the full recipe is available here : 
+Tool-Calling: Conversational Tool Use Pivot 
+Tool-call schema: Function Calling Pivot 
+Instruction Following: Instruction Following , SysBench , InverseIFEval , CFBench , MultiTurnChat , Calendar 
+Instruction Hierarchy: System-User-Instruction-Hierarchy 
+Structured Outputs: Structured Outputs 
+Free-form formatting: Free-Form Formatting 
+GenRM: Updated version of Nemotron-RLHF-GenRM-v1 
+To emphasize non-reasoning accuracy, we used every sample in the RLVR/RLHF training blend in both reasoning and non-reasoning modes. We profiled rewards for each dataset separately in both modes, and maintained a 2:1 ratio of non-reasoning to reasoning samples in each training batch. 
+As post-training progressed, both reasoning traces and final answers became substantially longer. To control verbosity, we increased group-relative length penalties for reasoning and answer length in the GenRM environment. In all other environments, we disabled overlong filtering. 
+After post-training, we quantized the selected BF16 checkpoint to Q4_K_M using llama.cpp with importance-matrix (imatrix) calibration. Calibration used approximately 1M tokens of RL rollouts from the same training step as the selected checkpoint. 
+This release also includes a DFlash parallel drafter. It proposes all draft tokens in one forward pass, which the target verifies in parallel while preserving the target model’s  output distribution. DFlash delivers up to 21% higher throughput relative to Gemma-4-E4B’s original MTP drafter. 
+Check out our technical report for more details! 
+Deploy it, Configure it, and Customize it for Your Use Case 
+Get started with Bolt E4B today through Hugging Face , Ollama , LM Studio, Unsloth , Canonical, Jetson AI Lab and the NVIDIA In-Game Inferencing SDK . 
+Explore our model card and deployment snippets, training recipes, and prompting/app setup guidelines. 
+We’re excited to see what you build! 
+Checkpoints 
+NVIDIA-Nemotron-3.5-Bolt-E4B-4GB - Post-trained model in GGUF 
+NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-DFlash - Drafter model for the GGUF checkpoint 
+NVIDIA-Nemotron-3.5-Bolt-E4B-BF16 - Post-trained model in BF16 HF 
+NVIDIA-Nemotron-3.5-Bolt-E4B-BF16-DFlash-NVFP4 - Drafter model for the HF checkpoint Share on Twitter Facebook LinkedIn Previous Next 
+Privacy Policy 
+Your Privacy Choices 
+Terms of Service 
+Accessibility 
+Corporate Policies 
+Contact © 2026 NVIDIA. Powered by Jekyll &amp; AcademicPages , a fork of Minimal Mistakes .</pre></body></html>

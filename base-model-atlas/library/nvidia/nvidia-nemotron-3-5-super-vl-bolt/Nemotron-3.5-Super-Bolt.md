@@ -3,7 +3,7 @@ title: "Nemotron 3.5 Super VL / Bolt — 从多模态父模型到 24GB 部署预
 type: model-note
 tags: [base-model, nvidia, nemotron, compression, agent-training]
 created: 2026-10-16
-updated: 2026-10-16
+updated: 2026-10-24
 release_date: 2026-10-15
 url: "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16"
 ---
@@ -131,3 +131,75 @@ Bolt 不是这张表中最快的模型。速度与质量 Pareto 的主张依赖�
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/261015_Kimodo_SOMA_RP_v1_2/Kimodo-SOMA-RP-v1.2|同团队动作生成支线]]
 
 > 📊 相关可视化：[[nemotron35_super_bolt_poster_zh.html|中文 Poster]]
+
+## 10月23日同 family 新增：Bolt E4B，不能照搬74B压缩链
+
+10月24日巡检新发现四个E4B仓库，但**官方博客与4GB原卡都明确10月23日发布**。因此按10/23同族更新加入近30天表格；维持本条3.5 family的10/15首发及原URL，不拆四个正代。前面的Super→74B压缩分析仍然有效，但不自动适用于这一支。
+
+| 项目 | Bolt E4B | 与74B Bolt的区别 |
+|---|---|---|
+| 基座 | Gemma-4-E4B-it后训练 | 不是Super VL结构压缩得到 |
+| 总参数/有效参数 | 8B / 4B effective | 不把4B写成总参数，或未经证实称4B MoE激活 |
+| 输入/输出 | 当前卡明确文本→文本 | 上游结构含多模态模块，不证明本版视觉/语音已评测 |
+| 上下文 | 部署示例总长度65536 | 原卡输入/输出各写64K，不等于同时输入64K再输出64K |
+| 发布格式 | BF16与Q4_K_M GGUF | BF16用于定制/评测，4GB是推理目标版本 |
+| 加速 | 两条配套DFlash drafter路径 | 不是74B的LiLiCorr，也不是两个独立聊天正代 |
+
+![官方E4B首token延迟/质量对照](src/assets/e4b-ttft.png)
+
+图的质量是MultiChallenge、RoleMRC、BFCL-v3、IHEval、SysBench与RelyToolBench的Q4均值；RTX5090、约3K输入/50输出。圆面积表示显存档位。不同质量项目、精度、harness和硬件的数字不能跨图拼成一个Pareto结果。
+
+### 训练最值得注意的是两种模式共同优化
+
+官方卡写GRPO与异步训练/推理解耦；博客进一步明确RLVR和RLHF，使用NeMo RL/Gym，环境覆盖工具schema、多轮工具、层级指令、格式、日历和GenRM等。**每个样本都用于思考和非思考两种模式，批内非思考:思考为2:1，分环境分模式监控reward。** 这比“训练完把think关闭”多了一层分布设计，但不能据此推测未披露的各环境权重和训练步数。
+
+后训练使思考链与最终回答都变长，因此在GenRM环境增大组相对长度惩罚；其他环境关闭overlong过滤。这两项是不同控制：前者改变奖励偏好，后者改变被接受的轨迹分布，不能写成简单“全数据截短”。
+
+选定BF16后，用同一训练step约1M rollout tokens做llama.cpp imatrix校准，再量化Q4_K_M。DFlash一次提出多个draft token，由target并行验证；官方相对Gemma原MTP“最高21%吞吐提升”依赖任务与实现，不能写成任意请求都21%。本轮未运行权重、训练、推理或测速。
+
+![官方E4B质量与平均输出长度对照](src/assets/e4b-verbosity.png)
+
+图中思考/非思考模式是圆/三角；输出token为对数坐标。官方“最多80%更少token”不能解释成所有任务成本都减少80%，更不能把简短回答当作工具执行成功。原卡多数任务用思考模式，RoleBench、EQ-Bench、RULER例外；图中均值也不替代逐任务结果。
+
+| 官方模型卡BF16结果 | E4B Bolt | Gemma4 E4B | Qwen3.5 4B |
+|---|---:|---:|---:|
+| MultiChallenge | 53.10 | 42.08 | 51.76 |
+| RoleBench | 67.05 | 49.95 | 53.66 |
+| BFCL-v3 | 68.51 | 66.39 | 70.95 |
+| Tau2-Bench | 55.10 | 38.50 | 75.06 |
+| IHEval | 84.79 | 67.04 | 60.57 |
+| RULER64K | 86.99 | 86.55 | 95.15 |
+| LongMemEval | 72.10 | 70.95 | 66.85 |
+| GaRAGe | 42.61 | 34.73 | 24.66 |
+
+E4B并非全面超过Qwen；EQ-Bench也略低Gemma。Q4的MultiChallenge为55.60、BF16为53.10，这种单项上升不能被写成“量化提高能力”的普遍因果结论。
+
+### 4GB、异步工具和“完整recipe”的三个坑
+
+| 硬件/条件 | 峰值显存GB | TTFT毫秒 | TPS |
+|---|---:|---:|---:|
+| RTX5070，0cache/3K输入/50输出 | 3.5 | 548 | 133.4 |
+| RTX5070，32Kcache/2K输入/256输出 | 4.3 | 1238 | 106.2 |
+| RTX Spark，0cache/3K输入/50输出 | 3.1 | 930 | 67.0 |
+| Orin Nano8GB，0cache/3K输入/50输出 | 4.2 | 5785 | 15.5 |
+| Orin Nano8GB，32Kcache/2K输入/256输出 | 4.9 | 6259 | 13.0 |
+
+以上为官方batch1、Q4_K_M、llama.cpp CUDA+AIPerf测量；不是本地实测，也不代表64K/多并发/视觉整套系统总显存。设备Agent“能运行”与“响应足够快”须分别判断。
+
+`enable_thinking`与`conversational_mode`可以组合，后者鼓励简短口语输出，不是禁用思考的同义词。运行时thinking budget可能截断思考，须扫预算并同时记录任务质量与总生成上限。
+
+原卡不允许游离的`tool`消息。异步工具采用：assistant发tool_call→立即tool确认pending→结果到达后宿主以结构化user `TOOL UPDATE`回填。**task ID、结果来源与状态转移仍由宿主校验，不能因为放在user role就信任任意自然语言“工具完成了”。** 这也不是原生任意顺序tool-role协议。
+
+博客“full recipe”链接实际是AutoModel定制文档：MedPix-VQA全参/LoRA示例，8/2张H100，LoRA dim16/alpha32、AdamW2e−4，冻结视觉/音频塔。它不是原始多环境RL训练的全部复现配方；文档还使用`E4B-4GB-BF16`名称，与当前有效`E4B-BF16`仓库名不同，不能盲跑或伪称已验证该入口。
+
+> [!warning] E4B资料深度边界
+> 四份原卡、完整博客、两张官方静态图和适配文档已归档并阅读。独立TechReport只保留PDF链接，按当前“不下载PDF”要求没有抓取，也未冒称报告全文精读完成；原始RL采样权重、完整消融及跨设备同预算结果不足，**本部分仍未达到完整训练报告复现审计标准**。
+
+> [!insight]
+> 对Agent训练有价值的对照是：相同任务在think/nonthink两种模式下分别训练与验证，结合终态正确性和长度成本约束。验收不能只看短答案或首token延迟，应记录漏调用、错误状态、grounding和每成功任务成本；量化与drafter另做固定target的对照。
+
+- [HF Model Card · E4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB)
+- [Tech Blog · E4B，10/23](https://research.nvidia.com/labs/nemotron/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB/)
+- [Tech Report · E4B PDF，仅链接](https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-Technical-Report.pdf)
+
+> 📊 相关可视化：[[nemotron35_bolt_e4b_poster_zh.html|E4B专题中文 Poster，与既有family同目录]]

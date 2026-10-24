@@ -47,6 +47,8 @@ $$z_k \sim p_\theta(z_k\mid T_k,C_k,\mathrm{KV}_{<k}),\qquad V_k=D_{\mathrm{Pixe
 
 动作时间戳由配置在段内归一化；`video_length=event` 从事件时间推导长度。原卡示例不是任意JSON都可兼容；`Style` 大写、subject/segments/description_change等字段有具体输入契约。
 
+**10月24日官方原卡契约修正：** `segments` 与 `contained_actions` 的 `start_time` / `end_time` 都必须是 `MM:SS.mmm` 字符串，例如 `"00:05.000"`，不是旧示例中的数值秒。新例为0–5秒及5–10秒两段；把旧数值JSON直接传入不是有效复现。本次是输入格式/链接修正文档，不是新权重或新模型发布日期；报告仍为Coming Soon。
+
 ## 三、8步、1步、24FPS分别是什么
 
 | 字段 | 默认值 | 不代表什么 |
