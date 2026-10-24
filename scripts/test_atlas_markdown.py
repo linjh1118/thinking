@@ -14,6 +14,35 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_hf_html_headings_code_links_and_video_are_readable(self):
+        raw = ('<h1 align="center">Model Title</h1>\n'
+               '<p>BF16 · <code>Pipeline</code></p>\n'
+               '<a href="https://example.com/report"><img alt="Report" src="badge.png"/></a>\n'
+               '<video src="https://example.com/demo.mp4" controls></video>')
+        normalized = atlas.normalize_card_html(raw)
+        self.assertIn('# Model Title', normalized)
+        self.assertIn('`Pipeline`', normalized)
+        self.assertIn('[Report](https://example.com/report)', normalized)
+        self.assertIn('[▶ 官方演示视频](https://example.com/demo.mp4)', normalized)
+        self.assertNotIn('<video', normalized)
+
+    def test_hf_html_normalization_preserves_fenced_code(self):
+        code = '```html\n<h1>Literal heading</h1>\n<code>literal</code>\n```'
+        self.assertEqual(atlas.normalize_card_html(code), code)
+
+    def test_hf_mailto_does_not_become_a_repository_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'hf_model_card.md'
+            source.write_text('[Contact](mailto:team@example.com)\n')
+            (root / 'retrieval_manifest.json').write_text(json.dumps({'documents': {
+                source.name: {'url': 'https://huggingface.co/org/Model/resolve/main/README.md'}
+            }}))
+            published = root / 'card.html'
+            atlas.render_markdown(source, published, {})
+            self.assertIn('href="mailto:team@example.com"', published.read_text())
+            self.assertNotIn('/blob/main/mailto:', published.read_text())
+
     def test_family_update_keeps_first_release_and_stable_leaf(self):
         record = {'slug':'family','date':'2026-09-10','name':'Family','releaseUpdates':[
             {'slug':'family','date':'2026-10-17','name':'Family-1017','summary':'Minor update'}

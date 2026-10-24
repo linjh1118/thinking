@@ -1910,6 +1910,41 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
     return text
 
 
+def normalize_card_html(raw: str) -> str:
+    """Convert common HF presentation HTML into safe Markdown, outside fences.
+
+    Cards are evidence, not executable pages: preserve headings, inline code
+    and source destinations, but turn video embeds into ordinary source links.
+    Do not reinterpret HTML examples contained in fenced code blocks.
+    """
+    parts = re.split(r"(```[^\n]*\n.*?^```[^\n]*$)", raw, flags=re.M | re.S)
+    for index in range(0, len(parts), 2):
+        text = re.sub(r"<(script|style)\b[^>]*>.*?</\1>", "", parts[index], flags=re.I | re.S)
+        def anchor(match: re.Match[str]) -> str:
+            attrs, content = match.groups()
+            href = re.search(r'''\bhref=["']([^"']+)["']''', attrs, re.I)
+            if not href:
+                return content
+            image_alt = re.search(r'''\balt=["']([^"']*)["']''', content, re.I)
+            label = image_alt.group(1) if image_alt else re.sub(r"<[^>]+>", "", content)
+            label = html.unescape(label).strip() or "官方来源"
+            url = html.unescape(href.group(1))
+            if urlsplit(url).scheme not in {"", "http", "https", "mailto"}:
+                return label
+            return f"[{label}]({url})"
+        text = re.sub(r"<a\b([^>]*)>(.*?)</a>", anchor, text, flags=re.I | re.S)
+        text = re.sub(r"<h([1-6])\b[^>]*>(.*?)</h\1>", lambda m: "\n" + "#" * int(m.group(1)) + " " + re.sub(r"\s+", " ", m.group(2)).strip() + "\n", text, flags=re.I | re.S)
+        text = re.sub(r"<code\b[^>]*>(.*?)</code>", lambda m: '`' + html.unescape(m.group(1)) + '`', text, flags=re.I | re.S)
+        def video(match: re.Match[str]) -> str:
+            src = re.search(r'''\bsrc=["']([^"']+)["']''', match.group(0), re.I)
+            if src and urlsplit(html.unescape(src.group(1))).scheme in {"http", "https"}:
+                return '\n[▶ 官方演示视频](' + html.unescape(src.group(1)) + ')\n'
+            return '\n官方演示视频：请打开原始页面。\n'
+        text = re.sub(r"<video\b[^>]*>.*?</video>", video, text, flags=re.I | re.S)
+        parts[index] = text.replace('&nbsp;', ' ')
+    return ''.join(parts)
+
+
 def render_markdown(source_file: Path, destination: Path, targets: dict[str, Path]) -> None:
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
@@ -1985,7 +2020,7 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             hf_asset_base = f"https://huggingface.co/{repo}/resolve/main/"
     if hf_asset_base:
         raw = re.sub(
-            r'(?<!!)(\[[^\]]*\]\()(?!https?://|data:|#|/)([^)]+)',
+            r'(?<!!)(\[[^\]]*\]\()(?![a-zA-Z][\w+.-]*:|#|/)([^)]+)',
             lambda match: match.group(1) + (
                 match.group(2) if (source_file.parent / match.group(2)).is_file()
                 else hf_asset_base.replace('/resolve/main/', '/blob/main/') + match.group(2)
@@ -2002,6 +2037,8 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             lambda match: match.group(1) + (match.group(2) if (source_file.parent / match.group(2)).is_file() else hf_asset_base + match.group(2)),
             raw,
         )
+    if hf_asset_base:
+        raw = normalize_card_html(raw)
     raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S)
     def html_image(match: re.Match[str]) -> str:
         attrs = match.group(1)
