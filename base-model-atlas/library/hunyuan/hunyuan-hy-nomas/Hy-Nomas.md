@@ -3,7 +3,7 @@ title: "Hy-Nomas — 分段自回归的自由交互世界生成"
 type: model-note
 tags: [model-note, tencent, world-model, video-generation, agent-training]
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-24
 url: "https://huggingface.co/tencent/Hy-Nomas"
 related: ["[[WeVisOne-VL]]", "[[Hy4-Preview]]"]
 ---
@@ -62,7 +62,25 @@ $$z_k \sim p_\theta(z_k\mid T_k,C_k,\mathrm{KV}_{<k}),\qquad V_k=D_{\mathrm{Pixe
 
 DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、hidden4096、32Q/8KV，RGB tubelet4×16×16。卡片说demo在段边界流式解码；段首等待、PE等待、去噪、CPU搬运与播放是不同计时段，本轮未实测。
 
-## 四、单4090：减少活跃显存，不是无限免费历史
+## 四、部署边界：Diffusers与原生低显存分开看
+
+### 新补充：Diffusers 入口是同一模型的格式转换
+
+10月24日巡检新观察到官方 `tencent/Hy-Nomas-Diffusers`。原卡明确写的是 **distilled Hy-Nomas 的 BF16 Diffusers conversion**，不是一代新基座；这里记录的是发现/归档时间，不据仓库新建时间认定模型首发。原生权重、量化版、LoRA和Nomas-PE仍位于原仓库，不能以新目录取代原family。
+
+| 对照项 | Diffusers 原卡给出的边界 |
+|---|---|
+| 加载入口 | `HyNomasModularPipeline`；包内含 transformer、decoder、text encoder、tokenizer、scheduler |
+| 示例设置 | 704×1280、24FPS、DiT去噪4步；不是上文原生默认8步，也不是输出720高度 |
+| 十秒示例 | `num_frames=240`、`segment_latent_lengths=[30,30]`；两段各五秒，不是每段240帧 |
+| 动作时间 | **相对当前段起点**；两段都用 `00:00.000`–`00:05.000`，不要照搬原生示例第二段5–10秒 |
+| 提示增强 | 接受纯文本或准备好的结构化prompt；**不运行Nomas-PE** |
+| 注意力 | 默认PyTorch SDPA；参考attention需另装兼容kernel并启用，不能默认宣称与原生数值一致 |
+| 显存 | 示例将BF16组件加载到CUDA；**原生INT8/FP8单4090方案是另一配置**，不能把其显存承诺挪到这里 |
+
+原卡安装例指向 `jiaxiangc/diffusers` 的 `hy-nomas` 分支；这是官方卡推荐的实现分支，**不是已经证实合入上游稳定版的承诺**。持续生成可复用返回状态，但历史KV会增长；4步DiT与1步PixelUMM解码依然是两个独立阶段。此轮只读卡、归档和比较接口，未安装依赖、下载权重或运行生成。报告仍标Coming Soon，新增格式卡不能补齐训练/消融证据。
+
+### 原生单4090：减少活跃显存，不是无限免费历史
 
 `single_gpu_low_mem_inference.yaml`继承标准配置，仅重写执行与内存策略：
 
@@ -118,6 +136,7 @@ DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、h
 ## 来源与资料边界
 
 - 🤗 [HF Model Card](https://huggingface.co/tencent/Hy-Nomas)，归档`src/hf_model_card.md`；[Benchmark Card](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench)，归档`src/hf_benchmark_card.md`。
+- 🤗 [HF Model Card · Diffusers](https://huggingface.co/tencent/Hy-Nomas-Diffusers)，完整原卡归档`src/hf_diffusers_model_card.md`；同family格式转换，非新正代或已证实的新首发事件。
 - 🧩 [官方代码](https://github.com/Tencent-Hunyuan/Hy-Nomas)：README中英、推理/低显存/SFT配置、demo与captioning说明已存`src/reference/`，未执行外部源码。
 - 🌐 [官方项目与演示](https://hy-nomas.hy.tencent.com/)：本轮调用端抓取超时，保留缺口，不写已离线归档成功。
 - 📄 Tech Report：官方仍标Coming Soon；**不把未来PDF占位按钮伪装成已发布报告链接**，本轮未抓PDF或权重。
