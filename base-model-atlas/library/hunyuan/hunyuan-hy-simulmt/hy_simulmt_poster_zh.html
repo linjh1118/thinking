@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hy-SimulMT — 中文模型研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="Hy-SimulMT.html">阅读笔记</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span style="color: #78716c;">BrainHao · 源文档：</span> <a href="Hy-SimulMT.html">Hy-SimulMT 研读笔记</a> &nbsp;·&nbsp; <a href="https://huggingface.co/tencent/Hy-SimulMT-30B-A3B">🤗 HF Model Card</a> &nbsp;·&nbsp; <a href="https://github.com/Tencent-Hunyuan/Hy-SimulMT">官方仓库</a></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">Tencent Hunyuan &nbsp;|&nbsp; 2026-10-26 官方发布 · 语音专项</span>
+    <div class="zh-title">Hy-SimulMT：中英实时同传，质量与等待的权衡</div>
+    <h1>Low-Latency Simultaneous Translation <span>with Streaming Speech Input</span></h1>
+    <div class="authors">毛峥、吕博、孙明睿、李政、刘方旭、陈涛 等 · 基于官方卡与部署/训练原件</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">30B-A3B</div><div class="sub">官方family<br>命名口径</div></div>
+    <div class="score-box"><div class="num">≈3s</div><div class="sub">RealSI StreamLAAL<br>不是首声延迟</div></div>
+    <div class="score-box"><div class="num">84.7</div><div class="sub">RealSI-Sentence<br>官方报告分数</div></div>
+    <div class="score-box"><div class="num">6→1</div><div class="sub">六仓合并<br>两协议×三格式</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型边界</h2></div>
+  <p class="body">核心贡献是把<b>连续音频、增量译文与可选声音克隆</b>连接成实时中英同传系统。属于混元语音翻译专项，不是新的聊天正代。首发日来自明确News。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">先决定何时输出，再比较译文质量</div>
+      <p>连续听音频时未来不可见。等久能消歧，抢先又易漏否定与修饰；同传必须同时评估语义和滞后。不要用离线句级高分代替交互体验。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">两个协议、三种格式是一个family</div>
+      <p>仅译文/Interleave源文+译文，各有原精度、FP8、GGUF。量化与输出模式不拆成六代；标签里的多语言也不等于正文已验证几十语种同传。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">音频与语言接口</div>
+      <p>HYV3Speech配置：48语言层、2048 hidden、128路由专家/每token选8；24层音频encoder、16kHz。30B-A3B沿用官方命名，非自行复算参数。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">增量翻译，语音另接</div>
+      <p>音频→SimulInfer/VAD→翻译后端→增量文本→可选TTS。模型决定是否输出源文；语音自然度与翻译语义分别验收。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">已开放与尚未支持分开</div>
+      <p>News明确10/26；权重目录及首分片HEAD200。llama.cpp支持仍未合入；GGUF存在不代表官方框架已即装即用。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/realsi_gemba_streamlaal_redstar_logos_v2.png" alt="Hy-SimulMT官方评测原图">
+    <div class="fig-cap">官方RealSI：横轴为对数刻度；质量—滞后取舍</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>流式协议与训练入口</h2></div>
+  <p class="body">首块必须<b>1600ms</b>；standard后续也是1600ms，short_chunk仅后续可800ms。WebSocket先等ready，按声明格式发PCM，EOF后读到done，避免截断尾句。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/hy_vs_human_streamlaal_horizontal_hyblue_en.png" alt="Hy-SimulMT官方评测原图">
+    <div class="fig-cap">官方小样本人类对照：3.3 / 4.5 / 4.7秒</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">语音克隆来自独立TTS</div>
+      <p>SimulInfer把译文交给另一个TTS服务；官方示例Qwen3-TTS+vLLM-Omni，约10秒历史保持衔接。显存、队列和首声时间单独计入。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">首字、首声与翻译滞后分别计时</div>
+    <p>StreamLAAL衡量流式翻译滞后，不是时间到第一段语音；实时系统还含音频累积、排队、翻译、TTS。配置262144位置不等于已验证262K音频会话。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">指标边界（研读记号，非训练目标公式）</div>$$\mathrm{StreamLAAL} \neq \mathrm{TimeToFirstSpeech}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">报告未披露完整策略目标；不编造等待惩罚、RL reward或训练公式。</p></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">官方继续SFT配置</div>
+      <p>冻结encoder，训练LLM与adapter；SFT/ZeRO-3/BF16、AdamW1e-5、cosine、warmup1000、长度2048、每卡batch1×累积2。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">适配例子不等于首发recipe</div>
+      <p>公开的是merged checkpoint继续训练入口；不能据此推断原始预训练、策略学习或RL配方。训练README旧pending句与当前HF开放状态有滞后。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>官方结果与证据边界</h2></div>
+  <p class="body">下表为官方九系统四集结果，非本地复测。Hy整行加粗是高亮本模型；<b>不是四列第一</b>。与RealSI长音频图不能直接混成一个排行榜。</p>
+
+  <table class="rtable"><tr><th class="left">Model</th><th>FLEURS</th><th>CoVoST2</th><th>ACL6060</th><th>RealSI-S</th></tr><tr><td class="left">Qwen3.8-Live</td><td>88.4</td><td>82.1</td><td>80.5</td><td>84.4</td></tr><tr class="ours"><td class="left">Hy-SimulMT</td><td>90.3</td><td>75.5</td><td>81.2</td><td>84.7</td></tr><tr><td class="left">Gemini3.5-Live</td><td>92.4</td><td>74.4</td><td>82.6</td><td>82.2</td></tr><tr><td class="left">Confucius4</td><td>89.4</td><td>76.8</td><td>76.1</td><td>77.7</td></tr><tr><td class="left">Seed-Live2.0</td><td>85.8</td><td>67.7</td><td>74.8</td><td>80.0</td></tr><tr><td class="left">SimulS2ST-Omni</td><td>78.6</td><td>66.6</td><td>73.1</td><td>77.4</td></tr><tr><td class="left">GPT-Realtime</td><td>77.7</td><td>50.8</td><td>76.4</td><td>76.7</td></tr><tr><td class="left">XunFei-Simult</td><td>73.4</td><td>57.0</td><td>57.5</td><td>70.9</td></tr><tr><td class="left">Seamless</td><td>72.8</td><td>60.9</td><td>49.8</td><td>56.9</td></tr></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">资料不足：未达完整报告精读深度</div>
+      <p>已读六原卡、中文卡、代码说明、配置与官方图；独立Tech Report、原始训练配比/策略目标/消融/统计协议未核实。未下载PDF或权重，未做本地复测。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">真人对照：18段约6分钟音频、10领域；六位译员，每级三人取最高质量分，不是全体均值。</p>
+  <table class="ood-table"><tr><th class="left">Matched test</th><th>StreamLAAL</th><th>Scope</th></tr><tr class="ours"><td class="left">Hy-SimulMT</td><td>3.3s</td><td>18 recordings</td></tr><tr><td class="left">CATTI Level 1</td><td>4.5s</td><td>3 interpreters</td></tr><tr><td class="left">CATTI Level 2</td><td>4.7s</td><td>3 interpreters</td></tr></table>
+
+  <div class="trick-box">
+    <div class="trick-title">真人测试与离线演示不能外推</div>
+    <p>小样本人类图为3.3/4.5/4.7秒；长音频约3秒是另一测试。官方视频是离线回放，不作live latency证据；没有总体语音自然度/相似度保证。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">优势有场景边界</div>
+      <div class="adelta">+0.3 / −6.6</div>
+      <div class="adesc">对Qwen：RealSI-S高0.3，CoVoST低6.6；无CI不夸大</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">Agent验收分层</div>
+      <div class="adelta">固定策略</div>
+      <div class="adesc">先测译文/等待/TTS，再看工具触发和最终状态</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">收录口径</div>
+    <p><span class="hl">10/26发布，一family六仓</span>；专项折叠，不用量化镜像或时间戳制造新正代。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">系统边界</div>
+    <p><span class="hl">源语音→增量翻译→独立TTS</span>；声音克隆与翻译质量、首声与滞后分开测。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">证据边界</div>
+    <p><span class="hl">原始资料不足</span>，未达完整报告精读；保留官网动态壳和训练说明滞后差异。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">研究方向</div>
+    <p><span class="hl">部分可观察决策</span>：固定翻译器/Agent分别对照，防止抢答、修订和源文监督泄漏。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>
