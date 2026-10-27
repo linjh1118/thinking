@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLD-Uni — 中文模型研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+</head>
+<body>
+<div class="lang-switch"><a class="active" href="NLD-Uni.html">阅读笔记</a></div>
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span style="color: #78716c;">BrainHao · 源文档：</span> <a href="NLD-Uni.html">NLD-Uni 研读笔记</a> &nbsp;·&nbsp; <a href="https://huggingface.co/nvidia/NLD-Uni">🤗 HF Model Card</a></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">NVIDIA · 2026-10月份线索 · 公开首日未核</span>
+    <div class="zh-title">NLD-Uni：统一接口与证据缺口分别记录</div>
+    <h1>Unified Multimodal Diffusion <span>Audit the Actual Checkpoint</span></h1>
+    <div class="authors">基于公开HF卡、配置、实现、manifest与LICENSE · 示意图非官方实验图</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">8 shards</div><div class="sub">官方BF16<br>权重分片说明</div></div>
+    <div class="score-box"><div class="num">1,557</div><div class="sub">active tensors<br>不是专家数</div></div>
+    <div class="score-box"><div class="num">34 layers</div><div class="sub">公开backbone<br>config字段</div></div>
+    <div class="score-box"><div class="num">日期待核</div><div class="sub">10/17指内部GitLab<br>非公开HF首发证据</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>统一框架的具体含义</h2></div>
+  <p class="body">本项收录为<b>统一多模态专项</b>。公开模型卡可读、实现存在，但首日与结果不足，保留月份线索，不塞进精确日30天榜。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">理解与生成有不同参数路径</div>
+      <p>理解用连续视觉特征、生成用离散视觉token扩散；MixtureofTransformers共框架但不同路径，不是所有任务同一计算。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">名称不代替checkpoint覆盖</div>
+      <p>卡通用描述理解/生成/编辑；release manifest写generation-only-step-10000。存在API不等于本checkpoint各路径都经验证。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">理解：连续视觉→文本</div>
+      <p>卡称支持AR/blockdiffusion；当前generate实现greedyblockdiffusionwithoutthinking。不能把架构一般能力当当前checkpoint效果。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">生成：离散视觉扩散→RGB</div>
+      <p>text_to_image与image_edit接口有steps/refinement/guidance/seed；支持256/512/1024参数不等于每档已量化验证。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">以实际实现核对入口</div>
+      <p>hidden4096、34层、32heads、8KVheads，位置131072。名称8B不等于自行核算完整视觉系统参数，配置不证明长上下文质量。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/paths.svg" alt="NLD-Uni 研读示意，非官方图或实测">
+    <div class="fig-cap">研读示意：同框架内不同视觉表示与参数路径</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>接口、checkpoint与验证</h2></div>
+  <p class="body">代码仅阅读归档，<b>没有trust_remote_code执行</b>。SGLang说明针对理解/文本路径，不能推广成图像生成服务支持。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/evidence.svg" alt="NLD-Uni 研读示意，非官方图或实测">
+    <div class="fig-cap">研读示意：当前公开材料、缺失验证与日期边界</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">验证文件不存在就保留缺口</div>
+      <p>卡指向VALIDATION.md、validation.json、examples/results.json；当前tree无这些文件，MD404。三场景smoketest也不是benchmark。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">内部GitLab日期不冒充公开首发</div>
+    <p>只访问公开HF资料。卡写10/17内部GitLab；未访问内部服务，也不以仓库createdAt/lastModified补公开日期。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">研读记号：证据等级不可跳跃</div>$$\mathrm{InterfaceExists}\;\not\Rightarrow\;\mathrm{TaskQualityVerified}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">不是官方训练公式；结果、协议和原始输出仍需补足。</p></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">评测从功能走向任务成绩</div>
+      <p>列出的MathVista/MMMU/DocVQA/ScreenSpot/GenEval等是应报告清单，没有实际成绩。缺split、judge、seed、样本数不作排名。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">许可原文与卡链接不一致</div>
+      <p>卡许可指另一个NL-Diffusion-Image；本仓LICENSE明确非商业research/eval、NVIDIA例外。记录差异，不宣称通用商业许可。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>已知事实与待补结果</h2></div>
+  <p class="body">表中是已核查文件事实，<b>不是实验成绩</b>。100M+图文对也没有公开精确混比、分阶段目标与消融。</p>
+
+  <table class="rtable"><tr><th class="left">Public artifact</th><th>Observed</th><th>Boundary</th></tr><tr><td class="left">HF README</td><td>available</td><td>general architecture</td></tr><tr><td class="left">config</td><td>34 layers</td><td>not full recipe</td></tr><tr><td class="left">release manifest</td><td>generation-only</td><td>coverage pending</td></tr><tr><td class="left">8 BF16 shards</td><td>listed</td><td>not downloaded</td></tr><tr><td class="left">VALIDATION.md</td><td>404</td><td>not verified</td></tr><tr><td class="left">Benchmark scores</td><td>absent</td><td>no SOTA claim</td></tr><tr><td class="left">Official figures</td><td>absent</td><td>research SVG only</td></tr></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">资料少：达不到完整报告标准</div>
+      <p>没有独立报告、正式结果表、训练消融或官方效果图。配图均为研读示意；不伪造样例/数字。未下载权重、未执行源代码。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">独立验证生成→编辑→理解链，避免同模型延续自己的错误并给自己打高分。</p>
+  <table class="ood-table"><tr><th class="left">Target</th><th>Listed suite</th><th>Missing</th></tr><tr><td class="left">Reasoning</td><td>MMMU/MathVista</td><td>scores / judge</td></tr><tr><td class="left">Document</td><td>DocVQA/OCRBench</td><td>protocol/results</td></tr><tr><td class="left">Grounding</td><td>ScreenSpot/RefCOCO</td><td>crop / IoU</td></tr><tr><td class="left">Image generation</td><td>GenEval/DPG/MJHQ</td><td>scores / seeds</td></tr></table>
+
+  <div class="trick-box">
+    <div class="trick-title">功能脚本不等于质量基准</div>
+    <p>即使三场景验证文件恢复，也应先保存输出，再固定模型/tokenizer/推理配置评基准；不借用LaVida-O或图像专用模型成绩。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">分开验收</div>
+      <div class="adelta">生成→编辑→理解</div>
+      <div class="adesc">独立观察器检查区域保持、文字与最终状态</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">先补证据</div>
+      <div class="adelta">不编数字</div>
+      <div class="adesc">功能样例、正式基准和首发日期各自补齐</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">日期</div>
+    <p><span class="hl">公开首日待核</span>；10/17内部日期不进入精确日列表。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">路径</div>
+    <p><span class="hl">连续理解/离散生成</span>；架构和当前checkpoint身份分开。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">资料</div>
+    <p><span class="hl">原始材料不足</span>；验证文件404、无基准表和报告。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">Agent训练</div>
+    <p><span class="hl">独立judge与外部事实</span>；不把漂亮合成图作已核实证据。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+</body>
+</html>

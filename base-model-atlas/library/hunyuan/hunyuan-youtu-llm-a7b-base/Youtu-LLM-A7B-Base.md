@@ -7,7 +7,7 @@ url: "https://huggingface.co/tencent/Youtu-LLM-A7B-Base"
 tags: [model-note, youtu, moe, multimodal, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-27
 ---
 
 # Youtu-LLM-A7B-Base：混合注意力的稀疏视觉语言基座
@@ -42,6 +42,12 @@ updated: 2026-10-21
 | 词表 / 精度 | 129280 / BF16 | 推理成本另看后端、并发与图像token |
 
 KDA在局部层承担线性注意力，GatedMLA穿插提供另一类交互路径；MoE使每个token只选择部分专家。配置还记有MRoPE、模态token和MTP相关字段，**字段存在不等于本次服务已启用全部功能**。配置注释明确MTP记录用于训练，推理不加载；不能直接宣传MTP推理解码加速。
+
+## 10 月 27 日模型卡补充：反向的多模态预训练起点
+
+官方卡新增说明：与常见 MLLM 使用已训练语言骨干再连接视觉模块的路线相比，本模型将**随机初始化 LLM 连接到预训练 ViT**，按 **4K→32K→128K→256K** 上下文分阶段预训练。这里“反向”是官方对训练起点的描述，不意味着各注意力模块反向执行，也不是新增 checkpoint 或新首发日。
+
+这使 11.5T 多模态 tokens 与语言骨干从头学习的关系更清楚，但卡没有给出每阶段 token 配比、冻结/解冻策略和可控消融。不能据此断言随机语言初始化一定优于成熟 LLM 起点。对 Agent Training，更有价值的实验是固定数据和算力，比较先验语言能力与视觉对齐的取舍，并单列长上下文扩展的收益；本轮只更新文档证据，没有运行这项实验。
 
 ## Base意味着什么
 

@@ -245,7 +245,7 @@ track_downloads: true
 
 ### **llama.cpp**
 
-**Note:** Dory support in llama.cpp is available in [ggml-org/llama.cpp#30306](https://github.com/ggml-org/llama.cpp/pull/30306). Until it is included in a llama.cpp release, build from the Dory-enabled source below. This example pins revision `98a74c97ea09ac72f6ceda1559808fc0a2f447ce`, used by the local macOS reference setup, rather than following the moving PR head.
+**Note:** Dory support in llama.cpp is available in [ggml-org/llama.cpp#30306](https://github.com/ggml-org/llama.cpp/pull/30306). Until it is included in a llama.cpp release, build from the Dory-enabled source below rather than using a stock llama.cpp binary. The Apple Silicon and Linux CUDA examples both pin revision `98a74c97ea09ac72f6ceda1559808fc0a2f447ce` rather than following the moving PR head.
 
 #### **Build on Apple Silicon**
 
@@ -275,17 +275,56 @@ cmake --build build --parallel 4 --target llama-server
 
 The build uses Metal and a prebuilt browser UI; no Python environment or JavaScript build is required to run the server.
 
+#### **Build on Linux with CUDA**
+
+These commands require Linux with a supported NVIDIA GPU and driver, the CUDA toolkit, a C/C++ compiler, CMake, and Git. Run them from the directory that will contain `llama.cpp-dory/`:
+
+```shell
+REV=98a74c97ea09ac72f6ceda1559808fc0a2f447ce
+
+git clone https://github.com/brianchmielNV/llama.cpp.git llama.cpp-dory
+git -C llama.cpp-dory fetch origin "$REV"
+git -C llama.cpp-dory checkout --detach "$REV"
+
+cmake -S llama.cpp-dory -B llama.cpp-dory/build-cuda \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DGGML_CUDA=ON \
+    -DGGML_CUDA_GRAPHS=ON \
+    -DGGML_NATIVE=OFF \
+    -DLLAMA_BUILD_SERVER=ON \
+    -DLLAMA_BUILD_UI=OFF \
+    -DLLAMA_BUILD_TESTS=OFF \
+    -DLLAMA_BUILD_EXAMPLES=OFF
+
+cmake --build llama.cpp-dory/build-cuda \
+    --target llama-server --parallel
+
+llama.cpp-dory/build-cuda/bin/llama-server --list-devices
+```
+
+For NVIDIA GB300, add `-DCMAKE_CUDA_ARCHITECTURES=103` to the CMake command. For another NVIDIA GPU, set the option to its CUDA compute capability or omit it for native detection. Confirm that `--list-devices` reports the NVIDIA GPU before launching the server.
+
 #### **Download the GGUF Checkpoint**
 
 llama.cpp loads GGUF files rather than the BF16 Hugging Face checkpoint directly. Download the reference [`dory-q5_k_m.gguf` export (Q5_K_M)](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-GGUF) in your browser and place it in `llama.cpp-dory/`. This is a quantized export; the benchmark results above are for BF16.
 
-The expected file size is **3,673,288,864 bytes**. Verify its SHA-256 checksum before launching:
+The expected file size is **3,673,288,864 bytes**. Verify its SHA-256 checksum before launching.
+
+On macOS:
 
 ```shell
 echo "96080be49ffd67b916018b7bdef8c484762576fb52780e10ab98ac4978a660e0  dory-q5_k_m.gguf" | shasum -a 256 -c -
 ```
 
+On Linux:
+
+```shell
+echo "96080be49ffd67b916018b7bdef8c484762576fb52780e10ab98ac4978a660e0  dory-q5_k_m.gguf" | sha256sum --check
+```
+
 #### **Launch the Server**
+
+##### **Apple Silicon**
 
 From `llama.cpp-dory/`, start a local server with two loops and reasoning enabled:
 
@@ -305,7 +344,32 @@ From `llama.cpp-dory/`, start a local server with two loops and reasoning enable
     --override-kv "dory.num_loops=int:2,dory.recurrent_kv_cache_mode=str:per_loop"
 ```
 
-Once the server is ready, open **http://127.0.0.1:8080** on the same Mac for the chat interface. The server is local-only and unauthenticated. Its OpenAI-compatible API is at **http://127.0.0.1:8080/v1**, with model identifier `dory` from `--alias`.
+##### **Linux with CUDA**
+
+From the directory that contains `llama.cpp-dory/`, start the CUDA server with the same two-loop configuration:
+
+```shell
+MODEL="$PWD/llama.cpp-dory/dory-q5_k_m.gguf"
+export LD_LIBRARY_PATH="$PWD/llama.cpp-dory/build-cuda/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+llama.cpp-dory/build-cuda/bin/llama-server \
+    -m "$MODEL" \
+    --alias dory \
+    --host 127.0.0.1 --port 8080 \
+    -ngl 999 \
+    --ctx-size 4096 --parallel 1 \
+    --batch-size 512 --ubatch-size 512 \
+    --cache-type-k f16 --cache-type-v f16 \
+    --flash-attn off \
+    --no-context-shift \
+    --jinja --reasoning on \
+    --temp 1.0 --top-p 0.95 --top-k 0 --min-p 0 --repeat-penalty 1 \
+    --override-kv "dory.num_loops=int:2,dory.recurrent_kv_cache_mode=str:per_loop"
+```
+
+Keep `-ngl 999` so that the expanded Dory graph is fully offloaded. Confirm during startup that llama.cpp detects a CUDA device and reports complete model-layer offload rather than CPU fallback.
+
+Once the server is ready, open **http://127.0.0.1:8080** on the same machine for the chat interface. The server is local-only and unauthenticated. Its OpenAI-compatible API is at **http://127.0.0.1:8080/v1**, with model identifier `dory` from `--alias`. Use the [API client examples](#api-client) below to prompt the model programmatically.
 
 
 #### **Choosing the Loop Count**

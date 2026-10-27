@@ -11,6 +11,7 @@ pipeline_tag: image-text-to-text
 Youtu-LLM-A7B-Base is a pre-trained checkpoint of a vision-language Mixture-of-Experts model with about 120B total parameters and ~7B activated parameters per token. 
 - This is a **base** model. We recommend to use raw text continuation, although `chat_template.jinja` is provided for further purpose. Custom modeling code is shipped in this repository and must be loaded with `trust_remote_code=True`.
 - It combines a hybrid attention stack, KDA interleaved with GatedMLA, with a fine-grained MoE feed-forward network. The model accepts text and image inputs and is trained with a 262,144-token context window over 11.5T multimodal tokens.
+- Compared to typical MLLMs, this model employs an opposed pre-training strategy: it attaches a randomly initialized LLM to a pre-trained ViT, followed by a multi-stage pre-training process with context lengths of 4K, 32K, 128K, and 256K.
 
 ## Model Summary
 

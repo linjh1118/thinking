@@ -4,9 +4,9 @@ type: model-note
 tags: [model-note, nvidia, latent-recurrence, agent-training]
 status: read
 created: 2026-10-17
-updated: 2026-10-17
+updated: 2026-10-27
 url: "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16"
-related: ["[[Nemotron-3.5-Super-VL-Family]]", "[[Hy-Memory-30B-A3B]]"]
+related: ["[[Topics/13_base_model/NVIDIA_Nemotron/261015_Nemotron_3_5_Super_Bolt/Nemotron-3.5-Super-Bolt|Nemotron-3.5-Super-VL-Family]]", "[[Hy-Memory-30B-A3B]]"]
 ---
 
 # Dory1.0-4B：不增加权重，用循环深度换计算
@@ -132,6 +132,10 @@ $$
 - 不自动执行下载卡内的安装、sudo、clone 或启动命令；本次仅归档研读。
 - 许可允许的商业使用仍受 OpenMDW-1.1；安全子卡404意味着审计材料不足，不意味着已经没有风险。
 
+### 10 月 27 日文档修订：Linux GGUF 路径
+
+当前 GGUF 卡新增 Linux/CUDA 编译与启动说明，固定 llama.cpp commit `98a74c97ea09ac72f6ceda1559808fc0a2f447ce`；GB300 的 CUDA architecture 103、全 GPU offload、`sha256sum` 与 `LD_LIBRARY_PATH` 均属于该部署例程条件。macOS 与 Linux 路径不互换；存在命令不等于已在本机跑通。本轮只同步原卡并补记，权重与基准表未因此变化，不在发布表重复计为新模型。
+
 ## 对 Agent Training 的启发
 
 > [!insight] 将 latent compute 与轨迹长短分开优化
@@ -147,6 +151,6 @@ $$
 - `src/config.json`：实际配置，区分图注block与attention/MLP条目。
 - `src/assets/`：完整官方架构、AA对照、token效率图和logo，离线可读。
 - Tech Report / Tech Blog：本轮未核实到专属正文，**不伪造链接**；训练数据公共说明PDF仅链接在原卡中，本次不下载。
-- 关联：[[Nemotron-3.5-Super-VL-Family]] 的容量/吞吐优化与本模型循环深度是不同轴；[[Hy-Memory-30B-A3B]] 的外部记忆写入也不同于潜空间循环。
+- 关联：[[Topics/13_base_model/NVIDIA_Nemotron/261015_Nemotron_3_5_Super_Bolt/Nemotron-3.5-Super-Bolt|Nemotron-3.5-Super-VL-Family]] 的容量/吞吐优化与本模型循环深度是不同轴；[[Hy-Memory-30B-A3B]] 的外部记忆写入也不同于潜空间循环。
 
 > 📊 相关可视化：[[dory_1_0_poster_zh.html|Dory1.0 中文研究 Poster]]

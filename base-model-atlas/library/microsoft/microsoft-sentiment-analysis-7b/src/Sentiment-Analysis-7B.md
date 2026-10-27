@@ -15,7 +15,7 @@ tags:
 
 **Sentiment-Analysis-7B** is a 7B-parameter autoregressive language model fine-tuned for sentiment classification of user messages directed at a service, product, or agent (the "Target"). It is built on top of [*mistralai/Mistral-7B-Instruct-v0.2*](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) and was fine-tuned with reinforcement learning, using an LLM as a judge, on a small internal training set of ~300 examples. No pre-defined labels were used for training.
 
-Given a user message, the model generates a response in the following format: the **first token is the sentiment label** (`Negative`, `Neutral`, or `Positive`), followed by a short explanation of the decision. If only the label is needed, set `max_new_tokens=3`.
+Given a user message, the model generates a response in the following format: the **first token is the sentiment label** (`Negative`, `Neutral`, or `Positive`), followed by a short explanation of the decision.
 
 ### Evaluation metrics
 

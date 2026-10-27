@@ -3,7 +3,7 @@ title: "Sentiment-Analysis-7B — 用小量RL数据学习定向情感规则"
 type: model-note
 tags: [model, microsoft, reinforcement-learning, classification]
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-27
 url: "https://huggingface.co/microsoft/Sentiment-Analysis-7B"
 ---
 
@@ -37,7 +37,7 @@ Target定义为用户正在交互的服务/产品/agent及其网站、app、API�
 
 ## 为什么使用生成式分类
 
-它仍通过AutoModelForCausalLM生成，不是独立三分类logits head。卡称标签为first token，同时示例建议max_new_tokens=3只要标签；实现中应按实际tokenizer和完整标签串验证，不假定每个标签始终单token。短理由是事后文本，不是可靠概率或必然忠实的reward因果解释。
+它仍通过AutoModelForCausalLM生成，不是独立三分类logits head。卡称标签先输出，随后给理由。10月27日原卡已移除旧的 `max_new_tokens=3` 标签截断建议；不再将它作为官方推荐。实现中应按实际tokenizer和完整标签串验证，不假定每个标签始终单token。短理由是事后文本，不是可靠概率或必然忠实的reward因果解释。这是文档修订，不是新模型发布。
 
 ## 62.0→72.8应该怎样理解
 
