@@ -3,9 +3,9 @@ title: "WeVisOne-VL — 从对象定位到连续透明度的统一视觉感知"
 type: model-note
 tags: [model-note, tencent, vision-language, grounding, segmentation, agent-training]
 created: 2026-10-23
-updated: 2026-10-23
+updated: 2026-10-27
 url: "https://huggingface.co/tencent/WeVisOne-VL-4B"
-related: ["[[WeVisDoc]]", "[[Qwen3-VL]]", "[[Hy-Nomas]]"]
+related: ["[[WeVisDoc]]", "[[Hy-Nomas]]"]
 ---
 
 # WeVisOne-VL：把“在哪里”与“哪些像素”接在同一个实例上
@@ -31,6 +31,10 @@ related: ["[[WeVisDoc]]", "[[Qwen3-VL]]", "[[Hy-Nomas]]"]
 | 抠图 | 框、`<OBJ>`、连续 alpha | 半透明与发丝不能用二值边界完全表示 |
 
 卡片声明面向感知研究，不面向自主高影响决策或身份识别。直接输出结构化结果，不显式生成 CoT；专项微调也可能损失基座的通用能力。
+
+### 10 月 27 日模型卡校正记录
+
+2B 原卡将旧的 **9,511,460（约9.5M）** 改为 **9,609,764（约9.6M）**，与4B卡和本文原有报告口径一致；两张卡还补上论文、项目页和引用。报告已在10月23日归档，这次只是同步模型卡的证据链。参数描述被修正不能单独证明权重发生更新，本文未以README修改时间新增发布事件，family和首发日期待核状态保持不变。
 
 ## 二、Data Engine：高召回提案不等于可靠监督
 
@@ -123,6 +127,6 @@ F1 Mean 是 IoU0.5至0.95步长0.05的平均，不是单一IoU0.5；Ref-ZOM还�
 - 🤗 [4B Model Card](https://huggingface.co/tencent/WeVisOne-VL-4B)；[2B Model Card](https://huggingface.co/tencent/WeVisOne-VL-2B)。原文：`src/hf_model_card.md`、`src/hf_2b_model_card.md`。
 - 📄 [Tech Report HTML](https://arxiv.org/html/2610.31329v1)；[PDF链接](https://arxiv.org/pdf/2610.31329)仅外链，未下载PDF。
 - 🧩 [官方源码与评测](https://github.com/Tencent/WeVisOne-VL)；[项目页](https://tencent.github.io/WeVisOne-VL/)。归档代码未执行。
-- 关联：[[WeVisDoc]] 关注文档感知；[[Qwen3-VL]] 是骨干来源；[[Hy-Nomas]] 是同团队树下另一种世界生成专项，不混成聊天正代。
+- 关联：[[WeVisDoc]] 关注文档感知；[Qwen3-VL Atlas节点](https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=qwen-qwen3-vl)及[官方仓库](https://github.com/QwenLM/Qwen3-VL)可追溯骨干来源；[[Hy-Nomas]] 是同团队树下另一种世界生成专项，不混成聊天正代。
 
 > 📊 中文海报：[[wevisone_vl_poster_zh.html]] · [Thinking Overview](https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=hunyuan-wevisone-vl)

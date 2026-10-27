@@ -15,7 +15,9 @@ tags:
 
 # WeVisOne-VL: Unified Visual Perception from Objects to Pixels
 
-**WeVisOne-VL** (**We**Chat **Vis**ion All-in-**One**) is a unified vision-language model developed by WeChat Vision, Tencent Inc. Built upon Qwen3-VL, it unifies object-level perception (open-vocabulary object detection, referring localization, object counting, object pointing, and OCR) and pixel-level perception (referring segmentation and promptable alpha matting) through structured next-token prediction and a lightweight 9.5M-parameter pixel decoder.
+**Paper:** [WeVisOne-VL: Unified Visual Perception from Objects to Pixels](https://huggingface.co/papers/2610.31329) | **Project Page:** [WeVisOne-VL](https://tencent.github.io/WeVisOne-VL)
+
+**WeVisOne-VL** (**We**Chat **Vis**ion All-in-**One**) is a unified vision-language model developed by WeChat Vision, Tencent Inc. Built upon Qwen3-VL, it unifies object-level perception (open-vocabulary object detection, referring localization, object counting, object pointing, and OCR) and pixel-level perception (referring segmentation and promptable alpha matting) through structured next-token prediction and a lightweight 9.6M-parameter pixel decoder.
 
 ## Quick Start
 
@@ -35,7 +37,7 @@ print(result.response, len(result.masks))
 
 The model uses dedicated coordinate tokens (`<0>` ... `<1000>`) to represent normalized bounding boxes and points, returns `None` when a queried target is absent, and emits a special instance token (`<OBJ>`, token ID `152678`) after each predicted box for dense tasks.
 
-The attached `mask_decoder.pt` (9,511,460 parameters) is a required core component that combines:
+The attached `mask_decoder.pt` (9,609,764 parameters) is a required core component that combines:
 - A **Visual Feature Adapter** over multi-level Qwen3-VL pre-merging ViT features;
 - A **Box-Guided Query Decoder** with 6 deformable cross-attention blocks initialized from the `<OBJ>` hidden state and Fourier-encoded box prior;
 - An **Instance-Conditioned Dense Prediction Head** with `FullCanvasAlphaCascadeHead` (refining predictions across S/4, S/2, and S/1 to output full-resolution continuous alpha mattes at stride 1).
@@ -54,3 +56,16 @@ The release is intended for research in visual grounding, referring localization
 Unless otherwise noted, Tencent-authored code in this repository is released under the [Apache License 2.0](LICENSE).
 
 Third-party components retain their original licenses and copyright notices. Please review the corresponding source files before use.
+
+## Citation
+
+If WeVisOne-VL is helpful to your work, please consider giving us a ⭐ and citing:
+
+```bibtex
+@article{liang2026wevisone,
+  title={WeVisOne-VL: Unified Visual Perception from Objects to Pixels},
+  author={Liang, Tianming and Pan, Junyi and Li, Yuxi and Fu, Canmiao and Huang, Zhipeng and Sun, Chong and Li, Chen and Lyu, Jing},
+  journal={arXiv preprint arXiv:2610.31329},
+  year={2026}
+}
+```

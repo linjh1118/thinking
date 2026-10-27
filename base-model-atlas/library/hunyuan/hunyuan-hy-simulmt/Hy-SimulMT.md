@@ -4,7 +4,7 @@ type: model-note
 team: Tencent Hunyuan
 date: 2026-10-26
 created: 2026-10-26
-updated: 2026-10-26
+updated: 2026-10-27
 tags: [model-note, hunyuan, simultaneous-translation, streaming, speech]
 status: read
 url: "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B"
@@ -69,7 +69,7 @@ Hy-SimulMT 的价值在于把连续音频、增量输出、客户端节奏与语
 | 仅译文 | `Hy-SimulMT-30B-A3B` | `-FP8` | `-GGUF` | 面向只需要目标语言结果的场景 |
 | 源文 + 译文 | `Hy-SimulMT-30B-A3B-Interleave` | `-Interleave-FP8` | `-Interleave-GGUF` | 需要源文展示、对齐和错误回放 |
 
-六份原卡已存 `src/`，但量化格式存在不等于原生推理框架已全部支持。**官方 llama.cpp 说明仍写支持尚未合入，建议等待兼容版本**；不能因有 GGUF 文件便写成即装即用。vLLM 路径要求兼容的 `HYV3ForCausalLM` 支持以及 `simulst` 插件；配置架构名和框架注册名不同，不能机械按字符串断言不兼容。
+六份原卡已存 `src/`，但量化格式存在不等于原生推理框架已全部支持。**10月27日卡片补充 [llama.cpp PR #31198](https://github.com/ggml-org/llama.cpp/pull/31198)：当前实现支持 `llama-mtmd-cli`，`llama-server` 支持计划后续提供，尚未合入官方仓库。** 因此 CLI 能推理不证明音频 server bridge 已可用；运行下文 server 示例前，应单独核对该版本包含所需服务支持。这里只记录部署资料修订，不据此认定权重更新或新增模型。vLLM 路径要求兼容的 `HYV3ForCausalLM` 支持以及 `simulst` 插件；配置架构名和框架注册名不同，不能机械按字符串断言不兼容。
 
 ## 评测：四个短音频数据集说明什么
 

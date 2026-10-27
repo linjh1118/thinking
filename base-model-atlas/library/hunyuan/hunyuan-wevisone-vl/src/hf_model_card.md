@@ -15,6 +15,8 @@ tags:
 
 # WeVisOne-VL: Unified Visual Perception from Objects to Pixels
 
+**Paper:** [WeVisOne-VL: Unified Visual Perception from Objects to Pixels](https://huggingface.co/papers/2610.31329) | **Project Page:** [WeVisOne-VL](https://tencent.github.io/WeVisOne-VL)
+
 **WeVisOne-VL** (**We**Chat **Vis**ion All-in-**One**) is a unified vision-language model developed by WeChat Vision, Tencent Inc. Built upon Qwen3-VL, it unifies object-level perception (open-vocabulary object detection, referring localization, object counting, object pointing, and OCR) and pixel-level perception (referring segmentation and promptable alpha matting) through structured next-token prediction and a lightweight 9.6M-parameter pixel decoder.
 
 ## Quick Start
@@ -54,3 +56,16 @@ The release is intended for research in visual grounding, referring localization
 Unless otherwise noted, Tencent-authored code in this repository is released under the [Apache License 2.0](LICENSE).
 
 Third-party components retain their original licenses and copyright notices. Please review the corresponding source files before use.
+
+## Citation
+
+If WeVisOne-VL is helpful to your work, please consider giving us a ⭐ and citing:
+
+```bibtex
+@article{liang2026wevisone,
+  title={WeVisOne-VL: Unified Visual Perception from Objects to Pixels},
+  author={Liang, Tianming and Pan, Junyi and Li, Yuxi and Fu, Canmiao and Huang, Zhipeng and Sun, Chong and Li, Chen and Lyu, Jing},
+  journal={arXiv preprint arXiv:2610.31329},
+  year={2026}
+}
+```

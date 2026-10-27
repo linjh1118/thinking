@@ -10,9 +10,10 @@ tags:
 license: mit
 library_name: transformers
 ---
+
 <div align="center">
 
-![Baidu Inc.](assets/logo.png)
+<img src="assets/logo.png" width="40%" alt="Baidu Inc." />
 
 </div>
 
@@ -43,7 +44,7 @@ library_name: transformers
 
 <div align="center">
 
-![Unlimited OCR 2 overview](assets/Unlimited-OCR2.png)
+<img src="assets/Unlimited-OCR2.png" width="1000" alt="Unlimited OCR 2 overview" />
 
 </div>
 
@@ -62,7 +63,13 @@ library_name: transformers
 * Sparse Reference Sliding Window Attention (SR-SWA): Compresses text-visual attention interactions from ultra-long sequences down to a fixed-size set of working references (e.g., 512 tokens). This bounds computational complexity, keeping per-step decoding latency and memory footprint nearly constant regardless of document length.
 * From Long- to Unlimited-Horizon Parsing: Powered by SR-SWA, Unlimited-OCR 2 achieves true, unbounded document parsing within a finite context window—effectively eliminating quadratic attention scaling and memory bottlenecks as documents grow.
 * Ultra-Long Document Parsing SOTA: Achieves state-of-the-art performance across both dozens-of-pages benchmarks (e.g., MPDocBench) and extreme hundred-page benchmarks (e.g., MarathonDocBench).
-![Performance](assets/leaderboard.png)
+
+<div align="center">
+
+<img src="assets/leaderboard.png" width="1000" alt="Unlimited OCR 2 Performance" />
+
+</div>
+
 ## Inference
 
 > Unlimited OCR 2 supports **Transformers** (native, for quick tests) and **SGLang** (recommended for serving).
