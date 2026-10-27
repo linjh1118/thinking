@@ -14,6 +14,23 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_native_card_tables_keep_merged_cells_and_strip_executable_html(self):
+        raw = '<table onclick="bad()"><tr><th colspan="2">Result</th></tr><tr><td rowspan="2" style="color:red">9.49</td><td><b>Offline</b><script>alert(1)</script></td></tr></table>'
+        clean = atlas.sanitize_card_table(raw)
+        self.assertIn('colspan="2"', clean)
+        self.assertIn('rowspan="2"', clean)
+        self.assertIn('<b>Offline</b>', clean)
+        for unsafe in ['onclick', 'style=', 'alert(1)', '<script']:
+            self.assertNotIn(unsafe, clean)
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'card.md'
+            destination = Path(directory) / 'card.html'
+            source.write_text('# Card\n\nIntro\n' + raw + '\n\n```html\n<table><tr><td>Literal</td></tr></table>\n```\n')
+            atlas.render_markdown(source, destination, {})
+            rendered = destination.read_text()
+            self.assertIn('<div class="table-wrap"><table>', rendered)
+            self.assertIn('&lt;table&gt;&lt;tr&gt;&lt;td&gt;Literal', rendered)
+
     def test_hf_html_headings_code_links_and_video_are_readable(self):
         raw = ('<h1 align="center">Model Title</h1>\n'
                '<p>BF16 · <code>Pipeline</code></p>\n'

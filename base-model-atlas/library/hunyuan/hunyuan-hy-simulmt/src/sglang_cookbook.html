@@ -1,0 +1,227 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://sgl-project.github.io/sglang-omni/cookbook/hy_simulmt.html">打开官方原文 ↗</a> · <a href="sglang_cookbook.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Hy-SimulMT — SGLang Skip to main content Back to top Ctrl + K Search Ctrl + K Search Ctrl + K Search Ctrl + K 
+Get Started 
+Installation — CUDA 
+Installation — Apple Silicon 
+Installation — Ascend NPU 
+Installation — Intel XPU 
+Installation — Intel CPU 
+Installation — MUSA 
+Troubleshooting 
+Cookbook 
+Qwen3-TTS 
+MOSS-TTS 
+Whisper ASR 
+Nemotron 3.5 ASR 
+MOSS-Transcribe-Diarize 
+Fish Audio S2-Pro 
+Fun-CosyVoice3 
+NemotronLabs VoiceChat 
+PersonaPlex 
+Cosmos3 Nano serving 
+Qwen3-Omni 
+Qwen3-ASR 
+MiniCPM-o 
+Fun-ASR-Nano 
+Higgs TTS 
+MOSS-TTS-Local 
+Nemotron 3 Diarization 
+Fish Audio Drama 3 
+MiniMax Music 3 
+Ming-Omni 
+AuK 
+ZONOS2 
+ARK-ASR-3B 
+Hy-SimulMT 
+Voxtral TTS 
+dots.tts 
+LLaDA2.0-Uni 
+Ming-Omni-TTS 
+Ming-3.0-asr-tiny 
+Ming-3.0-audio-flash 
+Ming-3.0-TTS 
+General Usage 
+Omni Model Usage 
+Native Chat Stage 
+Audio Translations 
+TTS Model Usage 
+Process Topology, Replicas, and GPU Sharing 
+TTS Process Topology 
+Process Topology Migration 
+SGLang-Omni Router 
+Same-GPU Data Parallelism with CUDA MPS 
+Native Media Routes 
+MLX 
+MLX Path 
+Developer Reference 
+Architecture 
+API Server Design 
+Pipeline Overview 
+Config 
+Adding a Parameter 
+Communication 
+Reference Encode Service 
+Request-level profiler 
+Qwen3-ASR High-Concurrency Benchmark and Bottleneck Profile 
+Full-Duplex Guide 
+TTS benchmark runbook 
+TTS Model Integration 
+ASR benchmark runbook 
+MiniCPM-o offline benchmark runbook 
+RL Admin Control 
+CI Workflows and Labels 
+Bumping the SGLang Pin 
+Repository 
+Show source 
+Suggest edit 
+Open issue 
+.md 
+.pdf 
+System Settings 
+Light 
+Dark 
+Hy-SimulMT 
+Contents 
+Start the server 
+Translate an audio file 
+Stream the translated text 
+Live audio 
+Reference validation 
+Latency check 
+Hy-SimulMT # 
+Hy-SimulMT-30B-A3B translates Chinese speech to English text and English speech to Chinese text. This integration supports the ordinary, unquantized checkpoint. It uses the shared ASR scheduler, the Qwen3 audio encoder, a frame-stacking adapter, and SGLang’s Hunyuan V3 decoder. 
+Start the server # 
+Install SGLang-Omni using the installation guide , then run: sgl-omni serve \ --model-path tencent/Hy-SimulMT-30B-A3B \ --mem-fraction-static 0 .75 \ --enable-realtime \ --port 8000 
+The BF16 weights occupy approximately 57 GiB before KV cache and runtime allocations. A single H200 can host this configuration. Decode CUDA graphs are enabled and Torch compilation is disabled by default. 
+Translate an audio file # 
+For Chinese speech to English text, use the audio translation endpoint: curl http://localhost:8000/v1/audio/translations \ -F file = @chinese.wav \ -F language = zh \ -F response_format = json 
+The translation endpoint always targets English. Specify the source language because this checkpoint does not provide language-detection tokens. Individual audio inputs must be at most 30 seconds; longer inputs are rejected instead of silently truncated. 
+For English speech to Chinese text, use the shared transcription route with the source language: curl http://localhost:8000/v1/audio/transcriptions \ -F file = @english.wav \ -F language = en \ -F response_format = json 
+The shared /v1/audio/transcriptions route also works: for this translation-only model, language=en produces Chinese translation and language=zh produces English translation. It does not produce a source-language transcript. Omitted language defaults to Chinese-to-English. 
+Stream the translated text # 
+Set stream=true on either audio endpoint to receive transcript.text.delta events followed by the authoritative transcript.text.done . This streams the output of a completed audio upload. 
+Live audio # 
+With --enable-realtime , connect to /v1/realtime?intent=transcription . The shared ASR WebSocket accepts mono PCM16 at 16 kHz: 
+
+Send session.update with session.language set to the source language ( zh or en ). 
+
+Send base64 PCM chunks with input_audio_buffer.append . 
+
+Receive transcription.segment translation hypotheses, refreshed every 1.6 seconds by default. 
+
+Send input_audio_buffer.commit to finish a segment or transcription.done to finish input. 
+Each partial request retains earlier audio turns and their translations, including turns that emitted no text. Audio embeddings and prefix tokens use the existing multimodal and radix-cache paths. At a segment boundary, the final hypothesis translates the complete segment to cover speech deferred by earlier turns; it may revise partial translations. The shared runtime splits segments at 30 seconds, after which translation context starts fresh. This initial policy does not reproduce SimulInfer’s VAD and recovery heuristics. 
+Outputs are text. Speech synthesis requires a separate TTS stage. Interleave checkpoints and quantized checkpoints are outside this implementation. 
+Reference validation # 
+Use identical 16 kHz waveforms, greedy decoding, and the checkpoint’s audio-window boundaries when comparing with Transformers. In the SimulTrain reference at revision 918868feee81c290bb31ebe373d5c3e235a51959 , use flash_attention_2 for the audio encoder: its SDPA path does not pass the block mask to attention, so clips spanning multiple windows can produce different translations. This integration preserves n_window_infer=800 , consistent with the checkpoint and the SimulInfer serving encoder. 
+Validation used checkpoint revision 8461c998403d10a4c30bcb0e55bfb0c981b92774 and 13 requests derived from two speech clips: seven offline inputs covering short audio, an 8-second window boundary, and the 30-second limit, plus three successive streaming turns in each direction. Prompt tokens and BF16 mel features match exactly. Audio-embedding relative L2 error is at most 0.00414. Greedy output token sequences match on 11 of 13 requests; the 8-second and repeated 30-second inputs diverge at near-tied choices with an HF top-two logit gap of 0.125. At those positions, both implementations retain the same top-two token set. Across 15 aligned next-token distributions, maximum HF-to-Omni KL divergence is 0.0193. This establishes basic implementation agreement; it does not establish translation quality on a representative corpus. 
+Decode CUDA graphs produce identical token sequences to eager Omni execution on all 13 requests. Concurrent Chinese and English realtime sessions produce partial translations and final text matching offline decoding of the same PCM16 audio. The 30-second automatic segment boundary also produces the same final translation. 
+Latency check # 
+The following batch-size-one medians use one warmup and three measured calls on H200, BF16, greedy decoding, and disabled radix and multimodal embedding caches. The two full clips have identical generated token sequences in both runtimes. HF timing includes feature extraction, audio encoding, and generation; Omni timing additionally includes local HTTP transport and audio decoding. Model loading and warmup are excluded. HF uses PyTorch 2.9.1, Transformers 5.8.0, encoder FA2, and decoder SDPA; Omni uses PyTorch 2.14.1, SGLang 0.5.22, and FA3. 
+
+Request 
+HF 
+Omni eager 
+Omni CUDA graph 
+HF / Omni graph 
+
+Chinese speech, 4.20 seconds, 14 output tokens 
+661.9 ms 
+897.8 ms 
+140.7 ms 
+4.70x 
+
+English speech, 15.05 seconds, 38 output tokens 
+1751.2 ms 
+2416.1 ms 
+269.7 ms 
+6.49x 
+
+Streaming WAIT turn, one terminal token 
+82.1 ms 
+88.2 ms 
+90.1 ms 
+0.91x 
+The WAIT request ends after prefill, so decode graphs do not accelerate it. These small-sample measurements do not characterize concurrent throughput. To repeat an uncached serving comparison, add --asr.engine.disable_radix_cache true ; add --asr.engine.disable_cuda_graph true for the eager control. 
+previous 
+ARK-ASR-3B 
+next 
+Voxtral TTS Contents 
+Start the server 
+Translate an audio file 
+Stream the translated text 
+Live audio 
+Reference validation 
+Latency check 
+By SGLang-Omni Team 
+© Copyright 2025-2026, SGLang-Omni. 
+Last updated on Oct 27, 2026.</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

@@ -21,6 +21,10 @@ updated: 2026-10-27
 
 ![官方 SR-SWA 示意：每步选择有关页面和视觉 token](src/assets/Unlimited-OCR2.png)
 
+## 10月27日晚资料补充
+
+原卡新增 [MarathonDocBench 数据集入口](https://huggingface.co/datasets/baidu/MarathonDocBench)，以及 ModelScope、百度云与演示链接。它补充了本笔记已有长文档评测的资源地图，**不改变Unlimited-OCR-2首发日，不另造模型叶子**；本轮未下载数据集或由新链接推断权重更新。
+
 ## 为什么跨页解析比逐页 OCR 更难
 
 长合同里的表格可能跨过分页，标题层级可能依赖前页，脚注与正文也可能分离。逐页识别即使字准，也可能在拼接时丢掉结构。反过来，让每个输出 token 都看全部页面，会把视觉访问成本放大。官方图左侧 R-SWA 的视觉参考仍很密；右侧 SR-SWA 只激活有关页面和视觉区域，同时保留局部生成历史。[S1]

@@ -111,6 +111,14 @@ Hy-SimulMT 的价值在于把连续音频、增量输出、客户端节奏与语
 
 SimulInfer Web/API 默认 8080、vLLM 模型服务默认 8800；llama.cpp bridge 示例是另一条 8094 Web/API → 8080 模型服务路径。区分部署方式后再解释端口，避免把不同示例拼成一套配置。
 
+## 10月27日晚：SGLang-Omni 部署补充
+
+六份 HF 卡新增同一节 SGLang-Omni，但该接入**只覆盖 BF16 的 Hy-SimulMT-30B-A3B，仅返回译文文本**；不覆盖 FP8、GGUF 或 Interleave，语音输出和克隆仍需独立 TTS。不能因为六卡都出现这段文字就说六 checkpoint 全兼容，也不据部署说明认定权重更新。
+
+官方描述 BF16 权重本身约57GiB，还需 KV cache 与运行空间；“一张H200可用”不是57GiB总显存承诺。服务默认端口8000，不要与SimulInfer8080混用。文件请求每次一个、最长30秒，超长拒绝而非截断；应显式传源语言zh/en，缺省是中译英。SSE以transcript.text.done为最终结果，实时WebSocket接16kHz单声道PCM16，每1.6秒刷新假设，最后可修订先前部分译文；30秒后新建翻译上下文。
+
+这条路径不复刻 SimulInfer 的 VAD 与恢复启发式。官方cookbook的“最高6.5倍快于Transformers”限定H200、batch1和其验证设置，不是所有设备或端到端首声的加速。本轮保存HF原卡与[cookbook](https://sgl-project.github.io/sglang-omni/cookbook/hy_simulmt.html)，只阅读未执行Docker、安装或推理命令。
+
 ## 训练：公开的是继续 SFT 的入口
 
 SimulTrain 以已下载的 merged checkpoint 为起点，用 LlamaFactory 集成继续训练。默认 YAML 冻结 encoder，训练语言模型与 adapter；`stage=sft`、full finetuning、ZeRO-3、BF16、gradient checkpointing、AdamW、学习率 1e-5、cosine、warmup 1000、每卡 batch 1、累积 2、1 epoch、长度 2048、无 packing。数据示例包含音频引用、源文和译文，示例音频占位不能当真实训练集。

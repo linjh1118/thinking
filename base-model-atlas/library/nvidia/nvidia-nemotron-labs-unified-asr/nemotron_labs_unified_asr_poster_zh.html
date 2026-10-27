@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nemotron Labs Unified ASR — 中文研究海报</title>
+
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style><style id="MJX-SVG-styles">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+</style></head>
+<body>
+
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>ω BrainHao · </span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FNVIDIA_Nemotron%2FVariants%2F261027_Nemotron_Labs_Unified_ASR%2FNemotron-Labs-Unified-ASR">📚 本地源笔记</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=nvidia-nemotron-labs-unified-asr">Overview</a> · <a href="Nemotron-Labs-Unified-ASR.html">📖 渲染笔记</a> · <a href="https://huggingface.co/nvidia/nemotron-labs-unified-asr-0.6b">官方资料 ↗</a></div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">2026-10-27 HF首发 | NVIDIA · 语音识别专项</span>
+<div class="zh-title">共享权重兼顾离线精度与流式等待</div>
+<h1>Unified ASR <span>Offline + Streaming</span></h1>
+<div class="authors">600M FastConformer-RNNT · 官方模型卡与原图 · 非本地复测</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">600M</div><div class="sub">共享权重</div></div>
+<div class="score-box"><div class="num">25</div><div class="sub">欧洲语言</div></div>
+<div class="score-box"><div class="num">160ms</div><div class="sub">最低推荐算法延迟</div></div>
+<div class="score-box"><div class="num">670k h</div><div class="sub">人工+伪标注语音</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题：离线与在线为何有落差</h2></div>
+<p class="body">离线可以看完整句，在线必须在未来音频未知时提交。统一模型共享 encoder、predictor、joint，减少两套系统的维护，但不能消除实时性的准确率代价。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">一个checkpoint，不是通用文本新正代</div>
+<p>英文Parakeet-unified的25语种扩展；中文不在ASR语言列表。转写文本，不直接生成语音。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">公开数据与未公开细节</div>
+<p>约10k小时人工转写+660k小时Granary伪标注；温度采样。完整超参、MCR消融和各语言时长不足，不能冒充完整报告精读。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">初始化</div>
+<p>24层encoder来自Parakeet TDT v3；解码目标为RNNT，8倍下采样仍非因果。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">联合工作模式</div>
+<p>完整上下文与left/chunk/right分块训练共享全部参数，MCR减小模式差距。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">数据与词表</div>
+<p>25语种共用SentencePiece；人工与伪标注保持标点和大小写。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="官方：离线/流式共享权重与上下文模式" src="src/assets/unified_scheme.png"/>
+<div class="fig-cap">官方：离线/流式共享权重与上下文模式</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>机制：模式一致性与语言提示</h2></div>
+<p class="body">离线用全上下文；流式用分块 attention 与 Dynamic Chunked Convolution。MCR 约束两种模式一致。图为官方架构，不把切块调用误写成完整训练方法。</p>
+<div class="fig-box">
+<img alt="官方：WER—算法延迟完整权衡图" src="src/assets/unified_asr_comparison.png"/>
+<div class="fig-cap">官方：WER—算法延迟完整权衡图</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">统计口径必须保留</div>
+<p>44-run均值不是25个语言均分再平均。cleaned英文集合不能与历史uncleaned榜单直接比较。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">不要把auto语言模式当评测模式</div>
+<p>支持auto，但卡片成绩用显式language-ID。最早的错误token已提交后通常无法撤回。</p>
+</div>
+<div class="formula-box"><div class="flabel">算法延迟定义</div><mjx-container class="MathJax CtxtMenu_Attached_0" jax="SVG" display="true" tabindex="0" ctxtmenu_counter="0" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="18.864ex" height="2.264ex" role="img" focusable="false" viewBox="0 -705 8337.8 1000.7" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.669ex;"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D43F" xlink:href="#MJX-TEX-I-1D43F"></use></g><g data-mml-node="TeXAtom" transform="translate(714,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="61" xlink:href="#MJX-TEX-N-61"></use><use data-c="6C" xlink:href="#MJX-TEX-N-6C" transform="translate(500,0)"></use><use data-c="67" xlink:href="#MJX-TEX-N-67" transform="translate(778,0)"></use><use data-c="6F" xlink:href="#MJX-TEX-N-6F" transform="translate(1278,0)"></use><use data-c="72" xlink:href="#MJX-TEX-N-72" transform="translate(1778,0)"></use><use data-c="69" xlink:href="#MJX-TEX-N-69" transform="translate(2170,0)"></use><use data-c="74" xlink:href="#MJX-TEX-N-74" transform="translate(2448,0)"></use><use data-c="68" xlink:href="#MJX-TEX-N-68" transform="translate(2837,0)"></use><use data-c="6D" xlink:href="#MJX-TEX-N-6D" transform="translate(3393,0)"></use><use data-c="69" xlink:href="#MJX-TEX-N-69" transform="translate(4226,0)"></use><use data-c="63" xlink:href="#MJX-TEX-N-63" transform="translate(4504,0)"></use></g></g></g></g><g data-mml-node="mo" transform="translate(4540.5,0)"><use data-c="3D" xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(5596.3,0)"><use data-c="1D436" xlink:href="#MJX-TEX-I-1D436"></use></g><g data-mml-node="mo" transform="translate(6578.5,0)"><use data-c="2B" xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(7578.8,0)"><use data-c="1D445" xlink:href="#MJX-TEX-I-1D445"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msub><mi>L</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi data-mjx-auto-op="false">algorithmic</mi></mrow></mrow></msub><mo>=</mo><mi>C</mi><mo>+</mo><mi>R</mi></math></mjx-assistive-mml></mjx-container><p style="font-size:.68rem;color:#78716c;margin-top:4px;">80ms chunk +80ms right=160ms；不含采集、网络、排队、GPU重算和TTS。</p><template class="formula-latex">$$L_{\mathrm{algorithmic}}=C+R$$</template></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">语言提示</div>
+<p>one-hot语言向量沿时间广播，与声学特征拼接并投影；低延迟时避免首批token误判语言。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">推理不是缓存免费</div>
+<p>当前buffered每步重算左上下文。直接cache-aware会破坏训练/推理匹配，2秒以下左上下文明显退化。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>实验：延迟下降不等于全项领先</h2></div>
+<p class="body">WER%越低越好。所有结果使用显式语言提示，5.6秒左上下文。英文7个cleaned集合、全语种44次dataset-language运行，口径不同不能混均分。</p>
+<table class="rtable"><tr><th>套件/模型</th><th>离线</th><th>1.12s</th><th>0.16s</th></tr><tr><td>英文·Parakeet</td><td>4.93</td><td>32.31</td><td>—</td></tr><tr><td>英文·3.5流式</td><td>—</td><td>7.26</td><td>8.90</td></tr><tr><td>英文·Unified</td><td>4.68</td><td>5.41</td><td>7.87</td></tr><tr><td>25语·Parakeet</td><td>10.55</td><td>30.93</td><td>—</td></tr><tr><td>25语·3.5流式</td><td>—</td><td>20.00</td><td>22.77</td></tr><tr><td>25语·Unified</td><td>9.49</td><td>11.85</td><td>19.19</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">160ms的代价</div>
+<p>多语子集并非全配置更强；80ms无右上下文仅测英文且不推荐。实际网络/GPU排队与首声另算。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">反例：多语HF子集在160ms时，Unified 9.95差于cache-aware基线8.53。</p>
+<table class="ood-table"><tr><th>前端设置</th><th>En→X COMET</th><th>LAAL</th><th>X→En COMET</th><th>LAAL</th></tr><tr><td>Unified .56+.56</td><td>81.4</td><td>2.40</td><td>81.7</td><td>2.58</td></tr><tr><td>Unified .80+.80</td><td>81.2</td><td>2.74</td><td>82.8</td><td>2.97</td></tr><tr><td>Unified 1.04+.56</td><td>82.1</td><td>3.14</td><td>83.7</td><td>3.36</td></tr><tr><td>3.5缓存1.12s</td><td>79.3</td><td>2.96</td><td>78.5</td><td>3.27</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">级联同传与ASR分开验收</div>
+<p>配Riva-Translate-v2及LCP策略；23语言对，Maltese排除。英前身IWSLT获奖不是新多语权重参赛结果。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">训练可复现性</div>
+<div class="adelta">有缺口</div>
+<div class="adesc">只提供推理；超参/MCR消融未完整公开。</div>
+</div>
+<div class="abl-card">
+<div class="aname">系统成本</div>
+<div class="adelta">需实测</div>
+<div class="adesc">buffered重算左上下文，不用160ms推断GPU成本。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">日期</div>
+<p>原卡明确10/27/26，非lastModified；方法背景报告为4月。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">方法</div>
+<p>共享权重+模式一致性，language-ID稳定低延迟词序列。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">结果</div>
+<p>全25语离线9.49、160ms19.19；保留多语子集退化反例。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">Agent启发</div>
+<p>固定语言、预算，分别测WER、实体错误、工具终态与总延迟。</p>
+</div>
+</div>
+</div><!-- /poster -->
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script><svg id="MJX-SVG-global-cache" style="display: none;"><defs><path id="MJX-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path><path id="MJX-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-TEX-N-6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path id="MJX-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-TEX-N-6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path id="MJX-TEX-N-72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z"></path><path id="MJX-TEX-N-69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path id="MJX-TEX-N-74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z"></path><path id="MJX-TEX-N-68" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 124T102 167T103 217T103 272T103 329Q103 366 103 407T103 482T102 542T102 586T102 603Q99 622 88 628T43 637H25V660Q25 683 27 683L37 684Q47 685 66 686T103 688Q120 689 140 690T170 693T181 694H184V367Q244 442 328 442Q451 442 463 329Q464 322 464 190V104Q464 66 466 59T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path id="MJX-TEX-N-6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path id="MJX-TEX-N-63" d="M370 305T349 305T313 320T297 358Q297 381 312 396Q317 401 317 402T307 404Q281 408 258 408Q209 408 178 376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163 -11 99 53T34 214Q34 318 99 383T250 448T370 421T404 357Q404 334 387 320Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-I-1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-I-1D445" d="M230 637Q203 637 198 638T193 649Q193 676 204 682Q206 683 378 683Q550 682 564 680Q620 672 658 652T712 606T733 563T739 529Q739 484 710 445T643 385T576 351T538 338L545 333Q612 295 612 223Q612 212 607 162T602 80V71Q602 53 603 43T614 25T640 16Q668 16 686 38T712 85Q717 99 720 102T735 105Q755 105 755 93Q755 75 731 36Q693 -21 641 -21H632Q571 -21 531 4T487 82Q487 109 502 166T517 239Q517 290 474 313Q459 320 449 321T378 323H309L277 193Q244 61 244 59Q244 55 245 54T252 50T269 48T302 46H333Q339 38 339 37T336 19Q332 6 326 0H311Q275 2 180 2Q146 2 117 2T71 2T50 1Q33 1 33 10Q33 12 36 24Q41 43 46 45Q50 46 61 46H67Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628Q287 635 230 637ZM630 554Q630 586 609 608T523 636Q521 636 500 636T462 637H440Q393 637 386 627Q385 624 352 494T319 361Q319 360 388 360Q466 361 492 367Q556 377 592 426Q608 449 619 486T630 554Z"></path></defs></svg></body>
+</html>

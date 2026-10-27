@@ -44,12 +44,16 @@ library_name: transformers
 
 <div align="center">
 
-<img src="assets/Unlimited-OCR2.png" width="1000" alt="Unlimited OCR 2 overview" />
+<img src="assets/Unlimited-OCR2.png" alt="Unlimited OCR 2 overview" width="1000" />
 
 </div>
 
 
 ## Release
+- [2026/10/27] 📊 We release [**MarathonDocBench**](https://huggingface.co/datasets/baidu/MarathonDocBench), a new benchmark for ultra-long document parsing
+- [2026/10/27] 🤝 Thanks to the [ModelScope community](https://github.com/modelscope) for their support. Our model is now available at [ModelScope](https://modelscope.cn/models/PaddlePaddle/Unlimited-OCR-2).
+- [2026/10/27] 🤝 Thanks to the Baidu Cloud team for their support. Our model is now available on [Baidu Cloud](https://cloud.baidu.com/doc/OCR/s/fmr1p39gb).
+- [2026/10/27] 🤝 Thanks to [AK](https://x.com/_akhaliq) for creating a new demo for us. Try it at [Unlimited-OCR-2](https://huggingface.co/spaces/baidu/Unlimited-OCR-2).
 - [2026/10/27] 🚀 We release [**Unlimited OCR 2**](https://github.com/baidu/Unlimited-OCR), achieving unlimited-horizon parsing with SR-SWA.
 - [2026/07/21] 🤝 Thanks to the [ms-swift community](https://github.com/modelscope/ms-swift) for their support, our model now supports training with [ms-swift](https://github.com/modelscope/ms-swift).
 - [2026/07/03] 🤝 Thanks to the Baidu Cloud team for their support. Our model is now available on [Baidu Cloud](https://cloud.baidu.com/doc/OCR/s/fmr1p39gb).

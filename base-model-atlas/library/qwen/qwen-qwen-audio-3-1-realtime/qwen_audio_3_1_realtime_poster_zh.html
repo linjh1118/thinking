@@ -1,1 +1,483 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen Audio 3.1 Realtime · 中文研究Poster</title><style>*{box-sizing:border-box}body{margin:0;background:#0b101a;color:#eaf0ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.75}main{max-width:1360px;margin:auto;padding:30px clamp(18px,4vw,54px) 55px}nav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#8ca8d6;font-size:13px}a{color:#9ed8ff;text-decoration:none}header{padding:45px 0 25px;border-bottom:1px solid #263650}.eyebrow{color:#91eddd;font-size:13px;letter-spacing:.1em}h1{font-size:clamp(36px,6vw,76px);line-height:1.06;letter-spacing:-.04em;margin:15px 0 22px}header p{font-size:21px;max-width:1100px;color:#c3d1e9}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:27px 0}.stat{padding:20px;border:1px solid #344565;border-radius:16px;background:linear-gradient(135deg,#192845,#121b2c)}.stat b{display:block;color:#a2e5ff;font-size:27px}.stat span{color:#a3b4cd;font-size:13px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:17px;margin:27px 0}.card{padding:23px;border:1px solid #2a3a54;background:#131c2d;border-radius:18px}.card h2{font-size:20px;color:#c5d6ff;margin:0 0 10px}.card p{margin:0;color:#afc0db}figure{margin:24px 0;background:#172434;border:1px solid #33415c;border-radius:18px;padding:16px;overflow:hidden}figure img{width:100%;height:auto;display:block;border-radius:8px}figcaption{font-size:13px;color:#9fb4d0;margin-top:12px}.limit{background:#3d2a1b55;border:1px solid #8a5a35;border-radius:16px;padding:20px;color:#e9c6a0;margin-top:26px}.limit h2{font-size:18px;margin:0 0 9px}.limit p{margin:0}footer{margin-top:25px;color:#879cbe;font-size:12px}@media(max-width:680px){.cards,.stats{grid-template-columns:1fr}header p{font-size:17px}}</style></head><body><main><nav><span>ω BrainHao · Research Poster</span><span><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=qwen-qwen-audio-3-1-realtime">Overview</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/library/qwen/qwen-qwen-audio-3-1-realtime/Qwen-Audio-3.1-Realtime.html">📖 渲染笔记</a> · <a href="obsidian://open?vault=BrainHao&file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F260920_Qwen_Audio_3_1_Realtime%2FQwen-Audio-3.1-Realtime">📚 本地源笔记</a> · <a href="https://help.aliyun.com/en/model-studio/qwen-audio-3-1-realtime-plus">官方来源 ↗</a></span></nav><header><div class="eyebrow">2026-09-20 · 语音专项支线 · Duplex interaction</div><h1>Qwen Audio 3.1 Realtime</h1><p>实时双工文本/音频输入输出，沿用3.0 Plus协议并增补音色。公开服务规格不等于训练方法；工具调用与搜索有明确互斥约束。</p></header><div class="stats"><div class="stat"><b>262,144</b><span>context window</span></div><div class="stat"><b>16,384</b><span>最大输出tokens</span></div><div class="stat"><b>Search ⊕ Tools</b><span>不能同时启用</span></div></div><div class="cards"><section class="card"><h2>与ASR/TTS/Omni区分</h2><p>3.1 Realtime是独立语音族，不改写为Qwen3.8正代，不因同属音频把识别、合成和双工交互全部当SKU。</p></section><section class="card"><h2>用户取消后的边界</h2><p>语音自然度不代表任务完成。验收插话、迟到工具结果、授权变更，以及取消后仍执行的误行动。</p></section><section class="card"><h2>规格与收益分开</h2><p>音色新增与长窗口不证明WER、延迟或推理提高；官方没有这些对照，不能画一张无来源性能图。</p></section><section class="card"><h2>研究验收</h2><p>同任务同音频对比3.0/3.1，记录端点检测、工具终态、p95延迟和每成功成本；把网络/服务差异与模型收益分开。</p></section></div><figure><img loading="lazy" src="src/assets/realtime-boundary.svg" alt="整理的交互边界示意，不是官方网络结构"><figcaption>整理的交互边界示意，不是官方网络结构</figcaption></figure><aside class="limit"><h2>证据与适用边界</h2><p>原始资料较少：只有官方模型页与首发目录，未核实HF卡/完整报告/架构和训练图。配图为整理示意，技术证据深度不足已明确。</p></aside><footer>基于亲自阅读的官方材料整理 · 图表保留官方口径，未在本地复现 · 2026-10-14更新 · 原始材料与图像保存在同模型src/</footer></main></body></html>
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Qwen Audio 3.1 Realtime — 中文研究海报</title>
+
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style><style id="MJX-SVG-styles">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+</style></head>
+<body>
+
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>ω BrainHao · </span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FAlibaba_Qwen%2FVariants%2F260920_Qwen_Audio_3_1_Realtime%2FQwen-Audio-3.1-Realtime">📚 本地源笔记</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=qwen-qwen-audio-3-1-realtime">Overview</a> · <a href="Qwen-Audio-3.1-Realtime.html">📖 渲染笔记</a> · <a href="https://help.aliyun.com/en/model-studio/qwen-audio-3-1-realtime-flash">官方资料 ↗</a></div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">9/20 Plus · 10/27 Flash | Alibaba Cloud Model Studio</span>
+<div class="zh-title">同一实时语音家族，更新服务规格而不虚构训练结论</div>
+<h1>Qwen Audio 3.1 <span>Plus / Flash</span></h1>
+<div class="authors">官方模型页与发布记录 · 无公开独立训练报告 · 示意图为整理绘制</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">262K</div><div class="sub">总context</div></div>
+<div class="score-box"><div class="num">16K</div><div class="sub">最大输出</div></div>
+<div class="score-box"><div class="num">50轮</div><div class="sub">Flash音频历史</div></div>
+<div class="score-box"><div class="num">300s</div><div class="sub">Flash音频累计</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>定位：家族与证据边界</h2></div>
+<p class="body">Plus首发9月20日；10月27日新增Flash。沿用同一family叶子与链接，在30天表增加更新事件。ASR、TTS和Omni仍是独立任务族。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">原始资料较少，训练深度达不到参考标准</div>
+<p>未核实HF模型卡、独立Tech Blog/Report、架构/训练图、参数和损失。本笔记不能达到GLM-5.3-Flash的训练证据深度，配图均为整理示意。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">不把Flash另拆一个正代</div>
+<p>只记录同族服务变体；未公开Plus/Flash权重关系，不能擅自写蒸馏、剪枝或量化。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">输入输出</div>
+<p>文本/音频进入会话，输出文本/音频；语音自然不证明执行正确。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">确定工作模式</div>
+<p>Web Search与Function Calling不能同时启用；按任务选择并记录。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">管理会话预算</div>
+<p>总窗口262,144，输入245,760，输出16,384；音频历史另受轮数/秒数约束。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="整理：Plus/Flash可证实规格与价格，不是官方架构" src="src/assets/flash-comparison.svg"/>
+<div class="fig-cap">整理：Plus/Flash可证实规格与价格，不是官方架构</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>交互：支持项也有约束</h2></div>
+<p class="body">双工文本/音频输入输出，默认音色longanqian_v3.1。Flash模型页明确WebSocket、WebRTC、AOQ及三种交互模式。训练结构未披露。</p>
+<div class="fig-box">
+<img alt="整理：双工、工具与取消边界，不是性能实测" src="src/assets/realtime-boundary.svg"/>
+<div class="fig-cap">整理：双工、工具与取消边界，不是性能实测</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">音频预算与总窗口分开</div>
+<p>Flash历史最多50轮/300秒；262K不是无限语音记忆。工具返回和文本仍占上下文预算。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">支持搜索与工具不等于能同时启用</div>
+<p>模型页明确互斥。把服务错误与模型任务失败分别记账，避免配置错误污染评测。</p>
+</div>
+<div class="formula-box"><div class="flabel">比较口径</div>同任务 · 同音频 · 同模式 · 同验收终态<p style="font-size:.68rem;color:#78716c;margin-top:4px;">公开信息不足以建立参数/训练/质量等价；这里不编造模型损失公式。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">Flash交互</div>
+<p>server_vad、smart_turn、push-to-talk；speaker enhancement仅smart_turn支持。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">验收真实终态</div>
+<p>插话取消、迟到工具结果与目标变更后，检查是否继续误行动；enable_thinking不支持。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>比较：价格快照不是质量结论</h2></div>
+<p class="body">两页均回读于2026-10-27；下表人民币/百万tokens，不是音频秒数价格，也不是永久费率。</p>
+<table class="rtable"><tr><th>北京单价</th><th>Plus</th><th>Flash</th></tr><tr><td>文本输入</td><td>5</td><td>1.5</td></tr><tr><td>音频输入</td><td>40</td><td>6</td></tr><tr><td>文本输出</td><td>40</td><td>4.5</td></tr><tr><td>音频输出</td><td>150</td><td>12</td></tr><tr><td>RPM</td><td>60</td><td>60</td></tr><tr><td>TPM</td><td>100,000</td><td>100,000</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">计费与吞吐边界</div>
+<p>同时文本+音频输出仅收音频输出；RPM是连接请求数。无单列并发上限不代表无限吞吐。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">没有公开WER、插话成功率、延迟或同质量对照。Flash名称不能证明更快且同质量。</p>
+<table class="ood-table"><tr><th>新加坡单价</th><th>Plus</th><th>Flash</th></tr><tr><td>文本输入</td><td>5.995</td><td>1.677</td></tr><tr><td>音频输入</td><td>47.963</td><td>6.781</td></tr><tr><td>文本输出</td><td>47.963</td><td>5.104</td></tr><tr><td>音频输出</td><td>179.861</td><td>13.636</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">价格降幅不等于任务成本降幅</div>
+<p>北京四项单价分别下降70%/85%/88.75%/92%；实际成本取决于模态token、成功率及输出组合。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">公开能力</div>
+<div class="adelta">可核实</div>
+<div class="adesc">双工/搜索/工具/克隆，互斥与音频历史明确。</div>
+</div>
+<div class="abl-card">
+<div class="aname">训练与性能</div>
+<div class="adelta">资料不足</div>
+<div class="adesc">无完整训练报告，无同质量/端到端延迟对照。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">时间</div>
+<p>保留9/20 family首发；10/27 Flash单列更新，不重复正代。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">工具</div>
+<p>Search和Function Calling互斥；取消与迟到结果需验收。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">价格</div>
+<p>四项价格变低；输出组合、token与成功率决定任务成本。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">质量</div>
+<p>未公开独立评测，不能宣称更快同质量；保留资料不足说明。</p>
+</div>
+</div>
+</div><!-- /poster -->
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body>
+</html>

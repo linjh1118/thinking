@@ -28,6 +28,92 @@ ATLAS = THINKING / "base-model-atlas"
 LIBRARY = ATLAS / "library"
 
 
+def add_theme_controls(page: str) -> str:
+    """Add an accessible dark-first switch to generated Atlas reading pages.
+
+    Keep the existing dark palette and page structure. The alternate palette
+    changes surfaces and text, while official figures retain their own colors.
+    No operating-system setting or stored preference overrides the first view.
+    """
+    if 'id="atlas-theme-toggle"' in page:
+        return page
+    page = re.sub(r"<html\b([^>]*)>", r'<html\1 data-theme="dark">', page, count=1)
+    style = r'''<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style>'''
+    control = '''<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script>'''
+    page = page.replace("</head>", style + "</head>", 1)
+    return page.replace("</body>", control + "</body>", 1)
+
+
 # Z.ai publishes complementary first-party artifacts for modern GLM releases:
 # the HF README is the weight/deployment model card, while the Tech Blog carries
 # the release narrative, architecture discussion, training details and results.
@@ -1945,6 +2031,44 @@ def normalize_card_html(raw: str) -> str:
     return ''.join(parts)
 
 
+def sanitize_card_table(raw: str) -> str:
+    """Keep official table structure and merged cells without executable HTML."""
+    class TableParser(HTMLParser):
+        allowed = {"table", "thead", "tbody", "tfoot", "tr", "th", "td", "b", "strong", "em", "i", "code", "br", "caption"}
+
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.output = []
+            self.suppressed = 0
+
+        def handle_starttag(self, tag, attrs):
+            if tag in {"script", "style", "iframe", "object"}:
+                self.suppressed += 1
+            if self.suppressed or tag not in self.allowed:
+                return
+            spans = "".join(
+                f' {name}="{value}"' for name, value in attrs
+                if tag in {"td", "th"} and name in {"rowspan", "colspan"}
+                and value and value.isdigit() and 0 < int(value) < 1000
+            )
+            self.output.append(f"<{tag}{spans}>")
+
+        def handle_endtag(self, tag):
+            if tag in {"script", "style", "iframe", "object"}:
+                self.suppressed = max(0, self.suppressed - 1)
+                return
+            if not self.suppressed and tag in self.allowed and tag != "br":
+                self.output.append(f"</{tag}>")
+
+        def handle_data(self, data):
+            if not self.suppressed:
+                self.output.append(html.escape(data))
+
+    parser = TableParser()
+    parser.feed(raw)
+    return "".join(parser.output)
+
+
 def render_markdown(source_file: Path, destination: Path, targets: dict[str, Path]) -> None:
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
@@ -2018,6 +2142,19 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             or source_file.name in HF_REPO_BY_CARD_FILENAME
         ):
             hf_asset_base = f"https://huggingface.co/{repo}/resolve/main/"
+    def local_card_asset(reference: str) -> str:
+        """Prefer model-local figures, including images shared by history cards."""
+        if (source_file.parent / reference).is_file():
+            return reference
+        candidates = [source_file.parent / "assets" / Path(reference).name]
+        for ancestor in source_file.parents:
+            if ancestor.name == "src":
+                candidates.append(ancestor / "assets" / Path(reference).name)
+                break
+        for candidate in candidates:
+            if candidate.is_file():
+                return os.path.relpath(candidate, source_file.parent).replace(os.sep, "/")
+        return hf_asset_base + reference
     if hf_asset_base:
         raw = re.sub(
             r'(?<!!)(\[[^\]]*\]\()(?![a-zA-Z][\w+.-]*:|#|/)([^)]+)',
@@ -2028,13 +2165,13 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
         )
         raw = re.sub(
             r'(<img\b[^>]*?\bsrc=["\'])(?!https?://|data:|/)([^"\']+)',
-            lambda match: match.group(1) + (match.group(2) if (source_file.parent / match.group(2)).is_file() else hf_asset_base + match.group(2)),
+            lambda match: match.group(1) + (local_card_asset(match.group(2))),
             raw,
             flags=re.I,
         )
         raw = re.sub(
             r'(!\[[^\]]*\]\()(?!https?://|data:|/)([^)]+)',
-            lambda match: match.group(1) + (match.group(2) if (source_file.parent / match.group(2)).is_file() else hf_asset_base + match.group(2)),
+            lambda match: match.group(1) + (local_card_asset(match.group(2))),
             raw,
         )
     if hf_asset_base:
@@ -2050,7 +2187,7 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     raw = re.sub(r"<img\b([^>]*?)/?>", html_image, raw, flags=re.I)
     raw = re.sub(r"<br\s*/?>", "\n", raw, flags=re.I)
     raw = re.sub(r"<hr\s*/?>", "\n---\n", raw, flags=re.I)
-    raw = re.sub(r"</?(?:div|p|a|span|details|summary)[^>]*>", "", raw, flags=re.I)
+    raw = re.sub(r"</?(?:div|p|a|span|details|summary|figure|figcaption)[^>]*>", "", raw, flags=re.I)
     lines = raw.splitlines()
     out: list[str] = []
     toc: list[tuple[int, str, str]] = []
@@ -2067,6 +2204,14 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                 code.append(lines[i]); i += 1
             i += 1
             out.append(f'<pre><div class="code-lang">{html.escape(lang or "code")}</div><code>{html.escape(chr(10).join(code))}</code></pre>')
+            continue
+        if re.match(r"^\s*<table\b", line, re.I):
+            table_lines = [line]
+            i += 1
+            while "</table>" not in table_lines[-1].lower() and i < len(lines):
+                table_lines.append(lines[i])
+                i += 1
+            out.append('<div class="table-wrap">' + sanitize_card_table("\n".join(table_lines)) + '</div>')
             continue
         hm = re.match(r"^(#{1,6})\s+(.+)$", line)
         if hm:
@@ -2131,6 +2276,7 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             continue
         paragraph=[line.strip()]; i += 1
         while i < len(lines) and lines[i].strip() and not re.match(r"^(#{1,6})\s|^```|^>|^\s*([-*+] |\d+\. )", lines[i]):
+            if re.match(r"^\s*<table\b", lines[i], re.I): break
             if i + 1 < len(lines) and "|" in lines[i] and re.match(r"^\s*\|?\s*:?-{3,}", lines[i+1]): break
             paragraph.append(lines[i].strip()); i += 1
         out.append(f'<p>{render_inline_md(" ".join(paragraph),destination,targets)}</p>')
@@ -2174,9 +2320,10 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             note_html = quality_banner + note_html
     mathjax = ""
     if "$$" in raw:
-        mathjax = '<script>window.MathJax={tex:{displayMath:[["$$","$$"]]},svg:{fontCache:"global"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>'
+        runtime = "src/assets/mathjax-tex-svg.js" if (source_file.parent / "src/assets/mathjax-tex-svg.js").is_file() else "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+        mathjax = '<script>window.MathJax={tex:{displayMath:[["$$","$$"]]},svg:{fontCache:"global"}};</script><script defer src="' + runtime + '"></script>'
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style>{mathjax}</head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{note_html}</main></div></body></html>''', encoding="utf-8")
+    destination.write_text(add_theme_controls(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)} · BrainHao</title><style>{NOTE_CSS}</style>{mathjax}</head><body><div class="app"><aside class="rail"><a class="back" href="{os.path.relpath(ATLAS / 'library.html', destination.parent).replace(os.sep,'/')}">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>{html.escape(title)}</h2><div class="meta">{html.escape(meta.get('type','note'))} · {html.escape(meta.get('year',''))}<br>{html.escape(tags)}</div><nav>{toc_html}</nav></aside><main class="note">{note_html}</main></div></body></html>'''), encoding="utf-8")
 
 
 NOTE_CSS = r'''
@@ -2297,7 +2444,7 @@ def sync_source_archive(
                 entry = manifest_data.get("documents", {}).get(str(rel), {})
             source_url = entry.get("url", "")
             limitation = "若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。"
-            destination.write_text(
+            destination.write_text(add_theme_controls(
                 '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 '<title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;'
@@ -2306,7 +2453,7 @@ def sync_source_archive(
                 '<h1>官方网页响应 · 静态阅读</h1><p>' + html.escape(limitation) + '</p>'
                 '<p><a href="' + html.escape(source_url, quote=True) + '">打开官方原文 ↗</a> · '
                 '<a href="' + quote(raw_download_name) + '">原始HTML响应源码（不运行脚本）</a></p>'
-                '<pre>' + html.escape(body_text) + '</pre></body></html>', encoding="utf-8"
+                '<pre>' + html.escape(body_text) + '</pre></body></html>'), encoding="utf-8"
             )
         published = destination
         kind = source.suffix.lower().lstrip(".") or "file"
@@ -2382,9 +2529,9 @@ def sync_source_archive(
         if (source_root / "retrieval_manifest.json").is_file()
         else "原始文件保留不改写；Markdown 另提供阅读版 HTML。"
     )
-    index.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模型一手资料包</title><style>
+    index.write_text(add_theme_controls(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模型一手资料包</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#07111c;color:#eaf4ff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:34px}}main{{max-width:1120px;margin:auto}}a{{color:#7dd3fc;text-decoration:none}}.back{{display:inline-block;margin-bottom:28px}}h1{{font-size:clamp(40px,7vw,74px);letter-spacing:-.05em;margin:0 0 12px}}.lead{{color:#9db2c3;line-height:1.7;max-width:820px}}.box{{margin-top:30px;overflow:auto;border:1px solid #20415a;border-radius:18px;background:#0b1b29}}table{{border-collapse:collapse;width:100%;font-size:13px}}th,td{{padding:13px 16px;border-bottom:1px solid #18374c;text-align:left;vertical-align:top}}th{{color:#78d7ec;background:#0d2435;position:sticky;top:0}}tr:last-child td{{border:0}}code{{color:#a7c5d8}}@media(max-width:700px){{body{{padding:20px 12px}}}}
-</style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的官方网页、Hugging Face Model Card、技术报告与可获得的论文源码。{manifest_hint}</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>''', encoding="utf-8")
+</style></head><body><main><a class="back" href="javascript:history.back()">← 返回模型 Overview</a><h1>一手资料包</h1><p class="lead">这里发布 BrainHao 中保存的官方网页、Hugging Face Model Card、技术报告与可获得的论文源码。{manifest_hint}</p><div class="box"><table><thead><tr><th>本地文件</th><th>格式</th><th>大小</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></main></body></html>'''), encoding="utf-8")
     priorities = {
         "hf_model_card.md": 0,
         "official_pro_model_card.md": 1,
@@ -3102,14 +3249,14 @@ def main() -> None:
     index_page = add_recent_releases(index_page, records)
     build_date = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
     index_page = index_page.replace("更新时间：2026-09-04", f"页面生成：{build_date}")
-    (THINKING / "base_model_atlas.html").write_text(index_page, encoding="utf-8")
+    (THINKING / "base_model_atlas.html").write_text(add_theme_controls(index_page), encoding="utf-8")
     (ATLAS / "model.html").write_text(
-        add_typed_official_source_links(render_detail(records)), encoding="utf-8"
+        add_theme_controls(add_typed_official_source_links(render_detail(records))), encoding="utf-8"
     )
-    (ATLAS / "workspace.html").write_text(render_workspace(records), encoding="utf-8")
-    (ATLAS / "library.html").write_text(render_library(archive_entries), encoding="utf-8")
-    (ATLAS / "branch-audit.html").write_text(render_branch_audit_complete(teams, records), encoding="utf-8")
-    (ATLAS / "top8-tree.html").write_text(render_top8_tree_complete(teams, records), encoding="utf-8")
+    (ATLAS / "workspace.html").write_text(add_theme_controls(render_workspace(records)), encoding="utf-8")
+    (ATLAS / "library.html").write_text(add_theme_controls(render_library(archive_entries)), encoding="utf-8")
+    (ATLAS / "branch-audit.html").write_text(add_theme_controls(render_branch_audit_complete(teams, records)), encoding="utf-8")
+    (ATLAS / "top8-tree.html").write_text(add_theme_controls(render_top8_tree_complete(teams, records)), encoding="utf-8")
     write_legacy_compatibility()
     (ATLAS / "models.json").write_text(json.dumps([{k:v for k,v in r.items() if not k.startswith('_')} for r in records], ensure_ascii=False, indent=2), encoding="utf-8")
     linked_notes = sum(1 for r in records if r.get("note"))
