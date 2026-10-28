@@ -110,6 +110,20 @@ class InlineMarkdownTests(unittest.TestCase):
             atlas.render_markdown(source, destination, {})
             self.assertNotIn('tex-svg.js', destination.read_text())
 
+    def test_repository_readme_fragment_points_to_original_markdown(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'card.md'
+            source.write_text('Unmodified README')
+            published = root / 'card.md.html'
+            published.write_text('<a href="docs/TRAINING.md.html#fine-tuning">Train</a>')
+            atlas.resolve_archived_card_links(
+                source, published, 'https://raw.githubusercontent.com/NVlabs/GEM-X/main/README.md')
+            self.assertIn('https://github.com/NVlabs/GEM-X/blob/main/docs/TRAINING.md#fine-tuning',
+                          published.read_text())
+            self.assertNotIn('.md.html#', published.read_text())
+            self.assertEqual(source.read_text(), 'Unmodified README')
+
     def test_github_archive_resolves_remote_links_without_changing_raw(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

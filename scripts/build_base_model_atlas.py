@@ -2381,8 +2381,10 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
         value = html.unescape(value)
         if not value or value.startswith(("#", "?", "data:")) or urlsplit(value).scheme:
             return match.group(0)
-        raw = value[:-5] if value.endswith(".md.html") else value
-        path = unquote(urlsplit(raw).path)
+        relative = urlsplit(value)
+        original_path = relative.path[:-5] if relative.path.endswith(".md.html") else relative.path
+        raw = relative._replace(path=original_path).geturl()
+        path = unquote(original_path)
         # The renderer adds its own navigation (for example, library.html).
         # Those links are relative to the published site, not the HF README.
         published_target = (published.parent / unquote(urlsplit(value).path)).resolve()

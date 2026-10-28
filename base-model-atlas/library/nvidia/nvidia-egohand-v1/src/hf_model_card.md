@@ -21,7 +21,11 @@ Global
 
 ### Use Case:  
 EgoHand could be used by researchers and engineers working on egocentric hand pose estimation to produce accurate 3D hand keypoints and MHR/SOMA-hand mesh parameters from single RGB crops. The resulting 3D hand pose/keypoint data serves as a training signal for downstream robotics applications — particularly robotic foundation models and manipulation policy training, where accurate hand trajectories human demonstration video are needed to supervise or bootstrap policy learning.  
-  
+
+
+## References:
+[EgoHand inference pipeline](https://github.com/NVIDIA/IsaacCapture/tree/main/src/python/isaaccapture_egopost)  
+[EgoHand model finetuning](https://github.com/NVlabs/GEM-X)  
 
 ## Model Architecture:   
 **Architecture Type:** Transformer  
