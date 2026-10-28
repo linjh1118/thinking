@@ -100,6 +100,7 @@ Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated sys
 
 - [PyTorch](https://pytorch.org/)
 - [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
+- [SGLang](https://github.com/sgl-project/sglang)
 
 **Supported Hardware Microarchitecture Compatibility:**
 
@@ -559,6 +560,113 @@ Generated output:
 
 The initial image is the only visual observation sent to the server. The action
 values are already normalized for this checkpoint.
+
+### Quick Start with SGLang
+
+[SGLang](https://github.com/sgl-project/sglang) serves the same model through its OpenAI-compatible Videos API and generates the same mixed-action example. The request is the same shape, an uploaded initial image plus inline actions, but the server takes the embodiment names from the action sidecar instead of domain IDs, and generation runs as an asynchronous job that the client polls. For the other published examples with SGLang, see the [SGLang notebook](https://github.com/NVIDIA/cosmos-framework/blob/main/.agents/skills/cookbooks/cosmos3/simulation/bimanual/run_bimanual_with_sglang.ipynb).
+
+#### 1. Start the server
+
+On the same kind of host, with the published [`lmsysorg/sglang:dev`](https://hub.docker.com/r/lmsysorg/sglang/tags) image, which includes the Cosmos3 pipelines from [sgl-project/sglang#39475](https://github.com/sgl-project/sglang/pull/39475):
+
+```bash
+export SGLANG_HF_CACHE="${SGLANG_HF_CACHE:-$HOME/.cache/sglang-huggingface}"  # The container runs as root.
+mkdir -p "$SGLANG_HF_CACHE"
+chmod 777 "$SGLANG_HF_CACHE"
+# The same history window as the vLLM-Omni windowed deployment above.
+cat > cosmos3_bimanual_window.json <<'EOF'
+{"history_mode": "sliding", "kv_cache_inference_size": 64, "attention_sink_size": 8}
+EOF
+docker pull lmsysorg/sglang:dev
+docker run --init --runtime nvidia --gpus all --ipc=host \
+  -v "$SGLANG_HF_CACHE:/root/.cache/huggingface" \
+  -v "$PWD:$PWD:ro" \
+  --env "HF_TOKEN=$HF_TOKEN" \
+  -p 127.0.0.1:30000:30000 \
+  lmsysorg/sglang:dev \
+  sglang serve \
+    --model-path nvidia/Cosmos3-Nano-Sim-Bimanual \
+    --pipeline-config-path "$PWD/cosmos3_bimanual_window.json" \
+    --host 0.0.0.0 --port 30000
+```
+
+The container publishes the server on `127.0.0.1:30000` of the host and mounts the working directory, read-only, at the same path so that it can read the pipeline-config file; the client uploads the initial image and sends the actions inline, so the server needs no other access to the client's files. `--pipeline-config-path` selects a 64-frame rolling key/value cache with eight attention sinks, the window the vLLM-Omni example uses: eight pinned frames, 55 recent frames, and the frame being generated. Without it SGLang keeps the full 901-frame history, which exhausts a 141 GB GPU on this example. The start-up log confirms the setting with `sliding history, 64-frame cache = 8 sinks + 55 recent + current`. The `dev` tag moves with SGLang's main branch, so pull it before each start. The first start downloads the checkpoint; the HTTP port opens after the weights are loaded and the warmup request finishes. The distilled checkpoint fixes the step count and guidance, so the request sets neither.
+
+#### 2. Generate the mixed-action video
+
+Run the client from the same directory. The example metadata supplies the prompt, frame count, frame rate, embodiment, and seed 2026:
+
+```bash
+pip install requests huggingface_hub
+```
+
+```python
+import json
+import time
+from pathlib import Path
+
+import requests
+from huggingface_hub import snapshot_download
+
+MODEL = "nvidia/Cosmos3-Nano-Sim-Bimanual"
+SERVER = "http://127.0.0.1:30000"
+repo_dir = Path(snapshot_download(MODEL, allow_patterns=[
+    "examples/inference/sim_bimanual_mixed_action_hf.jsonl",
+    "assets/sim_bimanual/agibot/images/agibot_mixed_028_initial.png",
+    "assets/sim_bimanual/agibot/actions/agibot_mixed_028_normalized_mixed_action.json",
+]))
+manifest_path = repo_dir / "examples/inference/sim_bimanual_mixed_action_hf.jsonl"
+image_path = repo_dir / "assets/sim_bimanual/agibot/images/agibot_mixed_028_initial.png"
+action_path = repo_dir / "assets/sim_bimanual/agibot/actions/agibot_mixed_028_normalized_mixed_action.json"
+
+examples = [json.loads(line) for line in manifest_path.read_text().splitlines() if line.strip()]
+example = next(item for item in examples if item["action_path"].endswith("/" + action_path.name))
+action = json.loads(action_path.read_text())  # 900 normalized 59D rows and one embodiment name per row.
+
+# The rows travel inline; the server parses each multipart field within 1 MiB (about 0.5 MB here).
+extra_params = json.dumps({
+    "action_mode": "forward_dynamics",
+    "domain_name": example["domain_name"],
+    "domain_names": action["domain_names"],
+    "action_normalization": "none",
+    "action_view_point": "ego_view",
+    "format_prompt_as_json": example["format_prompt_as_json"],
+    "action": action["action"],
+}, separators=(",", ":"))
+assert len(extra_params.encode()) <= 1024 * 1024, "Shorten the rollout or raise the server's form-field limit."
+
+form = {
+    "model": MODEL,
+    "prompt": example["prompt"],
+    "size": "832x480",  # The 480p canvas closest to the 640 x 360 initial image.
+    "num_frames": str(example["num_frames"]),
+    "fps": str(example["fps"]),
+    "seed": str(example["seed"]),
+    "extra_params": extra_params,
+}
+# Submit the job with the initial image, poll it, and download the video.
+with image_path.open("rb") as image_file:
+    response = requests.post(
+        f"{SERVER}/v1/videos", data=form,
+        files={"input_reference": (image_path.name, image_file, "image/png")},
+        timeout=60,
+    )
+response.raise_for_status()
+job = response.json()
+deadline = time.monotonic() + 3600
+while job["status"] not in ("completed", "failed", "cancelled"):
+    if time.monotonic() > deadline:
+        raise TimeoutError(f"Job {job['id']} did not finish in time: {job}")
+    time.sleep(10)
+    job = requests.get(f"{SERVER}/v1/videos/{job['id']}", timeout=60).json()
+if job["status"] != "completed":
+    raise RuntimeError(json.dumps(job, indent=2))
+video = requests.get(f"{SERVER}/v1/videos/{job['id']}/content", timeout=600)
+video.raise_for_status()
+Path("cosmos3-nano-sim-bimanual-mixed-028.mp4").write_bytes(video.content)
+```
+
+The initial image is the only visual observation sent to the server. The action values are already normalized for this checkpoint.
 
 ## Ethical Considerations
 

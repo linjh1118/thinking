@@ -72,6 +72,20 @@ class InlineMarkdownTests(unittest.TestCase):
         self.assertIn('非新正代', rows[1]['lineageLabel'])
         self.assertEqual(record['date'], '2026-09-10')
 
+    def test_document_array_uses_each_cards_own_repository(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'second.md'
+            source.write_text('![Architecture](assets/diagram.png)\n')
+            (root / 'retrieval_manifest.json').write_text(json.dumps({'documents': [
+                {'file': 'first.md', 'url': 'https://huggingface.co/org/First/resolve/main/README.md'},
+                {'file': 'second.md', 'url': 'https://huggingface.co/org/Second/resolve/main/README.md'},
+            ]}))
+            published = root / 'second.html'
+            atlas.render_markdown(source, published, {})
+            self.assertIn('https://huggingface.co/org/Second/resolve/main/assets/diagram.png', published.read_text())
+            self.assertNotIn('/First/resolve/main/assets/diagram.png', published.read_text())
+
     def test_family_updates_are_deduplicated_and_hidden_families_stay_hidden(self):
         update = {'date':'2026-10-17','name':'Family-1017'}
         record = {'slug':'family','date':'2026-09-10','releaseUpdates':[update, update]}

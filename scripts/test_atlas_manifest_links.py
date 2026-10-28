@@ -2,12 +2,33 @@
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import build_base_model_atlas as atlas
 
 
 class ManifestLinkTests(unittest.TestCase):
+    def test_nested_document_array_publishes_readers_with_original_links(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            model = root / 'model'
+            source = model / 'src'
+            source.mkdir(parents=True)
+            (source / 'card.md').write_text('# Card\n\n[License](LICENSE)\n')
+            (source / 'report.html').write_text('<html><body>Original report</body></html>')
+            (source / 'retrieval_manifest.json').write_text(json.dumps({'documents': [
+                {'file': 'card.md', 'url': 'https://huggingface.co/org/Model/resolve/main/README.md'},
+                {'file': 'report.html', 'url': 'https://example.com/report'},
+            ]}))
+            atlas_root = root / 'atlas'
+            output = atlas_root / 'library/model'
+            with patch.object(atlas, 'ATLAS', atlas_root):
+                result = atlas.sync_source_archive(model, output, {})
+            self.assertIn('https://huggingface.co/org/Model/blob/main/LICENSE', (output / 'src/card.md.html').read_text())
+            self.assertIn('href="https://example.com/report"', (output / 'src/report.html').read_text())
+            self.assertEqual(len(result['docs']), 2)
+
     def test_sibling_card_uses_its_own_repository(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

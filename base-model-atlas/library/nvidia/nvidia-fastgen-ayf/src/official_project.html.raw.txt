@@ -1,0 +1,911 @@
+<!DOCTYPE HTML "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<!-- OneTrust Cookies Consent Notice start for nvidia.com -->
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true"
+  type="text/javascript" charset="UTF-8" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5"></script>
+<script type="text/javascript">
+  function OptanonWrapper() {
+    var event = new Event('bannerLoaded');
+    window.dispatchEvent(event);
+  }
+</script>
+<!-- OneTrust Cookies Consent Notice end for nvidia.com -->
+<script type="text/javascript" src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+
+<head>
+  <title>Align Your Flow</title>
+  <meta property="og:description" content="Align Your Flow: Scaling Continuous-Time Flow Map Distillation" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  <script src="//assets.adobedtm.com/5d4962a43b79/814eb6e9b4e1/launch-4bc07f1e0b0b.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,600,400italic,600italic,300,300italic'
+    rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" defer></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js" async></script> -->
+
+  <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@nvidia">
+  <meta name="twitter:creator" content="@amsabour">
+  <meta name="twitter:title" content="Align Your Flow: Scaling Continuous-Time Flow Map Distillation">
+  <meta name="twitter:description"
+    content="Align Your Flow distills diffusion and flow-based models into fast and efficient few-step generators using new objectives, training techniques, and achieves SOTA few-step image generation performance.">
+  <meta name="twitter:image" content="https://research.nvidia.com/labs/toronto-ai/AlignYourFlow/assets/teaser.jpg">
+  <meta name="twitter:image:alt"
+    content="A text description of the image conveying the essential nature of an image to users who are visually impaired. Maximum 420 characters.">
+
+  <script>
+    MathJax = {
+      tex: {
+        packages: ['base', 'amsmath', 'amssymb'] // Ensure these packages are included
+      },
+    };
+  </script>
+  <script>
+    if (window.MathJax) {
+      MathJax.startup.promise.then(() => {
+        document.querySelectorAll('mjx-container').forEach(el => {
+          el.parentElement.classList.add('math-parent');
+        });
+
+        const scaleMath = () => {
+          document.querySelectorAll('mjx-container').forEach(el => {
+            el.style.transform = '';
+            el.style.transformOrigin = 'left';
+            const parent = el.parentElement;
+
+            const parentStyle = window.getComputedStyle(parent);
+            const parentPadding = parseFloat(parentStyle.paddingLeft) + parseFloat(parentStyle.paddingRight);
+            const parentWidth = parent.clientWidth - parentPadding;
+
+            const mathWidth = el.scrollWidth;
+
+            if (mathWidth > parentWidth) {
+              const scale = parentWidth / mathWidth;
+              el.style.transform = `scale(${scale})`;
+            }
+          });
+        };
+
+        scaleMath();
+        window.addEventListener('resize', scaleMath);
+      });
+    }
+  </script>
+</head>
+
+<body>
+  <div class="topnav" id="myTopnav">
+    <a href="https://www.nvidia.com/"><img width="100%" src="assets/nvidia.svg"></a>
+    <a href="https://nv-tlabs.github.io/"><strong>Spatial Intelligence Lab</strong></a>
+  </div>
+
+  <div class="container">
+    <div class="paper-title">
+      <h1>
+        <div class="paper-title-name">Align Your Flow:</div> <br>
+        Scaling Continuous-Time Flow Map Distillation
+      </h1>
+    </div>
+
+    <div id="authors">
+      <div class="author-row">
+        <div class="col-3 text-center"><a href="#">Amirmojtaba Sabour</a><sup>1,2,3</sup></div>
+        <div class="col-3 text-center"><a href="https://www.cs.utoronto.ca/~fidler/">Sanja Fidler</a><sup>1,2,3</sup>
+        </div>
+        <div class="col-3 text-center"><a href="https://karstenkreis.github.io/">Karsten Kreis</a><sup>1</sup></div>
+      </div>
+
+      <div class="affil-row">
+        <div class="col-3 text-center"><sup>1</sup> NVIDIA</a></div>
+        <div class="col-3 text-center"><sup>2</sup> University of Toronto</div>
+        <div class="col-3 text-center"><sup>3</sup> Vector Institute</div>
+      </div>
+
+      <div class="affil-row">
+        <div class="venue text-center">NeurIPS 2025</div>
+      </div>
+
+      <div style="clear: both">
+        <div class="paper-btn-parent">
+          <a class="supp-btn" href="https://arxiv.org/abs/2506.14603"
+            target="_blank">
+            <span class="material-icons"> description </span>
+            Paper
+          </a>
+          <a class="supp-btn" href="#" target="_blank">
+            <span class="material-icons"> code </span>
+            <span>Code (TBA)</span>
+          </a>
+          <!-- <a class="supp-btn" href="./howto.html" target="_blank">
+            <span class="material-icons"> explore </span>
+            Quickstart
+          </a> -->
+        </div>
+      </div>
+    </div>
+
+    <section id="teaser-image">
+      <figure style="margin-top: 1px; margin-bottom: 1px; text-align: center;">
+        <img id="fig1" src="./assets/teaser_2.jpg" style="width: 100%;">
+      </figure>
+      <p style="text-align: center; margin-bottom: 1px;" class="caption_method">
+        <b><strong>Figure 1.</strong></b> Four-step samples generated by our distilled FLUX.1-dev flow map model.
+      </p>
+
+    </section>
+
+    <section id="contributions">
+      <h2>Key Contributions</h2>
+      <hr>
+      <ul>
+        <li>We prove that consistency models inherently suffer from error accumulation in multi-step sampling.</li>
+        <li>We propose Align Your Flow, a high-performance few-step flow map model with new theoretical insights,
+          unifying several existing methods.</li>
+        <li>We introduce two new training objectives and stabilization techniques for learning flow maps.</li>
+        <li>We apply autoguidance and adversarial finetuning to improve distillation performance while maintaining
+          diversity.</li>
+        <li>We achieve state-of-the-art few-step generation on ImageNet and also demonstrate fast high-resolution
+          text-to-image flow maps.</li>
+      </ul>
+    </section>
+
+    <section id="abstract">
+      <h2>Abstract</h2>
+      <hr>
+      <p>
+        Diffusion and flow-based models have emerged as state-of-the-art generative modeling approaches, but they
+        require many sampling steps. Consistency models can distill these models into efficient one-step generators;
+        however, unlike flow- and diffusion-based methods, their performance inevitably degrades when increasing the
+        number of steps, which we show both analytically and empirically. Flow maps generalize these approaches by
+        connecting any two noise levels in a single step and remain effective across all step counts. In this paper,
+        we introduce two new continuous-time objectives for training flow maps, along with additional novel training
+        techniques, generalizing existing consistency and flow matching objectives. We further demonstrate that
+        autoguidance can improve performance, using a low-quality model for guidance during distillation, and an
+        additional boost can be achieved by adversarial finetuning, with minimal loss in sample diversity. We
+        extensively validate our flow map models, called <em>Align Your Flow</em>, on challenging image generation
+        benchmarks and achieve state-of-the-art few-step generation performance on both ImageNet 64x64 and 512x512,
+        using small and efficient neural networks. Finally, we show text-to-image flow map models that outperform all
+        existing non-adversarially trained few-step samplers in text-conditioned synthesis.
+      </p>
+
+      <section id="teaser-image" class="my_figure">
+        <figure style="margin-top: 1px; margin-bottom: 1px; text-align: center;" id="">
+          <img id="fig2" src="./assets/ayf_overview.jpg" style="width: 100%;">
+        </figure>
+        <p style="margin-bottom: 1px;" class="caption_method">
+          <b><strong>Figure 2.</strong></b>
+          Flow maps generalize both consistency models and flow matching by connecting any two
+          noise levels \(s, t\) in a single step.
+          When \(s=0\), flow maps reduce to consistency models; when \(s \to t\) they are equivalent to standard flow
+          matching models.
+          Our proposed AYF-EMD objective similarly generalizes the continuous-time consistency and flow matching losses.
+        </p>
+      </section>
+    </section>
+
+
+    <section id="method">
+      <h2>Consistency Models are Flawed Multi-Step Generators</h2>
+      <hr>
+      <div class="flex-row">
+        <p style="margin-bottom: 1px;">
+          <a href="https://arxiv.org/abs/2006.11239" target="_blank">Diffusion</a> and <a
+            href="https://arxiv.org/abs/2210.02747" target="_blank">flow-based</a> models
+          have revolutionized generative modeling, but they rely on slow iterative sampling.
+          <a href="https://arxiv.org/abs/2303.01469" target="_blank">Consistency models</a> are a popular approach to
+          distill these models into efficient one-step generators. They learn to map samples that lie on deterministic
+          noise-to-data paths to the same, consistent clean
+          output in a single step.
+          However, they have been empirically shown to degrade in performance as the number of sampling steps
+          increases.
+          In this work, we analytically explain this phenomenon and show that consistency models are inherently
+          incompatible with multi-step sampling.
+        </p>
+        <p style="margin-bottom: 1px;">
+          Specifically, we analyze a simple case where the initial distribution is an isotropic Gaussian
+          with standard deviation \(c\), i.e. \(p_{\textrm{data}}(\mathbf{x}) = \mathcal{N}(\mathbf{0},
+          c^2\mathbf{I})\).
+          Let \(\mathbf{f}^*(\mathbf{x}_t, t)\) denote the optimal consistency model.
+          We show that regardless of how small an error \(\epsilon\) we consider, there exists an imperfect consistency
+          model \(\mathbf{f}(\mathbf{x}_t, t)\) such that
+          \(\mathbb{E}_{\mathbf{x}_t \sim p(\mathbf{x},t)}\!\bigl[\| \mathbf{f}(\mathbf{x}_t, t) -
+          \mathbf{f}^*(\mathbf{x}_t, t) \|_2^2\bigr] < \epsilon\) for all \(t \in [0, 1]\), and using \(\mathbf{f}\) for
+            multi-step sampling will lead to error accumulation beyond a certain step count. In other words, even for
+            minimal modeling errors, multi-step sampling with consistency models eventually diverges when increasing the
+            number of sampling steps (see the <a
+            href="https://arxiv.org/abs/2506.14603" target="_blank">
+            paper</a> for proof and derivation).
+        </p>
+        <p style="margin-bottom: 1px;">
+          Intuitively, when doing multi-step sampling with consistency models we first perform denoising by removing all
+          noise from a noisy image to obtain a clean one,
+          and then re-add a smaller amount of noise. But because the model is not perfect, the denoised image drifts
+          slightly off the true data manifold. When noise is
+          added back in, the resulting image is now slightly off the noisy manifold the model was trained on. This
+          mismatch compounds: each denoising step starts from a
+          slightly worse input, pushing the sample further off-manifold over time. As a result, errors accumulate with
+          more sampling steps, leading to degrading
+          image quality beyond a certain point.
+        </p>
+        <p style="margin-bottom: 1px;">
+          To overcome this issue, we advocate for the Flow Map framework, which unifies flow matching and
+          consistency models by connecting any two noise levels in a single step.
+          Flow maps offer the best of both worlds: they achieve high-quality samples with just a few sampling
+          steps while remaining naturally compatible with multi-step sampling.
+          <a href="#fig3">Figure 3</a> shows a comparison between these methods.
+        </p>
+      </div>
+
+      <section class="my_figure">
+        <figure style="margin-top: 1px; margin-bottom: 1px; text-align: center;">
+          <img id="fig3" src="./assets/fid_vs_nfe_2.jpg">
+        </figure>
+        <p style="margin-bottom: 1px;" class="caption_method">
+          <b><strong>Figure 3.</strong></b>
+          FID versus number of sampling steps on ImageNet 512x512 (lower is better). Diffusion models require dozens of
+          steps to reach good quality, and consistency models deteriorate after only a few, whereas our AYF flow maps
+          maintain low FID across the board. AYF is slightly weaker at single-step generation, but a brief adversarial
+          fine-tuning stage closes this gap and improves quality for all numbers of sampling steps with minimal loss in
+          diversity.
+        </p>
+      </section>
+    </section>
+
+
+    <section id="method">
+      <h2>Flow Maps: Generalizing Flow Matching and Consistency Models</h2>
+      <hr>
+      <div class="flex-row">
+        <p style="margin-bottom: 1px;">
+          Flow maps are neural networks \(\mathbf{f}_\theta(\mathbf{x}_t, t, s)\) that map a noisy input
+          \(\mathbf{x}_t\)
+          directly to any other point \(\mathbf{x}_s\) by following the probability flow ODE (PF-ODE) from time \(t\) to
+          \(s\).
+          When \(s = 0\), they reduce to standard CMs. When performing many small steps, i.e. \(s \to t\), they reduce
+          to
+          regular flow matching models (see <a href="#fig2">Figure 2</a>). In this work, we propose two continuous-time
+          objectives for training flow maps,
+          as well as
+          training techniques to improve sample quality. For proofs, derivations and more, please refer to the
+          <a href="https://arxiv.org/abs/2506.14603"
+            target="_blank">paper</a>.
+        </p>
+
+        <p style="margin-bottom: 1px;">
+          Our first objective, which we call the <b>AYF-Eulerian Map Distillation (AYF-EMD) objective</b>, is similar to the objective used to
+          train continuous-time consistency models. This objective aims to ensure that for a fixed \(s\), the output of
+          the flow map remains constant as we move \((\mathbf{x}_t, t)\) along the PF-ODE.
+          This objective reduces to the continuous-time consistency model objective when \(s = 0\), and reduces to
+          the flow matching objective when \(s \to t\).
+          Note that the time derivative contains \(\theta^- = \text{stopgrad}(\theta)\), meaning that
+          this objective does not require backpropagating through the time derivative, avoiding unstable second-order
+          derivatives during training.
+          This objective is compatible with both distillation and training from scratch.
+        </p>
+        <div class="math-parent">
+          \[
+          \text{AYF}_{\text{EMD}} = \nabla_\theta \mathbb{E}_{\mathbf{x}_t, t, s} \left[ w(t, s) \mathrm{sign}(t - s)
+          \cdot
+          \mathbf{f}_\theta^{\top}(\mathbf{x}_t, t, s) \cdot \frac{\mathrm{d} \mathbf{f}_{\theta^-}(\mathbf{x}_t, t,
+          s)}{\mathrm{d}t} \right]
+          \]
+        </div>
+
+        <p style="margin-bottom: 1px;">
+          Our second objective, which we call the <b>AYF-Lagrangian Map Distillation (AYF-LMD) objective</b>, is similar to the objective proposed in
+          <a href="https://arxiv.org/abs/2406.07507" target="_blank">Flow Map Matching</a>.
+          This method tries to ensure that for a fixed \((\mathbf{x}_t, t)\), the
+          trajectory \(\mathbf{f}_\theta(\mathbf{x}_t, t, \cdot)\) is aligned with the PF-ODE at all points.
+          However, similar to AYF-EMD and unlike the one proposed in Flow Map Matching,
+          this also does not require backpropagating through the time derivative.
+          This objective is only compatible with distillation and assumes access to a pretrained flow-based model
+          \(\mathbf{v}_\phi(\mathbf{x}_t, t) \).
+        </p>
+        <div class="math-parent">
+          \[
+          \text{AYF}_{\text{LMD}} = \nabla_\theta \mathbb{E}_{\mathbf{x}_t, t, s} \left[ w(t, s) \, \mathrm{sign}(s - t)
+          \cdot
+          \mathbf{f}_\theta^{\top}(\mathbf{x}_t, t, s) \cdot \left( \frac{\mathrm{d} \mathbf{f}_{\theta^-}(\mathbf{x}_t,
+          t, s)}{\mathrm{d}s} - \mathbf{v}_\phi(\mathbf{f}_{\theta^-}(\mathbf{x}_t, t, s), s) \right) \right]
+          \]
+        </div>
+
+        <p style="margin-bottom: 1px;">
+          In this work, we focus on distillation. We assume access to a pretrained diffusion or flow matching model, and
+          aim to distill
+          it into a flow map. Following prior works, we distill guidance into the flow map, and show that this can be
+          improved further by using autoguidance as opposed to classifier-free guidance.
+          A detailed training algorithm is provided in the <a
+            href="https://arxiv.org/abs/2506.14603"
+            target="_blank">paper</a>.
+        </p>
+      </div>
+    </section>
+
+
+    <section id="related-work">
+      <h2>Related Work</h2>
+      <hr>
+      <p style="margin-bottom: 1px;">
+        Align Your Flow considers the task of distilling a continuous-time flow map from a pretrained flow-based or
+        diffusion model.
+        Flow maps, however, have been explored in prior work. They were first introduced in
+        <a href="https://arxiv.org/abs/2310.02279" target="_blank">Consistency Trajectory Models (CTM)</a>, which
+        trained discrete-time flow maps
+        using a combination of consistency loss, flow matching, and adversarial training. This framework was later
+        applied to
+        text-to-image generation in <a href="https://arxiv.org/abs/2402.19159" target="_blank">Trajectory Consistency
+          Distillation (TCD)</a>.
+      </p>
+      <p>
+        More recently, <a href="https://arxiv.org/abs/2406.07507" target="_blank">Flow Map Matching</a> proposed two
+        continuous-time losses
+        for training flow maps, though we found that these did not perform well in practice.
+        <a href="https://arxiv.org/abs/2410.12557" target="_blank">Shortcut Models</a> also adopted the flow map
+        framework, introducing a self-consistency loss
+        that, like our AYF-EMD objective, is compatible with both distillation and training from scratch. We compare
+        against their
+        distillation variant in our experiments and show that AYF-EMD achieves significantly stronger results.
+        Please refer to the ablation study in the <a
+          href="https://arxiv.org/abs/2506.14603"
+          target="_blank">paper</a> for details.
+      </p>
+      <p>
+        Concurrently, <a href="https://arxiv.org/abs/2505.13447v1" target="_blank">MeanFlow Models</a> introduced a loss
+        for training flow maps from scratch
+        that closely resembles our AYF-EMD objective. Their formulation can be seen as a special case of AYF-EMD under an Euler flow map parameterization,
+        which we also adopt in our experiments. Their strong results in the training-from-scratch setting are
+        complementary to our distillation results and further highlight the effectiveness and generality of the AYF-EMD
+        objective
+        for both distillation and training from scratch.
+        In parallel, <a href="https://arxiv.org/abs/2505.18825" target="_blank">How to Build a Consistency Model</a>
+        explored similar objectives as those in Flow Map Matching,
+        and examined the role of higher-order derivatives, finding them beneficial in low-dimensional settings but
+        largely ineffective in high-dimensional ones. Please see the extended discussion in the Appendix of our <a
+          href="https://arxiv.org/abs/2506.14603"
+          target="_blank">paper</a>.
+      </p>
+      <p>
+        Align Your Flow can be viewed as a generalization of many of these works, as shown in <a href="#fig4">Figure
+          4</a>.
+        For example, the AYF-EMD objective reduces to the standard flow matching loss when \(s \to t\), and to the
+        continuous-time consistency loss when \(s = 0\).
+        The loss in <a href="https://arxiv.org/abs/2402.19159" target="_blank">Trajectory Consistency Distillation</a>
+        is essentially a time-discretized
+        version of AYF-EMD. Likewise, our AYF-EMD and AYF-LMD objectives are closely related to the EMD and LMD losses
+        in
+        <a href="https://arxiv.org/abs/2406.07507" target="_blank">Flow Map Matching</a>, with the main difference being
+        whether or not
+        we differentiate through the time derivatives. This subtle change leads to very different training dynamics.
+        As mentioned earlier, <a href="https://arxiv.org/abs/2505.13447v1" target="_blank">MeanFlow Models</a> can also
+        be seen as a special case of AYF-EMD
+        under an Euler flow map parameterization. For more details, please refer to the
+        <a href="https://arxiv.org/abs/2506.14603"
+          target="_blank">paper</a>.
+      </p>
+
+      <section class="my_figure">
+        <figure style="margin-top: 1px; margin-bottom: 1px; text-align: center;">
+          <img id="fig4" src="./assets/ayf_generalizes_all_v2.jpg">
+        </figure>
+        <p style="margin-bottom: 1px;" class="caption_method">
+          <b><strong>Figure 4.</strong></b>
+          AYF can be seen as a generalization of many prior works such as
+          <a href="https://arxiv.org/abs/2210.02747" target="_blank">Flow Matching</a>,
+          <a href="https://arxiv.org/abs/2410.11081" target="_blank">Continuous-time Consistency Models</a>,
+          <a href="https://arxiv.org/abs/2406.07507" target="_blank">Flow Map Matching</a>,
+          <a href="https://arxiv.org/abs/2402.19159" target="_blank">Consistency Trajectory Distillation</a>,
+          and the concurrent <a href="https://arxiv.org/abs/2505.13447v1" target="_blank">MeanFlow Models</a>.
+        </p>
+      </section>
+    </section>
+
+    <section id="experiments">
+      <h2>Generation Results</h2>
+      <hr>
+
+      <p style="margin-bottom: 1px;">
+        To evaluate the effectiveness of our AYF flow maps, we perform rigorous quantitative experiments on standard
+        image generation benchmarks (ImageNet 64x64, ImageNet 512x512).
+        We show that our flow map models effectively solve the multi-step sampling problem of CMs, and are effective image
+        generators at all step counts (measured by FID), please see <a href="#fig3">Figure 3</a>.
+        We also show that given a pretrained flow map model, a short finetuning stage with an adversarial loss can
+        significantly boost the performance for all numbers of sampling steps with a minimal impact on sample diversity (measured by
+        recall scores);
+        see Table 1 in the <a href="https://arxiv.org/abs/2506.14603"
+          target="_blank">paper</a> for more details.
+        Putting everything together, we show that we can distill state-of-the-art flow maps using small networks that
+        achieve the best speed-quality trade-off across the board, as seen in <a href="#fig5">Figure 5</a>. Extensive
+        comparisons to baselines can be found in the tables in the <a
+          href="https://arxiv.org/abs/2506.14603"
+          target="_blank">paper</a>.
+      </p>
+
+      <section class="my_figure">
+        <div class="wrapper" id="fig5">
+          <figure>
+            <img class="fig5_image" src="./assets/fid_vs_time_v2.jpg">
+          </figure>
+
+          <figure>
+            <img class="fig5_image" src="./assets/fid_vs_time_img64_v2.jpg">
+          </figure>
+        </div>
+        <p style="margin-bottom: 1px;" class="caption_method">
+          <b><strong>Figure 5.</strong></b>
+          By combining flow maps with our proposed training techniques (autoguidance and adversarial finetuning),
+          we distill state-of-the-art flow maps using small and highly efficient networks (using the S-sized architecture
+          from
+          <a href="https://arxiv.org/abs/2312.02696" target="_blank">EDM2</a>) that deliver
+          the best speed-quality trade-off across the board. These small models outperform much larger consistency
+          baselines at every runtime budget, even when they sample in a single step.
+          sCD and sCT refer to the distilled and from-scratch continuous-time consistency models from
+          <a href="https://arxiv.org/abs/2312.02696" target="_blank">sCM</a>, respectively.
+        </p>
+      </section>
+
+
+      <div id="img512-samples">
+        <h3>
+          ImageNet 512x512
+        </h3>
+        <p style="margin-bottom: 1px;">
+          In this section, we show some one- and two-step samples generated by our distilled flow map model on ImageNet
+          512x512.
+        </p>
+
+        <div style="display: flex; justify-content: center; width: 100%;">
+          <section class="splide" aria-label="ImageNet 512x512 samples"
+            style="width: 100%; height: auto; margin-bottom: 0px;">
+            <div class="splide__track">
+              <ul class="splide__list">
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00001.jpg" alt="goldfish" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00002.jpg" alt="owl" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00018.jpg" alt="bubble" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00003.jpg" alt="axolotl" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00004.jpg" alt="peacock" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00016.jpg" alt="hourglass" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00005.jpg" alt="parrot" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00006.jpg" alt="jacamar" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00021.jpg" alt="castle" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00007.jpg" alt="toucan" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00008.jpg" alt="dog" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00017.jpg" alt="pomegranate"
+                    loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00009.jpg" alt="dog2" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00011.jpg" alt="cat" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00019.jpg" alt="beach" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00012.jpg" alt="ladybug" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00013.jpg" alt="hamster" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00020.jpg" alt="tomato" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00014.jpg" alt="squirrel" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00015.jpg" alt="ferret" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/1-step/00022.jpg" alt="vase" loading="lazy"></li>
+              </ul>
+            </div>
+          </section>
+        </div>
+        <p style="margin-top: 0.5rem; text-align: center;" class="caption_method">
+          One-step samples generated by our AYF flow map model on ImageNet 512x512.
+        </p>
+
+        <div style="display: flex; justify-content: center; width: 100%;">
+          <section class="splide" aria-label="ImageNet 512x512 samples"
+            style="width: 100%; height: auto; margin-bottom: 0px;">
+            <div class="splide__track">
+              <ul class="splide__list">
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00001.jpg" alt="anemone" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00002.jpg" alt="dog" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00003.jpg" alt="panda" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00004.jpg" alt="plant" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00005.jpg" alt="dog2" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00013.jpg" alt="mountain" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00006.jpg" alt="mushroom" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00007.jpg" alt="wolf" loading="lazy"></li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00008.jpg" alt="goldfish" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00009.jpg" alt="eagle" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00010.jpg" alt="axolotl" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00011.jpg" alt="parrot" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00012.jpg" alt="beach" loading="lazy">
+                </li>
+                <li class="splide__slide"><img src="assets/img512_dump/2-step/00014.jpg" alt="flower" loading="lazy">
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+        <p style="margin-top: 0.5rem; text-align: center;" class="caption_method">
+          Two-step samples generated by our AYF flow map model on ImageNet 512x512.
+        </p>
+      </div>
+
+      <div id="flux-results">
+        <h3>
+          Text-to-Image
+        </h3>
+        <p style="margin-bottom: 1px;">
+          We also evaluate our method on text-to-image generation by distilling the
+          <a href="https://huggingface.co/black-forest-labs/FLUX.1-dev" target="_blank">FLUX.1-dev</a> model.
+          Following prior work, we add a lightweight LoRA to the base model and finetune it using the AYF-EMD objective.
+          This finetuning process is quick, taking only about 4 hours on 8x A100 GPUs.
+        </p>
+        <p style="margin-bottom: 1px;">
+          Four-step samples from the distilled text-to-image flow map model are shown in <a href="#fig1">Figure 1</a>,
+          and below we show further samples and compare them to those from
+          <a href="https://latent-consistency-models.github.io/" target="_blank">LCM</a> and
+          <a href="https://mhh0318.github.io/tcd/" target="_blank">TCD</a>,
+          two prior LoRA-based consistency-distilled models that are built on SDXL. Our model generates images with
+          more visual detail and better text-alignment,
+          as confirmed by a user study reported in the <a
+            href="https://arxiv.org/abs/2506.14603"
+            target="_blank">paper</a>. 
+          <b>Hover over the images for zoom-ins.</b>
+        </p>
+
+
+        <div style="width: 90%; margin: 2rem auto;">
+          <div class="wrapper" style="margin-bottom: -10pt;">
+            <figure style="text-align: center; font-weight: bold; width: 33.33%;">
+              LCM
+            </figure>
+
+            <figure style="text-align: center; font-weight: bold; width: 33.33%;">
+              TCD
+            </figure>
+
+            <figure style="text-align: center; font-weight: bold; width: 33.33%;">
+              AYF (<i>ours</i>)
+            </figure>
+          </div>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/spider_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/spider_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/spider_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"Cute jumping spider in pirate hat on a yellow daisy"</em>
+            </b>
+          </p>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/squirrel_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/squirrel_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/squirrel_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"Red squirrel drumming on tiny twig and acorn drums in autumn woods"</em>
+            </b>
+          </p>
+
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/misty_mountain_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/misty_mountain_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/misty_mountain_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"Misty mountain lake at dawn, with calm water and lush pine trees"</em>
+            </b>
+          </p>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/blue_gecko_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/blue_gecko_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/blue_gecko_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"Neon-blue glowing gecko on finger in cyberpunk city at night"</em>
+            </b>
+          </p>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/red_samurai_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/red_samurai_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/red_samurai_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"A lone samurai faces a crimson forest at dusk. Leaves swirl, a bridge crosses a koi pond, and a
+                distant
+                temple glows in the fading light"</em>
+            </b>
+          </p>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/ferris_wheel_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/ferris_wheel_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/ferris_wheel_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"A floating carnival drifts above the clouds neon lit rides, surreal Ferris cabins, and balloons
+                gliding
+                through caramel-scented air"</em>
+            </b>
+          </p>
+
+          <div class="wrapper">
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/robot_cat_lcm.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/robot_cat_tcd.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+
+            <figure class="image-container">
+              <img width="95%" src="./assets/flux_samples/robot_cat_ayf.jpg" style="margin-bottom: 0px;">
+              <div class="magnifier"></div>
+            </figure>
+          </div>
+          <p style="margin-bottom: 1px;" class="caption">
+            <b>Text prompt:
+              <em>"A weathered yellow robot cat plays with a white rabbit with a flower on its back in a rainy, misty
+                alley, with rusted buildings looming overhead."</em>
+            </b>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="paper">
+      <h2>Paper</h2>
+      <hr>
+      <div class="flex-row">
+        <div style="box-sizing: border-box; padding: 16px; margin: auto;">
+          <img class="screenshot" src="assets/ayf_paper_preview.png">
+        </div>
+        <div style="width: 60%">
+          <p><b>Align Your Flow: Scaling Continuous-Time Flow Map Distillation</b></p>
+          <p>Amirmojtaba Sabour, Sanja Fidler, Karsten Kreis</p>
+          <p><i>NeurIPS 2025</i></p>
+          <div><span class="material-icons"> description </span><a
+              href="https://arxiv.org/abs/2506.14603"> Paper </a>
+          </div>
+          <div><span class="material-icons"> description </span><a href="assets/bibtex.txt"> BibTeX </a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="bibtex">
+      <h2>Citation</h2>
+      <hr>
+      <pre><code>
+      @misc{sabour2025align,
+        title={Align Your Flow: Scaling Continuous-Time Flow Map Distillation},
+        author={Amirmojtaba Sabour and Sanja Fidler and Karsten Kreis},
+        year={2025},
+        eprint={2506.14603},
+        archivePrefix={arXiv},
+        primaryClass={cs.CV}
+      }
+    </code></pre>
+    </section>
+  </div>
+
+  <div class="footer">
+    <a href="https://www.nvidia.com/en-us/about-nvidia/privacy-policy/" target="_blank" rel="noopener">Privacy
+      Policy</a> -
+    <a href="https://www.nvidia.com/en-us/privacy-center/" target="_blank" rel="noopener">Manage My Privacy</a> -
+    <a href="https://www.nvidia.com/en-us/preferences/email-preferences/" target="_blank" rel="noopener">Do Not Sell or
+      Share My Data</a> -
+    <a href="https://www.nvidia.com/en-us/about-nvidia/terms-of-service/" target="_blank" rel="noopener">Terms of
+      Service</a> -
+    <a href="https://www.nvidia.com/en-us/about-nvidia/accessibility/" target="_blank" rel="noopener">Accessibility</a>
+    -
+    <a href="https://www.nvidia.com/en-us/about-nvidia/company-policies/" target="_blank" rel="noopener">Corporate
+      Policies</a> -
+    <a href="https://www.nvidia.com/en-us/contact/" target="_blank" rel="noopener"> Contact</a> <br>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var elms = document.getElementsByClassName('splide');
+
+      for (var i = 0; i < elms.length; i++) {
+        new Splide(elms[i], {
+          type: 'loop',
+          perPage: 3,
+          perMove: 1,
+          padding: '3%',
+          gap: '1%',
+          pagination: false,
+          // focus: 'center',
+          autoHeight: true,
+          lazyLoad: 'nearby',
+
+          breakpoints: {
+            600: {
+              perPage: 1,
+              padding: '8%',
+              gap: '2%',
+            },
+          },
+        }).mount();
+      }
+
+    });
+  </script>
+
+  <script>
+    function preloadImage(url) {
+      const img = new Image();
+      img.src = url;
+    }
+
+    document.querySelectorAll('.wrapper').forEach(wrapper => {
+      wrapper.querySelectorAll('.image-container img').forEach((img) => {
+        (img.nextElementSibling || img.previousElementSibling).style.backgroundImage = 'url(' + (img.dataset.src_original ?? img.src) + ')'
+        preloadImage(img.dataset.src_original ?? img.src);
+        preloadImage(img.dataset.src_zoomed ?? img.src);
+        img.addEventListener('mousemove', (e) => magnify(e, wrapper));
+        img.addEventListener('mouseleave', (e) => hideMagnifier(wrapper));
+      });
+    });
+
+
+    function magnify(e, wrapper) {
+      const magnifiers = wrapper.querySelectorAll('.magnifier');
+      let zoomFactor = parseFloat(wrapper.dataset.zoom_level) || 3;
+      let windowSizeX = parseFloat(wrapper.dataset.window_size_x) || 0.33;
+      let windowSizeY = parseFloat(wrapper.dataset.window_size_y) || 0.33;
+
+      let x = e.offsetX;
+      let y = e.offsetY;
+      let xPercent = x / e.toElement.offsetWidth;
+      let yPercent = y / e.toElement.offsetHeight;
+
+      // Clamp values to be inside the box
+      xPercent = Math.max(windowSizeX / 2, Math.min(xPercent, 1.0 - windowSizeX / 2));
+      yPercent = Math.max(windowSizeY / 2, Math.min(yPercent, 1.0 - windowSizeY / 2));
+      x = xPercent * e.toElement.width;
+      y = yPercent * e.toElement.height;
+
+
+      magnifiers.forEach((magnifier) => {
+        const img = magnifier.previousElementSibling;
+        const magnifierSize = magnifier.offsetWidth / 2;
+
+        const originalSrc = img.dataset.src_original ?? img.src;
+        const zoomedSrc = img.dataset.src_zoomed ?? img.src;
+
+        img.src = originalSrc;
+
+        // Calculate the position for the background image
+        const bgX = (xPercent * img.offsetWidth);
+        const bgY = (yPercent * img.offsetHeight);
+
+        magnifier.style.display = 'block';
+        magnifier.style.boxSizing = "border-box";
+        magnifier.style.width = (windowSizeX * img.offsetWidth * zoomFactor) + 'px';
+        magnifier.style.height = (windowSizeY * img.offsetHeight * zoomFactor) + 'px';
+
+        magnifier.style.left = (x - magnifier.offsetWidth / 2 + 0.5 * (img.parentElement.offsetWidth - img.offsetWidth)) + 'px';
+        magnifier.style.top = (y - magnifier.offsetHeight / 2 + 0.5 * (img.parentElement.offsetHeight - img.offsetHeight)) + 'px';
+
+        magnifier.style.backgroundSize = `${img.offsetWidth * zoomFactor}px ${img.offsetHeight * zoomFactor}px`;
+        let bgTrueX = Math.max(0, bgX * zoomFactor - magnifier.offsetWidth / 2);
+        let bgTrueY = Math.max(0, bgY * zoomFactor - magnifier.offsetHeight / 2);
+        magnifier.style.backgroundPosition = '-' + (bgTrueX) + 'px -' + (bgTrueY) + 'px';
+      });
+    }
+
+    function hideMagnifier(wrapper) {
+      wrapper.querySelectorAll('.magnifier').forEach(magnifier => {
+        magnifier.style.display = 'none';
+
+        const img = magnifier.previousElementSibling;
+        const originalSrc = img.dataset.src_original ?? img.src;
+        const zoomedSrc = img.dataset.src_zoomed ?? img.src;
+        img.src = zoomedSrc;
+      });
+    } 
+  </script>
+
+</body>
+
+</html>

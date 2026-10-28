@@ -1,71 +1,109 @@
 ---
-title: "EmbeddingGemma 2"
+title: "EmbeddingGemma 2 — 统一多模态表示与分阶段训练"
 type: model-note
 release: "2026-10-06"
 year: 2026
 url: "https://huggingface.co/google/embeddinggemma-2"
-tags: [model-note, base-model, google]
+arxiv: "2610.37364"
+tags: [model-note, base-model, google, embedding]
 topic: "13_base_model"
 status: read
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-28
 ---
 
-# EmbeddingGemma 2
+# EmbeddingGemma 2：统一空间之后，还要为小模型重新整形
 
-> [!tldr]
-> 740M 全模态 embedding；可裁剪为270M纯文本，支持Matryoshka向量截断。 它把文本、视觉和音频映射到同一检索空间，而不是生成答案。关闭模态encoder改变内存但保留文本能力路径；截断向量后重新L2归一化是排序正确性要求，不能只追求存储节省。
+> [!tldr] 我的判断
+> 这是一套可按模态加载的多模态检索表示模型。新报告最有价值的发现是：**先蒸馏教师空间，再用对比学习和正则形成适合学生的空间**，比一味延长蒸馏更有效。原卡更新了 MIEB / MAEB 数值；模型仍按 10/6 首发，不把 10/27 报告上线当新代。
 
-![研读路径：整理示意，不代表未公开架构](src/assets/reading-map.svg)
+![手绘研读图：三阶段训练及编码器分工](src/assets/handdrawn-method.png)
 
-## 一页速览
+## 本次来源变化
 
-| 维度 | 当前证据 |
-|---|---|
-| 发布时间 | 2026-10-06 |
-| 类型 | 专项支线 / family · Embedding |
-| 关键事实 1 | 完整740M；text-only270M |
-| 关键事实 2 | 8192-token共享上下文 |
-| 关键事实 3 | 768 / 512 / 256 / 128维 |
-| 检查日期 | 2026-10-13；官方原始资料在同级src/ |
+10/28 回读 HF 主卡发现正式报告 [2610.37364](https://arxiv.org/abs/2610.37364)，报告 HTML v1 标 10/27。已保存原始 HTML 并阅读架构、输入、损失、训练、消融与评测部分。旧卡保存在 src/history/，保留数值修订证据。
 
-## 统一向量空间，不是新聊天模型
+| HF 原卡修订 | 旧值 | 本轮卡 / 报告 |
+|---|---:|---:|
+| MIEB-lite，Mean(Type)，768d | 64.64 | **65.67** |
+| MAEB，Mean(Task)，768d | 49.39 | **49.87** |
+| 截断维度表 | 对应旧列 | 512/256/128d 相关列一并更新 |
 
-740M总参由270M文本、170M视觉和300M音频模块构成；仅加载文本270M，图文440M，文音570M。四模态映射到共享768维向量，适合检索与记忆，不能拿embedding benchmark解释生成或工具执行能力。
+这是官方表格修订，不是本地重新测得提升，也没有证据说模型权重为此升级。
 
-24层、1024滑窗、local/global5:1，512隐藏维经projection变768维，mean pooling。8192token为共享预算，混合图片/视频/音频会一起占用，而不是每种模态独享8K。
+## 模块化架构：总参和实际激活模块不同
 
-## MRL 的压缩有真实代价
+![官方报告图 1：跨模态统一表示](src/assets/official-unified-embedding.png)
 
-| 维度 | MTEB multilingual | MMEB总体 | 音频MSEB检索 |
-|---|---:|---:|---:|
-| 768 | 61.36 | 59.01 | 69.54 |
-| 512 | 61.17 | 58.38 | 69.18 |
-| 256 | 60.41 | 56.24 | 66.76 |
-| 128 | 57.89 | 45.65 | 56.71 |
+报告给出更精确的 744M 总参：271M 双向 Transformer 主体（含 embedder）、167M vision encoder、305M audio encoder。分项与组合值存在舍入；纯文本 271M、图文 439M、文音 577M，与原卡约 740M/270M/440M/570M 是精度口径不同。
 
-128维存储约缩至六分之一，但多模态质量下降明显，不能将“最低维可用”写成“所有模态无损6倍压缩”。截断后必须再L2归一化，query/document要同维。
+图像和音频先变成 soft tokens，经投影与文本 token 交错进入同一个双向 backbone。最终 mean pooling、线性投影、L2 归一化，形成 768d 单向量。它不生成答案；只加载文本模块也不意味着跨模态表示空间需要换成另一模型。
 
-## 易被忽略的复现条件
+PLE 不再额外维护一张巨大 token lookup table，而是从共享输入表示做每层投影与门控。这样非文本模态也能得到每层输入，同时减少参数与内存；这是架构消融支持的选择，不能简单概括成“把所有 embedding 层删掉”。
 
-使用BF16或FP32，不能用FP16：激活范围可导致NaN或静默退化。非对称检索使用query prefix与document title格式；分类/聚类为对称任务，不能机械复用检索前缀。模态模块按需加载与precision、维度一起记录，才知道小模型真正省了哪些资源。
+## 三阶段 curriculum：teacher 是起点，不是最终空间
 
-10月6日按官方model card发布时间记录；HF9月14日仓库创建不能直接当正式首发。当前已读模型卡的架构/评测/部署，未补完整训练源码，长媒体召回仍应在用户任务上验证。
+| 阶段 | token 量 | 目标与作用 |
+|---|---:|---|
+| 文本预微调 | 300B | 以 embedding matching 蒸馏为主，少量对比项；先稳住文本能力 |
+| 多模态预微调 | 2T | 只用蒸馏；从 Gemini Embedding 2 学跨模态共同空间 |
+| 多模态微调 | 600B | 换成对比学习、spread-out 与 MRL；适配学生架构和低维空间 |
+
+总量约 2.9T。Vision encoder 在多模态两阶段继续训练；audio encoder 与 Gemma 4 对应模块 bit-identical，保持冻结。最后平均同一次微调轨迹中的早晚 checkpoint；QAT 是合并后单独的 tail-patch，以冻结浮点模型为教师，不是直接在上述末阶段随手量化。
+
+## 损失如何对应检索问题
+
+对比项包含 batch negatives、hard negatives 与 same-tower negatives；后者避免 query 和 document 聚成互不兼容的两团。重复项 mask 避免把同一目标当负例；列表排序数据另用 Plackett–Luce 风格 listwise 目标。小的 squared-hinge 项校准绝对相似度。
+
+Spread-out 正则约束随机向量对的二阶矩，让空间更充分利用，服务于量化与 ANN 检索。MRL 将目标同时施加到嵌套子维度。蒸馏则直接对齐教师向量而不仅是 query-document 分数，并涵盖 hard negative 向量。
+
+## 消融：这些数来自中间 recipe，不能与最终模型直接相减
+
+| 实验 | MMEB-v2 Overall | 含义 |
+|---|---:|---|
+| PLE projection-only / 带 lookup | 55.46 / 55.07 | 简化不只是省内存，也改善该组质量 |
+| 多模态预微调 / 继续等量蒸馏 / 最后微调 | 52.27 / 52.28 / 55.46 | 继续蒸馏平台化，换目标更有效 |
+| Vision 可训练 / 冻结 | 52.27 / 48.18 | 只接强视觉编码器仍不够 |
+
+Vision token budget 提升尤其改善细粒度文档检索；但视频在 280→560 tokens 的该组消融反而退化。更长输入会稀释注意力和 mean pooling，不能把“可配 1120”理解为全任务单调增益。
+
+## 最终评测：指标和比较对象要写清
+
+| 指标 | 当前报告 / 原卡 |
+|---|---:|
+| MTEB multilingual v2，Mean(Task) | 61.36 |
+| MTEB code，Mean(Task) | 78.68 |
+| MIEB-lite，Mean(Type) | 65.67 |
+| MMEB-v2，Mean(Task) | 59.01 |
+| MSEB retrieval，Mean(Task) | 69.54 |
+| MAEB，Mean(Task) | 49.87 |
+
+MIEB 的 Mean(Task) 是 60.17，不能拿 65.67 与别人的 Mean(Task) 比。不同 benchmark 的均值口径不同，不能平均成“总能力分”。报告的英语 MTEB 68.46 低于上一代 69.67；多模态扩展并非每项都上涨。
+
+| 向量维度 | MTEB multi | MMEB总体 | MIEB Mean(Type) | MAEB Mean(Task) |
+|---|---:|---:|---:|---:|
+| 768 | 61.36 | 59.01 | 65.67 | 49.87 |
+| 512 | 61.17 | 58.38 | 65.34 | 49.76 |
+| 256 | 60.41 | 56.24 | 64.16 | 49.13 |
+| 128 | 57.89 | 45.65 | 59.97 | 47.28 |
+
+低维需要截断后重新 L2 归一化，query/document 同维。文本 256d 较稳，多模态 128d 代价明显。报告的量化与浮点评测部分使用不同 harness，不能把差值全部归因量化；Pixel 11 Pro 的峰值内存是特定量化/设备结果，不是通用显存承诺。
+
+## 使用与验收
+
+8192 token 是共享总预算，图像、视频、音频共同占用。检索使用匹配的 query prefix 与 document title 模板；分类/聚类不照搬非对称检索前缀。使用 BF16/FP32，原卡警示 FP16 可能 NaN 或静默退化。固定模态模块、维度、precision、token budget、视频采样与任务前缀。
+
+> [!warning] 尚未达到完整训练复现验收
+> 报告已补齐许多方法与消融，不再写“没有报告”。但完整训练语料、配比/超参与本地复测仍不足；**原始可复现资料尚不能支持完整 checkpoint 重训验收**。报告中的作者结果与本笔记研究判断分别陈述。
 
 ## 对 Agent Training 的启发
 
 > [!insight]
-> query/document使用匹配任务前缀与向量维度；BF16/FP32，避免FP16产生NaN。以Recall@K和下游证据命中测跨模态检索，128维须独立验收。
-
-以上是基于已读官方资料的研究判断，不是官方保证，也没有在本机运行模型推理或复现论文成绩。下一步优先补独立验证器、固定任务/版本和完整失败轨迹，避免只保存最好样例。
-
-## 一手资料与导航
+> Agent 记忆检索可先蒸馏覆盖面，再用本任务的检索/失败轨迹对形成学生空间。终点是独立任务的证据召回，而不是永远更贴近教师向量。评测 Recall@K、困难负例混淆和下游工具成功率，同时报告内存/延迟与低维损失。
 
 - [S1] [HF Model Card](https://huggingface.co/google/embeddinggemma-2)
-- [S2] [Model Card](https://ai.google.dev/gemma/docs/embeddinggemma/model_card_2)
-
-原始下载文件与SHA-256见 [[src/retrieval_manifest.json|抓取记录]]。报告保留链接，不抓PDF；动态网页响应若只有壳文件，不将其标成完整离线正文。
-
+- [S2] [官方 Model Card](https://ai.google.dev/gemma/docs/embeddinggemma/model_card_2)
+- [S3] [Tech Report](https://arxiv.org/abs/2610.37364)
 - [[Topics/13_base_model/Base Model MOC|基模主题索引]]
 - [[embeddinggemma-2_poster_zh.html|中文Poster]]
 

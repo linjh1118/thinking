@@ -105,6 +105,7 @@ Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated sys
 
 - [PyTorch](https://pytorch.org/)
 - [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
+- [SGLang](https://github.com/sgl-project/sglang)
 
 **Supported Hardware Microarchitecture Compatibility:**
 
@@ -400,6 +401,90 @@ Path("robot_depth.mp4").write_bytes(response.content)
 With the supplied depth control, the generated output looks like this:
 
 <video src="https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Transfer/resolve/main/assets/output/cosmos3-nano-sim-transfer-quickstart.mp4" controls autoplay loop muted playsinline width="640"></video>
+
+### Quick Start with SGLang
+
+[SGLang](https://github.com/sgl-project/sglang) serves the same model through its OpenAI-compatible Videos API and generates the same depth-controlled video. Two things differ: the server reads the control video from a path it can open instead of accepting uploads, so the working directory is mounted into the container, and generation runs as an asynchronous job that the client polls. For edge, blur, and segmentation controls with SGLang, see the [SGLang notebook](https://github.com/NVIDIA/cosmos-framework/blob/main/.agents/skills/cookbooks/cosmos3/simulation/transfer/run_transfer_with_sglang.ipynb).
+
+#### 1. Start the server
+
+On the same kind of host, with the published [`lmsysorg/sglang:dev`](https://hub.docker.com/r/lmsysorg/sglang/tags) image, which includes the Cosmos3 pipelines from [sgl-project/sglang#39475](https://github.com/sgl-project/sglang/pull/39475):
+
+```bash
+export SGLANG_HF_CACHE="${SGLANG_HF_CACHE:-$HOME/.cache/sglang-huggingface}"  # The container runs as root.
+mkdir -p "$SGLANG_HF_CACHE"
+chmod 777 "$SGLANG_HF_CACHE"
+docker pull lmsysorg/sglang:dev
+docker run --init --runtime nvidia --gpus all --ipc=host \
+  -v "$SGLANG_HF_CACHE:/root/.cache/huggingface" \
+  -v "$PWD:$PWD:ro" \
+  --env "HF_TOKEN=$HF_TOKEN" \
+  -p 127.0.0.1:30000:30000 \
+  lmsysorg/sglang:dev \
+  sglang serve \
+    --model-path nvidia/Cosmos3-Nano-Sim-Transfer \
+    --host 0.0.0.0 --port 30000
+```
+
+The container publishes the server on `127.0.0.1:30000` of the host and mounts the working directory, read-only, at the same path; the client below downloads the control video under that directory and names it by path. The `dev` tag moves with SGLang's main branch, so pull it before each start. The first start downloads the checkpoint; the HTTP port opens after the weights are loaded and the warmup request finishes. The distilled checkpoint fixes the step count and guidance, and the server reads its history window from the export's training configuration, so the request sets neither.
+
+#### 2. Generate the depth video
+
+Run this from the directory mounted above:
+
+```bash
+pip install requests huggingface_hub
+```
+
+```python
+import json
+import time
+from pathlib import Path
+
+import requests
+from huggingface_hub import snapshot_download
+
+MODEL = "nvidia/Cosmos3-Nano-Sim-Transfer"
+SERVER = "http://127.0.0.1:30000"
+example_dir = Path(snapshot_download(
+    MODEL,
+    allow_patterns=[
+        "assets/sample_data/example1/example1_depth.mp4",
+        "assets/sample_data/example1/example1_upsampled_prompt.json",
+    ],
+    local_dir=Path("Cosmos3-Nano-Sim-Transfer").resolve(),  # Inside the mounted working directory.
+)) / "assets/sample_data/example1"
+metadata = json.loads((example_dir / "example1_upsampled_prompt.json").read_text())
+
+form = {
+    "model": MODEL,
+    "prompt": metadata["prompt"],
+    "size": "640x640",
+    "num_frames": "600",  # Caps the control frames consumed; the server trims the clip to whole chunks.
+    "fps": "30",
+    "seed": str(metadata["seed"]),
+    "control_hint": "depth",
+    "control_path": str(example_dir / "example1_depth.mp4"),  # Opened by the server; nothing is uploaded.
+    "extra_params": json.dumps({"emphasize_control_in_prompt": False}),
+}
+# Submit the job, poll it, and download the video. The form carries text fields only.
+response = requests.post(f"{SERVER}/v1/videos", files=[(key, (None, value)) for key, value in form.items()], timeout=60)
+response.raise_for_status()
+job = response.json()
+deadline = time.monotonic() + 7200
+while job["status"] not in ("completed", "failed", "cancelled"):
+    if time.monotonic() > deadline:
+        raise TimeoutError(f"Job {job['id']} did not finish in time: {job}")
+    time.sleep(10)
+    job = requests.get(f"{SERVER}/v1/videos/{job['id']}", timeout=60).json()
+if job["status"] != "completed":
+    raise RuntimeError(json.dumps(job, indent=2))
+video = requests.get(f"{SERVER}/v1/videos/{job['id']}/content", timeout=600)
+video.raise_for_status()
+Path("robot_depth.mp4").write_bytes(video.content)
+```
+
+The output follows the control clip, trimmed to the pipeline's whole latent chunks, so it can be a few frames shorter than the requested count.
 
 ## Ethical Considerations
 

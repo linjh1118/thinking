@@ -2114,7 +2114,14 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                 else:
                     # A pack can archive several repositories. Never resolve a
                     # sibling card's links against the family's primary repo.
-                    entry = manifest_data.get("documents", {}).get(source_file.name, {})
+                    documents = manifest_data.get("documents", {})
+                    if isinstance(documents, list):
+                        entry = next(
+                            (item for item in documents if item.get("file") == source_file.name),
+                            {},
+                        )
+                    else:
+                        entry = documents.get(source_file.name, {})
                     raw_url = entry.get("url", "")
                 match = re.fullmatch(
                     r"(https://huggingface\.co/[^/]+/[^/]+)/(?:raw|resolve)/main/README\.md",
@@ -2420,6 +2427,15 @@ def sync_source_archive(
     source_docs = []
     manifest_path = source_root / "retrieval_manifest.json"
     manifest_data = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    if isinstance(manifest_data, dict) and isinstance(manifest_data.get("documents"), list):
+        manifest_data = {
+            **manifest_data,
+            "documents": {
+                item["file"]: item
+                for item in manifest_data["documents"]
+                if isinstance(item, dict) and item.get("file")
+            },
+        }
     incremental_manifest = isinstance(manifest_data, list)
     sources = (p for p in source_root.rglob("*") if p.is_file())
     if include_relative is not None:

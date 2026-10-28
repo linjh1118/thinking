@@ -1,14 +1,14 @@
 ---
 title: "NLD-Uni：统一理解与图像扩散生成的公开包核查"
 type: model-note
-release: "2026-10"
+release: "2026-10-27"
 year: 2026
 url: "https://huggingface.co/nvidia/NLD-Uni"
 tags: [model-note, base-model, nvidia, unified-multimodal, diffusion]
 topic: "13_base_model"
 status: read
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 ---
 
 # NLD-Uni：理解、生成与实际 checkpoint 要分别验收
@@ -17,7 +17,7 @@ updated: 2026-10-27
 > 官方将 Nemotron-Labs-Diffusion-Uni-8B 描述为统一图文理解与图像生成模型，但“统一”指共同框架内存在不同 transformer 参数路径，不是所有任务完全共享同一条计算路径。公开卡列出了大量应评测的基准，却没有附这些基准的成绩。当前 release manifest 还标记 `generation-only-step-10000`，因此架构接口存在不能代替此 checkpoint 的双任务质量证据。
 
 > [!warning] 原始资料较少，达不到完整技术报告精读标准
-> 目前读到 HF 卡、配置、公开实现、release/weights manifests 与仓库 LICENSE。卡引用的 VALIDATION.md 返回 404，当前公开文件树没有 validation.json、examples/results.json 或官方结果图片；没有找到独立报告链接和可核验 benchmark 表。下面配图是根据公开资料整理的结构图，**不是官方图片、生成样例或实验结果**。公开首发日也尚未核实：卡的 10/17 指向 NVIDIA 内部 GitLab，不能当作公开 HF 首发日，更没有访问该内部服务。
+> 目前读到 HF 卡、配置、公开实现、release/weights manifests 与仓库 LICENSE。卡引用的 VALIDATION.md 返回 404，当前公开文件树没有 validation.json、examples/results.json 或官方结果图片；没有找到独立报告链接和可核验 benchmark 表。下面配图是根据公开资料整理的结构图，**不是官方图片、生成样例或实验结果**。10/28回读的公开卡已明确写10/27/2026，日期缺口关闭；旧卡的内部GitLab10/17仅作历史证据，不曾访问内部服务。
 
 ![研读示意：理解与生成有不同视觉表示，不代表实测](src/assets/paths.svg)
 
@@ -81,3 +81,7 @@ SGLang 适配在卡中限定为理解和文本生成路径，并不证明它能�
 - [[Topics/13_base_model/Base Model MOC|基模主题索引]]；[[nld_uni_poster_zh.html|中文 Poster]]。
 
 > 📊 相关可视化: [[nld_uni_poster_zh.html|NLD-Uni 中文 Poster]]
+
+## 2026-10-28：日期证据修正
+
+公开原卡将旧的内部GitLab10/17链接改成明确的10/27/2026。此前Atlas只记月份，本次精确到10/27并进入30天表；训练、动作解码能力和权重身份没有据此改变。

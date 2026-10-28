@@ -8,7 +8,7 @@ tags: [model-note, base-model, mimo]
 topic: "13_base_model"
 status: read
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-28
 ---
 
 # MiMo-V2.6
@@ -105,3 +105,7 @@ Flash 在 CyberGym 高于 Pro，说明“总参更大”不是每项都更好；
 - [[mimo-v2_6_poster_zh.html|中文Poster]]
 
 > 📊 相关可视化: [[mimo-v2_6_poster_zh.html|MiMo-V2.6 中文Poster]]
+
+## 2026-10-28：原卡使用说明增补
+
+Pro/Flash 的 RL/MOPD 四张卡同批新增 Use Restrictions 与咨询入口；卡又明确此说明是 informational reminder，不修改适用model licence或新增licence条件。保存新旧卡，部署仍核对实际LICENSE版本。此为文档说明，未据此更改权重、训练结论或9/22首发，不新增正代/SKU节点。

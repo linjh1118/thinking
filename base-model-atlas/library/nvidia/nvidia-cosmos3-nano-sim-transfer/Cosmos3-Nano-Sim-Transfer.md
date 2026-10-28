@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Transfer"
 tags: [model-note, world-model, sim-to-real, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-28
 ---
 
 # Cosmos3-Nano-Sim-Transfer：状态不动，观察换域
@@ -83,3 +83,7 @@ Prompt、drift、时序几何都不是全面提升。我的判断是：更强控
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|Cosmos3 基础家族]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Auto/Cosmos3-Nano-Auto-Family|驾驶多传感器生成]]。
 
 > 📊 相关可视化：[[cosmos3_nano_sim_transfer_poster_zh.html|中文 Poster]]
+
+## 2026-10-28：SGLang 异步路径
+
+原卡新增同一模型的 SGLang Videos API：control video 为服务端可见路径，需要目录挂载；请求只传字段，生成后轮询 job。蒸馏 checkpoint 固定步数/guidance，历史窗口从训练配置读；不要自行移植 Transfer-Auto 的35步。输出会按完整latent chunk裁剪，可能少于请求帧数。仅更新资料，不记新权重/新发布日期。

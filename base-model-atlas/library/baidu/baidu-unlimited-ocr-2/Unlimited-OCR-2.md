@@ -8,7 +8,7 @@ tags: [model-note, base-model, baidu, document-parsing]
 topic: "13_base_model"
 status: read
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 ---
 
 # Unlimited-OCR-2：长文档中的选择性视觉访问
@@ -112,3 +112,7 @@ updated: 2026-10-27
 - [[Topics/13_base_model/Base Model MOC|基模主题索引]]；[[unlimited_ocr_2_poster_zh.html|中文 Poster]]。
 
 > 📊 相关可视化: [[unlimited_ocr_2_poster_zh.html|Unlimited-OCR-2 中文 Poster]]
+
+## 2026-10-28：ms-swift 训练支持入口
+
+HF Release新增ms-swift社区支持Unlimited OCR 2训练的说明，链接指向 [modelscope/ms-swift](https://github.com/modelscope/ms-swift)。这是社区训练栈接入，不是新权重或新的首发日；未安装/执行训练，也没有从这条公告推断可复现超参、训练成本或成绩。

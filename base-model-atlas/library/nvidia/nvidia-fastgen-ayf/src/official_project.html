@@ -1,0 +1,318 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://research.nvidia.com/labs/toronto-ai/AlignYourFlow/">打开官方原文 ↗</a> · <a href="official_project.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Align Your Flow Spatial Intelligence Lab 
+Align Your Flow: Scaling Continuous-Time Flow Map Distillation Amirmojtaba Sabour 1,2,3 Sanja Fidler 1,2,3 Karsten Kreis 1 1 NVIDIA 2 University of Toronto 3 Vector Institute NeurIPS 2025 description Paper code Code (TBA) 
+Figure 1. Four-step samples generated by our distilled FLUX.1-dev flow map model. 
+Key Contributions 
+We prove that consistency models inherently suffer from error accumulation in multi-step sampling. 
+We propose Align Your Flow, a high-performance few-step flow map model with new theoretical insights,
+          unifying several existing methods. 
+We introduce two new training objectives and stabilization techniques for learning flow maps. 
+We apply autoguidance and adversarial finetuning to improve distillation performance while maintaining
+          diversity. 
+We achieve state-of-the-art few-step generation on ImageNet and also demonstrate fast high-resolution
+          text-to-image flow maps. 
+Abstract 
+Diffusion and flow-based models have emerged as state-of-the-art generative modeling approaches, but they
+        require many sampling steps. Consistency models can distill these models into efficient one-step generators;
+        however, unlike flow- and diffusion-based methods, their performance inevitably degrades when increasing the
+        number of steps, which we show both analytically and empirically. Flow maps generalize these approaches by
+        connecting any two noise levels in a single step and remain effective across all step counts. In this paper,
+        we introduce two new continuous-time objectives for training flow maps, along with additional novel training
+        techniques, generalizing existing consistency and flow matching objectives. We further demonstrate that
+        autoguidance can improve performance, using a low-quality model for guidance during distillation, and an
+        additional boost can be achieved by adversarial finetuning, with minimal loss in sample diversity. We
+        extensively validate our flow map models, called Align Your Flow , on challenging image generation
+        benchmarks and achieve state-of-the-art few-step generation performance on both ImageNet 64x64 and 512x512,
+        using small and efficient neural networks. Finally, we show text-to-image flow map models that outperform all
+        existing non-adversarially trained few-step samplers in text-conditioned synthesis. 
+Figure 2. Flow maps generalize both consistency models and flow matching by connecting any two
+          noise levels \(s, t\) in a single step.
+          When \(s=0\), flow maps reduce to consistency models; when \(s \to t\) they are equivalent to standard flow
+          matching models.
+          Our proposed AYF-EMD objective similarly generalizes the continuous-time consistency and flow matching losses. 
+Consistency Models are Flawed Multi-Step Generators 
+Diffusion and flow-based models
+          have revolutionized generative modeling, but they rely on slow iterative sampling. Consistency models are a popular approach to
+          distill these models into efficient one-step generators. They learn to map samples that lie on deterministic
+          noise-to-data paths to the same, consistent clean
+          output in a single step.
+          However, they have been empirically shown to degrade in performance as the number of sampling steps
+          increases.
+          In this work, we analytically explain this phenomenon and show that consistency models are inherently
+          incompatible with multi-step sampling. 
+Specifically, we analyze a simple case where the initial distribution is an isotropic Gaussian
+          with standard deviation \(c\), i.e. \(p_{\textrm{data}}(\mathbf{x}) = \mathcal{N}(\mathbf{0},
+          c^2\mathbf{I})\).
+          Let \(\mathbf{f}^*(\mathbf{x}_t, t)\) denote the optimal consistency model.
+          We show that regardless of how small an error \(\epsilon\) we consider, there exists an imperfect consistency
+          model \(\mathbf{f}(\mathbf{x}_t, t)\) such that
+          \(\mathbb{E}_{\mathbf{x}_t \sim p(\mathbf{x},t)}\!\bigl[\| \mathbf{f}(\mathbf{x}_t, t) -
+          \mathbf{f}^*(\mathbf{x}_t, t) \|_2^2\bigr] &lt; \epsilon\) for all \(t \in [0, 1]\), and using \(\mathbf{f}\) for
+            multi-step sampling will lead to error accumulation beyond a certain step count. In other words, even for
+            minimal modeling errors, multi-step sampling with consistency models eventually diverges when increasing the
+            number of sampling steps (see the paper for proof and derivation). 
+Intuitively, when doing multi-step sampling with consistency models we first perform denoising by removing all
+          noise from a noisy image to obtain a clean one,
+          and then re-add a smaller amount of noise. But because the model is not perfect, the denoised image drifts
+          slightly off the true data manifold. When noise is
+          added back in, the resulting image is now slightly off the noisy manifold the model was trained on. This
+          mismatch compounds: each denoising step starts from a
+          slightly worse input, pushing the sample further off-manifold over time. As a result, errors accumulate with
+          more sampling steps, leading to degrading
+          image quality beyond a certain point. 
+To overcome this issue, we advocate for the Flow Map framework, which unifies flow matching and
+          consistency models by connecting any two noise levels in a single step.
+          Flow maps offer the best of both worlds: they achieve high-quality samples with just a few sampling
+          steps while remaining naturally compatible with multi-step sampling. Figure 3 shows a comparison between these methods. 
+Figure 3. FID versus number of sampling steps on ImageNet 512x512 (lower is better). Diffusion models require dozens of
+          steps to reach good quality, and consistency models deteriorate after only a few, whereas our AYF flow maps
+          maintain low FID across the board. AYF is slightly weaker at single-step generation, but a brief adversarial
+          fine-tuning stage closes this gap and improves quality for all numbers of sampling steps with minimal loss in
+          diversity. 
+Flow Maps: Generalizing Flow Matching and Consistency Models 
+Flow maps are neural networks \(\mathbf{f}_\theta(\mathbf{x}_t, t, s)\) that map a noisy input
+          \(\mathbf{x}_t\)
+          directly to any other point \(\mathbf{x}_s\) by following the probability flow ODE (PF-ODE) from time \(t\) to
+          \(s\).
+          When \(s = 0\), they reduce to standard CMs. When performing many small steps, i.e. \(s \to t\), they reduce
+          to
+          regular flow matching models (see Figure 2 ). In this work, we propose two continuous-time
+          objectives for training flow maps,
+          as well as
+          training techniques to improve sample quality. For proofs, derivations and more, please refer to the paper . 
+Our first objective, which we call the AYF-Eulerian Map Distillation (AYF-EMD) objective , is similar to the objective used to
+          train continuous-time consistency models. This objective aims to ensure that for a fixed \(s\), the output of
+          the flow map remains constant as we move \((\mathbf{x}_t, t)\) along the PF-ODE.
+          This objective reduces to the continuous-time consistency model objective when \(s = 0\), and reduces to
+          the flow matching objective when \(s \to t\).
+          Note that the time derivative contains \(\theta^- = \text{stopgrad}(\theta)\), meaning that
+          this objective does not require backpropagating through the time derivative, avoiding unstable second-order
+          derivatives during training.
+          This objective is compatible with both distillation and training from scratch. \[
+          \text{AYF}_{\text{EMD}} = \nabla_\theta \mathbb{E}_{\mathbf{x}_t, t, s} \left[ w(t, s) \mathrm{sign}(t - s)
+          \cdot
+          \mathbf{f}_\theta^{\top}(\mathbf{x}_t, t, s) \cdot \frac{\mathrm{d} \mathbf{f}_{\theta^-}(\mathbf{x}_t, t,
+          s)}{\mathrm{d}t} \right]
+          \] 
+Our second objective, which we call the AYF-Lagrangian Map Distillation (AYF-LMD) objective , is similar to the objective proposed in Flow Map Matching .
+          This method tries to ensure that for a fixed \((\mathbf{x}_t, t)\), the
+          trajectory \(\mathbf{f}_\theta(\mathbf{x}_t, t, \cdot)\) is aligned with the PF-ODE at all points.
+          However, similar to AYF-EMD and unlike the one proposed in Flow Map Matching,
+          this also does not require backpropagating through the time derivative.
+          This objective is only compatible with distillation and assumes access to a pretrained flow-based model
+          \(\mathbf{v}_\phi(\mathbf{x}_t, t) \). \[
+          \text{AYF}_{\text{LMD}} = \nabla_\theta \mathbb{E}_{\mathbf{x}_t, t, s} \left[ w(t, s) \, \mathrm{sign}(s - t)
+          \cdot
+          \mathbf{f}_\theta^{\top}(\mathbf{x}_t, t, s) \cdot \left( \frac{\mathrm{d} \mathbf{f}_{\theta^-}(\mathbf{x}_t,
+          t, s)}{\mathrm{d}s} - \mathbf{v}_\phi(\mathbf{f}_{\theta^-}(\mathbf{x}_t, t, s), s) \right) \right]
+          \] 
+In this work, we focus on distillation. We assume access to a pretrained diffusion or flow matching model, and
+          aim to distill
+          it into a flow map. Following prior works, we distill guidance into the flow map, and show that this can be
+          improved further by using autoguidance as opposed to classifier-free guidance.
+          A detailed training algorithm is provided in the paper . 
+Related Work 
+Align Your Flow considers the task of distilling a continuous-time flow map from a pretrained flow-based or
+        diffusion model.
+        Flow maps, however, have been explored in prior work. They were first introduced in Consistency Trajectory Models (CTM) , which
+        trained discrete-time flow maps
+        using a combination of consistency loss, flow matching, and adversarial training. This framework was later
+        applied to
+        text-to-image generation in Trajectory Consistency
+          Distillation (TCD) . 
+More recently, Flow Map Matching proposed two
+        continuous-time losses
+        for training flow maps, though we found that these did not perform well in practice. Shortcut Models also adopted the flow map
+        framework, introducing a self-consistency loss
+        that, like our AYF-EMD objective, is compatible with both distillation and training from scratch. We compare
+        against their
+        distillation variant in our experiments and show that AYF-EMD achieves significantly stronger results.
+        Please refer to the ablation study in the paper for details. 
+Concurrently, MeanFlow Models introduced a loss
+        for training flow maps from scratch
+        that closely resembles our AYF-EMD objective. Their formulation can be seen as a special case of AYF-EMD under an Euler flow map parameterization,
+        which we also adopt in our experiments. Their strong results in the training-from-scratch setting are
+        complementary to our distillation results and further highlight the effectiveness and generality of the AYF-EMD
+        objective
+        for both distillation and training from scratch.
+        In parallel, How to Build a Consistency Model explored similar objectives as those in Flow Map Matching,
+        and examined the role of higher-order derivatives, finding them beneficial in low-dimensional settings but
+        largely ineffective in high-dimensional ones. Please see the extended discussion in the Appendix of our paper . 
+Align Your Flow can be viewed as a generalization of many of these works, as shown in Figure
+          4 .
+        For example, the AYF-EMD objective reduces to the standard flow matching loss when \(s \to t\), and to the
+        continuous-time consistency loss when \(s = 0\).
+        The loss in Trajectory Consistency Distillation is essentially a time-discretized
+        version of AYF-EMD. Likewise, our AYF-EMD and AYF-LMD objectives are closely related to the EMD and LMD losses
+        in Flow Map Matching , with the main difference being
+        whether or not
+        we differentiate through the time derivatives. This subtle change leads to very different training dynamics.
+        As mentioned earlier, MeanFlow Models can also
+        be seen as a special case of AYF-EMD
+        under an Euler flow map parameterization. For more details, please refer to the paper . 
+Figure 4. AYF can be seen as a generalization of many prior works such as Flow Matching , Continuous-time Consistency Models , Flow Map Matching , Consistency Trajectory Distillation ,
+          and the concurrent MeanFlow Models . 
+Generation Results 
+To evaluate the effectiveness of our AYF flow maps, we perform rigorous quantitative experiments on standard
+        image generation benchmarks (ImageNet 64x64, ImageNet 512x512).
+        We show that our flow map models effectively solve the multi-step sampling problem of CMs, and are effective image
+        generators at all step counts (measured by FID), please see Figure 3 .
+        We also show that given a pretrained flow map model, a short finetuning stage with an adversarial loss can
+        significantly boost the performance for all numbers of sampling steps with a minimal impact on sample diversity (measured by
+        recall scores);
+        see Table 1 in the paper for more details.
+        Putting everything together, we show that we can distill state-of-the-art flow maps using small networks that
+        achieve the best speed-quality trade-off across the board, as seen in Figure 5 . Extensive
+        comparisons to baselines can be found in the tables in the paper . 
+Figure 5. By combining flow maps with our proposed training techniques (autoguidance and adversarial finetuning),
+          we distill state-of-the-art flow maps using small and highly efficient networks (using the S-sized architecture
+          from EDM2 ) that deliver
+          the best speed-quality trade-off across the board. These small models outperform much larger consistency
+          baselines at every runtime budget, even when they sample in a single step.
+          sCD and sCT refer to the distilled and from-scratch continuous-time consistency models from sCM , respectively. 
+ImageNet 512x512 
+In this section, we show some one- and two-step samples generated by our distilled flow map model on ImageNet
+          512x512. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+One-step samples generated by our AYF flow map model on ImageNet 512x512. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Two-step samples generated by our AYF flow map model on ImageNet 512x512. 
+Text-to-Image 
+We also evaluate our method on text-to-image generation by distilling the FLUX.1-dev model.
+          Following prior work, we add a lightweight LoRA to the base model and finetune it using the AYF-EMD objective.
+          This finetuning process is quick, taking only about 4 hours on 8x A100 GPUs. 
+Four-step samples from the distilled text-to-image flow map model are shown in Figure 1 ,
+          and below we show further samples and compare them to those from LCM and TCD ,
+          two prior LoRA-based consistency-distilled models that are built on SDXL. Our model generates images with
+          more visual detail and better text-alignment,
+          as confirmed by a user study reported in the paper . Hover over the images for zoom-ins. LCM TCD AYF ( ours ) 
+Text prompt: &quot;Cute jumping spider in pirate hat on a yellow daisy&quot; 
+Text prompt: &quot;Red squirrel drumming on tiny twig and acorn drums in autumn woods&quot; 
+Text prompt: &quot;Misty mountain lake at dawn, with calm water and lush pine trees&quot; 
+Text prompt: &quot;Neon-blue glowing gecko on finger in cyberpunk city at night&quot; 
+Text prompt: &quot;A lone samurai faces a crimson forest at dusk. Leaves swirl, a bridge crosses a koi pond, and a
+                distant
+                temple glows in the fading light&quot; 
+Text prompt: &quot;A floating carnival drifts above the clouds neon lit rides, surreal Ferris cabins, and balloons
+                gliding
+                through caramel-scented air&quot; 
+Text prompt: &quot;A weathered yellow robot cat plays with a white rabbit with a flower on its back in a rainy, misty
+                alley, with rusted buildings looming overhead.&quot; 
+Paper 
+Align Your Flow: Scaling Continuous-Time Flow Map Distillation 
+Amirmojtaba Sabour, Sanja Fidler, Karsten Kreis 
+NeurIPS 2025 description Paper description BibTeX 
+Citation @misc{sabour2025align,
+        title={Align Your Flow: Scaling Continuous-Time Flow Map Distillation},
+        author={Amirmojtaba Sabour and Sanja Fidler and Karsten Kreis},
+        year={2025},
+        eprint={2506.14603},
+        archivePrefix={arXiv},
+        primaryClass={cs.CV}
+      } Privacy
+      Policy - Manage My Privacy - Do Not Sell or
+      Share My Data - Terms of
+      Service - Accessibility - Corporate
+      Policies - Contact</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

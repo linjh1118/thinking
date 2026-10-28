@@ -84,7 +84,7 @@ NLD-Uni is intended for research and evaluation of unified multimodal systems, i
 
 ## Release Date
 
-GitLab 10/17/2026 via [NLD-Uni](https://gitlab-master.nvidia.com/shufanl/nld-uni).
+10/27/2026
 
 ## Model Architecture
 

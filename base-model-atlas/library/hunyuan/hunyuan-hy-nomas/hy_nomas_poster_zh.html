@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -15,7 +15,7 @@ window.MathJax = {
   svg: { fontCache: 'global' }
 };
 </script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0 }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
@@ -141,126 +141,177 @@ mjx-container svg, mjx-container svg * {
 }
 
 </style>
-</head>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
 <body>
-<div class="lang-switch"><a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=hunyuan-hy-nomas">Overview</a><a class="active" href="Hy-Nomas.html">渲染笔记</a></div>
+
 <div class="poster">
 <!-- BACKLINKS -->
 <div style="padding: 0 48px; padding-top: 12px;">
-<div class="backlinks">
-<span style="color: #78716c;">源文档：</span>
-<a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/Tencent_Hunyuan/Variants/2610_Hy_Nomas/Hy-Nomas" style="text-decoration: none;">Hy-Nomas · 本地笔记</a>
-   · 
-  <a href="https://huggingface.co/tencent/Hy-Nomas" style="text-decoration: none;" target="_blank">🤗 HF Model Card</a>
-</div>
+<div class="backlinks"><span>ω BrainHao · </span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FTencent_Hunyuan%2FVariants%2F2610_Hy_Nomas%2FHy-Nomas">📚 本地源笔记</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=hunyuan-hy-nomas">Overview</a> · <a href="Hy-Nomas.html">📖 渲染笔记</a> · <a href="https://huggingface.co/tencent/Hy-Nomas">官方资料 ↗</a></div>
 </div>
 <!-- HEADER -->
 <div class="header">
 <div class="header-left">
-<span class="venue-pill">Tencent · 2026-10归档 · 首发日待核</span>
-<div class="zh-title">段内扩散、段间自回归：自由交互的世界生成</div>
-<h1>Hy-Nomas <span>Evidence · Method · Limits</span></h1>
-<div class="authors">官方 Model Card 逐段研读 · BrainHao · 非本地复测</div>
+<span class="venue-pill">2026-10归档 · 首发日待核 | Tencent · 交互世界生成</span>
+<div class="zh-title">场景描述跨段保留，动作指令限制在有效时间窗</div>
+<h1>Hy-Nomas <span>Action-aware Worlds</span></h1>
+<div class="authors">HF/源码 + 正式报告2610.36729 · 10/28补报告，非新权重</div>
 </div>
 <div class="header-right">
-<div class="score-box"><div class="num">54</div><div class="sub">双流MMDiT blocks</div></div>
-<div class="score-box"><div class="num">8</div><div class="sub">DiT默认去噪步</div></div>
-<div class="score-box"><div class="num">24</div><div class="sub">输出播放FPS</div></div>
-<div class="score-box"><div class="num">280</div><div class="sub">benchmark输入案例</div></div>
+<div class="score-box"><div class="num">8B</div><div class="sub">diffusion backbone</div></div>
+<div class="score-box"><div class="num">280</div><div class="sub">Bench案例</div></div>
+<div class="score-box"><div class="num">100→4</div><div class="sub">报告每段NFE蒸馏</div></div>
+<div class="score-box"><div class="num">−16.7pp</div><div class="sub">空间记忆vs Genie3净胜</div></div>
 </div>
 </div>
 <!-- MAIN 3-COLUMN GRID -->
 <div class="main-grid">
 <!-- COLUMN 1: 问题 + 环境构建 -->
 <div class="col">
-<div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型定位</h2></div>
-<p class="body">多轮文本与相机控制，逐段生成世界；KV承接过去，PixelUMM解码视频。原卡与代码已可读；首发日待核，10/23仅发现日，不造新代际日期。</p>
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题：旧动作不该重放</h2></div>
+<p class="body">逐段生成需要保留环境，却不能无限读取旧动作。普通段级因果mask仍可能动作乱序与跨段重复；时间因果也不等于物理正确。</p>
 <div class="gap-boxes">
 <div class="gap-box g1">
-<div class="title">组件与版本只收一个family</div>
-<p>Base AR、distilled、INT8、两LoRA、decoder与PE归同系统；不是多个Hunyuan聊天正代。Tech Report仍Coming Soon。</p>
+<div class="title">正式报告已发布，旧限制已关闭</div>
+<p>原卡新增2610.36729；已读HTML方法/训练/评测。旧Coming Soon仅留历史，完整数据与独立复现仍缺。</p>
 </div>
 <div class="gap-box g2">
-<div class="title">24FPS不是实时吞吐</div>
-<p>它是输出播放帧率；PE、去噪、解码和搬运分别计时。本轮未运行推理或用演示观感补造延迟数字。</p>
+<div class="title">模型首发日仍待核</div>
+<p>10/27是报告日期，10/23曾是发现日；两者都不替代模型首发，仍为10月月份线索。</p>
 </div>
 </div>
 <div class="stage-list">
 <div class="stage-item">
-<div class="stitle">先组织段级条件</div>
-<p>Qwen2.5-VL7B语言hidden3584→两层refiner→2048；在线Nomas-PE另做提示增强，离线可读预制prompt。</p>
+<div class="stitle">迁移latent</div>
+<p>HunyuanVideo1.5→DCAE-V；输入输出20Ksteps，再全模型60K。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">段内扩散与段间因果</div>
-<p>54双流、16heads；图文joint attention读历史KV，视频再读相机。8步需蒸馏DiT，不能套非蒸馏权重。</p>
+<div class="stitle">因果与控制CPT</div>
+<p>段因果→action-aware→连续相机，camera有轨迹时删除文字捷径。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">独立的视频解码</div>
-<p>DCAE-V f32t4c32潜表示；PixelUMM36层、4096hidden、1解码步。此1步≠整个视频生成只有1步。</p>
+<div class="stitle">高质量annealing</div>
+<p>KimiK3细caption；text长度768→1280；改善语义/相机条件。</p>
 </div>
 </div>
 <div class="fig-box">
-<img alt="官方图：文本/视频/相机与段间缓存" src="src/assets/method_framework_h.png"/>
-<div class="fig-cap">官方图：文本/视频/相机与段间缓存</div>
+<img alt="官方报告图17：空间记忆仍落后Genie3" src="src/assets/official-spatial-memory.png"/>
+<div class="fig-cap">官方报告图17：空间记忆仍落后Genie3</div>
 </div>
 </div>
 <!-- COLUMN 2: 方法流程 -->
 <div class="col">
-<div class="sec-head c-orange"><div class="nc">2</div><h2>方法与复现契约</h2></div>
-<p class="body">相机4×4外参按4视频帧分组展64维，与latent帧对齐。camera cross-attention提供控制；轨迹坐标、时间戳与gain是任务契约，不能忽略。</p>
+<div class="sec-head c-orange"><div class="nc">2</div><h2>方法：mask与闭环历史</h2></div>
+<p class="body">描述head跨段可见；action tails仅本段对应窗口可见。Segment Forcing用自己预测的上下文训练，减少干净历史与推理差异。</p>
 <div class="fig-box">
-<img alt="官方图：非蒸馏版微调→合并蒸馏版" src="src/assets/lora-finetuning.svg"/>
-<div class="fig-cap">官方图：非蒸馏版微调→合并蒸馏版</div>
+<img alt="手绘研读：保留环境，限制旧动作的作用域" src="src/assets/handdrawn-method.png"/>
+<div class="fig-cap">手绘研读：保留环境，限制旧动作的作用域</div>
 </div>
 <div class="gap-boxes">
 <div class="gap-box g1">
-<div class="title">标准全历史与单卡有界历史不同</div>
-<p>标准max_cache_segments=null；单卡18历史latent帧活跃预算+CPU archive，不限制当前段内存，也不保证无限世界记忆不退化。</p>
+<div class="title">NFE/FPS/配置分开</div>
+<p>报告4NFE；旧原生默认8步，Diffusers4步。24FPS是播放帧率，不是生成吞吐。</p>
 </div>
 </div>
 <div class="trick-box">
-<div class="trick-title">单4090不含全部PE资源</div>
-<p>INT8权重/KV存储，DiT仍BF16计算；FP8 decoder+CPU offload。Web demo额外要求Nomas-PE，不能宣传整套系统只占一卡。</p>
+<div class="trick-title">LoRA学习位置和部署位置不同</div>
+<p>在非蒸馏AR基础权重上训adapter，再合入distilled；不是在INT8loader里任意挂浮点LoRA。</p>
 </div>
-<div class="formula-box"><div class="flabel">研读记号：段内去噪、段间历史条件</div>$$z_k\sim p_\theta(z_k\mid T_k,C_k,\mathrm{KV}_{\lt k})$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">公式来源以标题为准：WeVisOne为报告原式，Hy-Nomas为研读记号。</p></div>
+<div class="formula-box"><div class="flabel">长交互验收要拆开</div>动作可控 · 回访记忆 · 物理合理 · 适配后回归<p style="font-size:.68rem;color:#78716c;margin-top:4px;">人评win/tie/loss是相对偏好，不是任务绝对成功率。</p></div>
 <div class="stage-list">
 <div class="stage-item">
-<div class="stitle">LoRA先训非蒸馏版</div>
-<p>segment_self_forcing，rank/alpha256、Muon1e-4恒定2000步；导出后合并兼容distilled checkpoint。</p>
+<div class="stitle">Segment Forcing</div>
+<p>每段flow loss即时backward，一步低噪估计入KV；整序列后一次optimizer step。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">数据与packing</div>
-<p>视频标注→DCAE-V→Arrow/Parquet；例360K token、16groups对应DP16×SP8，实际按硬件与样本行序适配。</p>
+<div class="stitle">两段蒸馏</div>
+<p>PCM初始化，hybrid forcing下DDMD+hinge；100→4NFE，早段cache停梯度。</p>
 </div>
 </div>
 </div>
 <!-- COLUMN 3: 实验结果 -->
 <div class="col">
-<div class="sec-head c-green"><div class="nc">3</div><h2>结果边界与研究判断</h2></div>
-<p class="body">benchmark卡只有结构化输入与220轨迹，不含生成视频、回访参考帧或分数。280案例≠280个已成功评测；评分是另一步。</p>
-<table class="rtable"><tr><th>项目</th><th>已披露</th><th>限制</th></tr><tr><td class="left">子集</td><td class="left">案例</td><td class="left">平均请求时长</td></tr><tr><td class="left">多轮文本</td><td class="left">60</td><td class="left">37.88s</td></tr><tr><td class="left">相机导航</td><td class="left">100</td><td class="left">27.05s</td></tr><tr><td class="left">交替控制</td><td class="left">60</td><td class="left">30.59s</td></tr><tr><td class="left">空间记忆</td><td class="left">60</td><td class="left">18.00s</td></tr></table>
+<div class="sec-head c-green"><div class="nc">3</div><h2>证据：进步与回归同时看</h2></div>
+<p class="body">报告提供280例人评；Genie3接口不支持文本项，不能当零分。初图、分辨率、接口改编仍有系统差异。</p>
+<table class="rtable"><tr><th>对照项</th><th>W / T / L</th><th>净胜pp</th></tr><tr><td>Text vs HappyOyster</td><td>65/25/10</td><td>+55</td></tr><tr><td>Interleaved相机vsLingBot</td><td>26.7/68.3/5</td><td>+21.7</td></tr><tr><td>Memory vs Genie3</td><td>13.3/56.7/30</td><td>−16.7</td></tr><tr><td>风格LoRA相机vs基线</td><td>19/44/37</td><td>−18</td></tr></table>
 <div class="gap-boxes">
 <div class="gap-box g3">
-<div class="title">请求时长不是实测质量</div>
-<p>8–86秒为输入请求范围；回访要匹配有效相机位姿。生成看起来合理，不能证明真实物理或可直接训练现实策略。</p>
+<div class="title">单4090是特定资源例</div>
+<p>七段100秒1280×704/24FPS峰值20.53GiB；不是100秒耗时，也不含PE全服务资源承诺。</p>
 </div>
 </div>
-<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">下一步验收：不是已有实测结果</p>
-<table class="ood-table"><tr><th>维度</th><th>控制变量</th><th>验收点</th></tr><tr><td class="left">控制</td><td class="left">固定prompt/轨迹/gain</td><td class="left">执行/回访一致</td></tr><tr><td class="left">记忆</td><td class="left">全历史/有界历史</td><td class="left">长程身份/场景</td></tr><tr><td class="left">成本</td><td class="left">分开PE/去噪/解码</td><td class="left">p95/显存/搬运</td></tr></table>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">风格LoRA提示/物理改善同时相机控制净−18pp；比一张最好视频更能说明适配代价。</p>
+<table class="ood-table"><tr><th>数据/系统</th><th>原报告</th><th>限制</th></tr><tr><td>Bench1/2/3/4</td><td>60/100/60/60</td><td>作者构建、人评</td></tr><tr><td>SP/上下文</td><td>8路 /360Ktoken</td><td>不是任意硬件配置</td></tr><tr><td>4090资源例</td><td>20.53GiB</td><td>特定视频/段长/cache</td></tr></table>
 <div class="trick-box">
-<div class="trick-title">原始资料不足：明确未达到完整精读深度</div>
-<p>原始资料不足：Tech Report仍Coming Soon，缺完整预训练/蒸馏recipe、正式结果和时延表，未达到完整技术报告精读标准。官方网站本轮超时；不伪称已归档成功。</p>
+<div class="trick-title">评测对象包括PE和cache</div>
+<p>Nomas-PE基于Qwen3.8-27B做SFT。固定prompt来源、cache策略和模块版本，才可归因模型。</p>
 </div>
 <div class="abl-grid">
 <div class="abl-card">
-<div class="aname">可读</div>
-<div class="adelta">卡+代码+配置</div>
-<div class="adesc">有LoRA路径与原图</div>
+<div class="aname">Camera回归</div>
+<div class="adelta">−18pp</div>
+<div class="adesc">电影LoRA相机win19/loss37；不省略负结果。</div>
 </div>
 <div class="abl-card">
-<div class="aname">未证实</div>
-<div class="adelta">质量/实时性</div>
-<div class="adesc">无对照分数或本地复测</div>
+<div class="aname">空间记忆</div>
+<div class="adelta">弱于Genie3</div>
+<div class="adesc">13.3胜/30负；视觉自然不等于持久状态。</div>
 </div>
 </div>
 </div>
@@ -268,22 +319,36 @@ mjx-container svg, mjx-container svg * {
 <!-- BOTTOM STRIP -->
 <div class="bottom-strip">
 <div class="bstrip">
-<div class="bhead">收录</div>
-<p>世界生成专项，首发日待核；量化/LoRA/组件不拆新代。</p>
+<div class="bhead">资料</div>
+<p>正式报告补齐并保留原卡历史；不抓PDF。</p>
 </div>
 <div class="bstrip">
-<div class="bhead">机制</div>
-<p>段内DiT去噪，段间KV条件，视频decoder与PE独立算资源。</p>
+<div class="bhead">方法</div>
+<p>环境head持续、动作tail局部；闭环历史训练。</p>
 </div>
 <div class="bstrip">
-<div class="bhead">边界</div>
-<p>单卡活跃历史有限；24FPS播放≠实时，benchmark输入≠成绩。</p>
+<div class="bhead">推理</div>
+<p>4NFE与24播放FPS不同；PE/decoder分开。</p>
 </div>
 <div class="bstrip">
-<div class="bhead">研究</div>
-<p>冻结Agent与提示增强，先验环境控制/记忆，再谈策略训练迁移。</p>
+<div class="bhead">验收</div>
+<p>报告接口/来源偏差，保留记忆与LoRA回归。</p>
 </div>
 </div>
 </div><!-- /poster -->
-</body>
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body>
 </html>

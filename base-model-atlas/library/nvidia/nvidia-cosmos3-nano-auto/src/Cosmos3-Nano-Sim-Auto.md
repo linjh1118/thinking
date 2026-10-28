@@ -108,6 +108,7 @@ Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated sys
 
 - [PyTorch](https://pytorch.org/)
 - [vLLM-Omni](https://github.com/vllm-project/vllm-omni)
+- [SGLang](https://github.com/sgl-project/sglang)
 
 **Supported Hardware Microarchitecture Compatibility:**
 
@@ -522,6 +523,124 @@ for index, camera in enumerate(CAMERAS):
 With the daytime sample, the output looks like this, tiled as a surround view with the front-facing cameras on top and the rear-facing cameras below. Each camera starts from the first frame of its RGB video.
 
 <video src="https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Auto/resolve/main/images/cosmos3-nano-sim-auto-quickstart.mp4" controls autoplay loop muted playsinline width="100%"></video>
+
+### Quick Start with SGLang
+
+[SGLang](https://github.com/sgl-project/sglang) serves the same model through its OpenAI-compatible Videos API and produces the same camera-major video as the example above. Two things differ: the server reads every input from a path it can open instead of accepting uploads, so the sample is downloaded into a directory that is mounted into the container, and generation runs as an asynchronous job that the client polls. For joint camera and LiDAR generation with SGLang, see the [SGLang notebook](https://github.com/NVIDIA/cosmos-framework/blob/main/.agents/skills/cookbooks/cosmos3/simulation/auto/run_sim-auto_with_sglang.ipynb).
+
+#### 1. Start the server
+
+On the same kind of host, with the published [`lmsysorg/sglang:dev`](https://hub.docker.com/r/lmsysorg/sglang/tags) image, which includes the Cosmos3 pipelines from [sgl-project/sglang#39475](https://github.com/sgl-project/sglang/pull/39475):
+
+```bash
+export SAMPLE_DIR="$PWD/cosmos3-daytime-sample"  # Receives the inputs; the server reads them from this path.
+export SGLANG_HF_CACHE="${SGLANG_HF_CACHE:-$HOME/.cache/sglang-huggingface}"  # The container runs as root.
+mkdir -p "$SAMPLE_DIR" "$SGLANG_HF_CACHE"
+chmod 777 "$SGLANG_HF_CACHE"
+docker pull lmsysorg/sglang:dev
+docker run --init --runtime nvidia --gpus all --ipc=host \
+  -v "$SGLANG_HF_CACHE:/root/.cache/huggingface" \
+  -v "$SAMPLE_DIR:$SAMPLE_DIR" \
+  --env "HF_TOKEN=$HF_TOKEN" \
+  -p 127.0.0.1:30000:30000 \
+  lmsysorg/sglang:dev \
+  sglang serve \
+    --model-path nvidia/Cosmos3-Nano-Sim-Auto \
+    --host 0.0.0.0 --port 30000
+```
+
+The container publishes the server on `127.0.0.1:30000` of the host and mounts `SAMPLE_DIR` at the same path, so the paths in the request below are valid inside it. The `dev` tag moves with SGLang's main branch, so pull it before each start. The first start downloads the checkpoint; the HTTP port opens after the weights are loaded and the warmup request finishes. This pipeline runs no text or video guardrails. With N GPUs (2, 4, or 8), add `--num-gpus N --ulysses-degree N --sp-degree N` to `sglang serve` to split every chunk across them with Ulysses sequence parallelism.
+
+#### 2. Generate the camera videos
+
+Run this in the same shell, so `SAMPLE_DIR` is set:
+
+```bash
+pip install requests huggingface_hub
+```
+
+```python
+import json
+import os
+import time
+from pathlib import Path
+
+import requests
+from huggingface_hub import snapshot_download
+
+MODEL = "nvidia/Cosmos3-Nano-Sim-Auto"
+SAMPLE_REPO = "nvidia/Cosmos3-Nano-Transfer-Auto"  # Publishes the shared daytime sample.
+SERVER = "http://127.0.0.1:30000"
+SAMPLE_DIR = Path(os.environ["SAMPLE_DIR"]).resolve()  # Mounted into the server container at this path.
+# The sample's seven cameras, in the checkpoint's camera order.
+CAMERAS = [
+    "camera_front_wide_120fov",
+    "camera_cross_right_120fov",
+    "camera_rear_right_70fov",
+    "camera_rear_tele_30fov",
+    "camera_rear_left_70fov",
+    "camera_cross_left_120fov",
+    "camera_front_tele_30fov",
+]
+NUM_FRAMES = 297  # Must be 4k + 1.
+
+# Download the sample's WSM controls, RGB videos, and captions (about 70 MB) into SAMPLE_DIR.
+scene = Path(snapshot_download(SAMPLE_REPO, local_dir=SAMPLE_DIR, allow_patterns=[
+    "assets/sample_data/daytime_scene/wsm/*.mp4",
+    "assets/sample_data/daytime_scene/rgb/*.mp4",
+    "assets/sample_data/daytime_scene/captions/*.json",
+])) / "assets/sample_data/daytime_scene"
+
+def caption(camera):
+    data = json.loads((scene / "captions" / f"{camera}.json").read_text())
+    return data["caption_structured"]["chunk_0_300"]["caption"]
+
+# One view per camera: its caption and the server-visible paths of its WSM control and RGB video.
+views = [
+    {
+        "camera_key": camera,
+        "prompt": caption(camera),
+        "control_path": str(scene / "wsm" / f"{camera}.mp4"),
+        "vision_path": str(scene / "rgb" / f"{camera}.mp4"),
+    }
+    for camera in CAMERAS
+]
+
+form = {
+    "model": MODEL,
+    "prompt": views[0]["prompt"],  # Required by the API; generation uses each view's prompt.
+    "size": "832x480",
+    "num_frames": str(NUM_FRAMES),
+    "fps": "30",
+    "guidance_scale": "1",  # Fixed by the distilled checkpoint,
+    "num_inference_steps": "4",  # as is its four-step sampler.
+    "seed": "0",
+    "extra_params": json.dumps({
+        "wsm": {},
+        "multiview": {"views": views, "condition_video_as_image": True, "num_frames": NUM_FRAMES},
+        "resolution": "480",
+        "aspect_ratio": "16,9",
+    }),
+}
+
+# Submit the job, poll it, and download the video. Nothing is uploaded: the form carries text fields only.
+response = requests.post(f"{SERVER}/v1/videos", files=[(key, (None, value)) for key, value in form.items()], timeout=60)
+response.raise_for_status()
+job = response.json()
+deadline = time.monotonic() + 3600
+while job["status"] not in ("completed", "failed", "cancelled"):
+    if time.monotonic() > deadline:
+        raise TimeoutError(f"Job {job['id']} did not finish in time: {job}")
+    time.sleep(10)
+    job = requests.get(f"{SERVER}/v1/videos/{job['id']}", timeout=60).json()
+if job["status"] != "completed":
+    raise RuntimeError(json.dumps(job, indent=2))
+video = requests.get(f"{SERVER}/v1/videos/{job['id']}/content", timeout=600)
+video.raise_for_status()
+Path("sim_auto.mp4").write_bytes(video.content)
+```
+
+The server uses only the first frame of each RGB video, and trims each 300-frame control to `num_frames` and resizes it to 832 × 480. Split the camera-major output as in step 3 above.
 
 ## Ethical Considerations
 

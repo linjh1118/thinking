@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Bimanual"
 tags: [model-note, world-model, robotics, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-28
 ---
 
 # Cosmos3-Nano-Sim-Bimanual：动作来一段，观察生成一段
@@ -93,3 +93,7 @@ PAI 上画质提高，但 ATE 不如 LingBot，drift 也略差；Sana simple 更
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|Cosmos3 基础 family]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Sim_Transfer/Cosmos3-Nano-Sim-Transfer|视觉迁移与外部状态账本]]。
 
 > 📊 相关可视化：[[cosmos3_nano_sim_bimanual_poster_zh.html|中文 Poster]]
+
+## 2026-10-28：SGLang 的历史与接口契约
+
+新增 SGLang 示例接受上传的初始图像和 inline actions，用 embodiment names，而非另一接口的domain ID。示例指定64-frame KV窗口：8 pinned +55 recent +current；若缺该pipeline config，将保留901-frame全历史，原卡警示该例可耗尽141GB GPU。当前例900行59D normalized actions；multipart extra_params有1MiB限制。蒸馏固定步数/guidance，不在请求里改。是服务文档更新，不是新模型，未本地运行。

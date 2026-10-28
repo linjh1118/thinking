@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Transfer-Auto"
 tags: [model-note, world-model, driving, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-28
 ---
 
 # Cosmos3-Nano Auto：离线双向教师与闭环因果学生
@@ -100,3 +100,7 @@ LidarVerse 使用不同评估子集，所以只能带条件比较。CTC 比值�
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|基础 Cosmos3 家族]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Sim_Bimanual/Cosmos3-Nano-Sim-Bimanual|机器人与相机模拟]]
 
 > 📊 相关可视化：[[cosmos3_nano_auto_poster_zh.html|中文 Poster]]
+
+## 2026-10-28：SGLang serving 文档增补
+
+Transfer-Auto 和 Sim-Auto 原卡都新增 SGLang Videos API。输入是服务端可访问的路径，目录需挂载；生成是异步 job，客户端轮询。不是把 MP4 上传后同步立即返回。Transfer 示例为35步、guidance3，Sim 为蒸馏固定4步、guidance1；不能互换。七相机按 camera-major 输出；联合 LiDAR 走额外 notebook。dev 镜像随主干移动，应固定镜像/代码revision。本次为同权重服务文档，不改10/20首发，也未运行示例。

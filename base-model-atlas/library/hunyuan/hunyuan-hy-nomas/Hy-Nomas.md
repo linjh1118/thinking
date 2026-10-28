@@ -3,7 +3,7 @@ title: "Hy-Nomas — 分段自回归的自由交互世界生成"
 type: model-note
 tags: [model-note, tencent, world-model, video-generation, agent-training]
 created: 2026-10-23
-updated: 2026-10-24
+updated: 2026-10-28
 url: "https://huggingface.co/tencent/Hy-Nomas"
 related: ["[[WeVisOne-VL]]", "[[Hy4-Preview]]"]
 ---
@@ -13,8 +13,8 @@ related: ["[[WeVisOne-VL]]", "[[Hy4-Preview]]"]
 > [!tldr] 我的判断
 > Hy-Nomas 把多轮文字指令与相机轨迹接到分段自回归 DiT，每段内部做扩散，段间复用KV；它更像可持续改写的视频世界生成器，而非问答模型。研读重点是 **提示词服务、视频生成、解码、历史缓存与评测输入的边界**，不是把720p/24FPS误当实时交互性能。
 
-> [!warning] 原始资料不足，明确未达完整技术报告精读标准
-> 本轮读到官方HF模型卡、代码/配置、LoRA与标注说明、280案例benchmark卡和两张官方结构图；但官方仍标 **Technical Report (Coming Soon)**，没有可确认的独立报告正文、完整预训练数据/蒸馏配方、对照分数或时延曲线。**由于这些原始资料较少，当前无法达到完整技术报告级训练与效果审计深度。** 以下严格区分源码默认值、官方能力描述与待验证假设，不造SOTA或实时帧率。
+> [!info] 正式报告已补齐
+> 10/28 主卡加入报告 2610.36729，已保存并阅读 HTML 的训练、注意力、蒸馏、推理与评测。旧卡 Coming Soon 仅保存在历史档，不再作为当前状态。模型首发日仍未明确；报告日期不替代模型发布日期。
 
 > [!info] 首发日期待核
 > 2026-10-23是本轮发现官方仓库的日期，不是已证实的模型首发日。HF createdAt/lastModified、GitHub创建时间均不作为首发；暂放10月归档线索与“日期待核实”，不伪造10月23日新发布。主干、蒸馏、INT8、两种LoRA、视频decoder与Nomas-PE都归一个专项family，不拆多个聊天正代。
@@ -47,7 +47,7 @@ $$z_k \sim p_\theta(z_k\mid T_k,C_k,\mathrm{KV}_{<k}),\qquad V_k=D_{\mathrm{Pixe
 
 动作时间戳由配置在段内归一化；`video_length=event` 从事件时间推导长度。原卡示例不是任意JSON都可兼容；`Style` 大写、subject/segments/description_change等字段有具体输入契约。
 
-**10月24日官方原卡契约修正：** `segments` 与 `contained_actions` 的 `start_time` / `end_time` 都必须是 `MM:SS.mmm` 字符串，例如 `"00:05.000"`，不是旧示例中的数值秒。新例为0–5秒及5–10秒两段；把旧数值JSON直接传入不是有效复现。本次是输入格式/链接修正文档，不是新权重或新模型发布日期；报告仍为Coming Soon。
+**10月24日官方原卡契约修正：** `segments` 与 `contained_actions` 的 `start_time` / `end_time` 都必须是 `MM:SS.mmm` 字符串，例如 `"00:05.000"`，不是旧示例中的数值秒。新例为0–5秒及5–10秒两段；把旧数值JSON直接传入不是有效复现。本次是输入格式/链接修正文档，不是新权重或新模型发布日期；正式报告已在10/28补入。
 
 ## 三、8步、1步、24FPS分别是什么
 
@@ -78,7 +78,7 @@ DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、h
 | 注意力 | 默认PyTorch SDPA；参考attention需另装兼容kernel并启用，不能默认宣称与原生数值一致 |
 | 显存 | 示例将BF16组件加载到CUDA；**原生INT8/FP8单4090方案是另一配置**，不能把其显存承诺挪到这里 |
 
-原卡安装例指向 `jiaxiangc/diffusers` 的 `hy-nomas` 分支；这是官方卡推荐的实现分支，**不是已经证实合入上游稳定版的承诺**。持续生成可复用返回状态，但历史KV会增长；4步DiT与1步PixelUMM解码依然是两个独立阶段。此轮只读卡、归档和比较接口，未安装依赖、下载权重或运行生成。报告仍标Coming Soon，新增格式卡不能补齐训练/消融证据。
+原卡安装例指向 `jiaxiangc/diffusers` 的 `hy-nomas` 分支；这是官方卡推荐的实现分支，**不是已经证实合入上游稳定版的承诺**。持续生成可复用返回状态，但历史KV会增长；4步DiT与1步PixelUMM解码依然是两个独立阶段。此轮只读卡、归档和比较接口，未安装依赖、下载权重或运行生成。新增格式卡本身不能证明训练配方；正式报告补充内容见下文。
 
 ### 原生单4090：减少活跃显存，不是无限免费历史
 
@@ -113,7 +113,7 @@ DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、h
 
 微调从 `DiT/base_ar` 非蒸馏权重开始，导出adapter，再合并到兼容的distilled权重推理。rank/shape与版本要匹配。**不能把公开的这份LoRA recipe说成基座预训练或8步蒸馏的全部recipe。** 本轮仅阅读源码，未启动标注、推理或训练。
 
-## 六、280案例benchmark有输入，没有现成胜负表
+## 六、280案例benchmark的输入与独立评分
 
 | 子集 | 案例数 | 段/回合 | 平均请求时长 | 观察重点 |
 |---|---:|---|---:|---|
@@ -122,7 +122,7 @@ DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、h
 | 文字/相机交替 | 60 | 2–7 | 30.59s | 条件切换；125文字段/68相机段 |
 | 空间记忆 | 60 | 8 | 18.00s | 四组离开/返回，同有效相机位姿比较 |
 
-合计280，附220条参考相机轨迹。官方卡明确：**不含视频、抽取的参考/回访帧或评测分数**。时长8–86s是请求输入范围，不是实测性能或成功生成时长。
+合计280，附220条参考相机轨迹。公开benchmark数据包明确：**不含视频、抽取的参考/回访帧或评测分数**；正式报告的作者结果另见下文。时长8–86s是请求输入范围，不是实测性能或成功生成时长。
 
 轨迹路径相对所在JSON解析；时间范围左闭右开；Bench2/4的`w/a/s/d`与Bench3的`KeyW/KeyA/KeyS/KeyD`不是可忽略的字段差异。只读JSON也不会自动加载NPZ。官方脚本生成视频，**评分是另一步**；不能把成功写出MP4当全部benchmark通过。
 
@@ -139,8 +139,68 @@ DCAE-V时空压缩为时间4×、空间各32×，32通道；PixelUMM是36层、h
 - 🤗 [HF Model Card · Diffusers](https://huggingface.co/tencent/Hy-Nomas-Diffusers)，完整原卡归档`src/hf_diffusers_model_card.md`；同family格式转换，非新正代或已证实的新首发事件。
 - 🧩 [官方代码](https://github.com/Tencent-Hunyuan/Hy-Nomas)：README中英、推理/低显存/SFT配置、demo与captioning说明已存`src/reference/`，未执行外部源码。
 - 🌐 [官方项目与演示](https://hy-nomas.hy.tencent.com/)：本轮调用端抓取超时，保留缺口，不写已离线归档成功。
-- 📄 Tech Report：官方仍标Coming Soon；**不把未来PDF占位按钮伪装成已发布报告链接**，本轮未抓PDF或权重。
+- 📄 [Tech Report](https://arxiv.org/abs/2610.36729)：已归档并阅读HTML正文；本轮不抓PDF或权重。
 - 许可证Apache2.0；Qwen等第三方组件各自条款仍适用。
 - 关联：[[WeVisOne-VL]] 为另一种感知专项；[[Hy4-Preview]] 为聊天正代，本文不归入其新代际。
 
 > 📊 中文海报：[[hy_nomas_poster_zh.html]] · [Thinking Overview](https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=hunyuan-hy-nomas)
+
+## 正式报告增补：动作有效期比“加因果 mask”更关键
+
+![手绘方法图：环境描述与动作指令的不同有效期](src/assets/handdrawn-method.png)
+
+报告确认 8B diffusion backbone，从 HunyuanVideo 1.5 迁移到 DCAE-V 的紧凑 latent。普通 segment-causal attention 允许每段读取当前段全部文本和历史段文本，带来两类错误：本段动作顺序混乱，以及旧动作跨段重放。
+
+Action-aware mask 把 caption 分为描述环境的 head 与带时间窗的 action tails。环境 head 继续对未来段可见；action tails 仅对本段指定动作窗口可见。因此模型保留场景又不会无限重复旧动作。时间因果仍不等同物理因果，不能据 mask 宣称真实动力学可靠。
+
+## 训练 curriculum 与 rollout 分布
+
+| 阶段 | 做了什么 | 解决哪类差异 |
+|---|---|---|
+| latent 迁移 | 20K 步只更新输入/输出层，再 60K 全模型 | 适应更紧凑的 DCAE-V latent |
+| CPT | segment-causal→action-aware→camera-conditioned | 从视频生成过渡到时序动作与连续相机控制 |
+| 高质量 annealing | Kimi K3 生成细 caption；text length 768→1280 | 提升细粒度语义与相机监督质量 |
+| Segment Forcing | 逐段损失、一步低噪估计构建后续 KV；streaming backward | 让模型看到自己产生的 imperfect history |
+| causal 蒸馏 | PCM 初始化，hybrid forcing 下 DDMD + adversarial hinge | 100→4 NFE；质量与推理预算共同优化 |
+
+Segment Forcing 每段立即 backward 后释放该段图，跨段累计梯度，整条序列结束一次 optimizer step。DDMD 精修只监督最终生成段，对更早段及 cache 停梯度，不能称无限长历史完全端到端反传。
+
+相机与文字控制按段混合；有可靠轨迹监督时删除 caption 中相机动作，避免文本泄漏几何条件。分布式训练采用 8 路 Ulysses SP、组内 FSDP2 sharding、FLOPs 平衡 packing，最大 360K tokens。Segment Forcing 阶段保留 attention output 多占约 1.6GB/rank 却无明显加速，因此与 one-shot 阶段采用不同 checkpoint/offload 策略。
+
+## 4 NFE、旧配置 8 步与播放帧率要分开
+
+报告的蒸馏学生为每段 4 NFE；已归档原生配置默认 8 步，Diffusers 卡为 4 步，属于不同来源/推理配置，不能静默把旧值改成全家通用。24FPS 是播放帧率。
+
+报告单 RTX4090 示例：七段共 100 秒、1280×704、24FPS，峰值 20.53 GiB，使用 INT8 权重/历史 KV、BF16 计算、SWA 与 CPU offload。**这是特定视频/段长/缓存设置的显存例，不是100秒生成耗时，也不是全服务含 PE 的总资源。**
+
+## 公开评测终于有了数值，也暴露空间记忆短板
+
+Hy-Nomas-Bench 280 cases 分四类，三位标注员组成一组讨论校准。下表从 Hy-Nomas 视角写 win/tie/loss，不把 win 当独立成功率。
+
+| 比较 | win / tie / loss | 净胜率（win−loss） |
+|---|---|---:|
+| Bench1 提示跟随 vs HappyOyster-Directing | 65.0 / 25.0 / 10.0 | +55.0pp |
+| Bench1 提示跟随 vs LingBot-World v2 | 75.0 / 16.7 / 8.3 | +66.7pp |
+| Bench3 相机控制 vs LingBot-World v2 | 26.7 / 68.3 / 5.0 | +21.7pp |
+| Bench4 空间记忆 vs Genie3 | **13.3 / 56.7 / 30.0** | **−16.7pp** |
+| Bench4 空间记忆 vs HappyOyster | 30.0 / 46.7 / 23.3 | +6.7pp |
+
+![官方报告图17：空间记忆对照，保留落后于Genie3的结果](src/assets/official-spatial-memory.png)
+
+Genie3 在该评测接口不支持文本交互，所以没有 Bench1/3 分数；不能补零分后计算“全项目碾压”。LingBot v2 使用作者改编开源接口；需要初图的模型用 Hy-Nomas 首帧初始化，各自默认分辨率和设置，仍有系统差异。评测不覆盖审美、音频或真实机器人迁移。
+
+## LoRA：领域表现改善可能牺牲控制能力
+
+电影风格 LoRA 与蒸馏基线比较：提示跟随 win35/loss24，物理合理性 win46/loss13；相机控制 **win19/loss37，净−18pp**。报告认为相机轨迹覆盖有限可能造成回归，这是一项解释而非已隔离的因果证明。
+
+![官方报告图20：风格适配与相机控制回归](src/assets/official-lora-tradeoff.png)
+
+机器人 LoRA 使用 128 个选定任务样本进行初步适配；图像中更像双臂机器人，不代表可直接训练安全控制策略。Nomas-PE 基于 Qwen3.8-27B 进行 SFT，改善结构化格式和端到端文字控制；PE、视频模型与最终评估必须分别固定版本。
+
+> [!warning] 报告已读，但完整复现仍有缺口
+> 正式报告提供了此前没有的训练、消融式分析与比较结果，旧的“无正式报告/无数值”限制已关闭。仍缺完整训练数据与本地复测，280例由作者构建、人评且接口异构；**因此无法把笔记当成独立复现验收，更不能担保长期物理一致或下游RL收益**。
+
+> [!insight] 对 Agent Training 的进一步判断
+> 环境描述可持续，动作指令有时间窗，这一分工可迁移到长工具轨迹的状态/任务分离设计。Segment Forcing 则说明只训干净历史会留下闭环差异。真正可转化实验应固定 PE、cache 与 prompt 来源，报告文本遵循、动作重复、回访记忆和适配后控制回归，而不是只截一段最好视频。
+
+- [S-Report] [Tech Report](https://arxiv.org/abs/2610.36729)；原始HTML在 `src/tech_report.html`，不抓PDF。

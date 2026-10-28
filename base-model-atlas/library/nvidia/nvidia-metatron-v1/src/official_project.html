@@ -1,0 +1,219 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://research.nvidia.com/labs/par/projects/metatron/">打开官方原文 ↗</a> · <a href="official_project.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Metatron — A Promptable Whole-Body Execution Layer for Humanoids Skip to content METATRON Menu ⌄ PAR Lab Interface Build skills Examples Training Paper ↗ Interactive demo ↗ ☼ Promptable humanoid control 
+One policy. New goals. New behaviors. 
+Chen Tessler *,1 Yifeng Jiang *,1 Alec Otto 2 Yi Shi †,1 Umar Iqbal 1 Gal Chechik 1 Xue Bin Peng 1 
+1 NVIDIA 2 Dollhouse Robotics * Equal contribution † Work done while interning at NVIDIA 
+Metatron turns motion goals into coordinated whole-body action. Coding agents can write and refine those goals to build new skills—without retraining the policy. ▶ Video 2:59 
+Six behaviors, one G1 policy One frozen Metatron Different prompts. Same G1 policy. Play all ▶ 
+Steering ↗ 
+Velocity + heading + foot targets 
+Teleoperation ↗ 
+Hand targets + joystick steering 
+Sit &amp; stand ↗ 
+Scene geometry + torso &amp; foot goals 
+Recovery ↗ 
+Upright pose 
+Physical guidance ↗ 
+Torso height + heading · arms free 
+Dynamic tracking ↗ 
+Dense body targets 
+Goals specify what to do. 
+Metatron coordinates how to move. 01 / An interface for skill code 
+Set the goals. Let the body respond. 
+A coding agent can work with positions, orientations, velocities, and arrival times. Metatron turns those goals into coordinated whole-body motion. What &amp; where 
+Specify the task. 
+Give approximate targets for a hand, foot, torso, or travel velocity and heading. Refine them when the task needs more precision. When 
+Give it timing. 
+Arrival times can be approximate too. Skill code can sequence goals and update their timing as the task progresses. What stays free 
+Leave room to move. 
+Constrain only what matters. Metatron generates the remaining motion instead of requiring a complete pose at every instant. Explore the goal interface ↗ 
+The overlays show the supplied goals. Metatron generates the whole-body motion in response. G1 / MuJoCo simulation 
+Change the goals, not the policy. 
+Velocity, heading, and timed foot targets guide locomotion. During recovery, the skill switches to upright-pose goals. SOMA / IsaacLab simulation · separate policy 
+Run, slide, climb. Change the goals. 
+Velocity and heading goals build speed. For the slide, a low pelvis target and a forward foot target guide the body down with one leg extended ahead. For the climb, a pelvis-position target above the ledge and a heading goal guide the body upward, leaving hand and foot placement to the policy. 02 / Agent-assisted skill development 
+Refine the goals. Not the policy. 
+Describe a task. A coding agent writes goal-setting code, tests it in simulation, and refines it from the results. Metatron stays frozen. Human Specify the task Coding agent + motion examples Write and refine skill code Simulation + frozen Metatron Evaluate and diagnose 
+The LLM develops the skill offline . At runtime, ordinary skill code supplies goals—not an LLM in the robot’s control loop. A human decides whether to deploy it. Hardware example / Agent-assisted steering 
+A better gait, through better goals. 
+Velocity goals alone can produce hesitant foot motion. We used Claude Code to fit a compact foot-trajectory rule from motion-capture clips. Its timed foot targets guide more decisive stepping, with the policy unchanged. Velocity + heading + timed foot targets 
+The demonstrated improvement in hardware gait quality and stability is assessed qualitatively. See the steering inputs ↗ What does a skill look like? 
+Two feet. Half a cycle apart. 
+Speed sets the step frequency and swing amplitude. Each foot follows a cosine swing and lifts during half the cycle. The skill evaluates this rule at future arrival times and adds the resulting foot goals to the velocity and heading prompt. 
+The stance widens for sideways travel, and the swing axis follows the travel direction with reduced lateral motion. Metatron supplies the whole-body response. 
+Moving-gait pseudocode based on the C++ deployment. Standing holds and turning corrections are omitted. View simplified skill code # speed in m/s; frequency in Hz; distances in m frequency = min(2.0, 0.83 + 0.93 * speed)
+amplitude = 0.13 + 0.065 * speed
+phase += 2 * pi * frequency * dt
+
+for time in future_times:
+    for foot, shift in [(right, 0), (left, pi)]:
+        angle = phase + 2 * pi * frequency * time + shift
+        offset = stance_offset(foot, travel_angle)
+        offset.xy += amplitude * cos(angle) * swing_axis
+        offset.z += 0.08 * max(0, -sin(angle))
+        goals.add(foot, to_world(offset, time), time) # Foot goals + velocity + heading → frozen Metatron 03 / Agent-authored skills · G1 in MuJoCo 
+New tasks. Same frozen policy. 
+For these simulated tasks, GPT-6 Astra refined goal-setting code, timing, and motion references under human direction. No task-specific policy training. Four hurdles Fall &amp; recover Bowling Tennis Football kick Running → jump goals → running 
+Four hurdles. One continuous run. 
+Switch from running goals to a reference jump before each bar, then resume running as both feet clear it. Repeat without resetting the robot or policy. 
+4 × 20 cm hurdles · 5 m apart · zero bar contacts in this run Goals supplied Concept + pseudocode 
+Forward velocity, heading, and torso XY goals guide the run. At 2.6 m from a known bar, replace velocity conditioning with timed position and rotation goals for the torso, hands, and feet, sampled from a reference jump aligned over the bar. Once both feet clear, return to running goals. # Conceptual pseudocode — not a runnable API
+for bar in course:  # four bars, 5 m apart
+    run(speed=3.3, heading=forward, lane=center)
+    when distance_to(bar) &lt;= 2.6:
+        track_jump_goals(aligned_over=bar)
+    when both_feet_clear(bar, margin=0.12):
+        resume_running(ramp_seconds=0.32) 
+Approaches average 3.07–3.17 m/s; the robot slows during each jump. The bar locations are supplied by task code, not perceived by the policy. Illustrative names; control details abbreviated. Running → recovery → running 
+Fall. Get up. Carry on. 
+The robot runs into a 40 cm bar, falls, gets up, and resumes running. 
+3.83 m/s before impact · running again 3.28 s after the fall Goals supplied Concept + pseudocode 
+Velocity and torso goals guide the run; hands and feet are free. A low torso held for 120 ms triggers upright five-body goals. Once upright, resume running. No obstacle-avoidance goal, reset, or teleport is used. # Conceptual pseudocode — not a runnable API
+# Height is measured above the lowest body.
+height = torso_height / upright_height
+if not recovering:
+    recovering = below_for(height, 0.65, seconds=0.12)
+elif height &gt;= 0.90:
+    recovering = False
+if recovering:
+    goals = timed_upright_pose(torso, hands, feet)
+else:
+    goals = track_running_goals(velocity, torso_path, heading)
+policy.track(goals) 
+Illustrative names; control details abbreviated. Motion reference + timed release 
+Send the ball down the lane. 
+A bowling reference guides the swing. After release, gravity and physical collisions determine the ball and pin motion. 
+9 of 10 pins knocked down Goals supplied Concept + pseudocode 
+A bowling reference supplies torso, hand, and foot poses in global and local frames. Scene code releases the simulated grasp at a set time; physics moves the ball. # Conceptual pseudocode — not a runnable API
+horizons = [0.1, 0.2, 0.4, 0.6, 0.8]
+poses = bowling_reference.sample(future_motion_times)
+goals = body_pose_goals(poses, torso + hands + feet,
+                        horizons, frames=&quot;global + local&quot;)
+policy.track(goals)
+if time &gt;= 2.3:
+    scene.release_ball_grasp()  # Physics takes over. 
+Illustrative names; control details abbreviated. Motion reference + physical racket 
+Meet the ball. 
+A forehand reference drives a racket into a dropped ball, sending it over the net to the opposite side of the court. 
+5.37 m/s outgoing ball speed Goals supplied Concept + pseudocode 
+A forehand reference supplies five-body poses. Hand targets guide the attached racket. Scene code drops the ball at a set time: a timed drill, not visual ball tracking. # Conceptual pseudocode — not a runnable API
+horizons = [0.1, 0.2, 0.4, 0.6, 0.8]
+poses = forehand_reference.sample(future_motion_times)
+policy.track(body_pose_goals(
+    poses, torso + hands + feet, horizons,
+    frames=&quot;global + local&quot;))
+if time &gt;= 1.2:
+    scene.drop_ball()  # Racket contact sets its flight. 
+Illustrative names; control details abbreviated. Foot targets + contact physics 
+Follow through on the kick. 
+Timed goals guide the kicking foot into a passive football. The ball moves through contact—not a scripted trajectory. 
+2 m approach · 4.82 m/s peak ball speed Goals supplied Concept + pseudocode 
+Approach with velocity and torso goals. Near the ball, switch to timed foot targets: draw back, strike, and follow through. Keep the support foot planted; leave the hands free. # Conceptual pseudocode — not a runnable API
+if distance_to_ball &gt; 0.7:
+    goals = approach_goals(speed=1.5, heading=toward_ball)
+else:
+    goals = timed_kick(
+        support_foot=planted, torso=balanced_stance,
+        kicking_foot=[(0.08, backswing), (0.18, strike),
+                      (0.36, forward_and_up), (0.98, settle)])
+policy.track(goals)  # No force or velocity is applied to the ball. 
+Illustrative names; control details abbreviated. 04 / The training recipe 
+Learn from complete motion. Act on partial goals. 
+Dense reference motions teach coordination. Masked on-policy distillation makes that capability available through a flexible goal interface. 01 
+Train the tracker 
+Full reference motions supervise dense whole-body tracking. Reinforcement learning → 02 
+Distill Metatron 
+The frozen tracker supervises a generative policy with masked goals. On-policy distillation → 03 
+Deploy the policy. Supply goals in code. On-device · C++ skill code skill(state) → goals ↓ Frozen Metatron actions No task-specific policy training Explore how Metatron is built ↗ 
+After stage 2, Metatron’s weights are frozen. Stage 3 adds skills through goal-setting code, without further policy training. On the robot, C++ skill code updates goals from the current state; Metatron turns them into joint targets. 05 / Try it yourself · MuJoCo 
+Interactive Web Demo 
+Steer the G1, change its motion style, or give it a destination. The actual policy and physics simulation run in your browser. Launch interactive demo ↗ 
+Desktop recommended First load downloads and prepares the model. Later visits can reuse cached weights. 06 / More G1 demonstrations 
+More ways to move. 
+From everyday interaction to dynamic motion, explore the goals behind each G1 example. Steering Teleoperation Sit &amp; stand Recovery Physical guidance Dynamic tracking G1 / Real robot 
+Direct the motion, not every joint. 
+An Xbox controller specifies travel velocity and heading. Timed foot-placement goals guide the gait; the same policy coordinates the rest of the body. Goals supplied Velocity Heading Foot targets Policy weights unchanged 
+The skill generates goals, not joint actions. See the supplied goals ↗ 
+These behavior clips play at real-time 1× speed. These modes share one G1 policy and deployment stack; switching modes changes the goals and their masks, not the policy weights. The scene-geometry simulation grid illustrates prompting with a separate sitting policy. 
+Metatron 
+© 2026 NVIDIA Corporation. All rights reserved. Interface Build skills Examples Training Lab homepage All projects NVIDIA Research Privacy Policy Your Privacy Choices Terms of Service Accessibility Corporate Policies Contact Metatron · Full narrated film Close × 
+Inside the goal interface 
+Specify what matters. 
+Combine any subset of these goals in one prompt. Metatron generates the remaining motion. Close × Body targets Velocity &amp; heading Style examples Scene geometry 
+
+
+Where is the target defined? In the world Relative to the body 
+
+Skills supply goals. Proprioception supplies the robot’s current state. Structured inputs, not text commands. 
+From motion data to skill code 
+Train the controller. Then build skills. 
+Two stages learn the policy. The third develops skills with its weights frozen. Close × 1 · Train the tracker 2 · Distill Metatron 3 · Develop skills</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

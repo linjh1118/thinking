@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Nemotron-3.5-Parse"
 tags: [base-model, nemotron, document-parsing, ocr, data-construction]
 status: read
 created: 2026-10-18
-updated: 2026-10-22
+updated: 2026-10-28
 ---
 
 # Nemotron 3.5 Parse：不只是读出文字，还要保留可用结构
@@ -197,3 +197,7 @@ Malayalam 63.15、Gujarati 66.96 仍明显低于总体，不能把平均提升�
 - [[Topics/13_base_model/NVIDIA_Nemotron/261015_Nemotron_3_5_Super_Bolt/Nemotron-3.5-Super-Bolt|Nemotron 3.5 Super / Bolt]]：通用模型 family，与本 parser 分线阅读。
 
 > 📊 相关可视化：[[Topics/13_base_model/NVIDIA_Nemotron/Variants/261017_Nemotron_3_5_Parse/nemotron_3_5_parse_poster_zh.html|Nemotron 3.5 Parse 中文 Poster]]
+
+## 2026-10-28：托管推理入口
+
+原卡新增 [NVIDIA Build](https://build.nvidia.com/nvidia/nemotron-3.5-parse) 与 [Baseten](https://www.baseten.co/library/nemotron-35-parse/) 入口。本轮只更新原卡和链接，不据上架服务推断新权重、指标提升或重新首发；模型日期仍10/17。

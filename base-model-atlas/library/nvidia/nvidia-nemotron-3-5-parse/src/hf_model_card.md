@@ -16,6 +16,11 @@ Nemotron 3.5 Parse was developed by NVIDIA as a part of Nemotron.
 
 This model is ready for commercial or non-commercial use. <br>
 
+## Hosted inference
+
+- [Try the API on NVIDIA Build](https://build.nvidia.com/nvidia/nemotron-3.5-parse)
+- [Deploy on Baseten](https://www.baseten.co/library/nemotron-35-parse/)
+
 ## Benchmark highlights
 
 Detailed benchmarks: [ParseBench](#parsebench) · [IndicVisionBench](#indicvisionbench-ocr) · [MOSCAR](#moscar-multilingual-ocr).

@@ -1,6 +1,7 @@
 ---
 license: apache-2.0
 license_link: https://huggingface.co/tencent/Hy-Nomas/blob/main/LICENSE
+library_name: diffusion-single-file
 tags:
   - hy-nomas
   - world-model
@@ -24,25 +25,22 @@ tags:
 
 <p align="center">
   <a href="https://github.com/Tencent-Hunyuan/Hy-Nomas"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&amp;logo=github&amp;logoColor=white" alt="GitHub"/></a>
-  <a href="https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf"><img src="https://img.shields.io/badge/Technical%20Report%20%28Coming%20Soon%29-B31B1B?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTQgMkg1djIwaDE0Vjd6TTE0IDJ2NWg1TTggMTJoOE04IDE2aDgiLz48L3N2Zz4%3D" alt="Technical Report (Coming Soon)"/></a>
+  <a href="https://arxiv.org/abs/2610.36729"><img src="https://img.shields.io/badge/Technical%20Report-B31B1B?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTQgMkg1djIwaDE0Vjd6TTE0IDJ2NWg1TTggMTJoOE04IDE2aDgiLz48L3N2Zz4%3D" alt="Technical Report"/></a>
   <a href="https://huggingface.co/datasets/tencent/Hy-Nomas-Bench"><img src="https://img.shields.io/badge/Benchmark-FFD21E?style=flat-square&amp;logo=huggingface&amp;logoColor=black" alt="Benchmark"/></a>
   <a href="https://hy-nomas.hy.tencent.com/"><img src="https://img.shields.io/badge/Project%20Website-666666?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxlbGxpcHNlIGN4PSIxMiIgY3k9IjEyIiByeD0iNCIgcnk9IjEwIi8%2BPHBhdGggZD0iTTIgMTJoMjAiLz48L3N2Zz4%3D" alt="Project Website"/></a>
   <a href="https://x.com/TencentHunyuan/status/2113676827114053892"><img src="https://img.shields.io/badge/X%20Post-000000?style=flat-square&amp;logo=x&amp;logoColor=white" alt="X Post"/></a>
 </p>
-
 <h3 align="center">
   🚀 <a href="https://hy-nomas.hy.tencent.com/">Try the Demo →</a>
 </h3>
-
 <br>
-
 <video controls playsinline preload="metadata" width="100%" src="https://hy-nomas.hy.tencent.com/gallery/hy_nomas_promo.mp4"></video>
 
-## Model Introduction
+## Introduction
 
 **Hy-Nomas** is a video world generation model that supports free-form, multi-turn interaction through text instructions and camera control. It generates a world one video segment at a time, allowing users to introduce objects, change styles and scenes, describe actions, or control the camera as generation continues.
 
-The model combines a segment-autoregressive diffusion transformer (DiT), a Qwen text encoder, camera-conditioning modules, and a PixelUMM video decoder. A persistent key/value (KV) cache carries context between segments. The distilled inference configuration uses **8 denoising steps**, with **720 × 1280** output at **24 FPS**. A separate configuration supports video generation on a **single NVIDIA GeForce RTX 4090** using INT8 DiT weights, an INT8 KV cache, an FP8 decoder, and CPU offload.
+The model combines a segment-wise autoregressive diffusion transformer (DiT), a Qwen text encoder, camera-conditioning modules, and a PixelUMM video decoder. A persistent key/value (KV) cache carries context between segments. The distilled inference configuration uses **8 denoising steps**, with **720 × 1280** output at **24 FPS**. A separate configuration supports video generation on a **single NVIDIA GeForce RTX 4090** using INT8 DiT weights, an INT8 KV cache, an FP8 decoder, and CPU offload.
 
 ## Key Features
 
