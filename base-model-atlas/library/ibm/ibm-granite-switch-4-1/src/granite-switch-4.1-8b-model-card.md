@@ -7,35 +7,64 @@ tags:
 - granite-4.1
 ---
 
-# Granite Switch 4.1 8B
+# Granite Switch 4.1 8B (revision 4.1.1)
 
-📝 **Read the launch blog:** [Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)
+📝 **Read the launch blog:** [Granite Switch 4.1.1: Update models like you update software](http://huggingface.co/blog/ibm-granite/granite-switch-4-1-1)
 
-**Model Summary:** Granite Switch 4.1 8B is a modular LLM that composes a base model, multiple adapters and an encoder together so that a single hosted endpoint can move between natural-language responses, general and specialized decisions, and speech-to-text.
+**Model Summary:** Granite Switch 4.1.1 8B is a modular LLM that composes a base model, multiple adapters and an encoder together so that a single hosted endpoint can move between natural-language responses, general and specialized decisions, and speech-to-text.
 
 Adapters are activated on demand via control tokens in the chat template. For full details on model composition and adapter configuration, see [BUILD.md](BUILD.md).
 
 - **Base Model:** `ibm-granite/granite-4.1-8b` (8B params, 128K context)
-- **Adapters:** 2 — `decision` (aLoRA, general-purpose Decisions) and `guardian-core` (aLoRA, from `granitelib-guardian-r1.0`)
-- **Audio:** embedded speech-to-text via `ibm-granite/granite-speech-5.0-470m-turboctc` (470M params, English)
+- **Adapters:** 2 — `decision` (aLoRA, general-purpose Decisions, updated weights in 4.1.1) and `guardian-core` (aLoRA, from `granitelib-guardian-r1.0`)
+- **Audio:** embedded speech-to-text via `ibm-granite/granite-speech-5.0-470m-turboctc` (470M params; English, French, German, Spanish, Portuguese, Italian, Japanese)
 - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-- **Release Date:** October 14, 2026
+- **Release Date:** October 27, 2026 (revision 4.1.1); October 14, 2026 (revision 4.1)
 - **Backends:** HuggingFace Transformers, vLLM
-- **Automatically Composed with:** [granite-switch](https://github.com/generative-computing/granite-switch)
+- **Automatically Composed with:** [granite-switch](https://github.com/generative-computing/granite-switch) 0.1.1
 
 Granite Switch is also available in [granite-switch-4.1-30b](https://huggingface.co/ibm-granite/granite-switch-4.1-30b) (same Chat + Decisions + Guardian + speech configuration, 30B base), and with the complete Granite Libraries bundle (no audio) in [granite-switch-4.1-8b-preview](https://huggingface.co/ibm-granite/granite-switch-4.1-8b-preview), [-30b-preview](https://huggingface.co/ibm-granite/granite-switch-4.1-30b-preview), and [-3b-preview](https://huggingface.co/ibm-granite/granite-switch-4.1-3b-preview).
+
+## What's New in Revision 4.1.1
+
+This repository's `main` branch holds the latest revision; every release is also tagged, so you can pin to it.
+
+Revision 4.1.1 keeps the same two adapters as revision 4.1. Compared to 4.1:
+
+- **Updated `decision` weights.** The `decision` aLoRA ships updated weights; its prompt format, invocation and readout are unchanged, so existing integrations work as-is.
+- **Multilingual speech input.** The embedded [Granite Speech 5.0 TurboCTC](https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc) encoder now transcribes English, French, German, Spanish, Portuguese, Italian and Japanese, and outputs punctuated, capitalized transcripts.
+
+| Revision | Tag | Adapters | Speech |
+|---|---|---|---|
+| **4.1.1** (latest, on `main`) | `granite-switch-4.1.1-8b` | `guardian-core`, `decision` (updated weights) | 7 languages |
+| 4.1 | `granite-switch-4.1-8b` | `guardian-core`, `decision` | English |
+
+To load the previous revision, pass its tag as the revision:
+
+```python
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "ibm-granite/granite-switch-4.1-8b", revision="granite-switch-4.1-8b"
+)
+```
+
+```bash
+python -m vllm.entrypoints.openai.api_server \
+  --model ibm-granite/granite-switch-4.1-8b --revision granite-switch-4.1-8b
+```
 
 ## Included Adapters & Encoders
 
 | Switch Component | Description |
 |---|---|
 | [**Guardian Core aLoRA**](https://huggingface.co/ibm-granite/granitelib-guardian-r1.0/tree/main/guardian-core) | Detects safety risks: harm, jailbreaking, profanity, violence, sexual content, social bias, unethical behavior |
-| [**Decision aLoRA**](https://huggingface.co/ibm-granite/granitelib-core-r1.0/tree/main/decision) | Given a state + a question with labelled options, returns a softmax probability distribution over the option labels in one forward pass |
-| [**Granite Speech 5.0 TurboCTC Encoder**](https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc) | An ASR model for quick speech to text transcription tasks |
+| [**Decision aLoRA**](https://huggingface.co/ibm-granite/granitelib-core-r1.0/tree/4.1.1-decision) | Given a state + a question with labelled options, returns a softmax probability distribution over the option labels in one forward pass |
+| [**Granite Speech 5.0 TurboCTC Encoder**](https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc) | A multilingual ASR model for fast speech-to-text transcription (English, French, German, Spanish, Portuguese, Italian, Japanese) |
 
 ### Speech-to-Text (Audio Input)
 
-Transcription runs on the same endpoint as chat and decisions, so you don't need a separate speech server and how the model is called doesn't change. Incoming audio is transcribed by the embedded [**Granite Speech 5.0 TurboCTC**](https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc) model (470M params, English, non-autoregressive conformer CTC encoder), the fastest ASR model on the [OpenASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard) <!-- TODO: add "as of <date>" -->. The transcript is spliced into the chat context in place of the audio content part. The speech encoder and the LLM are not yet jointly trained — there is no trained projection coupling them together yet; see [docs/AUDIO.md](https://github.com/generative-computing/granite-switch/blob/main/docs/AUDIO.md) in the granite-switch repo for the full design and limitations (English only, lowercase/unpunctuated output, no decode-time steering).
+Transcription runs on the same endpoint as chat and decisions, so you don't need a separate speech server and how the model is called doesn't change. Incoming audio is transcribed by the embedded [**Granite Speech 5.0 TurboCTC**](https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc) model (470M params, non-autoregressive conformer CTC encoder; English, French, German, Spanish, Portuguese, Italian and Japanese, with punctuated and capitalized output), the fastest ASR model on the [OpenASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard) <!-- TODO: add "as of <date>" -->. The language is detected from the audio, so no language parameter is needed. The transcript is spliced into the chat context in place of the audio content part. The speech encoder and the LLM are not yet jointly trained — there is no trained projection coupling them together yet; see [docs/AUDIO.md](https://github.com/generative-computing/granite-switch/blob/main/docs/AUDIO.md) in the granite-switch repo for the full design and limitations (no decode-time steering).
 
 ```python
 from openai import OpenAI
@@ -54,47 +83,41 @@ print(response.choices[0].message.content)
 
 ### Decision Index (JEV) — decision aLoRA
 
-The `decision` activated-LoRA adapter was evaluated on the public Decision Index fast subset (1,068
-rows) in the edition-v0.3 scoring, using the adapter's documented invocation recipe: a fixed
-decision-engine system prompt, a `State:` turn (run on the frozen base), and a `### DECISION` turn
-presenting the question and single-token-labelled options, with the first assistant token read as a
-softmax over the option-label logits. Each configuration was measured two ways — the adapter served
-locally and the same adapter served behind a hosted vLLM endpoint — which agree to within ~0.6 points,
-confirming the serving path is faithful; hosted-serving numbers are shown below.
+The revision 4.1.1 `decision` activated-LoRA adapter was evaluated on the public Jev Decision Index
+v0.3 set, using the adapter's documented invocation recipe: a fixed decision-engine system prompt, a
+`State:` turn (run on the frozen base), and a `### DECISION` turn presenting the question and
+single-token-labelled options, with the first assistant token read as a softmax over the option-label
+logits.
 
 | Overall | Knowledge | Language | Retrieval | Tools | Arts |
 |---|---|---|---|---|---|
-| 42.9 | 29.1 | 48.9 | 49.8 | 59.8 | 18.0 |
+| 46.72 | 28.7 | 53.1 | 60.4 | 63.4 | 19.0 |
 
-Scores are the Decision Index v0.3 public component (0–100); per-area skills are shown ×100.
+Scores are shown ×100; **Overall** is the chance-corrected weighted aggregate.
 
 ---
 
 ### Generation
 
 ```bash
-git clone https://github.com/generative-computing/granite-switch.git
-cd granite-switch
-
-# Pick what you need:
-pip install -e ".[compose]"   # Compose models with adapters
-pip install -e ".[hf]"        # HuggingFace inference
-pip install -e ".[vllm]"      # vLLM inference
-pip install -e ".[audio]"     # Audio input (adds vLLM's audio deps)
-pip install -e ".[dev]"       # Everything
+pip install "granite-switch[vllm,audio]>=0.1.1"   # serve with vLLM (includes audio input)
+pip install "granite-switch[hf]>=0.1.1"           # HuggingFace inference
+pip install "granite-switch[compose]>=0.1.1"      # compose your own checkpoint
 ```
 
 #### Recreating this checkpoint
 
-This checkpoint is produced by composing the base model with `guardian-core` from the Guardian
-library and `decision` from the Core library — `--include-adapters` drops every other adapter each
-library ships — plus the ASR cascade (`--enable-audio`, default Granite Speech 5.0 TurboCTC):
+This checkpoint is produced with `granite-switch==0.1.1` by composing the base model with the aLoRA
+versions of `guardian-core` from the Guardian library and `decision` from the Core library —
+`--include-adapters` drops every other adapter each library ships — plus the ASR cascade
+(`--enable-audio`, default Granite Speech 5.0 TurboCTC):
 
 ```bash
 python -m granite_switch.composer.compose_granite_switch \
   --base-model ibm-granite/granite-4.1-8b \
   --adapters ibm-granite/granitelib-guardian-r1.0 ibm-granite/granitelib-core-r1.0 \
   --include-adapters guardian-core decision \
+  --technology-filter alora \
   --enable-audio \
   --output ./granite-switch-4.1-8b
 ```
@@ -148,7 +171,7 @@ one is a one-field difference on the request: `extra_body={"chat_template_kwargs
 ...}}`. Start the server once:
 
 ```bash
-pip install -e ".[vllm]"
+pip install "granite-switch[vllm,audio]>=0.1.1"
 
 python -m vllm.entrypoints.openai.api_server \
   --model ibm-granite/granite-switch-4.1-8b \
@@ -209,7 +232,7 @@ response = client.chat.completions.create(
 top = response.choices[0].logprobs.content[0].top_logprobs
 probs = {t.token: math.exp(t.logprob) for t in top}
 print(probs)
-# => {"A": 0.982, "B": 0.0035, "C": 0.014}  -- the softmax over option labels `decision` is trained to produce
+# => {"A": 0.995, "B": 0.0006, "C": 0.0046}  -- the softmax over option labels `decision` is trained to produce
 ```
 
 #### Decisions with more than 128 options
@@ -311,7 +334,7 @@ Check Granite Switch for additional [tutorials](https://github.com/generative-co
 
 | File | Description |
 |---|---|
-| `model.safetensors` | Full model with embedded adapters |
+| `model-*.safetensors` | Full model with embedded adapters |
 | `config.json` | GraniteSwitchConfig |
 | `tokenizer.json` / `tokenizer_config.json` | Tokenizer with control tokens |
 | `adapter_index.json` | Adapter-to-control-token mapping |
@@ -323,10 +346,11 @@ Check Granite Switch for additional [tutorials](https://github.com/generative-co
 
 | Dependency | Version |
 |---|---|
-| Python | >= 3.9 |
+| Python | >= 3.11, < 3.14 |
+| granite-switch | >= 0.1.1 |
 | PyTorch | >= 2.11.0 |
 | Transformers | >= 5.16, <= 5.17.0 |
-| vLLM (optional) | >= 0.26.0, < 0.28.0 |
+| vLLM (optional) | >= 0.26.0, < 0.31.0 |
 
 ---
 
@@ -405,7 +429,7 @@ This model inherits the safety profile of the base Granite 4.1 model. The embedd
 - Monitor adapter outputs, especially for safety-critical applications
 - Treat the `decision` adapter's option probabilities as a prior to inform a decision, not a certified classification, on domains it wasn't trained for
 
-The speech-to-text cascade has known limitations: it is English-only, produces lowercase/unpunctuated transcripts, and the ASR model is not fine-tuned jointly with the LLM or adapters — a mistranscription can silently change what the model (or an adapter) responds to.
+The speech-to-text cascade has known limitations: it covers 7 languages (English, French, German, Spanish, Portuguese, Italian, Japanese), and the ASR model is not fine-tuned jointly with the LLM or adapters — a mistranscription can silently change what the model (or an adapter) responds to.
 
 ### License
 

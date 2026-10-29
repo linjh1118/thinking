@@ -17,7 +17,7 @@ Total adapters: **2**
 | # | Name | Technology | Control Token | Token ID | Rank | Alpha | Target Modules | Source |
 |---|------|------------|---------------|----------|------|-------|----------------|--------|
 | 1 | guardian-core | alora | `<\|guardian-core\|>` | 100352 | 16 | 64 | k_proj, o_proj, q_proj, v_proj | ibm-granite/granitelib-guardian-r1.0 |
-| 2 | decision | alora | `<\|decision\|>` | 100353 | 64 | 128 | down_proj, gate_proj, k_proj, o_proj, q_proj, up_proj, v_proj | alora |
+| 2 | decision | alora | `<\|decision\|>` | 100353 | 64 | 64 | down_proj, gate_proj, k_proj, o_proj, q_proj, up_proj, v_proj | decision-4.1.1 |
 
 ## Composition Details
 
@@ -25,6 +25,7 @@ Total adapters: **2**
 - composed_param_count: 29,989,814,272
 - Param delta: +3.89%
 - compose_settings:
+  - technology_filter: "alora"
   - include_adapters:
     - "guardian-core"
     - "decision"
@@ -33,4 +34,4 @@ Total adapters: **2**
     - 14711
   - target_model: "granite-4.1-30b"
 - adapter_sources:
-  - "ibm-granite/granitelib-guardian-r1.0": "1a1a488a51d0d5307e30e5b3c1e66b4a5237d18a"
+  - "ibm-granite/granitelib-guardian-r1.0": "5802b88ef1f9a71e7a33c9025a36b81f2671e58d"

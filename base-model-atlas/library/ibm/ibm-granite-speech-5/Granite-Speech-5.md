@@ -3,7 +3,7 @@ title: "Granite Speech 5.0 · 2B / TurboCTC — 准确率路线与非自回归�
 type: model-note
 tags: [model-note, ibm, agent-training]
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-10-29
 ---
 
 # Granite Speech 5.0 · 2B / TurboCTC：准确率路线与非自回归速度路线共用代际入口
@@ -72,3 +72,9 @@ TurboCTC原卡英文WER由5.78到5.51；当前多语言checkpoint的速度–质
 ## 10月23日文档补充：托管推理不算新模型
 
 官方2B原卡新增 `automatic-speech-recognition` 标签与 Hosted Inference Endpoint 的 OpenAI-compatible 示例。端点闲置时缩容到零，首次请求可能等待数分钟；这属于服务冷启动，不可当模型稳定推理延迟。示例限制16kHz单声道、约2分钟音频，仍沿用vLLM请求格式。HF_TOKEN由使用者环境提供，本轮未调用收费端点或提交音频。该变化仅同步原卡与说明，**没有确认新权重或能力升级，不新增family、叶子或近30天发布行**。
+
+## 10月29日补充：浏览器ONNX是部署格式
+
+官方新增[2B ONNX Model Card](https://huggingface.co/ibm-granite/granite-speech-5.0-2b-ONNX)，基于5.0 checkpoint重新导出权重并量化，不作为新模型族或新权重能力发布。Transformers.js≥4.3、WebGPU，16kHz单声道；Safari26特别要求该版本。音频encoder为q4（fp32 activations），embedding/decoder为q4f16，三文件分别658/119/948MB，合计约1.725GB文件量，不是浏览器峰值显存。
+
+官方说明复用4.1 ONNX图结构但全部重新来自5.0权重，按本版YaRN factor4重建16,384位置的rotary缓存，不能只拿旧图替换文件名。CPU EP上的73句dummy LibriSpeech测试WER2.43（归一化2.31）低于旧4.1 ONNX的2.70，但这是小样本转换核对，不是完整榜单，也不是WebGPU/Safari端到端速度测试。decoder logits整体为Transformers的1/8；greedy argmax不变，不意味着采样概率或temperature已等价。完整原卡保存为[[src/ONNX|本地ONNX原卡]]，未下载权重或执行示例。

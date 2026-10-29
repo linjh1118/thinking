@@ -3,7 +3,7 @@ title: "Granite Switch 4.1 — 在同一主干上切换决策、安全与转写"
 type: model-note
 tags: [base-model, granite, alora, decision, agent-training]
 created: 2026-10-16
-updated: 2026-10-16
+updated: 2026-10-29
 release_date: 2026-10-14
 url: "https://huggingface.co/ibm-granite/granite-switch-4.1-30b"
 ---
@@ -11,7 +11,7 @@ url: "https://huggingface.co/ibm-granite/granite-switch-4.1-30b"
 # Granite Switch 4.1
 
 > [!tldr] 核心判断
-> Switch 是将 Granite 4.1 主干、两个可切换 aLoRA 和英文 ASR 组合成可复用前缀的系统。值得关注的是专用决策头的概率语义与状态复用，不是把多个组件打包就叫新基模正代。8B、30B 共用一个组合模型支线 family。
+> Switch 是将 Granite 4.1 主干、两个可切换 aLoRA 和 ASR 组合成可复用前缀的系统。值得关注的是专用决策头的概率语义与状态复用，不是把多个组件打包就叫新基模正代。8B、30B 共用一个组合模型支线 family。
 
 > [!warning] 材料与深度
 > 已阅读 30B 完整模型卡、官方发布博客和 BUILD 清单，归档 8B 原卡。现有材料足以核对组合方式、推理约束和部分训练目标，但缺少完整训练报告、数据配比与逐组件消融，达不到 GLM / Kimi 完整报告级深度。没有可核实的独立 Tech Report 就不伪造链接。下文两张图是依据原卡绘制的研读示意图，不冒充官方实验图片；本次没有运行权重。
@@ -31,11 +31,17 @@ HF 模型卡的 Release Date 为 **2026-10-14**，IBM 团队在 HF 发布的博�
 | 权重变化 | 30B base 28,865,728,512 → composed 29,989,814,272 | 两个 rank 本身就解释全部增量 |
 | 许可 | Apache-2.0 | 任意业务已有安全认证 |
 
-BUILD 给出的组合增量约 3.89%，还包含打包组件，不能只按 LoRA rank 解释总参数差异。ASR 先生成英文转写再进入语言上下文，错误会沿后续决策传递。
+BUILD 给出的组合增量约 3.89%，还包含打包组件，不能只按 LoRA rank 解释总参数差异。4.1初版ASR先生成英文转写，4.1.1已扩展7语种，仍先转写再进入语言上下文，错误会沿后续决策传递。
 
-![研读绘制：组合与可见的决策边界](src/assets/switch-architecture.svg)
+![研读绘制：组合与可见的决策边界](src/assets/handdrawn-method.png)
 
-*研读示意图，依据官方原卡；不是官方架构消融。*
+*手绘研读图，依据4.1.1原卡；不是官方消融。*
+
+## 4.1.1：同family更新，不改4.1首发
+
+两张当前原卡明确：4.1首发10/14，revision4.1.1为**2026-10-27**。更新了decision aLoRA权重，prompt/invocation/readout接口不变；仍只有decision与guardian-core两个adapter，不是第三个adapter或Granite4.2正代。另同步TurboCTC多语言路径。main跟随最新版本，复现旧版需显式使用`granite-switch-4.1-30b`或`granite-switch-4.1-8b`tag；新版tag为`granite-switch-4.1.1-30b/8b`，不能只固定仓库名。
+
+原卡提供新版Tech Blog链接，但本轮官方URL返回401，网页读取同样失败，未绕过访问限制，也不假装读过。当前变化以两张可公开读取的HF原卡为证据；旧发布博客继续保留，两个版本卡均已归档。
 
 ## aLoRA 的开关有时间边界
 
@@ -59,22 +65,18 @@ vLLM 的 logprob_token_ids 最多一次请求 128 个 token。选项多时，保
 
 ## Decision Index：能比较什么，不能比较什么
 
-模型卡给出 Decision Index v0.3 public fast、1,068 样本的结果。下表是这一版的官方自报，不与不同版本或私有测试集混排。
+当前卡标明4.1.1在Jev Decision Index v0.3上的结果。旧4.1卡为public fast 1,068样本；新卡删除了这一样本量说明，并改称Overall为chance-corrected weighted aggregate。因此保留旧数值作历史，不能直接相减宣称纯adapter增益。
 
-| 项目 | 30B 官方值 |
-|---|---:|
-| Overall | 50.1 |
-| Knowledge | 32.4 |
-| Language | 58.6 |
-| Retrieval | 49.8 |
-| Tools | 76.5 |
-| Arts | 26.4 |
+| 项目 | 当前30B / 4.1.1 | 当前8B / 4.1.1 | 旧30B / 4.1历史快照 |
+|---|---:|---:|---:|
+| Overall | 51.33 | 46.72 | 50.1 |
+| Knowledge | 34.8 | 28.7 | 32.4 |
+| Language | 58.5 | 53.1 | 58.6 |
+| Retrieval | 59.8 | 60.4 | 49.8 |
+| Tools | 69.0 | 63.4 | 76.5 |
+| Arts | 25.9 | 19.0 | 26.4 |
 
-![研读绘制：保留强弱项的官方数据](src/assets/decision-evidence.svg)
-
-*研读重绘，原卡 Decision Index v0.3 public fast，越高越好；不是本地复测。*
-
-Tools 较强不意味着常识和艺术类同等可靠，Overall 50.1 也不足以承担无人验收决策。官方 local / hosted 差距约 0.6 points，是对应路径的一致性观察，不是统计置信区间。
+当前30B并非每一分项都高于8B，例如Retrieval 59.8低于60.4；不以总分替代任务适配。旧卡local / hosted约0.6points的一致性观察仅适用旧测试，不能套到新版。旧数据图仍保存在原始历史材料，本次正文以当前表为准，不再展示过时柱图。
 
 原卡评测部分提到固定 decision-engine system prompt，而使用指引强调无 system prompt 以共享 prefix。两条配方不能自动视为同一个评测设置；复现前应确认具体 benchmark 配置，不把“删 system prompt 仍能复现全部成绩”当已证实事实。
 
@@ -82,9 +84,9 @@ Tools 较强不意味着常识和艺术类同等可靠，Overall 50.1 也不足�
 
 ## 部署与失败传播
 
-原卡建议 Python≥3.9、torch≥2.11、transformers 5.16–5.17、vLLM≥0.26 且 <0.28。版本边界是发布时说明，升级后需重新验收控制 token、adapter 载入与概率接口。
+4.1.1当前卡建议Python≥3.11且<3.14、granite-switch≥0.1.1、torch≥2.11、transformers≥5.16且≤5.17.0、vLLM≥0.26且<0.31。版本边界是发布时说明，升级后需重新验收控制 token、adapter 载入与概率接口。
 
-ASR 目前是英文、小写且不带标点的转写路径，不适合直接当多语种音频理解保证。录音中的否定词、数值或实体识别错，后续 Decision 仍可能给出很尖锐的概率分布；“很确定地理解错”必须被单列。
+4.1.1的TurboCTC路径现支持英、法、德、西、葡、意、日7语种，输出标点与大小写并从音频检测语言；旧4.1的英文、小写无标点限制不再代表当前版本。但它仍是ASR级联，未与LLM或adapter联合训练，也不支持任意decode-time steering，不能称为端到端音频理解升级。录音中的否定词、数值或实体识别错，后续 Decision 仍可能给出很尖锐的概率分布；“很确定地理解错”必须被单列。
 
 Mellea 的 Guardian intrinsic 已有使用路径，Decision intrinsic 当时仍是计划，不能写成全部已上线。基座、adapter、ASR 与 SDK 要分别锁定 revision。
 
@@ -96,6 +98,7 @@ Mellea 的 Guardian intrinsic 已有使用路径，Decision intrinsic 当时仍�
 - [HF Model Card · 30B](https://huggingface.co/ibm-granite/granite-switch-4.1-30b)；[[src/granite-switch-4.1-30b-model-card|本地原卡]]
 - [HF Model Card · 8B](https://huggingface.co/ibm-granite/granite-switch-4.1-8b)
 - [Tech Blog · IBM 官方团队](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)
+- [Tech Blog · 4.1.1（本轮401，未读）](https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1)
 - [[src/BUILD|30B 组合清单]]
 - [[Topics/13_base_model/IBM_Granite/260429_Granite_4_1/Granite-4.1|Granite 4.1 主干]]
 

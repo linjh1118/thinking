@@ -1,0 +1,37 @@
+# Granite Switch Composed Model
+
+## Base Model
+
+- Identifier: ibm-granite/granite-4.1-8b
+- Model type: granite
+- Architectures: GraniteForCausalLM
+- Hidden size: 4096
+- Hidden layers: 40
+- Attention heads: 32
+- Vocab size: 100352
+
+## Embedded Adapters
+
+Total adapters: **2**
+
+| # | Name | Technology | Control Token | Token ID | Rank | Alpha | Target Modules | Source |
+|---|------|------------|---------------|----------|------|-------|----------------|--------|
+| 1 | guardian-core | alora | `<\|guardian-core\|>` | 100352 | 16 | 64 | k_proj, o_proj, q_proj, v_proj | ibm-granite/granitelib-guardian-r1.0 |
+| 2 | decision | alora | `<\|decision\|>` | 100353 | 64 | 64 | down_proj, gate_proj, k_proj, o_proj, q_proj, up_proj, v_proj | decision-4.1.1 |
+
+## Composition Details
+
+- base_param_count: 8,380,551,168
+- composed_param_count: 8,776,400,896
+- Param delta: +4.72%
+- compose_settings:
+  - technology_filter: "alora"
+  - include_adapters:
+    - "guardian-core"
+    - "decision"
+  - adapter_substitute_token_ids:
+    - 27
+    - 14711
+  - target_model: "granite-4.1-8b"
+- adapter_sources:
+  - "ibm-granite/granitelib-guardian-r1.0": "5802b88ef1f9a71e7a33c9025a36b81f2671e58d"

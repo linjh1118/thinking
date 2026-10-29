@@ -94,3 +94,9 @@ Harvey LAB 采用严格 all-pass，覆盖 24 个执业领域；19.2% 相对基�
 - 原始响应和四张官方图位于本模型 `src/`；产品截图是案例，不是受控消融实验。
 
 > 📊 相关可视化: [[Topics/13_base_model/Zhipu_GLM/Variants/261012_GLM_Legal/glm_legal_poster_zh.html|GLM-Legal 中文 Poster]]
+
+## 10月29日渠道更新：AutoClaw中的flashX-Legal
+
+[AutoClaw官方10/29公告](https://autoclaw.z.ai/blog/model/GLM-5.3-flashX-Legal/)称GLM-5.3-flashX-Legal已可在其产品中使用，列合同Word修订/批注、证据交叉核查和合规清单，并复述Harvey LAB all-pass19.2%、比底模高12.5个百分点。该数值与已有法律模型资料相同，**本页未给出独立新checkpoint、训练改动或相对GLM-Legal的新评测**。
+
+因此暂记为现有法律family的产品可用性说明，不另造新叶子、不把10/29当新权重首发。flashX-Legal与原GLM-Legal的精确checkpoint映射仍待官方证实，不能仅凭相同分数宣称权重完全相同。来源HTML已保存为本地资料包，旧首发日期与此前评测限制保留。
