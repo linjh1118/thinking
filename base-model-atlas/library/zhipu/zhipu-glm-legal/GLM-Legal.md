@@ -9,7 +9,7 @@ tags: [model-note, base-model, glm, domain-training, agentic-rl, legal]
 topic: "13_base_model"
 status: read
 created: 2026-10-14
-updated: 2026-10-14
+updated: 2026-10-29
 related: ["[[Topics/13_base_model/Zhipu_GLM/2608_GLM_5_3_Flash/GLM-5.3-Flash]]"]
 ---
 
