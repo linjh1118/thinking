@@ -24,6 +24,7 @@ from zoneinfo import ZoneInfo
 
 TOPIC = Path('/Users/omegalin/Documents/github/BrainHao/Topics/13_base_model')
 OFFICIAL_PAGES = {
+    'ant': 'https://www.ant-ling.com/en',
     'deepseek': 'https://api-docs.deepseek.com/updates/',
     'zhipu': 'https://z.ai/blog',
     'kimi': 'https://www.kimi.com/en/blog/',

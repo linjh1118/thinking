@@ -110,3 +110,9 @@ MTP联合训练两个next-token预测深度，复用同一层可在推理中提�
 - [[Topics/13_base_model/IBM_Granite/Variants/260825_Granite_Speech_5/Granite-Speech-5|Granite Speech 5.0]]：对比CTC速度路线与声文语言模型路线，勿混任务指标。
 
 > 📊 相关可视化：[[nemotron35_transcribe_poster_zh.html|中文Poster]]
+
+## 10月29日晚补充：量化结果不能借用BF16表
+
+新公开FP8/NVFP4卡都写明：主体榜单表是BF16结果，量化版本在所列转写benchmark平均错误率分别相对高**1.0% / 3.6%**，不是加1.0/3.6个百分点，也不能把4.71逐项乘一次就推算所有量化成绩。NVFP4为decoder NVFP4、Mamba/audio encoder/MTP head FP8的混合导出，要求Blackwell；需ModelOpt mixed插件、CUDA13 nvcc、显式fp8 KV，`--dtype bfloat16`只设计算/残差精度，不把量化权重还原成BF16。先编译预热，再测真实长度与并发。
+
+FP8/NVFP4为现有10/28 family的量化变体，不增加叶子或首发事件。原始MD均已归档。当前主卡Bias Metric补BBQ Accuracy Scores链接，但仍没有列出本模型的BBQ分数、分组样本或不确定性；**评测名称不等于已经公开偏见验收结果**。

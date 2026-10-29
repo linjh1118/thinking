@@ -1,0 +1,266 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://developer.ant-ling.com/en/docs/models/ling">打开官方原文 ↗</a> · <a href="official-model-page.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Ling Skip to Content 文档 博客 Search... ⌘ K 
+Command Palette 
+Search for a command to run... English 博客 文档 English 
+Introduction 
+Getting Started 
+Prerequisites 
+Quickstart 
+Changelog 
+Billing Service Upgrade Guide 
+Models 
+Ling 
+Ming 
+Pricing 
+Deprecation 
+API Reference 
+Chat 
+OpenAI Compatible 
+Anthropic Compatible 
+Audio 
+ASR 
+TTS 
+Image 
+Image Generation 
+Image Editing 
+API Guide 
+Rate Limits 
+Error Codes 
+Tutorials 
+Prompt Engineering 
+Sampling 
+Streaming 
+Structured Outputs 
+Multimodal Understanding 
+3rd-party Platforms 
+OpenRouter 
+ZenMux 
+Integration 
+OpenClaw 
+Claude Code 
+Kilo Code 
+Hermes Agent 
+FAQ 
+Contact Us 
+Introduction 
+Getting Started 
+Prerequisites 
+Quickstart 
+Changelog 
+Billing Service Upgrade Guide 
+Models 
+Ling 
+Ming 
+Pricing 
+Deprecation 
+API Reference 
+Chat 
+OpenAI Compatible 
+Anthropic Compatible 
+Audio 
+ASR 
+TTS 
+Image 
+Image Generation 
+Image Editing 
+API Guide 
+Rate Limits 
+Error Codes 
+Tutorials 
+Prompt Engineering 
+Sampling 
+Streaming 
+Structured Outputs 
+Multimodal Understanding 
+3rd-party Platforms 
+OpenRouter 
+ZenMux 
+Integration 
+OpenClaw 
+Claude Code 
+Kilo Code 
+Hermes Agent 
+FAQ 
+Contact Us 
+On This Page 
+Why Choose Ling? 
+Inference Efficiency 
+Long Context Support 
+Native Multimodal Understanding 
+Model Selection Guide 
+Model Details 
+Ling-3.1-flash 
+Ling-3.0-flash-VL 
+Ling-3.0-flash 
+Ling-3.0-tiny 
+Ling’s Evolution 
+Technology Ecosystem 
+Quick Start Scroll to top Models Ling 
+Ling 
+Ling is a general-purpose large language model series independently developed and open-sourced by Ant Group. Built on the MoE (Mixture of Experts) architecture, it has been validated on domestic heterogeneous computing platforms, achieved breakthrough at the trillion-parameter scale, and continues to evolve with long context modeling, multimodal understanding, and AI Agent collaborative reasoning capabilities. 
+Why Choose Ling? 
+Ling achieves key breakthroughs in 4 dimensions: inference efficiency, long context modeling, multimodal understanding, and training technology: 
+Inference Efficiency 
+Traditional Dense models require activating all parameters during inference, with computational overhead proportional to model size. Ling’s MoE architecture routes each token to activate only the most relevant expert subnetworks, compressing the actual computation to a minimal fraction while maintaining large-scale model capacity. 
+Long Context Support 
+Building on MoE’s efficient inference, the Ling series further advances long-sequence modeling. 
+Ling-3.1-flash : Context window up to 1M ; the official service currently exposes a 256K context window. 
+Ling-3.0-flash : Native 256K context window, extendable up to 1M . 
+Long-range information retrieval without noticeable degradation: the model reliably retrieves information regardless of whether it appears at the beginning, middle, or end of the context. 
+Native Multimodal Understanding 
+The first native multimodal model in the Ling series, Ling-3.0-flash-VL , is now released and open-sourced, deeply integrating visual understanding into the MoE architecture: 
+Native support for image, text, and video input : Goes beyond simple image captioning — multimodal information serves as a foundational input for reasoning, enabling deeper cross-modal understanding. 
+Visual feedback closed-loop mechanism : Advances tasks through a continuous “Observe → Act → Verify → Correct” cycle, allowing the model to continuously refine execution results based on visual feedback in scenarios such as medical report interpretation, frontend code generation, and GUI automation. 
+Model Selection Guide 
+The following is a capability comparison of Ling models at different scales to help you evaluate and select: 
+Model Positioning Context Parameters Activated Parameters 
+Ling-3.1-flash New-generation hybrid reasoning model, purpose-built for everyday office work, long-horizon software development, and complex Agent tasks 256K 560B 25B 
+Ling-3.0-flash-VL Native multimodal hybrid reasoning model supporting image, text, and video input with visual feedback closed-loop, ideal for multimodal understanding and generation tasks 256K 124B 5.5B 
+Ling-3.0-flash Cost-effective hybrid reasoning model with 5.1B activated parameters — high TPS for high-frequency tasks, peak inference speed up to 1000 tokens/s — fast, stable, and low cost 256K 124B 5.1B 
+Ling-3.0-tiny Lightweight hybrid reasoning model with only 1.3B activated parameters — supports on-device deployment and local offline execution, low latency and low cost, built for real-time interaction and tool use — 7.9B 1.3B 
+Selection Suggestions : 
+Need a model as a personal assistant for office work, long-horizon development, or complex Agentic tasks? Choose Ling-3.1-flash . With around 560B total parameters, it maintains high completion rates across multi-step planning, tool-chain invocation, and long-running self-correction, backed by strong world knowledge. 
+Looking to build workflows for low-cost, batch text processing or repetitive Agentic tasks? Or want real-time feedback? Start with Ling-3.0-flash — low cost, fast response, and effortless task handling. 
+Need to handle images, videos, and other multimodal content, or build vision-related automation workflows? Choose Ling-3.0-flash-VL , which natively supports image, text, and video input and continuously refines execution results through a visual feedback closed-loop, ideal for image-to-web, GUI automation, and similar scenarios. 
+For online service scenarios sensitive to inference latency and throughput, Ling-3.0-flash ’s low activated parameter count gives it superior TTFT (Time to First Token) and TPS (Tokens Per Second) performance. 
+Need on-device deployment, local offline execution, or extremely cost- and resource-constrained environments? Choose Ling-3.0-tiny — with only 1.3B activated parameters, it handles real-time interaction, lightweight code assistance, local knowledge base retrieval, and tool calling with ease. 
+Model Details 
+Next, let’s dive into the technical characteristics and Use Cases of each model: 
+Ling-3.1-flash 
+Ling-3.1-flash is a hybrid reasoning model in the Ling series, optimized for long-horizon real-world tasks and agent / Agent scenarios. The model has around 560B total parameters, activating about 25B parameters per token; the context window caps at 1M, with the official service currently exposing a 256K context window. 
+Advantages : 
+Balance of high capacity and low compute overhead : Retains 560B model capacity while keeping per-step activation at around 25B, balancing model capability with inference efficiency; balances world knowledge and response performance, suitable as an everyday assistant for a variety of tasks. 
+Long-horizon state maintenance and self-correction : Built for multi-step tasks lasting hours or longer, it consistently maintains goal alignment across multiple rounds of tool calling and environment interaction, and adjusts its path in time based on intermediate results. 
+Use Cases : 
+Everyday office collaboration. Handles the full chain from vague requirements to delivered output, including research synthesis, data analysis, and report and presentation creation. 
+Software development. Suited for complex development tasks such as cross-language refactoring, performance optimization, and codebase hotspot analysis and interpretation. 
+Professional consulting and analysis. Suited for comprehensive analysis, synthesis, information and metric interpretation, and recommended actions and reports across multiple professional domains under fragmented information. 
+Ling-3.0-flash-VL 
+Ling-3.0-flash-VL is the first native multimodal large model in the Ling series, extended from Ling-3.0-flash’s MoE (Mixture of Experts) architecture. It features 124B total parameters with 5.5B activated per inference, natively supports image, text, and video input, with a 256K token context window. The model is now open-sourced on Hugging Face and ModelScope. 
+Advantages : 
+Native multimodal understanding : Fuses vision and language capabilities at the architectural level, supporting image, text, and video input without relying on external vision modules 
+Visual feedback closed-loop mechanism : Introduces a continuous “Observe → Act → Verify → Correct” cycle, enabling the model to continuously refine execution results based on visual feedback, significantly improving task reliability and accuracy. Unlike one-shot image-to-output generation, this mechanism transforms the process into a dynamic, self-correcting workflow in scenarios such as medical report interpretation, frontend code generation, and GUI automation 
+Arbitrary-resolution visual encoder : Introduces an arbitrary-resolution visual encoder and VideoRoPE, maintaining low-latency responses in real-time video conversations, multi-turn visual interactions, and long-duration tasks 
+Deep architectural synergy : Language backbone retains the 42-layer hybrid architecture (KDA and Gated MLA alternating at a 5:1 ratio), activating only 5.5B parameters per inference from 124B total — balancing high performance with cost efficiency 
+256K context window : Supports long document and long video analysis for demanding context scenarios 
+Use Cases : 
+Visual feedback programming : Understands layout and component relationships from screenshots or reference images to generate frontend code, with self-correction via rendered output comparison to produce highly faithful web pages 
+GUI automation : As a GUI Agent, recognizes interface structures and performs cross-tool operations, effortlessly handling diverse productivity scenarios 
+Professional report interpretation : Possesses medical domain expertise while supporting cross-document and cross-format data integration and risk flagging — suitable for specialized document analysis such as health checkup report interpretation 
+Real-time video learning &amp; explanation : Enhanced subject-matter knowledge and visual reasoning capabilities enable snapshot-based learning, real-time video explanations, and video knowledge extraction, creating an interactive “watch and ask” learning companion. This experience is already available to users in the “灵光” (Ling Guang) app 
+Multimodal office automation : Handles comprehensive office tasks involving images, documents, and videos via MCP interfaces 
+Ling-3.0-flash 
+Ling-3.0-flash is the latest-generation cost-effective model in the Ling series, with 124B total parameters, 5.1B activated parameters, a native 256K context window extendable up to 1M. 
+Compared to the previous flash model, Ling-3.0-flash delivers significantly enhanced stability in long-horizon tasks, markedly higher tool calling accuracy, and substantially improved compatibility with common Harness environments. In coding tasks, Ling-3.0-flash features greatly optimized spatial understanding, capable of constructing physical scene grids and relative positions. Additionally, thanks to its hybrid Reasoning mode, task success rates across varying difficulty levels have all improved. 
+Advantages : 
+Cost-effective: lower activation, higher throughput — lower cost and higher efficiency per unit task, handling complex tasks with greater ease 
+Seamless switching between thinking and non-thinking modes — engage deep thinking for complex tasks, or disable it for high-volume production and low-latency scenarios 
+High TPS for high-frequency tasks: peak inference speed reaches 1000 tokens/s with TTFT &lt; 100ms, enabling more reading, checking, and thinking within the same time unit for more iterations and more accurate results 
+Stable tool calling: under the RL strong-check mechanism, long-horizon tool calling stability is significantly improved with reliable instruction following 
+Native 256K context window, extendable up to 1M, with full tool calling and Agent capabilities 
+Use Cases : 
+Office automation, office collaboration, and Cowork 
+Human-AI collaboration: agile and efficient daily code development under human guidance 
+High-concurrency batch data processing and analysis scenarios, such as resume screening, document review, knowledge base organization, and data cleaning 
+Scenarios requiring high response speed, such as digital human live-streaming, streaming media interaction, and real-time translation 
+Ling-3.0-tiny 
+Ling-3.0-tiny is a lightweight hybrid reasoning model in the Ling series designed for edge deployment scenarios, with 7.9B total parameters and only 1.3B activated parameters. It supports on-device deployment and local offline execution, and will be open-sourced in the near future. 
+With minimal activated parameters, it delivers real-world task execution capability, combining mathematical reasoning, instruction following, and low hallucination, achieving balanced performance across scientific reasoning, code, real-world tasks, and long context. 
+Advantages : 
+Ultra-lightweight: only 1.3B activated parameters, deployable on edge devices and resource-constrained environments with low inference latency and minimal compute overhead 
+Comprehensive capability coverage: practical performance in mathematical reasoning, instruction following, code generation, and tool calling — “tiny” does not mean compromised capability 
+Native tool-use support, enabling lightweight automation scenarios such as mobile device and browser UI automation 
+Local offline execution support, ideal for privacy-sensitive private deployments where data must not leave the device 
+Use Cases : 
+On-device applications and local offline inference, such as local knowledge base retrieval and content generation 
+Lightweight code assistants, local web page translation, and other high-frequency low-latency tasks 
+Task agents in enterprise private deployments and model foundations for vertical scenarios 
+Tool calling and UI automation for real-time control scenarios 
+Ling’s Evolution 
+Ling has undergone a complete technical evolution from computing platform validation to Agent capability breakthroughs: 
+Time Version Key Technical Breakthroughs 
+2025.03 Ling 1.0 Series Validated the engineering feasibility of MoE large language models on non-high-end heterogeneous computing platforms (non-A100/H100), completing domestic computing platform adaptation 
+2025.10 Ling 2.0 Series First breakthrough at trillion-parameter scale, introduced FP8 end-to-end training, significantly improving training efficiency and achieving cross-domain generalization 
+2026.02 Ling 2.5 Series Achieved high-throughput decoding optimization, long context understanding capability reached industry-leading levels, initial Agent interaction and tool calling foundation 
+2026.04 Ling 2.6 Series Completed the full reasoning chain from logical reasoning to task execution, significantly improved “intelligence-efficiency ratio” (task completion per unit compute), opening the era of cost-effective, scalable Agent applications 
+2026.07 Ling 3.0 Series Transitioned from migration-based hybrid linear architecture to native hybrid linear design, improving the conversion efficiency of model capacity and computation with lower expert activation ratios, and introduced KDA (Kimi Delta Attention) to enhance memory update and information retention in long sequences 
+2026.10 Ling 3.1 Series Further optimized long-horizon tasks, long-cycle engineering, and agent execution capabilities on top of 3.0. 
+Technology Ecosystem 
+Based on the Ling foundation model, we have built a complete technology ecosystem covering the full pipeline from training to deployment: 
+High-Performance Operator Library : Open-sourced high-performance training and inference operator system, covering core components such as MoE routing and attention computation, supporting full-pipeline optimization from pre-training to online inference. 
+Vertical Domain Models : Domain-adapted models for specialized scenarios such as healthcare and finance, with superior performance on domain knowledge-intensive tasks. 
+Open Source Community : All research results open-sourced to the Inclusion AI community, continuously co-building the ecosystem with developers. 
+Quick Start 
+Create API Key : Obtain access credentials. 
+Make Your First Call : Complete your first API request in 5 minutes. 
+Explore More Capabilities : Learn more about advanced features such as inference optimization and long context. Was this page helpful? Last updated on October 28, 2026 Models Ming 
+Ant Intelligence (Hang Zhou) Technology Co., Ltd.</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

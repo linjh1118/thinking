@@ -804,6 +804,7 @@ TEAMS = [
     {"id":"ernie_extra","dir":"MiroMind","name":"MiroMind · MiroThinker","region":"国内","color":"#c7a7ff","thesis":"以 interaction scaling 和 verification agent 构建 research-agent 基模。","models":[
         ["2511","MiroThinker v1","600 tool calls/task 的 interaction scaling。","https://arxiv.org/abs/2511.11793"],
         ["2603","MiroThinker 1.7","local/global verification agent。","https://arxiv.org/abs/2603.15726"]]},
+    {"id":"ant","dir":"Ant_Ling","name":"Ant Group · Ling","region":"国内","color":"#f4bd68","thesis":"混合线性注意力、稀疏MoE与长任务执行；已补Ling3.1，早期/专项谱系仍在核查。","models":[]},
 ]
 
 # Editorial order: the five domestic teams requested by the reader come first,
@@ -812,7 +813,7 @@ TEAMS = [
 # order, so the domestic view always starts DeepSeek → GLM → Kimi → Qwen → Seed.
 TEAM_PRIORITY = [
     "deepseek", "zhipu", "kimi", "qwen", "seed",
-    "minimax", "mimo", "longcat", "stepfun", "baidu", "hunyuan", "ernie_extra",
+    "minimax", "mimo", "longcat", "stepfun", "baidu", "hunyuan", "ernie_extra", "ant",
     "openai", "anthropic", "google",
     "meta", "xai", "mistral", "microsoft", "amazon", "nvidia", "cohere", "ibm",
 ]

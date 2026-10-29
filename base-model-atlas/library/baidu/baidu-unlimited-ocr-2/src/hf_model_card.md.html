@@ -67,10 +67,10 @@ model = AutoModel.from_pretrained(model_name, trust_remote_code=True, use_safete
 
 text, num_tokens = model.infer_multi(tokenizer, image_files=pages,
                                      output_path=&quot;output/multi&quot;, save_results=True)</code></pre><p>The prompt is built automatically as <code>&quot;&lt;image&gt;&quot; * num_pages + &quot;Multi page parsing.&quot;</code>, and each page is encoded as one global view (base mode). The output contains one `<code> per input page, in the same order as </code>image_files`.</p><p><strong>Single-page inference</strong> (<code>infer</code>). A single page is encoded with dynamic tiling (gundam mode) by default:</p><pre><div class="code-lang">python</div><code>text = model.infer(tokenizer, image_file=&quot;your_doc/page_1.jpg&quot;,
-                   output_path=&quot;output/single&quot;, save_results=True)</code></pre><h3 id="sglang">SGLang</h3><p>Set up the environment (uv-managed virtualenv, Python 3.10) and install the customized SGLang wheel <code>sglang-0.5.20.dev10+g8d62f5fb9c-py3-none-any.whl</code>, plus PyMuPDF for PDF-to-image conversion:</p><pre><div class="code-lang">shell</div><code>uv venv --python 3.10
+                   output_path=&quot;output/single&quot;, save_results=True)</code></pre><h3 id="sglang">SGLang</h3><p>Set up the environment (uv-managed virtualenv, Python 3.10) and install the customized SGLang wheel <code>sglang-0.5.20.dev13+g75b9b06b02-py3-none-any.whl</code>, plus PyMuPDF for PDF-to-image conversion:</p><pre><div class="code-lang">shell</div><code>uv venv --python 3.10
 source .venv/bin/activate
 
-uv pip install wheel/sglang-0.5.20.dev10+g8d62f5fb9c-py3-none-any.whl
+uv pip install wheel/sglang-0.5.20.dev13+g75b9b06b02-py3-none-any.whl
 uv pip install pymupdf==1.27.2.2
 uv pip install fastokens==0.3.2</code></pre><p>Start the SGLang server:</p><pre><div class="code-lang">shell</div><code># Page-window scheduling for very long documents (the KV tail of the previous window is reused).
 export SGLANG_UOCR_EANABLE_DOC_LIMIT=1          # 1 = enable, 0 = whole document in one window
