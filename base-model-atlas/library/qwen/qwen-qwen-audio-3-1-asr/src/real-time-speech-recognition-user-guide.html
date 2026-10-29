@@ -1,0 +1,3215 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://help.aliyun.com/en/model-studio/real-time-speech-recognition-user-guide">打开官方原文 ↗</a> · <a href="real-time-speech-recognition-user-guide.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>real-time-speech-recognition-user-guide.html.raw.txt 
+官方归档来源： https://help.aliyun.com/en/model-studio/real-time-speech-recognition-user-guide Home Page Alibaba Cloud Model Studio User Guide (Models) Model Playground Speech-to-text Real-time speech recognition - Qwen 
+Real-time speech recognition - Qwen Updated at: Copy as MD Product My Favorites 
+The real-time speech recognition service receives an audio stream and transcribes it into punctuated text in real time. Use it for live captioning, online meetings, voice chat, smart assistants, and similar scenarios. 
+Overview 
+The service streams audio and returns transcribed text with low latency. 
+Recognizes Mandarin Chinese with high accuracy, plus Cantonese, Sichuanese, and other dialects. 
+Handles complex acoustic environments, with automatic language detection and intelligent filtering of non-speech audio. 
+Recognizes a range of emotional states, including surprise, calm, happiness, sadness, disgust, anger, and fear. 
+Supports custom hotwords to improve recognition accuracy for specific terms. 
+Supports context enhancement to improve recognition accuracy by passing in conversation history or domain terms. 
+Outputs timestamps to produce structured recognition results. 
+Accepts flexible sample rates and multiple audio formats to fit different recording environments. 
+Prerequisites 
+An API key is Obtain an API key and set as an environment variable . 
+To call the service through the DashScope SDK, install the latest SDK . 
+Quick start 
+The following examples show how to call the real-time speech recognition service through the DashScope SDK. Qwen-Audio-ASR-Message 
+For access instructions, see Model access . import os
+
+import dashscope
+
+# If you have not set the environment variable, replace the following line with your Model Studio API key: api_key=&quot;sk-xxx&quot;
+# Replace {WorkspaceId} with your workspace ID in the Beijing region.
+client = dashscope.Client(
+    api_key=os.environ[&quot;DASHSCOPE_API_KEY&quot;],
+    workspace=&quot;{WorkspaceId}&quot;,
+    region=&quot;cn-beijing&quot;,
+)
+
+# audio.wav: a 16 kHz, mono WAV file with 16-bit PCM encoding.
+# recognize_file automatically sends the audio in chunks and drives the task to completion
+for event in client.audio.asr.recognize_file(
+        &quot;audio.wav&quot;,
+        model=&quot;qwen-audio-3.1-asr-flash-message&quot;,
+        format=&quot;wav&quot;,
+        sample_rate=16000):
+    payload = event.get(&#x27;payload&#x27;) or {}
+    sentence = (payload.get(&#x27;output&#x27;) or {}).get(&#x27;sentence&#x27;) or {}
+    if sentence.get(&#x27;text&#x27;) and not sentence.get(&#x27;heartbeat&#x27;):
+        print(sentence) Qwen-Audio-ASR-Streaming / Fun-ASR-Realtime 
+For AOQ use cases, supported models, and integration instructions, see Realtime API overview . Recognize speech from a microphone 
+Recognize speech from a microphone and output text in real time, so words appear as the speaker talks. Java import com.alibaba.dashscope.audio.asr.recognition.Recognition;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionParam;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionResult;
+import com.alibaba.dashscope.common.ResultCallback;
+import com.alibaba.dashscope.utils.Constants;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.TargetDataLine;
+
+import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your real workspace ID. Configurations differ by region.
+        Constants.baseWebsocketApiUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&quot;;
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(new RealtimeRecognitionTask());
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
+        System.exit(0);
+    }
+}
+
+class RealtimeRecognitionTask implements Runnable {
+    @Override
+    public void run() {
+        RecognitionParam param = RecognitionParam.builder()
+                .model(&quot;qwen-audio-3.0-asr-flash-streaming&quot;)
+                // The API Key differs between the Singapore and Beijing regions. Get an API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+                // If you have not configured the environment variable, replace the following line with your Model Studio API Key: .apiKey(&quot;sk-xxx&quot;)
+                .apiKey(System.getenv(&quot;DASHSCOPE_API_KEY&quot;))
+                .format(&quot;pcm&quot;)
+                .sampleRate(16000)
+                .build();
+        Recognition recognizer = new Recognition();
+
+        ResultCallback&lt;RecognitionResult&gt; callback = new ResultCallback&lt;RecognitionResult&gt;() {
+            @Override
+            public void onEvent(RecognitionResult result) {
+                if (result.isSentenceEnd()) {
+                    System.out.println(&quot;Final Result: &quot; + result.getSentence().getText());
+                } else {
+                    System.out.println(&quot;Intermediate Result: &quot; + result.getSentence().getText());
+                }
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println(&quot;Recognition complete&quot;);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(&quot;RecognitionCallback error: &quot; + e.getMessage());
+            }
+        };
+        try {
+            recognizer.call(param, callback);
+            // Create the audio format
+            AudioFormat audioFormat = new AudioFormat(16000, 16, 1, true, false);
+            // Match the default recording device based on the format
+            TargetDataLine targetDataLine =
+                    AudioSystem.getTargetDataLine(audioFormat);
+            targetDataLine.open(audioFormat);
+            // Start recording
+            targetDataLine.start();
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            long start = System.currentTimeMillis();
+            // Record for 50s and perform real-time transcription
+            while (System.currentTimeMillis() - start &lt; 50000) {
+                int read = targetDataLine.read(buffer.array(), 0, buffer.capacity());
+                if (read &gt; 0) {
+                    buffer.limit(read);
+                    // Send the recorded audio data to the streaming recognition service
+                    recognizer.sendAudioFrame(buffer);
+                    buffer = ByteBuffer.allocate(1024);
+                    // The recording rate is limited; sleep for a short while to prevent excessive CPU usage
+                    Thread.sleep(20);
+                }
+            }
+            recognizer.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the WebSocket connection after the task is complete
+            recognizer.getDuplexApi().close(1000, &quot;bye&quot;);
+        }
+
+        System.out.println(
+                &quot;[Metric] requestId: &quot;
+                        + recognizer.getLastRequestId()
+                        + &quot;, first package delay ms: &quot;
+                        + recognizer.getFirstPackageDelay()
+                        + &quot;, last package delay ms: &quot;
+                        + recognizer.getLastPackageDelay());
+    }
+} Python 
+Before you run the Python example, install the third-party audio playback and capture toolkit with pip install pyaudio . import os
+import signal  # for keyboard events handling (press &quot;Ctrl+C&quot; to terminate recording)
+import sys
+
+import dashscope
+import pyaudio
+from concurrent.futures import ThreadPoolExecutor
+
+mic = None
+stream = None
+
+# Set recording parameters
+sample_rate = 16000  # sampling rate (Hz)
+channels = 1  # mono channel
+dtype = &#x27;int16&#x27;  # data type
+format_pcm = &#x27;pcm&#x27;  # the format of the audio data
+block_size = 3200  # number of frames per buffer
+
+# Real-time speech recognition event receiver
+def receive_events(rec):
+    for event in rec.events():
+        payload = event.get(&#x27;payload&#x27;) or {}
+        sentence = (payload.get(&#x27;output&#x27;) or {}).get(&#x27;sentence&#x27;) or {}
+        if sentence.get(&#x27;text&#x27;) and not sentence.get(&#x27;heartbeat&#x27;):
+            print(&#x27;Recognition text: &#x27;, sentence[&#x27;text&#x27;])
+            if sentence.get(&#x27;sentence_end&#x27;):
+                print(
+                    &#x27;Recognition sentence end, request_id:%s, usage:%s&#x27;
+                    % (rec.request_id, rec.usage))
+
+def signal_handler(sig, frame):
+    print(&#x27;Ctrl+C pressed, stop recognition ...&#x27;)
+    # Stop recognition
+    recognition.stop()
+    print(&#x27;Recognition stopped.&#x27;)
+    print(
+        &#x27;[Metric] requestId: {}, first package delay ms: {}, last package delay ms: {}&#x27;
+        .format(
+            recognition.request_id,
+            recognition.first_package_delay,
+            recognition.last_package_delay,
+        ))
+    # Forcefully exit the program
+    sys.exit(0)
+
+# main function
+if __name__ == &#x27;__main__&#x27;:
+    # The API Key differs between the Singapore and Beijing regions. Get an API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    # If you have not configured the environment variable, replace the following line with your Model Studio API key: api_key=&quot;sk-xxx&quot;
+    client = dashscope.Client(
+        api_key=os.environ.get(&#x27;DASHSCOPE_API_KEY&#x27;),
+        # The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. The configuration differs by region.
+        workspace=&quot;{WorkspaceId}&quot;,
+        region=&quot;cn-beijing&quot;,
+    )
+
+    # Call recognition service, you can customize the recognition parameters, like model, format,
+    # sample_rate
+    with client.audio.asr.recognize(
+            model=&#x27;qwen-audio-3.0-asr-flash-streaming&#x27;,
+            format=format_pcm,
+            # &#x27;pcm&#x27;、&#x27;wav&#x27;、&#x27;opus&#x27;、&#x27;speex&#x27;、&#x27;aac&#x27;、&#x27;amr&#x27;, you can check the supported formats in the document
+            sample_rate=sample_rate,
+            # support 8000, 16000
+    ) as recognition:
+        # Open the microphone
+        mic = pyaudio.PyAudio()
+        stream = mic.open(format=pyaudio.paInt16,
+                          channels=1,
+                          rate=16000,
+                          input=True)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            receiver = pool.submit(receive_events, recognition)
+            try:
+                # Send audio from the microphone until &quot;Ctrl+C&quot; is pressed
+                while stream:
+                    data = stream.read(3200, exception_on_overflow=False)
+                    recognition.send_audio_frame(data)
+                recognition.stop()
+                receiver.result()
+            finally:
+                # close must run inside the pool context to unblock the receiver
+                recognition.close()
+        stream.stop_stream()
+        stream.close()
+        mic.terminate()
+        stream = None
+        mic = None Recognize a local audio file 
+Recognize a local audio file and output the result. This suits shorter, near-real-time scenarios such as chat conversations, voice commands, voice input methods, and voice search. Java import com.alibaba.dashscope.api.GeneralApi;
+import com.alibaba.dashscope.audio.asr.recognition.Recognition;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionParam;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionResult;
+import com.alibaba.dashscope.base.HalfDuplexParamBase;
+import com.alibaba.dashscope.common.GeneralListParam;
+import com.alibaba.dashscope.common.ResultCallback;
+import com.alibaba.dashscope.protocol.GeneralServiceOption;
+import com.alibaba.dashscope.protocol.HttpMethod;
+import com.alibaba.dashscope.protocol.Protocol;
+import com.alibaba.dashscope.protocol.StreamingMode;
+import com.alibaba.dashscope.utils.Constants;
+
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+class TimeUtils {
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss.SSS&quot;);
+
+    public static String getTimestamp() {
+        return LocalDateTime.now().format(formatter);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your real workspace ID. Configurations differ by region.
+        Constants.baseWebsocketApiUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&quot;;
+        // In real applications, this method only needs to be executed once at the very beginning of the program; there is no need to execute it multiple times.
+        warmUp();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(new RealtimeRecognitionTask(Paths.get(System.getProperty(&quot;user.dir&quot;), &quot;{YOUR_AUDIO_FILE}&quot;)));
+        executorService.shutdown();
+
+        // wait for all tasks to complete
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
+        System.exit(0);
+    }
+
+    public static void warmUp() {
+        try {
+            // Lightweight GET request to establish connection
+            GeneralServiceOption warmupOption = GeneralServiceOption.builder()
+                    .protocol(Protocol.HTTP)
+                    .httpMethod(HttpMethod.GET)
+                    .streamingMode(StreamingMode.OUT)
+                    .path(&quot;assistants&quot;)
+                    .build();
+
+            warmupOption.setBaseHttpUrl(Constants.baseHttpApiUrl);
+            GeneralApi&lt;HalfDuplexParamBase&gt; api = new GeneralApi&lt;&gt;();
+            api.get(GeneralListParam.builder().limit(1L).build(), warmupOption);
+        } catch (Exception e) {
+            // Reset flag to allow retry if pre-warming failed
+        }
+    }
+}
+
+class RealtimeRecognitionTask implements Runnable {
+    private Path filepath;
+
+    public RealtimeRecognitionTask(Path filepath) {
+        this.filepath = filepath;
+    }
+
+    @Override
+    public void run() {
+        RecognitionParam param = RecognitionParam.builder()
+                .model(&quot;qwen-audio-3.1-asr-flash-streaming&quot;)
+                // The API Key differs between the Singapore and Beijing regions. Get an API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+                // If you have not configured the environment variable, replace the following line with your Model Studio API Key: .apiKey(&quot;sk-xxx&quot;)
+                .apiKey(System.getenv(&quot;DASHSCOPE_API_KEY&quot;))
+                .format(&quot;wav&quot;)
+                .sampleRate(16000)
+                .build();
+        Recognition recognizer = new Recognition();
+
+        String threadName = Thread.currentThread().getName();
+
+        ResultCallback&lt;RecognitionResult&gt; callback = new ResultCallback&lt;RecognitionResult&gt;() {
+            @Override
+            public void onEvent(RecognitionResult message) {
+                if (message.isSentenceEnd()) {
+
+                    System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+
+                            &quot;[process &quot; + threadName + &quot;] Final Result:&quot; + message.getSentence().getText());
+                } else {
+                    System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+
+                            &quot;[process &quot; + threadName + &quot;] Intermediate Result: &quot; + message.getSentence().getText());
+                }
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+&quot;[&quot; + threadName + &quot;] Recognition complete&quot;);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+
+                        &quot;[&quot; + threadName + &quot;] RecognitionCallback error: &quot; + e.getMessage());
+            }
+        };
+
+        try {
+            recognizer.call(param, callback);
+            // Please replace the path with your audio file path
+            System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+&quot;[&quot; + threadName + &quot;] Input file_path is: &quot; + this.filepath);
+            // Read file and send audio by chunks
+            FileInputStream fis = new FileInputStream(this.filepath.toFile());
+            byte[] allData = new byte[fis.available()];
+            int ret = fis.read(allData);
+            fis.close();
+
+            int sendFrameLength = 3200;
+            for (int i = 0; i * sendFrameLength &lt; allData.length; i ++) {
+                int start = i * sendFrameLength;
+                int end = Math.min(start + sendFrameLength, allData.length);
+                ByteBuffer byteBuffer = ByteBuffer.wrap(allData, start, end - start);
+                recognizer.sendAudioFrame(byteBuffer);
+                Thread.sleep(100);
+            }
+
+            System.out.println(TimeUtils.getTimestamp()+&quot; &quot;+LocalDateTime.now());
+            recognizer.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Close the WebSocket connection after the task is complete
+            recognizer.getDuplexApi().close(1000, &quot;bye&quot;);
+        }
+
+        System.out.println(
+                &quot;[&quot;
+                        + threadName
+                        + &quot;][Metric] requestId: &quot;
+                        + recognizer.getLastRequestId()
+                        + &quot;, first package delay ms: &quot;
+                        + recognizer.getFirstPackageDelay()
+                        + &quot;, last package delay ms: &quot;
+                        + recognizer.getLastPackageDelay());
+    }
+} Python import os
+import time
+import dashscope
+from concurrent.futures import ThreadPoolExecutor
+
+# The API Key differs between the Singapore and Beijing regions. Get an API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+# If you have not configured the environment variable, replace the following line with your Model Studio API key: api_key=&quot;sk-xxx&quot;
+client = dashscope.Client(
+    api_key=os.environ.get(&#x27;DASHSCOPE_API_KEY&#x27;),
+    # The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. The configuration differs by region.
+    workspace=&quot;{WorkspaceId}&quot;,
+    region=&quot;cn-beijing&quot;,
+)
+
+from datetime import datetime
+
+def get_timestamp():
+    now = datetime.now()
+    formatted_timestamp = now.strftime(&quot;[%Y-%m-%d %H:%M:%S.%f]&quot;)
+    return formatted_timestamp
+
+# Real-time speech recognition event receiver
+def receive_events(rec):
+    for event in rec.events():
+        payload = event.get(&#x27;payload&#x27;) or {}
+        sentence = (payload.get(&#x27;output&#x27;) or {}).get(&#x27;sentence&#x27;) or {}
+        if sentence.get(&#x27;text&#x27;) and not sentence.get(&#x27;heartbeat&#x27;):
+            print(get_timestamp() + &#x27; Recognition text: &#x27;, sentence[&#x27;text&#x27;])
+        if sentence.get(&#x27;sentence_end&#x27;):
+            print(get_timestamp() +
+                  &#x27;Recognition sentence end, request_id:%s, usage:%s&#x27;
+                  % (rec.request_id, rec.usage))
+
+with client.audio.asr.recognize(
+        model=&#x27;qwen-audio-3.1-asr-flash-streaming&#x27;,
+        format=&#x27;wav&#x27;,
+        sample_rate=16000,
+) as recognition:
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        receiver = pool.submit(receive_events, recognition)
+        try:
+            audio_data: bytes = None
+            f = open(&quot;{YOUR_AUDIO_FILE}&quot;, &#x27;rb&#x27;)
+            if os.path.getsize(&quot;{YOUR_AUDIO_FILE}&quot;):
+                # Read all the file data into the buffer at once
+                file_buffer = f.read()
+                f.close()
+                print(&quot;Start Recognition&quot;)
+
+                # Send 3200 bytes from the buffer at a time
+                buffer_size = len(file_buffer)
+                offset = 0
+                chunk_size = 3200
+
+                while offset &lt; buffer_size:
+                    # Calculate the size of the data chunk to send this time
+                    remaining_bytes = buffer_size - offset
+                    current_chunk_size = min(chunk_size, remaining_bytes)
+
+                    # Extract the current data chunk from the buffer
+                    audio_data = file_buffer[offset:offset + current_chunk_size]
+
+                    # Send the audio data frame
+                    recognition.send_audio_frame(audio_data)
+                    # Update the offset
+                    offset += current_chunk_size
+
+                    # Add a delay to simulate real-time transmission
+                    time.sleep(0.1)
+
+                recognition.stop()
+                receiver.result()
+            else:
+                raise Exception(
+                    &#x27;The supplied file was empty (zero bytes long)&#x27;)
+        finally:
+            # close must run inside the pool context to unblock the receiver
+            recognition.close()
+
+print(
+    &#x27;[Metric] requestId: {}, first package delay ms: {}, last package delay ms: {}&#x27;
+    .format(
+        recognition.request_id,
+        recognition.first_package_delay,
+        recognition.last_package_delay,
+    )) Paraformer 
+The Paraformer example code is similar to that of Qwen-Audio-ASR-Streaming/Fun-ASR-Realtime. Replace the model name with a Paraformer model. 
+Advanced features 
+Intermediate results and text polishing 
+For qwen-audio-3.1-asr-flash-message , intermediate_result_enabled controls intermediate results and disfluency_removal_enabled controls text polishing. Both default to false . 
+When intermediate results are enabled, update the displayed sentence by sentence_id . Intermediate text can be revised, so do not concatenate each result. When sentence_end=true , replace the sentence with the final result. With polishing enabled, final results can remove fillers, repetitions, and self-corrections and refine the wording. 
+Client events · Server events 
+VAD segmentation configuration 
+Voice Activity Detection (VAD) determines when a continuous segment of speech ends, which triggers the final recognition result event. The following models enable server-side VAD by default, but their parameter names and tuning granularity differ: 
+qwen-audio-3.1-asr-flash-message ：Use vad_model to select near_meeting_16k (near-field) or far_field_meeting_16k (far-field, default). For parameter definitions, see Client events . 
+qwen-audio-3.1-asr-flash-streaming : Select the VAD model with vad_model : near_meeting_16k for near-field audio or far_field_meeting_16k for far-field audio (default). For parameter definitions, see Client events . 
+qwen-audio-3.0-asr-flash-streaming / Fun-ASR-Realtime / Paraformer : Configured through max_sentence_silence (the VAD silence threshold for segmentation, in milliseconds). When the silence after a segment of speech exceeds this threshold, the system treats the sentence as complete. 
+Qwen3-ASR-Flash-Realtime : Configured through session.turn_detection , which includes silence_duration_ms (the silence duration threshold that ends a turn when exceeded; server default 800 , with 400 recommended for conversation and chat scenarios that need fast segmentation) and threshold (VAD detection sensitivity; server default 0.2 ). Qwen3-ASR-Flash-Realtime also supports Manual mode, which disables VAD and uses client-side commit for segmentation. For details, see Qwen3-ASR-Flash-Realtime interaction modes . 
+Parameter names vary by protocol: the same concept is called max_sentence_silence in qwen-audio-3.0-asr-flash-streaming / Fun-ASR-Realtime / Paraformer, and silence_duration_ms in Qwen3-ASR-Flash-Realtime. For the full field definitions, see API reference . 
+Improve accuracy with hotwords 
+Use hotwords to improve recognition accuracy for specific terms, such as brand names, personal names, and proper terminology. 
+For detailed hotword configuration and usage, see Improve recognition accuracy . 
+Improve accuracy with context enhancement 
+Context enhancement passes conversation history or domain terminology to the ASR model to significantly improve transcription accuracy for proper terms. For detailed usage and result examples, see Context enhancement . 
+Get timestamps 
+qwen-audio-3.1-asr-flash-message also returns sentence-level and word-level timestamps in final results. For field definitions, see Server events . 
+The Qwen-Audio-ASR-Streaming, Fun-ASR-Realtime, and Paraformer model families output timestamps at both the sentence level and the word level by default, which supports subtitle alignment, keyword highlighting, karaoke-style read-along, and similar scenarios. Qwen3-ASR-Flash-Realtime (qwen3-asr-flash-realtime) does not currently return timestamps. If you need timestamps, use Qwen-Audio-ASR-Streaming, Fun-ASR-Realtime, or Paraformer. For file transcription, the Qwen ASR recording-file transcription model qwen3-asr-flash-filetrans supports word-level timestamps. For details, see Non-real-time speech recognition . 
+Timestamps are returned in milliseconds at two levels: 
+Sentence level : payload.output.sentence.begin_time and payload.output.sentence.end_time mark the start and end of a full sentence in the audio. In an intermediate result, end_time may be null and is filled with the final value when the sentence ends ( sentence_end = true ). 
+Word level : The payload.output.sentence.words array, where each element contains begin_time , end_time , text (the word or character text), and punctuation (the punctuation that follows the word, or an empty string if none). 
+The following excerpt shows the response structure: {
+  &quot;payload&quot;: {
+    &quot;output&quot;: {
+      &quot;sentence&quot;: {
+        &quot;begin_time&quot;: 170,
+        &quot;end_time&quot;: 920,
+        &quot;text&quot;: &quot;OK, I got it&quot;,
+        &quot;sentence_end&quot;: true,
+        &quot;words&quot;: [
+          { &quot;begin_time&quot;: 170, &quot;end_time&quot;: 295, &quot;text&quot;: &quot;OK&quot;, &quot;punctuation&quot;: &quot;,&quot; },
+          { &quot;begin_time&quot;: 295, &quot;end_time&quot;: 503, &quot;text&quot;: &quot;I&quot;, &quot;punctuation&quot;: &quot;&quot; },
+          { &quot;begin_time&quot;: 503, &quot;end_time&quot;: 711, &quot;text&quot;: &quot;got&quot;, &quot;punctuation&quot;: &quot;&quot; },
+          { &quot;begin_time&quot;: 711, &quot;end_time&quot;: 920, &quot;text&quot;: &quot;it&quot;, &quot;punctuation&quot;: &quot;&quot; }
+        ]
+      }
+    }
+  }
+} 
+The field names above follow the WebSocket JSON paths. Different SDKs expose these fields with their own naming conventions (dictionary keys, object properties, getter methods, and so on). For the complete field mapping, see the API reference for each SDK. 
+For the full field definitions, see API reference . 
+Emotion recognition 
+Qwen3-ASR-Flash-Realtime and some Paraformer models can include the speaker&#x27;s emotional state in the transcription result, but the two differ in output granularity and in how the feature is enabled. 
+Qwen3-ASR-Flash-Realtime (qwen3-asr-flash-realtime) : Always on, no configuration required. The emotion is returned through a top-level emotion field in both the conversation.item.input_audio_transcription.text and conversation.item.input_audio_transcription.completed events. The value is one of seven fine-grained emotions: surprised , neutral , happy , sad , disgusted , angry , and fearful . {
+  &quot;type&quot;: &quot;conversation.item.input_audio_transcription.text&quot;,
+  &quot;emotion&quot;: &quot;neutral&quot;,
+  &quot;text&quot;: &quot;The weather is nice today&quot;,
+  &quot;stash&quot;: &quot;&quot;
+} 
+Paraformer (paraformer-realtime-8k-v2) : This is the only Paraformer model that supports emotion recognition. The result is returned through payload.output.sentence.emo_tag and payload.output.sentence.emo_confidence . The value is one of three polarities: positive (such as happy or satisfied), negative (such as angry or subdued), and neutral (no clear emotion). The confidence ranges from 0.0 to 1.0. 
+Emotion recognition is returned only when all of the following conditions are met: 
+The model is paraformer-realtime-8k-v2 . 
+Semantic segmentation is off: semantic_punctuation_enabled = false (false is the default, so no special setting is needed). 
+The result is returned only in the sentence-end event, where sentence_end = true . 
+To stop returning the emotion fields, set semantic_punctuation_enabled to true . This enables semantic segmentation and no longer returns the emo_tag and emo_confidence fields. 
+The field names above follow the WebSocket JSON paths. Different SDKs expose these fields with their own naming conventions (dictionary keys, object properties, getter methods, and so on). For the complete field mapping, see the API reference for each SDK. 
+For the full field definitions, value constraints, and examples, see API reference . 
+Sensitive word filtering 
+Sensitive word filtering replaces or removes sensitive words in the recognition result. Use it for call-center quality inspection, content compliance, subtitle review, and similar scenarios. 
+Supported models: Qwen-Audio-ASR-Streaming and Fun-ASR-Realtime only. 
+Limit: You can set up to 32 sensitive words. 
+Default behavior: When the special_word_filter parameter is not passed, no sensitive words are filtered. 
+How to configure: special_word_filter is a JSON object with three subfields: 
+filter_with_signed.word_list : A string array that lists the sensitive words to replace with an equal-length string of * characters. For example, with [&quot;test&quot;] , &quot;Help me test it&quot; becomes &quot;Help me **** it&quot;. 
+filter_with_empty.word_list : A string array that lists the sensitive words to remove entirely from the result. For example, with [&quot;start&quot;] , &quot;Is the game about to start&quot; becomes &quot;Is the game about to&quot;. 
+system_reserved_filter : A boolean that defaults to false . It determines whether sensitive word filtering is enabled. 
+Configuration example: {
+  &quot;special_word_filter&quot;: {
+    &quot;filter_with_signed&quot;: {
+      &quot;word_list&quot;: [&quot;test&quot;]
+    },
+    &quot;filter_with_empty&quot;: {
+      &quot;word_list&quot;: [&quot;start&quot;, &quot;occur&quot;]
+    },
+    &quot;system_reserved_filter&quot;: true
+  }
+} 
+Different SDKs expose these parameters with their own naming conventions (dictionary keys, object properties, methods, and so on). For the complete field mapping, see the API reference. 
+Call the raw WebSocket protocol 
+The following examples show how to connect directly to the server over the raw WebSocket protocol, for scenarios that do not use the DashScope SDK. Each example is a minimal, runnable implementation. For the WebSocket protocol, see the API reference of each model. 
+Click to view raw WebSocket protocol examples Qwen-Audio-ASR-Message 
+Use qwen-audio-3.1-asr-flash-message . For examples, see WebSocket API . 
+Final results are returned by default. Set intermediate_result_enabled=true to display text as the user speaks, and disfluency_removal_enabled=true to remove fillers, repetitions, and self-corrections and polish the text. Both default to false . 
+Client events · Server events Qwen-Audio-ASR-Streaming / Fun-ASR-Realtime Python 
+Before you run the example, install the dependencies with the following commands: pip uninstall websocket-client
+pip uninstall websocket
+pip install websocket-client 
+Do not name the example file websocket.py . This name conflicts with the websocket library and causes the following error: AttributeError: module &#x27;websocket&#x27; has no attribute &#x27;WebSocketApp&#x27;. Did you mean: &#x27;WebSocket&#x27;? . # pip install websocket-client
+import os
+import json
+import time
+import uuid
+import threading
+import websocket
+
+# The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+# If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: api_key = &quot;sk-xxx&quot;
+api_key = os.environ.get(&#x27;DASHSCOPE_API_KEY&#x27;)
+# The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+url = &#x27;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&#x27;  # WebSocket server address
+audio_file = &#x27;{YOUR_AUDIO_FILE}&#x27;  # Replace with the path to your audio file
+
+# Generate a 32-character random ID
+TASK_ID = uuid.uuid4().hex[:32]
+
+task_started = False  # Flag indicating whether the task has started
+
+# Send the run-task instruction
+def send_run_task(ws):
+    run_task_message = {
+        &#x27;header&#x27;: {
+            &#x27;action&#x27;: &#x27;run-task&#x27;,
+            &#x27;task_id&#x27;: TASK_ID,
+            &#x27;streaming&#x27;: &#x27;duplex&#x27;
+        },
+        &#x27;payload&#x27;: {
+            &#x27;task_group&#x27;: &#x27;audio&#x27;,
+            &#x27;task&#x27;: &#x27;asr&#x27;,
+            &#x27;function&#x27;: &#x27;recognition&#x27;,
+            &#x27;model&#x27;: &#x27;qwen-audio-3.1-asr-flash-streaming&#x27;,
+            &#x27;parameters&#x27;: {
+                &#x27;sample_rate&#x27;: 16000,
+                &#x27;format&#x27;: &#x27;wav&#x27;
+            },
+            &#x27;input&#x27;: {}
+        }
+    }
+    ws.send(json.dumps(run_task_message))
+
+# Send the finish-task instruction
+def send_finish_task(ws):
+    finish_task_message = {
+        &#x27;header&#x27;: {
+            &#x27;action&#x27;: &#x27;finish-task&#x27;,
+            &#x27;task_id&#x27;: TASK_ID,
+            &#x27;streaming&#x27;: &#x27;duplex&#x27;
+        },
+        &#x27;payload&#x27;: {
+            &#x27;input&#x27;: {}
+        }
+    }
+    ws.send(json.dumps(finish_task_message))
+
+# Send the audio stream (send one binary chunk every 100ms)
+def send_audio_stream(ws):
+    chunk_size = 3200  # 100ms @ 16kHz 16bit mono
+    try:
+        with open(audio_file, &#x27;rb&#x27;) as f:
+            while True:
+                chunk = f.read(chunk_size)
+                if not chunk:
+                    break
+                ws.send(chunk, opcode=websocket.ABNF.OPCODE_BINARY)
+                time.sleep(0.1)
+        print(&#x27;Audio stream ended&#x27;)
+        send_finish_task(ws)
+    except Exception as e:
+        print(&#x27;Error reading audio file:&#x27;, e)
+        ws.close()
+
+# Send the run-task instruction when the connection opens
+def on_open(ws):
+    print(&#x27;Connected to server&#x27;)
+    send_run_task(ws)
+
+# Handle received messages
+def on_message(ws, data):
+    global task_started
+    message = json.loads(data)
+    event = message[&#x27;header&#x27;][&#x27;event&#x27;]
+    if event == &#x27;task-started&#x27;:
+        print(&#x27;Task started&#x27;)
+        task_started = True
+        threading.Thread(target=send_audio_stream, args=(ws,), daemon=True).start()
+    elif event == &#x27;result-generated&#x27;:
+        print(&#x27;Recognition result:&#x27;, message[&#x27;payload&#x27;][&#x27;output&#x27;][&#x27;sentence&#x27;][&#x27;text&#x27;])
+        if message[&#x27;payload&#x27;].get(&#x27;usage&#x27;):
+            print(&#x27;Task billing duration (seconds):&#x27;, message[&#x27;payload&#x27;][&#x27;usage&#x27;][&#x27;duration&#x27;])
+    elif event == &#x27;task-finished&#x27;:
+        print(&#x27;Task finished&#x27;)
+        ws.close()
+    elif event == &#x27;task-failed&#x27;:
+        print(&#x27;Task failed:&#x27;, message[&#x27;header&#x27;].get(&#x27;error_message&#x27;))
+        ws.close()
+    else:
+        print(&#x27;Unknown event:&#x27;, event)
+
+# Close the connection if the task-started event is not received
+def on_close(ws, close_status_code, close_msg):
+    if not task_started:
+        print(&#x27;Task not started, closing connection&#x27;)
+
+# Error handling
+def on_error(ws, error):
+    print(&#x27;WebSocket error:&#x27;, error)
+
+if __name__ == &#x27;__main__&#x27;:
+    ws = websocket.WebSocketApp(
+        url,
+        header={&#x27;Authorization&#x27;: f&#x27;bearer {api_key}&#x27;},
+        on_open=on_open,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close
+    )
+    ws.run_forever() Java 
+Before you run the example, install the Java-WebSocket dependency: Maven &lt;dependency&gt;
+    &lt;groupId&gt;org.java-websocket&lt;/groupId&gt;
+    &lt;artifactId&gt;Java-WebSocket&lt;/artifactId&gt;
+    &lt;version&gt;1.5.6&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.json&lt;/groupId&gt;
+    &lt;artifactId&gt;json&lt;/artifactId&gt;
+    &lt;version&gt;20240303&lt;/version&gt;
+&lt;/dependency&gt; Gradle implementation &#x27;org.java-websocket:Java-WebSocket:1.5.6&#x27;
+implementation &#x27;org.json:json:20240303&#x27; import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
+
+import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class FunASRRealtimeClient {
+
+    // The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    // If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: private static final String API_KEY = &quot;sk-xxx&quot;;
+    private static final String API_KEY = System.getenv().getOrDefault(&quot;DASHSCOPE_API_KEY&quot;, &quot;sk-xxx&quot;);
+    // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+    private static final String URL = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&quot;;
+    private static final String AUDIO_FILE = &quot;{YOUR_AUDIO_FILE}&quot;; // Replace with the path to your audio file
+    private static final String MODEL = &quot;qwen-audio-3.1-asr-flash-streaming&quot;;
+
+    // Generate a 32-character random ID
+    private static final String TASK_ID = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;).substring(0, 32);
+
+    private static final AtomicBoolean taskStarted = new AtomicBoolean(false);
+    private static WebSocketClient client;
+
+    public static void main(String[] args) throws Exception {
+        client = new WebSocketClient(new URI(URL)) {
+            @Override
+            public void onOpen(ServerHandshake handshake) {
+                System.out.println(&quot;Connected to server&quot;);
+                sendRunTask();
+            }
+
+            @Override
+            public void onMessage(String data) {
+                JSONObject message = new JSONObject(data);
+                String event = message.getJSONObject(&quot;header&quot;).getString(&quot;event&quot;);
+                switch (event) {
+                    case &quot;task-started&quot;:
+                        System.out.println(&quot;Task started&quot;);
+                        taskStarted.set(true);
+                        new Thread(FunASRRealtimeClient::sendAudioStream).start();
+                        break;
+                    case &quot;result-generated&quot;:
+                        JSONObject payload = message.getJSONObject(&quot;payload&quot;);
+                        String text = payload.getJSONObject(&quot;output&quot;).getJSONObject(&quot;sentence&quot;).getString(&quot;text&quot;);
+                        System.out.println(&quot;Recognition result: &quot; + text);
+                        if (payload.has(&quot;usage&quot;)) {
+                            System.out.println(&quot;Task billing duration (seconds): &quot; + payload.getJSONObject(&quot;usage&quot;).get(&quot;duration&quot;));
+                        }
+                        break;
+                    case &quot;task-finished&quot;:
+                        System.out.println(&quot;Task finished&quot;);
+                        close();
+                        break;
+                    case &quot;task-failed&quot;:
+                        String errMsg = message.getJSONObject(&quot;header&quot;).optString(&quot;error_message&quot;);
+                        System.err.println(&quot;Task failed: &quot; + errMsg);
+                        close();
+                        break;
+                    default:
+                        System.out.println(&quot;Unknown event: &quot; + event);
+                }
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                if (!taskStarted.get()) {
+                    System.err.println(&quot;Task not started, closing connection&quot;);
+                }
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                System.err.println(&quot;WebSocket error: &quot; + ex.getMessage());
+            }
+        };
+        client.addHeader(&quot;Authorization&quot;, &quot;bearer &quot; + API_KEY);
+        client.connectBlocking();
+    }
+
+    // Send the run-task instruction
+    private static void sendRunTask() {
+        JSONObject runTask = new JSONObject()
+                .put(&quot;header&quot;, new JSONObject()
+                        .put(&quot;action&quot;, &quot;run-task&quot;)
+                        .put(&quot;task_id&quot;, TASK_ID)
+                        .put(&quot;streaming&quot;, &quot;duplex&quot;))
+                .put(&quot;payload&quot;, new JSONObject()
+                        .put(&quot;task_group&quot;, &quot;audio&quot;)
+                        .put(&quot;task&quot;, &quot;asr&quot;)
+                        .put(&quot;function&quot;, &quot;recognition&quot;)
+                        .put(&quot;model&quot;, MODEL)
+                        .put(&quot;parameters&quot;, new JSONObject()
+                                .put(&quot;sample_rate&quot;, 16000)
+                                .put(&quot;format&quot;, &quot;wav&quot;))
+                        .put(&quot;input&quot;, new JSONObject()));
+        client.send(runTask.toString());
+    }
+
+    // Send the audio stream (send one binary chunk every 100ms)
+    private static void sendAudioStream() {
+        int chunkSize = 3200; // 100ms @ 16kHz 16bit mono
+        try {
+            byte[] audio = Files.readAllBytes(Paths.get(AUDIO_FILE));
+            int offset = 0;
+            while (offset &lt; audio.length) {
+                int end = Math.min(offset + chunkSize, audio.length);
+                byte[] chunk = new byte[end - offset];
+                System.arraycopy(audio, offset, chunk, 0, end - offset);
+                client.send(ByteBuffer.wrap(chunk));
+                offset = end;
+                Thread.sleep(100);
+            }
+            System.out.println(&quot;Audio stream ended&quot;);
+            sendFinishTask();
+        } catch (Exception e) {
+            System.err.println(&quot;Error reading audio file: &quot; + e.getMessage());
+            client.close();
+        }
+    }
+
+    // Send the finish-task instruction
+    private static void sendFinishTask() {
+        JSONObject finishTask = new JSONObject()
+                .put(&quot;header&quot;, new JSONObject()
+                        .put(&quot;action&quot;, &quot;finish-task&quot;)
+                        .put(&quot;task_id&quot;, TASK_ID)
+                        .put(&quot;streaming&quot;, &quot;duplex&quot;))
+                .put(&quot;payload&quot;, new JSONObject()
+                        .put(&quot;input&quot;, new JSONObject()));
+        client.send(finishTask.toString());
+    }
+} Node.js 
+Install the required dependencies: npm install ws
+npm install uuid 
+The example code is as follows: const fs = require(&#x27;fs&#x27;);
+const WebSocket = require(&#x27;ws&#x27;);
+const { v4: uuidv4 } = require(&#x27;uuid&#x27;); // Used to generate a UUID
+
+// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+// If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: const apiKey = &quot;sk-xxx&quot;
+const apiKey = process.env.DASHSCOPE_API_KEY;
+// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+const url = &#x27;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&#x27;; // WebSocket server address
+const audioFile = &#x27;{YOUR_AUDIO_FILE}&#x27;; // Replace with the path to your audio file
+
+// Generate a 32-character random ID
+const TASK_ID = uuidv4().replace(/-/g, &#x27;&#x27;).slice(0, 32);
+
+// Create the WebSocket client
+const ws = new WebSocket(url, {
+  headers: {
+    Authorization: `bearer ${apiKey}`
+  }
+});
+
+let taskStarted = false; // Flag indicating whether the task has started
+
+// Send the run-task instruction when the connection opens
+ws.on(&#x27;open&#x27;, () =&gt; {
+  console.log(&#x27;Connected to server&#x27;);
+  sendRunTask();
+});
+
+// Handle received messages
+ws.on(&#x27;message&#x27;, (data) =&gt; {
+  const message = JSON.parse(data);
+  switch (message.header.event) {
+    case &#x27;task-started&#x27;:
+      console.log(&#x27;Task started&#x27;);
+      taskStarted = true;
+      sendAudioStream();
+      break;
+    case &#x27;result-generated&#x27;:
+      console.log(&#x27;Recognition result:&#x27;, message.payload.output.sentence.text);
+      if (message.payload.usage) {
+        console.log(&#x27;Task billing duration (seconds):&#x27;, message.payload.usage.duration);
+      }
+      break;
+    case &#x27;task-finished&#x27;:
+      console.log(&#x27;Task finished&#x27;);
+      ws.close();
+      break;
+    case &#x27;task-failed&#x27;:
+      console.error(&#x27;Task failed:&#x27;, message.header.error_message);
+      ws.close();
+      break;
+    default:
+      console.log(&#x27;Unknown event:&#x27;, message.header.event);
+  }
+});
+
+// Close the connection if the task-started event is not received
+ws.on(&#x27;close&#x27;, () =&gt; {
+  if (!taskStarted) {
+    console.error(&#x27;Task not started, closing connection&#x27;);
+  }
+});
+
+// Send the run-task instruction
+function sendRunTask() {
+  const runTaskMessage = {
+    header: {
+      action: &#x27;run-task&#x27;,
+      task_id: TASK_ID,
+      streaming: &#x27;duplex&#x27;
+    },
+    payload: {
+      task_group: &#x27;audio&#x27;,
+      task: &#x27;asr&#x27;,
+      function: &#x27;recognition&#x27;,
+      model: &#x27;qwen-audio-3.1-asr-flash-streaming&#x27;,
+      parameters: {
+        sample_rate: 16000,
+        format: &#x27;wav&#x27;
+      },
+      input: {}
+    }
+  };
+  ws.send(JSON.stringify(runTaskMessage));
+}
+
+// Send the audio stream
+function sendAudioStream() {
+  const audioStream = fs.createReadStream(audioFile);
+  let chunkCount = 0;
+
+  function sendNextChunk() {
+    const chunk = audioStream.read();
+    if (chunk) {
+      ws.send(chunk);
+      chunkCount++;
+      setTimeout(sendNextChunk, 100); // Send once every 100ms
+    }
+  }
+
+  audioStream.on(&#x27;readable&#x27;, () =&gt; {
+    sendNextChunk();
+  });
+
+  audioStream.on(&#x27;end&#x27;, () =&gt; {
+    console.log(&#x27;Audio stream ended&#x27;);
+    sendFinishTask();
+  });
+
+  audioStream.on(&#x27;error&#x27;, (err) =&gt; {
+    console.error(&#x27;Error reading audio file:&#x27;, err);
+    ws.close();
+  });
+}
+
+// Send the finish-task instruction
+function sendFinishTask() {
+  const finishTaskMessage = {
+    header: {
+      action: &#x27;finish-task&#x27;,
+      task_id: TASK_ID,
+      streaming: &#x27;duplex&#x27;
+    },
+    payload: {
+      input: {}
+    }
+  };
+  ws.send(JSON.stringify(finishTaskMessage));
+}
+
+// Error handling
+ws.on(&#x27;error&#x27;, (error) =&gt; {
+  console.error(&#x27;WebSocket error:&#x27;, error);
+}); C# 
+The example code is as follows: using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+class Program {
+    private static ClientWebSocket _webSocket = new ClientWebSocket();
+    private static CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private static bool _taskStartedReceived = false;
+    private static bool _taskFinishedReceived = false;
+    // The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    // If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: private static readonly string ApiKey = &quot;sk-xxx&quot;
+    private static readonly string ApiKey = Environment.GetEnvironmentVariable(&quot;DASHSCOPE_API_KEY&quot;) ?? throw new InvalidOperationException(&quot;DASHSCOPE_API_KEY environment variable is not set.&quot;);
+
+    // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+    private const string WebSocketUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&quot;;
+    // Replace with the path to your audio file
+    private const string AudioFilePath = &quot;{YOUR_AUDIO_FILE}&quot;;
+
+    static async Task Main(string[] args) {
+        // Establish the WebSocket connection and configure headers for authentication
+        _webSocket.Options.SetRequestHeader(&quot;Authorization&quot;, $&quot;bearer {ApiKey}&quot;);
+
+        await _webSocket.ConnectAsync(new Uri(WebSocketUrl), _cancellationTokenSource.Token);
+
+        // Start a thread to receive WebSocket messages asynchronously
+        var receiveTask = ReceiveMessagesAsync();
+
+        // Send the run-task instruction
+        string _taskId = Guid.NewGuid().ToString(&quot;N&quot;); // Generate a 32-character random ID
+        var runTaskJson = GenerateRunTaskJson(_taskId);
+        await SendAsync(runTaskJson);
+
+        // Wait for the task-started event
+        while (!_taskStartedReceived) {
+            await Task.Delay(100, _cancellationTokenSource.Token);
+        }
+
+        // Read the local file and send the audio stream to be recognized to the server
+        await SendAudioStreamAsync(AudioFilePath);
+
+        // Send the finish-task instruction to end the task
+        var finishTaskJson = GenerateFinishTaskJson(_taskId);
+        await SendAsync(finishTaskJson);
+
+        // Wait for the task-finished event
+        while (!_taskFinishedReceived &amp;&amp; !_cancellationTokenSource.IsCancellationRequested) {
+            try {
+                await Task.Delay(100, _cancellationTokenSource.Token);
+            } catch (OperationCanceledException) {
+                // The task has been canceled, exit the loop
+                break;
+            }
+        }
+
+        // Close the connection
+        if (!_cancellationTokenSource.IsCancellationRequested) {
+            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, &quot;Closing&quot;, _cancellationTokenSource.Token);
+        }
+
+        _cancellationTokenSource.Cancel();
+        try {
+            await receiveTask;
+        } catch (OperationCanceledException) {
+            // Ignore the operation canceled exception
+        }
+    }
+
+    private static async Task ReceiveMessagesAsync() {
+        try {
+            while (_webSocket.State == WebSocketState.Open &amp;&amp; !_cancellationTokenSource.IsCancellationRequested) {
+                var message = await ReceiveMessageAsync(_cancellationTokenSource.Token);
+                if (message != null) {
+                    var eventValue = message[&quot;header&quot;]?[&quot;event&quot;]?.GetValue&lt;string&gt;();
+                    switch (eventValue) {
+                        case &quot;task-started&quot;:
+                            Console.WriteLine(&quot;Task started successfully&quot;);
+                            _taskStartedReceived = true;
+                            break;
+                        case &quot;result-generated&quot;:
+                            Console.WriteLine($&quot;Recognition result: {message[&quot;payload&quot;]?[&quot;output&quot;]?[&quot;sentence&quot;]?[&quot;text&quot;]?.GetValue&lt;string&gt;()}&quot;);
+                            if (message[&quot;payload&quot;]?[&quot;usage&quot;] != null &amp;&amp; message[&quot;payload&quot;]?[&quot;usage&quot;]?[&quot;duration&quot;] != null) {
+                                Console.WriteLine($&quot;Task billing duration (seconds): {message[&quot;payload&quot;]?[&quot;usage&quot;]?[&quot;duration&quot;]?.GetValue&lt;int&gt;()}&quot;);
+                            }
+                            break;
+                        case &quot;task-finished&quot;:
+                            Console.WriteLine(&quot;Task finished&quot;);
+                            _taskFinishedReceived = true;
+                            _cancellationTokenSource.Cancel();
+                            break;
+                        case &quot;task-failed&quot;:
+                            Console.WriteLine($&quot;Task failed: {message[&quot;header&quot;]?[&quot;error_message&quot;]?.GetValue&lt;string&gt;()}&quot;);
+                            _cancellationTokenSource.Cancel();
+                            break;
+                    }
+                }
+            }
+        } catch (OperationCanceledException) {
+            // Ignore the operation canceled exception
+        }
+    }
+
+    private static async Task&lt;JsonNode?&gt; ReceiveMessageAsync(CancellationToken cancellationToken) {
+        var buffer = new byte[1024 * 4];
+        var segment = new ArraySegment&lt;byte&gt;(buffer);
+        var sb = new StringBuilder();
+        WebSocketReceiveResult result;
+        // Receive and concatenate fragments until EndOfMessage to avoid JSON parsing failures on long messages
+        do {
+            result = await _webSocket.ReceiveAsync(segment, cancellationToken);
+            if (result.MessageType == WebSocketMessageType.Close) {
+                await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, &quot;Closing&quot;, cancellationToken);
+                return null;
+            }
+            sb.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+        } while (!result.EndOfMessage);
+
+        return JsonNode.Parse(sb.ToString());
+    }
+
+    private static async Task SendAsync(string message) {
+        var buffer = Encoding.UTF8.GetBytes(message);
+        var segment = new ArraySegment&lt;byte&gt;(buffer);
+        await _webSocket.SendAsync(segment, WebSocketMessageType.Text, true, _cancellationTokenSource.Token);
+    }
+
+    private static async Task SendAudioStreamAsync(string filePath) {
+        using (var audioStream = File.OpenRead(filePath)) {
+            var buffer = new byte[1024]; // Send 100ms of audio data each time
+            int bytesRead;
+
+            while ((bytesRead = await audioStream.ReadAsync(buffer, 0, buffer.Length)) &gt; 0) {
+                var segment = new ArraySegment&lt;byte&gt;(buffer, 0, bytesRead);
+                await _webSocket.SendAsync(segment, WebSocketMessageType.Binary, true, _cancellationTokenSource.Token);
+                await Task.Delay(100); // 100ms interval
+            }
+        }
+    }
+
+    private static string GenerateRunTaskJson(string taskId) {
+        var runTask = new JsonObject {
+            [&quot;header&quot;] = new JsonObject {
+                [&quot;action&quot;] = &quot;run-task&quot;,
+                [&quot;task_id&quot;] = taskId,
+                [&quot;streaming&quot;] = &quot;duplex&quot;
+            },
+            [&quot;payload&quot;] = new JsonObject {
+                [&quot;task_group&quot;] = &quot;audio&quot;,
+                [&quot;task&quot;] = &quot;asr&quot;,
+                [&quot;function&quot;] = &quot;recognition&quot;,
+                [&quot;model&quot;] = &quot;qwen-audio-3.1-asr-flash-streaming&quot;,
+                [&quot;parameters&quot;] = new JsonObject {
+                    [&quot;format&quot;] = &quot;wav&quot;,
+                    [&quot;sample_rate&quot;] = 16000,
+                },
+                [&quot;input&quot;] = new JsonObject()
+            }
+        };
+        return JsonSerializer.Serialize(runTask);
+    }
+
+    private static string GenerateFinishTaskJson(string taskId) {
+        var finishTask = new JsonObject {
+            [&quot;header&quot;] = new JsonObject {
+                [&quot;action&quot;] = &quot;finish-task&quot;,
+                [&quot;task_id&quot;] = taskId,
+                [&quot;streaming&quot;] = &quot;duplex&quot;
+            },
+            [&quot;payload&quot;] = new JsonObject {
+                [&quot;input&quot;] = new JsonObject()
+            }
+        };
+        return JsonSerializer.Serialize(finishTask);
+    }
+} PHP 
+The example project has the following directory structure: 
+my-php-project/ 
+├── composer.json 
+├── vendor/ 
+└── index.php 
+The contents of composer.json are as follows. Adjust the dependency versions as needed: {
+    &quot;require&quot;: {
+        &quot;react/event-loop&quot;: &quot;^1.3&quot;,
+        &quot;react/socket&quot;: &quot;^1.11&quot;,
+        &quot;react/stream&quot;: &quot;^1.2&quot;,
+        &quot;react/http&quot;: &quot;^1.1&quot;,
+        &quot;ratchet/pawl&quot;: &quot;^0.4&quot;
+    },
+    &quot;autoload&quot;: {
+        &quot;psr-4&quot;: {
+            &quot;App\\&quot;: &quot;src/&quot;
+        }
+    }
+} 
+The contents of index.php are as follows: &lt;?php
+
+require __DIR__ . &#x27;/vendor/autoload.php&#x27;;
+
+use Ratchet\Client\Connector;
+use React\EventLoop\Loop;
+use React\Socket\Connector as SocketConnector;
+use Ratchet\rfc6455\Messaging\Frame;
+
+// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+// If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: $api_key = &quot;sk-xxx&quot;
+$api_key = getenv(&quot;DASHSCOPE_API_KEY&quot;);
+// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+$websocket_url = &#x27;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&#x27;;
+$audio_file_path = &#x27;{YOUR_AUDIO_FILE}&#x27;; // Replace with the path to your audio file
+
+$loop = Loop::get();
+
+// Create a custom connector
+$socketConnector = new SocketConnector($loop, [
+    &#x27;tcp&#x27; =&gt; [
+        &#x27;bindto&#x27; =&gt; &#x27;0.0.0.0:0&#x27;,
+    ],
+    // WARNING: Disabling TLS certificate verification exposes you to man-in-the-middle attacks. Use for local debugging only; always set verify_peer/verify_peer_name to true in production.
+    &#x27;tls&#x27; =&gt; [
+        &#x27;verify_peer&#x27; =&gt; false,
+        &#x27;verify_peer_name&#x27; =&gt; false,
+    ],
+]);
+
+$connector = new Connector($loop, $socketConnector);
+
+$headers = [
+    &#x27;Authorization&#x27; =&gt; &#x27;bearer &#x27; . $api_key
+];
+
+$connector($websocket_url, [], $headers)-&gt;then(function ($conn) use ($loop, $audio_file_path) {
+    echo &quot;Connected to WebSocket server\n&quot;;
+
+    // Start a thread to receive WebSocket messages asynchronously
+    $conn-&gt;on(&#x27;message&#x27;, function($msg) use ($conn, $loop, $audio_file_path) {
+        $response = json_decode($msg, true);
+
+        if (isset($response[&#x27;header&#x27;][&#x27;event&#x27;])) {
+            handleEvent($conn, $response, $loop, $audio_file_path);
+        } else {
+            echo &quot;Unknown message format\n&quot;;
+        }
+    });
+
+    // Listen for the connection close
+    $conn-&gt;on(&#x27;close&#x27;, function($code = null, $reason = null) {
+        echo &quot;Connection closed\n&quot;;
+        if ($code !== null) {
+            echo &quot;Close code: &quot; . $code . &quot;\n&quot;;
+        }
+        if ($reason !== null) {
+            echo &quot;Close reason: &quot; . $reason . &quot;\n&quot;;
+        }
+    });
+
+    // Generate the task ID
+    $taskId = generateTaskId();
+
+    // Send the run-task instruction
+    sendRunTaskMessage($conn, $taskId);
+
+}, function ($e) {
+    echo &quot;Unable to connect: {$e-&gt;getMessage()}\n&quot;;
+});
+
+$loop-&gt;run();
+
+/**
+ * Generate the task ID
+ * @return string
+ */
+function generateTaskId(): string {
+    return bin2hex(random_bytes(16));
+}
+
+/**
+ * Send the run-task instruction
+ * @param $conn
+ * @param $taskId
+ */
+function sendRunTaskMessage($conn, $taskId) {
+    $runTaskMessage = json_encode([
+        &quot;header&quot; =&gt; [
+            &quot;action&quot; =&gt; &quot;run-task&quot;,
+            &quot;task_id&quot; =&gt; $taskId,
+            &quot;streaming&quot; =&gt; &quot;duplex&quot;
+        ],
+        &quot;payload&quot; =&gt; [
+            &quot;task_group&quot; =&gt; &quot;audio&quot;,
+            &quot;task&quot; =&gt; &quot;asr&quot;,
+            &quot;function&quot; =&gt; &quot;recognition&quot;,
+            &quot;model&quot; =&gt; &quot;qwen-audio-3.0-asr-flash-streaming&quot;,
+            &quot;parameters&quot; =&gt; [
+                &quot;format&quot; =&gt; &quot;wav&quot;,
+                &quot;sample_rate&quot; =&gt; 16000
+            ],
+            &quot;input&quot; =&gt; []
+        ]
+    ]);
+    echo &quot;Preparing to send the run-task instruction: &quot; . $runTaskMessage . &quot;\n&quot;;
+    $conn-&gt;send($runTaskMessage);
+    echo &quot;run-task instruction sent\n&quot;;
+}
+
+/**
+ * Read the audio file
+ * @param string $filePath
+ * @return bool|string
+ */
+function readAudioFile(string $filePath) {
+    $voiceData = file_get_contents($filePath);
+    if ($voiceData === false) {
+        echo &quot;Unable to read the audio file\n&quot;;
+    }
+    return $voiceData;
+}
+
+/**
+ * Split the audio data
+ * @param string $data
+ * @param int $chunkSize
+ * @return array
+ */
+function splitAudioData(string $data, int $chunkSize): array {
+    return str_split($data, $chunkSize);
+}
+
+/**
+ * Send the finish-task instruction
+ * @param $conn
+ * @param $taskId
+ */
+function sendFinishTaskMessage($conn, $taskId) {
+    $finishTaskMessage = json_encode([
+        &quot;header&quot; =&gt; [
+            &quot;action&quot; =&gt; &quot;finish-task&quot;,
+            &quot;task_id&quot; =&gt; $taskId,
+            &quot;streaming&quot; =&gt; &quot;duplex&quot;
+        ],
+        &quot;payload&quot; =&gt; [
+            &quot;input&quot; =&gt; []
+        ]
+    ]);
+    echo &quot;Preparing to send the finish-task instruction: &quot; . $finishTaskMessage . &quot;\n&quot;;
+    $conn-&gt;send($finishTaskMessage);
+    echo &quot;finish-task instruction sent\n&quot;;
+}
+
+/**
+ * Handle events
+ * @param $conn
+ * @param $response
+ * @param $loop
+ * @param $audio_file_path
+ */
+function handleEvent($conn, $response, $loop, $audio_file_path) {
+    static $taskId;
+    static $chunks;
+    static $allChunksSent = false;
+
+    if (is_null($taskId)) {
+        $taskId = generateTaskId();
+    }
+
+    switch ($response[&#x27;header&#x27;][&#x27;event&#x27;]) {
+        case &#x27;task-started&#x27;:
+            echo &quot;Task started, sending audio data...\n&quot;;
+            // Read the audio file
+            $voiceData = readAudioFile($audio_file_path);
+            if ($voiceData === false) {
+                echo &quot;Unable to read the audio file\n&quot;;
+                $conn-&gt;close();
+                return;
+            }
+
+            // Split the audio data
+            $chunks = splitAudioData($voiceData, 1024);
+
+            // Define the send function
+            $sendChunk = function() use ($conn, &amp;$chunks, $loop, &amp;$sendChunk, &amp;$allChunksSent, $taskId) {
+                if (!empty($chunks)) {
+                    $chunk = array_shift($chunks);
+                    $binaryMsg = new Frame($chunk, true, Frame::OP_BINARY);
+                    $conn-&gt;send($binaryMsg);
+                    // Send the next chunk after 100ms
+                    $loop-&gt;addTimer(0.1, $sendChunk);
+                } else {
+                    echo &quot;All data chunks sent\n&quot;;
+                    $allChunksSent = true;
+
+                    // Send the finish-task instruction
+                    sendFinishTaskMessage($conn, $taskId);
+                }
+            };
+
+            // Start sending audio data
+            $sendChunk();
+            break;
+        case &#x27;result-generated&#x27;:
+            $result = $response[&#x27;payload&#x27;][&#x27;output&#x27;][&#x27;sentence&#x27;];
+            echo &quot;Recognition result: &quot; . $result[&#x27;text&#x27;] . &quot;\n&quot;;
+            if (isset($response[&#x27;payload&#x27;][&#x27;usage&#x27;][&#x27;duration&#x27;])) {
+                echo &quot;Task billing duration (seconds): &quot; . $response[&#x27;payload&#x27;][&#x27;usage&#x27;][&#x27;duration&#x27;] . &quot;\n&quot;;
+            }
+            break;
+        case &#x27;task-finished&#x27;:
+            echo &quot;Task finished\n&quot;;
+            $conn-&gt;close();
+            break;
+        case &#x27;task-failed&#x27;:
+            echo &quot;Task failed\n&quot;;
+            echo &quot;Error code: &quot; . $response[&#x27;header&#x27;][&#x27;error_code&#x27;] . &quot;\n&quot;;
+            echo &quot;Error message: &quot; . $response[&#x27;header&#x27;][&#x27;error_message&#x27;] . &quot;\n&quot;;
+            $conn-&gt;close();
+            break;
+        case &#x27;error&#x27;:
+            echo &quot;Error: &quot; . $response[&#x27;payload&#x27;][&#x27;message&#x27;] . &quot;\n&quot;;
+            break;
+        default:
+            echo &quot;Unknown event: &quot; . $response[&#x27;header&#x27;][&#x27;event&#x27;] . &quot;\n&quot;;
+            break;
+    }
+
+    // If all data has been sent and the task has finished, close the connection
+    if ($allChunksSent &amp;&amp; $response[&#x27;header&#x27;][&#x27;event&#x27;] == &#x27;task-finished&#x27;) {
+        // Wait 1 second to ensure all data has been transmitted
+        $loop-&gt;addTimer(1, function() use ($conn) {
+            $conn-&gt;close();
+            echo &quot;Client closed the connection\n&quot;;
+        });
+    }
+} Go package main
+
+import (
+	&quot;encoding/json&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+	&quot;os&quot;
+	&quot;time&quot;
+
+	&quot;github.com/google/uuid&quot;
+	&quot;github.com/gorilla/websocket&quot;
+)
+
+const (
+	// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+	wsURL     = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference&quot; // WebSocket server address
+	audioFile = &quot;{YOUR_AUDIO_FILE}&quot;                                   // Replace with the path to your audio file
+)
+
+var dialer = websocket.DefaultDialer
+
+func main() {
+	// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    // If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: apiKey := &quot;sk-xxx&quot;
+	apiKey := os.Getenv(&quot;DASHSCOPE_API_KEY&quot;)
+
+	// Connect to the WebSocket service
+	conn, err := connectWebSocket(apiKey)
+	if err != nil {
+		log.Fatal(&quot;Failed to connect to WebSocket: &quot;, err)
+	}
+	defer closeConnection(conn)
+
+	// Start a goroutine to receive results
+	taskStarted := make(chan bool)
+	taskDone := make(chan bool)
+	startResultReceiver(conn, taskStarted, taskDone)
+
+	// Send the run-task instruction
+	taskID, err := sendRunTaskCmd(conn)
+	if err != nil {
+		log.Fatal(&quot;Failed to send the run-task instruction: &quot;, err)
+	}
+
+	// Wait for the task-started event
+	waitForTaskStarted(taskStarted)
+
+	// Send the audio file stream to be recognized
+	if err := sendAudioData(conn); err != nil {
+		log.Fatal(&quot;Failed to send audio: &quot;, err)
+	}
+
+	// Send the finish-task instruction
+	if err := sendFinishTaskCmd(conn, taskID); err != nil {
+		log.Fatal(&quot;Failed to send the finish-task instruction: &quot;, err)
+	}
+
+	// Wait for the task to finish or fail
+	&lt;-taskDone
+}
+
+// Define structs to represent the JSON data
+type Header struct {
+	Action       string                 `json:&quot;action&quot;`
+	TaskID       string                 `json:&quot;task_id&quot;`
+	Streaming    string                 `json:&quot;streaming&quot;`
+	Event        string                 `json:&quot;event&quot;`
+	ErrorCode    string                 `json:&quot;error_code,omitempty&quot;`
+	ErrorMessage string                 `json:&quot;error_message,omitempty&quot;`
+	Attributes   map[string]interface{} `json:&quot;attributes&quot;`
+}
+
+type Output struct {
+	Sentence struct {
+		BeginTime int64  `json:&quot;begin_time&quot;`
+		EndTime   *int64 `json:&quot;end_time&quot;`
+		Text      string `json:&quot;text&quot;`
+		Words     []struct {
+			BeginTime   int64  `json:&quot;begin_time&quot;`
+			EndTime     *int64 `json:&quot;end_time&quot;`
+			Text        string `json:&quot;text&quot;`
+			Punctuation string `json:&quot;punctuation&quot;`
+		} `json:&quot;words&quot;`
+	} `json:&quot;sentence&quot;`
+}
+
+type Payload struct {
+	TaskGroup  string `json:&quot;task_group&quot;`
+	Task       string `json:&quot;task&quot;`
+	Function   string `json:&quot;function&quot;`
+	Model      string `json:&quot;model&quot;`
+	Parameters Params `json:&quot;parameters&quot;`
+	Input      Input  `json:&quot;input&quot;`
+	Output     Output `json:&quot;output,omitempty&quot;`
+	Usage      *struct {
+		Duration int `json:&quot;duration&quot;`
+	} `json:&quot;usage,omitempty&quot;`
+}
+
+type Params struct {
+	Format                   string `json:&quot;format&quot;`
+	SampleRate               int    `json:&quot;sample_rate&quot;`
+	DisfluencyRemovalEnabled bool   `json:&quot;disfluency_removal_enabled&quot;`
+}
+
+type Input struct {
+}
+
+type Event struct {
+	Header  Header  `json:&quot;header&quot;`
+	Payload Payload `json:&quot;payload&quot;`
+}
+
+// Connect to the WebSocket service
+func connectWebSocket(apiKey string) (*websocket.Conn, error) {
+	header := make(http.Header)
+	header.Add(&quot;Authorization&quot;, fmt.Sprintf(&quot;bearer %s&quot;, apiKey))
+	conn, _, err := dialer.Dial(wsURL, header)
+	return conn, err
+}
+
+// Start a goroutine to receive WebSocket messages asynchronously
+func startResultReceiver(conn *websocket.Conn, taskStarted chan&lt;- bool, taskDone chan&lt;- bool) {
+	go func() {
+		for {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Println(&quot;Failed to parse server message: &quot;, err)
+				return
+			}
+			var event Event
+			err = json.Unmarshal(message, &amp;event)
+			if err != nil {
+				log.Println(&quot;Failed to parse event: &quot;, err)
+				continue
+			}
+			if handleEvent(conn, event, taskStarted, taskDone) {
+				return
+			}
+		}
+	}()
+}
+
+// Send the run-task instruction
+func sendRunTaskCmd(conn *websocket.Conn) (string, error) {
+	runTaskCmd, taskID, err := generateRunTaskCmd()
+	if err != nil {
+		return &quot;&quot;, err
+	}
+	err = conn.WriteMessage(websocket.TextMessage, []byte(runTaskCmd))
+	return taskID, err
+}
+
+// Generate the run-task instruction
+func generateRunTaskCmd() (string, string, error) {
+	taskID := uuid.New().String()
+	runTaskCmd := Event{
+		Header: Header{
+			Action:    &quot;run-task&quot;,
+			TaskID:    taskID,
+			Streaming: &quot;duplex&quot;,
+		},
+		Payload: Payload{
+			TaskGroup: &quot;audio&quot;,
+			Task:      &quot;asr&quot;,
+			Function:  &quot;recognition&quot;,
+			Model:     &quot;qwen-audio-3.1-asr-flash-streaming&quot;,
+			Parameters: Params{
+				Format:     &quot;wav&quot;,
+				SampleRate: 16000,
+			},
+			Input: Input{},
+		},
+	}
+	runTaskCmdJSON, err := json.Marshal(runTaskCmd)
+	return string(runTaskCmdJSON), taskID, err
+}
+
+// Wait for the task-started event
+func waitForTaskStarted(taskStarted chan bool) {
+	select {
+	case &lt;-taskStarted:
+		fmt.Println(&quot;Task started successfully&quot;)
+	case &lt;-time.After(10 * time.Second):
+		log.Fatal(&quot;Timed out waiting for task-started; failed to start the task&quot;)
+	}
+}
+
+// Send audio data
+func sendAudioData(conn *websocket.Conn) error {
+	file, err := os.Open(audioFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	buf := make([]byte, 1024)
+	for {
+		n, err := file.Read(buf)
+		if n == 0 {
+			break
+		}
+		if err != nil &amp;&amp; err != io.EOF {
+			return err
+		}
+		err = conn.WriteMessage(websocket.BinaryMessage, buf[:n])
+		if err != nil {
+			return err
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	return nil
+}
+
+// Send the finish-task instruction
+func sendFinishTaskCmd(conn *websocket.Conn, taskID string) error {
+	finishTaskCmd, err := generateFinishTaskCmd(taskID)
+	if err != nil {
+		return err
+	}
+	err = conn.WriteMessage(websocket.TextMessage, []byte(finishTaskCmd))
+	return err
+}
+
+// Generate the finish-task instruction
+func generateFinishTaskCmd(taskID string) (string, error) {
+	finishTaskCmd := Event{
+		Header: Header{
+			Action:    &quot;finish-task&quot;,
+			TaskID:    taskID,
+			Streaming: &quot;duplex&quot;,
+		},
+		Payload: Payload{
+			Input: Input{},
+		},
+	}
+	finishTaskCmdJSON, err := json.Marshal(finishTaskCmd)
+	return string(finishTaskCmdJSON), err
+}
+
+// Handle events
+func handleEvent(conn *websocket.Conn, event Event, taskStarted chan&lt;- bool, taskDone chan&lt;- bool) bool {
+	switch event.Header.Event {
+	case &quot;task-started&quot;:
+		fmt.Println(&quot;Received the task-started event&quot;)
+		taskStarted &lt;- true
+	case &quot;result-generated&quot;:
+		if event.Payload.Output.Sentence.Text != &quot;&quot; {
+			fmt.Println(&quot;Recognition result: &quot;, event.Payload.Output.Sentence.Text)
+		}
+		if event.Payload.Usage != nil {
+			fmt.Println(&quot;Task billing duration (seconds): &quot;, event.Payload.Usage.Duration)
+		}
+	case &quot;task-finished&quot;:
+		fmt.Println(&quot;Task finished&quot;)
+		taskDone &lt;- true
+		return true
+	case &quot;task-failed&quot;:
+		handleTaskFailed(event, conn)
+		taskDone &lt;- true
+		return true
+	default:
+		log.Printf(&quot;Unexpected event: %v&quot;, event)
+	}
+	return false
+}
+
+// Handle the task-failed event
+func handleTaskFailed(event Event, conn *websocket.Conn) {
+	if event.Header.ErrorMessage != &quot;&quot; {
+		log.Fatalf(&quot;Task failed: %s&quot;, event.Header.ErrorMessage)
+	} else {
+		log.Fatal(&quot;The task failed for an unknown reason&quot;)
+	}
+}
+
+// Close the connection
+func closeConnection(conn *websocket.Conn) {
+	if conn != nil {
+		conn.Close()
+	}
+} Qwen3-ASR-Flash-Realtime 
+Note The example code reads your_audio_file.pcm (PCM16, 16 kHz, mono). If you only have an MP3, WAV, or similar format, convert it with ffmpeg: ffmpeg -i your_audio.mp3 -ar 16000 -ac 1 -f s16le your_audio_file.pcm 
+Note In non-VAD (Manual) mode, we recommend that the cumulative duration of audio sent in a single session does not exceed 60 seconds. Python 
+Before you run the example, install the dependencies with the following commands: pip uninstall websocket-client
+pip uninstall websocket
+pip install websocket-client 
+Do not name the example file websocket.py . This name conflicts with the websocket library and causes the following error: AttributeError: module &#x27;websocket&#x27; has no attribute &#x27;WebSocketApp&#x27;. Did you mean: &#x27;WebSocket&#x27;? . # pip install websocket-client
+import os
+import time
+import json
+import threading
+import base64
+import websocket
+import logging
+import logging.handlers
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+# If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: API_KEY=&quot;sk-xxx&quot;
+API_KEY = os.environ.get(&quot;DASHSCOPE_API_KEY&quot;, &quot;sk-xxx&quot;)
+QWEN_MODEL = &quot;qwen3-asr-flash-realtime&quot;
+# The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+baseUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&quot;
+url = f&quot;{baseUrl}?model={QWEN_MODEL}&quot;
+print(f&quot;Connecting to server: {url}&quot;)
+
+# Note: In non-VAD mode, it is recommended that the cumulative duration of continuously sent audio does not exceed 60s
+enableServerVad = True
+is_running = True  # Add a running flag
+
+headers = [
+    &quot;Authorization: Bearer &quot; + API_KEY,
+    &quot;OpenAI-Beta: realtime=v1&quot;
+]
+
+def init_logger():
+    formatter = logging.Formatter(&#x27;%(asctime)s|%(levelname)s|%(message)s&#x27;)
+    f_handler = logging.handlers.RotatingFileHandler(
+        &quot;omni_tester.log&quot;, maxBytes=100 * 1024 * 1024, backupCount=3
+    )
+    f_handler.setLevel(logging.DEBUG)
+    f_handler.setFormatter(formatter)
+
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG)
+    console.setFormatter(formatter)
+
+    logger.addHandler(f_handler)
+    logger.addHandler(console)
+
+def on_open(ws):
+    logger.info(&quot;Connected to server.&quot;)
+
+    # Session update event
+    event_manual = {
+        &quot;event_id&quot;: &quot;event_123&quot;,
+        &quot;type&quot;: &quot;session.update&quot;,
+        &quot;session&quot;: {
+            &quot;modalities&quot;: [&quot;text&quot;],
+            &quot;input_audio_format&quot;: &quot;pcm&quot;,
+            &quot;sample_rate&quot;: 16000,
+            # &quot;input_audio_transcription&quot;: {
+            #     # Language identifier, optional; recommended to set it if the language is known
+            #     &quot;language&quot;: &quot;zh&quot;
+            # },
+            &quot;turn_detection&quot;: None
+        }
+    }
+    event_vad = {
+        &quot;event_id&quot;: &quot;event_123&quot;,
+        &quot;type&quot;: &quot;session.update&quot;,
+        &quot;session&quot;: {
+            &quot;modalities&quot;: [&quot;text&quot;],
+            &quot;input_audio_format&quot;: &quot;pcm&quot;,
+            &quot;sample_rate&quot;: 16000,
+            # &quot;input_audio_transcription&quot;: {
+            #     &quot;language&quot;: &quot;zh&quot;
+            # },
+            &quot;turn_detection&quot;: {
+                &quot;type&quot;: &quot;server_vad&quot;,
+                &quot;threshold&quot;: 0.2,
+                &quot;silence_duration_ms&quot;: 400
+            }
+        }
+    }
+    if enableServerVad:
+        logger.info(f&quot;Sending event: {json.dumps(event_vad, indent=2)}&quot;)
+        ws.send(json.dumps(event_vad))
+    else:
+        logger.info(f&quot;Sending event: {json.dumps(event_manual, indent=2)}&quot;)
+        ws.send(json.dumps(event_manual))
+
+def on_message(ws, message):
+    global is_running
+    try:
+        data = json.loads(message)
+        logger.info(f&quot;Received event: {json.dumps(data, ensure_ascii=False, indent=2)}&quot;)
+        if data.get(&quot;type&quot;) == &quot;conversation.item.input_audio_transcription.completed&quot;:
+            logger.info(f&quot;Final transcript: {data.get(&#x27;transcript&#x27;)}&quot;)
+        elif data.get(&quot;type&quot;) == &quot;session.finished&quot;:
+            logger.info(&quot;Closing WebSocket connection after session finished...&quot;)
+            is_running = False  # Stop the audio sending thread
+            ws.close()
+    except json.JSONDecodeError:
+        logger.error(f&quot;Failed to parse message: {message}&quot;)
+
+def on_error(ws, error):
+    logger.error(f&quot;Error: {error}&quot;)
+
+def on_close(ws, close_status_code, close_msg):
+    logger.info(f&quot;Connection closed: {close_status_code} - {close_msg}&quot;)
+
+def send_audio(ws, local_audio_path):
+    time.sleep(3)  # Wait for the session update to complete
+    global is_running
+
+    with open(local_audio_path, &#x27;rb&#x27;) as audio_file:
+        logger.info(f&quot;File reading started: {datetime.now().strftime(&#x27;%Y-%m-%d %H:%M:%S.%f&#x27;)[:-3]}&quot;)
+        while is_running:
+            audio_data = audio_file.read(3200)  # ~0.1s PCM16/16kHz
+            if not audio_data:
+                logger.info(f&quot;File reading finished: {datetime.now().strftime(&#x27;%Y-%m-%d %H:%M:%S.%f&#x27;)[:-3]}&quot;)
+                if ws.sock and ws.sock.connected:
+                    if not enableServerVad:
+                        commit_event = {
+                            &quot;event_id&quot;: &quot;event_789&quot;,
+                            &quot;type&quot;: &quot;input_audio_buffer.commit&quot;
+                        }
+                        ws.send(json.dumps(commit_event))
+                    finish_event = {
+                        &quot;event_id&quot;: &quot;event_987&quot;,
+                        &quot;type&quot;: &quot;session.finish&quot;
+                    }
+                    ws.send(json.dumps(finish_event))
+                break
+
+            if not ws.sock or not ws.sock.connected:
+                logger.info(&quot;WebSocket is closed, stopping audio sending.&quot;)
+                break
+
+            encoded_data = base64.b64encode(audio_data).decode(&#x27;utf-8&#x27;)
+            eventd = {
+                &quot;event_id&quot;: f&quot;event_{int(time.time() * 1000)}&quot;,
+                &quot;type&quot;: &quot;input_audio_buffer.append&quot;,
+                &quot;audio&quot;: encoded_data
+            }
+            ws.send(json.dumps(eventd))
+            logger.info(f&quot;Sending audio event: {eventd[&#x27;event_id&#x27;]}&quot;)
+            time.sleep(0.1)  # Simulate real-time capture
+
+# Initialize logging
+init_logger()
+logger.info(f&quot;Connecting to WebSocket server at {url}...&quot;)
+
+local_audio_path = &quot;your_audio_file.pcm&quot;
+ws = websocket.WebSocketApp(
+    url,
+    header=headers,
+    on_open=on_open,
+    on_message=on_message,
+    on_error=on_error,
+    on_close=on_close
+)
+
+thread = threading.Thread(target=send_audio, args=(ws, local_audio_path))
+thread.start()
+ws.run_forever() Java 
+Before you run the example, install the Java-WebSocket dependency: Maven &lt;dependency&gt;
+    &lt;groupId&gt;org.java-websocket&lt;/groupId&gt;
+    &lt;artifactId&gt;Java-WebSocket&lt;/artifactId&gt;
+    &lt;version&gt;1.5.6&lt;/version&gt;
+&lt;/dependency&gt; Gradle implementation &#x27;org.java-websocket:Java-WebSocket:1.5.6&#x27; import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
+
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.*;
+
+public class QwenASRRealtimeClient {
+
+    private static final Logger logger = Logger.getLogger(QwenASRRealtimeClient.class.getName());
+    // The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    // If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: private static final String API_KEY = &quot;sk-xxx&quot;
+    private static final String API_KEY = System.getenv().getOrDefault(&quot;DASHSCOPE_API_KEY&quot;, &quot;sk-xxx&quot;);
+    private static final String MODEL = &quot;qwen3-asr-flash-realtime&quot;;
+
+    // Controls whether to use VAD mode
+    private static final boolean enableServerVad = true;
+
+    private static final AtomicBoolean isRunning = new AtomicBoolean(true);
+    private static WebSocketClient client;
+
+    public static void main(String[] args) throws Exception {
+        initLogger();
+
+        // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+        String baseUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&quot;;
+        String url = baseUrl + &quot;?model=&quot; + MODEL;
+        logger.info(&quot;Connecting to server: &quot; + url);
+
+        client = new WebSocketClient(new URI(url)) {
+            @Override
+            public void onOpen(ServerHandshake handshake) {
+                logger.info(&quot;Connected to server.&quot;);
+                sendSessionUpdate();
+            }
+
+            @Override
+            public void onMessage(String message) {
+                try {
+                    JSONObject data = new JSONObject(message);
+                    String eventType = data.optString(&quot;type&quot;);
+
+                    logger.info(&quot;Received event: &quot; + data.toString(2));
+
+                    // The final recognition result is in the transcription.completed event
+                    if (&quot;conversation.item.input_audio_transcription.completed&quot;.equals(eventType)) {
+                        logger.info(&quot;Final transcript: &quot; + data.optString(&quot;transcript&quot;));
+                    }
+
+                    // On receiving the finished event -&gt; stop the sending thread and close the connection
+                    if (&quot;session.finished&quot;.equals(eventType)) {
+                        logger.info(&quot;Closing WebSocket connection after session finished...&quot;);
+
+                        isRunning.set(false); // Stop the audio sending thread
+                        if (this.isOpen()) {
+                            this.close(1000, &quot;ASR finished&quot;);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.severe(&quot;Failed to parse message: &quot; + message);
+                }
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                logger.info(&quot;Connection closed: &quot; + code + &quot; - &quot; + reason);
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                logger.severe(&quot;Error: &quot; + ex.getMessage());
+            }
+        };
+
+        // Add request headers
+        client.addHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + API_KEY);
+        client.addHeader(&quot;OpenAI-Beta&quot;, &quot;realtime=v1&quot;);
+
+        client.connectBlocking(); // Block until the connection is established
+
+        // Replace with the path to the audio file to be recognized
+        String localAudioPath = &quot;your_audio_file.pcm&quot;;
+        Thread audioThread = new Thread(() -&gt; {
+            try {
+                sendAudio(localAudioPath);
+            } catch (Exception e) {
+                logger.severe(&quot;Audio sending thread error: &quot; + e.getMessage());
+            }
+        });
+        audioThread.start();
+    }
+
+    /** Session update event (enable/disable VAD) */
+    private static void sendSessionUpdate() {
+        JSONObject eventNoVad = new JSONObject()
+                .put(&quot;event_id&quot;, &quot;event_123&quot;)
+                .put(&quot;type&quot;, &quot;session.update&quot;)
+                .put(&quot;session&quot;, new JSONObject()
+                        .put(&quot;modalities&quot;, new String[]{&quot;text&quot;})
+                        .put(&quot;input_audio_format&quot;, &quot;pcm&quot;)
+                        .put(&quot;sample_rate&quot;, 16000)
+                        // .put(&quot;input_audio_transcription&quot;, new JSONObject()
+                        //         .put(&quot;language&quot;, &quot;zh&quot;))
+                        .put(&quot;turn_detection&quot;, JSONObject.NULL) // Manual mode
+                );
+
+        JSONObject eventVad = new JSONObject()
+                .put(&quot;event_id&quot;, &quot;event_123&quot;)
+                .put(&quot;type&quot;, &quot;session.update&quot;)
+                .put(&quot;session&quot;, new JSONObject()
+                        .put(&quot;modalities&quot;, new String[]{&quot;text&quot;})
+                        .put(&quot;input_audio_format&quot;, &quot;pcm&quot;)
+                        .put(&quot;sample_rate&quot;, 16000)
+                        // .put(&quot;input_audio_transcription&quot;, new JSONObject()
+                        //         .put(&quot;language&quot;, &quot;zh&quot;))
+                        .put(&quot;turn_detection&quot;, new JSONObject()
+                                .put(&quot;type&quot;, &quot;server_vad&quot;)
+                                .put(&quot;threshold&quot;, 0.2)
+                                .put(&quot;silence_duration_ms&quot;, 400))
+                );
+
+        if (enableServerVad) {
+            logger.info(&quot;Sending event (VAD):\n&quot; + eventVad.toString(2));
+            client.send(eventVad.toString());
+        } else {
+            logger.info(&quot;Sending event (Manual):\n&quot; + eventNoVad.toString(2));
+            client.send(eventNoVad.toString());
+        }
+    }
+
+    /** Send the audio file stream */
+    private static void sendAudio(String localAudioPath) throws Exception {
+        Thread.sleep(3000); // Wait for the session to be ready
+        byte[] allBytes = Files.readAllBytes(Paths.get(localAudioPath));
+        logger.info(&quot;File reading started&quot;);
+
+        int offset = 0;
+        while (isRunning.get() &amp;&amp; offset &lt; allBytes.length) {
+            int chunkSize = Math.min(3200, allBytes.length - offset);
+            byte[] chunk = new byte[chunkSize];
+            System.arraycopy(allBytes, offset, chunk, 0, chunkSize);
+            offset += chunkSize;
+
+            if (client != null &amp;&amp; client.isOpen()) {
+                String encoded = Base64.getEncoder().encodeToString(chunk);
+                JSONObject eventd = new JSONObject()
+                        .put(&quot;event_id&quot;, &quot;event_&quot; + System.currentTimeMillis())
+                        .put(&quot;type&quot;, &quot;input_audio_buffer.append&quot;)
+                        .put(&quot;audio&quot;, encoded);
+
+                client.send(eventd.toString());
+                logger.info(&quot;Sending audio event: &quot; + eventd.getString(&quot;event_id&quot;));
+            } else {
+                break; // Avoid continuing to send after disconnection
+            }
+
+            Thread.sleep(100); // Simulate real-time sending
+        }
+
+        logger.info(&quot;File reading finished&quot;);
+
+        if (client != null &amp;&amp; client.isOpen()) {
+            // Commit is required in non-VAD mode
+            if (!enableServerVad) {
+                JSONObject commitEvent = new JSONObject()
+                        .put(&quot;event_id&quot;, &quot;event_789&quot;)
+                        .put(&quot;type&quot;, &quot;input_audio_buffer.commit&quot;);
+                client.send(commitEvent.toString());
+                logger.info(&quot;Sent commit event for manual mode.&quot;);
+            }
+
+            JSONObject finishEvent = new JSONObject()
+                    .put(&quot;event_id&quot;, &quot;event_987&quot;)
+                    .put(&quot;type&quot;, &quot;session.finish&quot;);
+            client.send(finishEvent.toString());
+            logger.info(&quot;Sent finish event.&quot;);
+        }
+    }
+
+    /** Initialize logging */
+    private static void initLogger() {
+        logger.setLevel(Level.ALL);
+        Logger rootLogger = Logger.getLogger(&quot;&quot;);
+        for (Handler h : rootLogger.getHandlers()) {
+            rootLogger.removeHandler(h);
+        }
+
+        Handler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.ALL);
+        consoleHandler.setFormatter(new SimpleFormatter());
+        logger.addHandler(consoleHandler);
+    }
+} Node.js 
+Before you run the example, install the dependencies with the following command: npm install ws /**
+ * Qwen-ASR Realtime WebSocket client (Node.js version)
+ * Features:
+ * - Supports VAD mode and Manual mode
+ * - Sends session.update to start the session
+ * - Continuously sends audio chunks via input_audio_buffer.append
+ * - In Manual mode, sends input_audio_buffer.commit
+ * - Sends the session.finish event
+ * - Closes the connection after receiving the session.finished event
+ */
+
+import WebSocket from &#x27;ws&#x27;;
+import fs from &#x27;fs&#x27;;
+
+// ===== Configuration =====
+// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+// If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: const API_KEY = &quot;sk-xxx&quot;
+const API_KEY = process.env.DASHSCOPE_API_KEY || &#x27;sk-xxx&#x27;;
+const MODEL = &#x27;qwen3-asr-flash-realtime&#x27;;
+const enableServerVad = true; // true for VAD mode, false for Manual mode
+const localAudioPath = &#x27;your_audio_file.pcm&#x27;; // Path to the PCM16, 16kHz audio file
+
+// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+const baseUrl = &#x27;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&#x27;;
+const url = `${baseUrl}?model=${MODEL}`;
+
+console.log(`Connecting to server: ${url}`);
+
+// ===== State control =====
+let isRunning = true;
+
+// ===== Establish the connection =====
+const ws = new WebSocket(url, {
+    headers: {
+        &#x27;Authorization&#x27;: `Bearer ${API_KEY}`,
+        &#x27;OpenAI-Beta&#x27;: &#x27;realtime=v1&#x27;
+    }
+});
+
+// ===== Event bindings =====
+ws.on(&#x27;open&#x27;, () =&gt; {
+    console.log(&#x27;[WebSocket] Connected to server.&#x27;);
+    sendSessionUpdate();
+    // Start the audio sending thread
+    sendAudio(localAudioPath);
+});
+
+ws.on(&#x27;message&#x27;, (message) =&gt; {
+    try {
+        const data = JSON.parse(message);
+        console.log(&#x27;[Received Event]:&#x27;, JSON.stringify(data, null, 2));
+
+        // The final recognition result is in the transcription.completed event
+        if (data.type === &#x27;conversation.item.input_audio_transcription.completed&#x27;) {
+            console.log(`[Final Transcript] ${data.transcript}`);
+        }
+
+        // Received the finished event
+        if (data.type === &#x27;session.finished&#x27;) {
+            console.log(&#x27;[Action] Closing WebSocket connection after session finished...&#x27;);
+
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.close(1000, &#x27;ASR finished&#x27;);
+            }
+        }
+    } catch (e) {
+        console.error(&#x27;[Error] Failed to parse message:&#x27;, message);
+    }
+});
+
+ws.on(&#x27;close&#x27;, (code, reason) =&gt; {
+    console.log(`[WebSocket] Connection closed: ${code} - ${reason}`);
+});
+
+ws.on(&#x27;error&#x27;, (err) =&gt; {
+    console.error(&#x27;[WebSocket Error]&#x27;, err);
+});
+
+// ===== Session update =====
+function sendSessionUpdate() {
+    const eventNoVad = {
+        event_id: &#x27;event_123&#x27;,
+        type: &#x27;session.update&#x27;,
+        session: {
+            modalities: [&#x27;text&#x27;],
+            input_audio_format: &#x27;pcm&#x27;,
+            sample_rate: 16000,
+            // input_audio_transcription: {
+            //     language: &#x27;zh&#x27;
+            // },
+            turn_detection: null
+        }
+    };
+
+    const eventVad = {
+        event_id: &#x27;event_123&#x27;,
+        type: &#x27;session.update&#x27;,
+        session: {
+            modalities: [&#x27;text&#x27;],
+            input_audio_format: &#x27;pcm&#x27;,
+            sample_rate: 16000,
+            // input_audio_transcription: {
+            //     language: &#x27;zh&#x27;
+            // },
+            turn_detection: {
+                type: &#x27;server_vad&#x27;,
+                threshold: 0.2,
+                silence_duration_ms: 400
+            }
+        }
+    };
+
+    if (enableServerVad) {
+        console.log(&#x27;[Send Event] VAD Mode:\n&#x27;, JSON.stringify(eventVad, null, 2));
+        ws.send(JSON.stringify(eventVad));
+    } else {
+        console.log(&#x27;[Send Event] Manual Mode:\n&#x27;, JSON.stringify(eventNoVad, null, 2));
+        ws.send(JSON.stringify(eventNoVad));
+    }
+}
+
+// ===== Send the audio file stream =====
+function sendAudio(audioPath) {
+    setTimeout(() =&gt; {
+        console.log(`[File Read Start] ${audioPath}`);
+        const buffer = fs.readFileSync(audioPath);
+
+        let offset = 0;
+        const chunkSize = 3200; // About 0.1s of PCM16 audio
+
+        function sendChunk() {
+            if (!isRunning) return;
+            if (offset &gt;= buffer.length) {
+                isRunning = false; // Stop sending audio
+                console.log(&#x27;[File Read End]&#x27;);
+                if (ws.readyState === WebSocket.OPEN) {
+                    if (!enableServerVad) {
+                        const commitEvent = {
+                            event_id: &#x27;event_789&#x27;,
+                            type: &#x27;input_audio_buffer.commit&#x27;
+                        };
+                        ws.send(JSON.stringify(commitEvent));
+                        console.log(&#x27;[Send Commit Event]&#x27;);
+                    }
+
+                    const finishEvent = {
+                        event_id: &#x27;event_987&#x27;,
+                        type: &#x27;session.finish&#x27;
+                    };
+                    ws.send(JSON.stringify(finishEvent));
+                    console.log(&#x27;[Send Finish Event]&#x27;);
+                }
+
+                return;
+            }
+
+            if (ws.readyState !== WebSocket.OPEN) {
+                console.log(&#x27;[Stop] WebSocket is not open.&#x27;);
+                return;
+            }
+
+            const chunk = buffer.slice(offset, offset + chunkSize);
+            offset += chunkSize;
+
+            const encoded = chunk.toString(&#x27;base64&#x27;);
+            const appendEvent = {
+                event_id: `event_${Date.now()}`,
+                type: &#x27;input_audio_buffer.append&#x27;,
+                audio: encoded
+            };
+
+            ws.send(JSON.stringify(appendEvent));
+            console.log(`[Send Audio Event] ${appendEvent.event_id}`);
+
+            setTimeout(sendChunk, 100); // Simulate real-time sending
+        }
+
+        sendChunk();
+    }, 3000); // Wait for the session configuration to complete
+} C# 
+The example code is as follows: using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json.Nodes;
+
+class Program {
+    private static ClientWebSocket _webSocket = new ClientWebSocket();
+    private static CancellationTokenSource _cts = new CancellationTokenSource();
+    private static bool _sessionFinished = false;
+    private static bool _isRunning = true;
+
+    // Controls whether to use VAD mode
+    private const bool EnableServerVad = true;
+
+    // The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+    // If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: private static readonly string ApiKey = &quot;sk-xxx&quot;
+    private static readonly string ApiKey = Environment.GetEnvironmentVariable(&quot;DASHSCOPE_API_KEY&quot;) ?? throw new InvalidOperationException(&quot;DASHSCOPE_API_KEY environment variable is not set.&quot;);
+    private const string Model = &quot;qwen3-asr-flash-realtime&quot;;
+    // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+    private const string BaseUrl = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&quot;;
+    private const string AudioFilePath = &quot;your_audio_file.pcm&quot;; // Replace with the path to your PCM audio file
+
+    static async Task Main(string[] args) {
+        var url = $&quot;{BaseUrl}?model={Model}&quot;;
+        Console.WriteLine($&quot;Connecting to server: {url}&quot;);
+
+        // Set authentication headers
+        _webSocket.Options.SetRequestHeader(&quot;Authorization&quot;, $&quot;Bearer {ApiKey}&quot;);
+        _webSocket.Options.SetRequestHeader(&quot;OpenAI-Beta&quot;, &quot;realtime=v1&quot;);
+
+        await _webSocket.ConnectAsync(new Uri(url), _cts.Token);
+        Console.WriteLine(&quot;Connected to server.&quot;);
+
+        // Start the message receiving task
+        var receiveTask = ReceiveMessagesAsync();
+
+        // Send the session.update configuration
+        await SendSessionUpdateAsync();
+
+        // Send the audio stream
+        await SendAudioStreamAsync();
+
+        // Wait for the session.finished event
+        while (!_sessionFinished &amp;&amp; !_cts.IsCancellationRequested) {
+            await Task.Delay(100);
+        }
+
+        if (_webSocket.State == WebSocketState.Open) {
+            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, &quot;ASR finished&quot;, _cts.Token);
+        }
+    }
+
+    private static async Task SendAsync(string text) {
+        var bytes = Encoding.UTF8.GetBytes(text);
+        await _webSocket.SendAsync(new ArraySegment&lt;byte&gt;(bytes), WebSocketMessageType.Text, true, _cts.Token);
+    }
+
+    // Send the session.update event
+    private static async Task SendSessionUpdateAsync() {
+        var session = new JsonObject {
+            [&quot;modalities&quot;] = new JsonArray { &quot;text&quot; },
+            [&quot;input_audio_format&quot;] = &quot;pcm&quot;,
+            [&quot;sample_rate&quot;] = 16000,
+            // [&quot;input_audio_transcription&quot;] = new JsonObject { [&quot;language&quot;] = &quot;zh&quot; }
+        };
+        if (EnableServerVad) {
+            session[&quot;turn_detection&quot;] = new JsonObject {
+                [&quot;type&quot;] = &quot;server_vad&quot;,
+                [&quot;threshold&quot;] = 0.2,
+                [&quot;silence_duration_ms&quot;] = 400
+            };
+        } else {
+            session[&quot;turn_detection&quot;] = null;
+        }
+        var payload = new JsonObject {
+            [&quot;event_id&quot;] = &quot;event_123&quot;,
+            [&quot;type&quot;] = &quot;session.update&quot;,
+            [&quot;session&quot;] = session
+        };
+        Console.WriteLine($&quot;Sending session.update: {payload.ToJsonString()}&quot;);
+        await SendAsync(payload.ToJsonString());
+    }
+
+    // Send the audio stream (send one PCM chunk every 100ms)
+    private static async Task SendAudioStreamAsync() {
+        await Task.Delay(3000); // Wait for the session configuration to complete
+        const int chunkSize = 3200; // 100ms @ 16kHz 16bit mono
+        using var fs = new FileStream(AudioFilePath, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[chunkSize];
+        int read;
+        while (_isRunning &amp;&amp; (read = await fs.ReadAsync(buffer, 0, chunkSize)) &gt; 0) {
+            if (_webSocket.State != WebSocketState.Open) break;
+            string b64 = Convert.ToBase64String(buffer, 0, read);
+            var append = new JsonObject {
+                [&quot;event_id&quot;] = $&quot;event_{DateTimeOffset.Now.ToUnixTimeMilliseconds()}&quot;,
+                [&quot;type&quot;] = &quot;input_audio_buffer.append&quot;,
+                [&quot;audio&quot;] = b64
+            };
+            await SendAsync(append.ToJsonString());
+            await Task.Delay(100);
+        }
+        Console.WriteLine(&quot;File read end.&quot;);
+        if (_webSocket.State == WebSocketState.Open) {
+            if (!EnableServerVad) {
+                var commit = new JsonObject {
+                    [&quot;event_id&quot;] = &quot;event_789&quot;,
+                    [&quot;type&quot;] = &quot;input_audio_buffer.commit&quot;
+                };
+                await SendAsync(commit.ToJsonString());
+            }
+            var finish = new JsonObject {
+                [&quot;event_id&quot;] = &quot;event_987&quot;,
+                [&quot;type&quot;] = &quot;session.finish&quot;
+            };
+            await SendAsync(finish.ToJsonString());
+        }
+    }
+
+    // Receive and handle server-side events
+    private static async Task ReceiveMessagesAsync() {
+        var buffer = new byte[16384];
+        var sb = new StringBuilder();
+        while (_webSocket.State == WebSocketState.Open &amp;&amp; !_cts.IsCancellationRequested) {
+            try {
+                var result = await _webSocket.ReceiveAsync(new ArraySegment&lt;byte&gt;(buffer), _cts.Token);
+                if (result.MessageType == WebSocketMessageType.Close) {
+                    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, &quot;Closing&quot;, _cts.Token);
+                    break;
+                }
+                sb.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+                if (!result.EndOfMessage) continue;
+                string text = sb.ToString();
+                sb.Clear();
+                var data = JsonNode.Parse(text);
+                string? type = data?[&quot;type&quot;]?.GetValue&lt;string&gt;();
+                Console.WriteLine($&quot;Received event: {type}&quot;);
+                if (type == &quot;conversation.item.input_audio_transcription.completed&quot;) {
+                    Console.WriteLine($&quot;Final transcript: {data![&quot;transcript&quot;]}&quot;);
+                } else if (type == &quot;session.finished&quot;) {
+                    Console.WriteLine(&quot;Session finished, closing...&quot;);
+                    _sessionFinished = true;
+                    _isRunning = false;
+                    break;
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($&quot;Receive error: {ex.Message}&quot;);
+                break;
+            }
+        }
+    }
+} PHP 
+The example project has the following directory structure: 
+my-php-project/ 
+├── composer.json 
+├── vendor/ 
+└── index.php 
+The contents of composer.json are as follows. Adjust the dependency versions as needed: {
+    &quot;require&quot;: {
+        &quot;react/event-loop&quot;: &quot;^1.3&quot;,
+        &quot;react/socket&quot;: &quot;^1.11&quot;,
+        &quot;ratchet/pawl&quot;: &quot;^0.4&quot;
+    }
+} 
+The contents of index.php are as follows: &lt;?php
+
+require __DIR__ . &#x27;/vendor/autoload.php&#x27;;
+
+use Ratchet\Client\Connector;
+use React\EventLoop\Loop;
+use React\Socket\Connector as SocketConnector;
+
+// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+// If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: $api_key = &quot;sk-xxx&quot;
+$api_key = getenv(&quot;DASHSCOPE_API_KEY&quot;);
+$model = &#x27;qwen3-asr-flash-realtime&#x27;;
+// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+$base_url = &#x27;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&#x27;;
+$websocket_url = $base_url . &#x27;?model=&#x27; . $model;
+$audio_file_path = &#x27;your_audio_file.pcm&#x27;; // Replace with the path to your PCM audio file
+
+// Controls whether to use VAD mode
+$enable_server_vad = true;
+
+$loop = Loop::get();
+$socketConnector = new SocketConnector($loop, [
+    // WARNING: Disabling TLS certificate verification exposes you to man-in-the-middle attacks. Use for local debugging only; always set verify_peer/verify_peer_name to true in production.
+    &#x27;tls&#x27; =&gt; [&#x27;verify_peer&#x27; =&gt; false, &#x27;verify_peer_name&#x27; =&gt; false],
+]);
+$connector = new Connector($loop, $socketConnector);
+
+$headers = [
+    &#x27;Authorization&#x27; =&gt; &#x27;Bearer &#x27; . $api_key,
+    &#x27;OpenAI-Beta&#x27; =&gt; &#x27;realtime=v1&#x27;,
+];
+
+$is_running = true;
+
+$connector($websocket_url, [], $headers)-&gt;then(function ($conn) use ($loop, $audio_file_path, $enable_server_vad, &amp;$is_running) {
+    echo &quot;Connected to WebSocket server\n&quot;;
+
+    // Listen for server-side events
+    $conn-&gt;on(&#x27;message&#x27;, function($msg) use ($conn, &amp;$is_running) {
+        $event = json_decode($msg, true);
+        if (!isset($event[&#x27;type&#x27;])) {
+            return;
+        }
+        echo &quot;Received event: {$event[&#x27;type&#x27;]}\n&quot;;
+        if ($event[&#x27;type&#x27;] === &#x27;conversation.item.input_audio_transcription.completed&#x27;) {
+            echo &quot;Final transcript: {$event[&#x27;transcript&#x27;]}\n&quot;;
+        } elseif ($event[&#x27;type&#x27;] === &#x27;session.finished&#x27;) {
+            echo &quot;Session finished, closing...\n&quot;;
+            $is_running = false;
+            $conn-&gt;close();
+        }
+    });
+    $conn-&gt;on(&#x27;close&#x27;, function() {
+        echo &quot;Connection closed\n&quot;;
+    });
+
+    // Send the session.update event
+    sendSessionUpdate($conn, $enable_server_vad);
+
+    // Start sending audio after the session configuration completes
+    $loop-&gt;addTimer(3, function () use ($conn, $audio_file_path, $enable_server_vad, $loop, &amp;$is_running) {
+        sendAudioStream($conn, $audio_file_path, $enable_server_vad, $loop, $is_running);
+    });
+}, function ($e) {
+    echo &quot;Unable to connect: {$e-&gt;getMessage()}\n&quot;;
+});
+
+$loop-&gt;run();
+
+// Send the session.update event
+function sendSessionUpdate($conn, $enable_server_vad) {
+    $session = [
+        &#x27;modalities&#x27; =&gt; [&#x27;text&#x27;],
+        &#x27;input_audio_format&#x27; =&gt; &#x27;pcm&#x27;,
+        &#x27;sample_rate&#x27; =&gt; 16000,
+        // &#x27;input_audio_transcription&#x27; =&gt; [&#x27;language&#x27; =&gt; &#x27;zh&#x27;],
+        &#x27;turn_detection&#x27; =&gt; $enable_server_vad ? [
+            &#x27;type&#x27; =&gt; &#x27;server_vad&#x27;,
+            &#x27;threshold&#x27; =&gt; 0.2,
+            &#x27;silence_duration_ms&#x27; =&gt; 400,
+        ] : null,
+    ];
+    $event = [
+        &#x27;event_id&#x27; =&gt; &#x27;event_123&#x27;,
+        &#x27;type&#x27; =&gt; &#x27;session.update&#x27;,
+        &#x27;session&#x27; =&gt; $session,
+    ];
+    $conn-&gt;send(json_encode($event));
+    echo &quot;Sent session.update\n&quot;;
+}
+
+// Send the audio stream (send one PCM chunk every 100ms)
+function sendAudioStream($conn, $audio_file_path, $enable_server_vad, $loop, &amp;$is_running) {
+    $fp = fopen($audio_file_path, &#x27;rb&#x27;);
+    if (!$fp) {
+        echo &quot;Unable to open the audio file\n&quot;;
+        return;
+    }
+    $send_chunk = function() use ($conn, $fp, $enable_server_vad, $loop, &amp;$send_chunk, &amp;$is_running) {
+        if (!$is_running) {
+            fclose($fp);
+            return;
+        }
+        $chunk = fread($fp, 3200); // 100ms @ 16kHz 16bit mono
+        if ($chunk === false || strlen($chunk) === 0) {
+            fclose($fp);
+            echo &quot;Audio stream ended\n&quot;;
+            if (!$enable_server_vad) {
+                $conn-&gt;send(json_encode([
+                    &#x27;event_id&#x27; =&gt; &#x27;event_789&#x27;,
+                    &#x27;type&#x27; =&gt; &#x27;input_audio_buffer.commit&#x27;,
+                ]));
+            }
+            $conn-&gt;send(json_encode([
+                &#x27;event_id&#x27; =&gt; &#x27;event_987&#x27;,
+                &#x27;type&#x27; =&gt; &#x27;session.finish&#x27;,
+            ]));
+            return;
+        }
+        $append = [
+            &#x27;event_id&#x27; =&gt; &#x27;event_&#x27; . round(microtime(true) * 1000),
+            &#x27;type&#x27; =&gt; &#x27;input_audio_buffer.append&#x27;,
+            &#x27;audio&#x27; =&gt; base64_encode($chunk),
+        ];
+        $conn-&gt;send(json_encode($append));
+        $loop-&gt;addTimer(0.1, $send_chunk);
+    };
+    $send_chunk();
+} Go 
+Before you run the example, install the required dependency: go get github.com/gorilla/websocket package main
+
+import (
+	&quot;encoding/base64&quot;
+	&quot;encoding/json&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;log&quot;
+	&quot;net/http&quot;
+	&quot;os&quot;
+	&quot;time&quot;
+
+	&quot;github.com/gorilla/websocket&quot;
+)
+
+const (
+	// The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+	baseURL         = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime&quot;
+	model           = &quot;qwen3-asr-flash-realtime&quot;
+	audioFile       = &quot;your_audio_file.pcm&quot; // Replace with the path to your PCM audio file
+	enableServerVad = true                  // Controls whether to use VAD mode
+)
+
+// Server-side event structure
+type ServerEvent struct {
+	Type       string `json:&quot;type&quot;`
+	Transcript string `json:&quot;transcript,omitempty&quot;`
+}
+
+func main() {
+	// The API Key differs between the Singapore and Beijing regions. Get your API Key: https://help.aliyun.com/zh/model-studio/get-api-key
+	// If you have not configured the environment variable, replace the following line with your Alibaba Cloud Model Studio API Key: apiKey := &quot;sk-xxx&quot;
+	apiKey := os.Getenv(&quot;DASHSCOPE_API_KEY&quot;)
+
+	url := baseURL + &quot;?model=&quot; + model
+	log.Printf(&quot;Connecting to server: %s&quot;, url)
+
+	conn, err := connect(url, apiKey)
+	if err != nil {
+		log.Fatal(&quot;Failed to connect to WebSocket: &quot;, err)
+	}
+	defer conn.Close()
+
+	// Start a goroutine to receive messages
+	sessionFinished := make(chan bool, 1)
+	go receiveMessages(conn, sessionFinished)
+
+	// Send session.update
+	if err := sendSessionUpdate(conn); err != nil {
+		log.Fatal(&quot;Failed to send session.update: &quot;, err)
+	}
+
+	// Wait for the session configuration to complete
+	time.Sleep(3 * time.Second)
+
+	// Send the audio stream
+	if err := sendAudioStream(conn); err != nil {
+		log.Fatal(&quot;Failed to send audio: &quot;, err)
+	}
+
+	// Wait for session.finished
+	&lt;-sessionFinished
+}
+
+// Establish the WebSocket connection
+func connect(url, apiKey string) (*websocket.Conn, error) {
+	headers := http.Header{}
+	headers.Set(&quot;Authorization&quot;, &quot;Bearer &quot;+apiKey)
+	headers.Set(&quot;OpenAI-Beta&quot;, &quot;realtime=v1&quot;)
+	conn, _, err := websocket.DefaultDialer.Dial(url, headers)
+	return conn, err
+}
+
+// Send the session.update event
+func sendSessionUpdate(conn *websocket.Conn) error {
+	session := map[string]interface{}{
+		&quot;modalities&quot;:         []string{&quot;text&quot;},
+		&quot;input_audio_format&quot;: &quot;pcm&quot;,
+		&quot;sample_rate&quot;:        16000,
+		// &quot;input_audio_transcription&quot;: map[string]interface{}{
+		// 	&quot;language&quot;: &quot;zh&quot;,
+		// },
+	}
+	if enableServerVad {
+		session[&quot;turn_detection&quot;] = map[string]interface{}{
+			&quot;type&quot;:                &quot;server_vad&quot;,
+			&quot;threshold&quot;:           0.2,
+			&quot;silence_duration_ms&quot;: 400,
+		}
+	} else {
+		session[&quot;turn_detection&quot;] = nil
+	}
+	event := map[string]interface{}{
+		&quot;event_id&quot;: &quot;event_123&quot;,
+		&quot;type&quot;:     &quot;session.update&quot;,
+		&quot;session&quot;:  session,
+	}
+	payload, _ := json.Marshal(event)
+	log.Printf(&quot;Sending session.update: %s&quot;, string(payload))
+	return conn.WriteMessage(websocket.TextMessage, payload)
+}
+
+// Send the audio stream (send one PCM chunk every 100ms)
+func sendAudioStream(conn *websocket.Conn) error {
+	f, err := os.Open(audioFile)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	chunk := make([]byte, 3200) // 100ms @ 16kHz 16bit mono
+	for {
+		n, err := f.Read(chunk)
+		if n &gt; 0 {
+			event := map[string]interface{}{
+				&quot;event_id&quot;: fmt.Sprintf(&quot;event_%d&quot;, time.Now().UnixMilli()),
+				&quot;type&quot;:     &quot;input_audio_buffer.append&quot;,
+				&quot;audio&quot;:    base64.StdEncoding.EncodeToString(chunk[:n]),
+			}
+			payload, _ := json.Marshal(event)
+			if err := conn.WriteMessage(websocket.TextMessage, payload); err != nil {
+				return err
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+	}
+	log.Println(&quot;Audio stream ended&quot;)
+	if !enableServerVad {
+		commitEvt := map[string]interface{}{
+			&quot;event_id&quot;: &quot;event_789&quot;,
+			&quot;type&quot;:     &quot;input_audio_buffer.commit&quot;,
+		}
+		payload, _ := json.Marshal(commitEvt)
+		if err := conn.WriteMessage(websocket.TextMessage, payload); err != nil {
+			return err
+		}
+	}
+	finishEvt := map[string]interface{}{
+		&quot;event_id&quot;: &quot;event_987&quot;,
+		&quot;type&quot;:     &quot;session.finish&quot;,
+	}
+	payload, _ := json.Marshal(finishEvt)
+	return conn.WriteMessage(websocket.TextMessage, payload)
+}
+
+// Receive and handle server-side events
+func receiveMessages(conn *websocket.Conn, sessionFinished chan&lt;- bool) {
+	for {
+		_, msg, err := conn.ReadMessage()
+		if err != nil {
+			log.Println(&quot;Error reading message: &quot;, err)
+			sessionFinished &lt;- true
+			return
+		}
+		var evt ServerEvent
+		if err := json.Unmarshal(msg, &amp;evt); err != nil {
+			log.Println(&quot;Error parsing message: &quot;, err)
+			continue
+		}
+		log.Printf(&quot;Received event: %s&quot;, evt.Type)
+		switch evt.Type {
+		case &quot;conversation.item.input_audio_transcription.completed&quot;:
+			log.Printf(&quot;Final transcript: %s&quot;, evt.Transcript)
+		case &quot;session.finished&quot;:
+			log.Println(&quot;Session finished&quot;)
+			sessionFinished &lt;- true
+			return
+		}
+	}
+} Paraformer 
+The Paraformer example code is similar to that of Qwen-Audio-ASR-Streaming/Fun-ASR-Realtime. Replace the model name with a Paraformer model. 
+Apply in production 
+Reuse connections (WebSocket) 
+The WebSocket connections for Qwen-Audio-ASR-Streaming/Fun-ASR-Realtime and Paraformer support reuse: after one recognition task finishes, you can start the next task without reestablishing the connection. 
+Reuse flow : The client sends finish-task . After the server returns task-finished , the client can send run-task again to start a new task. 
+Important 
+Wait for the server to return the task-finished event before starting a new task. 
+Different tasks over a reused connection must use different task_id values. 
+When a task fails, the server returns an error event and closes the connection. That connection cannot be reused. 
+If no new task starts within 60 seconds after a task ends, the connection closes automatically. 
+Qwen3-ASR-Flash-Realtime uses a session model and does not support connection reuse. Close the connection after each session ends. 
+For the events of each model, see the corresponding API reference . 
+High-concurrency best practices 
+The DashScope SDK includes a built-in pooling mechanism that reuses WebSocket connections and recognition objects, which avoids the overhead of frequent creation and destruction. 
+Important Currently, only the Java SDK supports this feature. 
+Click to view high-concurrency best practices Prerequisites 
+Obtain an API key 
+The DashScope SDK is installed and meets the version requirement. We recommend that you install the latest version : Java SDK version 2.16.9 or later. 
+The Java SDK combines a built-in connection pool with a custom object pool to achieve optimal performance: 
+Connection pool : The OkHttp3 connection pool integrated in the SDK manages and reuses the underlying WebSocket connections, which reduces network handshake overhead. This feature is enabled by default. 
+Object pool : Built on commons-pool2 , the object pool maintains a set of Recognition objects whose connections are already established. Borrowing an object from the pool eliminates the connection setup latency and significantly reduces first-packet latency. Implementation steps 
+
+Add dependencies 
+Add dashscope-sdk-java and commons-pool2 to your dependency configuration file, based on your project&#x27;s build tool. 
+The following examples show the configuration for Maven and Gradle: Maven 
+Open the pom.xml file of your Maven project. 
+Add the following dependencies inside the &lt;dependencies&gt; tag. &lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+    &lt;artifactId&gt;dashscope-sdk-java&lt;/artifactId&gt;
+    &lt;!-- Replace &#x27;the-latest-version&#x27; with version 2.16.9 or later. You can look up version numbers at: https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java --&gt;
+    &lt;version&gt;the-latest-version&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+    &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+    &lt;!-- Replace &#x27;the-latest-version&#x27; with the latest version. You can look up version numbers at: https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 --&gt;
+    &lt;version&gt;the-latest-version&lt;/version&gt;
+&lt;/dependency&gt; 
+Save the pom.xml file. 
+Run a Maven command (such as mvn clean install or mvn compile ) to update the project dependencies. Gradle 
+Open the build.gradle file of your Gradle project. 
+Add the following dependencies inside the dependencies block. dependencies {
+    // Replace &#x27;the-latest-version&#x27; with version 2.16.9 or later. You can look up version numbers at: https://mvnrepository.com/artifact/com.alibaba/dashscope-sdk-java
+    implementation group: &#x27;com.alibaba&#x27;, name: &#x27;dashscope-sdk-java&#x27;, version: &#x27;the-latest-version&#x27;
+
+    // Replace &#x27;the-latest-version&#x27; with the latest version. You can look up version numbers at: https://mvnrepository.com/artifact/org.apache.commons/commons-pool2
+    implementation group: &#x27;org.apache.commons&#x27;, name: &#x27;commons-pool2&#x27;, version: &#x27;the-latest-version&#x27;
+} 
+Save the build.gradle file. 
+On the command line, switch to the project root directory and run the following Gradle command to update the project dependencies. ./gradlew build --refresh-dependencies 
+On Windows, use the following command: gradlew build --refresh-dependencies 
+
+Configure the connection pool 
+Configure the key connection pool parameters through environment variables: 
+
+Environment variable 
+Description 
+
+DASHSCOPE_CONNECTION_POOL_SIZE 
+The connection pool size. 
+Recommended value: at least twice the peak concurrency. 
+Default value: 32. 
+
+DASHSCOPE_MAXIMUM_ASYNC_REQUESTS 
+The maximum number of asynchronous requests. 
+Recommended value: the same as DASHSCOPE_CONNECTION_POOL_SIZE . 
+Default value: 32. 
+
+DASHSCOPE_MAXIMUM_ASYNC_REQUESTS_PER_HOST 
+The maximum number of asynchronous requests per host. 
+Recommended value: the same as DASHSCOPE_CONNECTION_POOL_SIZE . 
+Default value: 32. 
+
+Configure the object pool 
+Configure the object pool size through an environment variable: 
+
+Environment variable 
+Description 
+
+RECOGNITION_OBJECTPOOL_SIZE 
+The object pool size. 
+Recommended value: 1.5 to 2 times the peak concurrency. 
+Default value: 500. 
+Important 
+The object pool size ( RECOGNITION_OBJECTPOOL_SIZE ) must be less than or equal to the connection pool size ( DASHSCOPE_CONNECTION_POOL_SIZE ). Otherwise, when the object pool requests an object and the connection pool is full, the calling thread blocks. 
+The object pool size must not exceed your account&#x27;s queries per second (QPS) limit. 
+Create the object pool with the following code: class RecognitionObjectPool {
+    // ... For the full example, see the complete code.
+    public static GenericObjectPool&lt;Recognition&gt; getInstance() {
+        lock.lock();
+        if (recognitionGenericObjectPool == null) {
+            int objectPoolSize = getObjectivePoolSize();
+            RecognitionObjectFactory recognitionObjectFactory =
+                    new RecognitionObjectFactory();
+            GenericObjectPoolConfig&lt;Recognition&gt; config =
+                    new GenericObjectPoolConfig&lt;&gt;();
+            config.setMaxTotal(objectPoolSize);
+            config.setMaxIdle(objectPoolSize);
+            config.setMinIdle(objectPoolSize);
+            recognitionGenericObjectPool =
+                    new GenericObjectPool&lt;&gt;(recognitionObjectFactory, config);
+        }
+        lock.unlock();
+        return recognitionGenericObjectPool;
+    }
+} 
+
+Borrow a Recognition object from the object pool 
+When the number of unreturned objects exceeds the object pool limit, the system creates additional Recognition objects. These new objects must reestablish a WebSocket connection and cannot be reused. recognizer = RecognitionObjectPool.getInstance().borrowObject(); 
+
+Perform speech recognition 
+Call the call or streamCall method of the Recognition object to perform speech recognition. 
+
+Return the Recognition object 
+After the speech recognition task finishes, return the Recognition object so that it can be reused. Do not return objects with unfinished or failed tasks. RecognitionObjectPool.getInstance().returnObject(recognizer); Complete code package org.alibaba.bailian.example.examples;
+
+import com.alibaba.dashscope.audio.asr.recognition.Recognition;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionParam;
+import com.alibaba.dashscope.audio.asr.recognition.RecognitionResult;
+import com.alibaba.dashscope.common.ResultCallback;
+import com.alibaba.dashscope.exception.NoApiKeyException;
+import com.alibaba.dashscope.utils.ApiKey;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import com.alibaba.dashscope.utils.Constants;
+
+public class Main {
+    public static void checkoutEnv(String envName, int defaultSize) {
+        if (System.getenv(envName) != null) {
+            System.out.println(&quot;[ENV CHECK]: &quot; + envName + &quot; &quot;
+                    + System.getenv(envName));
+        } else {
+            System.out.println(&quot;[ENV CHECK]: &quot; + envName
+                    + &quot; Using Default which is &quot; + defaultSize);
+        }
+    }
+
+    public static void main(String[] args)
+            throws NoApiKeyException, InterruptedException {
+        // The following is the configuration for the China (Beijing) region. When calling, replace &quot;{WorkspaceId}&quot; with your actual workspace ID. Configurations differ by region.
+        Constants.baseHttpApiUrl = &quot;https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api/v1&quot;;
+        checkoutEnv(&quot;DASHSCOPE_CONNECTION_POOL_SIZE&quot;, 32);
+        checkoutEnv(&quot;DASHSCOPE_MAXIMUM_ASYNC_REQUESTS&quot;, 32);
+        checkoutEnv(&quot;DASHSCOPE_MAXIMUM_ASYNC_REQUESTS_PER_HOST&quot;, 32);
+        checkoutEnv(RecognitionObjectPool.RECOGNITION_OBJECTPOOL_SIZE_ENV,
+                RecognitionObjectPool.DEFAULT_OBJECT_POOL_SIZE);
+
+        int threadNums = 3;
+        String currentDir = System.getProperty(&quot;user.dir&quot;);
+        Path[] filePaths = {
+                Paths.get(currentDir, &quot;{YOUR_AUDIO_FILE}&quot;),
+                Paths.get(currentDir, &quot;{YOUR_AUDIO_FILE}&quot;),
+                Paths.get(currentDir, &quot;{YOUR_AUDIO_FILE}&quot;),
+        };
+        ExecutorService executorService = Executors.newFixedThreadPool(threadNums);
+        for (int i = 0; i &lt; threadNums; i++) {
+            executorService.submit(new RealtimeRecognizeTask(filePaths));
+        }
+        executorService.shutdown();
+        executorService.awaitTermination(10, TimeUnit.MINUTES);
+        System.exit(0);
+    }
+}
+
+class RecognitionObjectFactory extends BasePooledObjectFactory&lt;Recognition&gt; {
+    public RecognitionObjectFactory() {
+        super();
+    }
+
+    @Override
+    public Recognition create() throws Exception {
+        return new Recognition();
+    }
+
+    @Override
+    public PooledObject&lt;Recognition&gt; wrap(Recognition obj) {
+        return new DefaultPooledObject&lt;&gt;(obj);
+    }
+}
+
+class RecognitionObjectPool {
+    public static GenericObjectPool&lt;Recognition&gt; recognitionGenericObjectPool;
+    public static String RECOGNITION_OBJECTPOOL_SIZE_ENV =
+            &quot;RECOGNITION_OBJECTPOOL_SIZE&quot;;
+    public static int DEFAULT_OBJECT_POOL_SIZE = 500;
+    private static Lock lock = new java.util.concurrent.locks.ReentrantLock();
+
+    public static int getObjectivePoolSize() {
+        try {
+            Integer n = Integer.parseInt(
+                    System.getenv(RECOGNITION_OBJECTPOOL_SIZE_ENV));
+            return n;
+        } catch (NumberFormatException e) {
+            return DEFAULT_OBJECT_POOL_SIZE;
+        }
+    }
+
+    public static GenericObjectPool&lt;Recognition&gt; getInstance() {
+        lock.lock();
+        if (recognitionGenericObjectPool == null) {
+            int objectPoolSize = getObjectivePoolSize();
+            System.out.println(&quot;RECOGNITION_OBJECTPOOL_SIZE: &quot;
+                    + objectPoolSize);
+            RecognitionObjectFactory recognitionObjectFactory =
+                    new RecognitionObjectFactory();
+            GenericObjectPoolConfig&lt;Recognition&gt; config =
+                    new GenericObjectPoolConfig&lt;&gt;();
+            config.setMaxTotal(objectPoolSize);
+            config.setMaxIdle(objectPoolSize);
+            config.setMinIdle(objectPoolSize);
+            recognitionGenericObjectPool =
+                    new GenericObjectPool&lt;&gt;(recognitionObjectFactory, config);
+        }
+        lock.unlock();
+        return recognitionGenericObjectPool;
+    }
+}
+
+class RealtimeRecognizeTask implements Runnable {
+    private static final Object lock = new Object();
+    private Path[] filePaths;
+
+    public RealtimeRecognizeTask(Path[] filePaths) {
+        this.filePaths = filePaths;
+    }
+
+    private static String getDashScopeApiKey() throws NoApiKeyException {
+        String dashScopeApiKey = null;
+        try {
+            ApiKey apiKey = new ApiKey();
+            dashScopeApiKey = ApiKey.getApiKey(null);
+        } catch (NoApiKeyException e) {
+            System.out.println(&quot;No API key found in environment.&quot;);
+        }
+        if (dashScopeApiKey == null) {
+            dashScopeApiKey = &quot;your-dashscope-apikey&quot;;
+        }
+        return dashScopeApiKey;
+    }
+
+    public void runCallback() {
+        for (Path filePath : filePaths) {
+            RecognitionParam param = null;
+            try {
+                param = RecognitionParam.builder()
+                        .model(&quot;paraformer-realtime-v2&quot;)
+                        .format(&quot;pcm&quot;)
+                        .sampleRate(16000)
+                        .apiKey(getDashScopeApiKey())
+                        .build();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            Recognition recognizer = null;
+            final boolean[] hasError = {false};
+            try {
+                recognizer = RecognitionObjectPool.getInstance().borrowObject();
+                String threadName = Thread.currentThread().getName();
+
+                ResultCallback&lt;RecognitionResult&gt; callback =
+                        new ResultCallback&lt;RecognitionResult&gt;() {
+                            @Override
+                            public void onEvent(RecognitionResult message) {
+                                synchronized (lock) {
+                                    if (message.isSentenceEnd()) {
+                                        System.out.println(&quot;[process &quot; + threadName
+                                                + &quot;] Fix:&quot; + message.getSentence().getText());
+                                    } else {
+                                        System.out.println(&quot;[process &quot; + threadName
+                                                + &quot;] Result: &quot; + message.getSentence().getText());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                System.out.println(&quot;[&quot; + threadName
+                                        + &quot;] Recognition complete&quot;);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                System.out.println(&quot;[&quot; + threadName
+                                        + &quot;] RecognitionCallback error: &quot; + e.getMessage());
+                                hasError[0] = true;
+                            }
+                        };
+                System.out.println(&quot;[&quot; + threadName
+                        + &quot;] Input file_path is: &quot; + filePath);
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(filePath.toFile());
+                } catch (Exception e) {
+                    System.out.println(&quot;Error when loading file: &quot; + filePath);
+                    e.printStackTrace();
+                }
+                recognizer.call(param, callback);
+
+                // chunk size set to 100 ms for 16KHz sample rate
+                byte[] buffer = new byte[3200];
+                int bytesRead;
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    ByteBuffer byteBuffer;
+                    if (bytesRead &lt; buffer.length) {
+                        byteBuffer = ByteBuffer.wrap(buffer, 0, bytesRead);
+                    } else {
+                        byteBuffer = ByteBuffer.wrap(buffer);
+                    }
+                    recognizer.sendAudioFrame(byteBuffer);
+                    Thread.sleep(100);
+                    buffer = new byte[3200];
+                }
+                System.out.println(&quot;[&quot; + threadName + &quot;] send audio done&quot;);
+                recognizer.stop();
+                System.out.println(&quot;[&quot; + threadName + &quot;] asr task finished&quot;);
+            } catch (Exception e) {
+                e.printStackTrace();
+                hasError[0] = true;
+            }
+            if (recognizer != null) {
+                try {
+                    if (hasError[0] == true) {
+                        recognizer.getDuplexApi().close(1000, &quot;bye&quot;);
+                        RecognitionObjectPool.getInstance()
+                                .invalidateObject(recognizer);
+                    } else {
+                        RecognitionObjectPool.getInstance()
+                                .returnObject(recognizer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        runCallback();
+    }
+} Recommended configuration 
+The following configurations are based on test results from running only the Paraformer real-time speech recognition service on Alibaba Cloud servers of the specified specifications. Single-machine concurrency is the number of Paraformer real-time speech recognition tasks running at the same time (that is, the number of worker threads). 
+
+Machine specification (Alibaba Cloud) 
+Max single-machine concurrency 
+Object pool size 
+Connection pool size 
+
+4 vCPUs, 8 GiB 
+100 
+500 
+2000 
+
+8 vCPUs, 16 GiB 
+200 
+500 
+2000 
+
+16 vCPUs, 32 GiB 
+400 
+500 
+2000 Resource management and error handling 
+
+Task succeeds : Call GenericObjectPool.returnObject() to return the Recognition object to the pool for reuse. 
+Important Do not return Recognition objects with unfinished or failed tasks. 
+
+Task fails : When an exception thrown by the SDK or your business logic interrupts a task, perform the following two actions: 
+Actively close the underlying WebSocket connection. 
+Invalidate the object in the object pool to prevent it from being reused. // Close the connection.
+recognizer.getDuplexApi().close(1000, &quot;bye&quot;);
+// Invalidate the failed recognizer in the object pool.
+RecognitionObjectPool.getInstance().invalidateObject(recognizer); 
+When the service returns a TaskFailed error, no extra handling is required. Warm-up and latency measurement 
+When you evaluate performance such as concurrent call latency for the DashScope Java SDK, we recommend that you run a sufficient warm-up before the formal test. Connection reuse mechanism 
+The DashScope Java SDK manages and reuses WebSocket connections through a global singleton connection pool. This mechanism works as follows: 
+
+On-demand creation : The SDK does not pre-create WebSocket connections at service startup. Instead, it establishes connections on demand at the first call. 
+
+Time-limited reuse : After a request completes, the connection stays in the pool for up to 60 seconds for reuse. 
+If a new request arrives within 60 seconds, the SDK reuses the existing connection and avoids the overhead of a repeated handshake. 
+If a connection stays idle for more than 60 seconds, the SDK closes it automatically to release resources. Why warm-up matters 
+In the following scenarios, the connection pool might not have an active connection to reuse, so a request has to create a new connection: 
+The application has just started and has not made any calls yet. 
+The service has been idle for more than 60 seconds, so pooled connections have closed due to timeout. 
+In these scenarios, the first or early requests trigger the full WebSocket connection process (including the TCP handshake, TLS negotiation, and protocol upgrade). Their end-to-end latency is significantly higher than that of later requests that reuse connections. Recommended approach 
+Before you run a formal load test or measure latency, follow these warm-up steps: 
+Simulate the concurrency level of the formal test by sending a number of calls in advance (for example, for 1 to 2 minutes) to fully populate the connection pool. 
+After you confirm that the connection pool has established and maintained enough active connections, start collecting the formal performance data. 
+Improve recognition accuracy 
+Choose a model that matches the sample rate : For 8 kHz telephone audio, use an 8 kHz model directly. This avoids the information loss caused by upsampling to 16 kHz. 
+Improve the input audio quality : Use a high-quality microphone and record in an environment with a high signal-to-noise ratio and no echo. At the application layer, you can integrate algorithms such as noise reduction (for example, RNNoise) and acoustic echo cancellation (AEC) for preprocessing. 
+Set up a fault-tolerance strategy 
+
+Client-side reconnection : The client should implement automatic reconnection to handle network jitter. The following is a reference implementation for the Python SDK: 
+Catch exceptions: Put the calling logic in a try/except block. When the dashscope SDK encounters a network error or another issue, it raises an exception, which you handle in the except branch. 
+Signal the state: When an exception is caught, set a reconnection signal. In Python, you can use threading.Event , a thread-safe signal flag. 
+Reconnection loop: Wrap the main logic in a for loop (for example, retry 3 times). When the reconnection signal is detected, the current recognition round is interrupted, resources are cleaned up, and after a few seconds the loop runs again to create a brand-new connection. 
+
+Set a heartbeat to keep the connection alive : To maintain a long-lived connection with the server, set the heartbeat parameter to true . The connection to the server then stays open even when the audio contains no sound for a long time. 
+
+Model rate limits : When you call the model API, note the model&#x27;s Rate limiting rules. 
+Supported models and regions China (Beijing) 
+To call the following models, use an API Key for the China (Beijing) region: 
+
+Qwen-Audio-ASR-Message : qwen-audio-3.1-asr-flash-message 
+
+Qwen-Audio-ASR-Streaming : qwen-audio-3.1-asr-flash-streaming , qwen-audio-3.0-asr-flash-streaming 
+
+Fun-ASR-Realtime : 
+fun-asr-realtime (stable version), fun-asr-realtime-2026-02-28 (latest snapshot version) 
+fun-asr-flash-8k-realtime (stable version, currently equivalent to fun-asr-flash-8k-realtime-2026-01-28), fun-asr-flash-8k-realtime-2026-01-28 
+
+Qwen-ASR-Realtime : qwen3-asr-flash-realtime (stable version) 
+
+Paraformer : paraformer-realtime-v2, paraformer-realtime-8k-v2 Singapore 
+To call the following models, use an API Key for the Singapore region: 
+Qwen-Audio-ASR-Message : qwen-audio-3.1-asr-flash-message 
+Qwen-Audio-ASR-Streaming : qwen-audio-3.1-asr-flash-streaming , qwen-audio-3.0-asr-flash-streaming 
+Fun-ASR-Realtime : fun-asr-realtime (stable version) 
+Qwen-ASR-Realtime : qwen3-asr-flash-realtime (stable version) 
+API reference 
+For the connection workflow and examples, see AOQ integration . For supported models and versions, see Model and protocol support . 
+Qwen-Audio-ASR-Message API 
+Real-time speech recognition - Qwen-Audio-ASR-Streaming API reference 
+Real-time speech recognition - Fun-ASR-Realtime API reference 
+Real-time speech recognition - Qwen3-ASR-Flash-Realtime API reference 
+Real-time speech recognition - Paraformer API reference 
+FAQ 
+Which audio formats does real-time speech recognition support? 
+qwen-audio-3.1-asr-flash-message Supports pcm, wav, mp3, opus, speex, aac, and amr. Set sample_rate to 16000 . For encoding and container requirements, see Client events . 
+The Qwen-Audio-ASR-Streaming, Fun-ASR-Realtime, and Paraformer models support the pcm, wav, mp3, opus, speex, aac, and amr formats. For the Qwen3-ASR-Flash-Realtime model, we recommend the pcm or opus format. Other formats (such as wav, aac, and amr) are accepted by the session.update validation layer, but the server-side decoding might fail. Confirm that the audio stream uses a recommended format before you send it. 
+What&#x27;s the difference between the SDK and the WebSocket API, and how do I choose? 
+The DashScope SDK encapsulates details such as WebSocket connection management, authentication, and reconnection, which makes it a good fit for quick integration. Connecting directly to the WebSocket API provides finer-grained control and suits programming languages that the SDK does not cover or scenarios that require custom connection management. We recommend that you use the SDK first. 
+How do I improve recognition accuracy for proper nouns? 
+Use hotwords or context enhancement. For detailed configuration methods and usage notes, see Improve recognition accuracy . 
+What should I do when the connection drops frequently? 
+Implement client-side reconnection and enable the heartbeat parameter ( heartbeat=true ) to prevent the connection from dropping when there is no audio for a long time. For detailed fault-tolerance strategies, see Apply in production . 
+Model application listing and filing 
+See Application compliance filing . Previous：Speech-to-text overview Next：Non-real-time speech recognition Is this page helpful? Feedback</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

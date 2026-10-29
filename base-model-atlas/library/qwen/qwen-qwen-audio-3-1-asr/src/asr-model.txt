@@ -1,0 +1,823 @@
+Home Page
+Alibaba Cloud Model Studio
+User Guide (Models)
+Model Playground
+Speech-to-text
+Speech-to-text overview
+Speech-to-text overview
+Updated at:
+Copy as MD
+Product
+My Favorites
+Choose the right model for real-time or file-based speech recognition.
+Migrate from closed-source models
+Map your current Whisper, Deepgram, or Google ASR service to a Bailian equivalent.
+Use case
+Closed-source examples
+Bailian recommendation
+Real-time recognition
+Deepgram Nova-3, Google Chirp 3
+Input methods and voice messages：
+qwen-audio-3.1-asr-flash-message
+Continuous transcription：
+qwen-audio-3.1-asr-flash-streaming
+Offline / file transcription
+OpenAI gpt-4o-transcribe, Whisper
+qwen-audio-3.1-asr-flash-filetrans
+,
+qwen-audio-3.1-asr-flash
+Use the four "
+Selection criteria
+"—real-time vs. offline, domain terminology, speaker diarization, and emotion recognition—to identify the right model. Then check "
+Recommended models
+" for top picks per scenario, "
+All models
+" for the full version list by model family, and "
+Audio specifications
+" for input constraints. Supported languages (including dialects) are listed under each model family in "
+All models
+".
+Selection criteria
+Evaluate four dimensions to find the right model.
+Real-time or offline?
+Real-time recognition returns results as the user speaks. Offline recognition transcribes a pre-recorded file after recording ends.
+Real-time recognition streams audio over WebSocket. Choose by use case:
+Short voice input, such as input methods and voice messages: use
+qwen-audio-3.1-asr-flash-message
+for low first-text and overall latency, optional text polishing, and a revised final result when a speech segment ends.
+Continuous transcription, such as meetings and classroom notes: use
+qwen-audio-3.1-asr-flash-streaming
+when users read results as they arrive and intermediate-result accuracy is a priority.
+Offline (file transcription)
+: Uses an HTTP API to submit audio files and retrieve transcription results. Suited for call center recordings, podcasts, and interviews. Recommended model:
+qwen-audio-3.1-asr-flash-filetrans
+(hot words, prompt context, speaker diarization).
+For client integrations that require stable latency, resilience on weak networks, and full-duplex noise suppression and echo cancellation, see the AOQ protocol comparison and supported models in
+Realtime API overview
+.
+For HTTP, WebSocket, and SDK integration options, see
+Speech recognition API reference
+. Refer to the corresponding SDK documentation for supported models and parameters.
+For real-time integration, see
+Real-time speech recognition
+. For offline integration, see
+Non-real-time speech recognition
+.
+Domain terminology
+Two approaches, ranked by flexibility:
+Prompt context injection
+: Describe your domain in the system prompt. No setup required—the model adapts per request. Recommended models:
+qwen-audio-3.1-asr-flash-streaming
+,
+qwen-audio-3.1-asr-flash-filetrans
+, and
+qwen-audio-3.1-asr-flash
+.
+Hot words
+: Supply a weighted vocabulary list. Recommended models:
+qwen-audio-3.1-asr-flash-streaming
+,
+qwen-audio-3.1-asr-flash-filetrans
+, and
+qwen-audio-3.1-asr-flash
+.
+qwen-audio-3.1-asr-flash-message
+supports instant hot words, precompiled hot words, and conversation context. Set
+vocabulary
+or
+vocabulary_id
+for hot words, and pass previous user transcriptions and assistant replies through
+input.context
+. For parameter definitions, see
+Client events
+.
+Speaker diarization
+qwen-audio-3.1-asr-flash
+,
+qwen-audio-3.1-asr-flash-filetrans
+,
+qwen-audio-3.0-asr-flash-filetrans
+, and Fun-ASR offline models (
+fun-asr
+) support speaker diarization. To identify who said what, use
+qwen-audio-3.1-asr-flash-filetrans
+.
+Emotion recognition
+Qwen-ASR models detect emotions alongside transcription. Recommended models:
+qwen3-asr-flash-realtime
+(real-time) or
+qwen3-asr-flash-filetrans
+(offline).
+Recommended models
+Top picks for common scenarios.
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen-audio-3.1-asr-flash-message
+Real-time
+WebSocket
+Hot words, Context
+Unsupported
+Unsupported
+Multilingual with dialects
+—
+qwen-audio-3.1-asr-flash-streaming
+Real-time
+WebSocket
+Hot words, prompt context
+Unsupported
+Unsupported
+Multilingual with dialects
+Unlimited
+qwen-audio-3.1-asr-flash-filetrans
+Offline
+HTTP
+Hot words, prompt context
+Unsupported
+Supported
+Multilingual with dialects
+12 hours / 2 GB
+All models
+Qwen-Audio-ASR-Message
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen-audio-3.1-asr-flash-message
+Real-time
+WebSocket
+Hot words, Context
+Unsupported
+Unsupported
+Multilingual with dialects
+—
+Supported languages
+:
+qwen-audio-3.1-asr-flash-message
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Qwen-Audio-ASR-Streaming
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen-audio-3.1-asr-flash-streaming
+Real-time
+WebSocket
+Hot words, prompt context
+Unsupported
+Unsupported
+Multilingual with dialects
+Unlimited
+qwen-audio-3.0-asr-flash-streaming
+Real-time
+WebSocket
+Hot words, prompt context
+Unsupported
+Unsupported
+Multilingual with dialects
+Unlimited
+Supported languages (by version)
+:
+qwen-audio-3.1-asr-flash-streaming
+,
+qwen-audio-3.0-asr-flash-streaming
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Qwen-Audio-ASR-Filetrans
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen-audio-3.1-asr-flash-filetrans
+Offline
+HTTP
+Hot words, prompt context
+Unsupported
+Supported
+Multilingual with dialects
+12 hours / 2 GB
+qwen-audio-3.0-asr-flash-filetrans
+Offline
+HTTP
+Hot words, prompt context
+Unsupported
+Supported
+Multilingual with dialects
+12 hours / 2 GB
+Supported languages (by version)
+:
+qwen-audio-3.1-asr-flash-filetrans
+,
+qwen-audio-3.0-asr-flash-filetrans
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Qwen-Audio-ASR
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen-audio-3.1-asr-flash
+Offline
+HTTP
+Hot words, prompt context
+Unsupported
+Supported
+Multilingual with dialects
+5 minutes / 2 GB
+qwen-audio-3.0-asr-flash
+Offline
+HTTP
+Hot words, prompt context
+Unsupported
+Unsupported
+Multilingual with dialects
+5 minutes / 2 GB
+Supported languages (by version)
+:
+qwen-audio-3.1-asr-flash
+,
+qwen-audio-3.0-asr-flash
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Fun-ASR
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+fun-asr-realtime
+Real-time
+WebSocket
+Hot words
+Unsupported
+Unsupported
+Multilingual with dialects
+Unlimited
+fun-asr-realtime-2026-02-28
+Real-time
+WebSocket
+Hot words
+Unsupported
+Unsupported
+Chinese, English, Japanese, and dialects
+Unlimited
+fun-asr-flash-8k-realtime
+Real-time
+WebSocket
+Hot words
+Unsupported
+Unsupported
+Chinese
+Unlimited
+fun-asr-flash-8k-realtime-2026-01-28
+Real-time
+WebSocket
+Hot words
+Unsupported
+Unsupported
+Chinese
+Unlimited
+fun-asr
+Offline
+HTTP
+Hot words
+Unsupported
+Supported
+Multilingual with dialects
+12 hours / 2 GB
+fun-asr-flash-2026-06-15
+Offline
+HTTP
+Prompt context
+Unsupported
+Unsupported
+Multilingual with dialects
+5 minutes / 2 GB
+Supported languages (by version)
+:
+Fun-ASR-Realtime main version
+(
+fun-asr-realtime
+): Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+fun-asr-realtime-2026-02-28
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese
+Fun-ASR-Flash-Realtime(8K)
+(
+fun-asr-flash-8k-realtime
+,
+fun-asr-flash-8k-realtime-2026-01-28
+): Chinese
+Fun-ASR main versions
+(
+fun-asr
+): Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Fun-ASR-Flash
+(
+fun-asr-flash-2026-06-15
+): Chinese (Mandarin, Cantonese, Wu, Hokkien, Hakka, Gan, Xiang, Jin; plus regional accents including Central Plains, Southwestern, Ji-Lu, Jianghuai, Lan-Yin, Jiao-Liao, Northeastern, Beijing, and Hong Kong/Taiwan—covering Henan, Shaanxi, Hubei, Sichuan, Chongqing, Yunnan, Guizhou, Guangdong, Guangxi, Hebei, Tianjin, Shandong, Anhui, Nanjing, Jiangsu, Hangzhou, Gansu, and Ningxia accents), English, Japanese, Korean, Vietnamese, Thai, Indonesian, Malay, Filipino, Hindi, Arabic, French, German, Spanish, Portuguese, Russian, Italian, Dutch, Swedish, Danish, Finnish, Norwegian, Greek, Polish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak
+Qwen-ASR
+Model ID
+Mode
+API
+Accuracy boost
+Emotion recognition
+Speaker diarization
+Languages
+Max audio duration/size
+qwen3-asr-flash-realtime
+Real-time
+WebSocket
+Unsupported
+Supported
+Unsupported
+Multilingual with dialects
+Unlimited
+qwen3-asr-flash-filetrans
+Offline
+HTTP
+Unsupported
+Supported
+Unsupported
+Multilingual with dialects
+12 hours / 2 GB
+qwen3-asr-flash
+Offline
+HTTP (OpenAI-compatible)
+Unsupported
+Supported
+Unsupported
+Multilingual with dialects
+5 minutes / 10 MB
+Supported languages
+: All Qwen-ASR models (
+qwen3-asr-flash-realtime
+,
+qwen3-asr-flash-filetrans
+,
+qwen3-asr-flash
+) share the same language list: Chinese (Mandarin, Sichuanese, Hokkien, Wu, Cantonese), English, Japanese, German, Korean, Russian, French, Portuguese, Arabic, Italian, Spanish, Hindi, Indonesian, Thai, Turkish, Ukrainian, Vietnamese, Czech, Danish, Filipino, Finnish, Icelandic, Malay, Norwegian, Polish, Swedish.
+Paraformer
+Paraformer is an older-generation ASR model family. Migrate to Fun-ASR or Qwen-ASR when possible.
+Model ID
+API
+Description
+paraformer-realtime-v2
+WebSocket
+Real-time recognition; Chinese, English, Japanese, Korean, German, French, Russian
+paraformer-realtime-8k-v2
+WebSocket
+Real-time recognition for 8 kHz telephony; Chinese
+paraformer-v2
+HTTP
+File transcription with speaker diarization; Chinese, English, Japanese, Korean, German, French, Russian
+paraformer-8k-v2
+HTTP
+File transcription for 8 kHz telephony; Chinese
+Supported languages (by version)
+:
+paraformer-realtime-v2
+,
+paraformer-v2
+: Chinese (Mandarin, Cantonese, Wu, Hokkien, Northeastern, Gansu, Guizhou, Henan, Hubei, Hunan, Ningxia, Shanxi, Shaanxi, Shandong, Sichuan, Tianjin, Jiangxi, Yunnan, Shanghai), English, Japanese, Korean, German, French, Russian
+paraformer-realtime-8k-v2
+,
+paraformer-8k-v2
+: Chinese (Mandarin)
+Audio specifications
+Audio specifications for
+real-time
+and
+offline
+modes. For supported languages, see the model family subsection under "
+All models
+".
+Real-time
+Model ID
+Input method
+Audio format
+Sample rate
+Size/duration
+qwen-audio-3.1-asr-flash-message
+Binary stream
+pcm
+,
+wav
+,
+mp3
+,
+opus
+,
+speex
+,
+aac
+,
+amr
+16 kHz
+—
+qwen-audio-3.1-asr-flash-streaming
+,
+qwen-audio-3.0-asr-flash-streaming
+Binary stream
+pcm
+,
+wav
+,
+mp3
+,
+opus
+,
+speex
+,
+aac
+,
+amr
+Any
+Unlimited
+Fun-ASR-Realtime series
+(
+fun-asr-realtime
+, etc.)
+Binary stream
+pcm
+,
+wav
+,
+mp3
+,
+opus
+,
+speex
+,
+aac
+,
+amr
+Any
+Unlimited
+Fun-ASR-Flash-8K-Realtime series
+(
+fun-asr-flash-8k-realtime
+, etc.)
+Binary stream
+Same as Fun-ASR-Realtime
+8 kHz
+Unlimited
+qwen3-asr-flash-realtime
+Binary stream
+pcm
+,
+opus
+8 kHz, 16 kHz
+Unlimited
+paraformer-realtime-v2
+,
+paraformer-realtime-8k-v2
+Binary stream
+Same as Fun-ASR-Realtime
+paraformer-realtime-v2
+any rate;
+paraformer-realtime-8k-v2
+8 kHz
+Unlimited
+All real-time models accept
+mono
+(single-channel) input only.
+Offline
+Model ID
+Input method
+Audio format
+Sample rate
+File size/duration
+qwen-audio-3.1-asr-flash-filetrans
+,
+qwen-audio-3.0-asr-flash-filetrans
+Publicly accessible file URL; 1 URL per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤12 hours (≤2 hours recommended when speaker diarization is enabled)
+qwen-audio-3.1-asr-flash
+URL / Base64; 1 file per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤5 minutes
+qwen-audio-3.0-asr-flash
+URL / Base64; 1 file per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤5 minutes
+fun-asr
+Publicly accessible file URL; 1 URL per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤12 hours (≤2 hours recommended when speaker diarization is enabled)
+fun-asr-flash-2026-06-15
+URL / Base64; 1 file per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤5 minutes
+fun-asr-realtime
+,
+fun-asr-realtime-2026-02-28
+URL / Base64; 1 file per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+Any
+≤2 GB; ≤5 minutes
+paraformer-v2
+,
+paraformer-8k-v2
+Same as Fun-ASR
+Same as Fun-ASR
+paraformer-v2
+/v1
+any rate;
+paraformer-8k-v2
+8 kHz only
+Same as Fun-ASR
+qwen3-asr-flash-filetrans
+Publicly accessible file URL; 1 URL per request
+aac
+,
+amr
+,
+avi
+,
+flac
+,
+flv
+,
+m4a
+,
+mkv
+,
+mov
+,
+mp3
+,
+mp4
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+pcm
+requires 16 kHz; other formats accept any rate (the server resamples to 16 kHz before recognition)
+≤2 GB; ≤12 hours
+qwen3-asr-flash
+URL / Base64 / local file absolute path; 1 file per request
+aac
+,
+amr
+,
+avi
+,
+aiff
+,
+flac
+,
+flv
+,
+mkv
+,
+mp3
+,
+mpeg
+,
+ogg
+,
+opus
+,
+wav
+,
+webm
+,
+wma
+,
+wmv
+pcm
+requires 16 kHz; other formats accept any rate (the server resamples to 16 kHz before recognition)
+≤10 MB; ≤5 minutes
+Previous：Speech-to-text
+Next：Real-time speech recognition - Qwen
+Is this page helpful?
+Feedback

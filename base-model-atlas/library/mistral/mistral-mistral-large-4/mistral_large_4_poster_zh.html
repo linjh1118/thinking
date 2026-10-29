@@ -1,1 +1,354 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mistral Large 4 · 中文研究Poster · BrainHao</title><style>*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#25345c55,transparent 40%),#0c111c;color:#edf3ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.75}.wrap{max-width:1250px;margin:auto;padding:40px 32px 70px}.brand,.source{color:#93a9c9;font-size:13px}.kicker{color:#98d9fb;letter-spacing:.14em;font-size:12px}h1{font-size:clamp(40px,7vw,78px);line-height:1.08;letter-spacing:-.04em;margin:18px 0 26px}.lead{font-size:21px;color:#bdcbe2;max-width:1050px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0}.stat,.card{border:1px solid #32425f;border-radius:18px;background:#121d31;padding:22px}.stat{color:#9fecd3;font-weight:650}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card h2{font-size:23px;color:#9cbaff;margin-top:0}.card p{margin:0 0 12px;color:#c0cee2}.wide{grid-column:1/-1}img{width:100%;height:auto;display:block;border-radius:14px;background:white}figure{margin:22px 0}figcaption{color:#95a7c4;font-size:12px;padding-top:8px}.warning{margin:28px 0;padding:18px 22px;background:#352d21;border:1px solid #64563c;border-radius:14px;color:#e7d3aa}a{color:#95d8ff;text-decoration:none}.button{display:inline-block;margin:18px 0 25px;padding:12px 20px;border-radius:100px;background:#a6ebd6;color:#102a2c;font-weight:700}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:10px 8px;border-bottom:1px solid #34435f;text-align:left}.scroll{overflow-x:auto}footer{margin-top:30px;font-size:13px;color:#8da0be}@media(max-width:750px){.stats,.grid{grid-template-columns:1fr}.wrap{padding:25px 16px}.wide{grid-column:auto}}</style></head><body><main class="wrap"><div class="brand">ω BrainHao · Research Atlas</div><a href="#">📚 返回完整笔记</a><p class="kicker">2026-10-06 · API Public Preview</p><h1>Mistral Large 4</h1><p class="lead">多环境与可组合验证器，让长任务 RL 随模型能力继续扩大。权重月底公开仍是计划，不写成已经开源。</p><div class="stats"><div class="stat">1T 总参数 / 52B 激活</div><div class="stat">3,800 张 Grace Blackwell · 从零训练</div><div class="stat">DeepSWE v1.1 · 61.7%</div></div><div class="grid"><section class="card wide"><h2>把真实工作变成同一套训练接口</h2><p>单轮问答 → 科学代码 → 安全与事实性 → 长工具轨迹，共用环境接口、沙箱、搜索与外部 API；按任务组合单元测试、静态检查、reward model 和 LLM judge。</p><p>异步 actor 数万条并行 rollout，控制策略滞后。约 3k GPU 的 RL 运行每天生成 33B tokens，过滤/遮罩后约 16B 可训练完成 tokens。百万 tokens 是长轨迹预算，不是已披露固定 context 上限。</p><figure><img src="src/assets/figure_25.webp" alt="官方多环境训练奖励曲线"><figcaption>官方训练奖励曲线；奖励上升不单独证明未知任务泛化。</figcaption></figure></section><section class="card"><h2>发布时能力证据</h2><div class="scroll"><table><tr><th>任务</th><th>结果</th></tr><tr><td>DeepSWE v1.1</td><td>61.7%</td></tr><tr><td>Terminal-Bench 4</td><td>28.3%</td></tr><tr><td>SWE-Atlas-QnA</td><td>59.4%</td></tr><tr><td>AutomationBench</td><td>59.9%</td></tr><tr><td>AA-Briefcase</td><td>1393 Elo</td></tr><tr><td>B3 攻击抵抗</td><td>93.3%</td></tr></table></div><p>版本与定义固定；任务拒绝会影响 Cyber 排名，不能把拒绝导致的低分直接解释为无能力。</p></section><section class="card"><h2>值得验证的研究线索</h2><p>固定模型与 token 预算，比单环境/多环境的泛化；改变 actor 队列和策略版本差，测长轨迹训练稳定性。</p><p>验证器分别消融，检查误判、有效修正、上下文压缩后的约束保持与每成功任务成本。这里是研究建议，未在本机复现。</p><figure><img src="src/assets/figure_12.webp" alt="官方Surge AI盲测编码质量"><figcaption>ML4 3.74/5；该组盲测仍低于 Opus 5 的4.22，不改写为全面领先。</figcaption></figure></section></div><p class="warning">原始资料深度限制：已读完整 Tech Blog、已保存官方图；完整架构、训练损失和配比尚未公开，达不到 GLM-5.3-Flash 式完整报告精读。API Preview 与未来开放权重保持区分。</p><a class="button" href="#">📖 阅读完整渲染笔记</a><p class="source">[S1] <a href="https://mistral.ai/news/mistral-large-4/">📰 官方 Tech Blog ↗</a></p><footer>整理日期2026-10-13 · 成绩来自发布正文，并非本机复现。原始资料与SHA-256见笔记同级src/。</footer></main></body></html>
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mistral Large 4 — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body>
+
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>ω BrainHao · </span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FMistral_AI%2F261006_Mistral_Large_4%2FMistral-Large-4">📚 本地源笔记</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=mistral-mistral-large-4">Overview</a> · <a href="Mistral-Large-4.html">📖 渲染笔记</a> · <a href="https://mistral.ai/news/mistral-large-4-oss/">官方资料 ↗</a></div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">2026-10-06首发 / 10-29开放权重 · 同family</span>
+<div class="zh-title">把权重、推理效率与执行条件放在同一张证据地图</div>
+<h1>Mistral Large 4 <span>Open Weight</span></h1>
+<div class="authors">2份HF原卡 + Preview / Open-weight博客 · 不虚构待发布报告</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">1T</div><div class="sub">总参数</div></div>
+<div class="score-box"><div class="num">49B/52B</div><div class="sub">主体 / 含嵌入输出</div></div>
+<div class="score-box"><div class="num">1M</div><div class="sub">卡明确上下文</div></div>
+<div class="score-box"><div class="num">48%</div><div class="sub">Coding Agent Index</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>定位：同代的新阶段</h2></div>
+<p class="body">10/6 API Preview首发；10/29继续RL后开放权重。保留旧评测快照，新权重与NVFP4合并family，非新一代。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">完整Tech Report未公开，达不到报告级精读深度</div>
+<p>新博客仍称后续发布。缺数据/奖励/损失与消融；不编造报告URL，不抓PDF。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">开放权重有许可证条件</div>
+<p>Mistral Ecosystem Open-Weight License：模型服务商需单独商业许可，不笼统称无约束MIT。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">同代阶段</div>
+<p>10/6预览→10/29开放，保留首发。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">稀疏主体</div>
+<p>1T总参数，49B主体激活，52B含嵌入输出。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">推测解码</div>
+<p>3层草稿头与验证；最高1.9x取决工作负载。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="手绘：阶段、稀疏容量、解码和量化分别验收" src="src/assets/handdrawn-method.png"/>
+<div class="fig-cap">手绘：阶段、稀疏容量、解码和量化分别验收</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>机制：三种效率分开</h2></div>
+<p class="body">128 routed专家每token选4，另1shared；文字/图像输入，文本输出。稀疏计算不等于只保存52B权重。</p>
+<div class="fig-box">
+<img alt="官方编码指数快照：token效率不是通用成本结论" src="src/assets/coding_index.png"/>
+<div class="fig-cap">官方编码指数快照：token效率不是通用成本结论</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">推理档位与预算要固定</div>
+<p>low/medium/high，默认high；少47%tokens限定Coding Agent Index，不等于每任务省47%费用。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">不能混评测版本</div>
+<p>Intelligence Index v5=26与CodingIndex48不同；BrowseComp84.5比较早期SFT75，不是公开Preview。</p>
+</div>
+<div class="formula-box"><div class="flabel">每个成功任务的总成本</div>生成tokens + 解码计算 + 工具调用 + 失败重试<p style="font-size:.68rem;color:#78716c;margin-top:4px;">RL效率、DSpark、NVFP4分别消融；不把三者共同收益全部归因某一组件。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">量化部署</div>
+<p>NVFP4专家+FP8线性，Blackwell；KV格式fp8_ds_mla。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">端到端验收</div>
+<p>固定Harness/工具/档位/预算，再比较成功与成本。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>证据：版本与边界</h2></div>
+<p class="body">内附DSpark三层dense MLA草稿头，按3token块提出候选并由主模型验证；不另建叶子。</p>
+<table class="rtable"><tr><th>新阶段自报</th><th>值</th><th>限制</th></tr><tr><td>FrontierCode2.0</td><td>19.7%</td><td>私有仓库质量</td></tr><tr><td>TB4.0</td><td>41%</td><td>Preview约28%</td></tr><tr><td>CodingIndex</td><td>48%</td><td>同组GLM5.3近似持平</td></tr><tr><td>平均tokens</td><td>少47%</td><td>限定此项比较</td></tr><tr><td>Finch</td><td>73.3%</td><td>Preview67.4%</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">保留弱项</div>
+<p>新Surge对Claude Opus5.5胜率仅22%；旧3.74/5与新成对胜率不可直接求差。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">新博客及模型卡为官方自报/转引快照；没有在本机复测，不把有利分项泛化到所有任务。</p>
+<table class="ood-table"><tr><th>不同指标</th><th>值</th><th>解释</th></tr><tr><td>CyberIndex</td><td>51%</td><td>防御能力</td></tr><tr><td>恶意请求拒绝</td><td>96.6%</td><td>行为过滤</td></tr><tr><td>B3抵抗</td><td>97.1%</td><td>提示注入基准</td></tr><tr><td>Surge vs Opus5.5</td><td>22%</td><td>不是全场景领先</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">安全能力与行为分开</div>
+<p>CyberIndex51%、恶意请求拒绝96.6%、B3抵抗97.1%各测不同事情。伙伴专用版未作公开新模型。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">NVFP4</div>
+<div class="adelta">同family</div>
+<div class="adesc">原卡基本维持所列评测，仍需测任务与kernel误差。</div>
+</div>
+<div class="abl-card">
+<div class="aname">完整训练配方</div>
+<div class="adelta">待公开</div>
+<div class="adesc">HF补结构，不能替代完整报告与因果消融。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">首发</div>
+<p>10/6保留，10/29开放权重阶段。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">结构</div>
+<p>49B/52B是计数口径；128选4+共享。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">成本</div>
+<p>token减少、投机解码、量化收益分开。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">边界</div>
+<p>完整报告待发；许可证与弱项显著保留。</p>
+</div>
+</div>
+</div><!-- /poster -->
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body>
+</html>
