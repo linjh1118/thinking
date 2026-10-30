@@ -1,1 +1,354 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Youtu-Parsing-Omni · 中文研究Poster</title><style>*{box-sizing:border-box}body{margin:0;background:#0c111c;color:#edf3ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.75}.wrap{max-width:1250px;margin:auto;padding:40px 32px 70px}.brand{color:#93a9c9;font-size:13px}.kicker{color:#98d9fb;letter-spacing:.14em;font-size:12px}h1{font-size:clamp(40px,7vw,78px);line-height:1.08;letter-spacing:-.04em;margin:18px 0 26px}.lead{font-size:20px;color:#bdcbe2;max-width:1000px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0}.stat,.card{border:1px solid #32425f;border-radius:18px;background:#121d31;padding:22px}.stat{color:#9fecd3;font-weight:650}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card h2{font-size:23px;color:#9cbaff;margin-top:0}.card p{margin:0;color:#c0cee2}.wide{grid-column:1/-1}.map{width:100%;height:auto;display:block;margin:30px 0}.note{margin-top:28px;padding:15px 20px;background:#352d21;border:1px solid #64563c;border-radius:14px;color:#e7d3aa}a{color:#95d8ff;text-decoration:none}.button{display:inline-block;margin:18px 0 25px;padding:12px 20px;border-radius:100px;background:#a6ebd6;color:#102a2c;font-weight:700}.source{font-size:13px;color:#a2b2cb}.backlinks{font-size:12px;margin-bottom:20px}@media(max-width:750px){.stats,.grid{grid-template-columns:1fr}.wrap{padding:25px 16px}.wide{grid-column:auto}}</style></head><body><main class="wrap"><div class="brand">ω BrainHao · Research Atlas</div><div class="backlinks">📚 源笔记：<a href="#">Youtu-Parsing-Omni</a></div><div class="kicker">2026-10 · Document / Omni</div><h1>Youtu-Parsing-Omni</h1><p class="lead">腾讯5B统一感知parser，输出OmniSchema，涵盖文档、图表、音频与视频。</p><div class="stats"><div class="stat">5B</div><div class="stat">OmniDocBench v1.6：96.96</div><div class="stat">OmniParsingBench：75.08</div></div><img class="map" src="src/assets/reading-map.svg" alt="整理研读路径，非官方架构图"><div class="grid"><section class="card wide"><h2>核心理解</h2><p>统一encoder提前融合音视频，共享(t,h,w)坐标；OSAD用通过结构门禁的学生rollout和带参考解析的冻结教师监督，对content和structure用不同散度，逐轮合并LoRA。</p></section><section class="card"><h2>值得做的实验</h2><p>schema有效不代表语义正确。分开验收结构合法、bbox/时间戳、文本事实和跨模态对齐；保留未通过门禁的数据并测分布外布局。</p></section><section class="card"><h2>证据与验收边界</h2><p>只使用已取得的官方资料。不把不同harness、数据子集、推理预算或服务SKU当作同口径横评；确切发布日期未证实的节点单列待核实。</p></section></div><p class="note">本Poster是研究研读摘要，不是完整技术报告或已复现实验。全文笔记显著标明资料不足、未读报告和归档缺口，请以其证据边界为准。</p><a class="button" href="#">📖 阅读完整渲染笔记</a><div class="source"><p>[S1] <a href="https://huggingface.co/tencent/Youtu-Parsing-Omni">HF Model Card</a></p></div></main></body></html>
+<!DOCTYPE html>
+
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Youtu-Parsing-Omni — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body>
+
+<div class="poster">
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>ω BrainHao · </span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FTencent_Hunyuan%2FVariants%2F2610_Youtu_Parsing_Omni%2FYoutu-Parsing-Omni">📚 本地源笔记</a> · <a href="https://linjh1118.github.io/thinking/base-model-atlas/model.html?id=hunyuan-youtu-parsing-omni">Overview</a> · <a href="Youtu-Parsing-Omni.html">📖 渲染笔记</a> · <a href="https://huggingface.co/tencent/Youtu-Parsing-Omni">官方资料 ↗</a></div>
+</div>
+<!-- HEADER -->
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">腾讯解析专项 · 首发精确日仍待核 · 10/30补读正式报告</span>
+<div class="zh-title">一套感知编码器和结构协议，把内容精度与序列结构分开监督</div>
+<h1>Youtu-Parsing-Omni <span>Encoder · Schema · OSAD</span></h1>
+<div class="authors">Tech Report 2610.39301v1完整HTML正文及架构/训练/评测附录已读；无PDF/权重下载</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">5B</div><div class="sub">统一parser</div></div>
+<div class="score-box"><div class="num">128K</div><div class="sub">最长上下文</div></div>
+<div class="score-box"><div class="num">96.96</div><div class="sub">OmniDocBench v1.6</div></div>
+<div class="score-box"><div class="num">6轮</div><div class="sub">OSAD教师刷新</div></div>
+</div>
+</div>
+<!-- MAIN 3-COLUMN GRID -->
+<div class="main-grid">
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>问题：合法JSON仍会读错</h2></div>
+<p class="body">自由caption丢位置，单独OCR不覆盖音视频。OmniSchema提供实体、关系与空间/时间锚点，供下游Agent引用证据。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">首发时间仍未证实</div>
+<p>保留2026-10月份线索；报告补链接不算新模型/新checkpoint，论文提交日不套成权重首日。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">评测经过重实现</div>
+<p>OmniParsing工具不完整，作者重新实现并重评；3738/3874可用媒体，schema repair后评分，不能拼原榜。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">统一感知预训练</div>
+<p>1.28T→512B→128B；最终128K/512frames，decoder40层MLA。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">SFT</div>
+<p>16B tokens、32K、64frames，全参数学schema。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">RLVR</div>
+<p>GRPO，格式/主载荷门禁，重复与覆盖不足惩罚。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="手绘研读：学生门禁、参考条件分布与逐轮刷新" src="src/assets/handdrawn-method.png"/>
+<div class="fig-cap">手绘研读：学生门禁、参考条件分布与逐轮刷新</div>
+</div>
+</div>
+<!-- COLUMN 2: 方法流程 -->
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>方法：学生前缀与参考教师</h2></div>
+<p class="body">共享Encoder用(t,h,w)统一位置；仅四层局部跨模态融合，坐标统一不等于全部层融合。</p>
+<div class="fig-box">
+<img alt="官方原图：统一Encoder、音视频位置与decoder" src="src/assets/arch_figure.png"/>
+<div class="fig-cap">官方原图：统一Encoder、音视频位置与decoder</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">高分不等于所有任务领先</div>
+<p>Overall75.08低于Gemini77.44；自然图像62.84、geometry74.33仍有明显差距。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">有效样本全局归约</div>
+<p>按所有rank有效rollout数求均值，不能各rank均值等权；全局有效数为0才跳过。</p>
+</div>
+<div class="formula-box"><div class="flabel">OSAD的信息边界</div>学生：输入 + 自己的前缀 ｜ 教师：同前缀 + 参考解析<p style="font-size:.68rem;color:#78716c;margin-top:4px;">同一状态比较token分布；不是教师独立生成完美轨迹。每轮内教师冻结，轮间更新。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">OSAD</div>
+<p>内容JS、结构forwardKL、全tokenJS；每角色先均值。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">逐轮刷新</div>
+<p>只训学生LoRA；轮末合并，初始化下一轮教师/学生。</p>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: 实验结果 -->
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>实验：符号读取与能力边界</h2></div>
+<p class="body">学生走自己的rollout；冻结教师看同一学生前缀，并额外看到reference。门禁只筛学生生成。</p>
+<table class="rtable"><tr><th>任务</th><th>结果</th><th>限制</th></tr><tr><td>OmniDocBench</td><td>96.96</td><td>无独立显著性结论</td></tr><tr><td>PureDocBench</td><td>76.29</td><td>TeleOCR78.41更高</td></tr><tr><td>OmniParsing</td><td>75.08</td><td>5列均值/重评</td></tr><tr><td>ChemOCR exact</td><td>54.2</td><td>990例/指纹一致</td></tr><tr><td>PDMX CER</td><td>22.73</td><td>排印谱，非任意手写</td></tr></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">覆盖与独立验证</div>
+<p>门禁失败样本被mask，需报告通过率和分布；无独立本地重测，reference正确性是前提。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">OSAD阶段不用手写标量reward，不代表此前RLVR没有reward；参考解析仍可能有错。</p>
+<table class="ood-table"><tr><th>顺序训练</th><th>Overall</th><th>增量</th></tr><tr><td>SFT</td><td>94.97</td><td>起点</td></tr><tr><td>+RLVR</td><td>95.21</td><td>+0.24</td></tr><tr><td>+6轮OSAD</td><td>96.96</td><td>+1.75；递减</td></tr></table>
+<div class="trick-box">
+<div class="trick-title">文本初始化偏向符号读取</div>
+<p>同300B预算OCR767.0 vs636.4；但随机初始化BLINK52.89高于43.41，不能说所有视觉都更强。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">OSAD顺序贡献</div>
+<div class="adelta">约88%</div>
+<div class="adesc">占SFT后1.99分中的1.75；不是全部RL配方的上限或独立最优超参证明。</div>
+</div>
+<div class="abl-card">
+<div class="aname">真实再拍退化</div>
+<div class="adelta">−14.48</div>
+<div class="adesc">PureDocBench clean82.61→physical68.13；保留真实采集差距。</div>
+</div>
+</div>
+</div>
+</div><!-- /main-grid -->
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">证据</div>
+<p>JSON合法、bbox可解析和事实正确分别验收。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">模型</div>
+<p>0.6B是Encoder初始化来源，完整parser5B。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">训练</div>
+<p>真实学生状态监督，监测门禁覆盖与reference噪声。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">资料</div>
+<p>报告正文/附录/原图本地化；精确首发日待核。</p>
+</div>
+</div>
+</div><!-- /poster -->
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body>
+</html>

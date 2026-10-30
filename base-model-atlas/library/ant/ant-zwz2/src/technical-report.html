@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2610.37037v1">打开官方原文 ↗</a> · <a href="technical-report.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>zwz · 官方原文 
+官方原文 ↗ 
+Zooming without Zooming v2: From Seeing Details to Connecting Evidence for Generalizable Multimodal Perception Lai Wei, Yatai Li, Liangbo He,
+Jun Lan, Renjie Gu, Linhan Cao, Junkai Lin, Huijia Zhu,
+Weiqiang Wang, Linghe Kong, Yue Wang, Zhuosheng Zhang, Weiran Huang School of Computer Science, Shanghai Jiao Tong University  Ant Group Zhongguancun Academy  Shanghai Innovation Institute  Fudan University Abstract 
+Multimodal perception forms the foundation of multimodal intelligence.
+In particular, spatial perception and multimodal long-context understanding are two pivotal tasks that underpin embodied AI and multimodal agents. However, synthesizing targeted, high-quality training data for these tasks remains difficult and costly.
+Our key insight is that these tasks share an underlying capability, which we call connecting evidence: identifying relevant visual facts, binding them to the correct entities, recovering their relations, and composing them into an answer.
+Crucially, targeted training data are far easier to synthesize for this capability than for these tasks themselves.
+To strengthen this capability, we propose EvidenceConnect , an easy-to-implement data synthesis framework that uses zoomed views of related regions within a single image to generate questions requiring comparison, aggregation, or chaining of visual evidence.
+To ensure quality, a reference answer is retained only when independent VLMs agree on it, and region-ablation tests discard questions whose answer survives the removal of selected regions.
+We then train base VLMs on the resulting data with RLVR, obtaining Zooming without Zooming v2 (ZwZ2).
+Although the synthesized data are not tailored to any downstream benchmark, ZwZ2 improves fine-grained and spatial perception, with further gains on embodied spatial reasoning, multimodal long-context understanding, multimodal agent tasks, and general visual reasoning (shown in Figure 1 ).
+These results establish EvidenceConnect as an effective framework for supervising evidence connection and suggest that strengthening this shared capability leads to more generalizable multimodal perception. 
+† † footnotetext: ∗ Equal contribution. ‡ Project Lead. † Correspondence to Weiran Huang
+( weiran.huang@sjtu.edu.cn ). Figure 1: Performance comparison of ZwZ2 and other advanced models. 
+Code: inclusionAI/Zooming-without-Zooming-v2 
+Hugging Face: collections/inclusionAI/zooming-without-zooming-v2 
+1 Introduction 
+Multimodal perception is the foundation of multimodal intelligence: before a multimodal model can reason or act, it must determine what is present in a scene. Recent progress on this front, such as multimodal Chain-of-Thought ( Zhang et al., 2023 ; Xu et al., 2024 ; Li and Ma, 2026 ) and Thinking-with-Images ( Zheng et al., 2025 ; Zhang et al., 2025c ) , has improved the ability of open-source vision-language models (VLMs) to perceive fine-grained visual content and use it in reasoning ( Wei et al., 2026 ; Wei et al., 2025b ; Li et al., 2026b ) . 
+However, these advances do not reliably extend to tasks in which critical visual cues are dispersed across objects, relationships, frames, or dialogue turns. Two such tasks, spatial perception and multimodal long-context understanding, are particularly important because they underpin embodied AI and multimodal agents, respectively.
+Spatial perception requires a model to recover how entities are arranged relative to one another and how several spatial relations compose ( Gemini Robotics Team, 2025 ; Li et al., 2025a ) . Embodied AI relies on it to ground navigation, manipulation, and viewpoint-dependent decisions in object locations and spatial relations ( Brohan et al., 2023 ; Kim et al., 2025 ; Yang et al., 2026 ) . Multimodal long-context understanding requires a model to locate evidence across images and dialogue history, preserve entity identity, and bring that evidence to bear on the current question ( Wu et al., 2025 ; Liu et al., 2024 ; Wang et al., 2025d ; Song et al., 2024 ) . Multimodal agents rely on it to retrieve relevant past observations, resolve references across interactions, and integrate earlier evidence into current decisions ( He et al., 2024 ; Su et al., 2026 ; Li et al., 2025b ) . 
+Strengthening these capabilities, however, is constrained by the difficulty of building high-quality training data.
+For spatial perception, existing efforts mainly scale up region-grounded relational data ( Chen et al., 2024a ; Zhang et al., 2026a ) , but reliable labels require precise localization and relational grounding across multiple objects. Such labels are expensive to annotate by hand, while automated generators often hallucinate relations.
+For long-context understanding, existing multi-image and multi-turn instruction data ( Jiang et al., 2024 ; Liu et al., 2024 ) concentrate on a few formats and task types, because diverse questions that remain answerable over long sequences are hard to construct automatically.
+Data for embodied spatial reasoning and multimodal agents are even harder to synthesize, since they additionally involve physical or interactive environments and multi-step trajectories. Consequently, neither these capabilities nor the applications built on them have a scalable and high-quality source of clean, verifiable supervision. 
+Our key insight is that these tasks build on a shared atomic capability of VLMs, which we call connecting evidence : identifying task-relevant visual facts, binding each fact to the correct entity, recovering the relations among them, and integrating the evidence into an answer.
+These tasks instantiate this capability differently: spatial perception connects objects within a scene through spatial relations, whereas long-context understanding, on which multimodal agents rely, connects facts across images and dialogue turns through entity identity and reference.
+Despite these differences in where the evidence resides and how it is linked, both tasks rely on the same underlying steps, so strengthening these steps can benefit both. Moreover, since the first step, identifying visual facts, is itself fine-grained perception, fine-grained perception benefits as well. 
+Crucially, training data that target this capability are far easier to construct and verify than data for the tasks themselves. To turn this insight into trainable supervision, we propose EvidenceConnect , an easy-to-implement, fully automated framework that synthesizes visual questions requiring the model to connect evidence across regions.
+Specifically, we select a group of related regions within a single image and synthesize a compositional question over them from privileged zoomed views, which make small details visible but are used only during data construction.
+Depending on the scene, we synthesize questions to compare, aggregate, or chain evidence across the regions.
+Answering such questions thus exercises the same steps as the target tasks: relating regions spatially, including from a given viewpoint, parallels spatial perception and embodied spatial reasoning, whereas locating scattered regions, binding their facts to the right references, and integrating them parallels long-context understanding and multimodal agents.
+To ensure data quality, we keep a question only if VLMs from different families agree on its answer, and we use region-ablation tests to discard questions whose answer survives the removal of selected regions.
+Finally, each verified question is converted into multiple-choice form for rule-based rewards and paired with the full image, where colored outlines typically mark the selected regions to avoid ambiguous references, so the model must still perceive and connect the evidence by itself. 
+To evaluate whether this supervision generalizes beyond the synthesized questions, we train Qwen3.5-4B, Qwen3.5-9B, and Qwen3.6-27B ( Qwen Team, 2026a ; Qwen Team, 2026b ) with reinforcement learning with verifiable rewards (RLVR) ( Lambert et al., 2024 ; DeepSeek-AI, 2025 ) using only our synthesized data, without supervised fine-tuning or benchmark-specific question formats.
+The resulting models, ZwZ2-4B/9B/27B, achieve substantial improvements in fine-grained and spatial perception as well as multimodal long-context understanding, with gains that further extend to embodied spatial reasoning, multimodal agent tasks, and general visual reasoning.
+For example, ZwZ2-4B improves over its base model from 37.43 to 45.26 (+7.83) on ViewSpatial-Bench (spatial reasoning) and from 60.08 to 70.08 (+10.00) on MileBench (long-context understanding).
+More broadly, its average over all 25 benchmarks increases from 49.41 to 54.79, and the corresponding averages improve from 51.63 to 56.59 for ZwZ2-9B and from 55.52 to 60.51 for ZwZ2-27B.
+Notably, although ZwZ2 is trained only on single images, it also improves on multi-image long-context benchmarks and multimodal agent tasks. These results demonstrate that connecting evidence is indeed a generalizable training target for multimodal perception. 
+To summarize, our key contributions are the following: 
+• 
+We identify connecting evidence as an important atomic capability of VLMs, underlying fine-grained perception, spatial perception, and multimodal long-context understanding. 
+• 
+We develop EvidenceConnect , a structured and audited synthesis pipeline for single-image, multi-region compositional questions, with privileged region views and independent checks for answer correctness and evidence dependence. 
+• 
+Experiments demonstrate that RLVR on the resulting synthetic data improves a broad range of perception benchmarks and further generalizes to many real-world tasks, including embodied spatial reasoning, multimodal agent tasks, and general visual reasoning. 
+2 Related Work 
+Spatial perception. Spatial perception underpins embodied tasks such as robotic manipulation and embodied question answering ( Brohan et al., 2023 ; Kim et al., 2025 ; Gemini Robotics Team, 2025 ) .
+Existing approaches use large-scale spatial supervision ( Chen et al., 2024a ) , intermediate visual grounding ( Zhang et al., 2026a ) , and progressive training ( Li et al., 2026a ) .
+Benchmarks and associated training resources examine perspective-taking, multi-image inference, and multi-hop composition ( Li et al., 2025a ; Yang et al., 2026 ) .
+MultihopSpatial additionally studies grounded spatial training and its transfer to embodied tasks ( Lee et al., 2026 ) .
+Euclid’s Gift ( Lian et al., 2026 ) demonstrates transfer from geometric surrogate tasks.
+Similarly, we train on a surrogate task and evaluate its transfer, but our task is built from natural images and targets the evidence connection shared by spatial perception and long-context understanding, rather than spatial skills alone. 
+Long-context multimodal understanding. Multimodal long-context understanding requires locating, tracking, and integrating evidence across long sequences of images and dialogue turns.
+Existing efforts support these abilities through multi-image and multi-turn instruction tuning ( Jiang et al., 2024 ; Huang et al., 2023 ; Liu et al., 2024 ) and dialogue-fragment retrieval ( Bi et al., 2026 ) , while benchmarks assess long-context integration and memory ( Song et al., 2024 ; Wang et al., 2025d ; Ren et al., 2026 ) .
+Controlled studies nevertheless identify persistent difficulties in aggregating distributed visual information ( Das et al., 2026 ) .
+We target evidence connection as a shared component of these tasks, constructing single-image questions that require identifying, binding, and composing facts across regions.
+This setting makes the selected evidence easier to localize and audit, allowing us to investigate whether such supervision transfers to multimodal long-context understanding without training on long image sequences or dialogue histories. 
+Multimodal synthetic data. Early resources provide annotated scene graphs and programmatic questions ( Krishna et al., 2017 ; Hudson and Manning, 2019 ) . Later methods automate instruction generation ( Zhao et al., 2024 ; Zhang et al., 2025b ) , evolution ( Luo et al., 2025 ) , and synthesis for unsupervised post-training ( Wei et al., 2025a ) .
+Zooming without Zooming ( Wei et al., 2026 ) transfers single-region supervision to full images with cross-model answer checks.
+CRIT ( Sung et al., 2026 ) and FM2DS ( Abaskohi et al., 2024 ) synthesize cross-modal questions and filter unimodal shortcuts, while MM-CondChain ( Shen et al., 2026 ) verifies conditional programs and ReasonVQA ( Tran et al., 2025 ) composes external knowledge paths.
+HopChain ( Wang et al., 2026 ) targets long-CoT robustness through instance-dependent chains with human-verified answers.
+Unlike these pipelines, EvidenceConnect builds each question on a coherent group of regions rather than a single region or a sequential chain, so its questions cover aggregation and closed-set comparison in addition to dependency chains.
+Moreover, it automatically checks both the answer and its dependence on the selected regions, through cross-model agreement and region ablation, without human annotation. 
+3 Boosting Multimodal Perception by Learning to Connect Visual Evidence 
+As discussed in Section 1 , fine-grained perception, spatial perception, and multimodal long-context understanding share a core capability that we call connecting evidence.
+This motivates training data whose questions structurally require this capability and end in concise answers suitable for verifiable rewards.
+To construct this supervision, we propose EvidenceConnect , a data synthesis framework centered on coherent groups of image regions. Within this framework, high-resolution privileged crops render local details visible for question synthesis, while cross-model answer anchoring and region ablation check label reliability and evidence dependence.
+The overview of the data synthesis pipeline is shown in Figure 2 . Figure 2: Overview of our multi-region question synthesis pipeline. We select related regions from a single image and construct a privileged crop view to generate compositional questions. The illustrative example connects a flight number on a boarding pass to its departure gate and then to a service icon (T218 → \rightarrow C6 → \rightarrow plug). Cross-model answer anchoring and drop-one region tests assess answer reliability and evidence dependence, followed by multiple-choice conversion and difficulty filtering. During training, the policy receives the full image with region outlines, while privileged crops are used only for data construction. 
+3.1 Multi-region Question Synthesis Target question structure. 
+We first define the target question, whose answer depends on connecting one coherent group of regions in an image.
+Formally, from a source image I I , we obtain localized region proposals R I R_{I} and select one evidence group G = { r i 1 , … , r i k } ⊆ R I , 3 ≤ k ≤ 7 . G=\{r_{i_{1}},\ldots,r_{i_{k}}\}\subseteq R_{I},3\leq k\leq 7. Restricting the evidence to a single image keeps training inexpensive, while several related regions of one image already require a model to locate, bind, and compose dispersed evidence.
+Importantly, the regions are selected to jointly support one question q q , which assigns each of them a role, i.e., the fact it contributes: a value to be combined, a member of a closed candidate set, or a clue on which a later step depends. 
+Corresponding to these three kinds of roles, q q connects the regions through one of three forms. Aggregation combines counts or other numeric facts from the regions, possibly through a short calculation. Comparison and matching treats the regions as the complete candidate set, so that an answer such as an outlier, an extremum, or a pairing can be identified only by considering all of them. Dependency chains and compositions build the answer in several steps, e.g., by using a clue to decide what to read next, fixing a viewpoint for interpreting the rest, or combining predicates from different regions.
+In all three forms, the answer is determined only when the assigned roles are taken together.
+These forms also tie our questions to the target tasks: spatial relations, including those in an agent’s or object’s own frame, parallel spatial perception and embodied spatial reasoning, while binding facts to regions referenced by outline colors and integrating them parallels how long-context understanding and multimodal agents handle facts tied to image or turn references.
+To synthesize such questions, we first locate candidate regions, then group those that support one of the three forms, and finally compose questions over each selected group. Grounded evidence discovery. 
+Since multi-region questions need detail-rich scenes, we start from high-resolution, visually complex images.
+For each image, a strong VLM judges whether it can support such questions and, if so, is prompted to propose concrete, clearly localizable regions, each with a bounding box and a short description, prioritizing regions that can be related to one another over isolated salient ones.
+We then discard proposals that are too small, too large, or heavily overlapping.
+As these model-generated descriptions may be wrong, they only guide grouping and question writing, whereas reference answers are later derived from the image itself. Task-conditioned evidence grouping. 
+An arbitrary collection of these proposals, however, does not necessarily support a valid compositional question.
+We therefore prompt a strong model with the image caption and region descriptions to propose several groups per image, each labeled with a task family (a specific question type such as anomaly detection) and a necessity mode (how removing a region should affect the answer).
+We then discard invalid or duplicated groups and closed sets of incomparable objects, and keep groups with distinct task families first.
+The task family only guides question writing, whereas each region’s concrete role is fixed when a question is written. Privileged evidence layout. 
+Since fine-grained details are difficult to inspect at full-image scale, we construct for each group a privileged evidence layout V G V_{G} , which is accessible only during data construction.
+Following the layout-preserving design of Liu et al. (2025) , V G V_{G} arranges native-resolution crops of the selected regions, with small context margins, on a compact canvas that removes irrelevant background while preserving their relative horizontal and vertical order.
+In addition, each region is outlined in a distinct color that also marks it in the full image, allowing questions to refer to regions by color unambiguously.
+Finally, V G V_{G} serves as the sole visual input to the question generator, which confines its questions to evidence within the group, and it is later reused for verification (Section 3.2 ). Question realization. 
+The question generator, a strong VLM, then receives V G V_{G} , the region descriptions, and a few reasoning blueprints, i.e., templates of reasoning programs, and composes several candidate questions, each with a concise answer: a single value (e.g., a number, a short phrase, or the outline color of a selected region), a set, or an ordered pair.
+To make its use of evidence checkable, the generator also states each region’s contribution and the answer expected after removing it, together with a reasoning certificate, i.e., a short sequence of steps that links the regions to the answer.
+Deterministic rules then reject candidates whose certificate leaves a region unused or contains steps that do not lead to the answer, whose own predicted answer survives the removal of a region, or that use subjective wording, leak the answer through an outline color, or contain inconsistent arithmetic.
+Implementation details and prompt templates appear in Appendices A and B . 
+3.2 Two-stage Verification 
+The checks above concern only the form of a candidate.
+A compositional question, however, is useful supervision only if its reference answer is reliable and the intended evidence matters.
+We assess these properties separately, since a plausible reasoning structure establishes neither. Cross-model answer anchoring. 
+To obtain a more reliable reference answer, two VLMs from different model families answer q q from V G V_{G} several times, without seeing the region descriptions or the proposed answer.
+A candidate is kept only if a clear majority of each model’s responses supports the same answer and this answer becomes the reference a ⋆ a^{\star} . Adaptive drop-one testing. 
+Agreement on a ⋆ a^{\star} , however, does not show that the answer actually depends on the selected evidence.
+Since every question is constructed to require all of its regions (Section 3.1 ), an answer that survives the removal of a region indicates a defect, such as a decorative region or a shortcut that bypasses the intended reasoning.
+To detect such defects, we mask each r i ∈ G r_{i}\in G in the privileged layout, V G − i = ℳ i ​ ( V G ) V_{G}^{-i}=\mathcal{M}_{i}(V_{G}) , where ℳ i \mathcal{M}_{i} replaces the crop of r i r_{i} with a gray placeholder.
+A verifier from one anchoring family then answers q q from this view, reporting insufficient information if the masked evidence is needed, and either such a report or a changed answer confirms that the question depends on r i r_{i} .
+If instead a ⋆ a^{\star} is still returned, or the response is unusable, we query the verifier again and mark r i r_{i} as empirically redundant only if most queries recover a ⋆ a^{\star} .
+Note that a single redundant region, however, may reflect noise rather than a defect, because part of a masked region can remain visible in an adjacent crop through overlapping context margins, and individual responses also vary.
+We therefore reject a question only when more than one region is redundant, which also improves synthesis efficiency, since a stricter rule would discard many potentially valid questions merely because one region was judged redundant.
+The implementation details are shown in Appendix A . 
+3.3 Data Finalization From privileged crops to the policy view. 
+Since the policy, i.e., the model under training, never sees V G V_{G} , each verified candidate is paired with a policy view V I V_{I} , by default the source image with each selected region outlined in its assigned color.
+To avoid ambiguous references in the full image, these outlines mark which instances a question refers to, without revealing the answer-bearing content that the policy must still perceive and compose.
+For aggregate questions, whose answers do not depend on the outlines, we also try to replace marker references with natural descriptions, so that the policy must locate the evidence itself.
+This unmarked version replaces the marked one only if independent audits by both anchoring families, without access to a ⋆ a^{\star} , confirm unique references, an unchanged multi-region task grounded in the intended regions, and the answer a ⋆ a^{\star} . Multiple-choice conversion and difficulty filtering. 
+To support rule-based rewards in RLVR, we then turn each question into a four-option multiple-choice question, adding three distractors in the answer format of a ⋆ a^{\star} so that the format does not reveal the answer.
+Each released example is thus x = ( V I , q rel , O ) x=(V_{I},\,q_{\mathrm{rel}},\,O) with label y ∈ { A , B , C , D } y\in\{\mathrm{A},\mathrm{B},\mathrm{C},\mathrm{D}\} , where q rel q_{\mathrm{rel}} is the verified question stem, rewritten without marker references when the unmarked view is used, O O the shuffled option set, and y y the option of a ⋆ a^{\star} .
+Finally, since overly easy examples provide little learning signal, a lightweight VLM answers each example several times, and we discard examples that it always answers correctly. 
+4 Experiments 
+This section evaluates whether learning to connect evidence within a single image yields improvements that generalize across multimodal perception tasks. Table 1: Main results on 25 benchmarks (accuracy, %).
+Domain averages and Overall are unweighted means within each domain
+and over all 25 benchmarks, respectively. 
+Domains Benchmarks Base models ZwZ2 Advanced models 
+4B 9B 27B 4B 9B 27B GPT GLM DeepSeek 
+VStar 82.20 83.77 87.96 89.00 90.58 91.62 75.92 83.77 78.53 
+HR-4K 82.37 84.88 84.25 88.62 89.75 89.88 83.87 84.25 79.13 
+HR-8K 78.37 82.50 80.00 83.63 87.62 88.00 79.13 80.63 75.00 
+MME-en 70.60 71.00 72.62 75.48 75.33 77.41 58.50 67.88 50.75 
+MME-cn 69.33 69.53 68.68 73.89 73.45 74.97 56.90 68.31 50.04 
+ZoomBench 50.41 49.57 53.61 58.22 59.53 61.78 54.44 56.09 49.94 
+Chartography 5.00 7.00 8.00 14.00 13.00 12.00 17.00 9.00 10.00 
+PerceptionBench 35.53 38.70 41.57 37.80 38.89 44.93 48.77 44.78 44.00 
+Fine-grained perception Avg. 59.23 60.87 62.09 65.08 66.02 67.57 59.32 61.84 54.67 
+TreeBench 50.37 46.67 49.63 51.36 51.60 56.05 52.35 57.53 61.98 
+O3-Bench 53.91 59.13 65.80 63.77 67.83 72.46 66.38 62.32 73.62 
+CountQA 36.91 37.63 46.73 47.19 48.43 54.32 51.83 49.35 64.07 
+MIMIC 55.01 59.39 55.95 66.10 64.98 65.16 57.43 73.46 68.55 
+MMSI-Bench 30.70 32.70 33.50 32.30 33.90 37.10 32.80 37.20 34.60 
+SPAR-Bench 41.47 43.53 46.68 45.69 47.23 50.78 43.92 52.13 40.66 
+Spatial perception Avg. 44.73 46.51 49.72 51.07 52.33 55.98 50.79 55.33 57.25 
+MMLongBench ∗ 63.50 69.89 73.41 68.34 73.45 76.73 67.79 83.15 82.20 
+MileBench 60.08 68.96 71.97 70.08 71.46 73.94 63.34 71.33 65.79 
+MemLens 40.62 45.82 52.22 42.59 47.34 55.64 37.20 58.40 66.57 
+Long-context understanding Avg. 54.73 61.56 65.87 60.34 64.08 68.77 56.11 70.96 71.52 
+ERQA 45.75 45.75 51.25 52.00 55.50 61.75 54.00 54.50 59.50 
+ViewSpatial-Bench 37.43 42.65 48.49 45.26 45.27 50.63 40.18 46.57 56.29 
+MindCube-Tiny 47.62 40.76 50.76 53.05 52.57 54.76 57.62 72.00 42.00 
+Embodied spatial reasoning Avg. 43.60 43.05 50.17 50.10 51.11 55.71 50.60 57.69 52.60 
+AgentVista 12.44 8.61 12.92 17.22 14.83 18.18 21.53 22.01 9.09 
+ScreenSpot-Pro 60.09 63.88 70.21 61.73 66.98 70.59 63.25 40.48 54.40 
+UI-Vision 35.83 42.48 66.05 37.67 45.48 66.66 59.43 38.48 43.34 
+Multimodal agent Avg. 36.12 38.32 49.73 38.87 42.43 51.81 48.07 33.66 35.61 
+MMStar 74.13 77.27 75.93 76.27 78.27 79.07 74.73 80.20 80.73 
+BabyVision 15.46 18.56 19.85 18.56 21.39 28.35 32.22 37.11 45.88 
+General visual reasoning Avg. 44.80 47.92 47.89 47.42 49.83 53.71 53.48 58.66 63.31 
+Overall 49.41 51.63 55.52 54.79 56.59 60.51 54.02 57.24 55.47 
+Notes. Base models are Qwen3.5-4B/9B and Qwen3.6-27B.
+GPT: GPT-5.6-Luna; GLM: GLM-5.3-Flash.
+DeepSeek: DeepSeek-V4.1-Flash.
+All models are evaluated in low-thinking or non-thinking reasoning modes. The input resolution of the three advanced models is constrained by platform limitations. ∗ : extracted MMLongBench visual-core subset, including V-RAG,
+Image MM-NIAH, and VH-Multi (25 non-Counting tasks in total). 
+4.1 Experimental Settings 
+Benchmarks. We evaluate on 25 benchmarks in six domains (Table 1 ). (i) Fine-grained perception: VStar ( Wu and Xie, 2024 ) , HR-Bench 4K/8K ( Wang et al., 2025c ) , MME-RealWorld (EN/CN) ( Zhang et al., 2025d ) , ZoomBench ( Wei et al., 2026 ) , Chartography ( Garre et al., 2026 ) , and PerceptionBench ( Lin et al., 2026 ) . (ii) Spatial perception: TreeBench ( Wang et al., 2025a ) , O3-Bench ( Li et al., 2026c ) , CountQA ( Tamarapalli et al., 2025 ) , MIMIC ( Das et al., 2026 ) , MMSI-Bench ( Yang et al., 2026 ) , and SPAR-Bench ( Zhang et al., 2025a ) . (iii) Multimodal long-context understanding: MMLongBench ( Wang et al., 2025d ) , MileBench ( Song et al., 2024 ) , and MemLens ( Ren et al., 2026 ) . (iv) Embodied spatial reasoning: ERQA ( Gemini Robotics Team, 2025 ) , ViewSpatial-Bench ( Li et al., 2025a ) , and MindCube-Tiny ( Wang et al., 2025b ) . (v) Multimodal agents: AgentVista ( Su et al., 2026 ) , together with ScreenSpot-Pro ( Li et al., 2025b ) and UI-Vision ( Nayak et al., 2025 ) for GUI grounding. (vi) General visual reasoning: MMStar ( Chen et al., 2024b ) and BabyVision ( Chen et al., 2026 ) .
+We report accuracy (%) on all benchmarks. 
+Training. We train Qwen3.5-4B/9B ( Qwen Team, 2026a ) and Qwen3.6-27B ( Qwen Team, 2026b ) in non-thinking mode with GRPO ( Shao et al., 2024 ) on the 20.4K examples synthesized by EvidenceConnect (Appendix C ), without supervised fine-tuning.
+All three scales share the same data and training configuration (Appendix D ), and we refer to the resulting models as ZwZ2-4B/9B/27B. 
+Baselines. We compare with two groups of baselines.
+As references for absolute performance, Table 1 includes three advanced models: GPT-5.6-Luna, GLM-5.3-Flash, and DeepSeek-V4.1-Flash.
+To compare EvidenceConnect with existing synthetic training data, we further train Qwen3.5-4B with the same GRPO recipe on the datasets of ZwZ ( Wei et al., 2026 ) , TVG ( Zhang et al., 2026a ) , F 2 RVLM ( Bi et al., 2026 ) , CRIT ( Sung et al., 2026 ) , and MMHops ( Zhang et al., 2026b ) (Table 2 ).
+For CRIT, whose 84,199 training samples contain 269,467 QA pairs from GQA, ActivityNet Captions, and SPIQA in multi-image, interleaved image–text, and multi-turn formats, we uniformly sample about 30K QA pairs across the three domains and train on them without CoT supervision or additional annotations. 
+4.2 Main Results 
+Table 1 shows that ZwZ2 improves over its base model on all 25 benchmarks at every scale, raising the overall average by 5.39, 4.96, and 4.99 points at 4B, 9B, and 27B, respectively.
+In particular, fine-grained and spatial perception improve by 5.2–6.3 points on average, with gains of up to 11.1 points on MIMIC and 10.8 points on CountQA, and embodied spatial reasoning improves by 5.5–8.1 points, including 10.5 points on ERQA at 27B.
+Qualitative examples are provided in Appendix F . 
+Notably, although ZwZ2 is trained only on single images, its gains carry over to multi-image and interactive settings.
+Long-context understanding improves at every scale, most markedly at 4B, where the domain average rises by 5.6 points, including a gain of 10.0 points on MileBench.
+Likewise, the multimodal agent benchmark AgentVista improves by 4.8–6.2 points, and GUI grounding also improves consistently.
+These results support our premise that connecting evidence within an image transfers to tasks whose evidence spans images, dialogue turns, or interaction steps. 
+ZwZ2 remains competitive with frontier models. ZwZ2-27B achieves the highest overall accuracy (60.51%), compared with 54.02%, 57.24%, and 55.47% for GPT-5.6-Luna, GLM-5.3-Flash, and DeepSeek-V4.1-Flash, respectively, and leads the fine-grained perception domain. Table 2: Training Qwen3.5-4B on different synthetic datasets (accuracy, %). Parentheses give the number of training examples. HR denotes HR-Bench; Chart and O3 denote Chartography and O3-Bench. MMSI, MindCube, and ViewSpatial denote MMSI-Bench, MindCube-Tiny, and ViewSpatial-Bench, respectively. 
+Models Fine-grained perception Spatial perception Embodied spatial reasoning Long-context understanding Avg. 
+HR-4K HR-8K Chart O3 CountQA MMSI MindCube ERQA ViewSpatial MileBench MemLens 
+Base 82.37 78.37 5.00 53.91 36.91 30.70 47.62 45.75 37.43 60.08 40.62 47.16 
+MMHops (31K) 77.75 73.12 3.00 45.80 30.82 30.50 42.10 43.75 40.90 66.29 15.97 42.73 
+TVG (19.4K) 78.25 73.62 13.00 53.04 33.97 29.50 28.86 46.00 42.16 64.56 37.29 45.48 
+F 2 RVLM (37K) 80.13 77.62 10.00 54.20 32.72 31.90 34.38 44.75 40.56 64.58 39.80 46.42 
+CRIT (30K) 82.25 77.88 6.00 45.22 30.56 29.90 43.43 45.00 43.98 68.13 40.40 46.61 
+ZwZ (73K) 87.00 82.75 7.00 60.87 43.32 31.33 33.81 46.00 43.75 70.21 42.46 49.86 
+Ours (20.4K) 88.62 83.63 14.00 63.77 47.19 32.30 53.05 52.00 45.26 70.08 42.59 53.86 
+4.3 Comparison with Existing Training Data 
+Table 2 compares EvidenceConnect with existing synthetic datasets on the same 4B base model.
+These datasets target single-region fine-grained perception (ZwZ), grounded counting and spatial reasoning (TVG), dialogue-fragment retrieval (F 2 RVLM), cross-modal multi-hop QA over interleaved contexts (CRIT), and knowledge-based multi-hop QA (MMHops).
+Training on TVG, F 2 RVLM, CRIT, or MMHops improves MileBench but degrades HR-Bench, CountQA, MindCube-Tiny, and MemLens, and all four datasets lower the average accuracy below that of the base model.
+In contrast, EvidenceConnect improves every benchmark over the base model and outperforms these four datasets on all 11 benchmarks, with a comparable amount of data (20.4K examples versus 19.4K–37K). 
+ZwZ-73K is the strongest baseline.
+Since it also synthesizes questions from zoomed-in views but grounds each question in a single region, the comparison with ZwZ serves as an approximate ablation of connecting multiple regions.
+Although ZwZ uses 3.6 × \times as many examples (73K versus 20.4K), EvidenceConnect raises the average accuracy from 49.86 to 53.86 and surpasses ZwZ on 10 of the 11 benchmarks, trailing it only on MileBench by 0.13 points.
+The largest margin appears on MindCube-Tiny, where ZwZ reduces accuracy by 13.8 points whereas EvidenceConnect improves it by 5.4 points.
+This contrast is consistent with our premise that embodied spatial reasoning relies on connecting evidence across regions rather than on inspecting a single region. 
+4.4 Ablation Studies Table 3: Data-synthesis ablations on Qwen3.5-4B (accuracy, %). Each trained variant uses 7K examples. The 7K reference model is shared by both comparisons and is reported only once; it uses privileged views and drop-one verification. Avg. is the unweighted mean over 11 benchmarks. 
+Settings Fine-grained perception Spatial perception Embodied spatial reasoning Long-context understanding Avg. 
+HR-4K HR-8K Chart O3 CountQA MMSI MindCube ERQA ViewSpatial MileBench MemLens 
+Base 82.37 78.37 5.00 53.91 36.91 30.70 47.62 45.75 37.43 60.08 40.62 47.16 
+Without privileged views 85.12 82.50 13.00 53.62 40.51 33.00 50.19 52.25 43.87 70.22 40.87 51.38 
+Without drop-one 85.75 79.75 8.00 58.26 41.30 34.10 47.14 51.50 43.84 70.16 41.48 51.03 
+Ours (7K) 86.62 82.87 9.00 62.90 45.09 34.60 52.29 47.50 45.68 70.47 42.14 52.65 Ablation study on drop-one verification. 
+To evaluate adaptive drop-one verification during data synthesis, we compare Qwen3.5-4B trained on 7K examples constructed with or without this verification step (Table 3 ).
+As described in Section 3.2 , this step masks one selected region at a time in the privileged layout and tests whether the reference answer remains recoverable.
+When the verifier returns the reference answer or an unusable response, additional queries are used; a region is marked as empirically redundant only if most queries recover the reference answer.
+A question is rejected only when more than one region is empirically redundant, allowing for noise from overlapping crop margins and variable verifier responses.
+With drop-one verification, average accuracy rises from 51.03 to 52.65 (+1.63 points), with improvements on 10 of the 11 benchmarks.
+The largest gains are on MindCube-Tiny (+5.15), O3-Bench (+4.64), and CountQA (+3.79), while ERQA decreases by 4.00 points.
+These results support the usefulness of this synthesis-time verification step for downstream performance, although its gains are not uniform across tasks. Ablation study on privileged views. 
+To examine the role of privileged views, we train Qwen3.5-4B on 7K examples synthesized from privileged views or original images, with all other settings fixed (Table 3 ).
+Synthesis from privileged views achieves a higher average accuracy than synthesis from original images (52.65 versus 51.38), with higher scores on 9 of the 11 benchmarks.
+Original-image synthesis performs better on Chartography and ERQA, by 4.00 and 4.75 points, respectively.
+Thus, privileged-view synthesis improves average accuracy by 1.27 points in this 7K comparison, although its gains are not uniform across benchmarks. 
+4.5 Analysis 
+Figure 3: Qwen3-VL generalization. Figure 4: Effect of training data scale. Generalization to Qwen3-VL. To examine whether the gains extend beyond the base models used in the experiments, we evaluate Qwen3-VL-2B and Qwen3-VL-4B before and after training on the same 11 benchmarks in Table 2 .
+Figure 3 reports average scores of 36.82 and 41.63 for Qwen3-VL-2B, and 41.70 and 44.61 for Qwen3-VL-4B, corresponding to gains of 4.81 and 2.91 points, respectively.
+These results suggest that the benefits of supervision extend to additional base models at both scales. 
+Effect of training data scale. Figure 4 compares Qwen3.5-4B at different training data scales on the same 11 benchmarks.
+Average accuracy over the 11 benchmarks in Table 2 increases from 47.16 for the base model to 52.65 with 7K training examples and 53.86 with the full 20.4K training set.
+The full set yields a further improvement of 1.21 points over 7K examples, while the 7K setting already improves over the base model by 5.49 points. Context length. 
+Figure 5 breaks down MemLens and the MMLongBench visual core by context length.
+ZwZ2 outperforms or matches its base model at every length and scale, and on MemLens its gains persist up to 256K tokens.
+The gains, however, narrow at the longest contexts.
+At 128K on the MMLongBench visual core, for example, ZwZ2-4B and ZwZ2-9B merely match their base models.
+This trend is consistent with our training data, in which each example contains a single image and thus a short context.
+Training therefore strengthens evidence connection but not retrieval from very long inputs, which likely becomes the main difficulty at the longest lengths. Attention to evidence. 
+To examine whether ZwZ2 focuses more on task-relevant visual evidence, we follow Wei et al. (2026) and evaluate ZwZ2-4B/9B against their base models on 405 TreeBench ( Wang et al., 2025a ) examples equipped with annotated evidence bounding boxes.
+For each full-attention layer, we compute the Intersection over Union (IoU) between the ground-truth evidence tokens E E and the | E | |{}E|{} visual tokens with the highest attention weights (Appendix E ).
+As shown in Figure 6 , ZwZ2 achieves a higher mean IoU across 7 out of 8 layers at the 4B scale and 6 out of 8 layers at the 9B scale.
+This indicates that the high-attention tokens of ZwZ2 align more closely with the ground-truth evidence in most layers at both scales. Figure 5: Context-length performance on MemLens (left) and the MMLongBench visual core (right). Blue, orange, and green denote 4B, 9B, and 27B. Dashed and solid lines show the base models and ZwZ2, respectively. Figure 6: Attention alignment on TreeBench. Layer-wise change in mean top- k k IoU (ZwZ2 minus Qwen3.5, percentage points). 
+5 Conclusion 
+We presented EvidenceConnect , a fully automated framework that synthesizes multi-region visual questions and answers, requiring a model to connect evidence within an image.
+Trained with RLVR on these data alone, ZwZ2 improves over its base models on all 25 benchmarks at 4B, 9B, and 27B.
+Notably, although training uses only single images, the gains extend beyond fine-grained and spatial perception to embodied spatial reasoning, multimodal long-context understanding, and multimodal agent tasks.
+These results suggest that connecting evidence is a transferable training target, and thus tasks whose training data are costly to build can benefit from data that are far easier to construct and verify. 
+Acknowledgement 
+Weiran Huang is supported by National Natural Science Foundation of China (No. 62406192), Shanghai Municipal Special Program for Basic Research on General AI Foundation Models (Grant No. 2025SHZDZX025G03), Tencent WeChat Rhino-Bird Focused Research Program, and Kuaishou Technology.
+This work is supported by Ant Group Research Intern Program.
+This work is also supported by the Zhongguancun Academy (Grant No.s C20250203).
+We also sincerely thank Xiangyu Zou (Z.ai) for assistance with a portion of the model evaluations. 
+References 
+Abaskohi et al. (2024) A. Abaskohi, S. Gella, G. Carenini, and I. H. Laradji Fm2ds: few-shot multimodal multihop data synthesis with knowledge distillation for question answering . arXiv preprint arXiv:2412.07030 . Cited by: §2 . 
+Bi et al. (2026) H. Bi, Z. Yuan, Z. Jia, J. Zhang, C. Li, P. Luo, Y. Deng, X. Duan, and J. Zhang F2RVLM: boosting fine-grained fragment retrieval for multi-modal long-form dialogue with vision language model . In Proceedings of the AAAI Conference on Artificial Intelligence , Cited by: §2 , §4.1 . 
+Brohan et al. (2023) A. Brohan, N. Brown, J. Carbajal, Y. Chebotar, X. Chen, K. Choromanski, T. Ding, D. Driess, A. Dubey, C. Finn, et al. Rt-2: vision-language-action models transfer web knowledge to robotic control . arXiv preprint arXiv:2307.15818 . Cited by: §1 , §2 . 
+Chen et al. (2024a) B. Chen, Z. Xu, S. Kirmani, B. Ichter, D. Sadigh, L. Guibas, and F. Xia Spatialvlm: endowing vision-language models with spatial reasoning capabilities . In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pp. 14455–14465 . Cited by: §1 , §2 . 
+Chen et al. (2026) L. Chen, W. Xie, Y. Liang, H. He, H. Zhao, Z. Yang, Z. Huang, H. Wu, H. Lu, Y. Bao, et al. Babyvision: visual reasoning beyond language . arXiv preprint arXiv:2601.06521 . Cited by: §4.1 . 
+Chen et al. (2024b) L. Chen, J. Li, X. Dong, P. Zhang, Y. Zang, Z. Chen, H. Duan, J. Wang, Y. Qiao, D. Lin, et al. Are we on the right way for evaluating large vision-language models? . Advances in Neural Information Processing Systems 37 , pp. 27056–27087 . Cited by: §4.1 . 
+Das et al. (2026) A. Das, A. Bulat, A. Baldrati, I. M. Metaxas, B. Schiele, G. Tzimiropoulos, and B. Martinez More images, more problems? a controlled analysis of vlm failure modes. . In Findings of the Association for Computational Linguistics: ACL 2026 , pp. 7423–7442 . Cited by: §2 , §4.1 . 
+DeepSeek-AI (2025) DeepSeek-AI DeepSeek-R1: incentivizing reasoning capability in LLMs via reinforcement learning . arXiv preprint arXiv:2501.12948 . Cited by: §1 . 
+Garre et al. (2026) S. Garre, C. Mutty, S. Mehta, and E. Chen Chartography: a benchmark for professional chart understanding . arXiv preprint arXiv:2608.10677 . Cited by: §4.1 . 
+Gemini Robotics Team (2025) Gemini Robotics Team Gemini robotics: bringing ai into the physical world . arXiv preprint arXiv:2503.20020 . Cited by: §1 , §2 , §4.1 . 
+He et al. (2024) H. He, W. Yao, K. Ma, W. Yu, Y. Dai, H. Zhang, Z. Lan, and D. Yu Webvoyager: building an end-to-end web agent with large multimodal models . In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 6864–6890 . Cited by: §1 . 
+Huang et al. (2023) Y. Huang, Z. Meng, F. Liu, Y. Su, N. Collier, and Y. Lu Sparkles: unlocking chats across multiple images for multimodal instruction-following models . arXiv preprint arXiv:2308.16463 . Cited by: §2 . 
+Hudson and Manning (2019) D. A. Hudson and C. D. Manning GQA: a new dataset for real-world visual reasoning and compositional question answering . In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pp. 6700–6709 . Cited by: §2 . 
+Jiang et al. (2024) D. Jiang, X. He, H. Zeng, C. Wei, M. Ku, Q. Liu, and W. Chen MANTIS: interleaved multi-image instruction tuning . arXiv preprint arXiv:2405.01483 . Cited by: §1 , §2 . 
+Kim et al. (2025) M. J. Kim, K. Pertsch, S. Karamcheti, T. Xiao, A. Balakrishna, S. Nair, R. Rafailov, E. P. Foster, P. R. Sanketi, Q. Vuong, T. Kollar, B. Burchfiel, R. Tedrake, D. Sadigh, S. Levine, P. Liang, and C. Finn OpenVLA: an open-source vision-language-action model . In Proceedings of the 8th Conference on Robot Learning , Proceedings of Machine Learning Research , Vol. 270 , pp. 2679–2713 . Cited by: §1 , §2 . 
+Kirillov et al. (2023) A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W. Lo, P. Dollár, and R. Girshick Segment anything . In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) , pp. 4015–4026 . Cited by: Appendix A . 
+Krishna et al. (2017) R. Krishna, Y. Zhu, O. Groth, J. Johnson, K. Hata, J. Kravitz, S. Chen, Y. Kalantidis, L. Li, D. A. Shamma, M. S. Bernstein, and L. Fei-Fei Visual Genome: connecting language and vision using crowdsourced dense image annotations . International Journal of Computer Vision 123 , pp. 32–73 . External Links: Document Cited by: §2 . 
+Lambert et al. (2024) N. Lambert, J. Morrison, V. Pyatkin, S. Huang, H. Ivison, F. Brahman, et al. Tülu 3: pushing frontiers in open language model post-training . arXiv preprint arXiv:2411.15124 . Cited by: §1 . 
+Lee et al. (2026) Y. Lee, S. Jang, Y. Cho, S. Lee, Y. Lee, and S. J. Hwang Multihopspatial: multi-hop compositional spatial reasoning benchmark for vision-language model . In European Conference on Computer Vision , pp. 580–598 . Cited by: §2 . 
+Li et al. (2025a) D. Li, H. Li, Z. Wang, Y. Yan, H. Zhang, S. Chen, G. Hou, S. Jiang, W. Zhang, Y. Shen, W. Lu, and Y. Zhuang ViewSpatial-Bench: evaluating multi-perspective spatial localization in vision-language models . arXiv preprint arXiv:2505.21500 . Cited by: §1 , §2 , §4.1 . 
+Li et al. (2026a) H. Li, D. Li, Z. Wang, Y. Yan, H. Wu, W. Zhang, Y. Shen, W. Lu, J. Xiao, and Y. Zhuang SpatialLadder: progressive training for spatial reasoning in vision-language models . In International Conference on Learning Representations (ICLR) , Cited by: §2 . 
+Li et al. (2026b) J. Li, R. Yang, T. Zhang, T. Xu, W. Dong, and Y. Zhang Fewer tokens, more self-teaching: on-policy self-distillation for extreme visual token reduction . arXiv preprint arXiv:2609.32353 . Cited by: §1 . 
+Li et al. (2026c) K. Li, L. Yao, J. Wu, T. Yu, J. Chen, H. Bai, L. Hou, L. Hong, W. Zhang, and N. L. Zhang Insight-o3: empowering multimodal foundation models with generalized visual search . In The Fourteenth International Conference on Learning Representations , Cited by: §4.1 . 
+Li et al. (2025b) K. Li, Z. Meng, H. Lin, Z. Luo, Y. Tian, J. Ma, Z. Huang, and T. Chua Screenspot-pro: gui grounding for professional high-resolution computer use . In Proceedings of the 33rd ACM International Conference on Multimedia , pp. 8778–8786 . Cited by: §1 , §4.1 . 
+Li and Ma (2026) X. Li and J. Ma AIM-CoT: active information-driven multimodal chain-of-thought for vision-language reasoning . In Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , San Diego, California, United States , pp. 26656–26681 . External Links: Document Cited by: §1 . 
+Lian et al. (2026) S. Lian, C. Wu, L. T. Yang, H. Yuan, B. Yu, L. Zhang, and K. Chen Euclid’s gift: enhancing spatial perception and reasoning in vision-language models via geometric surrogate tasks . In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings , pp. 9824–9835 . Cited by: §2 . 
+Lin et al. (2026) Z. Lin, Y. Xie, B. Qu, H. Wang, J. Li, H. Wu, Y. Dong, Z. Yang, J. Zhu, H. Lu, et al. PerceptionBench: evaluating atomic visual perception in multimodal large language models . arXiv preprint arXiv:2607.24957 . Cited by: §4.1 . 
+Liu et al. (2025) X. Liu, Y. Hu, Y. Zou, L. Wu, J. Xu, and B. Zheng Hide: rethinking the zoom-in method in high resolution mllms via hierarchical decoupling . arXiv preprint arXiv:2510.00054 . Cited by: §3.1 . 
+Liu et al. (2024) Z. Liu, T. Chu, Y. Zang, X. Wei, X. Dong, P. Zhang, Z. Liang, Y. Xiong, Y. Qiao, D. Lin, and J. Wang MMDU: a multi-turn multi-image dialog understanding benchmark and instruction-tuning dataset for LVLMs . arXiv preprint arXiv:2406.11833 . Cited by: §1 , §1 , §2 . 
+Luo et al. (2025) R. Luo, H. Zhang, L. Chen, T. Lin, X. Liu, Y. Wu, M. Yang, Y. Li, M. Wang, P. Zeng, L. Gao, H. T. Shen, Y. Li, H. Alinejad-Rokny, X. Xia, J. Song, and F. Huang MMEvol: empowering multimodal large language models with evol-instruct . In Findings of the Association for Computational Linguistics: ACL 2025 , pp. 19655–19682 . External Links: Document Cited by: §2 . 
+Nayak et al. (2025) S. Nayak, X. Jian, K. Q. Lin, J. A. Rodriguez, M. Kalsi, R. Awal, N. Chapados, M. T. Özsu, A. Agrawal, D. Vazquez, C. Pal, P. Taslakian, S. Gella, and S. Rajeswar UI-vision: a desktop-centric gui benchmark for visual perception and interaction . arXiv preprint arXiv:2503.15661 . Cited by: §4.1 . 
+Qwen Team (2026a) Qwen Team Qwen3.5: towards native multimodal agents . External Links: Link Cited by: Appendix A , §1 , §4.1 . 
+Qwen Team (2026b) Qwen Team Qwen3.6-27B: flagship-level coding in a 27B dense model . External Links: Link Cited by: §1 , §4.1 . 
+Ren et al. (2026) X. Ren, Z. Wang, Y. Du, Z. Xie, C. Liu, X. Yang, H. Feng, W. Pan, T. Zheng, B. Xu, et al. Memlens: benchmarking multimodal long-term memory in large vision-language models . arXiv preprint arXiv:2605.14906 . Cited by: §2 , §4.1 . 
+Shao et al. (2024) Z. Shao, P. Wang, Q. Zhu, R. Xu, J. Song, X. Bi, H. Zhang, M. Zhang, Y. K. Li, Y. Wu, and D. Guo DeepSeekMath: pushing the limits of mathematical reasoning in open language models . arXiv preprint arXiv:2402.03300 . Cited by: Appendix D , §4.1 . 
+Shen et al. (2026) H. Shen, S. Yan, H. Xue, S. Lu, X. Tang, G. Zhang, T. Zhao, and J. Yin MM-condchain: a programmatically verified benchmark for visually grounded deep compositional reasoning . arXiv preprint arXiv:2603.12266 . Cited by: §2 . 
+Song et al. (2024) D. Song, S. Chen, G. H. Chen, F. Yu, X. Wan, and B. Wang Milebench: benchmarking mllms in long context . arXiv preprint arXiv:2404.18532 . Cited by: §1 , §2 , §4.1 . 
+Su et al. (2026) Z. Su, J. Gao, H. Guo, Z. Liu, L. Zhang, X. Geng, S. Huang, P. Xia, G. Jiang, C. Wang, et al. Agentvista: evaluating multimodal agents in ultra-challenging realistic visual scenarios . arXiv preprint arXiv:2602.23166 . Cited by: §1 , §4.1 . 
+Sung et al. (2026) J. Sung, S. Lyu, M. Kim, S. An, A. Nagrani, and P. H. Seo CRIT: graph-based automatic data synthesis to enhance cross-modal multi-hop reasoning . In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , Cited by: §2 , §4.1 . 
+Tamarapalli et al. (2025) J. S. Tamarapalli, R. Grover, N. Pande, and S. Yerramilli CountQA: how well do MLLMs count in the wild? . arXiv preprint arXiv:2508.06585 . Cited by: §4.1 . 
+Tran et al. (2025) D. T. Tran, T. Tran, M. Hauswirth, and D. Le Phuoc Reasonvqa: a multi-hop reasoning benchmark with structural knowledge for visual question answering . In 2025 IEEE/CVF International Conference on Computer Vision (ICCV) , pp. 18793–18803 . Cited by: §2 . 
+Wang et al. (2025a) H. Wang, X. Li, Z. Huang, A. Wang, J. Wang, T. Zhang, J. Zheng, S. Bai, Z. Kang, J. Feng, Z. Wang, and Z. Zhang Traceable evidence enhanced visual grounded reasoning: evaluation and methodology . arXiv preprint arXiv:2507.07999 . Cited by: §4.1 , §4.5 . 
+Wang et al. (2025b) Q. Wang, B. Yin, P. Zhang, J. Zhang, K. Wang, Z. Wang, J. Zhang, K. Chandrasegaran, H. Liu, R. Krishna, et al. MindCube: spatial mental modeling from limited views . arXiv preprint arXiv:2506.21458 . Cited by: §4.1 . 
+Wang et al. (2026) S. Wang, S. Liu, J. Zhou, C. Gao, X. Chen, B. Wang, A. Yang, S. Song, B. Yu, G. Huang, et al. Hopchain: multi-hop data synthesis for generalizable vision-language reasoning . arXiv preprint arXiv:2603.17024 . Cited by: §2 . 
+Wang et al. (2025c) W. Wang, L. Ding, M. Zeng, X. Zhou, L. Shen, Y. Luo, and D. Tao Divide, conquer and combine: a training-free framework for high-resolution image perception in multimodal large language models . In Proceedings of the AAAI Conference on Artificial Intelligence , Cited by: §4.1 . 
+Wang et al. (2025d) Z. Wang, W. Yu, X. Ren, J. Zhang, Y. Zhao, R. Saxena, L. Cheng, G. Wong, S. See, P. Minervini, Y. Song, and M. Steedman MMLongBench: benchmarking long-context vision-language models effectively and thoroughly . In Advances in Neural Information Processing Systems , Cited by: §1 , §2 , §4.1 . 
+Wei et al. (2026) L. Wei, L. He, J. Lan, L. Dong, Y. Cai, S. Li, H. Zhu, W. Wang, L. Kong, Y. Wang, Z. Zhang, and W. Huang Zooming without zooming: region-to-image distillation for fine-grained multimodal perception . In Proceedings of the 43rd International Conference on Machine Learning , Cited by: §1 , §2 , §4.1 , §4.1 , §4.5 . 
+Wei et al. (2025a) L. Wei, Y. Li, C. Wang, Y. Wang, L. Kong, W. Huang, and L. Sun First sft, second rl, third upt: continual improving multi-modal llm reasoning via unsupervised post-training . Advances in Neural Information Processing Systems 38 , pp. 62293–62318 . Cited by: §2 . 
+Wei et al. (2025b) L. Wei, Y. Li, K. Zheng, C. Wang, Y. Wang, L. Kong, L. Sun, and W. Huang Advancing multimodal reasoning via reinforcement learning with cold start . arXiv preprint arXiv:2505.22334 . Cited by: §1 . 
+Wu and Xie (2024) P. Wu and S. Xie V*: guided visual search as a core mechanism in multimodal LLMs . In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pp. 13084–13094 . Cited by: §4.1 . 
+Wu et al. (2025) T. Wu, G. Biamby, J. Quenum, R. Gupta, J. E. Gonzalez, T. Darrell, and D. M. Chan Visual haystacks: a vision-centric needle-in-a-haystack benchmark . In International Conference on Learning Representations (ICLR) , Cited by: §1 . 
+Xu et al. (2024) G. Xu, P. Jin, Z. Wu, H. Li, Y. Song, L. Sun, and L. Yuan Llava-cot: let vision language models reason step-by-step . arXiv preprint arXiv:2411.10440 . Cited by: §1 . 
+Yang et al. (2026) S. Yang, R. Xu, Y. Xie, S. Yang, M. Li, J. Lin, C. Zhu, X. Chen, H. Duan, X. Yue, et al. Mmsi-bench: a benchmark for multi-image spatial intelligence . In International Conference on Learning Representations , Vol. 2026 , pp. 157051–157088 . Cited by: §1 , §2 , §4.1 . 
+Yu et al. (2025) Q. Yu, Z. Zhang, R. Zhu, Y. Yuan, X. Zuo, Y. Yue, W. Dai, T. Fan, G. Liu, J. Liu, L. Liu, X. Liu, H. Lin, Z. Lin, B. Ma, G. Sheng, Y. Tong, C. Zhang, M. Zhang, R. Zhang, et al. DAPO: an open-source LLM reinforcement learning system at scale . In Advances in Neural Information Processing Systems , Cited by: Appendix D . 
+Zhang et al. (2025a) J. Zhang, Y. Chen, Y. Xu, Z. Huang, J. Mei, C. Chen, Y. Zhou, Y. Yuan, X. Cai, G. Huang, et al. From flatland to space: teaching vision-language models to perceive and reason in 3d . Advances in Neural Information Processing Systems 38 . Cited by: §4.1 . 
+Zhang et al. (2026a) J. Zhang, Y. Deng, K. Chang, and W. Wang Thinking with visual grounding . arXiv preprint arXiv:2606.16122 . Cited by: §1 , §2 , §4.1 . 
+Zhang et al. (2025b) L. Zhang, Q. Cui, B. Zhao, and C. Yang Oasis: one image is all you need for multimodal instruction data synthesis . arXiv preprint arXiv:2503.08741 . Cited by: §2 . 
+Zhang et al. (2026b) T. Zhang, Z. Zhang, Z. Ma, Y. Chen, B. Li, C. Yuan, G. Wang, F. Rao, Y. Shan, and W. Hu MMhops-R1: multimodal multi-hop reasoning . In Proceedings of the AAAI Conference on Artificial Intelligence , Cited by: §4.1 . 
+Zhang et al. (2025c) Y. Zhang, X. Lu, S. Yin, C. Fu, W. Chen, X. Hu, B. Wen, K. Jiang, C. Liu, T. Zhang, H. Fan, K. Chen, J. Chen, H. Ding, K. Tang, Z. Zhang, L. Wang, F. Yang, T. Gao, and G. Zhou Thyme: think beyond images . arXiv preprint arXiv:2508.11630 . Cited by: §1 . 
+Zhang et al. (2025d) Y. Zhang, H. Zhang, H. Tian, C. Fu, S. Zhang, J. Wu, F. Li, K. Wang, Q. Wen, Z. Zhang, L. Wang, R. Jin, and T. Tan MME-RealWorld: could your multimodal LLM challenge high-resolution real-world scenarios that are difficult for humans? . In International Conference on Learning Representations (ICLR) , Cited by: §4.1 . 
+Zhang et al. (2023) Z. Zhang, A. Zhang, M. Li, H. Zhao, G. Karypis, and A. Smola Multimodal chain-of-thought reasoning in language models . arXiv preprint arXiv:2302.00923 . Cited by: §1 . 
+Zhao et al. (2024) H. H. Zhao, P. Zhou, and M. Z. Shou GENIXER: empowering multimodal large language models as a powerful data generator . In Computer Vision – ECCV 2024 , Lecture Notes in Computer Science , Vol. 15081 , pp. 129–147 . Cited by: §2 . 
+Zheng et al. (2025) Z. Zheng, M. Yang, J. Hong, C. Zhao, G. Xu, L. Yang, C. Shen, and X. Yu DeepEyes: incentivizing “thinking with images” via reinforcement learning . arXiv preprint arXiv:2505.14362 . Cited by: §1 . 
+Appendix 
+Appendix A Implementation Details 
+This section complements Section 3 with the concrete settings used to construct our training data, following the order of that section.
+The pipeline mainly uses Qwen3.5-397B-A17B ( Qwen Team, 2026a ) , and Table 4 summarizes all model calls, each with the thinking mode disabled. Table 4: Model calls in the EvidenceConnect pipeline. V G V_{G} denotes the privileged layout, V G − i V_{G}^{-i} the layout with region r i r_{i} masked, and V I V_{I} the policy view. 
+Stage Model Visual input Calls Temp. 
+Evidence discovery Qwen3.5-397B-A17B source image 1 per image 0.4 
+Evidence grouping Qwen3.5-397B-A17B none (text only) 1 per image 0.3 
+Question realization Qwen3.5-397B-A17B V G V_{G} 1 per group 0.5 
+Answer anchoring Qwen3.5-397B-A17B, Kimi-K2.6 V G V_{G} up to 4 + 4 per candidate 0.4 
+Equivalence judging GLM-5.2 none (text only) when needed 0.0 
+Drop-one testing Qwen3.5-397B-A17B V G − i V_{G}^{-i} 1–3 per region 0.4 
+Unmarked rewrite Qwen3.5-397B-A17B unmarked source image 1 per aggregate question 0.2 
+Unmarked audit Qwen3.5-397B-A17B, Kimi-K2.6 source image 2 + 2 per rewrite 0.0 
+Distractor generation Qwen3.5-397B-A17B marked image 1 per marked candidate 0.8 
+Difficulty filtering Qwen3.6-35B-A3B V I V_{I} 4 per example 0.7 Image source and pre-filtering. 
+We use SA-1B ( Kirillov et al., 2023 ) as the sole image source.
+Before any model call, we keep only images whose longer side has at least 1280 pixels, whose mean per-channel intensity entropy is at least 6.5 bits, whose Canny edge density is at least 0.04, and whose luminance standard deviation is at least 60. Grounded evidence discovery. 
+For each image, a single call with the image and its caption (Prompt B.1 ) judges whether the image can support multi-region questions and returns up to 18 region proposals, whose box coordinates are converted to pixels and clamped to the image.
+We then discard boxes that cover less than 0.04% or more than 18% of the image, as well as boxes whose IoU with an earlier kept box is at least 0.65.
+Images judged unsuitable, or with fewer than four remaining regions, are skipped. Task-conditioned evidence grouping. 
+A text-only call receives the caption together with the label and local description of each region, ranked by grounding confidence (Prompt B.1 ), and proposes up to six groups of 3–7 regions.
+Each group is annotated with one of 22 task families, which map to four necessity modes that refine the three question forms of Section 3.1 .
+Specifically, answer_sensitive covers aggregation (counting, numeric aggregation, and arithmetic), set_complete (filtering, anomaly, extremum, matching, and geometric, topological, or depth relations) and pair_complete (cross-region pairing) cover comparison and matching, and chain_dependency (OCR, spatial, viewpoint, conditional, Boolean, relational, and multi-hop chains) covers dependency chains and compositions.
+We keep groups whose region identifiers are valid, whose size lies in the allowed range, and that do not repeat an earlier group.
+In addition, the candidates of a filtering, anomaly, or extremum group must not mix coarse semantic classes, and groups with distinct task families are kept before groups that repeat a family. Privileged evidence layout. 
+Each region is cropped at native resolution with a margin of 8% of its box size on every side.
+The crops are placed on a white canvas through an order-preserving remapping of each image axis, which removes the rows and columns not covered by any crop, and the canvas is uniformly downscaled only when its longer side exceeds 4096 pixels.
+Each region receives a distinct color from a seven-color palette, which bounds the group size at seven.
+The same colors are used in the question text, in the privileged and ablated layouts, and for the outlines on the marked policy view. Question realization. 
+For each group, the generator receives the privileged layout, the group metadata (labels, local descriptions, natural referents, box coordinates, and outline colors), four blueprints sampled from a library of 104 reasoning templates, and up to four additional free-form slots, and it returns up to eight candidates (Prompt B.1 ).
+The first blueprint follows the proposed task family when possible, and the remaining ones diversify answer forms and question types.
+Each candidate declares its question type, necessity mode, answer semantics (scalar, unordered set, or ordered pair), answer kind (outline color, number, Boolean pattern, semantic phrase, text, semantic set, or semantic pair), the contribution of every region, the predicted answer after removing each region, and a reasoning certificate.
+Open-vocabulary answers must contain fewer than ten words. Rule-based checks and candidate selection. 
+A certificate is valid only if every step reads from earlier steps alone, every selected region lies on a path to the output step, and no step is disconnected from it.
+Aggregation, arithmetic, and Boolean questions must further use an executable certificate with a restricted operator set.
+For aggregation questions, every region must receive a positive value, and the values must sum to the answer without all being one, since the answer would otherwise equal the number of outlined regions.
+Similarly, arithmetic expressions must reference every region and evaluate to the answer.
+We further reject candidates that expose region identifiers, do not refer to the marked regions, use conditional wording without explicit branches or outside conditional types, count vague background targets, request more than one output for a scalar answer, omit an explicit coordinate frame for spatial types, leak the answer through an outline color, use subjective phrasing, or declare an answer form that the answer does not match.
+Candidates whose own predicted answer after removing some region equals their proposed answer are rejected as well.
+The remaining candidates are ranked by the generator’s self-assessed naturalness, visual confidence, and multi-region scores, with bonuses for compositional types and non-numeric answers, and this ranking only determines which candidates proceed to verification.
+Per group, we keep up to four top-ranked candidates, preferring distinct question types and allowing at most one numeric and two outline-color answers.
+Per image, we keep up to eight candidates but always retain the best candidate of each question type. Cross-model answer anchoring. 
+Each candidate is answered on the privileged layout by both anchoring families, with up to four samples per family and without the region descriptions or the generator’s answer (Prompt B.2 ).
+For closed-form questions, the prompt also lists the allowed answer labels, and we first draw two samples per family.
+Such a candidate is rejected early unless at least three of these four responses agree and each family contributes at least one of them.
+Responses are clustered by normalized string matching with numeric equivalence, and if the largest cluster has fewer than six members, the text-only judge re-clusters all responses by semantic equivalence (Prompt B.2 ).
+A candidate is accepted if the largest cluster is not an insufficiency response and contains at least three of the four responses from each family, and its answer then becomes a ⋆ a^{\star} .
+Finally, a ⋆ a^{\star} is re-checked against the answer-form constraints above. Adaptive drop-one testing. 
+For each selected region, its crop in the privileged layout is replaced by a gray block with a red cross, while all other crops stay in place.
+The first anchoring family answers each ablated view once, with a mode-specific addendum to the answering prompt (Prompt B.2 ).
+If the response matches a ⋆ a^{\star} or cannot be parsed, the same view is queried twice more, and the region is redundant if at least two of its three responses match a ⋆ a^{\star} .
+A candidate is rejected if two or more of its regions are redundant. Policy view. 
+Unmarked rewriting is attempted only for aggregate question types (object counts, attribute counts, and sums of visible numbers), whose answers do not depend on the outlines, whereas the answers of selection and pairing questions are often outline colors themselves.
+The first anchoring family rewrites the question for the unmarked image and proposes distractors (Prompt B.3 ), and rewrites that still mention boxes or outlines are discarded.
+Two audits from each family (Prompt B.3 ) must then all report unique references, task preservation, identifiable targets, multi-region dependence, and necessity of every evidence area.
+Each audit must also recover a ⋆ a^{\star} and ground exactly one box per intended region, and the grounded boxes must match the intended regions one-to-one, where a grounded box matches a region if its center lies inside the region’s box enlarged by 15%.
+Otherwise, the example keeps the marked policy view, on which the box of each selected region is outlined in its assigned color. Multiple-choice conversion. 
+For marked examples, the first anchoring family proposes three distractors given the marked image, the question, and a ⋆ a^{\star} (Prompt B.3 ), whereas unmarked examples reuse the distractors from the rewrite step.
+We remove empty distractors, distractors that match a ⋆ a^{\star} after normalization, duplicates, and, for closed-form answers, options outside the label vocabulary.
+If fewer than three distractors remain, we fill the missing options deterministically, for example with alternative subsets of set-valued answers, unused vocabulary labels, or neighboring integers for count answers.
+The four options are then shuffled, and the prompt asks for the option letter. Difficulty filtering. 
+The screening model answers each example four times on its policy view (Prompt B.3 ).
+Examples with four correct responses or any unparseable response are discarded, and the remaining ones are labeled easy, medium, hard, or very hard when three, two, one, or none of the responses are correct.
+Finally, we keep at most four examples per source image, and each training example consists of the policy view and the multiple-choice question. 
+Appendix B Prompt Templates for EvidenceConnect 
+This section lists the prompt templates used by EvidenceConnect .
+We replace instance-specific values with angle-bracketed placeholders and condense long templates for readability.
+Specifically, we keep their task definitions, key constraints, and main output fields, and omit examples, formatting reminders, repeated instructions, and fields unused in our setting. 
+B.1 Evidence Discovery and Question Construction Prompt B.1: Grounded region inventory [IMAGE]
+You are a precise visual grounding annotator and data-quality gate.
+
+Task: Decide whether this image can support natural questions whose
+answer genuinely depends on 3--7 distinct regions, then propose up to
+&lt;MAX_REGIONS&gt; useful evidence regions.
+
+Image caption, if available: &lt;IMAGE_CAPTION&gt;
+
+Return regions that are:
+- visually concrete and clearly localizable;
+- useful for multi-region reasoning, including people, animals, objects,
+signs, screens, text regions, fine details, and distinctive parts;
+- preferably small or medium-sized, spatially diverse, and not overly
+overlapping;
+- suitable for coherent tasks such as positive-contribution counting,
+closed-set filtering, anomaly/extremum detection, candidate matching,
+pairing, OCR--visual verification, or a short dependent spatial chain.
+
+Prioritize groups of related regions over isolated interesting objects.
+The image is suitable only if at least one coherent all-region task is
+possible. Avoid vague regions such as "background," "scene," "sky,"
+"room," or the whole image.
+
+For each region, return:
+- label: short name;
+- bbox: [x1,y1,x2,y2] in pixels, or normalized 0--1000 coordinates;
+- caption: one concise visible description;
+- natural_referent: an identifying phrase without coordinates or IDs;
+- role: candidate | reference | comparator | text_region |
+      count_target | fine_part | distractor;
+- confidence: grounding confidence.
+
+Return JSON only:
+{
+"suitable_for_multi_region_vqa": true,
+"richness_reason": "...",
+"coherent_sets": [
+  {"labels": [...], "task_family": "..."}
+],
+"regions": [
+  {
+    "label": "...", "bbox": [...], "caption": "...",
+    "natural_referent": "...", "role": "...", "confidence": 0.0
+  }
+]
+} Prompt B.2: Task-conditioned region-group proposal You are an expert VQA data curator. Below are &lt;N&gt; candidate evidence
+regions detected in one image.
+
+Image caption: &lt;IMAGE_CAPTION&gt;
+Regions:
+- &lt;REGION_ID&gt;: label=&lt;LABEL&gt;; caption=&lt;LOCAL_CAPTION&gt;
+- ...
+
+Propose up to &lt;MAX_GROUPS&gt; combinations that are good for natural
+questions requiring many regions. A good combination is a coherent
+candidate/evidence set, not a bag of unrelated boxes. Prefer the
+largest valid set, but every selected region must have a real role.
+
+Allowed task families and necessity modes:
+- answer_sensitive: aggregate_count, aggregate_attribute_count,
+aggregate_numeric, arithmetic_composition;
+- set_complete: set_filtering, anomaly_detection, extremum,
+candidate_matching, geometric_line_relation, topological_relation,
+depth_ordering;
+- pair_complete: cross_region_pairing;
+- chain_dependency: ocr_visual_verification, spatial_chain,
+dependent_chain, viewpoint_transform, agent_relative_direction,
+spatial_transitivity, conditional_composition, boolean_composition,
+relational_composition, multi_hop_reasoning.
+
+Selection rules:
+1. Select 3--7 regions and prefer larger groups only when coherent.
+2. Every region must change an aggregate, belong to the closed
+ candidate/pair set, or supply an indispensable chain constraint.
+3. Prefer objective text, numbers, countable objects, repeated classes,
+ comparable parts, and unambiguous attributes.
+4. Filtering, anomaly, and extremum candidates must be comparable.
+5. Every aggregate-count region must contribute a positive count.
+6. Spatial spread is preferred, but coherence has priority.
+7. Diversify task families and do not default to counting.
+8. Skip the image if no valid combination exists.
+
+Return JSON only:
+[
+{
+  "region_ids": ["r000", "r001", "r003"],
+  "task_family": "anomaly_detection",
+  "necessity_mode": "set_complete",
+  "reason": "short objective rationale"
+}
+] Prompt B.3: Privileged question and certificate realization [PRIVILEGED LAYOUT WITH K COLOR-OUTLINED CROPS]
+Create &lt;NUM_QUESTIONS&gt; diverse multi-region VQA questions.
+
+Scope contract:
+- The selected set is exactly &lt;REGION_IDS&gt;.
+- Every question must genuinely use all K regions.
+- evidence_region_ids, region_contributions, answer_if_dropped, and
+the reasoning certificate must cover exactly this set.
+- Never add decorative observations for otherwise unused regions.
+- Questions must be answerable from visible pixels in this layout,
+not from region captions.
+
+Visible crop anchors (the same outline colors appear on the marked image):
+- &lt;REGION_ID&gt;: label=&lt;LABEL&gt;; outline_color=&lt;COLOR&gt;; bbox=&lt;BBOX&gt;;
+  caption=&lt;LOCAL_CAPTION&gt;; natural_referent=&lt;REFERENT&gt;
+- ...
+
+Task guidance:
+- Preferred task family: &lt;TASK_FAMILY&gt;.
+- Preferred necessity mode: &lt;NECESSITY_MODE&gt;.
+- Selected reasoning blueprints: &lt;TEMPLATE_SPECS&gt;.
+- Instantiate a blueprint only when its facts are objectively visible.
+- Include diverse closed-set, comparison/matching, OCR/spatial/
+relational, and compositional structures.
+- Prefer select-then-report questions in which several regions identify
+a target and a second visible property supplies the final answer.
+- Keep the answer short, objective, unique, and absent from the stem.
+
+Necessity contract:
+- answer_sensitive: every region contributes a positive value, so
+masking it changes the result or makes the aggregate unknown.
+- set_complete / pair_complete: all regions form the explicitly closed
+candidate or pairing set; masking one prevents proving completeness.
+- chain_dependency: every region supplies an indispensable clue or hop.
+- For every region, answer_if_dropped must differ from the reference
+answer or be "insufficient information."
+
+Certificate contract:
+- First design a natural question from pixels; then provide its
+certificate. Do not verbalize the certificate mechanically.
+- Use mode="executable" for deterministic reading, counting, filtering,
+matching, comparison, arithmetic, Boolean, and lookup programs.
+- Use mode="evidence_graph" for open-vocabulary semantic or unusual
+multi-hop reasoning.
+- Every step has id, op, regions, inputs, and query.
+- Inputs may reference only earlier steps.
+- Every selected region must lie on a path to output_step.
+- No disconnected or decorative step is allowed.
+
+Wording contract:
+- Ask for one final answer.
+- Use one explicit coordinate frame for spatial questions.
+- Use outline colors only as reference anchors, never as leaked object
+attributes.
+- Open answers must be objective and fewer than 10 words.
+- Do not use subjective comparisons, vague counts, or invisible facts.
+
+Return JSON only, one object per candidate:
+[
+{
+  "template_id": "...",
+  "question": "...",
+  "question_type": "...",
+  "necessity_mode": "answer_sensitive | set_complete |
+                     pair_complete | chain_dependency",
+  "answer_semantics": "scalar | unordered_set | ordered_pair",
+  "final_answer_kind": "anchor | numeric | boolean | semantic |
+                        semantic_set | semantic_pair | text",
+  "evidence_region_ids": [...],
+  "region_contributions": {"r000": "...", "...": "..."},
+  "region_values": {"r000": 0},
+  "aggregation": "...",
+  "operation_expression": "...",
+  "candidate_region_ids": [...],
+  "closed_candidate_set": true,
+  "pair_region_ids": [[...], ...],
+  "chain_region_ids": [...],
+  "coordinate_frame": "image_plane | camera | agent | object |
+                       scene_3d | not_applicable",
+  "answer_vocabulary": [...],
+  "answer_if_dropped": {"r000": "...", "...": "..."},
+  "hypothetical_answer": "...",
+  "reasoning_certificate": {
+    "mode": "executable | evidence_graph",
+    "steps": [
+      {"id": "s1", "op": "...", "regions": ["r000"],
+       "inputs": [], "query": "..."}
+    ],
+    "output_step": "..."
+  },
+  "naturalness_score": 1,
+  "visual_confidence": 1,
+  "multi_region_score": 1
+}
+] 
+B.2 Answer Anchoring and Dependency Checks Prompt B.4: Privileged-view answer anchoring [PRIVILEGED LAYOUT]
+Answer the question using only the provided image.
+
+Question: &lt;QUESTION&gt;
+Allowed canonical answer labels: &lt;OPTIONAL_NEUTRAL_VOCABULARY&gt;
+
+You may reason briefly before answering. Put only the final short answer
+inside &lt;answer&gt;...&lt;/answer&gt;.
+
+Rules:
+- Use an objectively supported expression of fewer than 10 words.
+- Use Arabic digits for numbers, with no units or separators.
+- Do not emit coordinates, grounding tokens, or box markers.
+- Use the same language as the question.
+- If evidence is insufficient, output
+&lt;answer&gt;insufficient information&lt;/answer&gt;.
+- The answer tag is required; responses without it are discarded. Prompt B.5: Semantic-equivalence clustering You are an answer-equivalence judge for a VQA task.
+
+Question: &lt;QUESTION&gt;
+Answers:
+A1: &lt;ANSWER_1&gt;
+...
+AN: &lt;ANSWER_N&gt;
+
+Group answers by semantic equivalence. Equivalent paraphrases belong
+together; answers with different values, attributes, or truth values
+must remain separate.
+
+Return strict JSON only:
+{
+"groups": [["&lt;CANONICAL_FORM&gt;", [&lt;ANSWER_INDICES&gt;]], ...],
+"largest_group_size": &lt;INTEGER&gt;,
+"canonical": "&lt;CANONICAL_FORM_OF_LARGEST_GROUP&gt;"
+}
+
+Every answer must occur in exactly one group. Break size ties using the
+lexicographically smallest canonical form. Prompt B.6: Mode-specific drop-one verification 
+The drop-one verifier inserts one of the following addenda into
+Prompt B.2 , depending on the necessity mode. [answer_sensitive]
+ABLATION VIEW: one required aggregate region has been replaced by a
+gray masked box. If the full aggregate cannot be computed, answer
+"insufficient information"; do not count only visible boxes.
+
+[set_complete or pair_complete]
+ABLATION VIEW: one colored candidate box has been replaced by a gray
+masked box. The masked box remains a member of the explicitly closed
+candidate/pairing set. If its hidden content prevents proving the
+complete subset, unique anomaly, global extremum, unique match, or
+complete pairing, answer "insufficient information."
+
+[chain_dependency]
+ABLATION VIEW: one required clue region has been replaced by a gray
+masked box. If the missing clue breaks the reasoning chain, answer
+"insufficient information"; do not guess. 
+B.3 Policy-View and Multiple-Choice Construction Prompt B.7: Unmarked-question rewrite [UNMARKED ORIGINAL IMAGE]
+You are given an anchored visual question and its verified answer.
+
+Anchored question: &lt;QUESTION&gt;
+Verified answer: &lt;ANSWER&gt;
+
+Create a minimally changed question that works on the unmarked image.
+Replace box/outline references with visually unique natural descriptions
+or a clearly exhaustive image-level scope. Do not add facts, change the
+operation, or change the answer. If unique reference cannot be
+guaranteed, set safe_without_marks=false. Also generate three plausible
+incorrect distractors in the same answer format.
+
+Return JSON only:
+{
+"safe_without_marks": true,
+"natural_question": "...",
+"distractors": ["...", "...", "..."]
+} Prompt B.8: Independent audit of the unmarked rewrite [UNMARKED ORIGINAL IMAGE]
+Audit this visual question using only the unmarked original image.
+
+Anchored source question: &lt;ANCHORED_QUESTION&gt;
+Unmarked natural question: &lt;NATURAL_QUESTION&gt;
+
+Independently answer the question and judge whether every reference or
+exhaustive target set is uniquely determined. The question must require
+multiple spatially separated regions. Ground each evidence area with a
+box in normalized 0--1000 coordinates, locating it from pixels rather
+than inferring it from wording. Also judge whether the rewrite preserves
+the source task and whether every grounded area is required.
+
+Return JSON only:
+{
+"answer": "...",
+"reference_status": "unique | ambiguous",
+"same_task_as_source": true,
+"all_targets_identifiable": true,
+"requires_multiple_regions": true,
+"every_evidence_area_required": true,
+"evidence_boxes": [
+  {"description": "...", "bbox_2d": [x1,y1,x2,y2]}
+],
+"reason": "..."
+} Prompt B.9: Multiple-choice distractor generation [MARKED ORIGINAL IMAGE]
+You are given a visual question and its correct answer.
+
+Original question: &lt;QUESTION&gt;
+Correct answer: &lt;ANSWER&gt;
+
+Generate three plausible but incorrect multiple-choice distractors.
+Do not rewrite, paraphrase, simplify, or neutralize the question.
+Keep the stem exactly unchanged. Distractors must be visually relevant,
+distinct from the answer, and matched in answer format and approximate
+length. For open-vocabulary answers, use concrete alternatives with the
+same grammatical form and specificity. Do not use "none of the above,"
+"all of the above," or "cannot be determined."
+
+Return JSON only:
+[{"distractors": ["d1", "d2", "d3"]}] Prompt B.10: Difficulty sampling on the policy view [POLICY VIEW: MARKED OR UNMARKED IMAGE]
+Answer this multiple-choice visual question using only the image.
+
+&lt;QUESTION_AND_OPTIONS&gt;
+
+You may reason briefly before answering. The final answer must be:
+&lt;answer&gt;X&lt;/answer&gt;
+
+Rules:
+- X must contain only A, B, C, or D.
+- Do not output option text, coordinates, grounding tokens, or markers.
+- Keep any reasoning to a few short sentences.
+- The answer tag is required; otherwise the response is discarded. 
+Appendix C Training Data Statistics 
+Our training set contains 20.4K examples synthesized from SA-1B images by the pipeline in Section 3 and Appendix A , and Figure 7 summarizes its composition.
+Each example involves three to seven regions, most often three (65.74%) or four (24.34%), followed by five (7.93%) and six or seven (1.99%).
+The difficulty levels, defined by how many of the four screening responses are correct, are broadly distributed.
+Specifically, easy, medium, hard, and very hard examples account for 33.75%, 22.04%, 19.07%, and 25.14% of the data, so more than 44% of the examples are hard or very hard.
+Very hard examples, which the screening model never answers correctly, are kept, since their reference answers have already been anchored by two stronger VLMs. Figure 7: Composition of the 20.4K training examples by the number of selected regions per example and by difficulty level. 
+Appendix D Training Details 
+All models are trained with the same GRPO ( Shao et al., 2024 ) configuration for two epochs, with a batch size of 128 and a learning rate of 10 − 6 10^{-6} .
+For each prompt, we sample G = 8 G{=}8 rollouts at temperature 0.7 with a maximum response length of 32K tokens, and the thinking mode is disabled during rollouts to keep responses concise.
+We use decoupled clipping ratios ϵ low = 0.2 \epsilon_{\mathrm{low}}{=}0.2 and ϵ high = 0.3 \epsilon_{\mathrm{high}}{=}0.3 , as proposed in DAPO ( Yu et al., 2025 ) , and remove the KL penalty ( β KL = 0 \beta_{\mathrm{KL}}{=}0 ), so that the policy is not anchored to the base model.
+Finally, the reward checks whether the predicted option letter matches the ground-truth option. 
+Appendix E Attention Map Coverage Analysis Evaluation setting. 
+We compare ZwZ2-4B/9B with their Qwen3.5 base models on the same 405 TreeBench examples.
+Within each scale, both checkpoints use the base-model processor and identical image–question pairs, visual-token grids, and evidence annotations.
+Since Qwen3.5 interleaves linear-attention and full-attention layers, we evaluate all eight full-attention layers, ℒ = { 4 , 8 , 12 , 16 , 20 , 24 , 28 , 32 } \mathcal{L}=\{4,8,12,16,20,24,28,32\} (1-based). Attention extraction. 
+For each example, we apply the chat template with the generation prompt and perform a single forward pass in evaluation mode using eager attention, without generating an answer.
+We extract attention from the final token of this complete input sequence to the image tokens.
+This position predicts the first answer token, so its attention indicates where the model looks as it begins to answer. 
+Let V i V_{i} denote the visual-token indices for example i i , and let q i q_{i} be its final input-token position.
+For model m m at layer ℓ \ell , let T i , ℓ , h m ​ ( q i , v ) T_{i,\ell,h}^{m}(q_{i},v) denote the attention weight returned by head h h from q i q_{i} to visual token v v .
+We convert the extracted weights to float32, average equally over all n heads m , ℓ n_{\mathrm{heads}}^{m,\ell} heads, and then renormalize within the image tokens: 
+u i , ℓ m ​ ( v ) \displaystyle u_{i,\ell}^{m}(v) = 1 n heads m , ℓ ​ ∑ h = 1 n heads m , ℓ T i , ℓ , h m ​ ( q i , v ) , \displaystyle=\frac{1}{n_{\mathrm{heads}}^{m,\ell}}\sum_{h=1}^{n_{\mathrm{heads}}^{m,\ell}}T_{i,\ell,h}^{m}(q_{i},v), (1) 
+a i , ℓ m ​ ( v ) \displaystyle a_{i,\ell}^{m}(v) = u i , ℓ m ​ ( v ) ∑ v ′ ∈ V i u i , ℓ m ​ ( v ′ ) . \displaystyle=\frac{u_{i,\ell}^{m}(v)}{\sum_{v^{\prime}\in V_{i}}u_{i,\ell}^{m}(v^{\prime})}. 
+This renormalization over image tokens is applied once after head averaging, without renormalizing each head separately or applying an additional softmax. Evidence mask. 
+The visual tokens form an H i × W i H_{i}\times W_{i} grid for an image of size H i img × W i img H_{i}^{\mathrm{img}}\times W_{i}^{\mathrm{img}} .
+An annotated box ( x 0 , y 0 , x 1 , y 1 ) (x_{0},y_{0},x_{1},y_{1}) covers columns [ ⌊ x 0 ​ W i / W i img ⌋ , ⌈ x 1 ​ W i / W i img ⌉ ) [\lfloor x_{0}W_{i}/W_{i}^{\mathrm{img}}\rfloor,\lceil x_{1}W_{i}/W_{i}^{\mathrm{img}}\rceil) and the analogous row range, clipped to the grid boundaries.
+This range includes every visual-token cell that overlaps the box.
+The evidence set E i ⊆ V i E_{i}\subseteq V_{i} is the union of the tokens covered by all annotated boxes, counting overlapping tokens once.
+All evaluated examples have | E i | &gt; 0 |E_{i}|&gt;0 . Top- k k evidence IoU. 
+For each example, we set k i = | E i | k_{i}=|E_{i}| and select the k i k_{i} visual tokens with the largest head-averaged weights u i , ℓ m ​ ( v ) u_{i,\ell}^{m}(v) to form A i , ℓ m A_{i,\ell}^{m} .
+Ranking by the normalized weights a i , ℓ m ​ ( v ) a_{i,\ell}^{m}(v) gives the same ordering because the normalization divides all weights by a common positive value.
+Ties are broken by visual-token index in row-major order, so exactly k i k_{i} tokens are selected even when ties occur at the boundary.
+Because k i k_{i} is fixed by the annotation, the base and trained models receive the same token budget. 
+With h i , ℓ m = | A i , ℓ m ∩ E i | h_{i,\ell}^{m}=|A_{i,\ell}^{m}\cap E_{i}| , we compute 
+IoU i , ℓ m = | A i , ℓ m ∩ E i | | A i , ℓ m ∪ E i | = h i , ℓ m 2 ​ k i − h i , ℓ m . \operatorname{IoU}_{i,\ell}^{m}=\frac{|A_{i,\ell}^{m}\cap E_{i}|}{|A_{i,\ell}^{m}\cup E_{i}|}=\frac{h_{i,\ell}^{m}}{2k_{i}-h_{i,\ell}^{m}}. (2) 
+The score lies in [ 0 , 1 ] [0,1] , with larger values indicating better spatial alignment with the annotated evidence.
+Since | A i , ℓ m | = | E i | |A_{i,\ell}^{m}|=|E_{i}| , precision equals recall, p = h i , ℓ m / k i p=h_{i,\ell}^{m}/k_{i} , and the IoU equals p / ( 2 − p ) p/(2-p) . Aggregation and layer-wise results. 
+We take the unweighted mean of the per-example IoU over the N = 405 N=405 paired examples, rather than pooling intersections and unions, and report differences in percentage points: 
+IoU ¯ ℓ m \displaystyle\overline{\operatorname{IoU}}_{\ell}^{m} = 1 N ​ ∑ i = 1 N IoU i , ℓ m , \displaystyle=\frac{1}{N}\sum_{i=1}^{N}\operatorname{IoU}_{i,\ell}^{m}, (3) 
+Δ ℓ \displaystyle\Delta_{\ell} = 100 ​ ( IoU ¯ ℓ ZwZ2 − IoU ¯ ℓ Qwen3 ​ .5 ) . \displaystyle=100\left(\overline{\operatorname{IoU}}_{\ell}^{\mathrm{ZwZ2}}-\overline{\operatorname{IoU}}_{\ell}^{\mathrm{Qwen3.5}}\right). 
+Table 5 shows gains in 7 of 8 layers at 4B and 6 of 8 layers at 9B.
+The exceptions, layer 28 at 4B and layers 8 and 12 at 9B, each decrease by less than 0.03 percentage points.
+These comparisons describe changes in sample means.
+The metric measures spatial alignment at the final prompt position, rather than total attention mass or answer correctness. Table 5: Top- k k evidence IoU on TreeBench. Mean IoU is reported as a percentage; Δ \Delta is ZwZ2 minus Qwen3.5 in percentage points.
+Each entry averages the same 405 paired examples.
+Differences are computed before rounding. 
+4B 9B 
+Layer Qwen3.5 ZwZ2 Δ \Delta Qwen3.5 ZwZ2 Δ \Delta 
+4 11.625 11.877 +0.252 10.622 10.699 +0.077 
+8 10.355 10.402 +0.047 10.069 10.051 -0.018 
+12 11.568 11.692 +0.124 11.073 11.050 -0.023 
+16 10.400 10.650 +0.251 11.080 11.256 +0.175 
+20 11.132 11.386 +0.255 11.493 11.777 +0.284 
+24 10.924 11.162 +0.238 10.890 11.242 +0.352 
+28 11.181 11.152 -0.029 11.147 11.680 +0.533 
+32 11.244 11.424 +0.179 10.471 10.860 +0.390 
+Appendix F Case Study 
+To complement the quantitative evaluation, we examine three selected examples in which ZwZ2-4B answers correctly while its base model, Qwen3.5-4B, fails.
+Figure 8 presents examples from MIMIC, ZoomBench, and CountQA, covering cross-image category identification, spatially specified text recognition, and object counting.
+We analyze the models’ visible responses to identify how their answers differ in the use of visual evidence and the satisfaction of question constraints. Cross-image consistency. 
+In Figure 8 (a), the MIMIC question asks for a category that appears in all five images.
+The base model selects wine glass , even though its response explicitly acknowledges that this object is absent from some images.
+It justifies the answer by referring to the most prominent shared item across the majority of the set, effectively replacing the requirement of universal presence with majority overlap.
+ZwZ2 checks candidate categories against the full set of images.
+Its response rules out wine glass because it is absent from Images 4 and 5, and identifies person as the category shared by all five images.
+This example illustrates the importance of preserving the question’s scope when integrating evidence across images: an object shared by several images does not necessarily satisfy a constraint over the entire set. Question-conditioned text localization. 
+Figure 8 (b) asks for the black text above the lower archway.
+The base model recognizes the word SEGATORI on the adjacent building, but associates the question with inscriptions on the fountain and ultimately selects FONTE .
+Its response therefore reveals a mismatch between the recognized text and the region specified by the question.
+ZwZ2 identifies the entrance of the yellow building as the relevant lower archway and reads the sign immediately above it, yielding the correct answer, SEGATORI .
+The case highlights the role of spatial reference resolution in visual text understanding: recognizing a visible word must be accompanied by establishing whether it belongs to the queried location. Structured visual counting. 
+In Figure 8 (c), the CountQA question asks for the number of tablets in a blister pack.
+The base model divides the image into regions above and below the yellow rubber band, reports two and four tablets, respectively, and returns 2 + 4 = 6 2+4=6 .
+Its arithmetic is consistent with these counts, so the error lies in enumerating the tablets.
+ZwZ2 describes the pack as two columns and five rows, counts five tablets in each column, and obtains the correct total of 5 + 5 = 10 5+5=10 .
+Here, the response uses the regular spatial arrangement to account for the complete set of tablets. 
+Together, these cases reflect the steps of connecting evidence: integrating facts over the full set of images in (a), binding recognized text to the queried location in (b), and accounting for every instance before aggregating in (c). Figure 8: Qualitative comparisons between Qwen3.5-4B and ZwZ2-4B. Three selected examples show correct predictions by ZwZ2-4B where the base model fails:
+(a) identifying a category present in every image;
+(b) associating recognized text with the queried location;
+and (c) counting all instances in a structured arrangement.
+Responses are excerpted from the original outputs, with omissions marked by [...] and answer fields reformatted.
+The enlarged image region in (b) is provided for visualization only. 
+Appendix G Limitations and Future Work 
+Our work has two main limitations.
+First, although our single-image supervision transfers to multi-image and agent tasks, it does not directly model temporal or cross-frame dependencies, so extending the synthesis to evidence spread across video frames is a natural next step.
+Second, we apply RLVR to models of up to 27B parameters, and whether the same supervision benefits larger models or earlier training stages, such as pre-training, remains to be studied.</pre><button aria-label="切换为浅色主题" aria-pressed="false" id="atlas-theme-toggle" type="button">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
