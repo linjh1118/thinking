@@ -103,7 +103,7 @@ track_downloads: true
 
 ![Nemotron 3.5 Transcribe overview: one speech LLM transcribes a recording in the style selected by the instruction](hero.png)
 
-**Nemotron 3.5 Transcribe is an open-weight, offline speech and audio model** for transcription in 40 languages, with support for recordings up to one hour and a 65,536-token context. Its hybrid mixture-of-experts architecture activates approximately **4.3B parameters**, including the audio encoder, and it is released in BF16, FP8, and NVFP4 precision.
+**Nemotron 3.5 Transcribe is an open-weight, offline speech and audio model** for transcription in 40 languages, with support for recordings up to one hour and a 65,536-token context. Its hybrid mixture-of-experts architecture activates approximately **4.3B parameters**, including the audio encoder, and it is released in [BF16](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B), [FP8](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B-FP8), and [NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B-NVFP4) precision.
 
 [Get started ↓](#quick-start) · [Explore the tasks ↓](#prompt-guide) · [See the evidence ↓](#results-at-a-glance) · [NeMo Speech ↗](https://github.com/NVIDIA-NeMo/Speech)
 
@@ -126,7 +126,7 @@ track_downloads: true
 
 <br>
 
-> **NVFP4 quantized variant.** This checkpoint is the NVFP4 quantized version of [NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B). All benchmark results reported in this model card were computed for the BF16 model. Averaged over the transcription benchmarks, its error rate is **3.6% higher** in relative terms than that of the BF16 model.
+> **NVFP4 quantized variant.** This checkpoint is the NVFP4 quantized version of [NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B). All benchmark results reported in this model card were computed for the BF16 model. Averaged over the transcription benchmarks, its error rate is **3.6% higher** in relative terms than that of the [BF16 model](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B).
 
 # Model Overview
 
@@ -144,7 +144,7 @@ This model is ready for commercial or non-commercial use.
 |:---|:---|
 | **Total Parameters** | 34B (4.3B active), including the audio encoder |
 | **Architecture** | Mamba-2–Transformer hybrid Mixture of Experts language model with a Parallel Expert Encoder (Transformer ASR encoder and speaker encoder) |
-| **Precision** | NVFP4 decoder with FP8 layers (ModelOpt post-training quantization of the [BF16 model](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B)) |
+| **Precision** | NVFP4 decoder with FP8 layers (ModelOpt post-training quantization of the [BF16 model](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B)); an [FP8](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B-FP8) variant is also available |
 | **Context Length** | 65,536 tokens; recordings up to 1 hour |
 | **Inputs / Outputs** | Audio and text / text, with optional word timestamps |
 | **Languages** | 40; see the [language support matrix](#language-support-matrix) |

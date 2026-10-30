@@ -1,0 +1,113 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WeVisCut data-construct pipeline · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>WeVisCut data-construct pipeline</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#weviscut-data-construct-pipeline">WeVisCut data-construct pipeline</a><a class="toc-l2" href="#what-kind-of-loop-is-this">What kind of loop is this?</a><a class="toc-l2" href="#relation-to-the-rest-of-this-repository">Relation to the rest of this repository</a><a class="toc-l2" href="#install">Install</a><a class="toc-l2" href="#quick-start">Quick start</a><a class="toc-l2" href="#model-mix">Model mix</a><a class="toc-l2" href="#artifacts">Artifacts</a><a class="toc-l2" href="#configuration">Configuration</a><a class="toc-l2" href="#layout">Layout</a><a class="toc-l2" href="#troubleshooting">Troubleshooting</a></nav></aside><main class="note"><h1 id="weviscut-data-construct-pipeline">WeVisCut data-construct pipeline</h1><p><a href="README.md.html">English</a> · <a href="https://github.com/Tencent/WeVisCut/blob/main/data_construct_pipeline/README_zh.md">中文</a> · <a href="https://github.com/Tencent/WeVisCut/blob/main/README.md">back to WeVisCut</a></p><p>This package records <strong>training trajectories</strong> for WeVisCut: one narration script in, one finished cut plus three role-split data streams out.</p><p>It is the data-construction side of the paper, not the deployed studio. The studio (<code>aicut_agent/</code>, <code>studio/</code>) serves a trained policy. This package <strong>produces</strong> the trajectories that policy was trained on.</p><pre><div class="code-lang">code</div><code>narration script
+  → LongVideoRunner
+  → InferenceOrchestrator.run_agentic_pipeline   (server/infer_graph.py)
+       each step: orchestrator observes state → emits one tool call
+       dispatch:  generator / critic skill  or  external media tool
+  → TrajectoryRecorder splits the run into three streams</code></pre><p>---</p><h2 id="what-kind-of-loop-is-this">What kind of loop is this?</h2><p><strong>The orchestrator chooses the next tool.</strong> Every turn it sees the full action space (12 tools), the current flags, recent history, last observation, and the tool contract, then emits exactly one <code>tool_call</code>. There is no hardcoded <code>STAGE_SEQUENCE</code> driving a successful run — that older path exists only as a legacy fallback when <code>agent.agent_mode</code> is not <code>long_horizon</code>.</p><p><strong>The runtime is not a free-form agent.</strong> Preconditions, repeat limits, parse fallbacks and a terminal <code>Tool_StitchVideo</code> gate keep a rollout from stalling or skipping the quality arc. Those interventions are written into the trajectory; they are part of the training signal, not hidden rewrites after the fact.</p><p><strong>Content, reflection and media are decoupled.</strong> The same long-horizon episode is stored as three causally linked streams:</p><div class="table-wrap"><table><thead><tr><th>Role</th><th>Chinese</th><th>What it produces</th><th>On-disk shape</th></tr></thead><tbody><tr><td><code>orchestrator</code></td><td>主流程</td><td>Next-tool decisions</td><td>one multi-turn tool-calling episode</td></tr><tr><td><code>generator</code></td><td>内容生成器</td><td>Segmentation, shot plans, decoration, patches</td><td>one single-turn sample per call</td></tr><tr><td><code>critic</code></td><td>反思修复</td><td>Plan self-check, dimension judge, severity rank</td><td>one single-turn sample per call</td></tr></tbody></table></div><p><code>interactions.jsonl</code> records the edges (<code>step N → role → result</code>) so the three files stay one causal trajectory, not three independent logs.</p><p>This is why the model can be trained — and later deployed — as a tool-calling policy whose content skills and judge skills are separately replaceable.</p><p>---</p><h2 id="relation-to-the-rest-of-this-repository">Relation to the rest of this repository</h2><div class="table-wrap"><table><thead><tr><th>This package</th><th>Released WeVisCut studio</th></tr></thead><tbody><tr><td>Training-time loop in <code>server/infer_graph.py</code></td><td><code>aicut_agent/</code> deepagents / LangGraph harness</td></tr><tr><td>Runtime may redirect illegal / repeated calls so annotation finishes</td><td>Guardrails observe; they do not substitute a different tool</td></tr><tr><td>Writes orchestrator / generator / critic SFT+RL dumps</td><td>Serves one trained 9B policy in the browser</td></tr></tbody></table></div><p><code>pipeline.root</code> defaults to <strong>this WeVisCut checkout</strong> (<code>pipeline/</code> + <code>server/</code>). You do not need a second internal repository to run it.</p><p>---</p><h2 id="install">Install</h2><p>From the WeVisCut repo root:</p><pre><div class="code-lang">bash</div><code>pip install -e data_construct_pipeline            # core (httpx + pyyaml)
+pip install -e &quot;data_construct_pipeline[dev]&quot;     # pytest
+pip install -e &quot;data_construct_pipeline[web]&quot;     # campaign UI</code></pre><p>A real rollout also needs:</p><ul><li>this WeVisCut tree (<code>pipeline/</code>, <code>server/</code>, <code>configs/</code>, <code>external_tool/</code>)</li><li>an OpenAI-compatible served model (vLLM / SGLang)</li><li>TTS: <code>bash data_construct_pipeline/services/tts/run_qwen3_tts_service.sh</code></li><li><code>ffmpeg</code> / <code>ffprobe</code> (see the parent <a href="https://github.com/Tencent/WeVisCut/blob/main/docs/external_tools.md">external tools guide</a>)</li></ul><p>---</p><h2 id="quick-start">Quick start</h2><pre><div class="code-lang">bash</div><code># 0. Paths, system prompt, stage table, three role endpoints
+longvideo-polar check
+
+# 0.5 Offline wiring test — no GPU, no key, no TTS
+longvideo-polar smoke --pipeline-root ..
+
+# 1. One script → cut + three trajectories
+longvideo-polar run --script-file /path/to/script.txt --output ./rollouts/demo
+
+# 2. Batch (process-isolated, resumable, auto-aggregate)
+longvideo-polar batch --input-dir /path/to/scripts --workers 4
+
+# 3. Stronger critic (Gemini / Opus) for distillation
+longvideo-polar batch --input-dir /path/to/scripts --profile critic_gemini</code></pre><p>Python:</p><pre><div class="code-lang">python</div><code>from longvideo_polar import LongVideoConfig, LongVideoRunner
+
+config = LongVideoConfig.load(&quot;data_construct_pipeline/config/longvideo_polar.yaml&quot;)
+result = await LongVideoRunner(config).run(script=script_text, episode_id=&quot;ep_001&quot;)
+print(result.summary())</code></pre><p><code>agent.agent_mode</code> <strong>must</strong> be <code>long_horizon</code>. Anything else selects the old fixed-stage workflow and the builder refuses to start.</p><p>---</p><h2 id="model-mix">Model mix</h2><p>Three endpoints, independently configurable. Profiles deep-merge onto <code>models</code>.</p><div class="table-wrap"><table><thead><tr><th>Profile</th><th>Orchestrator</th><th>Generator</th><th>Critic</th><th>Use</th></tr></thead><tbody><tr><td><code>all_qwen</code> (default)</td><td>local Qwen</td><td>local Qwen</td><td>local Qwen</td><td>offline / RL</td></tr><tr><td><code>critic_gemini</code></td><td>Qwen</td><td>Qwen</td><td>Gemini</td><td>higher-quality judge labels</td></tr><tr><td><code>critic_opus</code></td><td>Qwen</td><td>Qwen</td><td>Claude Opus</td><td>same, different teacher</td></tr><tr><td><code>skills_gemini</code></td><td>Qwen</td><td>Gemini</td><td>Gemini</td><td>train orchestrator only</td></tr></tbody></table></div><p>The policy you train should be the model that <em>acted</em>. Teacher traces (<code>metadata.provider</code>) must stay separable from self-generated ones.</p><p>---</p><h2 id="artifacts">Artifacts</h2><pre><div class="code-lang">code</div><code>&lt;output&gt;/&lt;episode_id&gt;/
+├── episode.json                 # manifest, rewards, errors, timing
+├── /                # pipeline products (plan, assets, cut)
+│   └── agent_trace.jsonl
+└── trajectories/
+    ├── orchestrator.jsonl       # multi-turn tool-calling episode
+    ├── generator.jsonl          # single-turn skill samples
+    ├── critic.jsonl
+    ├── interactions.jsonl       # cross-role edges
+    ├── llm_calls.jsonl          # raw I/O audit
+    ├── sft/{orchestrator,generator,critic}_messages.jsonl
+    └── rl/reward_scores.jsonl</code></pre><p>A batch writes <code>aggregate/orchestrator_sft.jsonl</code>, <code>generator_sft.jsonl</code>, <code>critic_sft.jsonl</code>, <code>interactions.jsonl</code>, <code>rewards.jsonl</code>, <code>index.json</code>.</p><p>---</p><h2 id="configuration">Configuration</h2><p><a href="https://github.com/Tencent/WeVisCut/blob/main/data_construct_pipeline/config/longvideo_polar.yaml"><code>config/longvideo_polar.yaml</code></a> is the control plane. <a href="https://github.com/Tencent/WeVisCut/blob/main/data_construct_pipeline/config/pipeline_runtime.yaml"><code>config/pipeline_runtime.yaml</code></a> is what the orchestrator reads (execution, TTS, templates) — not <code>studio_config.yaml</code>.</p><div class="table-wrap"><table><thead><tr><th>Section</th><th>Controls</th></tr></thead><tbody><tr><td><code>pipeline</code></td><td>Environment root, runtime YAML, system prompt, TTS</td></tr><tr><td><code>profiles</code> / <code>models</code></td><td>Per-role endpoints and sampling</td></tr><tr><td><code>agent</code></td><td><code>long_horizon</code>, <code>max_steps</code>, repeat limit</td></tr><tr><td><code>tool_switches</code></td><td>TTS / retrieval / render / stitch</td></tr><tr><td><code>recording</code></td><td>Output root, prompt retention</td></tr><tr><td><code>batch</code></td><td>Input glob, workers, resume</td></tr></tbody></table></div><p>Useful environment variables: <code>WEVISCUT_ROOT</code>, <code>AICUT_PIPELINE_ROOT</code>, <code>OPENAI_BASE_URL</code>, <code>OPENAI_API_KEY</code>, <code>LVP_MODEL</code>, <code>LVP_PROFILE</code>, <code>LVP_OUTPUT_ROOT</code>, <code>LVP_INPUT_DIR</code>.</p><p>---</p><h2 id="layout">Layout</h2><pre><div class="code-lang">code</div><code>data_construct_pipeline/
+├── config/                 # master YAML + runtime YAML + campaign example
+├── src/longvideo_polar/    # runner, recorder, role routing, bridge
+├── services/tts/           # optional Qwen3-TTS helper
+├── scripts/                # campaign UI launcher
+└── tests/                  # offline unit tests (no GPU)</code></pre><pre><div class="code-lang">bash</div><code>cd data_construct_pipeline &amp;&amp; PYTHONPATH=src python -m pytest -q</code></pre><p>---</p><h2 id="troubleshooting">Troubleshooting</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>What to check</th></tr></thead><tbody><tr><td><code>pipeline.root does not exist</code></td><td>Point <code>pipeline.root</code> at this WeVisCut repo, or export <code>WEVISCUT_ROOT</code></td></tr><tr><td><code>missing server/infer_graph.py</code></td><td>Checkout is incomplete; the loop is <code>server/infer_graph.py</code></td></tr><tr><td><code>agent_mode=... does not select the long-horizon loop</code></td><td>Set <code>agent.agent_mode: long_horizon</code></td></tr><tr><td>every step <code>parse_ok: false</code></td><td>Served model has no native tool calling → <code>native_tool_calls: false</code></td></tr><tr><td>trajectories but no cut</td><td><code>episode.json</code> errors; usually render (<code>Tool_BatchTimelineCompose</code>) or stitch</td></tr><tr><td>want a faster debug cycle</td><td>turn off <code>tool_switches.hyperframes_render</code> / <code>tts</code> (no real video then)</td></tr></tbody></table></div></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

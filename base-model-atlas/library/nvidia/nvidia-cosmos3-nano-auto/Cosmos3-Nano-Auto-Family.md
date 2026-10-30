@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Transfer-Auto"
 tags: [model-note, world-model, driving, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-28
+updated: 2026-10-30
 ---
 
 # Cosmos3-Nano Auto：离线双向教师与闭环因果学生
@@ -104,3 +104,8 @@ LidarVerse 使用不同评估子集，所以只能带条件比较。CTC 比值�
 ## 2026-10-28：SGLang serving 文档增补
 
 Transfer-Auto 和 Sim-Auto 原卡都新增 SGLang Videos API。输入是服务端可访问的路径，目录需挂载；生成是异步 job，客户端轮询。不是把 MP4 上传后同步立即返回。Transfer 示例为35步、guidance3，Sim 为蒸馏固定4步、guidance1；不能互换。七相机按 camera-major 输出；联合 LiDAR 走额外 notebook。dev 镜像随主干移动，应固定镜像/代码revision。本次为同权重服务文档，不改10/20首发，也未运行示例。
+
+
+## 10月30日文档补充：H20吞吐，非新权重
+
+Sim-Auto官方卡补齐H20单卡吞吐：无LiDAR时单视角480p/720p为3.59/1.50fps，11视角为0.28/0.10fps；有LiDAR时单视角1.10/0.76fps，11视角480p为0.22fps、720p标“-”不支持。均为vLLM-Omni、4步去噪、无CFG、201帧测试。空格表示未报告，“-”表示不支持，二者不互换。这些是指定配置的生成吞吐，不是驾驶控制时钟、视频播放帧率或端到端闭环安全证据；多GPU优化仍进行中。旧卡与新卡保留，非模型新发，不增加30天发布事件。

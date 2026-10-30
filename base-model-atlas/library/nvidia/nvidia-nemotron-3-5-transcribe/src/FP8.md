@@ -106,7 +106,7 @@ track_downloads: true
 
 ![Nemotron 3.5 Transcribe overview: one speech LLM transcribes a recording in the style selected by the instruction](hero.png)
 
-**Nemotron 3.5 Transcribe is an open-weight, offline speech and audio model** for transcription in 40 languages, with support for recordings up to one hour and a 65,536-token context. Its hybrid mixture-of-experts architecture activates approximately **4.3B parameters**, including the audio encoder, and it is released in BF16, FP8, and NVFP4 precision.
+**Nemotron 3.5 Transcribe is an open-weight, offline speech and audio model** for transcription in 40 languages, with support for recordings up to one hour and a 65,536-token context. Its hybrid mixture-of-experts architecture activates approximately **4.3B parameters**, including the audio encoder, and it is released in [BF16](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B), [FP8](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B-FP8), and [NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B-NVFP4) precision.
 
 [Get started ↓](#quick-start) · [Explore the tasks ↓](#prompt-guide) · [See the evidence ↓](#results-at-a-glance) · [NeMo Speech ↗](https://github.com/NVIDIA-NeMo/Speech)
 
@@ -129,7 +129,7 @@ track_downloads: true
 
 <br>
 
-> **FP8 quantized variant.** This checkpoint is the FP8 quantized version of [NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B). All benchmark results reported in this model card were computed for the BF16 model. Averaged over the transcription benchmarks, its error rate is **1.0% higher** in relative terms than that of the BF16 model.
+> **FP8 quantized variant.** This checkpoint is the FP8 quantized version of [NVIDIA-Nemotron-3.5-Transcribe-30B-A4B](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B). All benchmark results reported in this model card were computed for the BF16 model. Averaged over the transcription benchmarks, its error rate is **1.0% higher** in relative terms than that of the [BF16 model](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B).
 
 # Model Overview
 
