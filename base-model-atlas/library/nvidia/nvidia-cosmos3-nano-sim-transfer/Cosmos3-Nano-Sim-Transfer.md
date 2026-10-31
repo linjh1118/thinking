@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Transfer"
 tags: [model-note, world-model, sim-to-real, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-28
+updated: 2026-10-31
 ---
 
 # Cosmos3-Nano-Sim-Transfer：状态不动，观察换域
@@ -16,7 +16,7 @@ updated: 2026-10-28
 > 这是 16B Cosmos3-Nano 的后训练、因果蒸馏专项。经典仿真器负责状态、物理与标注，它根据深度、分割、边缘或模糊控制生成逼真 RGB。它最适合回答“视觉域变化是否改变策略”，而不是直接替代物理模拟器。
 
 > [!warning] 达不到完整报告精读的部分
-> 已逐段阅读原卡、保存官方完整谱系图和控制演示动图。专项报告仍标 **coming soon**；精确训练损失、蒸馏配方、真实闭环 RL 收益和统计方差尚缺，因此**未达到完整技术报告精读深度**。仅保存 PDF 链接，不下载，不用基础 Cosmos3 报告冒充该专项报告。
+> 已逐段阅读原卡、保存官方完整谱系图和控制演示动图。专项报告现已移除coming soon，PDF链接经HEAD核验HTTP200；本轮未读报告正文；精确训练损失、蒸馏配方、真实闭环 RL 收益和统计方差尚缺，因此**未达到完整技术报告精读深度**。仅保存 PDF 链接，不下载，不用基础 Cosmos3 报告冒充该专项报告。
 
 ## 身份和来源
 
@@ -79,7 +79,7 @@ Prompt、drift、时序几何都不是全面提升。我的判断是：更强控
 
 - 🤗 [HF Model Card](https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Transfer)，[[src/hf_model_card.md|完整本地原始 MD]]。
 - 🌐 [官方项目页](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/)、[官方代码](https://github.com/NVIDIA/cosmos)。
-- 📄 [专项 Tech Report（原卡仍标 coming soon）](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)。
+- 📄 [专项 Tech Report（现已移除coming soon，本轮未读PDF）](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)。
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|Cosmos3 基础家族]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Auto/Cosmos3-Nano-Auto-Family|驾驶多传感器生成]]。
 
 > 📊 相关可视化：[[cosmos3_nano_sim_transfer_poster_zh.html|中文 Poster]]
@@ -87,3 +87,8 @@ Prompt、drift、时序几何都不是全面提升。我的判断是：更强控
 ## 2026-10-28：SGLang 异步路径
 
 原卡新增同一模型的 SGLang Videos API：control video 为服务端可见路径，需要目录挂载；请求只传字段，生成后轮询 job。蒸馏 checkpoint 固定步数/guidance，历史窗口从训练配置读；不要自行移植 Transfer-Auto 的35步。输出会按完整latent chunk裁剪，可能少于请求帧数。仅更新资料，不记新权重/新发布日期。
+
+
+### 2026-10-31报告链接状态复核
+
+本轮四张相关HF卡均移除Tech Report的coming soon。对同一官方PDF只发HEAD，返回HTTP200、application/pdf，没有下载PDF正文。Last-Modified不是报告或模型首次发布日，不新增模型事件。此前“报告仍未提供”的表述现已纠正；训练细节尚未读到，不再断言报告本身没有披露，也不冒称已完成精读。

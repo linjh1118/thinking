@@ -13,7 +13,7 @@ tags:
 
 # **Interactive World Simulation with Cosmos for Physical AI**
 
-**[Cosmos3 Examples Collection](https://huggingface.co/collections/nvidia/cosmos3-examples)** | **[Code](https://github.com/nvidia/cosmos)** | **[Technical Report](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)** (coming soon) | **[Website](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/)**
+**[Cosmos3 Examples Collection](https://huggingface.co/collections/nvidia/cosmos3-examples)** | **[Code](https://github.com/nvidia/cosmos)** | **[Technical Report](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)** | **[Website](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/)**
 
 # Model Overview: Cosmos3-Nano-Sim-Bimanual
 

@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Transfer-Auto"
 tags: [model-note, world-model, driving, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-30
+updated: 2026-10-31
 ---
 
 # Cosmos3-Nano Auto：离线双向教师与闭环因果学生
@@ -16,7 +16,7 @@ updated: 2026-10-30
 > Transfer-Auto 把同一个驾驶场景的多相机与 LiDAR 联合生成；Sim-Auto 从它因果蒸馏，让新驾驶输入可以影响后续观察。二者同一驾驶 family 合读，同时保留两个 checkpoint 的身份与结果。最重要的边界是：**支持 11 路传感器不等于 11 路都能实时生成，更不等于真实驾驶安全验证完成。**
 
 > [!warning] 原始资料不足之处
-> 两张完整模型卡有明确评估表，谱系图已归档；专项项目页直连 403，未成功保存正文。但专项 Technical Report 仍标 **coming soon**，完整 loss、蒸馏配方、闭环安全统计和置信区间未披露，因而**未达到完整技术报告精读深度**。基础 Cosmos3 的报告不冒充该专项报告；本轮未下载任何 PDF 或模型权重。
+> 两张完整模型卡有明确评估表，谱系图已归档；专项项目页直连 403，未成功保存正文。但专项 Technical Report 现已移除coming soon，PDF链接经HEAD核验HTTP200；本轮未读报告正文，本轮已读卡片中缺完整loss、蒸馏配方、闭环安全统计和置信区间，不能据此断言PDF未披露，因而**未达到完整技术报告精读深度**。基础 Cosmos3 的报告不冒充该专项报告；本轮未下载任何 PDF 或模型权重。
 
 ## 两个模型是什么关系
 
@@ -95,7 +95,7 @@ LidarVerse 使用不同评估子集，所以只能带条件比较。CTC 比值�
 
 - 🤗 [Transfer-Auto Model Card](https://huggingface.co/nvidia/Cosmos3-Nano-Transfer-Auto)、[Sim-Auto Model Card](https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Auto)
 - 🌐 [专项项目页](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/)
-- 📄 [专项 Tech Report：原卡标 coming soon](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)，仅保留链接，不声称已读或已发布。
+- 📄 [专项 Tech Report：PDF链接已可用，本轮未读](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)，仅保留链接，不声称已读正文；PDF链接可用不等于训练细节已核实。
 - [[src/hf_model_card.md|Transfer 原始 MD]]、[[src/Cosmos3-Nano-Sim-Auto.md|Sim 原始 MD]]；完整表格、例程与抓取清单留在同级 `src/`，不执行原文里的容器命令。
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|基础 Cosmos3 家族]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Sim_Bimanual/Cosmos3-Nano-Sim-Bimanual|机器人与相机模拟]]
 
@@ -109,3 +109,8 @@ Transfer-Auto 和 Sim-Auto 原卡都新增 SGLang Videos API。输入是服务�
 ## 10月30日文档补充：H20吞吐，非新权重
 
 Sim-Auto官方卡补齐H20单卡吞吐：无LiDAR时单视角480p/720p为3.59/1.50fps，11视角为0.28/0.10fps；有LiDAR时单视角1.10/0.76fps，11视角480p为0.22fps、720p标“-”不支持。均为vLLM-Omni、4步去噪、无CFG、201帧测试。空格表示未报告，“-”表示不支持，二者不互换。这些是指定配置的生成吞吐，不是驾驶控制时钟、视频播放帧率或端到端闭环安全证据；多GPU优化仍进行中。旧卡与新卡保留，非模型新发，不增加30天发布事件。
+
+
+### 2026-10-31报告链接状态复核
+
+本轮四张相关HF卡均移除Tech Report的coming soon。对同一官方PDF只发HEAD，返回HTTP200、application/pdf，没有下载PDF正文。Last-Modified不是报告或模型首次发布日，不新增模型事件。此前“报告仍未提供”的表述现已纠正；训练细节尚未读到，不再断言报告本身没有披露，也不冒称已完成精读。

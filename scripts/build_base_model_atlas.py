@@ -266,6 +266,7 @@ DEEPSEEK_OFFICIAL_SOURCES = {
     "DeepSeek-V4.1-Flash": [
         {"label": "HF Model Card", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"},
         {"label": "Tech Report", "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf"},
+        {"label": "HF Model Card · NVIDIA 1017 NVFP4（量化分发）", "url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4"},
     ],
 }
 
@@ -2613,7 +2614,7 @@ def sync_library(records: list[dict], targets: dict[str, Path]) -> None:
             record.setdefault("posters", []).append(str(dest.relative_to(ATLAS)))
         if record["team"] == "deepseek":
             compact_v4_source = None
-            if record["name"].startswith("DeepSeek-V4") and record["name"] not in {"DeepSeek-V4", "DeepSeek-V4-Flash"}:
+            if record["name"].startswith("DeepSeek-V4-") and record["name"] != "DeepSeek-V4-Flash":
                 source_name = f"{record['name']}.md"
                 source_rel = Path("huggingface_model_cards") / source_name
                 if not (model_root / "src" / source_rel).is_file():

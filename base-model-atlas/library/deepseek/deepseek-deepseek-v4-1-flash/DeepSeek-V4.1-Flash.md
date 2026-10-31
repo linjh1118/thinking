@@ -6,7 +6,7 @@ url: "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash"
 tags: [model-note, base-model, deepseek, multimodal, agentic-workflow, long-context]
 status: read
 created: 2026-09-10
-updated: 2026-10-17
+updated: 2026-10-31
 ---
 
 # DeepSeek-V4.1-Flash — KV Cache Compression for Million-Token Agents
@@ -213,3 +213,28 @@ DeepSWE 和 Terminal-Bench 2.1 还比较了 Claude Code、Codex、OpenCode、Pi�
 
 - [[Topics/13_base_model/Base Model MOC|Base Model MOC]]
 - [中文 Poster](deepseek_v4_1_flash_poster_zh.html)
+
+
+## 2026-10-31资料补充：NVIDIA的1017 NVFP4分发
+
+> [!info] 不是新正代，也不改变1017发布日期
+> NVIDIA原卡写该量化包10月30日发布，属于原1017 checkpoint的部署转换。它不是NVIDIA训练出的DeepSeek新代，Atlas不添叶子或“新模型”事件。原始新卡已保存，并与9月family及10月17日升级分开。
+
+[🤗 NVIDIA Model Card](https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4) · [[src/huggingface_model_cards/NVIDIA-DeepSeek-V4.1-Flash-1017-NVFP4|离线原卡]]。
+
+普通routed专家由源MXFP4转换为NVFP4 W4A4，group16，384专家×40层的w1/w2/w3；Engram由源FP8改为MXFP4。attention/shared experts/vision/MTP等排除组件保留源精度，不能写成全模型统一4bit。16,986,931,200个专家weight blocks的反量化值无损（含signed-zero规范化），但Engram转换有损、activation scale还经过校准，**不代表整体输出逐token等同**。46,080投影scale中24项用了fallback。
+
+ModelOpt v0.48.0rc0、revision `1bae0e1088993b9b82de08f59de5be5a34e42170`；两个校准数据集各512样本，总1024，序列512、batch4。checkpoint约400GiB，源约475GiB，减少75GiB约15.8%；这是文件体积，不等于峰值显存或总部署费用。
+
+| 同表指标（%） | 源MXFP4 | NVFP4 + MXFP4 Engram | 展示值差 |
+|---|---:|---:|---:|
+| GPQA Diamond | 92.77 | 92.93 | +0.16 |
+| AA-LCR | 80.41 | 80.19 | −0.22 |
+| SciCode | 57.58 | 57.32 | −0.26 |
+| IFBench | 76.33 | 76.47 | +0.14 |
+| MMMU-Pro | 78.38 | 78.73 | +0.35 |
+| Terminal-Bench 2.1 | 81.81 | 81.11 | −0.70 |
+
+这些是NVIDIA原卡结果，**不能与前文DeepSeek的Terminal-Bench4.0直接相减**。普通请求temperature1/top-p1/max effort/262144输出预算；GPQA16重复，AA-LCR每run16重复共两run，IFBench5、SciCode8；终端任务另用每任务8轨迹、两run均值。没有独立方差/显著性，微小上下波动不证明量化优于源。
+
+部署原卡验证4张GB300、vLLM0.31.0加[MXFP4 Engram支持PR61530](https://github.com/vllm-project/vllm/pull/61530)，stock镜像不能直接加载该Engram；SGLang未验证，MTP没有实测。原命令启用CPU offload、FP8 KV，工具调用需额外parser开关。本文只阅读卡片，没有执行部署命令、下载权重或测试吞吐，因此不补造加速倍数。

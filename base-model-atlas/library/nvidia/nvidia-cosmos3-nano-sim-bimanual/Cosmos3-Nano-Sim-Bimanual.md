@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Bimanual"
 tags: [model-note, world-model, robotics, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-28
+updated: 2026-10-31
 ---
 
 # Cosmos3-Nano-Sim-Bimanual：动作来一段，观察生成一段
@@ -16,7 +16,7 @@ updated: 2026-10-28
 > 用机器人操作与相机轨迹混合后训练，再做因果蒸馏，使同一 rollout 能交错改变视角和操作双臂。它生成动作条件观察，**不是直接替 VLA 作决策**。原卡像素代理指标较强，但真实抓取成功率、长期物理正确性不是这些指标已经证明的事情。
 
 > [!warning] 原始资料与深度限制
-> 原卡全文与官方谱系图已归档；项目网页直连 403，未成功保存正文；专项报告链接仍标 **coming soon**。训练 loss、精确蒸馏配方、闭环成功率与方差不足，**未达到完整技术报告精读深度**。第二张图是研读示意，明确不是官方图或实测。未下载 PDF、权重，未运行推理或控制设备。
+> 原卡全文与官方谱系图已归档；项目网页直连 403，未成功保存正文；专项报告链接现已移除coming soon，PDF链接经HEAD核验HTTP200；本轮未读报告正文。训练 loss、精确蒸馏配方、闭环成功率与方差不足，**未达到完整技术报告精读深度**。第二张图是研读示意，明确不是官方图或实测。未下载 PDF、权重，未运行推理或控制设备。
 
 ## 身份和派生关系
 
@@ -89,7 +89,7 @@ PAI 上画质提高，但 ATE 不如 LingBot，drift 也略差；Sana simple 更
 
 - 🤗 [HF Model Card](https://huggingface.co/nvidia/Cosmos3-Nano-Sim-Bimanual)，[[src/hf_model_card.md|完整本地原始 MD]]。
 - 🌐 [官方项目页](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/)、[官方代码](https://github.com/NVIDIA/cosmos)。
-- 📄 [专项 Tech Report：原卡仍标 coming soon](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)，本轮仅链接。
+- 📄 [专项 Tech Report：现已移除coming soon，本轮未读PDF](https://research.nvidia.com/labs/cosmos-lab/cosmos-simulation/technical-report.pdf)，本轮仅链接。
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/2605_Cosmos3/Cosmos3-Family|Cosmos3 基础 family]]、[[Topics/13_base_model/NVIDIA_Nemotron/Variants/2610_Cosmos3_Nano_Sim_Transfer/Cosmos3-Nano-Sim-Transfer|视觉迁移与外部状态账本]]。
 
 > 📊 相关可视化：[[cosmos3_nano_sim_bimanual_poster_zh.html|中文 Poster]]
@@ -97,3 +97,8 @@ PAI 上画质提高，但 ATE 不如 LingBot，drift 也略差；Sana simple 更
 ## 2026-10-28：SGLang 的历史与接口契约
 
 新增 SGLang 示例接受上传的初始图像和 inline actions，用 embodiment names，而非另一接口的domain ID。示例指定64-frame KV窗口：8 pinned +55 recent +current；若缺该pipeline config，将保留901-frame全历史，原卡警示该例可耗尽141GB GPU。当前例900行59D normalized actions；multipart extra_params有1MiB限制。蒸馏固定步数/guidance，不在请求里改。是服务文档更新，不是新模型，未本地运行。
+
+
+### 2026-10-31报告链接状态复核
+
+本轮四张相关HF卡均移除Tech Report的coming soon。对同一官方PDF只发HEAD，返回HTTP200、application/pdf，没有下载PDF正文。Last-Modified不是报告或模型首次发布日，不新增模型事件。此前“报告仍未提供”的表述现已纠正；训练细节尚未读到，不再断言报告本身没有披露，也不冒称已完成精读。
