@@ -55,6 +55,8 @@ OFFICIAL_PAGES = {
 # additional first-party directories; a human still verifies first-release dates
 # and excludes provider onboarding, API changes, and repeated family SKUs.
 ADDITIONAL_PAGES = {
+    'openai-safety-hub': ('openai', 'https://deploymentsafety.openai.com/'),
+    'openai-api-changelog': ('openai', 'https://developers.openai.com/api/docs/changelog.md'),
     'meta-current': ('meta', 'https://research.meta.ai/'),
     'meta-developer': ('meta', 'https://dev.meta.ai/resources/blog'),
     'zhipu-autoclaw': ('zhipu', 'https://autoclaw.z.ai/blog/'),

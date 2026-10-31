@@ -2905,10 +2905,10 @@ def build_records() -> tuple[list[dict], list[dict]]:
     updates_path = SOURCE / "src/verified_release_updates.json"
     if updates_path.exists():
         by_slug = {record["slug"]: record for record in records}
-        for update in json.loads(updates_path.read_text(encoding="utf-8")):
+        for update in sorted(json.loads(updates_path.read_text(encoding="utf-8")), key=lambda item: item["date"]):
             record = by_slug[update["slug"]]
             record.setdefault("releaseUpdates", []).append(update)
-            record["summary"] += f" 最新同族更新（{update['date']}）：{update['summary']}"
+            record["summary"] += f" 同族更新（{update['date']}）：{update['summary']}"
             existing_urls = {source["url"] for source in record.get("officialSources", [])}
             record["officialSources"] = [
                 source for source in update["officialSources"]
@@ -3181,7 +3181,7 @@ def recent_release_rows(records: list[dict]) -> list[dict]:
             if identity in seen_updates:
                 continue
             seen_updates.add(identity)
-            rows.append({**base, **update, "lineageLabel": "同族小版本升级（非新正代）"})
+            rows.append({**base, **update, "lineageLabel": update.get("lineageLabel") or "同族小版本升级（非新正代）"})
     return rows
 
 

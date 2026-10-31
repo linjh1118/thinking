@@ -9,6 +9,17 @@ import build_base_model_atlas as atlas
 
 
 class ManifestLinkTests(unittest.TestCase):
+    def test_named_same_weight_deployment_keeps_its_type_in_release_ledger(self):
+        record = {'slug': 'scientific-family', 'date': '2026-04-16', 'name': 'Scientific family',
+                  'lineageLabel': 'Scientific Research', 'releaseUpdates': [
+                      {'date': '2026-10-30', 'name': 'Research deployment',
+                       'lineageLabel': 'Same weights; deployment only'},
+                      {'date': '2026-06-03', 'name': 'Incremental training'}]}
+        rows = atlas.recent_release_rows([record])
+        self.assertEqual(rows[1]['lineageLabel'], 'Same weights; deployment only')
+        self.assertEqual(rows[2]['lineageLabel'], '同族小版本升级（非新正代）')
+        self.assertEqual(record['date'], '2026-04-16')
+
     def test_nested_document_array_publishes_readers_with_original_links(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
