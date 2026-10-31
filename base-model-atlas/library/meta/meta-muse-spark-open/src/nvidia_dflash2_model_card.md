@@ -66,6 +66,7 @@ Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated sys
 **Supported Runtime Engine(s):** <br>
 * TRT-LLM <br>
 * vLLM <br>
+* SGLang <br>
 
 
 **Supported Hardware Microarchitecture Compatibility:** <br>
@@ -104,7 +105,7 @@ The model is evaluated on the [SPEED-Bench](https://huggingface.co/datasets/nvid
 
 
 ## Inference:
-**Acceleration Engine:** **vLLM** <br>
+**Acceleration Engine:** **vLLM, SGLang** <br>
 **Test Hardware:** **NVIDIA Blackwell GB300** <br>
 
 ## DFlash 2 Speculative Decoding
@@ -119,6 +120,32 @@ vllm serve meta-models/Muse-Spark-Open-816B-A42B \
     --trust-remote-code
 ```
 
+### SGLang
+Run inside the Muse Spark Open image, `lmsysorg/sglang:dev-muse-spark-open`. On 4 Blackwell GPUs, serve the NVFP4 target with this draft model:
+
+```sh
+python -m sglang.launch_server \
+    --model-path meta-models/Muse-Spark-Open-816B-A42B-NVFP4 \
+    --quantization modelopt_fp4 \
+    --moe-runner-backend flashinfer_trtllm \
+    --tp-size 4 \
+    --ep-size 4 \
+    --attention-backend trtllm_mha \
+    --page-size 128 \
+    --kv-cache-dtype fp8_e4m3 \
+    --mem-fraction-static 0.8 \
+    --reasoning-parser muse \
+    --tool-call-parser muse \
+    --enable-layernorm-sp \
+    --enable-megamoe-for-layernorm-sp \
+    --speculative-algorithm DFLASH \
+    --speculative-draft-model-path nvidia/Muse-Spark-Open-816B-A42B-DFlash2 \
+    --speculative-draft-attention-backend fa4 \
+    --speculative-num-draft-tokens 8 \
+    --host 0.0.0.0 \
+    --port 30000
+```
+
 ## Evaluation
 
 All acceptance lengths below were measured with reasoning effort xhigh, 4,096 output tokens, and concurrency 32 on one NVIDIA GB300 node (TP4 + EP4). The t=0 numbers use greedy decoding; the t=1 numbers use temperature 1.0 with no top-p or top-k truncation and `draft_sample_method: probabilistic`.
@@ -127,41 +154,41 @@ Acceptance length on [MT-Bench](https://huggingface.co/spaces/lmsys/mt-bench) wi
 
 | Category            | AL, greedy (t=0) | AL, sampling (t=1) |
 | ------------------- | ----------------: | -----------------: |
-| writing             | 3.60 | 2.95 |
-| roleplay            | 3.18 | 2.64 |
-| reasoning           | 3.52 | 2.83 |
-| math                | 4.47 | 3.51 |
-| coding              | 4.34 | 3.43 |
-| extraction          | 4.60 | 3.43 |
-| stem                | 3.23 | 2.73 |
-| humanities          | 2.92 | 2.55 |
-| **Overall Average** | **3.73** | **3.01** |
+| writing             | 3.87 | 3.59 |
+| roleplay            | 3.38 | 3.20 |
+| reasoning           | 3.80 | 3.44 |
+| math                | 4.78 | 4.45 |
+| coding              | 4.68 | 4.12 |
+| extraction          | 4.84 | 4.30 |
+| stem                | 3.48 | 3.26 |
+| humanities          | 3.21 | 2.96 |
+| **Overall Average** | **4.01** | **3.66** |
 
 Acceptance length on [SPEED-Bench](https://huggingface.co/datasets/nvidia/SPEED-Bench) (qualitative split) with draft length 7, measured with vLLM and Muse-Spark-Open-816B-A42B (NVFP4):
 
 | Category            | AL, greedy (t=0) | AL, sampling (t=1) |
 | ------------------- | ----------------: | -----------------: |
-| coding              | 4.15 | 3.31 |
-| humanities          | 3.23 | 2.61 |
-| math                | 3.95 | 3.13 |
-| multilingual        | 4.27 | 3.47 |
-| qa                  | 3.43 | 2.76 |
-| rag                 | 4.17 | 3.26 |
-| reasoning           | 3.85 | 3.09 |
-| roleplay            | 3.39 | 2.74 |
-| stem                | 3.42 | 2.83 |
-| summarization       | 4.04 | 3.24 |
-| writing             | 3.05 | 2.65 |
-| **Overall Average** | **3.72** | **3.01** |
+| coding              | 4.53 | 4.15 |
+| humanities          | 3.50 | 3.13 |
+| math                | 4.19 | 3.81 |
+| multilingual        | 4.81 | 4.34 |
+| qa                  | 3.79 | 3.40 |
+| rag                 | 4.52 | 4.10 |
+| reasoning           | 4.22 | 3.78 |
+| roleplay            | 3.70 | 3.31 |
+| stem                | 3.73 | 3.37 |
+| summarization       | 4.51 | 4.03 |
+| writing             | 3.34 | 3.08 |
+| **Overall Average** | **4.08** | **3.68** |
 
 Acceptance length on [SPEED-Bench](https://huggingface.co/datasets/nvidia/SPEED-Bench) (throughput split, 32k-token inputs, first 100 prompts of each category) with draft length 7, measured with vLLM and Muse-Spark-Open-816B-A42B (NVFP4):
 
 | Category            | AL, greedy (t=0) | AL, sampling (t=1) |
 | ------------------- | ----------------: | -----------------: |
-| mixed               | 3.68 | 3.02 |
-| low_entropy         | 3.71 | 3.17 |
-| high_entropy        | 2.51 | 2.16 |
-| **Overall Average** | **3.30** | **2.78** |
+| mixed               | 4.00 | 3.65 |
+| low_entropy         | 3.99 | 3.62 |
+| high_entropy        | 2.78 | 2.52 |
+| **Overall Average** | **3.59** | **3.26** |
 
 ## Model Limitations:
 The base model was trained on data that contains toxic language and societal biases originally crawled from the internet. Therefore, the model may amplify those biases and return toxic responses especially when prompted with toxic prompts. The model may generate answers that may be inaccurate, omit key information, or include irrelevant or redundant text producing socially unacceptable or undesirable text, even if the prompt itself does not include anything explicitly offensive.

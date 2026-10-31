@@ -37,6 +37,17 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(result['status'],'failed')
         self.assertEqual(files,[])
 
+    def test_existing_repository_edit_is_a_review_signal_not_a_new_model(self):
+        result, _ = self.inspect([(json.dumps([
+            {'id': 'org/historical', 'createdAt': '2025-01-01',
+             'lastModified': '2026-10-31T01:00:00Z'},
+        ]).encode(), 'application/json', '')])
+        self.assertEqual(result['recentCandidates'], [])
+        self.assertEqual(result['modifiedCandidates'], ['org/historical'])
+        self.assertEqual(result['changedRepositories'], [])
+        self.assertTrue(result['modificationTrackingBaseline'])
+        self.assertIn('not new releases', result['comparisonNote'])
+
     def test_external_pagination_is_rejected(self):
         result,files=self.inspect([(b'[]','application/json','<https://example.com/api/models>; rel="next"')])
         self.assertEqual(result['status'],'failed')

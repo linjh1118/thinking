@@ -5,7 +5,7 @@ company: Tencent Hunyuan
 model: Hy-Memory-30B-A3B
 release: 2026-10-16
 created: 2026-10-16
-updated: 2026-10-18
+updated: 2026-10-31
 tags: [base-model, hunyuan, memory, agent-training, on-policy-distillation, grpo]
 status: read
 url: "https://memory.hunyuan.tencent.com"
@@ -190,3 +190,46 @@ RL 使用 16 节点×8 H20（128 GPU），64 windows×8 rollouts＝512 trajector
 - 相关材料：[[Topics/13_base_model/Tencent_Hunyuan/260423_Hy3/Hy3-Family|Hy3 family]]；[[Topics/13_base_model/Tencent_Hunyuan/260828_Hy4_Preview/Hy4-Preview|Hy4 Preview]]。
 
 > 📊 相关可视化：[[Topics/13_base_model/Tencent_Hunyuan/Variants/2610_Hy_Memory_30B_A3B/hy_memory_poster_zh.html|Hy-Memory 中文研究 Poster]]
+
+
+## 2026-10-31资料复核：GGUF混合精度，不能与BF16/FP8表混算
+
+> [!tldr]
+> 官方GGUF卡已从三个文件扩展为六种方案，最小8.03GB文件仅把路由专家压至IQ1_M，其他主要矩阵保留Q8_0。它在固定Mem0 LoCoMo子样本上为150/262，与最强Q6_K的154/262差四题；这是具体配置下的单次自报，不能称整体1bit模型、专家裁剪或质量无损，也不是新模型正代。
+
+![据官方GGUF卡重绘的文件体积与单次LoCoMo分数；非官方原图、非本机实测](src/assets/gguf-size-quality.png)
+
+| 官方分发文件 / 精度 | 下载体积GB | 正确题 / 262 | LoCoMo Judge |
+|---|---:|---:|---:|
+| Q6_K imatrix | 24.71 | 154 | 58.78% |
+| Q8_0 | 31.99 | 151 | 57.63% |
+| Q3_K_M imatrix | 14.45 | 150 | 57.25% |
+| 路由专家IQ1_M，其余Q8_0，imatrix | 8.03 | 150 | 57.25% |
+| Q4_K_M imatrix | 18.24 | 148 | 56.49% |
+| 路由专家IQ2_XXS，其余Q8_0，imatrix | 9.14 | 146 | 55.73% |
+
+8.03GB约为Q8_0文件的四分之一，和Q6_K分数差约1.53百分点；不同bank、单次测量无置信区间，不能把四题差距当作统计等效。更大位宽或更大文件也并非这一次就必然更高分。下载体积不包含KV缓存与运行时开销，不能标成峰值显存。
+
+### 压缩的是哪些层
+
+imatrix通过校准数据的激活统计控制量化误差；MoE混合精度把压缩预算集中给占参数量较大的路由专家。两个专家混合文件分别有141个路由专家tensor用IQ1_M或IQ2_XXS，338个其他矩阵tensor用Q8_0、287个小tensor保留F32。共享专家、注意力、输入embedding与输出层保留Q8_0；路由结构和专家数量没有改变。它不是整模型统一1/2bit，更不是剪掉专家。
+
+IQ1_M与IQ2_XXS是不同IQ编码，相应tensor平均约1.75与2.0625bit/weight；I是字母，不是数字1，也不是Q1_0/Q2_0的别名。Q8_0是整数8bit量化，不是FP8；K-quants的K也不是MoE top-k。六个方案中五个使用imatrix，标准Q8_0为不带imatrix的基线。编码格式来自llama.cpp生态，原卡发布的是其上的校准与精度分配配方。
+
+### 这个分数测了什么
+
+评测固定Mem0 2.0.19、LoCoMo20%子集、2用户/262问题/59记忆chunk；每chunk10轮，retrieval top_k10，writer温度.7、no-think；embedding为qwen3-embedding-8b-for-online（4096维），answer/judge为gpt-5.6-sol，llama.cpp commit为5aeac37a35b44fde4bdffaec9159f2fcb253b622，F16 KV。每个精度方案在相同设置下**独立构建自己的bank**；官方称六个均完成全部写入与问答，没有遗留评测错误。
+
+这不是上文跨框架55.49宏平均，也不是固定BF16记忆bank只更换answer模型的实验。应比较同任务/同预算下写入内容、bank状态和下游答案，而不是跨表挑最高数字。原卡命名中的Step250等历史文件名已规范化，选择文件时应按当前全名和SHA-256核验。
+
+### 能加载不等于能写记忆
+
+官方另报告了2026-10-21对特定社区仓库revision的四种超低比特文件检查：能加载，但8个中英文抽取/更新/删除/来源提示均未生成有效JSON；同条件Q6_K为8/8。条件为H20、上述llama.cpp revision、no-think、F16 KV、temperature0、max_tokens256、无强制JSON解码。这是基本输出检查，不是LoCoMo Judge分数，也没有把量化、转换与后端问题做因果隔离，不能推广成所有社区文件或所有低比特模型都失败。
+
+> [!warning] 证据深度
+> 本节原卡与全部表格已保存，但没有独立多seed复测、置信区间或同条件BF16/FP8配对结果，因此不能达到完整量化报告或独立实测级结论。这里明确保留资料不足；本次未下载权重或执行卡内命令。
+
+> [!insight]
+> 记忆writer的部署验收至少分两道门：先查结构化输出和写入语义不变量，再查完整bank→retrieval→answer闭环。只报告模型能加载、JSON格式合法或文件更小，无法证明记忆策略的实际质量。
+
+来源：[🤗 HF Model Card · 官方GGUF](https://huggingface.co/tencent/Hy-Memory-30B-A3B-GGUF)；原始MD见[[src/hf_gguf_model_card|本地卡片]]。10/31是本次资料复核日，未据lastModified伪造新发布日；family仍为10/16。

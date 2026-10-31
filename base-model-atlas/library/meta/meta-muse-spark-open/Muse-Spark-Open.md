@@ -5,7 +5,7 @@ company: Meta
 model: Muse Spark Open
 release: 2026-10-15
 created: 2026-10-16
-updated: 2026-10-16
+updated: 2026-10-31
 tags: [base-model, meta, muse, moe, agent-training, open-weights]
 status: read
 url: "https://research.meta.ai/blog/muse-spark-open"
@@ -109,15 +109,22 @@ url: "https://research.meta.ai/blog/muse-spark-open"
 
 NVIDIA 10 月 16 日发布的是面向同一 target 的 **辅助 drafter**，不另作 Atlas 正代。5 个 dense decoder 层、2048 非因果窗口，4.38B 参数不含共享 target embedding / head；候选经选择后由 target 并行校验。另一条 DSpark 或 RadixArk DFlash 路径是不同实现，不把名称相似当成同一实验。
 
-当前 NVIDIA 卡报告：GB300 节点，TP4 + EP4，draft length 7，xhigh，最大输出 4096，concurrency 32。贪心 / 概率采样（T=1，不截断）平均接受长度分别为：
+2026-10-31复核当前 NVIDIA 卡报告：GB300 节点，TP4 + EP4，draft length 7，xhigh，最大输出 4096，concurrency 32。贪心 / 概率采样（T=1，不截断）平均接受长度分别为：
 
 | 数据设置 | 贪心 AL | 概率 AL |
 |---|---:|---:|
-| MTBench | 3.73 | 3.01 |
-| SPEED quality | 3.72 | 3.01 |
-| SPEED 32K throughput 子集 | 3.30 | 2.78 |
+| MTBench | 4.01 | 3.66 |
+| SPEED quality | 4.08 | 3.68 |
+| SPEED 32K throughput 子集 | 3.59 | 3.26 |
 
-这些数字说明一次校验平均接受多少候选，不是 3.73× TPS 保证。drafter 本身计算、target 验证、通信以及 prefill 都改变净收益；卡内主要是文本评测，不能外推音频和图像任务也同幅加速。
+这些数字说明一次校验平均接受多少候选，不是 4.01× TPS 保证。drafter 本身计算、target 验证、通信以及 prefill 都改变净收益；卡内主要是文本评测，不能外推音频和图像任务也同幅加速。
+
+> [!note] 原始数据已更新，不能把差值归因给新权重
+> 10/16所存旧卡对应三项AL为3.73/3.01、3.72/3.01、3.30/2.78；当前原卡修订为上表数值。旧MD已保存在src/history/，不能并列混用为同一结果。新卡没有说明差值究竟来自权重、实现还是评测口径，因此本次只修正资料，不记录新checkpoint或虚构升级日期。AL是接受token数，仍不能转换成同倍端到端TPS。
+
+当前卡补入SGLang支持与4张Blackwell GPU的NVFP4 target示例：专用dev-muse-spark-open镜像、TP4/EP4、trtllm_mha、FP8 E4M3 KV、page size128、两种parser、DFLASH与8个draft token；原有vLLM示例为7个。**下面评测表仍明确是vLLM、draft length7**，不能把它解释成SGLang8-token示例的实测。卡里“支持框架”与“这组成绩用什么框架”必须分开记。
+
+以MTBench为例，当前卡逐类贪心/概率AL：writing3.87/3.59、roleplay3.38/3.20、reasoning3.80/3.44、math4.78/4.45、coding4.68/4.12、extraction4.84/4.30、stem3.48/3.26、humanities3.21/2.96。SPEED完整11类与32K三类均保留在本地原卡，不能仅凭平均接受长度就推断所有任务同幅获益。我们没有运行权重或执行部署命令。
 
 开发者博客另列 RadixArk / AMD MI355X 特定实验的 3.7× 单请求、2.9× concurrency 16、AL 6.4，与上表硬件和实现不同。Helion 的最高 3.95× 是 kernel 级别，而该博客给 AMD MI350 上端到端约 3%；不把两个最大数相乘写成全系统提升。
 

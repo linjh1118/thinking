@@ -47,7 +47,9 @@ OFFICIAL_PAGES = {
     'amazon': 'https://www.amazon.science/blog',
     'nvidia': 'https://research.nvidia.com/publications',
     'cohere': 'https://cohere.com/blog',
-    'ibm': 'https://www.ibm.com/granite/docs/changelog',
+    # The old Granite documentation site is retired and redirects changelog
+    # requests to a model overview. Its own banner points to HF and GitHub.
+    'ibm': 'https://huggingface.co/ibm-granite',
 }
 
 # HF inventories miss closed-source releases, and legacy entry pages can lag
@@ -55,6 +57,7 @@ OFFICIAL_PAGES = {
 # additional first-party directories; a human still verifies first-release dates
 # and excludes provider onboarding, API changes, and repeated family SKUs.
 ADDITIONAL_PAGES = {
+    'ibm-github': ('ibm', 'https://github.com/ibm-granite'),
     'openai-safety-hub': ('openai', 'https://deploymentsafety.openai.com/'),
     'openai-api-changelog': ('openai', 'https://developers.openai.com/api/docs/changelog.md'),
     'meta-current': ('meta', 'https://research.meta.ai/'),
@@ -152,6 +155,16 @@ def fetch_job(job, output, previous, window_start):
             result['newRepositories'] = [row['id'] for row in rows if row['id'] not in old_ids]
             result['comparisonNote'] = 'Newly observed IDs may be historical backfill, not new releases; verify the original announcement.'
             result['recentCandidates'] = [row['id'] for row in rows if row.get('createdAt', '') >= window_start]
+            # A release can update an existing repository. These timestamps
+            # only select cards for review; they never establish release dates.
+            result['modifiedCandidates'] = [row['id'] for row in rows if row.get('lastModified', '') >= window_start]
+            old_rows = {row['id']: row for row in old}
+            result['changedRepositories'] = [
+                row['id'] for row in rows
+                if old_rows.get(row['id'], {}).get('lastModified')
+                and row.get('lastModified') != old_rows[row['id']]['lastModified']
+            ]
+            result['modificationTrackingBaseline'] = bool(rows) and not any(row.get('lastModified') for row in old)
         elif kind == 'page':
             parser = VisibleText()
             parser.feed(data.decode(errors='replace'))
@@ -182,7 +195,10 @@ def main():
         # Teams may move new model families to a second verified publisher.
         # Keep the old account too: replacing it would lose historical coverage.
         for org in dict.fromkeys([team['hfOrg'], *team.get('hfAdditionalOrgs', [])]):
-            query = urllib.parse.urlencode({'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 1000})
+            query = urllib.parse.urlencode({
+                'author': org, 'sort': 'createdAt', 'direction': -1, 'limit': 1000,
+                'expand[]': ['createdAt', 'lastModified'],
+            }, doseq=True)
             jobs.append((org, 'https://huggingface.co/api/models?' + query, '.json', 'inventory', team['team']))
             jobs.append(('collections-' + org, 'https://huggingface.co/api/collections?' + urllib.parse.urlencode({'owner': org, 'limit': 100}),
                          '.json', 'collections', team['team']))
