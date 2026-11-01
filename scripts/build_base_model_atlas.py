@@ -3236,6 +3236,76 @@ document.querySelector('#recent-uncertain-list').innerHTML = uncertain.map(row =
     return page.replace("</body>", script + "</body>", 1)
 
 
+def add_index_tabs(page: str) -> str:
+    """Separate the release ledger and tree without rebuilding their stateful DOM.
+
+    Both panels stay mounted, so region/search filters, expanded branches and
+    horizontal timeline positions survive a round trip. Hash navigation also
+    selects the owning panel before the browser moves to an in-panel target.
+    """
+    if 'id="atlas-tab-tree"' in page:
+        return page
+    recent_start = page.index('<section class="recent-releases"')
+    tree_start = page.index('<div class="controls">', recent_start)
+    tree_end = page.index('<p class="footnote">', tree_start)
+    recent = page[recent_start:tree_start]
+    tree = page[tree_start:tree_end]
+    navigation = '''<nav class="atlas-tabs" role="tablist" aria-label="Atlas 内容">
+<button id="atlas-tab-tree" role="tab" type="button" aria-controls="atlas-panel-tree" aria-selected="true" tabindex="0" data-atlas-tab="tree">🌳 模型谱系</button>
+<button id="atlas-tab-recent" role="tab" type="button" aria-controls="atlas-panel-recent" aria-selected="false" tabindex="-1" data-atlas-tab="recent">📅 近 30 天发布</button></nav>'''
+    panels = navigation + '''<section id="atlas-panel-tree" role="tabpanel" aria-labelledby="atlas-tab-tree" tabindex="0">
+<p class="atlas-tldr">按团队浏览模型演进，默认展示海外团队。最新模型在左，向右回溯；搜索或展开支线后，切换页面板块仍保留当前查看状态。</p>''' + tree + '</section>'
+    panels += '''<section id="atlas-panel-recent" role="tabpanel" aria-labelledby="atlas-tab-recent" tabindex="0" hidden>
+<p class="atlas-tldr">集中查看全部团队近 30 天的发布与更新，按北京时间倒序排列。模型首发和同族更新分别标记，可直接打开 Overview、笔记与 Poster。</p>''' + recent + '</section>'
+    page = page[:recent_start] + panels + page[tree_end:]
+    style = '''<style id="atlas-tabs-style">[role="tabpanel"][hidden]{display:none!important}.atlas-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:6px;border:1px solid var(--line);border-radius:16px;width:fit-content;background:var(--panel,#111724)}.atlas-tabs button{border:1px solid transparent;border-radius:11px;padding:12px 20px;background:transparent;color:var(--muted,#aab8d0);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}.atlas-tabs button[aria-selected="true"]{background:#263c62;color:#eaf3ff;border-color:#6b9de2}.atlas-tabs button:focus-visible{outline:3px solid #70d9ff;outline-offset:3px}.atlas-tldr{padding:16px 20px;border-left:3px solid #70d9ff;border-radius:0 12px 12px 0;background:#70d9ff0c;color:var(--muted,#b6c4da);font-size:14px;line-height:1.7;margin:0 0 22px}html[data-theme="light"] .atlas-tabs{background:#fff;border-color:#cbd5e1}html[data-theme="light"] .atlas-tabs button{color:#475569}html[data-theme="light"] .atlas-tabs button[aria-selected="true"]{background:#e1ecff;border-color:#719ada;color:#173a72}html[data-theme="light"] .atlas-tldr{background:#e9f3ff;color:#3b5271}@media(max-width:600px){.atlas-tabs{width:100%}.atlas-tabs button{flex:1;padding:12px 10px}}</style>'''
+    script = '''<script id="atlas-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-atlas-tab]')];
+function select(name, focus = false) {
+    if (!tabs.some(tab => tab.dataset.atlasTab === name)) return;
+    for (const tab of tabs) {
+        const active = tab.dataset.atlasTab === name;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+        if (active && focus) tab.focus();
+    }
+}
+function revealHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    const aliases = {tree:'tree',recent:'recent'};
+    const target = document.getElementById(id);
+    const panel = target?.closest('[role="tabpanel"]');
+    if (aliases[id]) select(aliases[id]);
+    else if (panel) select(panel.id.replace('atlas-panel-', ''));
+    if (target) requestAnimationFrame(() => target.scrollIntoView({block:'start'}));
+}
+for (const [index, tab] of tabs.entries()) {
+    tab.addEventListener('click', () => {
+        select(tab.dataset.atlasTab);
+        history.replaceState(null, '', '#'+tab.dataset.atlasTab);
+    });
+    tab.addEventListener('keydown', event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    });
+}
+window.addEventListener('hashchange', revealHash);
+document.addEventListener('click', event => {
+    const anchor = event.target.closest('a[href^="#"]');
+    if (!anchor) return;
+    const target = document.getElementById(decodeURIComponent(anchor.hash.slice(1)));
+    const panel = target?.closest('[role="tabpanel"]');
+    if (panel) select(panel.id.replace('atlas-panel-', ''));
+});
+revealHash();
+})();</script>'''
+    return page.replace('</head>', style + '</head>', 1).replace('</body>', script + '</body>', 1)
+
+
 def main() -> None:
     add_missing_brainhao_packs()
     teams, records = build_records()
@@ -3267,6 +3337,7 @@ def main() -> None:
         1,
     )
     index_page = add_recent_releases(index_page, records)
+    index_page = add_index_tabs(index_page)
     build_date = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
     index_page = index_page.replace("更新时间：2026-09-04", f"页面生成：{build_date}")
     (THINKING / "base_model_atlas.html").write_text(add_theme_controls(index_page), encoding="utf-8")
