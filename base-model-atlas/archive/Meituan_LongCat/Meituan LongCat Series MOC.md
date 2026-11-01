@@ -3,21 +3,31 @@ title: "Meituan LongCat Series MOC — 美团 LongCat 全系列技术报告"
 type: moc
 tags: [moc, base-model, meituan, longcat, moe, agentic, multimodal]
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-11-02
+html_tabs: true
 ---
 
 # Meituan LongCat Series MOC
 
-> 📚 **时间窗口**: 2025-09 至 2026-03
+> 📚 **时间窗口**: 历史技术报告为 2025-09 至 2026-03；另补 LongCat-2.5 的 2026-09-25 / 2026-11-02 发布阶段。
 > **来源**: arXiv 官方技术报告（全部 7 篇均含 LaTeX 源码）
-> **基座统一**: 全系列基于 560B MoE（28 层，平均激活 27B，ScMoE + Zero-Computation Experts）
+> **规模边界**: 历史 Flash 报告的 560B 等描述不能推广到 Lite、Next 或 2.5；以各模型独立报告为准。
 > **上级 MOC**: [[Topics/13_base_model/Base Model MOC|Base Model MOC]]
 
 ---
 
+## 当前发布：LongCat-2.5
+
+> [!tldr]
+> 2026-09-25 Preview 首发，2026-11-02 正式版上线；一个 family 记录两个阶段。正式版已确认，独立架构/训练报告尚未找到；输出长度存在 128K / 256K 文档冲突，不能以接口兼容推断性能。
+
+- [[LongCat-2.5-Preview|LongCat-2.5 family 研读笔记]]：已保存七个官方页面、旧快照、官网截图和手绘整理图；显著标明资料不足。
+- [[longcat-2_5-preview_poster_zh.html|中文 Poster]]。
+- 下文是原七篇历史报告的研究索引；其中“统一基座”的旧归纳不构成对 2.5 的结构或参数声明。
+
 ## TL;DR
 
-美团 LongCat 是 2025-2026 年国产开源大模型里 **路线最清晰、技术报告粒度最细** 的系列之一：**一个 560B MoE 基座**（LongCat-Flash，2509.01322）+ 沿 six 不同方向的扩展（reasoning / small / omni / native multimodal / formal / prover / next-gen）。所有扩展都在原基座架构上做，没有推倒重来。三个值得记的研究价值锚点：
+美团 LongCat 是 2025-2026 年国产开源大模型里 **路线最清晰、技术报告粒度最细** 的系列之一：**一个 560B MoE 基座**（LongCat-Flash，2509.01322）+ 沿 six 不同方向的扩展（reasoning / small / omni / native multimodal / formal / prover / next-gen）。这些历史报告需要逐篇区分架构、尺寸与训练差异，不能把“同系列”当作参数或结构完全相同的证据。三个值得记的研究价值锚点：
 
 1. **架构基座（Flash）**：Zero-Computation Experts（动态计算预算）+ ScMoE（跨层 shortcut 拉 overlap 窗口）——把 comm 占比从 25.3% 压到 8.4%，TPOT 比 DeepSeek-V3 理论极限再降 50%。
 2. **路线分歧点**：Flash-Omni（2511）走 encoder-decoder 拼接式 omni；LongCat-Next（2603.27538）走 DiNA 原生离散 token 统一式 omni。**后者是美团的下一代押注**。
@@ -61,7 +71,7 @@ updated: 2026-07-01
 
 ### 主线 1：架构基座稳定，能力横向扩展
 
-LongCat 系列的 7 篇技术报告全部基于同一套 560B MoE 基座（28 层 / 512 FFN experts + 256 zero-comp experts / 12 activated / ScMoE + MLA + variance alignment）。**没有任何一篇推倒重做架构**，扩展都通过：
+历史 Flash 主干的架构复用值得研究，但 Lite、Next 与新发布的 2.5 应按独立资料核实。下列内容是历史路线的分类，不代表每一代均采用相同的 560B 基座：
 
 - **训练后 recipe 扩展**：Thinking 加 RL，Thinking-2601 加 Robust RL，Prover 加 tool-integrated RL
 - **模态模块挂载**：Omni 在基座外加 ViT 637M + Audio Encoder/Decoder ~1.2B

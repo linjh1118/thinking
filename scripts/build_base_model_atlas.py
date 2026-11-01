@@ -2071,6 +2071,92 @@ def sanitize_card_table(raw: str) -> str:
     return "".join(parser.output)
 
 
+def add_detail_tabs(page: str) -> str:
+    """Expose overview sections as real tabs, starting with reading materials."""
+    style = '''<style>[data-detail-panel][hidden]{display:none!important}.detail-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 12px}.detail-tabs button{font:inherit;font-size:14px;padding:10px 16px;border:1px solid var(--line,#34435d);border-radius:10px;background:var(--panel,#111724);color:var(--muted,#a9b7cd);cursor:pointer}.detail-tabs button[aria-selected="true"]{background:#284464;color:#edf5ff;border-color:#7fa9db}.detail-tabs button:focus-visible{outline:3px solid #70d9ff}.detail-tldr{color:var(--muted,#a9b7cd);font-size:14px;line-height:1.7}html[data-theme="light"] .detail-tabs button[aria-selected="true"]{background:#dceaff;color:#14365d}</style>'''
+    script = '''<script id="detail-tabs-script">(() => {
+const sections = [...document.querySelectorAll('#app > .section')];
+if (!sections.length) return;
+const updates=(x.releaseUpdates||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));
+if(updates.length){const card=document.querySelector('.datecard');card.querySelector('span').textContent='家族首次发布';const latest=document.createElement('span');latest.textContent='最新同族发布：'+updates[updates.length-1].date;card.append(latest);}
+const nav = document.createElement('nav'); nav.className='detail-tabs'; nav.setAttribute('role','tablist'); nav.setAttribute('aria-label','模型研读板块');
+sections[0].before(nav);
+const descriptions={'继续阅读':'优先阅读渲染笔记，再按需要核对原始资料与Poster。来源类型按实际材料标注。','在团队谱系中的位置':'查看当前模型所属代际、资料完成度与证据边界。','前后节点 · 时间线为最新优先':'按实际记录日期浏览同条谱系中的相邻节点。','团队专项支线':'专项支线与主干代际分开呈现。'};
+const buttons = sections.map((section,index) => {
+    const title=section.querySelector('h2').textContent;
+    section.id='overview-section-'+index; section.dataset.detailPanel=String(index); section.setAttribute('role','tabpanel'); section.setAttribute('aria-labelledby','overview-tab-'+index);
+    const intro=document.createElement('p'); intro.className='detail-tldr'; intro.textContent=descriptions[title]||'查看这一板块的模型资料与来源。'; section.querySelector('h2').after(intro);
+    const button=document.createElement('button'); button.type='button'; button.id='overview-tab-'+index; button.textContent=title; button.setAttribute('role','tab'); button.setAttribute('aria-controls',section.id); nav.append(button); return button;
+});
+function select(index){sections.forEach((section,i)=>{section.hidden=i!==index;buttons[i].setAttribute('aria-selected',String(i===index));buttons[i].tabIndex=i===index?0:-1;});}
+buttons.forEach((button,index)=>{button.onclick=()=>select(index);button.onkeydown=event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;select(next);buttons[next].focus();};});
+function reveal(){const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));const section=target?.closest('[data-detail-panel]');if(section)select(Number(section.dataset.detailPanel));}
+select(Math.max(0,buttons.findIndex(button=>button.textContent==='继续阅读')));reveal();window.addEventListener('hashchange',reveal);
+document.addEventListener('click',event=>{const link=event.target.closest('a[href^="#"]');const target=link&&document.getElementById(decodeURIComponent(link.hash.slice(1)));const section=target?.closest('[data-detail-panel]');if(section)select(Number(section.dataset.detailPanel));});
+})();</script>'''
+    return page.replace('</head>', style + '</head>', 1).replace('</body>', script + '</body>', 1)
+
+
+def add_note_tabs(note_html: str) -> str:
+    """Keep authored H2 sections mounted, with exactly one section visible.
+
+    Opt-in notes retain their table-of-contents links: opening an H2/H3 anchor
+    first selects its containing panel, including incoming fragment URLs.
+    """
+    parts = re.split(r'(?=<h2\b)', note_html)
+    if len(parts) < 3:
+        return note_html
+    buttons, panels = [], []
+    for index, section in enumerate(parts[1:]):
+        heading = re.search(r'<h2\b[^>]*>(.*?)</h2>', section, re.S)
+        label = re.sub(r'<[^>]+>', '', heading.group(1))
+        selected = index == 0
+        buttons.append(
+            f'<button type="button" role="tab" id="note-tab-{index}" '
+            f'aria-controls="note-panel-{index}" aria-selected="{str(selected).lower()}" '
+            f'tabindex="{0 if selected else -1}" data-note-tab="{index}">{label}</button>'
+        )
+        panels.append(
+            f'<section role="tabpanel" id="note-panel-{index}" '
+            f'aria-labelledby="note-tab-{index}" data-note-panel="{index}"'
+            f'{"" if selected else " hidden"}>{section}</section>'
+        )
+    style = '''<style id="note-tabs-style">[data-note-panel][hidden]{display:none!important}.note-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:24px 0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.note-tabs button{font:inherit;font-family:Inter,sans-serif;font-size:13px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 13px;cursor:pointer}.note-tabs button[aria-selected="true"]{background:#223d66;color:#eaf2ff;border-color:#6689ba}.note-tabs button:focus-visible{outline:3px solid #70d9ff}.note [data-note-panel]>h2:first-child{margin-top:20px}html[data-theme="light"] .note-tabs button[aria-selected="true"]{background:#dceaff;color:#15375e;border-color:#7ca1ce}</style>'''
+    script = '''<script id="note-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-note-tab]')];
+function select(index) {
+    tabs.forEach(tab => {
+        const active = tab.dataset.noteTab === String(index);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+}
+function reveal() {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) { select(panel.dataset.notePanel); requestAnimationFrame(() => target.scrollIntoView({block:'start'})); }
+}
+tabs.forEach((tab,index) => {
+    tab.onclick = () => select(tab.dataset.noteTab);
+    tab.onkeydown = event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    };
+});
+document.addEventListener('click',event => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) select(panel.dataset.notePanel);
+});
+window.addEventListener('hashchange',reveal); reveal();
+})();</script>'''
+    return parts[0] + style + '<nav class="note-tabs" role="tablist" aria-label="研读板块">' + ''.join(buttons) + '</nav>' + ''.join(panels) + script
+
+
 def render_markdown(source_file: Path, destination: Path, targets: dict[str, Path]) -> None:
     """Render the practical Obsidian subset used by BrainHao notes."""
     raw = source_file.read_text(encoding="utf-8", errors="ignore")
@@ -2327,6 +2413,8 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             note_html = note_html[:h1_end] + quality_banner + note_html[h1_end:]
         else:
             note_html = quality_banner + note_html
+    if meta.get("html_tabs") == "true":
+        note_html = add_note_tabs(note_html)
     mathjax = ""
     if "$$" in raw:
         runtime = "src/assets/mathjax-tex-svg.js" if (source_file.parent / "src/assets/mathjax-tex-svg.js").is_file() else "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
@@ -2887,7 +2975,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "teamDir": team["dir"], "region": team["region"], "color": team["color"],
                 "date": release["date"], "rawDate": raw_date, "name": release["name"],
                 "summary": release["summary"], "source": release["sources"][0]["url"],
-                "sourceType": release["sources"][0]["label"], "thesis": team["thesis"],
+                "sourceType": release["sources"][0]["label"], "thesis": release.get("thesis", team["thesis"]),
                 "lineageType": release["lineageType"], "lineageLabel": release["label"],
                 "officialSources": release["sources"],
                 "incrementalRelease": True,
@@ -3342,7 +3430,7 @@ def main() -> None:
     index_page = index_page.replace("更新时间：2026-09-04", f"页面生成：{build_date}")
     (THINKING / "base_model_atlas.html").write_text(add_theme_controls(index_page), encoding="utf-8")
     (ATLAS / "model.html").write_text(
-        add_theme_controls(add_typed_official_source_links(render_detail(records))), encoding="utf-8"
+        add_theme_controls(add_detail_tabs(add_typed_official_source_links(render_detail(records)))), encoding="utf-8"
     )
     (ATLAS / "workspace.html").write_text(add_theme_controls(render_workspace(records)), encoding="utf-8")
     (ATLAS / "library.html").write_text(add_theme_controls(render_library(archive_entries)), encoding="utf-8")
