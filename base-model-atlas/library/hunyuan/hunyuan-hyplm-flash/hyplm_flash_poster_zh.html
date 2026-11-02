@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>HyPLM-Flash · 中文研究Poster</title>
+
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-SVG-styles">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+</style></head>
+<body>
+
+<div class="poster">
+
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks">
+<span style="color: #78716c;">源文档：</span>
+<a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/Tencent_Hunyuan/Variants/261102_HyPLM_Flash/HyPLM-Flash" style="text-decoration: none;">BrainHao · HyPLM-Flash研读</a>
+  &nbsp;·&nbsp;
+  <a href="https://hunyuan.tencent.com/research/hyra2?langVersion=zh" style="text-decoration: none;" target="_blank">📝 Tech Blog · 2026-11-02</a>
+</div>
+</div>
+
+<div class="header">
+<div class="header-left">
+<span class="venue-pill">Tencent Hunyuan · 科学模型支线 · 2026-11-02</span>
+<div class="zh-title">蛋白质表征模型：权重能力与INT8引擎分开看</div>
+<h1>HyPLM-Flash <span>Scientific Model</span></h1>
+<div class="authors">依据腾讯官方博客、公开原始材料与原图 · 研读2026-11-02 · 未做本地复测</div>
+</div>
+<div class="header-right">
+<div class="score-box"><div class="num">650M</div><div class="sub">模型参数</div></div>
+<div class="score-box"><div class="num">726B</div><div class="sub">训练tokens · 博客</div></div>
+<div class="score-box"><div class="num">130k</div><div class="sub">残基/s · H20 INT8</div></div>
+<div class="score-box"><div class="num">11/02</div><div class="sub">权重与代码发布</div></div>
+</div>
+</div>
+
+<div class="main-grid">
+
+<div class="col">
+<div class="sec-head c-amber"><div class="nc">1</div><h2>定位与证据边界</h2></div>
+<p class="body">输入蛋白质序列，输出残基/整蛋白表征或MLM logits。Hyra 2.0从头研发；<b>科学模型专项</b>，不等于混元通用聊天正代。</p>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">表征与突变评分不是药效结论</div>
+<p>encode输出[L,1280]或mean pooling[1280]；logits用于masked marginal。分数差不是实验适应度差。</p>
+</div>
+<div class="gap-box g2">
+<div class="title">资料不足，未达完整报告精读</div>
+<p>README、config与官方图已读；独立报告仅PDF链接。训练数据去污染、各任务划分、统计检验与消融仍不能完整审核。</p>
+</div>
+</div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">序列预处理</div>
+<p>自动大写、去空白、J转X；非法字符报错。单条最多8190残基，不是batch_tokens32768。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">表示编码</div>
+<p>返回CPU FP32 tensors，去首尾special tokens；层16可读，mean pooling保持[1280]。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">预测接口</div>
+<p>MLM logits[L,33]；第三残基用masks=[2]。词表顺序由tokenizer读取，不猜氨基酸编号。</p>
+</div>
+</div>
+<div class="fig-box">
+<img alt="官方完整原图" src="src/assets/official-protein.png">
+<div class="fig-cap">图1：官方博客图，保留完整比较和坐标。</div>
+</div>
+</div>
+
+<div class="col">
+<div class="sec-head c-orange"><div class="nc">2</div><h2>机制与执行协议</h2></div>
+<p class="body">32层Transformer、hidden1280、20heads、词表33。FP32权重约2.6GB，服务默认INT8；<b>发布精度、推理精度、训练精度不能混写</b>。</p>
+<div class="fig-box">
+<img alt="手绘研读示意，非实测图" src="src/assets/handdrawn-scientific-models.png">
+<div class="fig-cap">图2：手绘研读；三类模型任务不同，不构成因果链。</div>
+</div>
+<div class="gap-boxes">
+<div class="gap-box g1">
+<div class="title">高效引擎不等于更强训练目标</div>
+<p>padding-free packing、Triton融合、INT8矩阵乘法和FlashAttention改变执行；不能直接归因模型新能力。</p>
+</div>
+</div>
+<div class="trick-box">
+<div class="trick-title">数据与计算不是一回事</div>
+<p>博客训练726B tokens，为ESM-2 650M的0.73倍、E1/ESM C的1/5–1/8。不能推成同去重语料、同质量或同GPU时长。</p>
+</div>
+<div class="formula-box"><div class="flabel">研读记号 · 不补造训练目标</div><mjx-container class="MathJax CtxtMenu_Attached_0" jax="SVG" display="true" tabindex="0" ctxtmenu_counter="0" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="37.556ex" height="2.497ex" role="img" focusable="false" viewBox="0 -750 16599.8 1103.5" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.8ex;"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="394" xlink:href="#MJX-TEX-N-394"></use></g><g data-mml-node="msub" transform="translate(833,0)"><g data-mml-node="mi"><use data-c="2113" xlink:href="#MJX-TEX-I-2113"></use></g><g data-mml-node="TeXAtom" transform="translate(450,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D447" xlink:href="#MJX-TEX-I-1D447"></use></g><g data-mml-node="mn" transform="translate(704,0)"><use data-c="33" xlink:href="#MJX-TEX-N-33"></use></g><g data-mml-node="mi" transform="translate(1204,0)"><use data-c="1D449" xlink:href="#MJX-TEX-I-1D449"></use></g></g></g><g data-mml-node="mo" transform="translate(3005.9,0)"><use data-c="3D" xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mi" transform="translate(4061.7,0)"><use data-c="6C" xlink:href="#MJX-TEX-N-6C"></use><use data-c="6F" xlink:href="#MJX-TEX-N-6F" transform="translate(278,0)"></use><use data-c="67" xlink:href="#MJX-TEX-N-67" transform="translate(778,0)"></use></g><g data-mml-node="mo" transform="translate(5339.7,0)"><use data-c="2061" xlink:href="#MJX-TEX-N-2061"></use></g><g data-mml-node="mi" transform="translate(5506.3,0)"><use data-c="1D45D" xlink:href="#MJX-TEX-I-1D45D"></use></g><g data-mml-node="mo" transform="translate(6009.3,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(6398.3,0)"><use data-c="1D449" xlink:href="#MJX-TEX-I-1D449"></use></g><g data-mml-node="mo" transform="translate(7445.1,0)"><use data-c="2223" xlink:href="#MJX-TEX-N-2223"></use></g><g data-mml-node="msub" transform="translate(8000.9,0)"><g data-mml-node="mi"><use data-c="1D465" xlink:href="#MJX-TEX-I-1D465"></use></g><g data-mml-node="TeXAtom" transform="translate(605,-176.7) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="2216" xlink:href="#MJX-TEX-N-2216"></use></g><g data-mml-node="mn" transform="translate(500,0)"><use data-c="33" xlink:href="#MJX-TEX-N-33"></use></g></g></g><g data-mml-node="mo" transform="translate(9363,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(9974.2,0)"><use data-c="2212" xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(10974.5,0)"><use data-c="6C" xlink:href="#MJX-TEX-N-6C"></use><use data-c="6F" xlink:href="#MJX-TEX-N-6F" transform="translate(278,0)"></use><use data-c="67" xlink:href="#MJX-TEX-N-67" transform="translate(778,0)"></use></g><g data-mml-node="mo" transform="translate(12252.5,0)"><use data-c="2061" xlink:href="#MJX-TEX-N-2061"></use></g><g data-mml-node="mi" transform="translate(12419.1,0)"><use data-c="1D45D" xlink:href="#MJX-TEX-I-1D45D"></use></g><g data-mml-node="mo" transform="translate(12922.1,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(13311.1,0)"><use data-c="1D447" xlink:href="#MJX-TEX-I-1D447"></use></g><g data-mml-node="mo" transform="translate(14292.9,0)"><use data-c="2223" xlink:href="#MJX-TEX-N-2223"></use></g><g data-mml-node="msub" transform="translate(14848.7,0)"><g data-mml-node="mi"><use data-c="1D465" xlink:href="#MJX-TEX-I-1D465"></use></g><g data-mml-node="TeXAtom" transform="translate(605,-176.7) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use data-c="2216" xlink:href="#MJX-TEX-N-2216"></use></g><g data-mml-node="mn" transform="translate(500,0)"><use data-c="33" xlink:href="#MJX-TEX-N-33"></use></g></g></g><g data-mml-node="mo" transform="translate(16210.8,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi mathvariant="normal">Δ</mi><msub><mi>ℓ</mi><mrow data-mjx-texclass="ORD"><mi>T</mi><mn>3</mn><mi>V</mi></mrow></msub><mo>=</mo><mi>log</mi><mo data-mjx-texclass="NONE">⁡</mo><mi>p</mi><mo stretchy="false">(</mo><mi>V</mi><mo>∣</mo><msub><mi>x</mi><mrow data-mjx-texclass="ORD"><mo>∖</mo><mn>3</mn></mrow></msub><mo stretchy="false">)</mo><mo>−</mo><mi>log</mi><mo data-mjx-texclass="NONE">⁡</mo><mi>p</mi><mo stretchy="false">(</mo><mi>T</mi><mo>∣</mo><msub><mi>x</mi><mrow data-mjx-texclass="ORD"><mo>∖</mo><mn>3</mn></mrow></msub><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><p style="font-size:.68rem;color:#78716c;margin-top:4px;">README masked-marginal示例的研读记号；不是实测突变效应。</p></div>
+<div class="stage-list">
+<div class="stage-item">
+<div class="stitle">精度选择</div>
+<p>INT8默认约130k残基/s；BF16约90k。近变体监督回归建议BF16，避免扰动压过约1%表征差。</p>
+</div>
+<div class="stage-item">
+<div class="stitle">复现记录</div>
+<p>固定revision、精度、layer、pooling、打包预算、数据划分与硬件；多GPU每卡一个worker。</p>
+</div>
+</div>
+</div>
+
+<div class="col">
+<div class="sec-head c-green"><div class="nc">3</div><h2>评测口径与待核问题</h2></div>
+<p class="body">博客12模型/35任务、README28checkpoint/32任务为两套口径，不能拼成一张统一榜。所有性能为官方自报，未做本地复测。</p>
+<table class="rtable">
+<tbody><tr><th class="left">核查项</th><th>数值/状态</th><th>口径</th><th>证据</th></tr>
+<tr class="cat"><td colspan="4">模型与材料事实</td></tr>
+<tr><td class="left">规模</td><td>650M</td><td>参数</td><td>README</td></tr>
+<tr><td class="left">网络</td><td>32层</td><td>20heads</td><td>config</td></tr>
+<tr><td class="left">宽度</td><td>1280</td><td>FFN3584</td><td>config</td></tr>
+<tr class="cat"><td colspan="4">执行与测量条件</td></tr>
+<tr><td class="left">词表</td><td>33</td><td>MLM</td><td>非聊天</td></tr>
+<tr><td class="left">发布</td><td>FP32</td><td>约2.6GB</td><td>未下载</td></tr>
+<tr><td class="left">训练量</td><td>726B</td><td>tokens</td><td>博客</td></tr>
+<tr class="cat"><td colspan="4">发布与复现边界</td></tr>
+<tr><td class="left">INT8速度</td><td>约130k</td><td>残基/s</td><td>H20</td></tr>
+<tr><td class="left">BF16速度</td><td>约90k</td><td>残基/s</td><td>H20</td></tr>
+<tr><td class="left">速度对照</td><td>1.9–2.7×</td><td>600M类</td><td>非全系统</td></tr>
+<tr class="ours"><td class="left">ProteinGym</td><td>0.409</td><td>Spearman</td><td>统计持平</td></tr>
+<tr class="ours"><td class="left">博客评测</td><td>12模型</td><td>35任务</td><td>均排第3</td></tr>
+<tr class="ours"><td class="left">README评测</td><td>28checkpoint</td><td>32任务</td><td>matched</td></tr>
+</tbody></table>
+<div class="gap-boxes">
+<div class="gap-box g3">
+<div class="title">保留两套评测口径</div>
+<p>博客35任务平均第3，README32任务matched evaluation；未读报告，不强行统一任务集合或名次。</p>
+</div>
+</div>
+<p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">执行约束与复现状态（不同测量口径分别列出）</p>
+<table class="ood-table">
+<tbody><tr><th class="left">接口</th><th>形状/预算</th><th>精度</th><th>用途</th><th>边界</th></tr>
+<tr><td class="left">residue</td><td>[L,1280]</td><td>CPU FP32</td><td>逐残基</td><td>去special</td></tr>
+<tr class="ours"><td class="left">pooled</td><td>[1280]</td><td>CPU FP32</td><td>整蛋白</td><td>mean</td></tr>
+<tr><td class="left">logits</td><td>[L,33]</td><td>MLM</td><td>突变评分</td><td>0起始索引</td></tr>
+<tr class="ours"><td class="left">长度</td><td>8190</td><td>单条</td><td>packing32768</td><td>非同一预算</td></tr>
+</tbody></table>
+<div class="trick-box">
+<div class="trick-title">第三方协议仍待核验</div>
+<p>ProteinGym0.409统计持平，不写显著超过。长程接触最优只限README被测模型；吞吐不是完整下游任务延迟。</p>
+</div>
+<div class="abl-grid">
+<div class="abl-card">
+<div class="aname">近似变体回归</div>
+<div class="adelta">优先BF16</div>
+<div class="adesc">AAV/GB1等细微表征任务不能套用INT8近无损保证。</div>
+</div>
+<div class="abl-card">
+<div class="aname">报告精读状态</div>
+<div class="adelta">资料不足</div>
+<div class="adesc">PDF未下载；两套任务口径与去污染尚待核对。</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="bottom-strip">
+<div class="bstrip">
+<div class="bhead">收录</div>
+<p>11/2权重/代码明确发布；蛋白语言模型支线。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">机制</div>
+<p>FP32文件与默认INT8引擎分开，层和pooling固定。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">证据</div>
+<p>统计持平不是超越；12/35与28/32各保留标签。</p>
+</div>
+<div class="bstrip">
+<div class="bhead">研究</div>
+<p>Agent评分需适用域，不能代替结构和实验验证。</p>
+</div>
+</div>
+</div>
+<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script>
+
+<svg id="MJX-SVG-global-cache" style="display: none;"><defs><path id="MJX-TEX-N-394" d="M51 0Q46 4 46 7Q46 9 215 357T388 709Q391 716 416 716Q439 716 444 709Q447 705 616 357T786 7Q786 4 781 0H51ZM507 344L384 596L137 92L383 91H630Q630 93 507 344Z"></path><path id="MJX-TEX-I-2113" d="M345 104T349 104T361 95T369 80T352 59Q268 -20 206 -20Q170 -20 146 3T113 53T99 104L94 129Q94 130 79 116T48 86T28 70Q22 70 15 79T7 94Q7 98 12 103T58 147L91 179V185Q91 186 91 191T92 200Q92 282 128 400T223 612T336 705Q397 705 397 636V627Q397 453 194 233Q185 223 180 218T174 211T171 208T165 201L163 186Q159 142 159 123Q159 17 208 17Q228 17 253 30T293 56T335 94Q345 104 349 104ZM360 634Q360 655 354 661T336 668Q328 668 322 666T302 645T272 592Q252 547 229 467T192 330L179 273Q179 272 186 280T204 300T221 322Q327 453 355 590Q360 612 360 634Z"></path><path id="MJX-TEX-I-1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path><path id="MJX-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path id="MJX-TEX-I-1D449" d="M52 648Q52 670 65 683H76Q118 680 181 680Q299 680 320 683H330Q336 677 336 674T334 656Q329 641 325 637H304Q282 635 274 635Q245 630 242 620Q242 618 271 369T301 118L374 235Q447 352 520 471T595 594Q599 601 599 609Q599 633 555 637Q537 637 537 648Q537 649 539 661Q542 675 545 679T558 683Q560 683 570 683T604 682T668 681Q737 681 755 683H762Q769 676 769 672Q769 655 760 640Q757 637 743 637Q730 636 719 635T698 630T682 623T670 615T660 608T652 599T645 592L452 282Q272 -9 266 -16Q263 -18 259 -21L241 -22H234Q216 -22 216 -15Q213 -9 177 305Q139 623 138 626Q133 637 76 637H59Q52 642 52 648Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path id="MJX-TEX-N-6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path id="MJX-TEX-N-67" d="M329 409Q373 453 429 453Q459 453 472 434T485 396Q485 382 476 371T449 360Q416 360 412 390Q410 404 415 411Q415 412 416 414V415Q388 412 363 393Q355 388 355 386Q355 385 359 381T368 369T379 351T388 325T392 292Q392 230 343 187T222 143Q172 143 123 171Q112 153 112 133Q112 98 138 81Q147 75 155 75T227 73Q311 72 335 67Q396 58 431 26Q470 -13 470 -72Q470 -139 392 -175Q332 -206 250 -206Q167 -206 107 -175Q29 -140 29 -75Q29 -39 50 -15T92 18L103 24Q67 55 67 108Q67 155 96 193Q52 237 52 292Q52 355 102 398T223 442Q274 442 318 416L329 409ZM299 343Q294 371 273 387T221 404Q192 404 171 388T145 343Q142 326 142 292Q142 248 149 227T179 192Q196 182 222 182Q244 182 260 189T283 207T294 227T299 242Q302 258 302 292T299 343ZM403 -75Q403 -50 389 -34T348 -11T299 -2T245 0H218Q151 0 138 -6Q118 -15 107 -34T95 -74Q95 -84 101 -97T122 -127T170 -155T250 -167Q319 -167 361 -139T403 -75Z"></path><path id="MJX-TEX-N-2061" d=""></path><path id="MJX-TEX-I-1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-N-2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path><path id="MJX-TEX-I-1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-TEX-N-2216" d="M56 731Q56 740 62 745T75 750Q85 750 92 740Q96 733 270 255T444 -231Q444 -239 438 -244T424 -250Q414 -250 407 -240Q404 -236 230 242T56 731Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path></defs></svg></body></html>

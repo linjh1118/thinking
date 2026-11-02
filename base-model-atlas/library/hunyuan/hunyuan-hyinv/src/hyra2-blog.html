@@ -1,0 +1,204 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://hunyuan.tencent.com/research/hyra2?langVersion=zh">打开官方原文 ↗</a> · <a href="hyra2-blog.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>腾讯混元 模型 研究 产品 Co-design International 试用 Hy 登录 研究 2026-11-02 Hyra Team 
+Hyra 2.0：自动化科研的下一步 
+• 摘要 AutoResearch的下半场，从「抽卡刷题」转向「工具升级」。 
+三个月前，我们发布了 Hyra 1.0 [1] ：一套面向通用科研问题的、极简的 agent 循环。发布一周后，在开源模型 Hy3 的驱动下，Hyra 解决了加法组合学中一个悬而未决五十多年的问题：和集与差集的最优指数 [2] 。这是 国产开源模型首次全自动解决数学开放问题 。 
+Hyra 1.0 发布 11 天后，OpenAI 公布了下一代模型 Astra 的内部版本在 10 个长期开放问题 [3] 上取得的新结果。随后的两个多月里，OpenAI 又宣布给出了 Navier–Stokes 千禧年问题的解答 [4] ，并公开了 722 篇由内部模型产出的数学手稿 [5] 。AI自动化科研一路疾驰。 
+Hyra 1.0 说明：给 AI 一道有明确评判标准的难题，让它循环尝试，就有机会超过已有的最好成绩。过去三个月，社区继续沿着这条路线探索，投入大量 token，在更多难题上取得了新进展。 
+既然路已走通，我们更想抬头看看前方：自动化科研的下一步是什么？ 
+
+当 AI 已经能攻克许多人类未解的难题，科研的范式将走向何处？ 
+
+怎样让 AI 更经济、更可持续地解决科研问题？ 
+
+目前仍然很多难题无法被 AI 解决，瓶颈在哪里？ 
+三个问题看似各有所指，我们的回答却是同一个： 工具升级 。 
+近年来，AI4Science经历过几次范式上的革新：以AlphaFold [6] ，AlphaEarth [7] ，AlphaGeometry [8] 为代表的面相特定问题的模型或系统；到以AlphaEvolve [9] ，Hyra1.0 [1] 等为代表的基于通用模型驱动agent，直接解决科学问题的范式。Hyra2.0希望再向前一步， 让通用 agent 参与科学工具与模型的研发和升级 ，让一次研发的成果在后续研究中被反复使用。 
+
+
+图 1：从解题到造工具。上方展示研究者研发专用科学模型、通用 agent 直接解决科研问题两种方式；下方展示 Hyra 2.0 的目标：由 agent 研发和升级科学模型、研究工作流与软件工具，让成果被后续研究反复使用。 
+
+从答案到工具 
+风靡社区的 刷题抽卡 的突破固然可贵，但它的成果，并不会自动提升下一次研究的能力，形成智能复利。 
+工具则不同。 升级一件工具，所有用到它的下游任务都会随之受益 。 
+荀子说：“君子生非异也，善假于物也。” 
+这里的「物」，即为工具，是能被人类或 agent 反复使用、帮助完成一类任务的方法与系统。按能力的载体，工具大致分为两类： 
+
+符号化工具 将方法显式地表达为代码、规则或流程，例如搜索算法、验证程序、数据处理管线和研究工作流。它们把“如何完成任务”写成可执行的操作或可遵循的步骤，改进这些方法，就能改变工具的能力与效率； 
+
+参数化工具 则通过训练，将从数据与反馈中学到的规律保存在模型参数中，例如用于理解、生成和推理的通用语言模型以及用于蛋白质设计的科学模型。 
+工具的最大价值在于 可复用 ，agent 调用的工具更好了，动作空间和效率也随之提升，在各种基准测试里的表现和效率也会提升（例如用更好的工具解决一个 Terminal Bench [10] 的任务）。 
+工具也有高阶与低阶之分。以数学为例：解出一道题，收获的是一个答案；做一套适合解这类题的工作流，或训练一个数学推理更强的模型，就有机会裨益无数题的解决；再往上，是一个能自动训练出这种模型的系统；最高处，则是一个能自动做任何任务的系统（AGI）。 
+越往上，工具越通用，惠及的任务越多，工具的研发周期更长，研发环境更复杂，研发难度更大。 
+工具升级已经在逐渐发生。8 月底发布混元 Hy4 preview 时，我们在博客 [11] 里展示了 Hyra 与它一同加速分子动力学力场模型；三周后，Anthropic 披露 Claude 在不到四周的时间里加速了 30 多个开源生物分子模型 [12] 。不过，由于反馈速度快，加速一个现成的模型相对容易。更难的是 端到端地做出一个新模型 ，从设计、实现到部署。Hyra 2.0 想攀登的，正是这级更难的台阶： 成为最会创造工具的系统 。 
+在 递归自我改进（RSI） 的语境里，研发大模型，本身就要用到许多工具：训练基础设施、数据合成管线、推理系统。我们希望 Hyra 2.0 参与升级这些工具，帮助训练出更好的下一代 Hy 模型；而下一代 Hy 模型，又可以成为 Hyra 2.0 手里的工具。倘若如此， 工具造得越好，造工具的系统就越强 ；系统越强，下一件工具又能造得更好。 
+
+为升级工具而生的 Harness 
+研发工具，对 Harness 提出了不同于解题的要求。训练一个模型，要经历方案设计、代码实现、训练、评估和反复修改，整个过程可能持续数天甚至数周。几个项目同时推进时，还要处理实验等待、资源分配和研究方向的调整。这些工作很难靠一个不断延长的 agent session 来管理。 
+我们先把 Hyra 2.0 接入团队的 实际研发环境 ：在企业微信里和研究者对齐需求，在计算平台上提交和管理实验，在代码仓库里实现、验证改动，并保存实验过程和产物。涉及较大算力开销和共享知识同步的操作，需要经过相应的人工审批；已经获准的工作则由系统继续推进。 
+研究工作由 Overall 、 Mission 和 Worker 三层分工。Overall 与人类研究者沟通，管理项目优先级，协调资源和关键决策。每个 Mission 长期负责一个研究问题，决定研究路线、设计实验、组织 Worker，并对结论负责。哪些假设值得继续投入，哪些结果需要复核，什么时候应该换方向，都需要 Mission 判断。Worker 可以独立读代码、做实验、分析失败原因、提出新想法，也可以质疑 Mission。不同 Worker 可以使用不同模型，提供不同的分析和复核意见。 
+Mission 可以同时安排方向探索、实验执行和独立复核。任务进入 持久化队列 后，调度系统根据优先级、依赖关系和资源上限启动 Worker。某项任务在等待训练结果或人工审批时，其他任务仍可继续。agent 也可以设置下一次唤醒时间，在实验完成或到达检查节点后接着工作。 
+并行研究的进展记录在 Research Board 上，包括想法、实验发现、证据和关键决策。普通进展由其他 agent 异步阅读；必须处理的问题通过消息通知，接收方需要明确回应。这样，Worker 可以连续工作较长时间，Mission 也能查到各条研究路线的进展，不必频繁打断正在进行的工作。 
+
+图 2：Hyra 2.0 的 Harness。Overall 协调目标与资源，Mission 负责研究路线，Worker 开展探索与实验；持久化队列、协作记录和独立复核支持长期研究。底部分别保存项目状态、agent 记忆与共享知识，并将可复用方法整理为 skill，供后续任务使用。 
+Worker 报告完成时，需要附上代码版本、实验结果、日志或原始运行轨迹等证据。Mission 可以查看实际操作记录，检查实验是否支持报告中的结论。需要独立验证时，系统会启动新的 Review Worker ，让它先接触原始问题和证据，减少执行者结论带来的影响。复核可能发现错误，也可能发现现有证据只支持一个范围更窄的结论，这些都需要如实保留。 
+工具研发的周期虽然长，却有不少经验可以复用。一次训练失败中有效的排查方法，可以用于后续训练；数值对齐时建立的验证流程，可以复用于其他模型；复核中发现的缺陷，也可以变成工具链里的自动化检查。单次尝试越昂贵，就越有必要留下这些经验，避免后续项目重复摸索。 
+为此，Hyra 2.0 将项目状态、agent 的工作记忆和可复用经验分开保存。任务队列和 Research Board 记录项目的协作状态；每个 agent 维护自己的分层记忆，保存当前认识、关键假设、已排除的路线和下一步计划；跨任务可复用的经验则进入 共享知识库 Books 。 
+Books 中的记录需要说明做法、理由和适用条件，并附上原始证据。这些经验分为 「观察」「已验证」和「约定」 ：单次实验发现的现象可以作为观察，供后续研究参考；经过独立复现的发现才能成为可靠依据；影响团队行为的约定需要人类确认。新证据出现后，已有记录也会随之修正。 
+项目复盘时，可迁移的方法还会被整理成 skill。例如，训练模型时积累的经验，已经形成了一套 skill，供后续任务使用。这些 skill 本身也是 Hyra 2.0 造出的工具，会在使用中继续修改和完善。我们所说的 持续学习 ，就包括把研究中摸索出的有效方法保存下来，让后续项目能够直接用上，并继续改进。 
+初步成果 
+Hyra 2.0 已经完成了一批工具的研发与升级。我们会将相关成果持续公开在 GitHub 仓库 ，供社区检验和复用。 
+HyInv：50 毫秒设计 128 条蛋白质序列 
+HyInv 和下面介绍的 HyPLM，均由 Hyra 2.0 从头训练。它们对应着前文所说的那级台阶： 从加速现有模型，走向完整的新模型研发 。 
+HyInv 处理蛋白质设计中的逆折叠问题：给定一个目标骨架，寻找能够折叠成这一结构的蛋白质序列。这是药物设计、酶工程和文库构建中的基础工具。 
+HyInv 是一个仅有 196 万参数 的图神经网络。它的预训练、监督微调、强化学习和推理优化均由 Hyra 2.0 完成。Hyra 2.0 还为它设计了“先起草、再改写”的两步采样方法。 
+与制药行业常用的 ProteinMPNN [13] 相比，HyInv 生成的序列与目标结构的吻合程度更好， 生成速度快了 57 倍 。 
+
+图 3：HyInv 与 HyPLM-Flash 的表现和速度对比。左：横轴为每秒生成的序列数，纵轴为设计质量（scTM）；右：横轴为推理吞吐量（千残基/秒），纵轴为平均归一化评测得分。两图均越靠右上越好；圆点大小表示参数量，分别按对数尺度（左）和线性尺度（右）绘制。 
+HyPLM：从头训练高效的蛋白质语言模型 
+蛋白质语言模型从序列中学习规律，是判断突变影响、注释蛋白功能和辅助蛋白设计的常用工具。这类模型会被反复调用，训练和推理效率的改进，也就能惠及许多下游任务。 
+Hyra 2.0 训练的 HyPLM-Flash 有 6.5 亿参数，累计使用 7260 亿训练 token。这一用量是 ESM-2 650M [14] 的 0.73 倍，是 E1-600M [15] 和 ESM C 600M [16] 的五分之一到八分之一。在比较的 12 个蛋白质语言模型中， HyPLM-Flash 的推理速度最快 ， 在35个评测任务中平均排名第3 。 
+HyInv 和 HyPLM 的研发细节将通过技术报告公开，供社区参考和复用。两个模型也可以由 agent 调用，参与药物设计等任务。我们还会继续研发这样的科学模型，全面升级工业制药的现有工具。 
+HyFF：面向大规模分子模拟的原子级基础模型 
+HyFF 是面向分子模拟的原子级基础模型，输入原子的种类和坐标，预测体系的能量与每个原子受到的力，可作为机器学习力场驱动分子动力学模拟。这让研究者能够在原子尺度上追踪分子的运动与反应，为药物设计、酶工程和材料研发提供基础工具。 
+HyFF 提供五种规模，参数量从 230 万到 12 亿，均在大规模量子化学计算数据上训练，覆盖 83 种元素，支持带电和开壳层体系。每个原子只调用与自身元素对应的子网络，在扩大模型容量的同时控制计算开销。我们将 HyFF 与 16 个公开模型进行了比较。 五个 HyFF 模型全部位于评测的精度–速度帕累托前沿 。HyFF 已用于实际模拟：近 6 万原子的水通道蛋白膜体系模拟了 100 纳秒，可以观察到水分子排成单列、逐个穿过通道；在 4.6 万原子的酶体系中，从选定起点出发，观察到了 一次完整的断键、成键反应过程 。 
+
+图 4：HyFF 与公开模型的精度–速度对比。左为能量预测误差，右为力预测误差；横轴为单步分子动力学模拟耗时，纵轴为平均绝对误差（MAE），越靠左下越好。绿色圆点为五种规模的 HyFF，其他标记为公开对比模型。 
+HyProver：把数学探索组织成可复用的工作流 
+HyProver 是一套 面向纯数学证明的 agent 工作流 ，保持高 token efficiency 和强探索能力。系统在运行过程中，持续搜索资料、寻找线索、转化问题、提出猜想并产出事实，像真实人类数学家一样，有组织地尝试攻克难题。在尝试潜在路线的过程中，系统并非盲目“摊大饼”，而是会高效地利用 token，通过转化问题来联系不同的数学分支或自主提出中间猜想，沿着 promising 的方向前进。 
+Hyprover已经完整解决了许多开放数学问题。其中，我们协同数学家已核验并整理好了 丘成桐先生的圆周作用猜想 与 五维 Petty 等距点猜想 [17] 的证明。 
+
+图 5：HyProver 的数学研究工作流。研究 agent 提出中间猜想，证明 Worker 尝试构造证明，再由独立 LLM 在新上下文中复核。待解猜想和通过复核的引理保存在共享研究笔记中，后者可作为后续探索的前提。 
+
+HyQEC：构造新量子码，严格验证码距 
+量子纠错需要用多个物理量子比特保护逻辑量子比特。如何降低这笔开销，是量子码研究的核心问题之一。Hyra 2.0 为此研发了 HyQEC：一套面向量子低密度奇偶校验码（qLDPC）的 构造与验证系统 ，支持新码构造、码距搜索和精确码距证明。 
+在新码构造上， Hyra 2.0 设计了 Split Pauli-CPM 算法，构造并严格验证了量子码 [ 488 , 123 , 22 ] 。其编码效率指标 k d 2 / n 达到 122.0，在非 CSS、校验权重不超过 8 的条件下，比 qLDPC Challenge [18] 原榜首 提升约 48% 。系统还构造出多种低开销量子码，刷新了相应参数条件下的已知编码开销纪录。 
+在码距验证上， HyQEC 配备了 GPU 加速的搜索算法和两套独立的精确证明工具。搜索吞吐量达到原有 8 线程 CPU 工具的 8–55 倍 。在复核已有结果时，它将原榜首码的码距上界从 95 收紧至 86，并 为排行榜 187 个条目中的 178 个完成了精确码距认证 。 
+这套工具既能帮助研究者寻找新码，也能为比较和筛选量子码提供可靠依据。我们后续将发布 HyQEC，供社区使用。 
+灵巧手：自主设计更高效的机器人结构 
+灵巧手是机器人操作物体的重要工具。传统方法通常先确定机械结构，再训练控制策略；但不同的手指布局和长度，也会影响机器人的操作能力。Hyra 2.0 尝试将探索延伸到机器人本体设计，自主寻找更好的机械结构。 
+在一项手内物体旋转任务中，Hyra 2.0 自主发现了一种特别的五指设计：五根手指绕着掌心排列，长度从短到长依次递增，像一段旋转楼梯。我们称它为 「旋梯手」 。有趣的是，这只手在初始测试中表现并不突出，旋转速度比论文中的最优设计 [19] 慢约 11%。但经过同等预算的策略微调后，它反而实现了反超。 
+在更严格的 DR5 仿真评测中，旋梯手的旋转速度达到 3.277 rad/s，比同样经过微调的论文最优设计 快 28.6% ，目标完成数提升 21%，失稳率也更低。 
+这一结果提示我们， 初始表现最好的机械结构，不一定拥有最好的训练后性能 。尽管目前的结果还局限于仿真环境，尚未经过真机验证，但它展示了让 AI 自主探索机器人结构与控制策略的潜力。我们希望将 Hyra 2.0 的工具研发能力，从软件和模型进一步延伸到物理世界。 
+main_hyra_vs_dextra_v5.mp4 
+
+图 6：Hyra 2.0 自主设计的「旋梯手」与 Dextra 的结构及仿真表现对比。左：与 House of Dextra [19] 最优五指设计的结构对比；右：与 Dextra Baseline 的物体旋转对比。在 DR5 仿真评测中，经相同预算的策略微调后，Hyra Hand 的平均旋转速度提升 28.6%（3.28 vs. 2.55 rad/s）。 
+香山：提升处理器性能，补强正确性验证 
+香山 [20] 是一个全流程开源的 RISC-V 处理器项目。Hyra 2.0 围绕它开展了两项工作： 性能优化与正确性验证 ，从而升级该芯片设计工具。 
+Hyra 2.0 修复了 SPEC CPU2006 [21] 基准测试中暴露的多项问题。结合其他调优，香山每 GHz 得分的几何平均值提升了 5.79% ，单核频率保持不变，面积增加 0.3%。按照官方性能看板 [22] 记录的历史迭代速度估算，这一提升大致相当于官方团队 2–3 个月的迭代成果。 
+Hyra 2.0 新设计的 fuzz 测试发现了 7 个 bug，加上另外 3 个独立发现， 共计 10 个 ，均未出现在官方 issue 列表中。它还使用 TLA+ [23] 进行形式化验证，找到了一个 多核缓存一致性的反例 ，相关修复已贡献给开源末级缓存 OpenLLC [24] 。 
+
+图 7：Hyra 2.0 在量子纠错与处理器研发中的工具升级。左：HyQEC 构造量子低密度奇偶校验码，并通过上下界一致来认证精确码距；右：围绕香山处理器开展性能调优与正确性验证，将发现的问题用于改进设计。 
+下一代 Hy 模型：走进大模型研发的现场 
+在混元内部，Hyra 2.0 也正在参与下一代 Hy 模型的升级，例如： 
+
+预训练 ： 优化训练基础设施，参与新训练技术的实验验证，缩短从提出方案到获得实验结果的时间。 
+
+后训练 ： 搭建自动化数据合成管线，让 Hyra 参与高质量训练数据的生成和处理； 
+
+推理 ： 优化实际使用的推理镜像和系统，以降低部署成本，以及训练、评测和大规模实验中的开销。 
+我们希望让 Hyra 通过改进研发工具，帮助训练出更好的 Hy 模型，再借助更强的模型和更好的工具，完成下一轮工具研发与模型迭代。 
+
+回到开头的三个问题 
+科研会怎样变化？ 我们认为，AI 的贡献会从解出具体问题，延伸到 提高一类问题的研究能力 。衡量一次研究的成果，除了看它得到了什么答案，也要看它为后续研究留下了什么：一套证明工作流、一个科学模型，或一种可靠的验证方法。工具越通用，能够支持的研究就越多。 
+怎样让 AI 做科研更经济、更可持续？ 研发工具本身可能昂贵，但这笔投入可以由后续的许多任务共同分摊。更快的模型减少每次调用的开销，更好的工作流减少重复探索，积累成 skill 的经验则让后续任务少走已经走过的弯路。 一次改进的价值，可以在反复使用中不断累积 。 
+暂时解决不了的问题怎么办？ 先找出限制来自哪里：模型能力不足、搜索效率不够，还是验证和实验反馈太慢？这些具体的限制，可以成为下一轮工具研发的目标。原问题未必立刻有解，但这次探索应尽可能 留下可复用的方法和工具 ，让下一次尝试有更好的起点。 
+我们希望， 今天的研究成果，能成为明天的研究工具 ，加速拓展科学的边界。 
+脚注 
+[1] 腾讯混元， Hyra 1.0 ，面向通用科研问题的自动化研究框架介绍： https://hy.tencent.com/research/hyra 
+[2] Haowei Lin 与 Shanda Li， “Settling the Optimal Exponent Relating Sumsets and Difference Sets” ，关于和集与差集最优指数的论文： https://arxiv.org/abs/2607.27199 
+[3] OpenAI， “Ten advances in mathematics and theoretical computer science” ，介绍模型在数学与理论计算机科学开放问题上的研究进展： https://openai.com/index/ten-advances-in-mathematics/ 
+[4] OpenAI， “On the Navier–Stokes Millennium Prize Problem” ，关于 Navier–Stokes 千禧年问题的研究文章： https://openai.com/index/navier-stokes-solution/ 
+[5] OpenAI， openai/math ，公开数学研究手稿与相关材料的代码仓库： https://github.com/openai/math 
+[6] John Jumper 等， “Highly accurate protein structure prediction with AlphaFold” ，发表于 Nature（2021）的 AlphaFold 论文： https://www.nature.com/articles/s41586-021-03819-2 
+[7] Google DeepMind， “AlphaEarth Foundations helps map our planet in unprecedented detail” ，AlphaEarth Foundations 的官方介绍： https://deepmind.google/blog/alphaearth-foundations-helps-map-our-planet-in-unprecedented-detail/ 
+[8] Trieu H. Trinh 等， “Solving olympiad geometry without human demonstrations” ，发表于 Nature（2024）的 AlphaGeometry 论文： https://www.nature.com/articles/s41586-023-06747-5 
+[9] Google DeepMind， “AlphaEvolve: A Gemini-powered Coding Agent for Designing Advanced Algorithms” ，官方技术博客： https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/ 
+[10] Mike A. Merrill 等， “Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces” ，面向终端环境中真实复杂任务的智能体评测基准： https://arxiv.org/abs/2601.11868；基准主页：https://www.tbench.ai/ 
+[11] 腾讯混元， Hy4 preview ，正文所引的模型发布博客： https://hunyuan.tencent.com/research/hy4-preview 
+[12] Anthropic， “How Claude is uplifting biomolecular modeling” ，介绍 Claude 参与生物分子模型加速的官方研究文章： https://www.anthropic.com/research/claude-uplifts-biomolecular-modeling 
+[13] Justas Dauparas 等， “Robust deep learning–based protein sequence design using ProteinMPNN” ，发表于 Science（2022）的 ProteinMPNN 论文： https://www.science.org/doi/10.1126/science.add2187 
+[14] Zeming Lin 等， “Evolutionary-scale prediction of atomic-level protein structure with a language model” ，发表于 Science（2023）、介绍 ESM-2 的论文： https://www.science.org/doi/10.1126/science.ade2574 
+[15] Profluent， “E1: Retrieval-Augmented Protein Encoder Models” ，E1 蛋白质编码模型的研究论文： https://www.biorxiv.org/content/10.1101/2025.11.12.688125v1；包含 E1-600M 的官方介绍： https://www.profluent.bio/showcase/e1 
+[16] EvolutionaryScale， “ESM Cambrian: Revealing the mysteries of proteins with unsupervised learning” ，包含 ESM C 600M 的官方模型介绍： https://www.evolutionaryscale.ai/blog/esm-cambrian 
+[17] C. M. Petty， “Equilateral Sets in Minkowski Spaces” ，关于 Minkowski 空间等距点集的原始研究，发表于 Proceedings of the American Mathematical Society，29(2): 369–374（1971）： https://doi.org/10.1090/S0002-9939-1971-0275294-8 
+[18] Unitary Foundation， QEC Challenge / qLDPC Challenge ，量子纠错码挑战、排行榜及码距验证的官方项目： https://github.com/unitaryfoundation/qldpc-challenge 
+[19] Kehlani Fay 等， “House of Dextra: Cross-embodied Co-design for Dexterous Hands” ，发表于 ICLR 2026 的灵巧手结构与控制策略协同设计研究： https://arxiv.org/abs/2512.03743 
+[20] OpenXiangShan， XiangShan（香山） ，开源高性能 RISC-V 处理器项目： https://github.com/OpenXiangShan/XiangShan 
+[21] Standard Performance Evaluation Corporation（SPEC）， SPEC CPU2006 ，处理器、内存子系统与编译器性能评测基准的官方说明： https://www.spec.org/cpu2006/ 
+[22] OpenXiangShan， XiangShan Dashboard ，香山项目的官方性能看板： https://dashboard.xiangshan.cc/ 
+[23] Leslie Lamport， TLA+ ，用于描述和验证并发及分布式系统的形式化规约语言；作者主页与工具资料： https://lamport.azurewebsites.net/tla/tla.html 
+[24] OpenXiangShan， OpenLLC ，开源末级缓存项目： https://github.com/OpenXiangShan/OpenLLC 目录 从答案到工具 为升级工具而生的 Harness 初步成果 HyInv：50 毫秒设计 128 条蛋白质序列 HyPLM：从头训练高效的蛋白质语言模型 HyFF：面向大规模分子模拟的原子级基础模型 HyProver：把数学探索组织成可复用的工作流 HyQEC：构造新量子码，严格验证码距 灵巧手：自主设计更高效的机器人结构 香山：提升处理器性能，补强正确性验证 下一代 Hy 模型：走进大模型研发的现场 回到开头的三个问题 评论（0） 0/2000 发表评论 
+继续阅读 
+Hy Image3.5 preview 发布：为专业创作提供高性价比模型 2026-09-22 caesarqin 
+当大模型强化学习走向规模化，Batch Size Scaling 有什么不一样？ 2026-09-22 RL Team 
+Hy4 preview 发布 2026-08-28 Hy LLM 模型 Hy 模型 开源模型 产品 WorkBuddy 元宝 ima 更多 研究 政策 招聘机会 版权所有 © 1998 - 2026 腾讯。保留所有权利</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
