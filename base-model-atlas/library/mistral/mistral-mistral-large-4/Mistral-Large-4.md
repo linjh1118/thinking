@@ -8,7 +8,8 @@ tags: [model-note, base-model, mistral, agentic-rl]
 topic: "13_base_model"
 status: read
 created: 2026-10-13
-updated: 2026-10-30
+updated: 2026-11-03
+html_tabs: true
 ---
 
 # Mistral Large 4
@@ -18,7 +19,12 @@ updated: 2026-10-30
 
 ![官方 ML4 发布视觉](src/assets/figure_01.jpg)
 
-## 10月6日Preview阶段：以下保留当时状态，不代表当前开放阶段
+## 发布阶段与报告边界
+
+> [!tldr]
+> 10/6 Preview与10/29继续RL后的开放权重共family；11/3新增报告PDF入口，尚未下载精读。
+
+### 10月6日Preview阶段：以下保留当时状态，不代表当前开放阶段
 
 | 项目 | 已披露内容 | 不能据此推断的内容 |
 |---|---|---|
@@ -29,10 +35,61 @@ updated: 2026-10-30
 | 权重 | 官方计划月底发布 | 本次已能下载、许可证已确定 |
 | 发布时价格 | 输入 $1.36/M、输出 $4.18/M tokens | 每个任务总成本必然低于其它模型 |
 
-> [!warning] 10月6日记录的资料边界（当前已补HF卡，完整报告仍待发布）
-> 本文已读完整官方 Tech Blog 并保存官方图，能认真拆解其评测与 RL 工程思路；当时尚无已核验HF卡；10/29两份HF卡现已补充，独立完整技术报告仍待官方后续发布。**因此达不到 GLM-5.3-Flash 那种可逐项核对架构、损失、数据配比的技术精读深度。** 原因是原始公开资料不足，不用推测补齐空白。以后权重和报告公开后在本笔记继续补充。
+> [!warning] 10月6日记录的资料边界（当前已补HF卡和报告PDF入口，完整报告尚未精读）
+> 本文已读完整官方 Tech Blog 并保存官方图，能认真拆解其评测与 RL 工程思路；当时尚无已核验HF卡；10/29两份HF卡现已补充，11/3已核验原卡新增独立报告PDF入口，仅链接未下载/精读。**因此达不到 GLM-5.3-Flash 那种可逐项核对架构、损失、数据配比的技术精读深度。** 原因是原始公开资料不足，不用推测补齐空白。以后权重和报告公开后在本笔记继续补充。
 
-## 把异构任务放进同一个训练闭环
+
+### 10月29日开放权重：继续RL后的同一正代
+
+首次公开Preview仍为10/6；10/29开放的是继续RL改进后的权重，作为同family阶段进入近30天表，不另造Large4.1或把量化版拆一代。已完整阅读两份HF卡和新的开放权重博客，保存原始MD/HTML、三张官方评测图和新的手绘研读图。
+
+> [!warning] 报告PDF入口已补，不能伪装报告精读
+> 新博客明确表示完整Technical Report后续发布。11/3模型卡已加入可核验的报告PDF链接，已补到来源区；遵照不抓PDF，尚未审读完整报告。HF卡补足了部署结构和评测快照，仍缺完整预训练/后训练数据配比、损失/奖励定义与可归因消融，因此依然达不到完整报告级深度。
+
+![手绘：Preview到开放权重、稀疏激活与投机解码分别理解](src/assets/handdrawn-method.png)
+
+
+### 11月3日：Tech Report入口已核验
+
+> [!tldr]
+> 模型卡新增报告链接，只构成资料补齐，没有新checkpoint或新能力发布证据；首发与10/29开放阶段日期保持不变。
+
+- [📄 Tech Report（PDF，仅链接）](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B/blob/main/assets/technical_report.pdf)。
+
+旧卡保存在src/history。当前报告不是“尚未存在”，而是“有PDF入口、未下载精读”；训练数据比例、奖励细节与消融仍不能凭链接补写为已读事实。
+## 架构与部署
+
+> [!tldr]
+> 主体49B与含嵌入输出52B是计数口径；DSpark与NVFP4属于执行优化，不拆正代。
+
+### 模型结构：49B与52B是计数口径差异
+
+| 已披露项目 | 10/29模型卡 | 阅读约束 |
+|---|---|---|
+| 总参数 | 1T | 不等于只需保存激活参数 |
+| 主体激活 / 含嵌入输出 | 49B / 52B | 不是两个不同尺寸版本 |
+| MoE | 128 routed专家，每token选4，另1 shared | 专家稀疏不消除通信、KV与权重存储 |
+| 输入/输出 | 文本+图像输入，文本输出 | 不自动包含音频生成 |
+| Vision | Pixtral风格可变分辨率/宽高比编码器 | 完整训练配方仍未公开 |
+| 上下文 | 当前卡明确1M | 与旧博客“百万token长轨迹预算”各自独立 |
+| 推理档位 | low / medium / high，默认high | low替代原None；不能保证逐题单调提升 |
+| 统一能力 | 同权重指令、推理、函数/JSON调用 | schema符合不等于工具最终状态正确 |
+
+
+### DSpark与NVFP4：加速机制不能替代精度验收
+
+模型内附3层dense MLA草稿头，以BF16运行、按3-token块提出候选，主模型验证后接受；属于同一权重包的投机解码能力，不另建DSpark叶子。官方最高约1.9倍吞吐是条件化结果，接受率、batch、输出分布和内存压力都改变收益，不能写成所有任务延迟减半。
+
+NVFP4仓库是同family的部署量化：MoE专家NVFP4、线性层FP8，目标Blackwell B200/B300/GB200/GB300。卡称所列评测基本维持质量，但并非所有提示上逐token等价。vLLM示例需要`fp8_ds_mla`KV格式；把它改成泛用FP8并非可直接替代。两份卡内示例均未在本机安装或运行。
+
+![官方：FP8与NVFP4评测对照，不能外推每个工作负载无误差](src/assets/fp8-vs-nvfp4-evaluations.png)
+
+## RL与研究判断
+
+> [!tldr]
+> 可组合环境与低策略滞后是研究线索；token吞吐和训练奖励不是未知任务成功率。
+
+### 把异构任务放进同一个训练闭环
 
 官方强调 composable environment interface：单轮问答、科学代码、安全对齐、事实性和长时程工具任务，可以共用环境接口、代码沙箱、搜索和外部 API。验证器并非只有“答对/答错”，而是按任务组合 reward model、单元测试、LLM judge 与静态检查。
 
@@ -56,7 +113,26 @@ updated: 2026-10-30
 
 图中的三项任务终点是 68.84%、38.66% 和 1,511；这些任务标签与下方发布时 DeepSWE、SWE-Atlas、AA-Briefcase 的定义/版本并不完全相同。不能为了凑一张表，擅自把训练曲线终点替代正式评测数值。
 
-## 能力证据：看分项，不看一个笼统“最强”
+
+### 对 Agent Training 的判断
+
+> [!insight]
+> 最可复用的线索是“环境与验证器的可组合性 + 低策略滞后异步 RL”，而不是照搬参数规模。先让真实多轮工作任务具有可复位环境、可审计工具结果和明确验收，再扩大 rollout。否则吞吐扩张只会放大错误奖励。
+
+值得转化成实验的是三组对照：
+
+- 固定基础模型和 rollout token 总量，比较单环境 RL 与多环境混合；同时看目标环境成绩和未见环境泛化。
+- 固定训练样本量，改变 actor 队列长度/策略版本差，检查长轨迹的 off-policy drift、有效完成 tokens 与失败恢复能力。
+- 把结果验证、过程静态检查与 LLM judge 分开消融；报告每种奖励的误判、总 verifier 成本与每个成功任务的墙钟时间。
+
+这些是阅读后的研究建议，**没有在本机复现训练或运行模型评测**。发布时官方 RL 仍在继续，所有结果需绑定 Preview 日期与 harness。
+
+## 评测与许可
+
+> [!tldr]
+> 不同任务版本、评分量表和许可证条件分别记录，保留对闭源强模型的弱项。
+
+### 能力证据：看分项，不看一个笼统“最强”
 
 | 发布正文指标 | ML4 Preview | 口径与限制 |
 |---|---:|---|
@@ -78,58 +154,6 @@ Surge AI 的盲测隐藏模型身份，专业标注者按 1–5 分评分。ML4 
 
 安全指标还要分辨能力与行为。若某个闭源模型因为策略拒绝而在漏洞复现任务接近零分，低分不一定代表它不会做。另一方面，减少合法请求误拒与拦截危险请求应分别验收；开放部署也不等于安全机制无用。
 
-## 对 Agent Training 的判断
-
-> [!insight]
-> 最可复用的线索是“环境与验证器的可组合性 + 低策略滞后异步 RL”，而不是照搬参数规模。先让真实多轮工作任务具有可复位环境、可审计工具结果和明确验收，再扩大 rollout。否则吞吐扩张只会放大错误奖励。
-
-值得转化成实验的是三组对照：
-
-- 固定基础模型和 rollout token 总量，比较单环境 RL 与多环境混合；同时看目标环境成绩和未见环境泛化。
-- 固定训练样本量，改变 actor 队列长度/策略版本差，检查长轨迹的 off-policy drift、有效完成 tokens 与失败恢复能力。
-- 把结果验证、过程静态检查与 LLM judge 分开消融；报告每种奖励的误判、总 verifier 成本与每个成功任务的墙钟时间。
-
-这些是阅读后的研究建议，**没有在本机复现训练或运行模型评测**。发布时官方 RL 仍在继续，所有结果需绑定 Preview 日期与 harness。
-
-## 一手资料与继续阅读
-
-- [S1] [Tech Blog：Introducing Mistral Large 4](https://mistral.ai/news/mistral-large-4/)，2026-10-06。
-- [[src/retrieval_manifest.json|原始正文与官方图片抓取记录]]：保留 URL、抓取时间和 SHA-256；本轮未下载 PDF。
-- [[Topics/13_base_model/Base Model MOC|基模主题索引]]
-- [[mistral_large_4_poster_zh.html|中文 Poster]]
-
-> 📊 相关可视化: [[mistral_large_4_poster_zh.html|Mistral Large 4 中文 Poster]]
-
-
-## 10月29日开放权重：继续RL后的同一正代
-
-首次公开Preview仍为10/6；10/29开放的是继续RL改进后的权重，作为同family阶段进入近30天表，不另造Large4.1或把量化版拆一代。已完整阅读两份HF卡和新的开放权重博客，保存原始MD/HTML、三张官方评测图和新的手绘研读图。
-
-> [!warning] 完整报告仍待发布，不能伪装报告精读
-> 新博客明确表示完整Technical Report后续发布。本次未找到可核验的该报告URL，不添加虚构Tech Report按钮，也未抓取PDF。HF卡补足了部署结构和评测快照，仍缺完整预训练/后训练数据配比、损失/奖励定义与可归因消融，因此依然达不到完整报告级深度。
-
-![手绘：Preview到开放权重、稀疏激活与投机解码分别理解](src/assets/handdrawn-method.png)
-
-### 模型结构：49B与52B是计数口径差异
-
-| 已披露项目 | 10/29模型卡 | 阅读约束 |
-|---|---|---|
-| 总参数 | 1T | 不等于只需保存激活参数 |
-| 主体激活 / 含嵌入输出 | 49B / 52B | 不是两个不同尺寸版本 |
-| MoE | 128 routed专家，每token选4，另1 shared | 专家稀疏不消除通信、KV与权重存储 |
-| 输入/输出 | 文本+图像输入，文本输出 | 不自动包含音频生成 |
-| Vision | Pixtral风格可变分辨率/宽高比编码器 | 完整训练配方仍未公开 |
-| 上下文 | 当前卡明确1M | 与旧博客“百万token长轨迹预算”各自独立 |
-| 推理档位 | low / medium / high，默认high | low替代原None；不能保证逐题单调提升 |
-| 统一能力 | 同权重指令、推理、函数/JSON调用 | schema符合不等于工具最终状态正确 |
-
-### DSpark与NVFP4：加速机制不能替代精度验收
-
-模型内附3层dense MLA草稿头，以BF16运行、按3-token块提出候选，主模型验证后接受；属于同一权重包的投机解码能力，不另建DSpark叶子。官方最高约1.9倍吞吐是条件化结果，接受率、batch、输出分布和内存压力都改变收益，不能写成所有任务延迟减半。
-
-NVFP4仓库是同family的部署量化：MoE专家NVFP4、线性层FP8，目标Blackwell B200/B300/GB200/GB300。卡称所列评测基本维持质量，但并非所有提示上逐token等价。vLLM示例需要`fp8_ds_mla`KV格式；把它改成泛用FP8并非可直接替代。两份卡内示例均未在本机安装或运行。
-
-![官方：FP8与NVFP4评测对照，不能外推每个工作负载无误差](src/assets/fp8-vs-nvfp4-evaluations.png)
 
 ### 新评测：同指标可比较，变版本不能硬减
 
@@ -151,6 +175,7 @@ NVFP4仓库是同family的部署量化：MoE专家NVFP4、线性层FP8，目标B
 
 新博客Surge盲测相对GLM5.3/KimiK3胜率各64%、DeepSeekV4.1Flash56%，对ClaudeOpus5.5仅22%。保留这个明显弱项，不能把“所评开放模型中强”改写成全面领先。旧Preview3.74/5是另一套评分，不与新成对胜率求提升百分点。
 
+
 ### 开放权重、许可证与专用网络安全版本分开
 
 使用Mistral Ecosystem Open-Weight License（修改自MIT）。官方允许商业/非商业使用，但**Model-as-a-Service业务需要单独商业许可**；页面不能继续泛称“无约束MIT开源”。许可证正文是最终依据，此处只是原卡条件记录。
@@ -160,8 +185,26 @@ NVFP4仓库是同family的部署量化：MoE专家NVFP4、线性层FP8，目标B
 > [!insight] 对Agent训练的新增判断
 > RL改进带来的任务质量与推理效率，要在同一Harness、工具预算、推理档位和checkpoint下比较。投机解码节省解码计算，减少无效推理节省生成tokens，两者不是同一种收益；量化又是第三个独立因素。先做三因素分离，再谈端到端每成功任务的成本。
 
+## 一手资料与导航
+
+> [!tldr]
+> 模型卡与博客已读；技术报告只有PDF链接，不能据此补写完整训练或消融。
+
+### 一手资料与继续阅读
+
+- [S1] [Tech Blog：Introducing Mistral Large 4](https://mistral.ai/news/mistral-large-4/)，2026-10-06。
+- [[src/retrieval_manifest.json|原始正文与官方图片抓取记录]]：保留 URL、抓取时间和 SHA-256；本轮未下载 PDF。
+- [[Topics/13_base_model/Base Model MOC|基模主题索引]]
+- [[mistral_large_4_poster_zh.html|中文 Poster]]
+
+> 📊 相关可视化: [[mistral_large_4_poster_zh.html|Mistral Large 4 中文 Poster]]
+
+
+
 ### 新增官方来源
 
 - [🤗 HF Model Card](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B)，[NVFP4同family卡](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B-NVFP4)。MD及官方图已离线归档。
 - [Tech Blog：10/29开放权重阶段](https://mistral.ai/news/mistral-large-4-oss/)，与10/6Preview博客分别保留。
 - [[mistral_large_4_poster_zh.html|更新后的中文Poster]]。
+
+

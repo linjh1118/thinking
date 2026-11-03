@@ -1,0 +1,4642 @@
+# Scaling Storm-Resolving Atmospheric AI Simulation to the Entire Planet
+
+来源：https://arxiv.org/html/2606.31248v1
+
+Scaling Storm-Resolving Atmospheric AI Simulation to the Entire Planet
+Skip to main content
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Contents
+Reading mode
+Colour theme
+Abstract
+1
+Introduction
+2
+Related Work
+3
+Proposed Method
+3.1
+Tile-based training and inference
+3.2
+Architecture
+3.3
+Grid-Invariant Position Encoding via Stereographic Projection
+3.4
+Training Objective and Multi-Step Fine-Tuning
+4
+Experiments
+4.1
+Dataset
+4.2
+Scaling transformers for high-entropy data
+4.3
+Physical Realism, Predictability and Statistical Fidelity
+4.4
+Grid invariance
+5
+Conclusion
+6
+Data and Code Availability
+References
+A
+Background: Global Storm-Resolving Models
+B
+Architecture details
+B.1
+STRATA Architecture and Production Hyperparameters
+B.2
+Patch-Size and Model-Size Sweep
+B.3
+Patch De-aliasing
+B.4
+Patch Instability Analysis
+B.5
+Additional Stabilization Details
+QK normalization and gated attention.
+C
+Dataset details
+C.1
+STRATA Vertical Grid
+C.2
+Training Data
+Evaluation initializations.
+D
+Input and Output Variables
+E
+Training details
+Tile size.
+Normalization.
+Optimization.
+Learning rate.
+Multi-step fine-tuning.
+F
+Inference
+F.1
+Tile extraction and DUO-style boundary padding
+Tile stitching
+Linear operator interpretation
+Distributed Implementation
+Scaling
+F.2
+Spectral filter to control large-scale vertical velocity
+F.3
+Negative
+q
+v
+q_{v}
+and precipitation fixer.
+G
+Throughput and Energy Accounting
+H
+Rollout Metrics
+Precipitation amount distribution.
+Fractions Skill Score (FSS).
+I
+Further rollout diagnostics
+J
+Information Entropy: Details
+K
+Additional sensitivity test
+K.1
+Width versus Depth Scaling
+K.2
+Inference Tile Size
+K.3
+Effective Batch Size and Training Tile Size
+K.4
+Model capacity and rollout stability
+License: CC BY 4.0
+arXiv:2606.31248v1 [physics.ao-ph] 30 Jun 2026
+Scaling Storm-Resolving Atmospheric AI Simulation to the Entire Planet
+Zeyuan Hu
+†
+†
+thanks:
+Equal contribution.
+Affiliation:
+NVIDIA
+Akshay Subramaniam
+Affiliation:
+NVIDIA
+Noel Keen
+Affiliation:
+LBNL
+Tao Ge
+Affiliation:
+NVIDIA
+Jaideep Pathak
+Affiliation:
+NVIDIA
+Mohammad Shoaib Abbas
+Affiliation:
+NVIDIA
+Suman Ravuri
+Affiliation:
+NVIDIA
+Karthik Kashinath
+Affiliation:
+NVIDIA
+Naser Mahfouz
+Affiliation:
+PNNL
+Peter Caldwell
+Affiliation:
+LLNL
+Mike Pritchard
+Affiliation:
+NVIDIA
+Noah Brenowitz
+1
+1
+footnotemark:
+1
+Affiliation:
+NVIDIA
+Abstract
+Kilometer-scale convection shapes precipitation extremes, tropical
+organization, and cloud feedbacks, but most global atmospheric models
+approximate these processes at 25–100 km resolution.
+Global storm-resolving physics models resolve convective systems explicitly, but at a cost—roughly one MWh per simulated day on exascale supercomputers—that limits long-duration simulation.
+We introduce STRATA (Storm-resolving Tile-based autoRegressive Atmosphere Transformer Architecture), the first autoregressive AI emulator for global storm-resolving atmospheric dynamics.
+STRATA is trained on the highest-resolution atmospheric dataset yet used for global AI emulation:
+17 days of SCREAM physics-model output at 4.9-km resolution (
+∼
+25
+{\sim}25
+million grid cells) sampled every 10 minutes.
+Our central premise is that on 10-minute timescales atmospheric dynamics are predominantly local, so training on small spatial tiles trades scarce global temporal samples for abundant local spatial samples and enables global rollout via overlapping-tile blending.
+STRATA combines 3D patch embedding and local 3D neighborhood attention, a novel Stereographic Rotary Position Embedding
+(StereoRoPE) for grid-invariant encoding, and a pixel-space
+de-aliasing decoder that suppresses patch-scale rollout artifacts.
+An iso-FLOP scaling study reveals that km-scale emulation requires
+∼
+10
+×
+{\sim}10\times
+more FLOPs per grid point than coarse-resolution AI weather models, consistent with the higher information density of convective-scale dynamics.
+Trained on only 17 days of data, STRATA produces stable 24-hour global rollouts with realistic km-scale dynamics across diverse regimes, though large-scale biases develop with lead time.
+It achieves 48 simulation days per megawatt-hour—about 50 times better energy efficiency than the SCREAM physics model—and 741 simulated days per wall-clock day at 512 H100 GPUs.
+Code and dataset are publicly available (Section
+6
+).
+†
+†
+footnotetext:
+Corresponding author(s):
+zeyuanh@nvidia.com
+,
+nbrenowitz@nvidia.com
+.
+Figure 1:
+Twelve-hour STRATA rollout compared with SCREAM.
+Top: near-surface specific humidity and rain intensity at +12 h from STRATA (left) and the
+corresponding SCREAM reference simulation (right) on the native 4.9-km output
+grid (
+6
+×
+2048
+2
+≈
+25
+6\times 2048^{2}\approx 25
+M horizontal cells). The colored
+boxes in the global SCREAM panel mark the zoom locations.
+Bottom: zoomed comparisons across six representative regimes. Row 1: STRATA forecast. Row 2: SCREAM ground truth at native 4.9-km
+resolution. Humidity colors in the zoom panels are independently
+rescaled for each location to emphasize local structure. Scale bars are
+100 km.
+Supplementary videos of the full 24-hour rollout are available at
+https://zydlszh.github.io/strata-supp/
+.
+1
+Introduction
+Long-range atmospheric simulation is
+among the most challenging computational workflows in science.
+Weather and climate depend on processes spanning more than ten orders of magnitude in space, from microphysics interactions between cloud droplets and raindrops to planetary-scale circulation, and physical fidelity requires accurately representing all of them.
+In practice, the finest scales are typically approximated by closed-form parameterizations rather than simulated explicitly, introducing substantial uncertainty in long-range projections
+[
+1
+,
+2
+]
+. To reduce this uncertainty, state-of-the-art physics models push to ever-finer grids that explicitly resolve convective storms rather than approximating them—currently reaching
+∼
+1
+{\sim}1
+km globally. These models, known as global storm-resolving models (GSRMs;
+3
+,
+4
+; Appendix
+A
+) offer unprecedented realism, but remain staggeringly expensive: the leading GSRMs achieve a throughput of roughly 1 simulated day (SD) per MWh on exascale supercomputers
+[
+5
+,
+6
+]
+, roughly 2.5 SD per ton of CO
+2
+emitted or 1.3 SD per passenger for a one-way coach flight from Seattle to New York.
+AI emulators promise the same fidelity at lower cost because their core computations are more arithmetically-intense and suited to modern hardware accelerators. While traditional atmospheric solvers are memory-bandwidth bound—spending most of their time moving data rather than computing—transformer-based architectures
+[
+7
+]
+operate on dense, low-precision matrix multiplications that saturate GPU compute units. Coarse-resolution global atmospheric emulators and limited-domain km-scale emulators have realized this efficiency gain in their respective regimes (Section
+2
+) but achieving autoregressive rollout at both
+global and km-scale
+, the only regime that can replace a full-resolution GSRM, remains an unsolved challenge.
+Reaching this milestone is hindered by several challenges that do not arise when using AI to simulate weather at coarse resolution. Convective dynamics are 3D, have elevated information density, and require 10-min (36
+×
+\times
+more) sampling in time and 4.9 km (25
+×
+\times
+more) sampling in space to constrain.
+This raises acute computational challenges.
+A given day of GSRM data occupies thousands of times more memory than a day of the ERA5 dataset. Such high resolution data is difficult to store on disk and activation memory-use during training becomes prohibitive.
+The upshot is a problem that demands especially scalable training strategies working backwards from an ambitious global inference goal—rapidly evolving 25M atmospheric horizontal grid cells globally.
+We introduce STRATA (Storm-resolving Tile-based autoRegressive Atmosphere Transformer Architecture), to our knowledge the first AI emulator to demonstrate successful autoregressive rollout at global km-scale. Its central premise is that atmospheric phenomena on 10-minute timescales are predominantly local, so a tile-based training strategy can convert temporally scarce global simulations into spatially abundant samples, with overlapping tile blending reassembling a coherent global state at inference.
+Our key technical solutions to the challenges of training a high-throughput global high resolution model include:
+•
+Tile-based training of global auto-regressive models.
+The activation memory bottleneck is overcome by training on crops. Only inference is global.
+•
+3D local-attention backbone.
+3D patch tokenization and neighborhood attention further exploit atmospheric locality for efficient roll-out.
+•
+Stereographic Rotary Position Embedding (StereoRoPE).
+Grid-invariant position encoding via stereographic projection, enabling consistent spatial representation across tile locations and arbitrary grid topologies.
+•
+Patch de-aliasing.
+A spectral stability analysis of patch-embedded architectures and a pixel-space dealiasing decoder that greatly reduces the resulting checkerboard artifacts.
+Additional accomplishments are as follows. STRATA produces stable 24-hour rollouts reproducing realistic km-scale dynamics across diverse weather regimes. Scaling analysis reveals
+∼
+10
+×
+{\sim}10\times
+more FLOPs are needed per grid point than coarse-resolution forecasting, with an information-theoretic explanation based on the higher entropy of convective-scale data. Most importantly, inference runs at a throughput of 48 simulated days per MWh—about 50 times better energy efficiency than SCREAM—and scales to 741 simulated days per wall-clock day at 512 H100 GPUs (Table
+1
+a).
+2
+Related Work
+Coarse-resolution emulators
+Global AI weather models now rival operational forecasts at
+∼
+0.25
+∘
+{\sim}0.25^{\circ}
+resolution and 6-hour timesteps
+[
+8
+,
+9
+,
+10
+,
+11
+,
+12
+,
+13
+,
+14
+,
+15
+,
+16
+,
+17
+,
+18
+]
+, and several coarse-resolution atmosphere emulators have produced stable multi-decadal to century-long rollouts
+[
+19
+,
+20
+,
+21
+,
+22
+,
+23
+]
+. However, these systems operate at resolutions at least an order of magnitude coarser than kilometer scale and therefore cannot simulate explicit convective-scale phenomena.
+Regional km-scale emulators.
+Flora and Potvin [24]
+show that realistic convection can be generated with a deterministic model when the resolution is fine enough in space (3-km) and time (10-minute). However, their simulations are limited to spatial extents of
+(
+1000
+km
+)
+2
+($1000\text{\,}\mathrm{km}$)^{2}
+and are only rolled out to two hours. Other regional emulators have been trained on 1-hour time resolution data, but either become blurry
+[
+25
+]
+or require expensive diffusion sampling
+[
+26
+]
+.
+Super-resolution.
+Generative diffusion models offer a complementary path to km-scale output by conditioning on coarse atmospheric states rather than rolling out autoregressively—producing km-scale details diagnostically as a function of the coarse input
+[
+27
+,
+28
+,
+29
+]
+. Inspiring our approach, global coverage is made tractable via patch-based training
+[
+30
+,
+28
+]
+. While practical for inpainting realistic details when trained on undersampled datasets, diffusion-based generation is purely downscale, so cannot model the two-way feedback between fine and large scales that we are after.
+Spherical architectures.
+Faithfully representing data on the sphere is a core challenge for global atmospheric emulators, motivating a range of geometry-aware
+architectures mostly targeting resolutions of
+≥
+0.25
+∘
+{\geq}0.25^{\circ}
+; scaling to km-scale grids remains an open problem. For example, Spherical Fourier Neural Operators
+[
+31
+]
+replace standard FFTs with spherical harmonic transforms for globally equivariant weather modeling
+∼
+0.25
+∘
+{\sim}0.25^{\circ}
+, but by using global basis functions they preclude our memory-saving local training strategy.
+Alternately, MeshGraphNet-based architectures
+[
+32
+,
+10
+,
+24
+]
+avoid polar geometric distortions and can be run globally or locally, but suffer from low throughput because they are based on sparse message passing operations.
+3
+Proposed Method
+Figure 2:
+STRATA method overview.
+(a,b)
+STRATA learns 10-minute updates from local SCREAM tiles and
+applies the same model globally using overlapping tiles that are blended into a
+continuous rollout; Duo-grid halo padding supplies geometrically consistent
+context near cubed-sphere face boundaries.
+(c)
+The tile update model combines 3D patch embedding, local attention
+mechanisms, and a pixel-space de-aliasing decoder adapted from PixelDiT.
+(d,e)
+Stereographic Rotary Position Embedding (StereoRoPE) projects
+each tile to a local stereographic frame and rotates vector inputs into the
+same tile-centered frame, providing grid-invariant position information for
+the transformer.
+3.1
+Tile-based training and inference
+We train on independent
+128
+×
+128
+128\times 128
+tiles (
+∼
+576
+{\sim}576
+km across)—sufficient to capture all physically relevant signals in a
+10-minute step, since even acoustic waves propagate only
+∼
+200
+{\sim}200
+km per step—using the many spatial tiles in each
+global snapshot as training samples to trade scarce temporal coverage for abundant spatial samples (Figure
+2
+a).
+At inference, STRATA is applied globally by decomposing each cubed-sphere face into overlapping tiles, processing them independently, and blending the overlap regions into a continuous global state (Figure
+2
+b). For tiles near cube-face boundaries, accurately predicting state changes requires atmospheric context from the adjacent face. These cross-face neighbors cannot be used directly, however, because the cubed-sphere grid orientation changes discontinuously at face boundaries, and at corners where three faces meet, naive padding is geometrically ill-defined. Duo-Grid halo padding
+[
+33
+]
+addresses this by extending each face’s equiangular grid past its boundary and interpolating neighboring-face values onto this extended grid (yellow shading in Figure
+2
+b), giving boundary tiles a locally coherent neighborhood that the model processes identically to interior tiles. This tile-based inference protocol also enables scalability to a multi-GPU distributed environment, yielding strong scaling efficiency of up to 98.4% from 8 to 512 GPUs and a throughput of 741 simulated days per wall-clock day at 512 GPUs. More inference details are in Appendix
+F
+.
+3.2
+Architecture
+Km-scale atmospheric dynamics have two properties that shape the
+architecture: they are intrinsically 3D and predominantly local on
+10-minute timescales.
+STRATA addresses these with three components
+(Figure
+2
+c): a 3D patch embedding layer, a
+local-attention DiT transformer backbone, and a pixel-space de-aliasing
+decoder.
+Full architecture specifications are provided in
+Appendix
+B.1
+.
+Transformer backbone.
+The STRATA backbone follows the Diffusion Transformer (DiT)
+[
+34
+]
+architecture (Appendix
+B.1
+, Figure
+S1
+a), adapted for deterministic atmospheric emulation rather than diffusion sampling. All input fields are concatenated and treated as a single volumetric tensor spanning the horizontal tile and all vertical levels. At a 10-minute timestep, atmospheric interactions are largely local, so we use 3D Neighborhood Attention (NATTEN
+[
+35
+,
+36
+]
+), with stereographic rotary position embeddings (see §
+3.3
+) inside local
+(
+x
+,
+y
+,
+lev
+)
+(x,y,\mathrm{lev})
+windows. With a horizontal patch embedding size of 4 and a NATTEN kernel size of 9, each attention window covers
+36
+×
+36
+36\times 36
+horizontal native grid cells (
+≈
+160
+×
+160
+{\approx}160\times 160
+km). We alternate these blocks with column-wise attention along the vertical dimension to capture processes that are computed column-by-column in SCREAM with no horizontal coupling, such as vertical radiation transfer and cloud microphysics.
+3D Patch-embedding and computational efficiency.
+Like the original DiT
+[
+34
+]
+, STRATA uses patch embedding to tokenize the input, grouping
+p
+h
+×
+p
+h
+×
+p
+v
+p_{h}\times p_{h}\times p_{v}
+3D grid cells into a single token before the transformer sees them. Unlike coarse-resolution atmospheric transformers, we treat the vertical dimension as a spatial axis (
+p
+v
+=
+1
+p_{v}=1
+) rather than a channel dimension (
+OPEN
+p
+v
+=
+# of levels
+)
+p_{v}=\text{\# of levels})
+. This decision is motivated on both physical and computational grounds—it allows modeling the 3D dynamics of atmospheric convection at the token level and acts as an independent lever for scaling computational complexity, and therefore accuracy
+[
+37
+,
+38
+,
+18
+,
+34
+]
+.
+The computational complexity of our architecture, measured in terms of FLOPs, is approximated by
+2
+​
+N
+​
+P
+2NP
+where
+P
+P
+is the number of parameters and
+N
+N
+the number of patches
+N
+∝
+(
+p
+v
+​
+p
+h
+2
+)
+−
+1
+N\propto(p_{v}p_{h}^{2})^{-1}
+. The number of parameters
+P
+∝
+d
+2
+P\propto d^{2}
+where
+d
+d
+is the embedding dimension of the network. From this we see that reducing the vertical patch size to
+p
+v
+=
+1
+p_{v}=1
+while holding the embedding dimension fixed increases
+N
+N
+and the computational complexity of the model overall.
+Even for a fixed FLOP budget (
+P
+∝
+N
+−
+1
+P\propto N^{-1}
+) the patch size is an important lever. Reducing
+N
+N
+improves model FLOP utilization (MFU)—by reducing the size of the activations which scales as
+O
+⁡
+(
+N
+​
+d
+)
+=
+O
+⁡
+(
+N
+​
+P
+)
+=
+O
+⁡
+(
+N
+)
+O(Nd)=O(N\sqrt{P})=O(\sqrt{N})
+and in so doing increasing the overall arithmetic intensity of the architecture.
+Another benefit of larger patches is that they expand the effective window size of the neighborhood attention at no extra cost, which improves the accuracy. Figure
+3
+b shows that for constant FLOPs the loss decreases with patch size.
+Patch instability and pixel-space de-aliasing decoder.
+Patch tokenization introduces checkerboard artifacts in rollouts
+[
+39
+,
+9
+]
+,
+most visibly in smooth fields like near-surface temperature.
+We argue this is caused by a spectral bias of the patched architecture upon
+initialization: the block-diagonal structure of the linearized update operator
+gives
+ρ
+⁡
+(
+A
+)
+>
+1
+\rho(A)>1
+, causing patch-scale eigenvectors to dominate the rollout.
+A formal stability analysis is provided in
+Appendix
+B.4
+.
+We mitigate this with a lightweight decoder of PixelDiT pixel
+blocks
+[
+40
+]
+; within each block, we replace
+the original linear-projection upsampling with bilinear upsampling followed by
+depthwise convolutional refinement to enforce continuity across patch boundaries
+(Figure
+S1
+b,c).
+Figure
+S2
+in Appendix
+B.3
+shows this substantially reduces patch-scale artifacts in 12-hour rollouts.
+Figure 3:
+Patch-size and model-size scaling.
+(a)
+inference latency vs. FLOPs per forward pass (estimated as
+2
+​
+N
+​
+P
+2NP
+, where
+N
+N
+is the token sequence
+length and
+P
+P
+the number of parameters) for DiT-S/M/L models with horizontal patch sizes
+p
+​
+s
+∈
+{
+1
+,
+2
+,
+4
+}
+ps\in\{1,2,4\}
+;
+at equal FLOPs,
+p
+​
+s
+=
+4
+ps=4
+is
+1.5
+1.5
+–
+2.9
+×
+2.9\times
+faster than
+p
+​
+s
+=
+1
+ps=1
+.
+(b)
+test loss vs. training FLOPs for the same sweep.
+Patch size 1 is worse than patch sizes 2 and 4 at equal FLOPs; smaller
+models are more compute-efficient at low budgets, while larger models reach
+lower loss with sufficient training.
+3.3
+Grid-Invariant Position Encoding via Stereographic Projection
+Our architecture requires locally rectangular grids for efficiency, but tile-based training requires the same local physical patterns to be represented consistently across the sphere.
+Standard embedding strategies for vision transformers, such as axial Rotary Position Embedding (RoPE)
+[
+41
+,
+42
+]
+, will fail at this since the same 2D index offset will have a different physical orientation and length depending on the location.
+We address this with Stereographic RoPE (StereoRoPE; Figure
+2
+). This approach decouples the coordinate used for RoPE from the discretization of the input data, allowing us to choose the most convenient option for each.
+For each tile, we project grid points to a local stereographic tangent plane centered on the tile (Figure
+2
+d) and use the resulting coordinates as RoPE inputs. Because these coordinates approximate physical displacement rather than grid indices, attention patterns can transfer across tile locations and grid topologies. For a tile centered at
+(
+ϕ
+0
+,
+λ
+0
+)
+(\phi_{0},\lambda_{0})
+, each token at
+(
+ϕ
+,
+λ
+)
+(\phi,\lambda)
+is mapped to tile-centered stereographic coordinates:
+cos
+⁡
+c
+\displaystyle\cos c
+=
+sin
+⁡
+ϕ
+0
+​
+sin
+⁡
+ϕ
++
+cos
+⁡
+ϕ
+0
+​
+cos
+⁡
+ϕ
+​
+cos
+⁡
+(
+λ
+−
+λ
+0
+)
+,
+k
+=
+2
+1
++
+cos
+⁡
+c
+,
+\displaystyle=\sin\phi_{0}\sin\phi+\cos\phi_{0}\cos\phi\cos(\lambda-\lambda_{0}),\quad k=\frac{2}{1+\cos c},
+x
+\displaystyle x
+=
+k
+ℓ
+scale
+​
+cos
+⁡
+ϕ
+​
+sin
+⁡
+(
+λ
+−
+λ
+0
+)
+,
+y
+=
+k
+ℓ
+scale
+​
+(
+cos
+⁡
+ϕ
+0
+​
+sin
+⁡
+ϕ
+−
+sin
+⁡
+ϕ
+0
+​
+cos
+⁡
+ϕ
+​
+cos
+⁡
+(
+λ
+−
+λ
+0
+)
+)
+,
+\displaystyle=\frac{k}{\ell_{\mathrm{scale}}}\cos\phi\sin(\lambda-\lambda_{0}),\quad y=\frac{k}{\ell_{\mathrm{scale}}}\bigl(\cos\phi_{0}\sin\phi-\sin\phi_{0}\cos\phi\cos(\lambda-\lambda_{0})\bigr),
+(1)
+where
+c
+c
+is the angular separation from the tile center,
+(
+x
+,
+y
+)
+(x,y)
+are local East–North coordinates in the tile-centered tangent frame, and
+ℓ
+scale
+=
+4
+​
+π
+/
+N
+total
+\ell_{\mathrm{scale}}=\sqrt{4\pi/N_{\mathrm{total}}}
+normalizes coordinates across resolutions.
+These coordinates replace row/column indices as inputs to axial 2D RoPE
+[
+42
+]
+. The stereographic projection is chosen because it is conformal, which preserves local angles and facilitates learning vector operators such as advection
+𝐮
+⋅
+∇
+q
+\mathbf{u}\cdot\nabla{q}
+where
+𝐮
+\mathbf{u}
+is the velocity and
+q
+q
+a tracer quantity.
+Because the local East–North frame rotates across the sphere (Figure
+2
+e), raw wind components
+(
+U
+,
+V
+)
+(U,V)
+encode the same physical wind differently at different tile positions—a frame inconsistency that would corrupt the grid-invariant encoding of StereoRoPE. We resolve this by projecting all wind vectors into the single East–North frame defined at the tile center.
+Concretely, we form the 3D vector
+𝐯
+=
+U
+​
+e
+^
++
+V
+​
+n
+^
+\mathbf{v}=U\hat{e}+V\hat{n}
+using the per-point unit vectors
+(
+e
+^
+,
+n
+^
+)
+(\hat{e},\hat{n})
+at
+(
+ϕ
+,
+λ
+)
+(\phi,\lambda)
+, then project onto the tile-center tangent plane spanned by
+(
+e
+^
+0
+,
+n
+^
+0
+)
+(\hat{e}_{0},\hat{n}_{0})
+—removing any radial leakage introduced by the change of frame—to obtain tile-center components:
+𝐯
+⟂
+=
+𝐯
+−
+(
+𝐯
+⋅
+r
+^
+0
+)
+​
+r
+^
+0
+,
+U
+loc
+=
+𝐯
+⟂
+⋅
+e
+^
+0
+,
+V
+loc
+=
+𝐯
+⟂
+⋅
+n
+^
+0
+,
+\mathbf{v}_{\perp}=\mathbf{v}-(\mathbf{v}\cdot\hat{r}_{0})\hat{r}_{0},\qquad U_{\mathrm{loc}}=\mathbf{v}_{\perp}\cdot\hat{e}_{0},\qquad V_{\mathrm{loc}}=\mathbf{v}_{\perp}\cdot\hat{n}_{0},
+(2)
+where
+r
+^
+0
+\hat{r}_{0}
+is the radial unit vector at the tile center.
+In early experiments on HEALPix grids
+[
+43
+]
+(later replaced by the cubed-sphere),
+standard RoPE defined on the local grid led to discontinuous wind fields across the boundaries of polar faces, where the local grid changes orientation by 90
+∘
+.
+We further validate grid invariance empirically in
+Section
+4.4
+, demonstrating stable zero-shot rollouts
+on unseen grids.
+3.4
+Training Objective and Multi-Step Fine-Tuning
+STRATA is first trained for one-step prediction with a channel-normalized Smoothed
+ℓ
+1
+\ell_{1}
+loss (Huber loss with
+δ
+=
+1
+\delta=1
+). One-step training minimizes single-step prediction error but allows artifacts to accumulate over autoregressive steps. We therefore fine-tune the model autoregressively for up to four steps, computing the loss on the final prediction. This multi-step fine-tuning substantially suppresses rollout instabilities and is key to stable 24-hour rollouts. Optimization details are in Appendix
+E
+.
+4
+Experiments
+We evaluate STRATA along two axes: an isoFLOP scaling study to
+characterize the compute–accuracy tradeoff at km-scale (§
+4.2
+),
+and a 24-hour autoregressive rollout to assess emulation fidelity
+(§
+4.3
+).
+For the rollout, we adopt metrics appropriate for a chaotic dynamical system:
+individual convective cells lose pointwise predictability within a few hours
+[
+44
+]
+, so structural and statistical
+fidelity—precipitation organization, error growth rate, and distributions—
+are the meaningful tests, not pointwise agreement.
+4.1
+Dataset
+STRATA emulates native SCREAM physics-grid output without regridding. While the effective dynamics grid spacing of SCREAM is 3.3 km, its physics output data are saved every 10 minutes on a 4.9-km cubed-sphere grid (
+6
+×
+2048
+2
+≈
+25
+6\times 2048^{2}\approx 25
+million horizontal grid points) and subsampled from 128 raw SCREAM levels to 24 tropospheric vertical levels (surface to
+∼
+100
+{\sim}100
+hPa; Figure
+S3
+). We collect 30 days from three non-contiguous SCREAM simulations spanning diverse seasons (October, August, and January) and train on 17 days; rollout evaluation uses 6 held-out initializations at 12-hourly intervals from 2020-10-11 to 2020-10-14 (see Appendix
+C.2
+). The model predicts the 10-minute evolution of 3D potential temperature, zonal and meridional wind, vertical velocity, geopotential height, and specific humidity fields, along with near-surface temperature; it also predicts diagnostic surface pressure and precipitation. Forcing inputs include solar zenith angle, surface geopotential, topography, latitude, and land fraction. A complete list of variable information is given in Appendix
+D
+.
+4.2
+Scaling transformers for high-entropy data
+Table 1:
+Energy efficiency and compute context.
+(a)
+Throughput and energy efficiency of STRATA at two hardware scales
+compared to the SCREAM physics model it emulates.
+(b)
+Compute requirements of representative coarse AI weather models
+and STRATA; coarse models are compute context, not SCREAM-emulation baselines.
+The PFLOPs/SD gap includes
+(
+6
+h
+/
+10
+min
+)
+×
+(
+25
+km
+/
+4.9
+km
+)
+2
+≈
+900
+×
+(6\,\text{h}/10\,\text{min})\times(25\,\text{km}/4.9\,\text{km})^{2}\approx 900\times
+from geometry alone.
+(a) SCREAM emulation and energy
+System
+SDPD
+∗
+SD/MWh
+SCREAM
+460
+0.78
+STRATA (16 H100s)
+23.6
+48.1
+STRATA (512 H100s)
+741
+47.3
+SD: simulated day; SDPD: simulated days per wall-clock day.
+∗
+SDPD depends critically on available hardware; see
+Table
+S5
+for full accounting.
+(b) Coarse AI compute context
+Model
+dt
+TFLOPs/step
+PFLOPs/SD
+ACE2
+6 h
+0.48
+0.002
+Stormer
+6 h
+4.95
+0.020
+Atlas-CRPS
+12 h
+72.07
+0.144
+Aurora
+6 h
+47.00
+0.188
+DiT-S
+10 min
+1.2
+1062
+DiT-M
+10 min
+4.9
+4335
+TFLOPs/step is per global step for coarse models but per tile for
+DiT-S/M; PFLOPs/SD normalizes to a full simulated day globally.
+A key design question for any emulator is how many FLOPs to allocate per forward pass: more FLOPs increase inference cost, but too few yield poor prediction quality. To understand this effect, we sweep over three iso-FLOP model tiers (DiT-S/M/L) and three horizontal patch sizes (1, 2, 4); see Appendix
+B.2
+and Table
+S2
+for configurations. Figure
+3
+b shows that the loss decreases predictably with model FLOPs, with smaller models more compute-efficient at low training budgets and larger models reaching lower loss given sufficient training compute—consistent with
+Hoffmann et al. [37]
+. Within each tier, the larger patch sized models are more computationally efficient (Figure
+3
+a). Models with a horizontal patch size
+p
+h
+=
+4
+p_{h}=4
+run
+1.5
+1.5
+–
+2.9
+×
+2.9\times
+faster than
+p
+h
+=
+1
+p_{h}=1
+models at equal FLOPs, with greater gains at smaller FLOP budgets.
+Reasonable 24-hour rollout stability begins to emerge at and above the DiT-M tier
+(
+∼
+5
+{\sim}5
+TFLOP), though biases remain present even at this scale;
+models below this threshold exhibit more visible large-scale artifacts
+(Figure
+S17
+,
+Appendix
+I
+).
+Consistent with a fundamental increase in underlying entropy, the computational scale required to succeed at simulating realistic convective-scale systems is 10
+×
+\times
+higher than naive extrapolations from established large-scale autoregressive AI weather models would predict based on spatial and temporal resolution differences alone (Table
+1
+b). We postulate this increased computational load is required since storm-resolving data (in space and time) has higher information content due to the 3D nature of atmospheric convection. By contrast, the large-scale atmosphere behaves like a two-dimensional fluid, due to the strong impact of the Earth’s rotation at those scales and the large aspect ratio.
+A statistical analysis of the compressibility and covariance structure of the km-scale data supports this hypothesis (cf. Appendix
+J
+) and shows that the differential entropy (
+−
+E
+X
+​
+[
+log
+⁡
+(
+p
+⁡
+(
+X
+)
+)
+]
+-E_{X}[\log(p(X))]
+) of 10-minute SCREAM increments (-0.5 bits/dim) is higher than 6-hour 0.25
+∘
+ERA5 increments (-6.5 bits/dim). This is a very large difference considering that the maximum entropy distribution with unit variance is the Gaussian (2 bits/dim).
+4.3
+Physical Realism, Predictability and Statistical Fidelity
+Visualizations of the rollout quality provide a useful qualitative test, if done long after initial condition km-scale memory has vanished. Figure
+1
+shows that STRATA’s self-generated dynamics resemble the ground truth across multiple phenomena – tropical cyclone,
+shallow clouds, midlatitude cold front, Intertropical Convergence Zone,
+diurnal island convection, and orographic precipitation. Global videos provide a holistic view (
+https://zydlszh.github.io/strata-supp/
+).
+Quantitative error growth rates affirm good performance for the km-scale. The rainfall fractions skill score
+[
+45
+]
+(FSS; Appendix
+H
+) exceeds a persistence baseline (Figure
+4
+b) indicating nontrivial maintenance of initialized organized rainfall structure. Meanwhile, tropical weather systems traverse the equatorial Indian and West Pacific at the correct speeds (phase tilt of rain streaks in Figure
+4
+a).
+Limitations are also apparent in simulating the largest scale circulations. On time scales of 12-24 hours, where macroscale forecast errors dominate, total error growth is too fast (Figure
+4
+c,d; slope of blue and blue-dashed) relative to expectations of an RMSE doubling-per-day (grey, yellow).
+For context, ACE2
+[
+21
+]
+, a
+coarse-resolution AI atmosphere emulator trained on six decades of global
+reanalysis specifically to capture large-scale dynamics, shows
+substantially slower error growth; it is not surprising that STRATA,
+trained on only 17 days of global km-scale data, does not match ACE2 at synoptic
+scales.
+Global mean rainfall is biased low by as much as 20% (Figure
+5
+a); see Appendix
+F
+(Figure
+S6
+) for details of vertical velocity filters that ameliorated this. The precipitation amount distribution
+(Figure
+5
+b) broadly matches SCREAM though the
+moderate-to-intense rain rates contribute slightly less than in SCREAM,
+consistent with the dry bias. Suppressed 12-h spectral power concentrated in the 100-2,000 km length scale regime again implicates imperfect synoptics (Figure
+5
+c). Whether this reflects insufficient training data or a fundamental limitation of the tile-based approach, coupling STRATA with a coarse-resolution global
+model is a natural next step.
+Figure 4:
+Predictability diagnostics for 24-hour rollout.
+(a)
+Tropical precipitation over the Indo-Pacific, averaged over
+5
+∘
+S–5
+∘
+N, shows coherent eastward and westward propagation of
+large-scale precipitation structures during STRATA free rollout.
+(b)
+Fractions Skill Score measures neighborhood-scale precipitation
+agreement with SCREAM; persistence is shown as an initial-condition memory
+reference rather than a competitive baseline.
+(c,d)
+Root-mean-square error for 850-hPa temperature and 850-hPa
+zonal wind on the native 4.9-km grid and after coarsening to
+the 1
+∘
+ACE2 grid. ACE2 is included as a coarse-resolution AI emulator baseline. Lines show the mean over 6 initialization times; shading shows the min–max range across ensemble members.
+Figure 5:
+Precipitation statistics during rollout.
+Solid lines show the mean over three rollouts initialized on different
+dates at the same time of day; shading shows the min–max range.
+(a)
+Global-mean precipitation over 24-hour rollouts.
+(b)
+Precipitation amount distribution at 12-hour lead time,
+showing each rain-rate bin’s contribution to the global mean.
+(c)
+Spherical-harmonic power spectrum of precipitation at
+12-hour lead time.
+4.4
+Grid invariance
+Figure 6:
+Grid invariance test
+: near-surface humidity and rain
+rate from a 3-hour zero-shot rollout over Indonesia on three grids
+of similar nominal resolution—regular latitude–longitude (left),
+oblique stereographic rotated 45
+∘
+(middle), and the native SCREAM
+cubed-sphere (right, training grid).
+StereoRoPE and wind vector rotation together should make learned operators transferable across grid topologies. To test this, we compare the native SCREAM cubed-sphere grid used during training with zero-shot rollouts on two unseen discretizations: a latitude–longitude grid and a rotated oblique stereographic grid. Figure
+6
+shows 3-hour forecasts over Indonesia. The precipitation and humidity fields remain qualitatively consistent across these discretizations, showing that the model generalizes to unseen grid topologies without retraining. The agreement is not exact—interpolation, masking, and grid resolution differ across the three setups—but the spatial organization of precipitation and moisture is preserved across substantial changes in grid geometry.
+5
+Conclusion
+STRATA is the first AI model to simulate storm-scale atmospheric dynamics globally, expanding the prior state of the art of 900 km domain and 2-hour rollouts
+[
+24
+]
+to the full planet and 24-hour rollouts, at 4.9 km and 10-minute resolution. Rollout evaluation confirms realistic simulation across the planet, spanning diverse convective regimes—from shallow marine stratocumulus and isolated continental storm lifecycles to organized deep convection, topographic precipitation, diurnal island convection, and midlatitude frontal bands.
+At a
+50
+×
+50\times
+improvement in energy efficiency over SCREAM (the physics model it emulates) and a throughput of 741 simulated days per wall-clock day at 512 H100 GPUs, STRATA demonstrates that convection-resolving simulation can be generated affordably at planetary scale. Our analysis has revealed emulating convective dynamics requires
+∼
+10
+×
+{\sim}10\times
+more FLOPs per grid point than synoptic-scale forecasting, due to the higher information entropy of 3D convective dynamics. This provides a quantitative framework for future high-resolution atmosphere emulator design.
+The current local-tile model learns convective-scale physics well but not large-scale circulation.
+Coupling with a complementary low-resolution global emulator is a natural way to explore the next frontier, enabling century-scale simulations that quantify how the
+frequency
+of extreme weather events changes with environmental conditions.
+Eventually, we hope the efficiencies of AI simulation might unlock the global
+∼
+{\sim}
+10-100-m scales needed to directly resolve low-cloud feedbacks—a major driver of climate sensitivity uncertainty
+[
+46
+]
+that remains computationally intractable
+[
+47
+,
+48
+,
+49
+]
+.
+6
+Data and Code Availability
+The STRATA code, including the model architecture and training and inference pipelines, is available at
+https://github.com/NVlabs/STRATA
+. The raw SCREAM output used for training and evaluation is available at
+https://portal.nersc.gov/archive/home/n/ndk/www/STRATA2026
+. As E3SM model output, it is distributed under the Creative Commons Attribution 4.0 International (CC BY 4.0) license (see
+https://docs.e3sm.org/e3sm_data_docs/_build/html/index.html
+). A machine-learning training-ready version of the dataset in Zarr format will be released soon.
+Acknowledgements
+We thank Dale Durran, Jindong Jiang, Peter Harrington, Jean Kossaifi, and Julius Berner for their advice and/or feedbacks on this work. This research used resources of the National Energy Research Scientific Computing Center (NERSC), a Department of Energy User Facility using NERSC award BER-ERCAP-0035294. Part of this work was performed under the auspices of the U.S. Department of Energy by Lawrence Livermore National Laboratory under Contract DE-AC52-07NA27344 and at Pacific Northwest National Laboratory under Contract DE-AC05-76RL01830.
+References
+[1]
+Sandrine Bony, Bjorn Stevens, Dargan M. W. Frierson, Christian Jakob, Masa Kageyama, Robert Pincus, Theodore G. Shepherd, Steven C. Sherwood, A. Pier Siebesma, Adam H. Sobel, Masahiro Watanabe, and Mark J. Webb.
+Clouds, circulation and climate sensitivity.
+Nature Geoscience
+, 8(4):261–268, April 2015.
+ISSN 1752-0908.
+doi:
+10.1038/ngeo2398
+.
+[2]
+Tapio Schneider, João Teixeira, Christopher S. Bretherton, Florent Brient, Kyle G. Pressel, Christoph Schär, and A. Pier Siebesma.
+Climate goals and computing the future of clouds.
+Nature Climate Change
+, 7(1):3–5, January 2017a.
+ISSN 1758-6798.
+doi:
+10.1038/nclimate3190
+.
+[3]
+P. M. Caldwell, C. R. Terai, B. Hillman, N. D. Keen, P. Bogenschutz, W. Lin, H. Beydoun, M. Taylor, L. Bertagna, A. M. Bradley, T. C. Clevenger, A. S. Donahue, C. Eldred, J. Foucar, J.-C. Golaz, O. Guba, R. Jacob, J. Johnson, J. Krishna, W. Liu, K. Pressel, A. G. Salinger, B. Singh, A. Steyer, P. Ullrich, D. Wu, X. Yuan, J. Shpund, H.-Y. Ma, and C. S. Zender.
+Convection-Permitting Simulations With the E3SM Global Atmosphere Model.
+Journal of Advances in Modeling Earth Systems
+, 13(11):e2021MS002544, November 2021.
+ISSN 1942-2466, 1942-2466.
+doi:
+10.1029/2021MS002544
+.
+[4]
+Hans Segura, Xabier Pedruzo-Bagazgoitia, Philipp Weiss, Sebastian K. Müller, Thomas Rackow, Junhong Lee, Edgar Dolores-Tesillos, Imme Benedict, Matthias Aengenheyster, Razvan Aguridan, Gabriele Arduini, Alexander J. Baker, Jiawei Bao, Swantje Bastin, Eulàlia Baulenas, Tobias Becker, Sebastian Beyer, Hendryk Bockelmann, Nils Brüggemann, Lukas Brunner, Suvarchal K. Cheedela, Sushant Das, Jasper Denissen, Ian Dragaud, Piotr Dziekan, Madeleine Ekblom, Jan Frederik Engels, Monika Esch, Richard Forbes, Claudia Frauen, Lilli Freischem, Diego García-Maroto, Philipp Geier, Paul Gierz, Álvaro González-Cervera, Katherine Grayson, Matthew Griffith, Oliver Gutjahr, Helmuth Haak, Ioan Hadade, Kerstin Haslehner, Shabeh ul Hasson, Jan Hegewald, Lukas Kluft, Aleksei Koldunov, Nikolay Koldunov, Tobias Kölling, Shunya Koseki, Sergey Kosukhin, Josh Kousal, Peter Kuma, Arjun U. Kumar, Rumeng Li, Nicolas Maury, Maximilian Meindl, Sebastian Milinski, Kristian Mogensen, Bimochan Niraula, Jakub
+Nowak, Divya Sri Praturi, Ulrike Proske, Dian Putrasahan, René Redler, David Santuy, Domokos Sármány, Reiner Schnur, Patrick Scholz, Dmitry Sidorenko, Dorian Spät, Birgit Sützl, Daisuke Takasuka, Adrian Tompkins, Alejandro Uribe, Mirco Valentini, Menno Veerman, Aiko Voigt, Sarah Warnau, Fabian Wachsmann, Marta Wacławczyk, Nils Wedi, Karl-Hermann Wieners, Jonathan Wille, Marius Winkler, Yuting Wu, Florian Ziemen, Janos Zimmermann, Frida A.-M. Bender, Dragana Bojovic, Sandrine Bony, Simona Bordoni, Patrice Brehmer, Marcus Dengler, Emanuel Dutra, Saliou Faye, Erich Fischer, Chiel van Heerwaarden, Cathy Hohenegger, Heikki Järvinen, Markus Jochum, Thomas Jung, Johann H. Jungclaus, Noel S. Keenlyside, Daniel Klocke, Heike Konow, Martina Klose, Szymon Malinowski, Olivia Martius, Thorsten Mauritsen, Juan Pedro Mellado, Theresa Mieslinger, Elsa Mohino, Hanna Pawłowska, Karsten Peters-von Gehlen, Abdoulaye Sarré, Pajam Sobhani, Philip Stier, Lauri Tuppi, Pier Luigi Vidale, Irina
+Sandu, and Bjorn Stevens.
+nextGEMS: Entering the era of kilometer-scale Earth system modeling.
+Geoscientific Model Development
+, 18(20):7735–7761, October 2025.
+ISSN 1991-959X.
+doi:
+10.5194/gmd-18-7735-2025
+.
+[5]
+Mark Taylor, Peter M. Caldwell, Luca Bertagna, Conrad Clevenger, Aaron Donahue, James Foucar, Oksana Guba, Benjamin Hillman, Noel Keen, Jayesh Krishna, Matthew Norman, Sarat Sreepathi, Christopher Terai, James B. White, Andrew G Salinger, Renata B McCoy, Lai-yung Ruby Leung, David C. Bader, and Danqing Wu.
+The Simple Cloud-Resolving E3SM Atmosphere Model Running on the Frontier Exascale System.
+In
+Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis
+, SC ’23, pages 1–11, New York, NY, USA, November 2023. Association for Computing Machinery.
+ISBN 979-8-4007-0109-2.
+doi:
+10.1145/3581784.3627044
+.
+[6]
+A. S. Donahue, P. M. Caldwell, L. Bertagna, H. Beydoun, P. A. Bogenschutz, A. M. Bradley, T. C. Clevenger, J. Foucar, C. Golaz, O. Guba, W. Hannah, B. R. Hillman, J. N. Johnson, N. Keen, W. Lin, B. Singh, S. Sreepathi, M. A. Taylor, J. Tian, C. R. Terai, P. A. Ullrich, X. Yuan, and Y. Zhang.
+To Exascale and Beyond—The Simple Cloud-Resolving E3SM Atmosphere Model (SCREAM), a Performance Portable Global Atmosphere Model for Cloud-Resolving Scales.
+Journal of Advances in Modeling Earth Systems
+, 16(7):e2024MS004314, 2024.
+ISSN 1942-2466.
+doi:
+10.1029/2024MS004314
+.
+[7]
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+Attention Is All You Need, August 2023.
+[8]
+Jaideep Pathak, Shashank Subramanian, Peter Harrington, Sanjeev Raja, Ashesh Chattopadhyay, Morteza Mardani, Thorsten Kurth, David Hall, Zongyi Li, Kamyar Azizzadenesheli, Pedram Hassanzadeh, Karthik Kashinath, and Animashree Anandkumar.
+FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators, February 2022.
+[9]
+Kaifeng Bi, Lingxi Xie, Hengheng Zhang, Xin Chen, Xiaotao Gu, and Qi Tian.
+Accurate medium-range global weather forecasting with 3D neural networks.
+Nature
+, 619(7970):533–538, July 2023.
+ISSN 1476-4687.
+doi:
+10.1038/s41586-023-06185-3
+.
+[10]
+Remi Lam, Alvaro Sanchez-Gonzalez, Matthew Willson, Peter Wirnsberger, Meire Fortunato, Ferran Alet, Suman Ravuri, Timo Ewalds, Zach Eaton-Rosen, Weihua Hu, Alexander Merose, Stephan Hoyer, George Holland, Oriol Vinyals, Jacklynn Stott, Alexander Pritzel, Shakir Mohamed, and Peter Battaglia.
+GraphCast: Learning skillful medium-range global weather forecasting, August 2023.
+[11]
+Lei Chen, Xiaohui Zhong, Feng Zhang, Yuan Cheng, Yinghui Xu, Yuan Qi, and Hao Li.
+FuXi: A cascade machine learning forecasting system for 15-day global weather forecast.
+npj Climate and Atmospheric Science
+, 6(1):190, November 2023.
+ISSN 2397-3722.
+doi:
+10.1038/s41612-023-00512-1
+.
+[12]
+Cristian Bodnar, Wessel P. Bruinsma, Ana Lucic, Megan Stanley, Anna Vaughan, Johannes Brandstetter, Patrick Garvan, Maik Riechert, Jonathan A. Weyn, Haiyu Dong, Jayesh K. Gupta, Kit Thambiratnam, Alexander T. Archibald, Chun-Chieh Wu, Elizabeth Heider, Max Welling, Richard E. Turner, and Paris Perdikaris.
+A Foundation Model for the Earth System, November 2024.
+[13]
+Tung Nguyen, Rohan Shah, Hritik Bansal, Troy Arcomano, Romit Maulik, Veerabhadra Kotamarthi, Ian Foster, Sandeep Madireddy, and Aditya Grover.
+Scaling transformer neural networks for skillful and reliable medium-range weather forecasting, October 2024.
+[14]
+Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, Tom R. Andersson, Andrew El-Kadi, Dominic Masters, Timo Ewalds, Jacklynn Stott, Shakir Mohamed, Peter Battaglia, Remi Lam, and Matthew Willson.
+GenCast: Diffusion-based ensemble forecasting for medium-range weather, May 2024.
+[15]
+Simon Lang, Mihai Alexe, Mariana C. A. Clare, Christopher Roberts, Rilwan Adewoyin, Zied Ben Bouallègue, Matthew Chantry, Jesper Dramsch, Peter D. Dueben, Sara Hahner, Pedro Maciel, Ana Prieto-Nemesio, Cathal O’Brien, Florian Pinault, Jan Polster, Baudouin Raoult, Steffen Tietsche, and Martin Leutbecher.
+AIFS-CRPS: Ensemble forecasting using a model trained with a loss function based on the Continuous Ranked Probability Score, December 2024.
+[16]
+Boris Bonev, Thorsten Kurth, Ankur Mahesh, Mauro Bisson, Jean Kossaifi, Karthik Kashinath, Anima Anandkumar, William D. Collins, Michael S. Pritchard, and Alexander Keller.
+FourCastNet 3: A geometric approach to probabilistic machine-learning weather forecasting at scale, July 2025.
+[17]
+Jean Kossaifi, Nikola Kovachki, Morteza Mardani, Daniel Leibovici, Suman Ravuri, Ira Shokar, Edoardo Calvello, Mohammad Shoaib Abbas, Peter Harrington, Ashay Subramaniam, Noah Brenowitz, Boris Bonev, Wonmin Byeon, Karsten Kreis, Dale Durran, Arash Vahdat, Mike Pritchard, and Jan Kautz.
+Demystifying Data-Driven Probabilistic Medium-Range Weather Forecasting, January 2026.
+[18]
+Yuejiang Yu, Langwen Huang, Alexandru Calotoiu, and Torsten Hoefler.
+Scaling Laws of Global Weather Models, February 2026.
+[19]
+Dmitrii Kochkov, Janni Yuval, Ian Langmore, Peter Norgaard, Jamie Smith, Griffin Mooers, Milan Klöwer, James Lottes, Stephan Rasp, Peter Düben, Sam Hatfield, Peter Battaglia, Alvaro Sanchez-Gonzalez, Matthew Willson, Michael P. Brenner, and Stephan Hoyer.
+Neural General Circulation Models for Weather and Climate.
+Nature
+, July 2024.
+ISSN 0028-0836, 1476-4687.
+doi:
+10.1038/s41586-024-07744-y
+.
+[20]
+Nathaniel Cresswell-Clay, Bowen Liu, Dale R. Durran, Zihui Liu, Zachary I. Espinosa, Raul A. Moreno, and Matthias Karlbauer.
+A Deep Learning Earth System Model for Efficient Simulation of the Observed Climate.
+AGU Advances
+, 6(4):e2025AV001706, 2025.
+ISSN 2576-604X.
+doi:
+10.1029/2025AV001706
+.
+[21]
+Oliver Watt-Meyer, Brian Henn, Jeremy McGibbon, Spencer K. Clark, Anna Kwa, W. Andre Perkins, Elynn Wu, Lucas Harris, and Christopher S. Bretherton.
+ACE2: Accurately learning subseasonal to decadal atmospheric variability and forced responses, November 2024.
+[22]
+Salva Rühling Cachay, Brian Henn, Oliver Watt-Meyer, Christopher S. Bretherton, and Rose Yu.
+Probabilistic Emulation of a Global Climate Model with Spherical DYffusion, November 2024.
+[23]
+William E. Chapman, John S. Schreck, Yingkai Sha, David John Gagne II, Dhamma Kimpara, Laure Zanna, Kirsten J. Mayer, and Judith Berner.
+CAMulator: Fast Emulation of the Community Atmosphere Model, April 2025.
+[24]
+Montgomery L. Flora and Corey Potvin.
+WoFSCast: A Machine Learning Model for Predicting Thunderstorms at Watch-to-Warning Scales.
+Geophysical Research Letters
+, 52(10):e2024GL112383, 2025.
+ISSN 1944-8007.
+doi:
+10.1029/2024GL112383
+.
+[25]
+Daniel Abdi, Isidora Jankov, Paul Madden, Vanderlei Vargas, Timothy A. Smith, Sergey Frolov, Montgomery Flora, and Corey Potvin.
+HRRRCast: A data-driven emulator for regional weather forecasting at convection allowing scales, July 2025.
+[26]
+Jaideep Pathak, Yair Cohen, Piyush Garg, Peter Harrington, Noah Brenowitz, Dale Durran, Morteza Mardani, Arash Vahdat, Shaoming Xu, Karthik Kashinath, and Michael Pritchard.
+Kilometer-Scale Convection Allowing Model Emulation using Generative Diffusion Modeling, August 2024.
+[27]
+Morteza Mardani, Noah Brenowitz, Yair Cohen, Jaideep Pathak, Chieh-Yu Chen, Cheng-Chin Liu, Arash Vahdat, Mohammad Amin Nabian, Tao Ge, Akshay Subramaniam, Karthik Kashinath, Jan Kautz, and Mike Pritchard.
+Residual Corrective Diffusion Modeling for Km-scale Atmospheric Downscaling, 2023.
+[28]
+Noah D. Brenowitz, Tao Ge, Akshay Subramaniam, Aayush Gupta, David M. Hall, Morteza Mardani, Arash Vahdat, Karthik Kashinath, and Michael S. Pritchard.
+Climate in a Bottle: Towards a Generative Foundation Model for the Kilometer-Scale Global Atmosphere, 2025.
+[29]
+W. Andre Perkins, Anna Kwa, Jeremy McGibbon, Troy Arcomano, Spencer K. Clark, Oliver Watt-Meyer, Christopher S. Bretherton, and Lucas M. Harris.
+HiRO-ACE: Fast and skillful AI emulation and downscaling trained on a 3 km global storm-resolving model, February 2026.
+[30]
+Omer Bar-Tal, Lior Yariv, Yaron Lipman, and Tali Dekel.
+MultiDiffusion: Fusing diffusion paths for controlled image generation.
+arXiv [cs.CV]
+, February 2023.
+[31]
+Boris Bonev, Thorsten Kurth, Christian Hundt, Jaideep Pathak, Maximilian Baust, Karthik Kashinath, and Anima Anandkumar.
+Spherical Fourier Neural Operators: Learning Stable Dynamics on the Sphere, June 2023.
+[32]
+Ryan Keisler.
+Forecasting Global Weather with Graph Neural Networks, February 2022.
+[33]
+Joseph Mouallem, Lucas Harris, and Xi Chen.
+Implementation of the Novel Duo-Grid in GFDL’s FV3 Dynamical Core.
+Journal of Advances in Modeling Earth Systems
+, 15(12):e2023MS003712, 2023.
+ISSN 1942-2466.
+doi:
+10.1029/2023MS003712
+.
+[34]
+William Peebles and Saining Xie.
+Scalable Diffusion Models with Transformers, March 2023.
+[35]
+Ali Hassani, Steven Walton, Jiachen Li, Shen Li, and Humphrey Shi.
+Neighborhood Attention Transformer, May 2023.
+[36]
+Ali Hassani, Fengzhe Zhou, Aditya Kane, Jiannan Huang, Chieh-Yun Chen, Min Shi, Steven Walton, Markus Hoehnerbach, Vijay Thakkar, Michael Isaev, Qinsheng Zhang, Bing Xu, Haicheng Wu, Wen-mei Hwu, Ming-Yu Liu, and Humphrey Shi.
+Generalized Neighborhood Attention: Multi-dimensional Sparse Attention at the Speed of Light, April 2025.
+[37]
+Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford, Diego de Las Casas, Lisa Anne Hendricks, Johannes Welbl, Aidan Clark, Tom Hennigan, Eric Noland, Katie Millican, George van den Driessche, Bogdan Damoc, Aurelia Guy, Simon Osindero, Karen Simonyan, Erich Elsen, Jack W. Rae, Oriol Vinyals, and Laurent Sifre.
+Training Compute-Optimal Large Language Models, March 2022.
+[38]
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei.
+Scaling Laws for Neural Language Models, January 2020.
+[39]
+Richard Zhang.
+Making Convolutional Networks Shift-Invariant Again, June 2019.
+[40]
+Yongsheng Yu, Wei Xiong, Weili Nie, Yichen Sheng, Shiqiu Liu, and Jiebo Luo.
+PixelDiT: Pixel Diffusion Transformers for Image Generation, November 2025.
+[41]
+Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, and Yunfeng Liu.
+RoFormer: Enhanced Transformer with Rotary Position Embedding, November 2023.
+[42]
+Byeongho Heo, Song Park, Dongyoon Han, and Sangdoo Yun.
+Rotary Position Embedding for Vision Transformer.
+https://arxiv.org/abs/2403.13298v2, March 2024.
+[43]
+Matthias Karlbauer, Nathaniel Cresswell-Clay, Dale R. Durran, Raul A. Moreno, Thorsten Kurth, Boris Bonev, Noah Brenowitz, and Martin V. Butz.
+Advancing Parsimonious Deep Learning Weather Prediction Using the HEALPix Mesh.
+Journal of Advances in Modeling Earth Systems
+, 16(8):e2023MS004021, 2024.
+ISSN 1942-2466.
+doi:
+10.1029/2023MS004021
+.
+[44]
+Madalina Surcel, Isztar Zawadzki, and M. K. Yau.
+A Study on the Scale Dependence of the Predictability of Precipitation Patterns.
+January 2015.
+doi:
+10.1175/JAS-D-14-0071.1
+.
+[45]
+Nigel M. Roberts and Humphrey W. Lean.
+Scale-Selective Verification of Rainfall Accumulations from High-Resolution Forecasts of Convective Events.
+January 2008.
+doi:
+10.1175/2007MWR2123.1
+.
+[46]
+Tapio Schneider, João Teixeira, Christopher S Bretherton, Florent Brient, Kyle G Pressel, Christoph Schär, and A Pier Siebesma.
+Climate goals and computing the future of clouds.
+Nature Climate Change
+, 7(1):3–5, 2017b.
+[47]
+Hossein Parishani, Michael S. Pritchard, Christopher S. Bretherton, Christopher R. Terai, Matthew C. Wyant, Marat Khairoutdinov, and Balwinder Singh.
+Insensitivity of the Cloud Response to Surface Warming Under Radical Changes to Boundary Layer Turbulence and Cloud Microphysics: Results From the Ultraparameterized CAM.
+Journal of Advances in Modeling Earth Systems
+, 10(12):3139–3158, 2018.
+ISSN 1942-2466.
+doi:
+10.1029/2018MS001409
+.
+[48]
+C. R. Terai, M. S. Pritchard, P. Blossey, and C. S. Bretherton.
+The Impact of Resolving Subkilometer Processes on Aerosol-Cloud Interactions of Low-Level Clouds in Global Model Simulations.
+Journal of Advances in Modeling Earth Systems
+, 12(11):e2020MS002274, 2020.
+ISSN 1942-2466.
+doi:
+10.1029/2020MS002274
+.
+[49]
+Liran Peng, Peter N. Blossey, Walter M. Hannah, Christopher S. Bretherton, Christopher R. Terai, Andrea M. Jenney, and Michael Pritchard.
+Improving Stratocumulus Cloud Amounts in a 200-m Resolution Multi-Scale Modeling Framework Through Tuning of Its Interior Physics.
+Journal of Advances in Modeling Earth Systems
+, 16(3):e2023MS003632, 2024.
+ISSN 1942-2466.
+doi:
+10.1029/2023MS003632
+.
+[50]
+Akio Arakawa.
+The cumulus parameterization problem: Past, present, and future.
+Journal of climate
+, 17(13):2493–2525, 2004.
+[51]
+Masaki Satoh, Hirofumi Tomita, Hisashi Yashiro, Hiroaki Miura, Chihiro Kodama, Tatsuya Seiki, Akira T Noda, Yohei Yamada, Daisuke Goto, Masahiro Sawada, et al.
+The non-hydrostatic icosahedral atmospheric model: Description and development.
+Progress in Earth and Planetary Science
+, 1(1):18, 2014.
+[52]
+Hsi-Yen Ma, Stephen A. Klein, Jiwoo Lee, Min-Seop Ahn, Cheng Tao, and Peter J. Gleckler.
+Superior Daily and Sub-Daily Precipitation Statistics for Intense and Long-Lived Storms in Global Storm-Resolving Models.
+Geophysical Research Letters
+, 49(8):e2021GL096759, April 2022.
+ISSN 0094-8276, 1944-8007.
+doi:
+10.1029/2021GL096759
+.
+[53]
+Cathy Hohenegger, Peter Korn, Leonidas Linardakis, René Redler, Reiner Schnur, Panagiotis Adamidis, Jiawei Bao, Swantje Bastin, Milad Behravesh, Martin Bergemann, et al.
+Icon-sapphire: simulating the components of the earth system and their interactions at kilometer and subkilometer scales.
+Geoscientific Model Development
+, 16(2):779–811, 2023.
+[54]
+Ioan Hadade, Daniel Klocke, Jussi Enkovaara, Tuomas Lunttila, Thomas Rackow, Jan Frederik Engels, Claudia Frauen, René Redler, Jenni Kontkanen, Thomas Jung, Dmitry Sein, Irina Sandu, Balthasar Reuter, Nils Wedi, Sebastian Milinski, Francisco Doblas-Reyes, Miguel Castrillo, Mario Acosta, Sergi Girona, and Pekka Manninen.
+Destination Earth: The Climate Change Adaptation Digital Twin.
+In
+Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis
+, SC ’25, pages 99–110, New York, NY, USA, November 2025. Association for Computing Machinery.
+ISBN 979-8-4007-1466-5.
+doi:
+10.1145/3712285.3771790
+.
+[55]
+Alex Henry, Prudhvi Raj Dachapally, Shubham Pawar, and Yuxuan Chen.
+Query-Key Normalization for Transformers, October 2020.
+[56]
+Zihan Qiu, Zekun Wang, Bo Zheng, Zeyu Huang, Kaiyue Wen, Songlin Yang, Rui Men, Le Yu, Fei Huang, Suozhi Huang, Dayiheng Liu, Jingren Zhou, and Junyang Lin.
+Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free.
+https://arxiv.org/abs/2505.06708v1, May 2025.
+[57]
+Angeline G Pendergrass and Dennis L Hartmann.
+Two modes of change of the distribution of rain.
+Journal of Climate
+, 27(22):8357–8371, 2014.
+[58]
+Gabriel J. Kooperman, Michael S. Pritchard, Melissa A. Burt, Mark D. Branson, and David A. Randall.
+Robust effects of cloud superparameterization on simulated daily rainfall intensity statistics across multiple versions of the Community Earth System Model.
+Journal of Advances in Modeling Earth Systems
+, 8(1):140–165, 2016.
+ISSN 1942-2466.
+doi:
+10.1002/2015MS000574
+.
+[59]
+Priya Goyal, Piotr Dollár, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, and Kaiming He.
+Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour, April 2018.
+[60]
+Sam McCandlish, Jared Kaplan, Dario Amodei, and OpenAI Dota Team.
+An Empirical Model of Large-Batch Training, December 2018.
+Contents
+1
+Introduction
+2
+Related Work
+3
+Proposed Method
+3.1
+Tile-based training and inference
+3.2
+Architecture
+3.3
+Grid-Invariant Position Encoding via Stereographic Projection
+3.4
+Training Objective and Multi-Step Fine-Tuning
+4
+Experiments
+4.1
+Dataset
+4.2
+Scaling transformers for high-entropy data
+4.3
+Physical Realism, Predictability and Statistical Fidelity
+4.4
+Grid invariance
+5
+Conclusion
+6
+Data and Code Availability
+References
+A
+Background: Global Storm-Resolving Models
+B
+Architecture details
+B.1
+STRATA Architecture and Production Hyperparameters
+B.2
+Patch-Size and Model-Size Sweep
+B.3
+Patch De-aliasing
+B.4
+Patch Instability Analysis
+B.5
+Additional Stabilization Details
+C
+Dataset details
+C.1
+STRATA Vertical Grid
+C.2
+Training Data
+D
+Input and Output Variables
+E
+Training details
+F
+Inference
+F.1
+Tile extraction and DUO-style boundary padding
+F.2
+Spectral filter to control large-scale vertical velocity
+F.3
+Negative
+q
+v
+q_{v}
+and precipitation fixer.
+G
+Throughput and Energy Accounting
+H
+Rollout Metrics
+I
+Further rollout diagnostics
+J
+Information Entropy: Details
+K
+Additional sensitivity test
+K.1
+Width versus Depth Scaling
+K.2
+Inference Tile Size
+K.3
+Effective Batch Size and Training Tile Size
+K.4
+Model capacity and rollout stability
+Appendix A
+Background: Global Storm-Resolving Models
+Traditional climate models use approximate representations
+of small-scale processes like thunderstorms and cloud physics
+[
+50
+]
+,
+which are a major source of uncertainty in climate projections.
+Physics-based Global Storm-Resolving Models (GSRMs)
+operate at kilometer-scale resolutions (
+<
+5
+<5
+km)
+to explicitly resolve deep convection and complex orography,
+demonstrating superior fidelity in capturing
+precipitation extremes, diurnal cycles,
+and mesoscale organization compared to coarser models
+[
+51
+,
+3
+,
+52
+,
+53
+]
+.
+However, their staggering computational and energy costs
+fundamentally limit their utility
+for large ensembles needed to optimally calibrate uncertain physics parameterizations and to sample internal variability alongside long-term ocean-coupled climate projections.
+Recent supercomputing initiatives represent the state of the art:
+the nextGEMS project demonstrated the feasibility
+of 30-year coupled simulations
+at 5–10 km resolutions
+[
+4
+]
+,
+while SCREAMv1 achieved 419.5 simulated days per day
+at 3.3 km resolution,
+requiring 8,192 nodes of the Frontier supercomputer
+[
+5
+,
+6
+]
+.
+The EU Destination Earth initiative
+has operationalized coupled multi-decadal digital twins
+on EuroHPC systems,
+achieving 120–230 simulated days per day
+at 5–10 km resolutions
+[
+54
+]
+.
+Despite these milestones,
+the computational demands remain immense,
+requiring dedicated access to the world’s largest supercomputers.
+Appendix B
+Architecture details
+B.1
+STRATA Architecture and Production Hyperparameters
+Figure
+S1
+summarizes the production architecture used for
+the rollout results, and Table
+S1
+lists its main hyperparameters
+and inference cost. The base DiT backbone produces patch-resolution semantic tokens,
+while the de-aliasing decoder refines the output at full horizontal resolution.
+Figure S1:
+Architecture of the STRATA with DiT backbone and PixelDiT-style pixel-space de-aliasing decoder.
+(a)
+The DiT backbone applies alternating 3D neighborhood attention
+(NA3D) and column-wise (CW) attention for transformer blocks with StereoRoPE position
+embeddings, followed by an unpatchify projection.
+(b)
+The pixel de-aliasing pathway re-embeds at full resolution and
+applies NA3D blocks conditioned via adaptive layer normalization (AdaLN)
+on the backbone output, then projects to the output fields.
+(c)
+Each AdaLN block uses bilinear upsampling, depthwise (DW)
+Conv2d with GeLU activation and RMSNorm, and a linear projection.
+d
+base
+d_{\mathrm{base}}
+: backbone embedding dimension;
+d
+pix
+d_{\mathrm{pix}}
+:
+decoder embedding dimension.
+Table S1:
+Architecture hyperparameters and inference cost of STRATA.
+Inference measured on a single H100 80 GB GPU with
+torch.compile
+and
+BF16 mixed precision, batch size 1, tile size 64x64.
+Component
+Hyperparameter
+Value
+DiT Backbone
+Embedding dimension
+1024
+Transformer layers
+24
+Attention heads
+16
+NA3D kernel size
+9
+Horizontal patch size
+4
+Vertical patch size
+1
+De-aliasing Decoder
+Embedding dimension
+128
+Transformer layers
+4
+NA3D kernel size
+9
+Cost
+Total parameters
+331.7 M
+GFLOPs (per tile)
+4,824
+B.2
+Patch-Size and Model-Size Sweep
+Table
+S2
+defines the nine configurations used in the patch-size
+and model-size scaling study in Figure
+3
+. Model names
+encode the FLOP tier (S/M/L) and horizontal patch size. Within each tier, depth
+and width are adjusted so that models have approximately matched forward-pass
+FLOPs while varying tokenization.
+PixelDiT-S (same FLOP tier as DiT-S,
+∼
+1.2
+{\sim}1.2
+TFLOP) and PixelDiT-M (
+same FLOP tier as DiT-M,
+∼
+5
+{\sim}5
+TFLOP) add a standard PixelDiT decoder with
+linear-projection upsampling to the corresponding DiT tier.
+PixelDiT-M shares the same backbone hyperparameters as Table
+S1
+but uses the original PixelDiT decoder with linear-projection upsampling
+(i.e., Figure
+S1
+c replaced by a single linear projection).
+PixelDiT-S uses a smaller backbone: 768 embedding dimension, 14 transformer
+layers, 12 attention heads,
+4
+×
+4
+×
+1
+4\times 4\times 1
+patch size; pixel decoder:
+64 embedding dimension, 2 transformer layers.
+Table S2:
+Model configurations for the scaling sweep.
+Model names encode FLOP tier (S/M/L) and horizontal patch embedding size
+(e.g., DiT-S-ps4 is the smallest FLOP tier with
+4
+×
+4
+4\times 4
+horizontal patch embedding).
+Within each FLOP tier, the number of layers and hidden dimension are adjusted to match
+the target FLOP budget; training hyperparameters are held fixed across all configurations.
+All these nine models use an NA3D kernel size of 3; the PixelDiT and production models later adopted
+kernel size 9 following further exploration (Table
+S1
+).
+Model
+Layers
+Hidden dim
+d
+d
+TFLOPs
+DiT-S-ps1
+14
+192
+1.2
+DiT-S-ps2
+14
+384
+1.2
+DiT-S-ps4
+14
+768
+1.2
+DiT-M-ps1
+14
+384
+4.9
+DiT-M-ps2
+14
+768
+4.9
+DiT-M-ps4
+32
+1024
+5.0
+DiT-L-ps1
+14
+768
+19.5
+DiT-L-ps2
+32
+1024
+19.8
+DiT-L-ps4
+32
+2048
+19.8
+B.3
+Patch De-aliasing
+Patch-size-4 tokenization makes transformer inference substantially cheaper by
+operating on fewer horizontal tokens, but direct decoding can introduce a
+periodic patch-scale mode during rollout. This artifact is easiest to see in
+smooth near-surface fields such as
+T
+2
+​
+m
+T_{2\mathrm{m}}
+. Figure
+S2
+compares model variants at 12 h lead time: direct unpatchifying produces a
+visible
+4
+×
+4
+4\times 4
+checkerboard, while the PixelDiT-style two-stage decoder
+reduces but does not fully remove patch-boundary structure. Our de-aliased
+decoder replaces the original PixelDiT linear upsampling with bilinear
+upsampling followed by a depthwise convolution, substantially reducing the
+artifact while preserving the large-scale temperature structure.
+Figure S2:
+Near-surface temperature (K) at 12 h lead time for 12 different locations
+comparing four model variants.
+DiT-M-ps4
+: patch-size-4 DiT without de-aliasing,
+showing visible checkerboard artifacts at the
+4
+×
+4
+4\times 4
+patch scale.
+PixelDiT-M-ps4 (baseline)
+: PixelDiT without the de-aliasing conditioning,
+where patch-boundary artifacts persist.
+PixelDiT-M-ps4 (dealiased)
+: full STRATA de-aliasing decoder,
+producing spatially smooth fields consistent with the reference, although on a small portion of locations, the patch-scale artifacts are not fully fixed.
+SCREAM
+: high-resolution reference simulation.
+B.4
+Patch Instability Analysis
+For simplicity we can focus on the one dimensional case of a length
+n
+n
+sequence. Let the flattened state vector be given by
+x
+∈
+ℝ
+n
+​
+c
+i
+​
+n
+x\in\mathbb{R}^{nc_{in}}
+where
+c
+i
+​
+n
+c_{in}
+is the channel index. For simplicity, we focus on a simple network consisting of
+L
+​
+x
+=
+D
+​
+E
+​
+x
+Lx=DEx
+representing a linearized transformer model with a residual connection. Let
+ℓ
+\ell
+be the patch-size. The embed operator
+E
+E
+represents patch embedding and can be expressed in matrix form as
+E
+=
+d
+​
+i
+​
+a
+​
+g
+​
+(
+[
+W
+E
+,
+…
+,
+W
+E
+]
+)
+E=diag([W_{E},\ldots,W_{E}])
+where
+W
+E
+∈
+ℝ
+c
+​
+ℓ
+×
+c
+h
+​
+i
+​
+d
+W_{E}\in\mathbb{R}^{c\ell\times c_{hid}}
+.
+c
+h
+​
+i
+​
+d
+c_{hid}
+is the embedding dimension of the architecture. The decoding operation can also be expressed as a block-diagonal matrix
+D
+=
+d
+​
+i
+​
+a
+​
+g
+​
+(
+[
+W
+D
+,
+…
+,
+W
+D
+]
+)
+D=diag([W_{D},\ldots,W_{D}])
+with
+W
+D
+∈
+ℝ
+c
+h
+​
+i
+​
+d
+×
+c
+o
+​
+u
+​
+t
+​
+ℓ
+W_{D}\in\mathbb{R}^{c_{hid}\times c_{out}\ell}
+. Putting this together we see that
+L
+L
+also has a block diagonal form
+L
+=
+d
+​
+i
+​
+a
+​
+g
+​
+(
+[
+W
+L
+,
+…
+,
+W
+L
+]
+)
+L=diag([W_{L},...,W_{L}])
+where
+W
+L
+=
+W
+D
+​
+W
+E
+W_{L}=W_{D}W_{E}
+. This is a linear setting for ease of analysis. Moreover, it does represent an actual mode when there is a skip connection directly around the transformer blocks as in our architecture.
+For any time marching procedure (e.g. weather rollout or diffusion sampling) the typical setup is to roll out the network recursively with dynamics given by
+x
+j
++
+1
+=
+A
+​
+x
+j
+:=
+α
+​
+I
++
+β
+​
+L
+​
+x
+j
+.
+x_{j+1}=Ax_{j}:=\alpha I+\beta Lx_{j}.
+(3)
+where
+α
+\alpha
+and
+β
+\beta
+are scalars or more generally diagonal matrices which repeat every
+c
+o
+​
+u
+​
+t
+​
+l
+c_{out}l
+elements. Setting
+α
+=
+0
+,
+1
+\alpha=0,1
+correspond to state and tendency prediction, respectively. We note that
+A
+A
+is also block diagonal with all the blocks being
+W
+A
+=
+α
+​
+I
++
+β
+​
+W
+D
+​
+W
+E
+W_{A}=\alpha I+\beta W_{D}W_{E}
+.
+It is an elementary fact that when initialized with non-degenerate initial data
+x
+0
+x_{0}
+such an iteration converges as
+x
+j
+→
+λ
+j
+​
+v
+1
+​
+⟨
+x
+0
+,
+v
+⟩
+x_{j}\rightarrow\lambda^{j}v_{1}\langle x_{0},v\rangle
+, where
+v
+v
+is the eigenvector of
+L
+L
+whose eigenvalue
+|
+λ
+|
+=
+ρ
+⁡
+(
+A
+)
+|\lambda|=\rho(A)
+has the largest norm, also known as the spectral radius. This is known as the power-iteration algorithm. The
+stability region
+of the iteration is defined as the subset of
+(
+W
+E
+,
+α
+,
+β
+,
+W
+D
+)
+(W_{E},\alpha,\beta,W_{D})
+where
+ρ
+⁡
+(
+A
+)
+≤
+1
+\rho(A)\leq 1
+.
+For any block diagonal matrix like
+A
+A
+, we can show that
+ρ
+⁡
+(
+A
+)
+=
+ρ
+⁡
+(
+W
+A
+)
+\rho(A)=\rho(W_{A})
+and that corresponding eigenvectors
+v
+v
+have patch-scale structure. To see this, let
+v
+v
+be an eigenvector of
+W
+L
+W_{L}
+with eigenvalue
+λ
+\lambda
+,
+i
+i
+be one of the patches, and
+x
+[
+i
+ℓ
+:
+(
+i
++
+1
+)
+ℓ
+]
+=
+v
+x[i\ell:(i+1)\ell]=v
+(in Python notation) is the vector whose value is
+v
+v
+in patch
+i
+i
+and zero elsewhere. Then, we see that
+x
+x
+is an eigenvector of
+A
+A
+. i.e.
+A
+​
+x
+=
+[
+0
+,
+…
+,
+0
+,
+W
+A
+​
+v
+,
+0
+​
+…
+,
+0
+]
+=
+[
+0
+,
+…
+,
+0
+,
+λ
+​
+v
+,
+0
+​
+…
+,
+0
+]
+=
+λ
+​
+x
+Ax=[0,\ldots,0,W_{A}v,0\ldots,0]=[0,\ldots,0,\lambda v,0\ldots,0]=\lambda x
+. Therefore, the eigenvalues of
+A
+A
+are also eigenvalues of
+W
+A
+W_{A}
+, and in particular the largest one
+ρ
+⁡
+(
+A
+)
+=
+ρ
+⁡
+(
+W
+A
+)
+\rho(A)=\rho(W_{A})
+. Because the same block
+W
+A
+W_{A}
+is repeated in every patch, the leading eigenspace of
+A
+A
+consists of patch-local copies of the dominant eigenvector of
+W
+A
+W_{A}
+. Thus power iteration amplifies the same within-patch pattern independently in each patch, producing a visible patch-scale artifact; the amplitude (and, for complex eigenvalues, phase) in each patch is determined by the projection of the initial state onto that patch’s eigenvector.
+For typical neural network initializations, we see that
+ρ
+⁡
+(
+A
+)
+>
+1
+\rho(A)>1
+which means that a periodic patch-scale artifact will dominate the rollout. By the considerations above the spectral radius of A is
+ρ
+⁡
+(
+A
+)
+=
+max
+m
+⁡
+(
+α
++
+β
+​
+ℜ
+⁡
+λ
+m
+)
+2
++
+(
+β
+​
+ℑ
+⁡
+λ
+m
+)
+2
+\rho(A)=\max_{m}\sqrt{(\alpha+\beta\Re\lambda_{m})^{2}+(\beta\Im\lambda_{m})^{2}}
+(4)
+where
+λ
+m
+\lambda_{m}
+are the eigenvalues of
+W
+D
+​
+W
+E
+W_{D}W_{E}
+.
+This explains why tendency prediction (
+α
+=
+1
+\alpha=1
+) is observed to be less stable than state prediction
+[
+16
+]
+.
+In this case,
+ρ
+⁡
+(
+A
+)
+>
+1
+\rho(A)>1
+if
+W
+D
+​
+W
+E
+W_{D}W_{E}
+has any eigenvectors with a positive real component, something that is almost sure to happen.
+Even state prediction
+α
+=
+0
+\alpha=0
+can be unstable for typical network initializations. With
+α
+=
+0
+\alpha=0
+and
+β
+=
+1
+\beta=1
+the spectral radius
+ρ
+⁡
+(
+A
+)
+=
+ρ
+⁡
+(
+W
+D
+​
+W
+E
+)
+≈
+2
+\rho(A)=\rho(W_{D}W_{E})\approx 2
+when using Kaiming initialization of the weights.
+Like any initial bias this can be trained away given enough data, but this is more efficient for high frequency fields that project strongly onto sub-patch scale variations. To see why, we note that the projection of the input data
+x
+0
+x_{0}
+onto
+v
+v
+can be bounded by
+|
+⟨
+x
+0
+,
+v
+⟩
+|
+≤
+‖
+x
+−
+A
+​
+v
+​
+g
+​
+P
+​
+o
+​
+o
+​
+l
+ℓ
+​
+x
+‖
+|\langle x_{0},v\rangle|\leq||x-AvgPool_{\ell}x||
+, assuming
+x
+0
+x_{0}
+is 0-centered. For smooth fields
+‖
+x
+−
+A
+​
+v
+​
+g
+​
+P
+​
+o
+​
+o
+​
+l
+l
+​
+(
+x
+)
+‖
+≪
+‖
+x
+‖
+||x-AvgPool_{l}(x)||\ll||x||
+since the sub-patch variation only accounts for a small portion of the overall variance of the field. So, the component of single-step network prediction explained by patch artifact
+ρ
+⁡
+(
+A
+)
+​
+⟨
+x
+0
+,
+v
+⟩
+​
+v
+\rho(A)\langle x_{0},v\rangle v
+is small compared to the target magnitude
+S
+​
+t
+​
+d
+​
+[
+x
+]
+Std[x]
+and so is not suppressed quickly during training.
+B.5
+Additional Stabilization Details
+QK normalization and gated attention.
+Training in BF16 precision introduces attention instability: unconstrained query–key dot products can produce
+pre-softmax logits on the order of
+±
+100
+\pm 100
+to
+±
+1000
+\pm 1000
+, causing gradient overflow.
+We address this with QK RMSNorm
+[
+55
+]
+, which applies RMSNorm
+(without learnable scale) to the query and key vectors before their dot product,
+bounding the logit magnitude and enabling stable BF16 training. All attention blocks additionally use gated attention
+[
+56
+]
+,
+which applies a head-specific sigmoid gate to the attention output,
+improving expressiveness and further stabilizing training.
+Appendix C
+Dataset details
+STRATA is trained to emulate the Simple Cloud-Resolving E3SM Atmosphere
+Model (SCREAM)
+[
+3
+]
+. We use
+native SCREAM physics-grid output without regridding. Prognostic 3D fields have
+global shape
+(
+6
+,
+24
+,
+2048
+,
+2048
+)
+(6,24,2048,2048)
+on the cubed-sphere grid; prognostic and
+diagnostic 2D fields have shape
+(
+6
+,
+2048
+,
+2048
+)
+(6,2048,2048)
+; boundary forcing 2D fields share the
+same horizontal shape. Output is saved every 10 minutes.
+C.1
+STRATA Vertical Grid
+SCREAM’s 128-level vertical grid is aggressively subsampled for the emulator.
+We retain 24 levels spanning the troposphere and tropopausal layer
+(approximately
+∼
+100
+{\sim}100
+hPa down to the surface in hybrid sigma-pressure coordinates),
+discarding the stratosphere and above.
+Figure S3:
+Pressure (hPa, in SCREAM’s hybrid sigma-pressure coordinates) of the 24 STRATA vertical levels,
+indexed from the top of the atmosphere (level 1,
+∼
+100
+{\sim}100
+hPa) to the
+surface (level 24,
+∼
+1000
+{\sim}1000
+hPa). Dashed lines mark standard reference
+pressure levels.
+C.2
+Training Data
+We use three SCREAM simulations summarized in Table
+S3
+.
+The
+sdecadal
+simulation is initialized on 1994-10-01 and runs for
+14 days.
+The
+DYAMOND1
+and
+DYAMOND2
+simulations are initialized on
+2016-08-01 and 2020-01-20, respectively, each running for 7 days.
+For all three simulations, the first 24 h are excluded due to model spin-up.
+The subsequent 9 days of sdecadal (1994-10-02 to 1994-10-10) and 4 days each
+of DYAMOND1 (2016-08-02 to 2016-08-05) and DYAMOND2 (2020-01-21 to
+2020-01-24) are used for training.
+The sdecadal simulation has an inconsistency: while the atmospheric initial
+condition is from October 1994, the SSTs were erroneously prescribed from
+October 2020 conditions.
+We acknowledge this as a dataset error.
+Nevertheless, we retain this simulation for training because SCREAM’s
+underlying physics solver is unchanged and operates consistently regardless
+of the IC–SST combination; each time step is physically self-consistent and
+represents a valid atmospheric state evolution produced by the same numerical
+model used for all other simulations.
+Table S3:
+SCREAM simulations used in this study.
+Simulation
+Period
+Training period
+sdecadal
+†
+1994-10-01 – 1994-10-14
+1994-10-02 – 1994-10-10
+DYAMOND1
+2016-08-01 – 2016-08-07
+2016-08-02 – 2016-08-05
+DYAMOND2
+2020-01-20 – 2020-01-26
+2020-01-21 – 2020-01-24
+†
+SSTs erroneously prescribed from October 2020 conditions.
+Evaluation initializations.
+All rollout evaluations use 6 ensemble members initialized from the
+held-out portion of the sdecadal simulation (after the training period
+ends on 2020-10-10), at 12-hourly intervals:
+2020-10-11 12:00, 2020-10-12 00:00, 2020-10-12 12:00,
+2020-10-13 00:00, 2020-10-13 12:00, and 2020-10-14 00:00 UTC.
+Note that dates are reported as 2020 to reflect the prescribed SST
+conditions, though the atmospheric initial conditions are from October 1994.
+Unless otherwise noted, single-run snapshot visualizations use the
+2020-10-13 00:00 UTC initialization.
+Figure S4:
+Correlation coefficient matrices of
+x
+⁡
+(
+t
++
+Δ
+​
+t
+)
+−
+x
+⁡
+(
+t
+)
+x(t+\Delta t)-x(t)
+for SCREAM (left) and ERA5 (right).
+Appendix D
+Input and Output Variables
+The model ingests six 3D prognostic fields (potential temperature, zonal and meridional wind, geopotential height, vertical pressure velocity, and specific humidity) on all 24 vertical levels, plus 2-m temperature and five forcing fields (solar zenith angle, latitude, surface geopotential, topography, and land fraction).
+Most prognostic variables are predicted as tendencies
+Δ
+​
+x
+=
+x
+t
++
+Δ
+​
+t
+−
+x
+t
+\Delta x=x_{t+\Delta t}-x_{t}
+; vertical pressure velocity is predicted as absolute state due to lower variance. Diagnostic outputs include precipitation fields and surface pressure.
+Table S4:
+STRATA input and output variables. “3D” variables have 24 vertical
+levels; “2D” variables are single-level. Prediction mode applies only to
+prognostic variables:
+tendency
+means the model predicts
+Δ
+​
+x
+=
+x
+t
++
+Δ
+​
+t
+−
+x
+t
+\Delta x=x_{t+\Delta t}-x_{t}
+;
+state
+means the model predicts
+x
+t
++
+Δ
+​
+t
+x_{t+\Delta t}
+directly.
+Variable
+Symbol
+Units
+Dims
+Role
+Pred. mode
+Prognostic (input & output)
+Potential temperature
+θ
+\theta
+K
+3D
+Prognostic
+Tendency
+Zonal wind
+U
+U
+m s
+-1
+3D
+Prognostic
+Tendency
+Meridional wind
+V
+V
+m s
+-1
+3D
+Prognostic
+Tendency
+Mid-level geopotential height
+z
+mid
+z_{\mathrm{mid}}
+m
+3D
+Prognostic
+Tendency
+Vertical pressure velocity
+ω
+\omega
+Pa s
+-1
+3D
+Prognostic
+State
+Specific humidity
+q
+v
+q_{v}
+kg kg
+-1
+3D
+Prognostic
+Tendency
+2-m temperature
+T
+2
+​
+m
+T_{2\mathrm{m}}
+K
+2D
+Prognostic
+Tendency
+Forcing (input only)
+Cosine solar zenith angle
+coszr
+–
+2D
+Forcing
+–
+Cosine latitude
+cos
+⁡
+ϕ
+\cos\phi
+–
+2D
+Forcing
+–
+Sine latitude
+sin
+⁡
+ϕ
+\sin\phi
+–
+2D
+Forcing
+–
+Surface geopotential
+ϕ
+s
+\phi_{s}
+m
+2
+s
+-2
+2D
+Forcing
+–
+Sub-grid std. dev. of topography
+sgh30
+m
+2D
+Forcing
+–
+Land fraction
+landfrac
+–
+2D
+Forcing
+–
+Diagnostic (output only)
+Liquid precip. surface mass flux
+prec_liq
+kg m
+-2
+s
+-1
+2D
+Diagnostic
+State
+Ice precip. surface mass flux
+prec_ice
+kg m
+-2
+s
+-1
+2D
+Diagnostic
+State
+Surface pressure
+p
+s
+p_{s}
+Pa
+2D
+Diagnostic
+State
+Appendix E
+Training details
+Tile size.
+All experiments are pre-trained on
+64
+×
+64
+64\times 64
+tiles sampled from all
+six cubed-sphere faces. The production STRATA model is further fine-tuned on
+128
+×
+128
+128\times 128
+tiles (see below).
+Normalization.
+Each input and output channel is normalized independently
+by subtracting its global mean and dividing by its global standard deviation,
+computed over subsampled training data.
+Optimization.
+We use AdamW with
+β
+1
+=
+0.9
+\beta_{1}=0.9
+,
+β
+2
+=
+0.999
+\beta_{2}=0.999
+, weight decay
+10
+−
+5
+10^{-5}
+,
+and Smoothed
+ℓ
+1
+\ell_{1}
+loss (Huber loss with
+δ
+=
+1
+\delta=1
+).
+Training uses a total batch size of 8 or 16
+(1 sample per GPU across 8 or 16 H100 80 GB GPUs)
+with BF16 mixed precision and
+torch.compile
+.
+Learning rate.
+The isoFLOP sweep (Figure
+3
+, Table
+S2
+)
+uses a constant lr
+=
+10
+−
+4
+=10^{-4}
+on 8 H100 GPUs; three configurations
+(DiT-S-ps4, DiT-M-ps4, DiT-L-ps2) receive an additional dampened cosine
+fine-tuning stage with 2 cycles.
+PixelDiT-S (DiT-S backbone with standard PixelDiT decoder) and
+PixelDiT-M (DiT-M backbone) both use dampened cosine LR
+(initial
+5
+×
+10
+−
+4
+5\times 10^{-4}
+, decay factor
+0.3162
+0.3162
+): PixelDiT-S trains for
+2 cycles and 32 M samples; PixelDiT-M for 3 cycles and 18 M samples.
+The production STRATA model shares the pretrained PixelDiT-M architecture weights but
+replaces linear-projection upsampling with bilinear/convolutional upsampling
+(Figure
+S1
+) and is trained in three stages:
+(1) pixel block warm-up with DiT layers frozen, cosine decay from
+5
+×
+10
+−
+4
+5\times 10^{-4}
+, 1 cycle, 6 M samples;
+(2) joint fine-tuning of all layers, cosine decay from
+5
+×
+10
+−
+4
+5\times 10^{-4}
+with decay factor
+0.3162
+0.3162
+, 2 cycles, 12 M samples;
+(3) large-tile fine-tuning on
+128
+×
+128
+128\times 128
+tiles,
+constant lr
+=
+10
+−
+5
+=10^{-5}
+, 1.5 M samples.
+Multi-step fine-tuning.
+After convergence of the one-step model,
+we fine-tune autoregressively to improve multi-step rollout stability.
+For an
+N
+N
+-step fine-tuning pass,
+the model is rolled out for
+N
+−
+1
+N-1
+steps under
+torch.no_grad()
+and a Smoothed
+ℓ
+1
+\ell_{1}
+loss is computed only on the final prediction;
+forcing fields are provided at every rollout step.
+We first fine-tune for 2,000 gradient steps with
+N
+=
+2
+N=2
+,
+then for a further 2,000 steps with
+N
+=
+4
+N=4
+,
+both at a constant learning rate of
+10
+−
+5
+10^{-5}
+.
+Multi-step fine-tuning suppresses ripple-style artifacts
+that accumulate in one-step-trained rollouts.
+Appendix F
+Inference
+F.1
+Tile extraction and DUO-style boundary padding
+SCREAM’s cubed-sphere grid is defined by equiangular meshes
+on each cube face.
+To construct halo cells beyond a face boundary,
+we extend the face’s equiangular mesh on its own plane
+past the boundary—preserving the same angular spacing
+as the interior—and then project these extended planar coordinates
+back onto the sphere.
+The state values at these extended grid points are interpolated
+from the 4 nearest neighbors on the adjacent face,
+weighted by inverse distance.
+The resulting halo is a seamless continuation
+of the face’s own grid pattern.
+Tile stitching
+Tiles are extracted with a stride smaller than the tile size
+so that adjacent tiles share a border region.
+Each tile’s output is weighted by a 2D Kaiser–Bessel-derived window,
+which tapers smoothly to zero at the edges;
+the final value at each grid cell is the weighted average
+of all overlapping tile outputs.
+This blending eliminates tile-boundary discontinuities
+in the stitched global state.
+If the output window function is instead chosen to be a 2D top-hat filter that is 1 in the interior and 0 in the halo region, then the stitching operation reduces to simply a crop.
+Linear operator interpretation
+For implementation, it is helpful to express padding and stitching as sparse linear operators
+P
+P
+and
+S
+S
+, respectively.
+Let
+𝐱
+\mathbf{x}
+be the un-padded input and
+𝐲
+=
+P
+​
+𝐱
+\mathbf{y}=P\mathbf{x}
+be the padded output.
+Concretely, the rows of
+P
+P
+expressed in matrix form have 4 non-zero elements corresponding to the weights of the 4 nearest neighbors.
+The stitching
+S
+S
+is an approximate inverse of
+P
+P
+expressed as
+S
+=
+D
+−
+1
+​
+P
+T
+​
+W
+S=D^{-1}P^{T}W
+(5)
+where
+W
+W
+is diagonal matrix consisting of the weights of the window and
+D
+=
+P
+T
+​
+W
+​
+𝟏
+D=P^{T}W\mathbf{1}
+is the sum of the incoming weights;
+𝟏
+=
+[
+1
+,
+…
+,
+1
+]
+T
+\mathbf{1}=[1,\ldots,1]^{T}
+.
+Interpreted in terms of message passing,
+P
+P
+sends a unique message from each unpadded grid point and
+S
+S
+takes a weighted average of the return communications.
+Eq.
+5
+is helpful for implementing the stitching operation because
+P
+T
+​
+(
+W
+​
+𝐲
+)
+P^{T}(W\mathbf{y})
+is just the vector-Jacobian product of the forward operator
+P
+P
+applied on a
+W
+​
+𝐲
+W\mathbf{y}
+, and can in principle be computed using the automatic differentiation feature of modern deep learning frameworks.
+Distributed Implementation
+The tile based inference approach also enables scalability to a distributed environment. Each rank processes a subset of tiles and model compute is independent across tiles. However, the DUO-style boundary padding outlined above needs to be consistent across processes.
+We can do this by performing a communication so every process has all the data needed for the DUO-style halo cell computation to populate the halos for all local tiles.
+This communication needs to be performed once per time-step to keep tiles in sync and ensure seamless continuation of fields across tile boundaries.
+In a simple implementation, the padding operator
+P
+​
+𝐱
+P\mathbf{x}
+can be applied using an all-gather followed by interpolation to the process-owned tiles using a sliced version of
+P
+P
+.
+In block matrix form, this is given by
+P
+=
+d
+​
+i
+​
+a
+​
+g
+​
+(
+[
+P
+1
+,
+…
+,
+P
+n
+]
+)
+​
+G
+,
+P=diag([P_{1},\ldots,P_{n}])G,
+(6)
+where
+P
+j
+P_{j}
+is the slice of
+P
+P
+owned by process
+j
+j
+and
+G
+G
+is an all-gather.
+This is simple, but most of the data communicated is unused, so it is more efficient to communicate only the tile boundary data needed for the 4 nearest neighbor interpolation. This reduces the all-gather to a local peer-to-peer communication pattern leveraging locality of the halo cell neighbor interpolation.
+To implement the stitching operator
+S
+S
+, the all-gather framing is helpful in light of Eq.
+5
+.
+The only expression in that equation requiring communication is
+P
+T
+P^{T}
+.
+In this form,
+P
+T
+=
+G
+T
+​
+d
+​
+i
+​
+a
+​
+g
+​
+(
+[
+P
+1
+T
+,
+…
+,
+P
+n
+T
+]
+)
+P^{T}=G^{T}diag([P_{1}^{T},\ldots,P_{n}^{T}])
+Since the second part of this expression is block-diagonal it can be applied locally on each process independently. Then, the transpose of the all-gather
+G
+T
+​
+𝐯
+G^{T}\mathbf{v}
+can be implemented as a distributed reduce-scatter operation.
+Scaling
+Figure
+S5
+shows the scalability of this distributed inference through a strong scaling test from 8 to 512 GPUs using a 2D top-hat window function. Both the all-gather and neighbor peer-to-peer algorithms have very good scalability with the all-gather algorithm yielding 82.8% strong scaling efficiency at 512 GPUs and the neighbor peer-to-peer algorithm yields 98.4% efficiency at the same scale.
+Figure S5:
+Scalability of tile based distributed inference.
+Left: Per step wall-clock time. Right: Speedup over 8 GPU baseline in solid lines on the left y-axis and strong scaling efficiency in dashed lines on the right y-axis. Two DUO-style boundary padding implementations are shown: allgather (blue) and neighbor peer-to-peer (orange).
+F.2
+Spectral filter to control large-scale vertical velocity
+Tile-based training is blind to global-mean constraints:
+because tiles are processed independently,
+the model has no mechanism to enforce that the global-mean vertical
+pressure velocity
+ω
+\omega
+remains near zero (as required by mass continuity),
+causing a slow drift in the leading spherical harmonic modes of
+ω
+\omega
+over long rollouts.
+After each rollout step we remove the drift by computing the real
+spherical harmonic transform of
+ω
+\omega
+at each vertical level,
+zeroing out the leading three modes (
+ℓ
+=
+0
+,
+1
+,
+2
+\ell=0,1,2
+),
+and inverting the transform.
+Figure S6:
+Effect of the large-scale
+ω
+\omega
+filter on global-mean precipitation.
+Global-mean liquid precipitation rate over a 24-hour rollout for
+SCREAM (reference, solid blue), STRATA with the
+ω
+\omega
+filter
+(dashed orange), and STRATA without the filter (dotted green).
+Without the filter, unconstrained drift in the leading spherical-harmonic
+modes of
+ω
+\omega
+causes global-mean precipitation to collapse to
+∼
+1.0
+{\sim}1.0
+mm d
+-1
+by 24 h—roughly half the reference value.
+The filter substantially reduces this dry drift while leaving the
+fine-scale precipitation structure unchanged.
+F.3
+Negative
+q
+v
+q_{v}
+and precipitation fixer.
+Without explicit constraints the model can predict physically inadmissible
+negative specific humidity
+q
+v
+q_{v}
+or precipitation.
+We apply differentiable constraints in the forward pass,
+active during both fine-tuning and rollout,
+so the model learns outputs consistent with the constraints.
+For
+q
+v
+q_{v}
+, let
+r
+=
+Δ
+​
+q
+v
+/
+max
+⁡
+(
+q
+v
+t
+,
+ε
+)
+r=\Delta q_{v}/\max(q_{v}^{t},\,\varepsilon)
+with
+ε
+=
+10
+−
+14
+\varepsilon=10^{-14}
+kg kg
+-1
+.
+We constrain
+r
+r
+via
+r
+~
+=
+softplus
+⁡
+(
+r
++
+1
+,
+β
+=
+10
+)
+−
+1
+\tilde{r}=\mathrm{softplus}(r+1;\,\beta=10)-1
+and set
+q
+v
+t
++
+1
+=
+(
+1
++
+r
+~
+)
+​
+max
+⁡
+(
+q
+v
+t
+,
+ε
+)
+≥
+0
+q_{v}^{t+1}=(1+\tilde{r})\,\max(q_{v}^{t},\,\varepsilon)\geq 0
+.
+During rollout only, an additional hard floor of
+10
+−
+15
+10^{-15}
+kg kg
+-1
+eliminates any residual numerical negatives.
+For surface precipitation, the predicted value is denormalized,
+passed through ReLU, and renormalized.
+Appendix G
+Throughput and Energy Accounting
+We report inference throughput in simulated days per wall-clock day (SDPD) and
+energy efficiency in simulated days per megawatt-hour
+(
+SD
+​
+MWh
+−
+1
+\mathrm{SD\,MWh^{-1}}
+). For STRATA, one simulated day contains
+N
+step
+=
+24
+​
+h
+/
+10
+​
+min
+=
+144
+N_{\mathrm{step}}=24\,\mathrm{h}/10\,\mathrm{min}=144
+autoregressive steps.
+If
+t
+step
+t_{\mathrm{step}}
+is the measured wall-clock latency of one global
+autoregressive step, then
+SDPD
+=
+86400
+N
+step
+​
+t
+step
+.
+\mathrm{SDPD}=\frac{86400}{N_{\mathrm{step}}t_{\mathrm{step}}}.
+(7)
+Given an average power draw
+P
+P
+in MW for the hardware included in the
+accounting boundary, the corresponding energy-normalized throughput is
+SD
+​
+MWh
+−
+1
+=
+SDPD
+24
+​
+P
+.
+\mathrm{SD\,MWh^{-1}}=\frac{\mathrm{SDPD}}{24P}.
+(8)
+Equivalently, if
+t
+SD
+=
+N
+step
+​
+t
+step
+t_{\mathrm{SD}}=N_{\mathrm{step}}t_{\mathrm{step}}
+is the
+wall-clock seconds required for one simulated day, then
+SD
+​
+MWh
+−
+1
+=
+1
+/
+(
+P
+​
+t
+SD
+/
+3600
+)
+\mathrm{SD\,MWh^{-1}}=1/(Pt_{\mathrm{SD}}/3600)
+.
+For SCREAM, we use the same conversion from its reported SDPD and average
+system power, and compute speedups as the ratio of
+SD
+​
+MWh
+−
+1
+\mathrm{SD\,MWh^{-1}}
+between STRATA and SCREAM. Under the assumptions
+in Table
+S5
+, the production STRATA configuration achieves
+48.1
+​
+SD
+​
+MWh
+−
+1
+48.1\,\mathrm{SD\,MWh^{-1}}
+, a
+>
+50
+×
+{>}50\times
+energy-efficiency
+improvement over the SCREAM Frontier run
+(
+0.78
+​
+SD
+​
+MWh
+−
+1
+0.78\,\mathrm{SD\,MWh^{-1}}
+).
+Using an emissions factor of
+388
+​
+kg
+​
+CO
+2
+​
+MWh
+−
+1
+388\,\mathrm{kg\,CO_{2}\,MWh^{-1}}
+(
+https://www.eia.gov/tools/faqs/faq.php?id=74&t=11
+), this
+corresponds to
+131.1
+131.1
+simulated days per ton of CO
+2
+vs.
+2.01
+2.01
+for SCREAM.
+Table S5:
+Throughput and energy accounting assumptions for the SCREAM and
+production STRATA comparison.
+SCREAM SDPD from
+Taylor et al. [5]
+;
+Frontier system power (24,607 kW) from the TOP500 November 2025
+list (
+https://top500.org/lists/top500/2025/11/
+).
+Both systems are assumed to draw their full rated power; in practice
+utilization is lower, so the reported SD MWh
+-1
+values are
+conservative lower bounds.
+System
+Hardware
+Power (kW)
+SDPD
+SD
+​
+MWh
+−
+1
+\mathrm{SD\,MWh^{-1}}
+SD/tCO
+2
+STRATA
+2 DGX H100
+20.4
+23.6
+48.1
+131.1
+STRATA
+64 DGX H100
+652.8
+741
+47.3
+128.9
+SCREAM
+Frontier
+24607
+460
+0.78
+2.12
+Appendix H
+Rollout Metrics
+Precipitation amount distribution.
+We follow the amount-distribution diagnostic of
+Pendergrass and Hartmann [57]
+as described by
+Kooperman et al. [58]
+, adapted from daily accumulated
+rainfall to instantaneous precipitation rates.
+For a sample set
+S
+=
+{
+(
+k
+,
+t
+)
+}
+S=\{(k,t)\}
+over grid cells
+k
+k
+and frames
+t
+t
+, let
+a
+k
+a_{k}
+be cell area and
+r
+k
+​
+t
+r_{kt}
+be precipitation rate in mm day
+-1
+.
+For logarithmic rain-rate bin
+B
+i
+=
+{
+(
+k
+,
+t
+)
+:
+R
+i
+ℓ
+≤
+r
+k
+​
+t
+<
+R
+i
+r
+}
+B_{i}=\{(k,t):R_{i}^{\ell}\leq r_{kt}<R_{i}^{r}\}
+with
+Δ
+​
+ln
+⁡
+R
+=
+ln
+⁡
+(
+R
+i
+r
+/
+R
+i
+ℓ
+)
+\Delta\ln R=\ln(R_{i}^{r}/R_{i}^{\ell})
+, we compute
+p
+i
+=
+1
+N
+T
+​
+Δ
+​
+ln
+⁡
+R
+​
+∑
+(
+k
+,
+t
+)
+∈
+B
+i
+a
+k
+​
+r
+k
+​
+t
+,
+N
+T
+=
+∑
+(
+k
+,
+t
+)
+∈
+S
+a
+k
+.
+p_{i}=\frac{1}{N_{T}\,\Delta\ln R}\sum_{(k,t)\in B_{i}}a_{k}r_{kt},\qquad N_{T}=\sum_{(k,t)\in S}a_{k}.
+(9)
+Dry samples are included in
+N
+T
+N_{T}
+but not assigned to any rainy bin.
+Thus
+∑
+i
+p
+i
+​
+Δ
+​
+ln
+⁡
+R
+\sum_{i}p_{i}\Delta\ln R
+equals the area-weighted global-mean
+precipitation rate contributed by the plotted rain-rate range.
+Fractions Skill Score (FSS).
+We follow standard practice to reward realistic spatial structure of organized rainfall systems without
+penalizing misplacement of individual convective cells by using the Fractions Skill Score
+[
+45
+]
+.
+Let
+r
+^
+​
+(
+𝐱
+,
+t
+)
+\hat{r}(\mathbf{x},t)
+and
+r
+⁡
+(
+𝐱
+,
+t
+)
+r(\mathbf{x},t)
+denote the model and
+SCREAM reference precipitation rates (mm day
+-1
+) at grid cell
+𝐱
+\mathbf{x}
+and lead time
+t
+t
+.
+For a threshold
+T
+T
+(mm day
+-1
+), we form binary exceedance
+indicators
+I
+r
+^
+(
+𝐱
+)
+=
+𝟏
+[
+r
+^
+(
+𝐱
+)
+>
+T
+]
+,
+I
+r
+(
+𝐱
+)
+=
+𝟏
+[
+r
+(
+𝐱
+)
+>
+T
+]
+.
+I_{\hat{r}}(\mathbf{x})=\mathbf{1}[\hat{r}(\mathbf{x})>T],\qquad I_{r}(\mathbf{x})=\mathbf{1}[r(\mathbf{x})>T].
+(10)
+Each indicator field is then averaged over a square
+n
+×
+n
+n\times n
+window
+of neighboring grid cells to obtain local exceedance fractions:
+F
+r
+^
+​
+(
+𝐱
+)
+=
+1
+n
+2
+​
+∑
+𝐱
+′
+∈
+𝒩
+n
+​
+(
+𝐱
+)
+I
+r
+^
+​
+(
+𝐱
+′
+)
+,
+F
+r
+​
+(
+𝐱
+)
+=
+1
+n
+2
+​
+∑
+𝐱
+′
+∈
+𝒩
+n
+​
+(
+𝐱
+)
+I
+r
+​
+(
+𝐱
+′
+)
+,
+F_{\hat{r}}(\mathbf{x})=\frac{1}{n^{2}}\sum_{\mathbf{x}^{\prime}\in\mathcal{N}_{n}(\mathbf{x})}I_{\hat{r}}(\mathbf{x}^{\prime}),\qquad F_{r}(\mathbf{x})=\frac{1}{n^{2}}\sum_{\mathbf{x}^{\prime}\in\mathcal{N}_{n}(\mathbf{x})}I_{r}(\mathbf{x}^{\prime}),
+(11)
+where
+𝒩
+n
+​
+(
+𝐱
+)
+\mathcal{N}_{n}(\mathbf{x})
+is the
+n
+×
+n
+n\times n
+neighborhood
+centered on
+𝐱
+\mathbf{x}
+.
+The FSS is
+FSS
+=
+1
+−
+∑
+𝐱
+(
+F
+r
+^
+​
+(
+𝐱
+)
+−
+F
+r
+​
+(
+𝐱
+)
+)
+2
+∑
+𝐱
+(
+F
+r
+^
+​
+(
+𝐱
+)
+2
++
+F
+r
+​
+(
+𝐱
+)
+2
+)
+,
+\mathrm{FSS}=1-\frac{\displaystyle\sum_{\mathbf{x}}(F_{\hat{r}}(\mathbf{x})-F_{r}(\mathbf{x}))^{2}}{\displaystyle\sum_{\mathbf{x}}(F_{\hat{r}}(\mathbf{x})^{2}+F_{r}(\mathbf{x})^{2})},
+(12)
+ranging from 0 (no overlap) to 1 (perfect agreement).
+The pooling is applied independently per cubed-sphere face with reflect
+padding (edge values mirrored outward) and does not cross face boundaries.
+To obtain a single global score, numerator and denominator are accumulated
+across all six faces before forming the ratio.
+We report FSS against a persistence baseline (SCREAM truth held constant
+at the initial time
+t
+0
+t_{0}
+), with the same binarization, pooling, and
+aggregation applied to both.
+Figure S7:
+FSS sensitivity to precipitation threshold and neighborhood size.
+Each panel shows Fractions Skill Score (FSS) versus lead time for STRATA
+(blue) and persistence (red), with shading indicating the spread across
+initializations. Rows use fixed precipitation thresholds of 120, 480, and
+1200 mm day
+-1
+, corresponding to increasingly intense rainfall.
+Columns use pooling neighborhoods of
+2
+×
+2
+2\times 2
+,
+5
+×
+5
+5\times 5
+, and
+10
+×
+10
+10\times 10
+native grid cells (
+≈
+{\approx}
+10, 24, and 49 km). The dashed line marks
+FSS = 0.5, a common scale-dependent reference for useful neighborhood
+agreement. As expected, FSS decreases faster for smaller neighborhoods and
+higher precipitation thresholds.
+Appendix I
+Further rollout diagnostics
+Figure S8:
+Time series of global mean liquid precipitation rate for SCREAM ground truth, shown for multiple independent STRATA simulations initialized at separate times during the held-out test set. All STRATA forecasts share a common pathology of an initial decline and then rebound of global mean precipitation.
+Figure S9:
+Global tropical precipitation propagation over 24-hour rollout.
+Top: geographic reference showing the 5
+∘
+S–5
+∘
+N averaging band
+(yellow); the red box marks the Indo-Pacific region shown in
+Figure
+4
+a.
+Middle and bottom: Hovmöller diagrams (longitude vs. lead time) of
+liquid precipitation averaged over 5
+∘
+S–5
+∘
+N for SCREAM
+(reference) and STRATA.
+Slanted features indicate propagating precipitation systems; their slope
+encodes propagation speed and direction.
+STRATA reproduces the propagation patterns of tropical convection
+throughout the 24-hour rollout.
+Figure S10:
+Spherical harmonic power spectra at lead time 12 h comparing STRATA (orange) and SCREAM (yellow)
+for surface precipitation, vertical velocity
+ω
+\omega
+at 850 hPa, specific humidity
+q
+v
+q_{v}
+at 850 hPa, zonal and meridional wind at 850 hPa.
+STRATA reproduces the SCREAM spectrum closely across all variables and scales.
+The suppressed power at the three lowest spherical harmonic degrees in
+ω
+\omega
+reflects the
+large-scale spectrum filter applied after each rollout step (Appendix
+F
+).
+Figure S11:
+Error power spectra at 2-hour and 12-hour lead time.
+Spherical-harmonic power spectra of STRATA forecast error
+(red; prediction minus SCREAM reference) and persistence error
+(orange; initial SCREAM state minus reference) for precipitation,
+850-hPa vertical pressure velocity
+ω
+\omega
+, 850-hPa specific humidity
+q
+v
+q_{v}
+,
+850-hPa zonal wind
+U
+U
+, 850-hPa meridional wind
+V
+V
+, and 2-m temperature
+T
+2
+​
+m
+T_{2\mathrm{m}}
+. The top figure shows 2-hour lead time and the bottom figure
+shows 12-hour lead time. At short lead time, STRATA errors are concentrated
+mainly at smaller scales; by 12 hours, error power increases at larger scales
+across several variables.
+Figure S12:
+Global snapshot and error maps at 12-hour lead time. Rows show
+850-hPa vertical pressure velocity
+ω
+\omega
+, specific humidity
+q
+v
+q_{v}
+, zonal wind
+U
+U
+, meridional wind
+V
+V
+, and potential temperature
+θ
+\theta
+. Columns show the
+STRATA rollout, the corresponding SCREAM reference, the pointwise STRATA–SCREAM
+difference for the shown initialization, and the STRATA–SCREAM difference
+averaged across six rollout initializations.
+Figure S13:
+Same as Figure
+S12
+, but at 24-hour lead time.
+Appendix J
+Information Entropy: Details
+Section
+4.2
+argued that km-scale data is higher entropy and therefore requires more compute for a given level of accuracy than coarser resolution modeling.
+To support this interpretation, we compute the differential entropy of spatial patches of size
+p
+p
+of
+d
+​
+x
+∈
+ℝ
+c
+​
+p
+2
+dx\in\mathbb{R}^{cp^{2}}
+assuming a Gaussian distribution
+d
+​
+x
+∼
+𝒩
+⁡
+(
+0
+,
+Σ
+)
+dx\sim\mathcal{N}(0,\Sigma)
+. The number of output dimensions is
+d
+d
+. To make this comparable across dataset with different units we unit normalize this so that
+Σ
+i
+​
+i
+=
+1
+\Sigma_{ii}=1
+. Given the large spatial resolution, we estimate this from a single time
+t
+t
+for convenience. The entropy in bits/dim
+c
+=
+c
+​
+p
+2
+c=cp^{2}
+is given by
+H
+/
+d
+=
+ln
+⁡
+(
+2
+)
+2
+​
+d
+​
+(
+d
++
+d
+​
+ln
+⁡
+(
+2
+​
+π
+)
++
+ln
+⁡
+|
+Σ
+|
+)
+H/d=\frac{\ln(2)}{2d}(d+d\ln(2\pi)+\ln|\Sigma|)
+. Table
+S6
+shows this quantity for several patch sizes. It shows that the SCREAM target carries significantly more information per dimension especially when more spatial context is included (larger
+p
+p
+). For an 8x8 patch, the entropy of SCREAM is 6 bits/dim larger than ERA5 and substantially closer to white noise (2 bits/dim; the maximum entropy distribution)—than ERA5.
+We suspect that this additional entropy increases the computational demand (harmful) but at the same time the information density is helpful for training models on a limited number of samples.
+Qualitatively, this can be visualized comparing the covariance structure of the state-vector difference
+d
+​
+x
+=
+x
+⁡
+(
+t
++
+Δ
+​
+t
+)
+−
+x
+⁡
+(
+t
+)
+dx=x(t+\Delta t)-x(t)
+for SCREAM and ERA5 in a single atmospheric column. Figure
+S4
+shows that ERA5 targets have much stronger correlation across vertical levels and variables.
+Dataset
+1x1
+2x2
+4x4
+8x8
+SCREAM
+1.384
+1.384
+0.573
+0.573
+−
+0.065
+-0.065
+−
+0.563
+-0.563
+ERA5
+0.694
+0.694
+−
+2.370
+-2.370
+−
+4.808
+-4.808
+−
+6.305
+-6.305
+Channels: SCREAM
+148
+148
+, ERA5
+72
+72
+.
+Table S6:
+Differential entropy (bits/dim) of spatial patches assuming a Gaussian distribution. The entropy of white noise
+Σ
+=
+I
+\Sigma=I
+is
+1
+2
+​
+log
+2
+⁡
+(
+2
+​
+e
+)
+≈
+2
+.
+\frac{1}{2}\log_{2}(2e)\approx 2.
+For ERA5 this analysis uses the same 72 output channels as FCN3
+[
+16
+]
+.
+Appendix K
+Additional sensitivity test
+K.1
+Width versus Depth Scaling
+Given a fixed compute budget (FLOPs), should one prefer a wider model (larger embedding dimension) or a deeper one (more layers)?
+Yu et al. [18]
+find that global weather forecasting models consistently favor increased width over depth,
+a trend that differs from behavior observed in language models.
+We examine whether this holds across the full range of model sizes relevant to STRATA.
+Figure
+S14
+shows test loss as a function of model scale under iso-FLOP width and depth sweeps.
+At smaller model sizes, scaling width outperforms scaling depth at matched FLOPs, consistent with
+Yu et al. [18]
+.
+We interpret this as the embedding dimension being a bottleneck at small scale:
+a narrow model lacks sufficient channel capacity to represent the diverse atmospheric variables and their interactions,
+so increasing width provides a larger per-token information budget that depth alone cannot compensate.
+At larger model sizes, however, this advantage reverses: deeper models show a slight edge over wider ones at matched FLOPs.
+This large-FLOP regime is not covered by
+Yu et al. [18]
+, and our results suggest that once the embedding
+dimension is wide enough to carry the necessary information, additional depth provides more expressive power per FLOP.
+These findings informed our choice of the STRATA architecture, which uses a relatively wide semantic encoder paired with a moderate number of layers.
+Figure S14:
+Width vs. depth scaling at fixed FLOPs.
+Test loss as a function of model size for iso-FLOP sweeps that increase width (embedding dimension)
+or depth (number of layers).
+At small model sizes, wider models outperform deeper ones, consistent with
+Yu et al. [18]
+.
+At larger model sizes, deeper models show a marginal advantage, a regime not explored in prior work.
+K.2
+Inference Tile Size
+Using a large tile size at inference is advantageous because it means there is less computation wasted on the halo regions.
+However, since the model was fine-tuned with a differing tile size of 128, there is some risk of exposure bias when running it with larger tile sizes only for inference. Figure
+S15
+shows that using a larger padded size “tile size + 2 halo” during inference results in a marginally worse dry bias especially in the tropics. However, the difference is small compared to the overall bias versus the ground truth.
+Figure S15:
+Precipitation bias at 12 hour lead time for various tile and halo sizes during inference.
+K.3
+Effective Batch Size and Training Tile Size
+Larger training tiles increase the effective batch size, since each tile covers more samples of independent storms.
+However, large-batch training is known to exhibit diminishing returns: beyond a critical batch size,
+increasing the batch further yields no improvement in convergence per unit of data processed,
+and may even degrade final loss
+[
+59
+,
+60
+]
+.
+This raises the question of whether km-scale atmospheric emulation benefits from the very large batch sizes
+that large tiles would provide.
+To answer this, we perform a batch size sweep on the SCREAM dataset, scaling the learning rate linearly
+with batch size following the linear scaling rule
+[
+59
+]
+. All samples are
+64
+×
+64
+64\times 64
+tiles.
+As shown in Figure
+S16
+, training with batch sizes up to 32 is stable, and smaller batch sizes achieve marginally lower test loss when evaluated
+at equal total number of training samples—consistent with the large-batch generalization gap reported
+in prior work.
+Increasing the batch size beyond this regime leads to training instability: the linear learning rate
+scaling rule breaks down, and loss diverges or fails to converge, indicating that the gradient noise
+at smaller batch sizes plays a beneficial regularization role that cannot simply be compensated by a
+proportionally larger learning rate.
+Together, these results suggest that training on moderate tile sizes (
+64
+×
+64
+64\times 64
+or
+128
+×
+128
+128\times 128
+)
+is not only computationally efficient but also well-matched to the effective batch size regime where
+optimization is most stable.
+As mentioned in the main text, this is further supported by the physics of the problem: at a 10-minute timestep, the maximum range
+of information propagation is bounded by the acoustic wave speed (
+∼
+340
+{\sim}340
+m/s), limiting the
+physical context required within a single tile.
+Large tiles therefore do not provide proportionally more useful physical context per training step,
+reinforcing the case for compact, compute-efficient tiles.
+Figure S16:
+Batch size ablation.
+Test loss as a function of batch size under linear learning rate scaling. Each
+sample is a
+64
+×
+64
+64\times 64
+tile.
+Training is stable and achieves the lowest loss at batch sizes up to 32.
+Smaller batch sizes show a marginal benefit in per-sample efficiency.
+Beyond batch size 32, training becomes unstable as the linear scaling rule breaks down,
+indicating a critical batch size beyond which further increases are counterproductive.
+K.4
+Model capacity and rollout stability
+Figure
+S17
+illustrates a characteristic failure mode
+of the smaller FLOP-size model (
+∼
+1.2
+{\sim}1.2
+TFLOP) at 24-hour lead time.
+Behind the dominant speckle of km-scale dynamics, the vertical velocity
+ω
+\omega
+field shows large, coherent planetary-scale
+anomalies—broad regions of anomalous ascent and
+subsidence absent in both the SCREAM reference and the larger model rollouts.
+These patterns are inconsistent with mass continuity, which requires
+ω
+\omega
+averaged over thousand-kilometer scales to remain near zero,
+suggesting the smaller model lacks sufficient capacity to maintain
+physically balanced large-scale circulation.
+The specific humidity field shows a corresponding degradation: the
+unrealistic large-scale descent drives spurious drying that further
+degrades forecast quality.
+Empirically, larger FLOP-size models are less prone to such artifacts at
+24-hour lead times; however, a more principled constraint on large-scale
+ω
+\omega
+is likely needed to ensure stability at longer horizons.
+Figure S17:
+Rollout skill on smaller vs larger models.
+Snapshots of several fields (vertical velocity, specific humidity) for small (1.2 TFLOP, left) and middle (4.9 TFLOP, middle) FLOP-size models and reference SCREAM ground truth (right) at 24-hour rollout lead time. The smaller model shows more pronounced artifacts with larger humidity RMSE. RMSE values of vertical velocity and specific humidity are reported on the forecast panels are evaluated on 4
+×
+\times
+coarsened fields for the shown cube face to focus more on large-scale error instead of pixel-wise agreement.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+(opens in new tab)

@@ -1,10 +1,9 @@
-<!doctype html>
-<html lang="zh-CN" data-theme="dark"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<!DOCTYPE html>
+
+<html data-theme="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>HyFF · 中文研究Poster</title>
-
-
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0 }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
@@ -364,172 +363,164 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 }
 </style></head>
 <body>
-
 <div class="poster">
-
 <div style="padding: 0 48px; padding-top: 12px;">
 <div class="backlinks">
 <span style="color: #78716c;">源文档：</span>
 <a href="obsidian://open?vault=BrainHao&amp;file=Topics/13_base_model/Tencent_Hunyuan/Variants/261102_HyFF/HyFF" style="text-decoration: none;">BrainHao · HyFF研读</a>
-  &nbsp;·&nbsp;
-  <a href="https://hunyuan.tencent.com/research/hyra2?langVersion=zh" style="text-decoration: none;" target="_blank">📝 Tech Blog · 2026-11-02</a>
+   · 
+  <a href="https://github.com/Tencent-Hunyuan/hyra-results/tree/main/AI4Science/hyff" style="text-decoration: none;" target="_blank">官方README</a>
 </div>
 </div>
-
 <div class="header">
 <div class="header-left">
-<span class="venue-pill">Tencent Hunyuan · 科学模型支线 · 2026-11-02</span>
-<div class="zh-title">原子级基础模型：五种尺寸共族，披露与开源分开</div>
+<span class="venue-pill">Tencent Hunyuan · 11/2 22:30 北京时间发布</span>
+<div class="zh-title">五尺寸保守原子势：公开状态、质量与MD速度各自核对</div>
 <h1>HyFF <span>Scientific Model</span></h1>
-<div class="authors">依据腾讯官方博客、公开原始材料与原图 · 研读2026-11-02 · 未做本地复测</div>
+<div class="authors">官方README/性能协议 · PDF报告仅链接 · 未独立复测</div>
 </div>
 <div class="header-right">
-<div class="score-box"><div class="num">5</div><div class="sub">规模 · 同一family</div></div>
-<div class="score-box"><div class="num">2.3M–1.2B</div><div class="sub">参数范围</div></div>
-<div class="score-box"><div class="num">83</div><div class="sub">元素覆盖 · 自报</div></div>
-<div class="score-box"><div class="num">11/02</div><div class="sub">官方模型披露</div></div>
+<div class="score-box"><div class="num">5</div><div class="sub">尺寸 · 同一family</div></div>
+<div class="score-box"><div class="num">83</div><div class="sub">元素 · 含charge/spin</div></div>
+<div class="score-box"><div class="num">2.31M–1.2B</div><div class="sub">参数范围</div></div>
+<div class="score-box"><div class="num">11/02</div><div class="sub">22:30北京时间发布</div></div>
 </div>
 </div>
-
 <div class="main-grid">
-
 <div class="col">
 <div class="sec-head c-amber"><div class="nc">1</div><h2>定位与证据边界</h2></div>
-<p class="body">原子种类与坐标输入，预测体系能量与每原子受力，为分子动力学提供力场。<b>HyFF是科学模型支线</b>；五尺寸合并，不作五个新正代。</p>
+<p class="body">官方News与Release明确权重、代码和报告入口已公开；原“仅披露”状态撤销。<b>5个尺寸共一个科学模型族</b>，不拆SKU或重复日期行。</p>
 <div class="gap-boxes">
 <div class="gap-box g1">
-<div class="title">披露模型，不冒充已开源</div>
-<p>11/2博客为首次明确介绍证据。官方仓库News只确认两个蛋白模型公开；HyFF权重和HF卡未核实。</p>
+<div class="title">公开状态已实证更新</div>
+<p>GitHub Release 11/2 14:30:56 UTC=北京时间22:30:56；包首次使用会自动下权重并验SHA。本轮不触发下载或运行。</p>
 </div>
 <div class="gap-box g2">
-<div class="title">资料不足，达不到GLM/Kimi精读标准</div>
-<p>独立Model Card、Tech Report、源码、数据划分、评测数表均未取得；显著说明缺口，而不编造部署命令。</p>
+<div class="title">训练资料仍不足，达不到完整报告深度</div>
+<p>README/性能/MD/Largo/输入文档已读；报告只有PDF链接未下载，完整数据处理、训练消融和独立复现不足。</p>
 </div>
 </div>
 <div class="stage-list">
 <div class="stage-item">
-<div class="stitle">输入定义</div>
-<p>原子种类与坐标；单位、边界条件、电荷/自旋输入规范未取得，不假定默认。</p>
+<div class="stitle">输入检查</div>
+<p>位置Å、元素、盒子晶格行向量、charge/multiplicity；输出eV与eV/Å。MD还需速度/质量/约束。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">元素子网络</div>
-<p>每原子只调用相应元素子网；具体邻域、层数和通信开销未知。</p>
+<div class="stitle">分配容量</div>
+<p>Presto/Vivace/Moderato为基础势；Andante/Largo增edge-frame mixing；5尺寸不拆5代。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">预测能量与受力</div>
-<p>能量和力接口有声明；是否严格梯度一致、守恒约束未从博客获得证据。</p>
+<div class="stitle">数值引擎</div>
+<p>权重不cast；小模型tf32x3/FP32统计，Andante FP32/FP64统计，Largo tf32x3/FP64统计。</p>
 </div>
 </div>
 <div class="fig-box">
-<img alt="官方完整原图" src="src/assets/official-hyff.png">
+<img alt="官方完整原图" src="src/assets/official-hyff.png"/>
 <div class="fig-cap">图1：官方博客图，保留完整比较和坐标。</div>
 </div>
 </div>
-
 <div class="col">
 <div class="sec-head c-orange"><div class="nc">2</div><h2>机制与执行协议</h2></div>
-<p class="body">博客称每个原子只调用对应元素子网络，在扩大容量时控制每原子计算。<b>完整结构、损失与数值接口未披露</b>，不能借通用MoE经验补猜。</p>
+<p class="body">标量/向量/rank2特征的保守消息传递势；<b>力为能量负梯度</b>，元素expert更新。Largo加电荷/自旋embedding与latent-charge项。</p>
 <div class="fig-box">
-<img alt="手绘研读示意，非实测图" src="src/assets/handdrawn-scientific-models.png">
+<img alt="手绘研读示意，非实测图" src="src/assets/handdrawn-scientific-models.png"/>
 <div class="fig-cap">图2：手绘研读；三类模型任务不同，不构成因果链。</div>
 </div>
 <div class="gap-boxes">
 <div class="gap-box g1">
-<div class="title">五尺寸按family管理</div>
-<p>参数从230万到12亿，中间三个尺寸未明确；覆盖83元素、带电和开壳层为厂商声称。</p>
+<div class="title">比较保留反例</div>
+<p>Andante力MAE7.65略差于UMA-S1.2的7.55，但MD快29倍；Largo能量0.364对DPA4Pro0.380，快9.7倍。不能写全面更准。</p>
 </div>
 </div>
 <div class="trick-box">
-<div class="trick-title">模拟物理时间 ≠ 墙钟时间</div>
-<p>近6万原子膜体系100ns是物理模拟长度。4.6万原子酶从选定起点看到一次反应，不等于反应速率/自由能已验证。</p>
+<div class="trick-title">速度测量条件不可删</div>
+<p>单H20、2586原子chorismate-in-water、1fs NVE+键约束，100warm-up后500步均值，含邻居表；冷编译另计，其他GPU未测。</p>
 </div>
-<div class="formula-box"><div class="flabel">研读记号 · 不补造训练目标</div><mjx-container class="MathJax CtxtMenu_Attached_0" jax="SVG" display="true" tabindex="0" ctxtmenu_counter="0" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="26.75ex" height="2.717ex" role="img" focusable="false" viewBox="0 -896 11823.7 1200.9" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.69ex;"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D453" xlink:href="#MJX-TEX-I-1D453"></use></g><g data-mml-node="TeXAtom" transform="translate(523,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D703" xlink:href="#MJX-TEX-I-1D703"></use></g></g></g><g data-mml-node="mo" transform="translate(1182.4,0)"><use data-c="3A" xlink:href="#MJX-TEX-N-3A"></use></g><g data-mml-node="mo" transform="translate(1738.2,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(2127.2,0)"><use data-c="1D44D" xlink:href="#MJX-TEX-I-1D44D"></use></g><g data-mml-node="mo" transform="translate(2850.2,0)"><use data-c="2C" xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(3294.9,0)"><use data-c="1D445" xlink:href="#MJX-TEX-I-1D445"></use></g><g data-mml-node="mo" transform="translate(4053.9,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(4720.6,0)"><use data-c="27FC" xlink:href="#MJX-TEX-N-27FC"></use></g><g data-mml-node="mo" transform="translate(6636.4,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(7025.4,0)"><use data-c="1D438" xlink:href="#MJX-TEX-I-1D438"></use></g><g data-mml-node="mo" transform="translate(7789.4,0)"><use data-c="2C" xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mo" transform="translate(8234.1,0)"><use data-c="7B" xlink:href="#MJX-TEX-N-7B"></use></g><g data-mml-node="msub" transform="translate(8734.1,0)"><g data-mml-node="mi"><use data-c="1D439" xlink:href="#MJX-TEX-I-1D439"></use></g><g data-mml-node="mi" transform="translate(676,-150) scale(0.707)"><use data-c="1D456" xlink:href="#MJX-TEX-I-1D456"></use></g></g><g data-mml-node="msubsup" transform="translate(9704,0)"><g data-mml-node="mo"><use data-c="7D" xlink:href="#MJX-TEX-N-7D"></use></g><g data-mml-node="TeXAtom" transform="translate(533,413) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D441" xlink:href="#MJX-TEX-I-1D441"></use></g></g><g data-mml-node="TeXAtom" transform="translate(533,-247) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="1D456" xlink:href="#MJX-TEX-I-1D456"></use></g><g data-mml-node="mo" transform="translate(345,0)"><use data-c="3D" xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1123,0)"><use data-c="31" xlink:href="#MJX-TEX-N-31"></use></g></g></g><g data-mml-node="mo" transform="translate(11434.7,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msub><mi>f</mi><mrow data-mjx-texclass="ORD"><mi>θ</mi></mrow></msub><mo>:</mo><mo stretchy="false">(</mo><mi>Z</mi><mo>,</mo><mi>R</mi><mo stretchy="false">)</mo><mo stretchy="false">⟼</mo><mo stretchy="false">(</mo><mi>E</mi><mo>,</mo><mo fence="false" stretchy="false">{</mo><msub><mi>F</mi><mi>i</mi></msub><msubsup><mo fence="false" stretchy="false">}</mo><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow data-mjx-texclass="ORD"><mi>N</mi></mrow></msubsup><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><p style="font-size:.68rem;color:#78716c;margin-top:4px;">仅把博客输入/输出写成研读记号；不假定官方能量梯度约束或训练loss。</p></div>
+<div class="formula-box"><div class="flabel">研读记号 · 不补造训练目标</div><mjx-container class="MathJax CtxtMenu_Attached_0" ctxtmenu_counter="0" display="true" jax="SVG" style="position: relative;" tabindex="0"><svg aria-hidden="true" focusable="false" height="2.137ex" role="img" style="vertical-align: -0.592ex;" viewbox="0 -683 5918 944.6" width="13.389ex" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g fill="currentColor" stroke="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D439" xlink:href="#MJX-TEX-I-1D439"></use></g><g data-mml-node="mi" transform="translate(676,-150) scale(0.707)"><use data-c="1D456" xlink:href="#MJX-TEX-I-1D456"></use></g></g><g data-mml-node="mo" transform="translate(1247.7,0)"><use data-c="3D" xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mo" transform="translate(2303.5,0)"><use data-c="2212" xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="msub" transform="translate(3081.5,0)"><g data-mml-node="mi"><use data-c="2207" xlink:href="#MJX-TEX-N-2207"></use></g><g data-mjx-texclass="ORD" data-mml-node="TeXAtom" transform="translate(866,-150) scale(0.707)"><g data-mml-node="msub"><g data-mml-node="mi"><use data-c="1D445" xlink:href="#MJX-TEX-I-1D445"></use></g><g data-mml-node="mi" transform="translate(792,-150) scale(0.707)"><use data-c="1D456" xlink:href="#MJX-TEX-I-1D456"></use></g></g></g></g><g data-mml-node="msub" transform="translate(4765.4,0)"><g data-mml-node="mi"><use data-c="1D438" xlink:href="#MJX-TEX-I-1D438"></use></g><g data-mjx-texclass="ORD" data-mml-node="TeXAtom" transform="translate(771,-150) scale(0.707)"><g data-mml-node="mi"><use data-c="1D703" xlink:href="#MJX-TEX-I-1D703"></use></g></g></g></g></g></svg><mjx-assistive-mml display="block" unselectable="on"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>F</mi><mi>i</mi></msub><mo>=</mo><mo>−</mo><msub><mi mathvariant="normal">∇</mi><mrow data-mjx-texclass="ORD"><msub><mi>R</mi><mi>i</mi></msub></mrow></msub><msub><mi>E</mi><mrow data-mjx-texclass="ORD"><mi>θ</mi></mrow></msub></math></mjx-assistive-mml></mjx-container><p style="font-size:.68rem;color:#78716c;margin-top:4px;">保守力定义来自新官方README。梯度一致不替代NVE漂移、域外构型与独立高精度验证。</p></div>
 <div class="stage-list">
 <div class="stage-item">
-<div class="stitle">接入模拟</div>
-<p>积分器、步长、温控和约束决定实际MD；模型本身不等于完整模拟器。</p>
+<div class="stitle">MD执行</div>
+<p>FP64 velocity-Verlet+RATTLE；NVE/NVT(Bussi)/NPT(MC)。不支持stress输出、多GPU NPT或非周期MD。</p>
 </div>
 <div class="stage-item">
-<div class="stitle">独立验收建议</div>
-<p>固定真值与硬件，比误差、吞吐、能量漂移和分布外构型；这是研读建议，尚未运行。</p>
+<div class="stitle">独立验收</div>
+<p>固定checkpoint/hash、精度、积分器、步长、约束和恢复次数；NVT回退恢复不当从未失稳。</p>
 </div>
 </div>
 </div>
-
 <div class="col">
 <div class="sec-head c-green"><div class="nc">3</div><h2>评测口径与待核问题</h2></div>
-<p class="body">官方称5尺寸均在与16个公开模型比较的误差—速度前沿。只有博客与原图，<b>没有完整表/硬件协议和独立报告</b>，不估读或捏造分数。</p>
+<p class="body">完整README表：速度为2586原子单H20MD；误差为全OMol25验证集2,762,021结构，<b>不是同一批体系测所有量</b>。PDF报告仅链接。</p>
 <table class="rtable">
 <tbody><tr><th class="left">核查项</th><th>数值/状态</th><th>口径</th><th>证据</th></tr>
 <tr class="cat"><td colspan="4">模型与材料事实</td></tr>
-<tr><td class="left">来源</td><td>Tech Blog</td><td>11/02</td><td>已读</td></tr>
-<tr><td class="left">族成员</td><td>5尺寸</td><td>共一个family</td><td>不拆SKU</td></tr>
-<tr><td class="left">最小</td><td>2.3M</td><td>参数</td><td>官方</td></tr>
+<tr><td class="left">单位</td><td>总参 / 每原子激活</td><td>ms/step</td><td>meV/Å · meV/atom</td></tr>
+<tr><td class="left">Presto</td><td>2.31M/0.05M</td><td>0.71</td><td>47.7/5.78</td></tr>
+<tr><td class="left">Vivace</td><td>6.66M/0.16M</td><td>1.27</td><td>33.5/4.36</td></tr>
 <tr class="cat"><td colspan="4">执行与测量条件</td></tr>
-<tr><td class="left">最大</td><td>1.2B</td><td>参数</td><td>官方</td></tr>
-<tr><td class="left">中间尺寸</td><td>未披露</td><td>不猜数值</td><td>待补</td></tr>
-<tr><td class="left">元素</td><td>83种</td><td>自报覆盖</td><td>需分桶</td></tr>
+<tr><td class="left">Moderato</td><td>34.8M/0.83M</td><td>4.04</td><td>16.5/1.36</td></tr>
+<tr><td class="left">Andante</td><td>175M/5M</td><td>29.5</td><td>7.65/0.620</td></tr>
+<tr><td class="left">Largo</td><td>1.2B/34M</td><td>125</td><td>5.79/0.364</td></tr>
 <tr class="cat"><td colspan="4">发布与复现边界</td></tr>
-<tr><td class="left">带电体系</td><td>声称支持</td><td>接口未核</td><td>待补</td></tr>
-<tr><td class="left">开壳层</td><td>声称支持</td><td>自旋未核</td><td>待补</td></tr>
-<tr><td class="left">公开对照</td><td>16模型</td><td>前沿声明</td><td>缺协议</td></tr>
-<tr class="ours"><td class="left">膜体系</td><td>近6万原子</td><td>100ns</td><td>物理时长</td></tr>
-<tr class="ours"><td class="left">酶体系</td><td>4.6万原子</td><td>一次反应</td><td>选定起点</td></tr>
-<tr class="ours"><td class="left">权重/源码</td><td>未核实</td><td>不写已开源</td><td>待补</td></tr>
+<tr><td class="left">速度体系</td><td>2586原子</td><td>H20</td><td>1fs约束NVE</td></tr>
+<tr><td class="left">准确度</td><td>2,762,021</td><td>结构</td><td>OMol25 val</td></tr>
+<tr><td class="left">刚性水1fs</td><td>2ps</td><td>+0.4</td><td>漂移</td></tr>
+<tr class="ours"><td class="left">柔性水1fs</td><td>2ps</td><td>−26.8</td><td>漂移</td></tr>
+<tr class="ours"><td class="left">柔性水0.5fs</td><td>20ps</td><td>−2.8</td><td>漂移</td></tr>
+<tr class="ours"><td class="left">柔性水0.25fs</td><td>20ps</td><td>−0.7</td><td>漂移</td></tr>
 </tbody></table>
 <div class="gap-boxes">
 <div class="gap-box g3">
-<div class="title">误差—速度前沿不是全面胜出</div>
-<p>图左为能量MAE，右为力MAE，越左下越好；不同size在不同点，不等于每项全胜。</p>
+<div class="title">物理守恒与数值积分分开</div>
+<p>能量梯度一致不消除时间离散误差。柔性1fs水漂移−26.8，0.5fs为−2.8meV/atom/ns；保留失败条件。</p>
 </div>
 </div>
 <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">执行约束与复现状态（不同测量口径分别列出）</p>
 <table class="ood-table">
-<tbody><tr><th class="left">验收维度</th><th>检查内容</th><th>状态</th><th>来源</th><th>限制</th></tr>
-<tr><td class="left">精度</td><td>能量/力MAE</td><td>自报图</td><td>博客</td><td>无完整表</td></tr>
-<tr class="ours"><td class="left">效率</td><td>单步耗时</td><td>自报图</td><td>博客</td><td>硬件待核</td></tr>
-<tr><td class="left">稳定性</td><td>能量漂移</td><td>建议</td><td>研读</td><td>尚未运行</td></tr>
-<tr class="ours"><td class="left">域外</td><td>新构型/电荷</td><td>建议</td><td>研读</td><td>独立复核</td></tr>
+<tbody><tr><th class="left">Largo系统</th><th>路径/卡数</th><th>ms/step</th><th>内存</th><th>限制</th></tr>
+<tr><td class="left">2586原子</td><td>专用engine</td><td>约125</td><td>12.8GB alloc</td><td>18.8reserved</td></tr>
+<tr class="ours"><td class="left">2586原子</td><td>eager</td><td>未完成</td><td>96GB放不下</td><td>autograd</td></tr>
+<tr><td class="left">103440原子</td><td>1/4/8卡</td><td>6347/2207/1173</td><td>条件各异</td><td>单多卡协议异</td></tr>
+<tr class="ours"><td class="left">2586原子</td><td>两卡</td><td>301</td><td>比单卡慢</td><td>不默认多卡</td></tr>
 </tbody></table>
 <div class="trick-box">
-<div class="trick-title">Agent工具可靠性</div>
-<p>搜索可能钻进力场分布外低能构型；让独立高精度计算复核，记录单位、边界与适用域。不能只由同一模型给优化结果打分。</p>
+<div class="trick-title">Largo长程项不要夸大</div>
+<p>发布权重latent-charge scale约−4.66e-8、σ72.9Å，文档示例贡献很小。单GPU周期SPME与多卡isolated dense非同一路径。</p>
 </div>
 <div class="abl-grid">
 <div class="abl-card">
-<div class="aname">独立材料状态</div>
-<div class="adelta">尚待公开</div>
-<div class="adesc">未找到专属HF卡/报告/可验证权重链接。</div>
+<div class="aname">报告正文精读</div>
+<div class="adelta">资料不足</div>
+<div class="adesc">PDF已有链接但未下载；不虚构训练消融。</div>
 </div>
 <div class="abl-card">
-<div class="aname">本地复现状态</div>
-<div class="adelta">尚未运行</div>
-<div class="adesc">未下载权重或执行MD，不能以宣传案例代替复测。</div>
+<div class="aname">验收边界</div>
+<div class="adelta">未独立复测</div>
+<div class="adesc">所有表是厂商记录，非本轮实验；误差单位为meV。</div>
 </div>
 </div>
 </div>
 </div>
-
 <div class="bottom-strip">
 <div class="bstrip">
 <div class="bhead">收录</div>
-<p>11/2记官方模型披露；权重开源时间仍待核。</p>
+<p>11/2已公开，更新原节点；五尺寸共族。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">机制</div>
-<p>五规模共族，元素子网络不移植LLM架构假设。</p>
+<p>能量—力一致；精度、统计和积分各自记录。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">证据</div>
-<p>单轨迹不是动力学统计；100ns不是墙钟耗时。</p>
+<p>29×和9.7×带体系/硬件条件，保留精度反例。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">研究</div>
-<p>先补接口和报告，再做独立物理与域外验收。</p>
+<p>恢复、域外与独立真值应进入Agent奖励验收。</p>
 </div>
 </div>
 </div>
-<button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<button aria-label="切换为浅色主题" aria-pressed="false" id="atlas-theme-toggle" type="button">☀️ 浅色</button>
 <script id="atlas-theme-script">
 (()=>{
   const root=document.documentElement;
@@ -544,5 +535,4 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
   });
 })();
 </script>
-
-<svg id="MJX-SVG-global-cache" style="display: none;"><defs><path id="MJX-TEX-I-1D453" d="M118 -162Q120 -162 124 -164T135 -167T147 -168Q160 -168 171 -155T187 -126Q197 -99 221 27T267 267T289 382V385H242Q195 385 192 387Q188 390 188 397L195 425Q197 430 203 430T250 431Q298 431 298 432Q298 434 307 482T319 540Q356 705 465 705Q502 703 526 683T550 630Q550 594 529 578T487 561Q443 561 443 603Q443 622 454 636T478 657L487 662Q471 668 457 668Q445 668 434 658T419 630Q412 601 403 552T387 469T380 433Q380 431 435 431Q480 431 487 430T498 424Q499 420 496 407T491 391Q489 386 482 386T428 385H372L349 263Q301 15 282 -47Q255 -132 212 -173Q175 -205 139 -205Q107 -205 81 -186T55 -132Q55 -95 76 -78T118 -61Q162 -61 162 -103Q162 -122 151 -136T127 -157L118 -162Z"></path><path id="MJX-TEX-I-1D703" d="M35 200Q35 302 74 415T180 610T319 704Q320 704 327 704T339 705Q393 701 423 656Q462 596 462 495Q462 380 417 261T302 66T168 -10H161Q125 -10 99 10T60 63T41 130T35 200ZM383 566Q383 668 330 668Q294 668 260 623T204 521T170 421T157 371Q206 370 254 370L351 371Q352 372 359 404T375 484T383 566ZM113 132Q113 26 166 26Q181 26 198 36T239 74T287 161T335 307L340 324H145Q145 321 136 286T120 208T113 132Z"></path><path id="MJX-TEX-N-3A" d="M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-I-1D44D" d="M58 8Q58 23 64 35Q64 36 329 334T596 635L586 637Q575 637 512 637H500H476Q442 637 420 635T365 624T311 598T266 548T228 469Q227 466 226 463T224 458T223 453T222 450L221 448Q218 443 202 443Q185 443 182 453L214 561Q228 606 241 651Q249 679 253 681Q256 683 487 683H718Q723 678 723 675Q723 673 717 649Q189 54 188 52L185 49H274Q369 50 377 51Q452 60 500 100T579 247Q587 272 590 277T603 282H607Q628 282 628 271Q547 5 541 2Q538 0 300 0H124Q58 0 58 8Z"></path><path id="MJX-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-TEX-I-1D445" d="M230 637Q203 637 198 638T193 649Q193 676 204 682Q206 683 378 683Q550 682 564 680Q620 672 658 652T712 606T733 563T739 529Q739 484 710 445T643 385T576 351T538 338L545 333Q612 295 612 223Q612 212 607 162T602 80V71Q602 53 603 43T614 25T640 16Q668 16 686 38T712 85Q717 99 720 102T735 105Q755 105 755 93Q755 75 731 36Q693 -21 641 -21H632Q571 -21 531 4T487 82Q487 109 502 166T517 239Q517 290 474 313Q459 320 449 321T378 323H309L277 193Q244 61 244 59Q244 55 245 54T252 50T269 48T302 46H333Q339 38 339 37T336 19Q332 6 326 0H311Q275 2 180 2Q146 2 117 2T71 2T50 1Q33 1 33 10Q33 12 36 24Q41 43 46 45Q50 46 61 46H67Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628Q287 635 230 637ZM630 554Q630 586 609 608T523 636Q521 636 500 636T462 637H440Q393 637 386 627Q385 624 352 494T319 361Q319 360 388 360Q466 361 492 367Q556 377 592 426Q608 449 619 486T630 554Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-TEX-N-27FC" d="M95 155V109Q95 83 92 73T75 63Q61 63 58 74T54 130Q54 140 54 180T55 250Q55 421 57 425Q61 437 75 437Q88 437 91 428T95 393V345V270H1444Q1328 357 1301 493Q1301 494 1301 496T1300 499Q1300 511 1317 511H1320Q1329 511 1332 510T1338 506T1341 497T1344 481T1352 456Q1374 389 1425 336T1544 261Q1553 258 1553 250Q1553 244 1548 241T1524 231T1486 212Q1445 186 1415 152T1370 85T1349 35T1341 4Q1339 -6 1336 -8T1320 -11Q1300 -11 1300 0Q1300 7 1305 25Q1337 151 1444 230H95V155Z"></path><path id="MJX-TEX-I-1D438" d="M492 213Q472 213 472 226Q472 230 477 250T482 285Q482 316 461 323T364 330H312Q311 328 277 192T243 52Q243 48 254 48T334 46Q428 46 458 48T518 61Q567 77 599 117T670 248Q680 270 683 272Q690 274 698 274Q718 274 718 261Q613 7 608 2Q605 0 322 0H133Q31 0 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H757Q764 676 764 669Q764 664 751 557T737 447Q735 440 717 440H705Q698 445 698 453L701 476Q704 500 704 528Q704 558 697 578T678 609T643 625T596 632T532 634H485Q397 633 392 631Q388 629 386 622Q385 619 355 499T324 377Q347 376 372 376H398Q464 376 489 391T534 472Q538 488 540 490T557 493Q562 493 565 493T570 492T572 491T574 487T577 483L544 351Q511 218 508 216Q505 213 492 213Z"></path><path id="MJX-TEX-N-7B" d="M434 -231Q434 -244 428 -250H410Q281 -250 230 -184Q225 -177 222 -172T217 -161T213 -148T211 -133T210 -111T209 -84T209 -47T209 0Q209 21 209 53Q208 142 204 153Q203 154 203 155Q189 191 153 211T82 231Q71 231 68 234T65 250T68 266T82 269Q116 269 152 289T203 345Q208 356 208 377T209 529V579Q209 634 215 656T244 698Q270 724 324 740Q361 748 377 749Q379 749 390 749T408 750H428Q434 744 434 732Q434 719 431 716Q429 713 415 713Q362 710 332 689T296 647Q291 634 291 499V417Q291 370 288 353T271 314Q240 271 184 255L170 250L184 245Q202 239 220 230T262 196T290 137Q291 131 291 1Q291 -134 296 -147Q306 -174 339 -192T415 -213Q429 -213 431 -216Q434 -219 434 -231Z"></path><path id="MJX-TEX-I-1D439" d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z"></path><path id="MJX-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-N-7D" d="M65 731Q65 745 68 747T88 750Q171 750 216 725T279 670Q288 649 289 635T291 501Q292 362 293 357Q306 312 345 291T417 269Q428 269 431 266T434 250T431 234T417 231Q380 231 345 210T298 157Q293 143 292 121T291 -28V-79Q291 -134 285 -156T256 -198Q202 -250 89 -250Q71 -250 68 -247T65 -230Q65 -224 65 -223T66 -218T69 -214T77 -213Q91 -213 108 -210T146 -200T183 -177T207 -139Q208 -134 209 3L210 139Q223 196 280 230Q315 247 330 250Q305 257 280 270Q225 304 212 352L210 362L209 498Q208 635 207 640Q195 680 154 696T77 713Q68 713 67 716T65 731Z"></path><path id="MJX-TEX-I-1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></defs></svg></body></html>
+<svg id="MJX-SVG-global-cache" style="display: none;"><defs><path d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z" id="MJX-TEX-I-1D439"></path><path d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z" id="MJX-TEX-I-1D456"></path><path d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z" id="MJX-TEX-N-3D"></path><path d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z" id="MJX-TEX-N-2212"></path><path d="M46 676Q46 679 51 683H781Q786 679 786 676Q786 674 617 326T444 -26Q439 -33 416 -33T388 -26Q385 -22 216 326T46 676ZM697 596Q697 597 445 597T193 596Q195 591 319 336T445 80L697 596Z" id="MJX-TEX-N-2207"></path><path d="M230 637Q203 637 198 638T193 649Q193 676 204 682Q206 683 378 683Q550 682 564 680Q620 672 658 652T712 606T733 563T739 529Q739 484 710 445T643 385T576 351T538 338L545 333Q612 295 612 223Q612 212 607 162T602 80V71Q602 53 603 43T614 25T640 16Q668 16 686 38T712 85Q717 99 720 102T735 105Q755 105 755 93Q755 75 731 36Q693 -21 641 -21H632Q571 -21 531 4T487 82Q487 109 502 166T517 239Q517 290 474 313Q459 320 449 321T378 323H309L277 193Q244 61 244 59Q244 55 245 54T252 50T269 48T302 46H333Q339 38 339 37T336 19Q332 6 326 0H311Q275 2 180 2Q146 2 117 2T71 2T50 1Q33 1 33 10Q33 12 36 24Q41 43 46 45Q50 46 61 46H67Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628Q287 635 230 637ZM630 554Q630 586 609 608T523 636Q521 636 500 636T462 637H440Q393 637 386 627Q385 624 352 494T319 361Q319 360 388 360Q466 361 492 367Q556 377 592 426Q608 449 619 486T630 554Z" id="MJX-TEX-I-1D445"></path><path d="M492 213Q472 213 472 226Q472 230 477 250T482 285Q482 316 461 323T364 330H312Q311 328 277 192T243 52Q243 48 254 48T334 46Q428 46 458 48T518 61Q567 77 599 117T670 248Q680 270 683 272Q690 274 698 274Q718 274 718 261Q613 7 608 2Q605 0 322 0H133Q31 0 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H757Q764 676 764 669Q764 664 751 557T737 447Q735 440 717 440H705Q698 445 698 453L701 476Q704 500 704 528Q704 558 697 578T678 609T643 625T596 632T532 634H485Q397 633 392 631Q388 629 386 622Q385 619 355 499T324 377Q347 376 372 376H398Q464 376 489 391T534 472Q538 488 540 490T557 493Q562 493 565 493T570 492T572 491T574 487T577 483L544 351Q511 218 508 216Q505 213 492 213Z" id="MJX-TEX-I-1D438"></path><path d="M35 200Q35 302 74 415T180 610T319 704Q320 704 327 704T339 705Q393 701 423 656Q462 596 462 495Q462 380 417 261T302 66T168 -10H161Q125 -10 99 10T60 63T41 130T35 200ZM383 566Q383 668 330 668Q294 668 260 623T204 521T170 421T157 371Q206 370 254 370L351 371Q352 372 359 404T375 484T383 566ZM113 132Q113 26 166 26Q181 26 198 36T239 74T287 161T335 307L340 324H145Q145 321 136 286T120 208T113 132Z" id="MJX-TEX-I-1D703"></path></defs></svg></body></html>
