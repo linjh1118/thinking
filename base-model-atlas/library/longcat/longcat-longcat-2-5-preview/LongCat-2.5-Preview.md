@@ -10,7 +10,7 @@ topic: "13_base_model"
 status: reading
 html_tabs: true
 created: 2026-10-13
-updated: 2026-11-02
+updated: 2026-11-03
 ---
 
 # LongCat-2.5：从 Preview 到正式版
@@ -19,14 +19,14 @@ updated: 2026-11-02
 > 2026-11-02，美团官方日志宣布 LongCat-2.5 上线：重点是视觉输入参与工程任务、长程代码库处理，以及与开发工具的协同。它与 9 月 25 日的 Preview 共用一个 2.5 family，分别记录首发和正式发布。现有资料能确定产品接口和发布阶段，不能证明正式版相对 Preview 的训练变化或性能提升。
 
 > [!warning] 原始资料不足，尚不能达到完整技术精读标准
-> 截至 2026-11-02，本轮查阅官方 HF 清单、发布日志和当前产品说明，未找到 LongCat-2.5 专属的完整 HF model card 或 Tech Report，也没有同一 harness 下 Preview 与正式版的成对评测。因此，本笔记仍无法达到 GLM-5.3-Flash / Kimi-K3 的架构、训练与实验深度。下文把已知事实、文档冲突和建议验收分开；不使用其他 LongCat 论文的参数或训练配方填补空白。
+> 截至 2026-11-03，本轮查阅官方 HF 清单、发布日志和当前产品说明，未找到 LongCat-2.5 专属的完整 HF model card 或 Tech Report，也没有同一 harness 下 Preview 与正式版的成对评测。因此，本笔记仍无法达到 GLM-5.3-Flash / Kimi-K3 的架构、训练与实验深度。下文把已知事实、尚存的文档同步问题和建议验收分开；不使用其他 LongCat 论文的参数或训练配方填补空白。
 
 ## 发布与证据
 
 > [!tldr]
 > 两个日期对应同一家族的不同发布阶段。正式版不是一条额外的“新正代”，官方的产品定位也不是已完成复现的实验结论。
 
-![LongCat-2.5 发布阶段、已知能力与证据边界；手绘研读示意，非官方架构图](src/assets/longcat-25-release-evidence-handdrawn.png)
+![LongCat-2.5 11月2日历史研读示意；其中128K/256K冲突已在11月3日原文修订后解除，当前值见接口Tab](src/assets/longcat-25-release-evidence-handdrawn.png)
 
 ### 两个阶段怎样归档
 
@@ -55,10 +55,12 @@ updated: 2026-11-02
 
 尤其不能把 LongCat-2.0 的论文规模、ASIC 训练描述或其他 Flash 系列的 MoE 结构直接写成 2.5 的事实。没有独立报告时，family 的技术继承关系也需要证据。
 
+> 11月3日仅修正文档参数：最大输出口径统一256K、图片每请求上限100；正式版日期仍11月2日，不新增发布事件。
+
 ## 接口与边界
 
 > [!tldr]
-> 当前说明确认了长上下文和视觉输入接口，但输出长度存在 128K / 256K 的文档冲突。这里保留两种原始口径，并明确未实际调用验证。
+> 11月3日复查，英文Quick Start已从128K改为256K，与参数页一致；图片上限50→100。它们是服务文档修订，不是新checkpoint证据；未实际调用验证。
 
 ### 上下文、输出与思考预算
 
@@ -66,11 +68,11 @@ updated: 2026-11-02
 |---|---|---|
 | 总上下文 | 参数页为 1,048,576 tokens，含输入与输出 [S4] | 不能把最大输入与最大输出同时当作两个独立额度 |
 | 最大输出 | 参数页 max_tokens 为 262,144（256K）[S4] | 指请求的输出上限；不是质量保证 |
-| 另一处最大输出 | 英文 Quick Start 仍写 128K [S2] | 与参数页冲突，不能擅自宣布已经统一到 256K |
+| Quick Start同步 | 11/3已写256K，原11/2快照为128K [S2] | 文档冲突已解除；不是服务上限实测 |
 | 思考预算 | thinking_budget 最大 262,144 [S4] | 文档未完整解释所有协议中的共享/计数关系；不能再叠加一个独立 256K 输出额度 |
 | 截断 | 达到生成上限时 finish_reason 为 length [S4] | 这与代码是否完成、测试是否通过是不同状态 |
 
-**未解决的冲突：** 两页都在本轮保存了原貌。对需要超长生成的使用场景，应在固定接口、模型名、请求参数与实际返回下复核；本次只做资料整理，没有消耗配额运行模型，也没有把某一页的较大数字当成实测值。
+**11/3修订：** Quick Start与参数页当前均写256K，11/2两种口径已保留到history。对需要超长生成的使用场景，应在固定接口、模型名、请求参数与实际返回下复核；本次只做资料整理，没有消耗配额运行模型，也没有把某一页的较大数字当成实测值。
 
 思考开关使用 enabled / disabled；温度分别固定为 1.0 / 0.7，其他传入值可能被覆盖。参数页还列出 top_p、top_k 与 repetition_penalty 的范围。[S4] 这意味着比较实验必须记录服务实际采用的设置，不能以为请求里写了同一个 temperature 就已经公平对齐。超出参数范围、请求格式错误、生成被截断与任务逻辑失败应分开计数。
 
@@ -80,7 +82,7 @@ updated: 2026-11-02
 
 | 输入 | 文档列出的限制 [S3] | 常见误读 |
 |---|---|---|
-| 图片 | PNG、JPG/JPEG、WebP、GIF；单张不超过 10 MB；每请求至多 50 张 | SVG 与 HEIC/HEIF 不在支持格式；GIF 支持不等于已证实完整时序理解 |
+| 图片 | PNG、JPG/JPEG、WebP、GIF；单张不超过 10 MB；11/3当前文档每请求至多 100 张（11/2快照为50） | SVG 与 HEIC/HEIF 不在支持格式；GIF 支持不等于已证实完整时序理解 |
 | 图片形状 | 原始宽高比超过 200:1 会报错 | 极长截图应拆分并保留坐标关系，不能直接拉伸后丢失细节 |
 | 视频 | 单个不超过 100 MB；每请求至多 10 个；时长小于 3600 秒 | “可提交近一小时视频”不是“完整逐帧理解近一小时视频”的实测结论 |
 | 跨协议 | 文档给出 OpenAI 与 Anthropic 兼容的图片块写法 | 协议兼容不代表所有客户端、视频块或错误重试行为完全相同 |
@@ -135,7 +137,7 @@ OpenCode 页已使用 LongCat-2.5，并说明思考默认开启；但本轮英�
 > 七个当前官方页面、旧版快照和截图已经本地归档。没有找到的 model card / report 明确留空；不伪造 HF 链接，也不把产品文档改名为 Tech Blog。
 
 - [S1] [Official Release Log · 中文发布日志](https://longcat.chat/platform/docs/zh/ChangeLog.html)：Preview 与正式版日期；保留本次及旧快照。
-- [S2] [Official Model Guide · Quick Start](https://longcat.chat/platform/docs/)：正式版名称、上下文与 128K 输出口径。
+- [S2] [Official Model Guide · Quick Start](https://longcat.chat/platform/docs/)：正式版名称、上下文与256K输出口径；11/2原128K快照保留。
 - [S3] [Official Vision Guide · Visual Understanding](https://longcat.chat/platform/docs/image-video-understanding)：图片、视频格式与限制。
 - [S4] [Official Model Parameters · 参数页](https://longcat.chat/platform/docs/zh/api/model-params)：1M 总上下文、256K 输出与思考/采样限制。
 - [S5] [Official Pricing · 当前限时价格](https://longcat.chat/platform/docs/zh/pricing/longcat-2.5)：抓取时计费口径，以实际结算为准。

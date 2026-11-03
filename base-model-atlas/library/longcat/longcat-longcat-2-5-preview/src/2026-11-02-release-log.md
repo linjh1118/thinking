@@ -1,9 +1,64 @@
-# Official Release Log
-
-来源：https://longcat.chat/platform/docs/zh/ChangeLog.html
-
-抓取：2026-11-02（北京时间）；正文提取，原始HTML保留。
-
+更新日志 | LongCat API Docs
+Docs
+使用指南
+快速开始
+Token资源包
+API按量付费
+常见问题
+更新日志
+API 文档
+API 概述
+视觉理解
+对话接口
+POST
+OpenAI Chat Completion API
+POST
+OpenAI Responses API
+POST
+Anthropic API
+参数参考
+模型参数参考
+模型接口
+GET
+模型列表
+GET
+模型详情
+工具
+AI 工具总览
+Claude Code 配置
+Codex 配置
+OpenCode 配置
+CatPaw 配置
+Cline 配置
+Kilo Code 配置
+Cherry Studio 配置
+Chatbox 配置
+CodeBuddy 配置
+OpenClaw 配置
+Hermes Agent 配置
+CC Switch 配置
+WorkBuddy 配置
+DeepSeek Harness 配置
+定价
+LongCat-2.5
+English
+API开放平台 ↗
+Docs
+搜索文档
+⌘K
+简体中文
+English
+简体中文
+API开放平台
+使用指南
+API 文档
+工具
+定价
+快速开始
+Token资源包
+API按量付费
+常见问题
+更新日志
 复制
 LongCat API开放平台更新日志
 ​
@@ -241,3 +296,38 @@ Github：
 https://github.com/meituan-longcat/LongCat-Flash-Chat
 上一页
 常见问题
+本页目录
+版本: 2026-11-02
+LongCat-2.5 上线
+版本: 2026-09-25
+LongCat-2.5-Preview 上线
+版本: 2026-09-10
+全新推出企业服务
+版本: 2026-11-02
+LongCat-2.5 上线
+版本: 2026-09-25
+LongCat-2.5-Preview 上线
+版本: 2026-09-02
+全新推出企业服务
+版本: 2026-06-30
+LongCat-2.0 发布 & 全新推出计费服务
+版本: 2026-05-29
+LongCat 部分模型服务下线
+版本: 2026-04-20
+LongCat-2.0-Preview 发布
+版本: 2026-03-12
+LongCat-Flash-Thinking 升级
+版本: 2026-03-11
+LongCat-Flash-Omni-2603 发布
+版本: 2026-02-05
+LongCat-Flash-Lite 发布
+版本: 2026-01-14
+LongCat-Flash-Thinking-2601 发布
+版本: 2025-12-22
+LongCat-Flash-Chat更新
+版本: 2025-09-22
+LongCat-Flash-Thinking发布
+版本: 2025-09-05
+LongCat API开放平台上线
+版本: 2025-08-29
+LongCat-Flash-Chat发布

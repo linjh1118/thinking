@@ -1,9 +1,75 @@
-# Official Model Parameters
-
-来源：https://longcat.chat/platform/docs/zh/api/model-params
-
-抓取：2026-11-02（北京时间）；正文提取，原始HTML保留。
-
+模型参数参考 | LongCat API Docs
+Docs
+使用指南
+快速开始
+Token资源包
+API按量付费
+常见问题
+更新日志
+API 文档
+API 概述
+视觉理解
+对话接口
+POST
+OpenAI Chat Completion API
+POST
+OpenAI Responses API
+POST
+Anthropic API
+参数参考
+模型参数参考
+模型接口
+GET
+模型列表
+GET
+模型详情
+工具
+AI 工具总览
+Claude Code 配置
+Codex 配置
+OpenCode 配置
+CatPaw 配置
+Cline 配置
+Kilo Code 配置
+Cherry Studio 配置
+Chatbox 配置
+CodeBuddy 配置
+OpenClaw 配置
+Hermes Agent 配置
+CC Switch 配置
+WorkBuddy 配置
+DeepSeek Harness 配置
+定价
+LongCat-2.5
+English
+API开放平台 ↗
+Docs
+搜索文档
+⌘K
+简体中文
+English
+简体中文
+API开放平台
+使用指南
+API 文档
+工具
+定价
+API 概述
+视觉理解
+对话接口
+POST
+OpenAI Chat Completion API
+POST
+OpenAI Responses API
+POST
+Anthropic API
+参数参考
+模型参数参考
+模型接口
+GET
+模型列表
+GET
+模型详情
 复制
 模型参数参考
 ​
@@ -133,3 +199,15 @@ temperature
 Anthropic API
 下一页
 模型列表
+本页目录
+模型能力对比
+采样与生成参数
+参数说明
+temperature
+top_p
+top_k
+repetition_penalty
+max_tokens
+thinking_budget
+范围校验
+思考开关

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GenFirst｜先生成、再重建的端到端潜空间学习 · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style><style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-SVG-styles">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>GenFirst｜先生成、再重建的端到端潜空间学习</h2><div class="meta">model-note · 2026<br>model-note, base-model, seed, latent-diffusion, representation-learning</div><nav><a class="toc-l1" href="#genfirst">GenFirst：先让潜空间容易生成，再恢复重建细节</a><a class="toc-l2" href="#section-2">定位、日期与材料</a><a class="toc-l2" href="#section-3">为什么会塌缩，方法改了什么</a><a class="toc-l2" href="#section-4">实验：生成改善与重建代价</a><a class="toc-l3" href="#section-5">训练协议对照</a><a class="toc-l3" href="#section-6">发布卡中的最终模型</a><a class="toc-l3" href="#section-7">消融揭示什么</a><a class="toc-l2" href="#section-8">扩展：共享表示与统一图文</a><a class="toc-l2" href="#section-9">复现风险与研究判断</a><a class="toc-l3" href="#section-10">目前保留的官方矛盾</a><a class="toc-l3" href="#agent-training">我对 Agent Training 的启发</a><a class="toc-l2" href="#section-12">原始资料与导航</a></nav></aside><main class="note"><h1 id="genfirst">GenFirst：先让潜空间容易生成，再恢复重建细节</h1><aside class="callout tldr"><div class="callout-title">TLDR</div><div>GenFirst 的核心贡献是一个训练顺序：显式保留后验熵，先用较强生成先验塑造潜空间，再同时减小先验和熵权重，让重建获得更高的相对影响。扩散分支最终还会冻结 VAE，从头训练新先验。最好的生成分数不能直接归给端到端阶段留下的那个扩散模型。</div></aside><aside class="callout warning"><div class="callout-title">证据边界与尚未达到的标准</div><div>已亲读 arXiv v1 的 paper.tex、suppl.tex 方法、训练、消融与限制，官方项目页、HF 卡、GitHub README 和评测文档；原图与源码已归档。原始资料并不少，但存在 A/B 标号和 80-epoch guidance 设置的官方内部矛盾；权重首次公开日、独立复测与完整训练语料比例仍不足，不能达到逐 checkpoint 精确复现与独立验收标准。没有下载 PDF、权重、数据集，也没有执行官方代码。</div></aside><style id="note-tabs-style">[data-note-panel][hidden]{display:none!important}.note-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:24px 0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.note-tabs button{font:inherit;font-family:Inter,sans-serif;font-size:13px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 13px;cursor:pointer}.note-tabs button[aria-selected="true"]{background:#223d66;color:#eaf2ff;border-color:#6689ba}.note-tabs button:focus-visible{outline:3px solid #70d9ff}.note [data-note-panel]>h2:first-child{margin-top:20px}html[data-theme="light"] .note-tabs button[aria-selected="true"]{background:#dceaff;color:#15375e;border-color:#7ca1ce}</style><nav class="note-tabs" role="tablist" aria-label="研读板块"><button type="button" role="tab" id="note-tab-0" aria-controls="note-panel-0" aria-selected="true" tabindex="0" data-note-tab="0">定位、日期与材料</button><button type="button" role="tab" id="note-tab-1" aria-controls="note-panel-1" aria-selected="false" tabindex="-1" data-note-tab="1">为什么会塌缩，方法改了什么</button><button type="button" role="tab" id="note-tab-2" aria-controls="note-panel-2" aria-selected="false" tabindex="-1" data-note-tab="2">实验：生成改善与重建代价</button><button type="button" role="tab" id="note-tab-3" aria-controls="note-panel-3" aria-selected="false" tabindex="-1" data-note-tab="3">扩展：共享表示与统一图文</button><button type="button" role="tab" id="note-tab-4" aria-controls="note-panel-4" aria-selected="false" tabindex="-1" data-note-tab="4">复现风险与研究判断</button><button type="button" role="tab" id="note-tab-5" aria-controls="note-panel-5" aria-selected="false" tabindex="-1" data-note-tab="5">原始资料与导航</button></nav><section role="tabpanel" id="note-panel-0" aria-labelledby="note-tab-0" data-note-panel="0"><h2 id="section-2">定位、日期与材料</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>这是 Seed 与中科大合作的生成建模研究支线。论文公开日是 8 月 29 日；11 月 3 日是本 Atlas 首次观测到官方公开 HF 包，不能当作已证实的权重首次发布日期。</div></aside><p><img src="src/assets/handdrawn-method.png" alt="GenFirst 手绘研读：熵防塌缩、生成优先、重建精修、冻结VAE后重训先验；机制示意而非实验结果"></p><div class="table-wrap"><table><thead><tr><th>事件</th><th>核实到的时间 / 状态</th><th>如何使用</th></tr></thead><tbody><tr><td>论文 v1 提交</td><td>2026-08-29 15:39:14 UTC，即北京时间 23:39:14</td><td>作为方法/论文首次公开日期；保留 arXiv submission history</td></tr><tr><td>HF 仓库 createdAt</td><td>2026-10-29 03:26:09 UTC</td><td>仅仓库元数据，不能证明当时已公开</td></tr><tr><td>本轮公开观测</td><td>2026-11-03，公开且非 gated，列出模型与 VAE 文件</td><td>作为发现时间，权重首发日期仍待核</td></tr><tr><td>当前发布范围</td><td>EiT 扩散 / flow-matching 实现、VAE 与配套 latent statistics</td><td>EAR 连续自回归实现没有在当前仓库公开</td></tr><tr><td>Atlas 组织</td><td>Seed → 图像生成 / 潜空间研究支线，一族管理</td><td>不把参数精度、训练轮数、A/B 或各 VAE 拆成新正代</td></tr></tbody></table></div><p>该工作不是 Seed2.x 通用大模型的参数升级。它研究的是图像或文本如何被编码成适合生成的连续表示，以及生成先验怎样反过来塑造这个表示。作者项目页明确给出中科大与 ByteDance Seed 的归属。[S1–S3]</p><p>发布物是原始 PyTorch checkpoint，需要相应训练仓库；不是可直接调用的 diffusers pipeline。官方说 VAE 必须与对应 latent statistics 成对使用，错配会输出噪声，未必报异常。HF 权重许可是 CC BY-NC 4.0，代码自有部分 MIT；第三方组件与数据许可另行约束，不能把代码许可等同权重许可。[S1][S2]</p></section><section role="tabpanel" id="note-panel-1" aria-labelledby="note-tab-1" data-note-panel="1" hidden=""><h2 id="section-3">为什么会塌缩，方法改了什么</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>重建、先验拟合和熵对后验分布施加不同的力。直接增加生成损失、却沿用很小的 KL 权重，会让先验压力压倒熵；显式熵项解决塌缩，分阶段优化缓解生成和重建争夺同一表示的问题。</div></aside><p><img src="src/assets/official-1.png" alt="官方图1：固定潜空间、朴素联合训练、REPA-E 与 GenFirst 的梯度路径比较"></p><p>传统流程先训练 VAE 重建图片，再冻结它训练生成模型。重建擅长保留某一张图片的细节，但这样的潜空间可能有空洞、曲折的分布，生成先验很难采到合适的点。让先验直接回传到编码器是自然方案，却容易出现后验方差趋零、不同图片被挤到近似同一个 code 的塌缩。[S4 §3]</p><p>对高斯参考先验，KL 可以拆成先验拟合减后验熵。沿用约 10^-6 的 KL、再增加较强的 learned-prior loss，会额外增强拟合压力，却几乎没增强保持不确定性的力。GenFirst 将先验项与后验熵分别显式加权。SiT 的目标是 flow-matching 速度误差，不是可直接计算的 latent likelihood；它额外保留 10^-6 KL 约束数值尺度，防止把 latent 无限放大、让噪声相对变小的捷径。这个小 KL 与主要防塌缩的显式熵是两件事。</p><p><mjx-container class="MathJax CtxtMenu_Attached_0" jax="SVG" display="true" tabindex="0" ctxtmenu_counter="0" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="46.545ex" height="2.364ex" role="img" focusable="false" viewBox="0 -750 20572.7 1045" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.667ex;"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="4C" xlink:href="#MJX-TEX-C-4C"></use></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="45" xlink:href="#MJX-TEX-N-45"></use></g><g data-mml-node="mn" transform="translate(681,0)"><use data-c="32" xlink:href="#MJX-TEX-N-32"></use></g><g data-mml-node="mi" transform="translate(1181,0)"><use data-c="45" xlink:href="#MJX-TEX-N-45"></use></g></g></g></g><g data-mml-node="mo" transform="translate(2367.4,0)"><use data-c="3D" xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="msub" transform="translate(3423.2,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="4C" xlink:href="#MJX-TEX-C-4C"></use></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="72" xlink:href="#MJX-TEX-N-72"></use><use data-c="65" xlink:href="#MJX-TEX-N-65" transform="translate(392,0)"></use><use data-c="63" xlink:href="#MJX-TEX-N-63" transform="translate(836,0)"></use></g><g data-mml-node="mo" transform="translate(1280,0)"><use data-c="2B" xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(2058,0)"><use data-c="70" xlink:href="#MJX-TEX-N-70"></use><use data-c="65" xlink:href="#MJX-TEX-N-65" transform="translate(556,0)"></use><use data-c="72" xlink:href="#MJX-TEX-N-72" transform="translate(1000,0)"></use><use data-c="63" xlink:href="#MJX-TEX-N-63" transform="translate(1392,0)"></use><use data-c="65" xlink:href="#MJX-TEX-N-65" transform="translate(1836,0)"></use><use data-c="70" xlink:href="#MJX-TEX-N-70" transform="translate(2280,0)"></use><use data-c="74" xlink:href="#MJX-TEX-N-74" transform="translate(2836,0)"></use><use data-c="75" xlink:href="#MJX-TEX-N-75" transform="translate(3225,0)"></use><use data-c="61" xlink:href="#MJX-TEX-N-61" transform="translate(3781,0)"></use><use data-c="6C" xlink:href="#MJX-TEX-N-6C" transform="translate(4281,0)"></use></g></g></g></g><g data-mml-node="mo" transform="translate(9097.3,0)"><use data-c="2B" xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="msub" transform="translate(10097.6,0)"><g data-mml-node="mi"><use data-c="1D706" xlink:href="#MJX-TEX-I-1D706"></use></g><g data-mml-node="mi" transform="translate(616,-150) scale(0.707)"><use data-c="1D45D" xlink:href="#MJX-TEX-I-1D45D"></use></g></g><g data-mml-node="msub" transform="translate(11119.2,0)"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="4C" xlink:href="#MJX-TEX-C-4C"></use></g></g><g data-mml-node="TeXAtom" transform="translate(723,-150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><use data-c="70" xlink:href="#MJX-TEX-N-70"></use><use data-c="72" xlink:href="#MJX-TEX-N-72" transform="translate(556,0)"></use><use data-c="69" xlink:href="#MJX-TEX-N-69" transform="translate(948,0)"></use><use data-c="6F" xlink:href="#MJX-TEX-N-6F" transform="translate(1226,0)"></use><use data-c="72" xlink:href="#MJX-TEX-N-72" transform="translate(1726,0)"></use></g></g></g></g><g data-mml-node="mo" transform="translate(13612.1,0)"><use data-c="2212" xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="msub" transform="translate(14612.3,0)"><g data-mml-node="mi"><use data-c="1D706" xlink:href="#MJX-TEX-I-1D706"></use></g><g data-mml-node="mi" transform="translate(616,-150) scale(0.707)"><use data-c="1D43B" xlink:href="#MJX-TEX-I-1D43B"></use></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(15906.2,0)"><g data-mml-node="mi"><use data-c="48" xlink:href="#MJX-TEX-C-48"></use></g></g><g data-mml-node="mo" transform="translate(16751.2,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="msub" transform="translate(17140.2,0)"><g data-mml-node="mi"><use data-c="1D45E" xlink:href="#MJX-TEX-I-1D45E"></use></g><g data-mml-node="mi" transform="translate(479,-150) scale(0.707)"><use data-c="1D719" xlink:href="#MJX-TEX-I-1D719"></use></g></g><g data-mml-node="mo" transform="translate(18090.7,0)"><use data-c="28" xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(18479.7,0)"><use data-c="1D467" xlink:href="#MJX-TEX-I-1D467"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(18944.7,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><use data-c="7C" xlink:href="#MJX-TEX-N-7C"></use></g></g><g data-mml-node="mi" transform="translate(19222.7,0)"><use data-c="1D465" xlink:href="#MJX-TEX-I-1D465"></use></g><g data-mml-node="mo" transform="translate(19794.7,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(20183.7,0)"><use data-c="29" xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msub><mrow data-mjx-texclass="ORD"><mi data-mjx-variant="-tex-calligraphic" mathvariant="script">L</mi></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi mathvariant="normal">E</mi><mn>2</mn><mi mathvariant="normal">E</mi></mrow></mrow></msub><mo>=</mo><msub><mrow data-mjx-texclass="ORD"><mi data-mjx-variant="-tex-calligraphic" mathvariant="script">L</mi></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi data-mjx-auto-op="false">rec</mi><mo>+</mo><mi data-mjx-auto-op="false">perceptual</mi></mrow></mrow></msub><mo>+</mo><msub><mi>λ</mi><mi>p</mi></msub><msub><mrow data-mjx-texclass="ORD"><mi data-mjx-variant="-tex-calligraphic" mathvariant="script">L</mi></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi data-mjx-auto-op="false">prior</mi></mrow></mrow></msub><mo>−</mo><msub><mi>λ</mi><mi>H</mi></msub><mrow data-mjx-texclass="ORD"><mi data-mjx-variant="-tex-calligraphic" mathvariant="script">H</mi></mrow><mo stretchy="false">(</mo><msub><mi>q</mi><mi>ϕ</mi></msub><mo stretchy="false">(</mo><mi>z</mi><mrow data-mjx-texclass="ORD"><mo stretchy="false">|</mo></mrow><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container></p><p>这里将重建、LPIPS、GAN 合写为第一项，仅为研读记号；SiT 还需小 KL。两个阶段保持重建相关权重不变，令 λH=λp，再把二者一起降低。因此“重建增强”是相对影响增强，不是把重建项绝对系数突然调大，更不是第一阶段不做重建。</p><p><img src="src/assets/official-3.png" alt="官方图3：后验均值分布与后验方差受不同目标作用；不是任意数据上的定理"></p><div class="table-wrap"><table><thead><tr><th>阶段 / 分支</th><th>可训练模块</th><th>公开的关键配置</th><th>应避免的误读</th></tr></thead><tbody><tr><td>EAR 生成优先</td><td>VAE + 连续 AR prior</td><td>500 epochs；prior / entropy 都为 1</td><td>论文分支，当前代码包未包含 EAR</td></tr><tr><td>EAR 重建精修</td><td>同上</td><td>140 epochs；二者都降至 0.25</td><td>熵没有完全关掉</td></tr><tr><td>EiT 生成优先</td><td>VAE + SiT</td><td>80 epochs；二者为 0.1</td><td>保留重建与熵，不是只训练先验</td></tr><tr><td>EiT 重建精修</td><td>同上</td><td>40 epochs；二者为 0.01</td><td>相对增加重建影响</td></tr><tr><td>EiT 最终先验</td><td>冻结 VAE，新 SiT</td><td>256² 训练 800 epochs；512² 训练 400 epochs</td><td>这是额外训练，不能从总成本中删掉</td></tr><tr><td>可选 decoder 精修</td><td>只训练 decoder</td><td>ImageNet256 对应结果额外 10K steps</td><td>论文 80-epoch 无引导 gFID 3.00→2.79；不是所有结果都用了</td></tr></tbody></table></div><p>SiT-XL 是 28 层、宽 1152、16 heads；不同 VAE 对应 f8d4 / f16d32 和不同 patch 配置。T2I 最终使用 MMDiT-XL/2、冻结 CLIP-L；较小 MMDiT-L/2 可以用于 VAE 端到端塑形。论文训练流程与当前 README 的新增 FLUX.2 三阶段 recipe 需要分开看，不能把后者当成所有 v1 数字的训练方案。</p></section><section role="tabpanel" id="note-panel-2" aria-labelledby="note-tab-2" data-note-panel="2" hidden=""><h2 id="section-4">实验：生成改善与重建代价</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>最有说服力的对照是“同一个新先验，换不同冻结 VAE”。同时，重建质量仍会牺牲；好的 gFID 不代表好 rFID，也不代表所有任务一起改善。</div></aside><h3 id="section-5">训练协议对照</h3><div class="table-wrap"><table><thead><tr><th>分支 / 设置</th><th>gFID ↓</th><th>IS ↑</th><th>rFID ↓</th><th>PSNR ↑</th><th>SSIM ↑</th></tr></thead><tbody><tr><td>EAR / Frozen VAE</td><td>36.33</td><td>46.55</td><td>0.53</td><td>26.18</td><td>0.72</td></tr><tr><td>EAR / Naive E2E</td><td>294.90</td><td>1.48</td><td>0.70</td><td>25.11</td><td>0.68</td></tr><tr><td>EAR / Stable E2E</td><td>5.10</td><td>145.22</td><td>1.26</td><td>21.93</td><td>0.58</td></tr><tr><td>EAR / 冻结 E2E VAE、重训 prior</td><td>5.67</td><td>137.39</td><td>1.26</td><td>21.93</td><td>0.58</td></tr><tr><td>SiT 80ep / Frozen VAE</td><td>7.90</td><td>122.60</td><td>0.74</td><td>25.67</td><td>0.72</td></tr><tr><td>SiT 80ep / Naive E2E</td><td>NaN 塌缩</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>SiT 80ep / Stable E2E</td><td>92.38</td><td>13.94</td><td>0.57</td><td>25.13</td><td>0.71</td></tr><tr><td>SiT 80ep / 冻结 E2E VAE、重训 prior</td><td>3.57</td><td>166.49</td><td>0.57</td><td>25.13</td><td>0.71</td></tr></tbody></table></div><p>这是论文 Table1 的分析设置，EAR 训练至收敛，SiT 按 80 epochs；不要与不同 VAE、800 epochs 的旗舰表直接比较。SiT 联合训练本身的 92.38 很差，优势在于它留下的 VAE 对后续新先验更友好。EAR 则在联合阶段的 5.10 略优于冻结后 5.67；不能把“都必须重训才有效”说成普遍结论。</p><h3 id="section-6">发布卡中的最终模型</h3><div class="table-wrap"><table><thead><tr><th>EiT prior / 分辨率</th><th>先验 epochs</th><th>无引导 gFID / IS</th><th>引导 gFID / IS</th></tr></thead><tbody><tr><td>SiT / 256²</td><td>80</td><td>2.79 / 175.4</td><td>1.38 / 271.3</td></tr><tr><td>SiT / 256²</td><td>480</td><td>1.60 / 216.8</td><td>0.988 / 270.7</td></tr><tr><td>SiT / 256²</td><td>800</td><td>1.45 / 226.7</td><td>0.969 / 283.4</td></tr><tr><td>SiT / 512²</td><td>80</td><td>未报告</td><td>1.63 / 278.9</td></tr><tr><td>SiT / 512²</td><td>400</td><td>未报告</td><td>1.23 / 286.1</td></tr><tr><td>MMDiT / 512² A</td><td>按 T2I recipe</td><td>GenEval 0.8987</td><td>DPG-Bench 82.60</td></tr><tr><td>MMDiT / 512² B</td><td>按 T2I recipe</td><td>GenEval 0.8920</td><td>DPG-Bench 82.06</td></tr></tbody></table></div><p>ImageNet gFID/IS 使用 50K 样本、torch-fidelity 和 MAR reference；SDE 250 steps。256² 引导含 weak-20ep autoguidance 与 CFG，512² 是 plain CFG，二者不能混写。T2I 是 Euler50、CFG7、区间[0.35,1.0]，无 prompt rewriting。项目页称 ≥70× fewer steps 是达到某参考 FID 的先验训练步数比较，不是包含 VAE 塑形成本的总 GPU 时间或同硬件墙钟加速。</p><h3 id="section-7">消融揭示什么</h3><div class="table-wrap"><table><thead><tr><th>同预算 loss 策略（EAR 分析）</th><th>引导 gFID ↓</th><th>rFID ↓</th><th>PSNR ↑</th></tr></thead><tbody><tr><td>GenFirst</td><td>2.10</td><td>1.26</td><td>21.93</td></tr><tr><td>常数权重</td><td>3.04</td><td>3.27</td><td>19.52</td></tr><tr><td>Cosine decay</td><td>5.45</td><td>0.66</td><td>23.87</td></tr><tr><td>PI 自适应</td><td>NaN 塌缩</td><td>—</td><td>—</td></tr><tr><td>Frozen VAE</td><td>6.97</td><td>0.53</td><td>26.18</td></tr></tbody></table></div><p>GenFirst 在这组设置平衡得更好，但重建依然差于 frozen VAE。SiT 权重消融中 1→0.1 的 FID4.44/rFID0.61，0.1→0.01 为3.57/0.57，0.01→0.01 则3.84/0.48：继续减弱先验换来更好重建、却使生成退步。[S4 appendix]</p><p>REPA 也不是已被替代：相同 SD-VAE 的 vanilla SiT 为17.20，加入 prior-only REPA 为7.90；E2E VAE 无 REPA 为8.09，塑形阶段加 REPA 为6.83，再在 prior-only 加 REPA 为3.57。低分来自互补组件，不能全归于训练顺序。</p></section><section role="tabpanel" id="note-panel-3" aria-labelledby="note-tab-3" data-note-panel="3" hidden=""><h2 id="section-8">扩展：共享表示与统一图文</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>表示学习监督可加入同一个潜空间，但有重建与生成的代价；统一图文的 GenEval 使用百分制，不能与上一个表的0–1直接混读。扩展模型不是新一代通用 Seed。</div></aside><p><img src="src/assets/official-7.png" alt="官方图9a–b：SigLIP latent监督与冻结VLM的caption-NLL两条监督路径"></p><div class="table-wrap"><table><thead><tr><th>Qwen3-VL ViT + projector</th><th>rFID ↓</th><th>PSNR ↑</th><th>GenEval ↑</th><th>DPG ↑</th><th>Linear Probe Top-1 ↑</th></tr></thead><tbody><tr><td>E2E</td><td>0.42</td><td>27.79</td><td>0.89</td><td>83.70</td><td>77.71</td></tr><tr><td>E2E + SigLIP</td><td>0.39</td><td>27.64</td><td>0.90</td><td>83.76</td><td>79.25</td></tr><tr><td>E2E + VLM-NLL</td><td>0.46</td><td>27.19</td><td>0.89</td><td>83.49</td><td>81.69</td></tr></tbody></table></div><p>预训练 Qwen3-VL ViT 的 probe 是79.64。VLM-NLL 达81.69，却没有同时达到最好的重建或 DPG；不能只展示超过预训练 probe 的一个数字。SigLIP 与 caption-NLL 作用位置不同，后者不是简单把两个最终分数加权。</p><p>统一图文使用 Cola 文本 VAE、FLUX.1 图像 VAE与双向 block-causal MMDiT，分别学习 p(image|text) 与 p(text|image)。端到端使用较小 MMDiT-L/2，冻结后重训 XL/2；T2I 使用后续 SFT checkpoint，I2T 使用 pre-SFT checkpoint。不能用同一个“统一模型”标签掩盖不同评测 checkpoint。</p><div class="table-wrap"><table><thead><tr><th>统一图文潜空间设置</th><th>GenEval（%）</th><th>DPG</th><th>CIDEr</th><th>BLEU-4</th><th>METEOR</th><th>ROUGE-L</th><th>SPICE</th><th>CLIPScore</th></tr></thead><tbody><tr><td>冻结 text + image VAE</td><td>79.88</td><td>63.96</td><td>20.03</td><td>5.36</td><td>13.72</td><td>29.01</td><td>8.03</td><td>53.21</td></tr><tr><td>E2E text、冻结 image</td><td>81.87</td><td>68.24</td><td>30.19</td><td>7.46</td><td>16.81</td><td>32.95</td><td>11.12</td><td>55.96</td></tr><tr><td>E2E joint text + image</td><td>86.57</td><td>72.68</td><td>33.28</td><td>7.76</td><td>17.74</td><td>34.16</td><td>11.81</td><td>57.97</td></tr></tbody></table></div><p>I2T 使用 COCO Karpathy test split 与 pycocoevalcap。论文明确统一图文实验因计算限制，E2E 仅 T2I 的一半步数，prior-only 样本量约30.8%；不能与充分训练的独立 T2I 模型作无条件优劣结论。</p></section><section role="tabpanel" id="note-panel-4" aria-labelledby="note-tab-4" data-note-panel="4" hidden=""><h2 id="section-9">复现风险与研究判断</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>先固定材料版本和评测协议，再谈效率或机制归因。两处官方矛盾、A/B 对应关系、checkpoint与归一化统计的配对，都是比抄一个最好分数更重要的复现信息。</div></aside><h3 id="section-10">目前保留的官方矛盾</h3><div class="table-wrap"><table><thead><tr><th>项目</th><th>原始材料差异</th><th>本笔记处理</th></tr></thead><tbody><tr><td>T2I A/B</td><td>主文、appendix开头、配置表、HF/README表指 A=ImageNet-SiT，B=T2I-MMDiT；suppl“Text-to-image EiT”一段反写</td><td>按文件路径记录配对，保留冲突；不默默统一原文</td></tr><tr><td>80ep ImageNet guidance</td><td>README统一写 autoguidance1.3、CFG1.5、区间[0.2,0.7]；suppl该80ep结果写 CFG2.0、区间[0.2,0.85]</td><td>不声称任意脚本默认参数能精确重现1.38；待作者澄清</td></tr><tr><td>训练数据</td><td>卡只写公开数据、未列各corpus；论文列出公开集合名称但比例不足</td><td>不把“公开数据”当作完整可复现数据清单</td></tr><tr><td>FLUX.2 新 recipe</td><td>当前仓库有f8d32三阶段与高分辨率/OCR混合训练；v1主要表用其他VAE</td><td>单独标版本与用途，不把0.041 rFID归入v1所有模型</td></tr><tr><td>首次公开日</td><td>arXiv8/29明确；HF创建10/29、首次观测11/3不是同一事件</td><td>节点用论文日，权重首日留空，不增加虚假的11月发布行</td></tr></tbody></table></div><h3 id="agent-training">我对 Agent Training 的启发</h3><aside class="callout insight"><div class="callout-title">INSIGHT</div><div>可迁移的是“多个训练目标的学习速度不同，优化顺序会改变共享表示”的实验思路，不是把图像生成的熵项原样加到 Agent RL。若研究轨迹表征、action tokenizer 或 world-model latent，可以比较先塑造可预测/可生成状态、再恢复细节，与恒定权重/反向课程；同时监控表征塌缩、信息保存、可生成性、最终任务成功和总成本。</div></aside><p>建议最小实验固定编码器、先验架构、数据顺序与总训练预算，比较固定 VAE、朴素联合、显式熵但恒权重、GenFirst、反向课程。保留一个冻结表示后从头训练同尺寸 prior 的对照，否则收益可能只是某次共同训练的优化便利。评价同时报告重建、生成和下游可验证任务，不把一个表示 probe 或 distribution-level FID 当作 Agent 任务完成率。</p><p>作者明确承认重建—生成权衡没有消失，EAR 的 CFG 伸缩仍有限，T2I 数据规模小于大规模系统。这些限制应与最佳数字一起阅读。独立复现尚未执行，不能把本笔记的核对写成重跑成绩。</p></section><section role="tabpanel" id="note-panel-5" aria-labelledby="note-tab-5" data-note-panel="5" hidden=""><h2 id="section-12">原始资料与导航</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>可读原文、TeX源码、评测协议和官方图已离线归档；PDF只保留官方链接。源文件与本笔记判断分开，失败路径明确记录。</div></aside><ul><li>[S1] <a href="https://huggingface.co/ByteDance-Seed/GenFirst" target="_blank" rel="noopener">🤗 HF Model Card</a>：当前发布范围、原始结果表、许可与模型/VAE配对。</li><li>[S2] <a href="https://github.com/ByteDance-Seed/GenFirst" target="_blank" rel="noopener">🧩 Official README / Code</a>：训练、评测、docs、代码文本与新增recipe。</li><li>[S3] <a href="https://tom-zgt.github.io/GenFirst/" target="_blank" rel="noopener">🌐 官方项目页</a>：机制解释、完整对照表与原图。</li><li>[S4] <a href="https://arxiv.org/pdf/2608.29335" target="_blank" rel="noopener">📄 Tech Report</a>：PDF未下载；实际阅读的是e-print中的paper.tex与suppl.tex，过滤PDF后归档。</li><li><a href="https://arxiv.org/abs/2608.29335" target="_blank" rel="noopener">Submission history</a>：8/29首次提交；arXiv HTML v1 返回404已记录，不能声称读过HTML全文。</li></ul><p>源码位于 src/paper-source/，下载清单见 <a class="wikilink" href="src/retrieval_manifest.json">原始材料清单</a>；代码仅阅读未执行。源码包中的PDF图已过滤；采用官方项目页PNG/JPG作图。手绘图是研读说明，不是官方实测图。</p><ul><li><a class="wikilink" href="../../../../base_model_atlas.html">基模主题索引</a></li><li><a class="wikilink" href="genfirst_poster_zh.html">中文研究 Poster</a></li></ul><blockquote>📊 相关可视化: <a class="wikilink" href="genfirst_poster_zh.html">GenFirst 中文 Poster</a></blockquote></section><script id="note-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-note-tab]')];
+function select(index) {
+    tabs.forEach(tab => {
+        const active = tab.dataset.noteTab === String(index);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+}
+function reveal() {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) { select(panel.dataset.notePanel); requestAnimationFrame(() => target.scrollIntoView({block:'start'})); }
+}
+tabs.forEach((tab,index) => {
+    tab.onclick = () => select(tab.dataset.noteTab);
+    tab.onkeydown = event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    };
+});
+document.addEventListener('click',event => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) select(panel.dataset.notePanel);
+});
+window.addEventListener('hashchange',reveal); reveal();
+})();</script></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script><svg id="MJX-SVG-global-cache" style="display: none;"><defs><path id="MJX-TEX-C-4C" d="M62 -22T47 -22T32 -11Q32 -1 56 24T83 55Q113 96 138 172T180 320T234 473T323 609Q364 649 419 677T531 705Q559 705 578 696T604 671T615 645T618 623V611Q618 582 615 571T598 548Q581 531 558 520T518 509Q503 509 503 520Q503 523 505 536T507 560Q507 590 494 610T452 630Q423 630 410 617Q367 578 333 492T271 301T233 170Q211 123 204 112L198 103L224 102Q281 102 369 79T509 52H523Q535 64 544 87T579 128Q616 152 641 152Q656 152 656 142Q656 101 588 40T433 -22Q381 -22 289 1T156 28L141 29L131 20Q111 0 87 -11Z"></path><path id="MJX-TEX-N-45" d="M128 619Q121 626 117 628T101 631T58 634H25V680H597V676Q599 670 611 560T625 444V440H585V444Q584 447 582 465Q578 500 570 526T553 571T528 601T498 619T457 629T411 633T353 634Q266 634 251 633T233 622Q233 622 233 621Q232 619 232 497V376H286Q359 378 377 385Q413 401 416 469Q416 471 416 473V493H456V213H416V233Q415 268 408 288T383 317T349 328T297 330Q290 330 286 330H232V196V114Q232 57 237 52Q243 47 289 47H340H391Q428 47 452 50T505 62T552 92T584 146Q594 172 599 200T607 247T612 270V273H652V270Q651 267 632 137T610 3V0H25V46H58Q100 47 109 49T128 61V619Z"></path><path id="MJX-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z"></path><path id="MJX-TEX-N-65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z"></path><path id="MJX-TEX-N-63" d="M370 305T349 305T313 320T297 358Q297 381 312 396Q317 401 317 402T307 404Q281 408 258 408Q209 408 178 376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163 -11 99 53T34 214Q34 318 99 383T250 448T370 421T404 357Q404 334 387 320Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-N-70" d="M36 -148H50Q89 -148 97 -134V-126Q97 -119 97 -107T97 -77T98 -38T98 6T98 55T98 106Q98 140 98 177T98 243T98 296T97 335T97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 61 434T98 436Q115 437 135 438T165 441T176 442H179V416L180 390L188 397Q247 441 326 441Q407 441 464 377T522 216Q522 115 457 52T310 -11Q242 -11 190 33L182 40V-45V-101Q182 -128 184 -134T195 -145Q216 -148 244 -148H260V-194H252L228 -193Q205 -192 178 -192T140 -191Q37 -191 28 -194H20V-148H36ZM424 218Q424 292 390 347T305 402Q234 402 182 337V98Q222 26 294 26Q345 26 384 80T424 218Z"></path><path id="MJX-TEX-N-74" d="M27 422Q80 426 109 478T141 600V615H181V431H316V385H181V241Q182 116 182 100T189 68Q203 29 238 29Q282 29 292 100Q293 108 293 146V181H333V146V134Q333 57 291 17Q264 -10 221 -10Q187 -10 162 2T124 33T105 68T98 100Q97 107 97 248V385H18V422H27Z"></path><path id="MJX-TEX-N-75" d="M383 58Q327 -10 256 -10H249Q124 -10 105 89Q104 96 103 226Q102 335 102 348T96 369Q86 385 36 385H25V408Q25 431 27 431L38 432Q48 433 67 434T105 436Q122 437 142 438T172 441T184 442H187V261Q188 77 190 64Q193 49 204 40Q224 26 264 26Q290 26 311 35T343 58T363 90T375 120T379 144Q379 145 379 161T380 201T380 248V315Q380 361 370 372T320 385H302V431Q304 431 378 436T457 442H464V264Q464 84 465 81Q468 61 479 55T524 46H542V0Q540 0 467 -5T390 -11H383V58Z"></path><path id="MJX-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-TEX-N-6C" d="M42 46H56Q95 46 103 60V68Q103 77 103 91T103 124T104 167T104 217T104 272T104 329Q104 366 104 407T104 482T104 542T103 586T103 603Q100 622 89 628T44 637H26V660Q26 683 28 683L38 684Q48 685 67 686T104 688Q121 689 141 690T171 693T182 694H185V379Q185 62 186 60Q190 52 198 49Q219 46 247 46H263V0H255L232 1Q209 2 183 2T145 3T107 3T57 1L34 0H26V46H42Z"></path><path id="MJX-TEX-I-1D706" d="M166 673Q166 685 183 694H202Q292 691 316 644Q322 629 373 486T474 207T524 67Q531 47 537 34T546 15T551 6T555 2T556 -2T550 -11H482Q457 3 450 18T399 152L354 277L340 262Q327 246 293 207T236 141Q211 112 174 69Q123 9 111 -1T83 -12Q47 -12 47 20Q47 37 61 52T199 187Q229 216 266 252T321 306L338 322Q338 323 288 462T234 612Q214 657 183 657Q166 657 166 673Z"></path><path id="MJX-TEX-I-1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path id="MJX-TEX-N-69" d="M69 609Q69 637 87 653T131 669Q154 667 171 652T188 609Q188 579 171 564T129 549Q104 549 87 564T69 609ZM247 0Q232 3 143 3Q132 3 106 3T56 1L34 0H26V46H42Q70 46 91 49Q100 53 102 60T104 102V205V293Q104 345 102 359T88 378Q74 385 41 385H30V408Q30 431 32 431L42 432Q52 433 70 434T106 436Q123 437 142 438T171 441T182 442H185V62Q190 52 197 50T232 46H255V0H247Z"></path><path id="MJX-TEX-N-6F" d="M28 214Q28 309 93 378T250 448Q340 448 405 380T471 215Q471 120 407 55T250 -10Q153 -10 91 57T28 214ZM250 30Q372 30 372 193V225V250Q372 272 371 288T364 326T348 362T317 390T268 410Q263 411 252 411Q222 411 195 399Q152 377 139 338T126 246V226Q126 130 145 91Q177 30 250 30Z"></path><path id="MJX-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-TEX-I-1D43B" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 219 683Q260 681 355 681Q389 681 418 681T463 682T483 682Q499 682 499 672Q499 670 497 658Q492 641 487 638H485Q483 638 480 638T473 638T464 637T455 637Q416 636 405 634T387 623Q384 619 355 500Q348 474 340 442T328 395L324 380Q324 378 469 378H614L615 381Q615 384 646 504Q674 619 674 627T617 637Q594 637 587 639T580 648Q580 650 582 660Q586 677 588 679T604 682Q609 682 646 681T740 680Q802 680 835 681T871 682Q888 682 888 672Q888 645 876 638H874Q872 638 869 638T862 638T853 637T844 637Q805 636 794 634T776 623Q773 618 704 340T634 58Q634 51 638 51Q646 48 692 46H723Q729 38 729 37T726 19Q722 6 716 0H701Q664 2 567 2Q533 2 504 2T458 2T437 1Q420 1 420 10Q420 15 423 24Q428 43 433 45Q437 46 448 46H454Q481 46 514 49Q520 50 522 50T528 55T534 64T540 82T547 110T558 153Q565 181 569 198Q602 330 602 331T457 332H312L279 197Q245 63 245 58Q245 51 253 49T303 46H334Q340 38 340 37T337 19Q333 6 327 0H312Q275 2 178 2Q144 2 115 2T69 2T48 1Q31 1 31 10Q31 12 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path><path id="MJX-TEX-C-48" d="M18 487Q18 496 29 517T67 566T127 621T216 665T330 683Q359 683 376 669T397 643T400 622Q400 584 382 488T348 343Q348 342 467 342H587L594 366Q615 440 648 534T690 641Q701 656 723 669T764 683Q783 683 783 672L750 578Q716 485 677 346T625 101Q624 92 623 82T622 65T621 56Q621 20 658 20Q666 20 701 25Q709 52 736 69T785 87Q803 87 803 75T791 44T754 3T685 -33T588 -48Q568 -48 562 -46Q522 -31 522 13V23Q531 129 562 250L569 281L565 280Q561 278 556 277T549 274L438 273H328L321 249Q307 202 275 107T232 0Q219 -16 196 -28T155 -41Q149 -41 145 -39T140 -34T139 -29Q139 -24 148 -3T181 86T233 247Q240 270 240 272Q240 273 194 273H169Q139 273 139 285Q139 295 153 308T187 332Q206 341 236 342L260 343L264 359Q278 414 289 482T300 578Q300 613 260 613H254Q198 613 169 592Q148 578 127 544T104 508Q72 478 37 475Q18 475 18 487Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-I-1D45E" d="M33 157Q33 258 109 349T280 441Q340 441 372 389Q373 390 377 395T388 406T404 418Q438 442 450 442Q454 442 457 439T460 434Q460 425 391 149Q320 -135 320 -139Q320 -147 365 -148H390Q396 -156 396 -157T393 -175Q389 -188 383 -194H370Q339 -192 262 -192Q234 -192 211 -192T174 -192T157 -193Q143 -193 143 -185Q143 -182 145 -170Q149 -154 152 -151T172 -148Q220 -148 230 -141Q238 -136 258 -53T279 32Q279 33 272 29Q224 -10 172 -10Q117 -10 75 30T33 157ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-TEX-I-1D719" d="M409 688Q413 694 421 694H429H442Q448 688 448 686Q448 679 418 563Q411 535 404 504T392 458L388 442Q388 441 397 441T429 435T477 418Q521 397 550 357T579 260T548 151T471 65T374 11T279 -10H275L251 -105Q245 -128 238 -160Q230 -192 227 -198T215 -205H209Q189 -205 189 -198Q189 -193 211 -103L234 -11Q234 -10 226 -10Q221 -10 206 -8T161 6T107 36T62 89T43 171Q43 231 76 284T157 370T254 422T342 441Q347 441 348 445L378 567Q409 686 409 688ZM122 150Q122 116 134 91T167 53T203 35T237 27H244L337 404Q333 404 326 403T297 395T255 379T211 350T170 304Q152 276 137 237Q122 191 122 150ZM500 282Q500 320 484 347T444 385T405 400T381 404H378L332 217L284 29Q284 27 285 27Q293 27 317 33T357 47Q400 66 431 100T475 170T494 234T500 282Z"></path><path id="MJX-TEX-I-1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path><path id="MJX-TEX-N-7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path><path id="MJX-TEX-I-1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs></svg></body></html>

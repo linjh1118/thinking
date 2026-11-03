@@ -1,9 +1,64 @@
-# Official Model Guide
-
-来源：https://longcat.chat/platform/docs/
-
-抓取：2026-11-02（北京时间）；正文提取，原始HTML保留。
-
+Quick Start | LongCat API Docs
+Docs
+Guide
+Quick Start
+Token Pack
+API Pay-As-You-Go
+FAQ
+Change Log
+API
+API Overview
+Visual Understanding
+Chat
+POST
+Chat Completions
+POST
+Responses API
+POST
+Anthropic Messages
+Reference
+Model Parameters
+Models
+GET
+List Models
+GET
+Retrieve Model
+Tools
+Overview of AI Tools
+Claude Code
+Codex
+OpenCode
+CatPaw
+Cline
+Kilo Code
+Cherry Studio
+Chatbox
+CodeBuddy
+OpenClaw
+Hermes Agent
+CC Switch
+WorkBuddy
+DeepSeek Harness
+Pricing
+LongCat-2.5
+简体中文
+API Platform ↗
+Docs
+Search docs
+⌘K
+English
+English
+简体中文
+API Platform
+Guide
+API
+Tools
+Pricing
+Quick Start
+Token Pack
+API Pay-As-You-Go
+FAQ
+Change Log
 Copy
 LongCat API Platform Quick Start Guide
 ​
@@ -60,7 +115,7 @@ Single Request Limit
 ​
 Maximum context length
 :
-LongCat-2.5: 1M token context window with a maximum output length of 128K tokens
+LongCat-2.5: 1M token context window with a maximum output length of 256K tokens
 Over-limit Handling
 ​
 When rate limiting is triggered, the API will return HTTP status code 429. Example response:
@@ -306,3 +361,20 @@ Please keep your API Key safe to avoid quota theft due to leakage
 Now you have learned the basics of using the LongCat API Platform. Go ahead and try it out!
 Next
 Token Pack
+On this page
+How to Get an API Key?
+Register an Account
+Create Your API Key
+Supported API Types
+OpenAI API Format
+Anthropic API Format
+Endpoints
+Supported Models
+Rate Limiting Rules
+Single Request Limit
+Over-limit Handling
+Quick Integration Examples
+OpenAI API Format Example
+Anthropic API Format Example
+cURL Example
+Important Reminders

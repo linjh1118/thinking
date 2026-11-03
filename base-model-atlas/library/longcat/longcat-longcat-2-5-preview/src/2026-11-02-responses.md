@@ -1,9 +1,75 @@
-# Official Responses Guide
-
-来源：https://longcat.chat/platform/docs/api/responses
-
-抓取：2026-11-02（北京时间）；正文提取，原始HTML保留。
-
+Responses API | LongCat API Docs
+Docs
+Guide
+Quick Start
+Token Pack
+API Pay-As-You-Go
+FAQ
+Change Log
+API
+API Overview
+Visual Understanding
+Chat
+POST
+Chat Completions
+POST
+Responses API
+POST
+Anthropic Messages
+Reference
+Model Parameters
+Models
+GET
+List Models
+GET
+Retrieve Model
+Tools
+Overview of AI Tools
+Claude Code
+Codex
+OpenCode
+CatPaw
+Cline
+Kilo Code
+Cherry Studio
+Chatbox
+CodeBuddy
+OpenClaw
+Hermes Agent
+CC Switch
+WorkBuddy
+DeepSeek Harness
+Pricing
+LongCat-2.5
+简体中文
+API Platform ↗
+Docs
+Search docs
+⌘K
+English
+English
+简体中文
+API Platform
+Guide
+API
+Tools
+Pricing
+API Overview
+Visual Understanding
+Chat
+POST
+Chat Completions
+POST
+Responses API
+POST
+Anthropic Messages
+Reference
+Model Parameters
+Models
+GET
+List Models
+GET
+Retrieve Model
 Responses API
 Copy
 Create a model response using the

@@ -1,9 +1,75 @@
-# Official Vision Guide
-
-来源：https://longcat.chat/platform/docs/image-video-understanding
-
-抓取：2026-11-02（北京时间）；正文提取，原始HTML保留。
-
+Visual Understanding | LongCat API Docs
+Docs
+Guide
+Quick Start
+Token Pack
+API Pay-As-You-Go
+FAQ
+Change Log
+API
+API Overview
+Visual Understanding
+Chat
+POST
+Chat Completions
+POST
+Responses API
+POST
+Anthropic Messages
+Reference
+Model Parameters
+Models
+GET
+List Models
+GET
+Retrieve Model
+Tools
+Overview of AI Tools
+Claude Code
+Codex
+OpenCode
+CatPaw
+Cline
+Kilo Code
+Cherry Studio
+Chatbox
+CodeBuddy
+OpenClaw
+Hermes Agent
+CC Switch
+WorkBuddy
+DeepSeek Harness
+Pricing
+LongCat-2.5
+简体中文
+API Platform ↗
+Docs
+Search docs
+⌘K
+English
+English
+简体中文
+API Platform
+Guide
+API
+Tools
+Pricing
+API Overview
+Visual Understanding
+Chat
+POST
+Chat Completions
+POST
+Responses API
+POST
+Anthropic Messages
+Reference
+Model Parameters
+Models
+GET
+List Models
+GET
+Retrieve Model
 Copy
 Visual Understanding
 ​
@@ -245,7 +311,7 @@ Over 200:1 returns an error
 Max size per image
 10 MB
 Max images per request
-50
+100
 Video Limits
 ​
 Item
@@ -365,3 +431,14 @@ Previous
 API Overview
 Next
 Chat Completions
+On this page
+Passing Images
+Method 1: Base64-Encoded Image (Inline)
+Method 2: External Image URL
+Passing Videos
+Limits
+Image Limits
+Video Limits
+API Information
+OpenAI-Compatible API
+Anthropic-Compatible API

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenFirst — Generation Before Reconstruction for Stable End-to-End Latent Generative Modeling</title>
+
+<meta name="description" content="GenFirst: latent collapse in end-to-end VAE + generative training comes from a prior-entropy imbalance. Preserving posterior entropy makes direct joint training stable, and a generation-before-reconstruction schedule resolves the generation-reconstruction conflict. 0.97 gFID on ImageNet-256 and 0.90 GenEval on text-to-image.">
+<meta property="og:title" content="GenFirst — Generation Before Reconstruction">
+<meta property="og:description" content="Stable end-to-end latent generative modeling: entropy prevents latent collapse, and generation shapes the latent space before reconstruction refines it.">
+<meta property="og:image" content="static/images/fig1.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/svg+xml" href="static/images/favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false}
+        ], throwOnError: false});"></script>
+
+<link rel="stylesheet" href="static/css/index.css">
+</head>
+
+<body>
+
+<!-- ==== STICKY TOP NAV ==== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="#top">
+      <span class="mark">E2E</span>
+      <span><span style="color:var(--accent)">Gen</span>First</span>
+    </a>
+    <nav>
+      <a href="#abstract">Abstract</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#t2i">Text-to-Image</a>
+      <a href="#shared-latents">Shared Latents</a>
+      <a href="#unified-mmdit">Unified MMDiT</a>
+      <a href="#samples">Samples</a>
+      <a href="#bibtex" class="is-cta">BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ==== HERO ==== -->
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="publication-title reveal">
+      <span class="accent">Gen</span>First
+    </h1>
+    <p class="subtitle reveal reveal-delay-1">
+      Generation Before Reconstruction for <br class="hero-br">
+      Stable End-to-End Latent Generative Modeling
+    </p>
+    <p class="tagline reveal reveal-delay-1">
+      The general framework for stable direct end-to-end training of VAEs and generative models: mapping the data distribution to the distribution modeled by the generative model.
+    </p>
+
+    <div class="authors reveal reveal-delay-2">
+      <span class="author">Guangting Zheng<span class="sup">1,2</span>,</span>
+      <span class="author">Yiyuan Zhang<span class="sup">2</span>,</span>
+      <span class="author">Tao Yang<span class="sup">2</span>,</span>
+      <span class="author">Yunpeng Chen<span class="sup">2</span>,</span>
+      <span class="author">Rui Zhu<span class="sup">2,&dagger;</span>,</span>
+      <span class="author">Jiajun Deng<span class="sup">1</span>,</span>
+      <span class="author">Yanyong Zhang<span class="sup">1,&#8225;</span></span>
+    </div>
+    <div class="affil-list reveal reveal-delay-3">
+      <span class="affil-item"><span class="sup">1</span>University of Science and Technology of China</span>
+      <span class="affil-item"><span class="sup">2</span>ByteDance Seed</span>
+    </div>
+    <div class="notes reveal reveal-delay-3">
+      <span class="sup">&dagger;</span>Project lead &middot; <span class="sup">&#8225;</span>Corresponding author
+    </div>
+
+    <div class="team-badge reveal reveal-delay-3">
+      <i class="fa-regular fa-star" style="color:var(--accent)"></i>
+      ByteDance Seed Project
+    </div>
+
+    <div class="publication-links reveal reveal-delay-4">
+      <a class="btn" href="https://arxiv.org/pdf/2608.29335" target="_blank" rel="noopener">
+        <i class="fa-solid fa-file-pdf"></i> Paper
+      </a>
+      <a class="btn" href="https://arxiv.org/pdf/2608.29335" target="_blank" rel="noopener">
+        <i class="ai ai-arxiv"></i> arXiv
+      </a>
+      <a class="btn" href="https://github.com/ByteDance-Seed/GenFirst" target="_blank" rel="noopener">
+        <i class="fa-brands fa-github"></i> Code
+      </a>
+      <a class="btn is-ghost" href="mailto:zgt@mail.ustc.edu.cn">
+        <i class="fa-regular fa-envelope"></i> Contact
+      </a>
+      <a class="btn is-ghost" href="#bibtex">
+        <i class="fa-solid fa-quote-left"></i> BibTeX
+      </a>
+    </div>
+
+    <div class="headline-stats reveal reveal-delay-4">
+      <div class="stat">
+        <span class="num">0.97</span>
+        <span class="lbl">gFID, ImageNet 256<br>with guidance</span>
+      </div>
+      <div class="stat">
+        <span class="num">1.45</span>
+        <span class="lbl">gFID, ImageNet 256<br>without guidance</span>
+      </div>
+      <div class="stat">
+        <span class="num">0.90</span>
+        <span class="lbl">GenEval overall<br>text-to-image, 1.3B</span>
+      </div>
+      <div class="stat">
+        <span class="num">&ge;70&times;</span>
+        <span class="lbl">fewer training steps<br>than SiT at equal FID</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== ABSTRACT ==== -->
+<section id="abstract" class="section">
+  <div class="container narrow">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Abstract</span>
+      <h2>Can a VAE and its generative prior be trained together, directly?</h2>
+    </div>
+    <div class="abstract-block reveal">
+      <p>
+        Latent generative models typically follow a two-stage pipeline, training a variational autoencoder
+        for reconstruction and then a generative model on the frozen latent space. Since
+        reconstruction-optimized latents are not necessarily generation-friendly, jointly training both
+        models is an appealing alternative. However, direct end-to-end training remains challenging, as it is
+        prone to <strong>latent collapse</strong> and faces a <strong>generation&ndash;reconstruction
+        conflict</strong>.
+      </p>
+      <p>
+        In this work, we revisit this problem by analyzing how different objectives shape the latent space and
+        identify two key insights. First, the <strong>entropy term in the KL objective is essential for
+        preventing collapse</strong>: reconstruction and prior fitting both tend to shrink the posterior,
+        while entropy preserves non-degenerate latent uncertainty. Second, reconstruction and generation
+        exhibit <strong>asymmetric learning dynamics</strong>: reconstruction is fast and strongly supervised,
+        whereas generation is slower and harder to optimize.
+      </p>
+      <p>
+        Motivated by these insights, we achieve the first direct end-to-end training without latent collapse
+        and further propose <strong>GenFirst</strong>, a simple generation-before-reconstruction strategy. The
+        generative objective first shapes the latent space under weak reconstruction pressure, after which
+        reconstruction is progressively strengthened to recover visual details. We validate this strategy with
+        both continuous autoregressive priors with exact likelihoods and SiT priors with implicit likelihoods.
+        With our end-to-end objective and GenFirst, SiT achieves a gFID of <strong>0.97</strong> with CFG
+        and <strong>1.45</strong> without CFG on ImageNet 256&times;256, while MMDiT reaches a GenEval score of
+        <strong>0.90</strong> on text-to-image generation.
+      </p>
+      <p>
+        Beyond image generation, we further extend the framework to <strong>shared visual latents</strong> for
+        generation and representation learning, and to <strong>continuous unified text&ndash;image
+        generation</strong>. These results demonstrate the generality of stable end-to-end latent learning
+        across generative priors and modalities.
+      </p>
+    </div>
+
+    <figure class="paper-figure reveal mt-3">
+      <img class="zoomable" src="static/images/fig1.png"
+           alt="Comparison of latent generative modeling paradigms"
+           data-caption="Figure 1. Comparison of latent generative modeling paradigms.">
+      <figcaption>
+        <b>Figure 1. Comparison of latent generative modeling paradigms.</b>
+        (a) Conventional two-stage methods train the generative model on a fixed, reconstruction-optimized
+        latent space that may be suboptimal for generation. (b) Naive end-to-end training lets the generative
+        loss update the encoder, but causes latent collapse. (c) REPA-E avoids collapse by stopping the
+        generative gradient and reshaping the latent space with an external representation-alignment loss, so
+        the generative objective never directly shapes the latents. (d) Our method enables direct end-to-end
+        training: the prior loss shapes a generation-friendly latent space while the entropy term prevents
+        collapse.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ==== ANALYSIS ==== -->
+<section id="analysis" class="section is-soft">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Analysis</span>
+      <h2>Two insights behind stable end-to-end training</h2>
+      <p class="lead">
+        We revisit end-to-end training from the VAE objective rather than from the architecture, and find that
+        both failure modes reported in prior work have a concrete, correctable cause.
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card reveal reveal-delay-1">
+        <span class="tag is-accent">Insight 1 &middot; why it collapses</span>
+        <h3>A prior&ndash;entropy imbalance, not a broken gradient</h3>
+        <p>
+          For a standard Gaussian reference prior, the KL regularizer splits into a
+          <b>prior-fitting</b> term and a <b>negative posterior-entropy</b> term:
+        </p>
+        <div class="eq-block" style="box-shadow:none; margin:.9rem 0;">
+          \[ D_{\mathrm{KL}}(q_\phi(z|x)\|p_0(z)) = \underbrace{\mathbb{E}_{q_\phi}[-\log p_0(z)]}_{\text{prior fitting}} \;-\; \underbrace{\mathcal{H}(q_\phi(z|x))}_{\text{entropy}} \]
+        </div>
+        <p>
+          Naive end-to-end training inherits the LDM recipe of a tiny KL weight
+          (\(\lambda_{\mathrm{KL}}\!\approx\!10^{-6}\)) and then adds a learned prior loss on top. The added
+          objective is a strong extra prior-fitting force while entropy stays suppressed:
+          \(\lambda_{\mathrm{prior}}+\lambda_{\mathrm{KL}} \gg \lambda_{\mathrm{KL}}\). Posterior variance is
+          driven to zero, the means concentrate on nearly one code, and the latent space collapses.
+        </p>
+        <div class="takeaway">
+          The entropy term is <b>not a minor regularizer</b>: it is the counteracting force to learned prior
+          fitting. Making it explicit turns latent collapse from a failure mode into a diagnosable imbalance.
+        </div>
+      </div>
+
+      <div class="card reveal reveal-delay-2">
+        <span class="tag is-accent">Insight 2 &middot; why weighting is not enough</span>
+        <h3>Reconstruction is fast, generation is slow</h3>
+        <p>
+          Reconstruction is a strongly supervised mapping problem: given latents, the decoder gets direct pixel
+          supervision and recovers detail within few steps. Generation is a distribution-modeling problem: the
+          prior must learn the global latent distribution before it can sample anything recognizable.
+        </p>
+        <p>
+          Strong reconstruction pressure early therefore anchors the encoder to a reconstruction-oriented
+          latent space that the prior can never catch up with, while permanent generative pressure prevents
+          detail recovery. What matters is not only <b>how</b> the two objectives are weighted, but
+          <b>when</b> each of them shapes the latent space.
+        </p>
+        <figure class="paper-figure" style="margin-top:1rem;">
+          <img class="zoomable" src="static/images/fig2.png"
+               alt="Asymmetric learning dynamics between reconstruction and generation"
+               data-caption="Figure 2. Asymmetric learning dynamics between reconstruction and generation.">
+          <figcaption>
+            <b>Figure 2.</b> Reconstruction reaches good fidelity within far fewer steps, while generation
+            needs a much longer optimization process to become sampleable.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <figure class="paper-figure reveal mt-3">
+      <img class="zoomable" src="static/images/fig3.png"
+           alt="Qualitative effects of each objective on the latent posterior"
+           data-caption="Figure 3. Qualitative effects of each objective on the latent posterior.">
+      <figcaption>
+        <b>Figure 3. What each objective does to the posterior.</b>
+        Reconstruction spreads the posterior means (\(\mathrm{Std}(\mu)\!\uparrow\)) but shrinks the
+        uncertainty (\(\mathbb{E}[\sigma^2]\!\downarrow\)), leaving gaps between codes that are hard to sample.
+        Prior fitting without entropy shrinks both and collapses the posterior toward a constant code. Adding
+        entropy restores \(\mathbb{E}[\sigma^2]\), increases posterior overlap and makes the latent space
+        sampleable.
+      </figcaption>
+    </figure>
+
+    <div class="mt-3">
+      <details class="detail-block reveal">
+        <summary>Three natural fixes for the generation&ndash;reconstruction conflict &mdash; none of them works</summary>
+        <div class="detail-body">
+          <figure class="paper-figure">
+            <img class="zoomable" src="static/images/fig4.png"
+                 alt="Latent dimension, VAE size and prior size ablations"
+                 data-caption="Figure 4. Larger latent dimension, VAE capacity and prior capacity.">
+            <figcaption>
+              <b>Figure 4.</b> (a) A larger latent dimension tolerates a stronger prior weight, but even
+              \(d\!=\!128\) only supports \(\lambda_{\mathrm{prior}}\!\approx\!0.1\), and makes the AR prior
+              harder to model. (b) Scaling the VAE (deeper encoder/decoder, or decoder only) does not
+              alleviate the conflict and can even hurt reconstruction. (c) Scaling the prior improves
+              generation but pushes reconstruction further down &mdash; more shaping pressure, same conflict.
+            </figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details class="detail-block reveal">
+        <summary>The trade-off of generation and reconstruction</summary>
+        <div class="detail-body">
+          <figure class="paper-figure">
+            <img class="zoomable" src="static/images/fig5.png"
+                 alt="Generation-reconstruction trade-off and GenFirst schedule ablations"
+                 data-caption="Figure 5. Generation-reconstruction trade-off and GenFirst schedule ablations.">
+            <figcaption>
+              <b>Figure 5.</b> (a) Raising \(\lambda_{\mathrm{prior}}\) from 0 to 1.0 improves gFID from
+              120.60 to 8.06 while rFID degrades from 0.53 to 4.20 &mdash; no fixed weight is favourable for
+              both. (b) In the reconstruction-refinement stage, a moderate prior weight of 0.25 is best.
+              (c) gFID improves with a longer generation-first stage and saturates around 500 epochs.
+            </figcaption>
+          </figure>
+
+          <div class="table-wrap mt-2">
+            <table class="data-table">
+              <caption><b>Table 2. Loss balancing is not enough.</b> Same architecture and budget; only the
+                way the generative objective is controlled differs. <i>Collapsed</i> = NaN training loss.</caption>
+              <thead>
+                <tr>
+                  <th>Strategy</th><th>gFID (w. CFG) &darr;</th><th>IS (w. CFG) &uarr;</th>
+                  <th>rFID &darr;</th><th>PSNR &uarr;</th><th>SSIM &uarr;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="ours"><td>GenFirst (ours)</td><td class="best">2.10</td><td>246.70</td><td>1.26</td><td>21.93</td><td>0.58</td></tr>
+                <tr><td>Constant weighting</td><td>3.04</td><td class="best">251.2</td><td>3.27</td><td>19.52</td><td>0.48</td></tr>
+                <tr><td>Cosine decay</td><td>5.45</td><td>136.11</td><td>0.66</td><td>23.87</td><td>0.67</td></tr>
+                <tr><td>PI adaptive</td><td class="collapsed" colspan="5">Collapsed</td></tr>
+                <tr><td>Frozen VAE (two-stage)</td><td>6.97</td><td>147.04</td><td class="best">0.53</td><td class="best">26.18</td><td class="best">0.72</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            Constant weighting buys generation at the cost of reconstruction, cosine decay does the opposite,
+            and PI-style adaptive control is numerically unstable in our setting. The optimization
+            <i>order</i> &mdash; not the weight schedule &mdash; is what resolves the conflict.
+          </p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==== METHOD ==== -->
+<section id="method" class="section">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Method</span>
+      <h2>An entropy-preserving objective, and generation before reconstruction</h2>
+      <p class="lead">
+        One objective makes direct joint training stable; one schedule decides which objective gets to shape
+        the latent space first.
+      </p>
+    </div>
+
+    <div class="eq-block reveal">
+      \[ \mathcal{L}_{\mathrm{E2E}} = \lambda_{\mathrm{rec}}\mathcal{L}_{\mathrm{rec}} + \lambda_{\mathrm{LPIPS}}\mathcal{L}_{\mathrm{LPIPS}} + \lambda_{\mathrm{GAN}}\mathcal{L}_{\mathrm{GAN}} + \lambda_{\mathrm{prior}}\mathcal{L}_{\mathrm{prior}} - \lambda_{\mathrm{ent}}\mathcal{H}(q_\phi(z|x)) \]
+      <p class="eq-note">
+        Prior fitting and posterior entropy are <b>separated and separately weighted</b>. The prior term is
+        whatever generative objective is being trained &mdash; an exact latent NLL for the continuous
+        autoregressive prior, or the flow-matching velocity loss for SiT. For SiT we additionally keep the
+        classic \(10^{-6}\) KL term purely to bound the latent scale, since an unbounded \(z\) would make the
+        injected Gaussian noise relatively too small and open another shortcut.
+      </p>
+    </div>
+
+    <div class="stage-grid">
+      <div class="stage reveal reveal-delay-1">
+        <span class="stage-tag">Stage 1</span>
+        <h4>Generation first</h4>
+        <p>
+          A large prior weight (with \(\lambda_{\mathrm{ent}}=\lambda_{\mathrm{prior}}\)) lets the generative
+          objective form a generation-friendly latent geometry, while reconstruction preserves image
+          information and entropy prevents collapse. This stage is the long one: 500 epochs for EAR,
+          80 epochs for EiT.
+        </p>
+      </div>
+      <div class="stage reveal reveal-delay-2">
+        <span class="stage-tag">Stage 2</span>
+        <h4>Reconstruction refinement</h4>
+        <p>
+          The prior and entropy weights drop together &mdash; \(1\!\to\!0.25\) for EAR and
+          \(0.1\!\to\!0.01\) for EiT &mdash; giving reconstruction more relative influence so that visual
+          detail returns without dismantling the latent space formed in stage 1. This stage is short: 140
+          and 40 epochs respectively.
+        </p>
+      </div>
+      <div class="stage reveal reveal-delay-3">
+        <span class="stage-tag">Then</span>
+        <h4>Freeze and train the prior</h4>
+        <p>
+          For diffusion priors the end-to-end phase is followed by a prior-only phase: freeze the learned VAE
+          and train a fresh SiT / MMDiT on its latents. The same frozen VAE also transfers to
+          512&times;512 and to text-to-image without retraining the tokenizer.
+        </p>
+      </div>
+    </div>
+
+    <div class="card-grid mt-3">
+      <div class="card reveal">
+        <span class="tag">Instantiation A</span>
+        <h3>EAR &mdash; exact-likelihood autoregressive prior</h3>
+        <p>
+          Latents are flattened into \(N=hw\) continuous tokens and modelled by a causal Transformer with a
+          \(K\)-component Gaussian-mixture head, following FARMER:
+          \(p_\theta(z|c)=\prod_i p_\theta(z_i|z_{&lt;i},c)\). The exact likelihood makes the prior&ndash;entropy
+          balance directly measurable, and the same loss both fits and reshapes the latent distribution.
+        </p>
+      </div>
+      <div class="card reveal reveal-delay-1">
+        <span class="tag">Instantiation B</span>
+        <h3>EiT &mdash; flow-matching / diffusion prior</h3>
+        <p>
+          SiT for class-conditional ImageNet and MMDiT for text-to-image, trained with the linear-interpolant
+          velocity loss \(\|v_\theta(z_t,t)-(z-\epsilon_t)\|^2_2\). No explicit likelihood over latents is
+          available here, which is exactly why the entropy term (rather than a likelihood diagnosis) is what
+          keeps training stable.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== RESULTS ==== -->
+<section id="results" class="section is-soft">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Results</span>
+      <h2>End-to-end latents are easier to generate from</h2>
+      <p class="lead">
+        The clearest evidence is not the joint model itself, but what happens when a <i>new</i> prior is
+        trained from scratch on the frozen end-to-end latent space.
+      </p>
+    </div>
+
+    <div class="figure-grid cols-2 reveal">
+      <div class="table-wrap">
+        <table class="data-table">
+          <caption><b>Table 1a. EAR.</b> Trained until gFID converges. <i>Collapsed</i> = NaN loss.</caption>
+          <thead>
+            <tr><th>Setting</th><th>gFID &darr;</th><th>IS &uarr;</th><th>rFID &darr;</th><th>PSNR &uarr;</th><th>SSIM &uarr;</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Frozen VAE</td><td>36.33</td><td>46.55</td><td class="best">0.53</td><td class="best">26.18</td><td class="best">0.72</td></tr>
+            <tr><td>Naive E2E</td><td>294.90</td><td>1.48</td><td>0.70</td><td>25.11</td><td>0.68</td></tr>
+            <tr class="ours"><td>Stable E2E (ours)</td><td class="best">5.10</td><td class="best">145.22</td><td>1.26</td><td>21.93</td><td>0.58</td></tr>
+            <tr class="ours"><td>Frozen E2E-trained VAE</td><td>5.67</td><td>137.39</td><td>1.26</td><td>21.93</td><td>0.58</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <caption><b>Table 1b. SiT</b> (80 epochs). Naive end-to-end training diverges outright.</caption>
+          <thead>
+            <tr><th>Setting</th><th>gFID &darr;</th><th>IS &uarr;</th><th>rFID &darr;</th><th>PSNR &uarr;</th><th>SSIM &uarr;</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Frozen VAE</td><td>7.90</td><td>122.60</td><td>0.74</td><td class="best">25.67</td><td class="best">0.72</td></tr>
+            <tr><td>Naive E2E</td><td class="collapsed" colspan="5">Collapsed</td></tr>
+            <tr class="ours"><td>Stable E2E (ours)</td><td>92.38</td><td>13.94</td><td class="best">0.57</td><td>25.13</td><td>0.71</td></tr>
+            <tr class="ours"><td>Frozen E2E-trained VAE</td><td class="best">3.57</td><td class="best">166.49</td><td class="best">0.57</td><td>25.13</td><td>0.71</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="table-note reveal">
+      Replacing a reconstruction-trained VAE with the frozen end-to-end-trained VAE takes a freshly trained
+      prior from <b>36.33 &rarr; 5.67</b> gFID for EAR and <b>7.90 &rarr; 3.57</b> for SiT. EAR, whose exact
+      likelihood directly models the VAE density, is slightly better <i>during</i> joint training; SiT, which
+      has no explicit likelihood over latents, prefers the freeze-and-retrain protocol.
+    </p>
+
+    <figure class="paper-figure reveal mt-3">
+      <img class="zoomable" src="static/images/fig8.png"
+           alt="Convergence acceleration on class-conditional and text-to-image generation"
+           data-caption="Figure 8. End-to-end training with GenFirst accelerates convergence.">
+      <figcaption>
+        <b>Figure 8. GenFirst latents converge much faster.</b>
+        (a) FID-50K without guidance on ImageNet: GenFirst reaches FID 6.91 at 100K steps and 4.97 at 150K
+        steps, beating the <i>final</i> results of SiT and REPA with at least <b>70&times;</b> and
+        <b>26&times;</b> fewer steps, and matching REPA-E at roughly <b>2&times;</b> lower cost.
+        (b&ndash;c) On text-to-image, both EiT variants pass the 200K-step SiT+REPA baseline by 80K steps on
+        GenEval and DPG-Bench.
+      </figcaption>
+    </figure>
+
+    <div class="mt-3">
+      <details class="detail-block reveal" open>
+        <summary>Class-conditional ImageNet 256&times;256 &mdash; full comparison</summary>
+        <div class="detail-body">
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption><b>Table 6.</b> <sup>*</sup> results obtained with a low-temperature sampling strategy.</caption>
+              <thead>
+                <tr>
+                  <th rowspan="2">Method</th><th rowspan="2">Epochs</th><th rowspan="2">#Params</th>
+                  <th colspan="4">Without guidance</th><th colspan="4">With guidance</th>
+                </tr>
+                <tr>
+                  <th>gFID &darr;</th><th>IS &uarr;</th><th>Prec. &uarr;</th><th>Rec. &uarr;</th>
+                  <th>gFID &darr;</th><th>IS &uarr;</th><th>Prec. &uarr;</th><th>Rec. &uarr;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group"><td colspan="11">Pixel space</td></tr>
+                <tr><td>ADM</td><td>400</td><td>554M</td><td>10.94</td><td>101.0</td><td>0.69</td><td>0.63</td><td>3.94</td><td>215.8</td><td>0.83</td><td>0.53</td></tr>
+                <tr><td>RIN</td><td>480</td><td>410M</td><td>3.42</td><td>182.0</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>PixelFlow</td><td>320</td><td>677M</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.98</td><td>282.1</td><td>0.81</td><td>0.60</td></tr>
+                <tr><td>PixNerd</td><td>160</td><td>700M</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>2.15</td><td>297.0</td><td>0.79</td><td>0.59</td></tr>
+                <tr><td>SiD2</td><td>1280</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.38</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>TARFlow</td><td>320</td><td>1.4B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>4.69</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>JetFormer</td><td>500</td><td>2.8B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>6.64</td><td>&ndash;</td><td>0.69</td><td>0.56</td></tr>
+                <tr><td>FARMER</td><td>320</td><td>1.9B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>3.60</td><td>269.2</td><td>0.81</td><td>0.51</td></tr>
+                <tr><td>JiT</td><td>600</td><td>2B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.82</td><td>292.6</td><td>0.79</td><td>0.62</td></tr>
+                <tr><td>PixelDiT</td><td>320</td><td>797M</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.61</td><td>292.7</td><td>0.78</td><td>0.64</td></tr>
+                <tr><td>DeCo</td><td>600</td><td>682M</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.69</td><td>304.0</td><td>0.79</td><td>0.63</td></tr>
+                <tr class="group"><td colspan="11">Latent autoregressive</td></tr>
+                <tr><td>GIVT</td><td>500</td><td>1.67B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>2.59</td><td>&ndash;</td><td>0.81</td><td>0.57</td></tr>
+                <tr><td>VAR</td><td>350</td><td>2.0B</td><td>1.92</td><td>323.1</td><td>0.82</td><td>0.59</td><td>1.73</td><td class="best">350.2</td><td>0.82</td><td>0.60</td></tr>
+                <tr><td>MAR</td><td>800</td><td>943M</td><td>2.35</td><td>227.8</td><td>0.79</td><td>0.62</td><td>1.55</td><td>303.7</td><td>0.81</td><td>0.62</td></tr>
+                <tr><td>xAR</td><td>800</td><td>1.1B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.24</td><td>301.6</td><td class="best">0.83</td><td>0.64</td></tr>
+                <tr class="group"><td colspan="11">Latent diffusion</td></tr>
+                <tr><td>DiT</td><td>1400</td><td>675M</td><td>9.62</td><td>121.5</td><td>0.67</td><td>0.67</td><td>2.27</td><td>278.2</td><td class="best">0.83</td><td>0.57</td></tr>
+                <tr><td>MaskDiT</td><td>1600</td><td>675M</td><td>5.69</td><td>177.9</td><td>0.74</td><td>0.60</td><td>2.28</td><td>276.6</td><td>0.80</td><td>0.61</td></tr>
+                <tr><td>SiT</td><td>1400</td><td>675M</td><td>8.61</td><td>131.7</td><td>0.68</td><td>0.67</td><td>2.06</td><td>270.3</td><td>0.82</td><td>0.59</td></tr>
+                <tr><td>MDTv2</td><td>1080</td><td>675M</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>1.58</td><td>314.7</td><td>0.79</td><td>0.65</td></tr>
+                <tr><td>REPA</td><td>800</td><td>675M</td><td>5.78</td><td>158.3</td><td>0.70</td><td class="best">0.68</td><td>1.29</td><td>306.3</td><td>0.79</td><td>0.64</td></tr>
+                <tr><td>VA-VAE</td><td>800</td><td>675M</td><td>2.17</td><td>205.6</td><td>0.77</td><td>0.65</td><td>1.35</td><td>295.3</td><td>0.79</td><td>0.65</td></tr>
+                <tr><td>DDT</td><td>400</td><td>675M</td><td>6.27</td><td>154.7</td><td>0.68</td><td class="best">0.69</td><td>1.26</td><td>310.6</td><td>0.79</td><td>0.65</td></tr>
+                <tr><td>RAE</td><td>800</td><td>839M</td><td>1.51</td><td class="best">242.9</td><td>0.79</td><td>0.63</td><td>1.13</td><td>262.6</td><td>0.78</td><td class="best">0.67</td></tr>
+                <tr class="group"><td colspan="11">End-to-end generative models</td></tr>
+                <tr><td>SimFlow</td><td>160</td><td>1.4B</td><td>13.72</td><td>105.2</td><td>0.67</td><td>0.62</td><td>2.15</td><td>276.8</td><td class="best">0.83</td><td>0.57</td></tr>
+                <tr><td>REPA-E</td><td>800</td><td>675M</td><td>1.69</td><td>219.3</td><td>0.77</td><td>0.67</td><td>1.12</td><td>302.9</td><td>0.79</td><td>0.66</td></tr>
+                <tr class="ours"><td>EAR (ours, w/o GenFirst)</td><td>500</td><td>312M</td><td>5.17</td><td>147.5</td><td>0.70</td><td>0.59</td><td>3.04</td><td>251.2</td><td>0.73</td><td>0.55</td></tr>
+                <tr class="ours"><td>EAR (ours)</td><td>500+140</td><td>312M</td><td>6.10 / 3.83<sup>*</sup></td><td>138.4 / 164.0<sup>*</sup></td><td>0.65</td><td>0.64</td><td>2.10</td><td>246.7</td><td>0.72</td><td>0.59</td></tr>
+                <tr class="ours"><td>EiT (ours)</td><td>80</td><td>675M</td><td>2.79</td><td>175.4</td><td>0.78</td><td>0.63</td><td>1.38</td><td>271.3</td><td>0.79</td><td>0.63</td></tr>
+                <tr class="ours"><td>EiT (ours)</td><td>480</td><td>675M</td><td>1.60</td><td>216.8</td><td>0.78</td><td>0.65</td><td>0.988</td><td>270.7</td><td>0.79</td><td class="best">0.67</td></tr>
+                <tr class="ours"><td>EiT (ours)</td><td>800</td><td>675M</td><td class="best">1.45</td><td>226.7</td><td class="best">0.79</td><td>0.65</td><td class="best">0.969</td><td>283.4</td><td>0.79</td><td class="best">0.67</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            EAR reaches a guided gFID of 2.10 with only <b>312M</b> parameters, outperforming much larger
+            continuous-AR baselines such as GIVT (2.59), FARMER (3.60) and JetFormer (6.64). EiT reaches
+            <b>0.988</b> guided gFID after 480 epochs &mdash; to our knowledge the first diffusion model below
+            FID 1.0 without a Fr&eacute;chet-Distance loss &mdash; and 1.45 unguided at 800 epochs.
+          </p>
+        </div>
+      </details>
+
+      <details class="detail-block reveal">
+        <summary>Class-conditional ImageNet 512&times;512</summary>
+        <div class="detail-body">
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption><b>Table 7.</b> The VAE is trained end-to-end at 256&times;256, then frozen; only the
+                prior is trained at 512&times;512.</caption>
+              <thead>
+                <tr><th>Method</th><th>Epochs</th><th>#Params</th><th>gFID &darr;</th><th>IS &uarr;</th><th>Prec. &uarr;</th><th>Rec. &uarr;</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>BigGAN-deep</td><td>&ndash;</td><td>158M</td><td>8.43</td><td>177.9</td><td>0.88</td><td>0.29</td></tr>
+                <tr><td>StyleGAN-XL</td><td>&ndash;</td><td>&ndash;</td><td>2.41</td><td>267.8</td><td>0.77</td><td>0.52</td></tr>
+                <tr><td>VAR</td><td>350</td><td>2.3B</td><td>2.63</td><td>303.2</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>MAGVIT-v2</td><td>1080</td><td>307M</td><td>1.91</td><td>324.3</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>MAR</td><td>800</td><td>481M</td><td>1.73</td><td>279.9</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>xAR</td><td>800</td><td>608M</td><td>1.70</td><td>281.5</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>ADM</td><td>871+210</td><td>731M</td><td>3.85</td><td>221.7</td><td>0.84</td><td>0.53</td></tr>
+                <tr><td>SiD2</td><td>&ndash;</td><td>&ndash;</td><td>1.50</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>PixNerd</td><td>340</td><td>700M</td><td>2.84</td><td>245.6</td><td>0.80</td><td>0.59</td></tr>
+                <tr><td>JiT</td><td>600</td><td>2B</td><td>1.78</td><td>306.8</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>PixelDiT</td><td>850</td><td>797M</td><td>1.81</td><td>278.6</td><td>0.78</td><td>0.67</td></tr>
+                <tr><td>DeCo</td><td>340</td><td>682M</td><td>2.22</td><td>290.0</td><td>0.80</td><td>0.60</td></tr>
+                <tr><td>DiT</td><td>600</td><td>674M</td><td>3.04</td><td>240.8</td><td>0.84</td><td>0.54</td></tr>
+                <tr><td>SiT</td><td>600</td><td>674M</td><td>2.62</td><td>252.2</td><td>0.84</td><td>0.57</td></tr>
+                <tr><td>REPA</td><td>200</td><td>675M</td><td>2.08</td><td>274.6</td><td>0.83</td><td>0.58</td></tr>
+                <tr><td>Unified Latents</td><td>&ndash;</td><td>&ndash;</td><td>1.31</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>DDT</td><td>356</td><td>675M</td><td>1.28</td><td>305.1</td><td>0.80</td><td>0.63</td></tr>
+                <tr><td>EDM2</td><td>&ndash;</td><td>1.5B</td><td>1.25</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>RAE</td><td>400</td><td>839M</td><td>1.13</td><td>259.6</td><td>0.80</td><td>0.63</td></tr>
+                <tr><td>STARFlow</td><td>&ndash;</td><td>1.4B</td><td>3.00</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+                <tr><td>SimFlow + REPA-E</td><td>160</td><td>1.4B</td><td>2.74</td><td>304.9</td><td>0.81</td><td>0.57</td></tr>
+                <tr class="ours"><td>EAR (ours)</td><td>320</td><td>940M</td><td>1.87</td><td>280.0</td><td>0.82</td><td>0.58</td></tr>
+                <tr class="ours"><td>EiT (ours)</td><td>80</td><td>675M</td><td>1.63</td><td>278.9</td><td>0.81</td><td>0.61</td></tr>
+                <tr class="ours"><td>EiT (ours)</td><td>400</td><td>675M</td><td>1.23</td><td>286.1</td><td>0.80</td><td>0.63</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <details class="detail-block reveal">
+        <summary>Comparison with REPA / REPA-E, and how end-to-end training interacts with REPA</summary>
+        <div class="detail-body">
+          <div class="figure-grid cols-1">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption><b>Table 4.</b> All models evaluated after 80 epochs.</caption>
+                <thead>
+                  <tr><th>Method</th><th>gFID &darr;</th><th>IS &uarr;</th><th>Prec. &uarr;</th><th>Rec. &uarr;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>REPA</td><td>7.90</td><td>122.60</td><td>0.70</td><td class="best">0.65</td></tr>
+                  <tr><td>REPA-E (scratch)</td><td>4.34</td><td>154.30</td><td>0.75</td><td>0.63</td></tr>
+                  <tr><td>REPA-E (SD-VAE init.)</td><td>4.07</td><td>161.80</td><td>0.76</td><td>0.62</td></tr>
+                  <tr><td>REPA-E (VA-VAE init.)</td><td>3.46</td><td>159.80</td><td>0.77</td><td>0.63</td></tr>
+                  <tr class="ours"><td>EiT (scratch)</td><td>3.78</td><td>161.42</td><td class="best">0.78</td><td>0.61</td></tr>
+                  <tr class="ours"><td>EiT (SD-VAE init.)</td><td>3.57</td><td>166.49</td><td>0.77</td><td>0.62</td></tr>
+                  <tr class="ours"><td>EiT (VA-VAE init.)</td><td class="best">2.79</td><td class="best">175.40</td><td class="best">0.78</td><td>0.63</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="detail-block reveal">
+        <summary>Scaling the prior, GMM capacity, the optional normalizing flow, and SiT prior weights</summary>
+        <div class="detail-body">
+          <div class="figure-grid cols-2">
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption><b>Table 3a. EAR model scale</b> on a frozen GenFirst VAE.</caption>
+                <thead><tr><th>Model</th><th>#Params</th><th>gFID &darr;</th><th>IS &uarr;</th></tr></thead>
+                <tbody>
+                  <tr><td>EAR-B</td><td>174M</td><td>13.85</td><td>79.00</td></tr>
+                  <tr><td>EAR-L</td><td>477M</td><td>5.67</td><td>137.39</td></tr>
+                  <tr><td>EAR-XL</td><td>775M</td><td>3.91</td><td>163.71</td></tr>
+                  <tr><td>EAR-XXL</td><td>1.4B</td><td class="best">3.19</td><td class="best">181.99</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption><b>Table 3b. GMM components</b> with EAR-L fixed.</caption>
+                <thead><tr><th>GMM \(K\)</th><th>gFID &darr;</th><th>IS &uarr;</th></tr></thead>
+                <tbody>
+                  <tr><td>32</td><td>6.08</td><td>132.70</td></tr>
+                  <tr><td>64</td><td>5.67</td><td>137.39</td></tr>
+                  <tr><td>128</td><td>5.64</td><td>137.24</td></tr>
+                  <tr><td>1024</td><td>5.01</td><td>144.63</td></tr>
+                  <tr><td>4096</td><td class="best">5.00</td><td class="best">144.99</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption><b>Table 5.</b> Is a normalizing flow still needed for continuous AR modeling?</caption>
+                <thead><tr><th>Setting</th><th>gFID &darr;</th><th>IS &uarr;</th></tr></thead>
+                <tbody>
+                  <tr><td>Frozen VAE + AR</td><td>110.10</td><td>14.79</td></tr>
+                  <tr><td>Frozen VAE + NF + AR</td><td>36.33</td><td>46.55</td></tr>
+                  <tr class="ours"><td>Stable E2E VAE + AR</td><td>5.27</td><td>149.28</td></tr>
+                  <tr class="ours"><td>Stable E2E VAE + NF + AR</td><td class="best">5.12</td><td class="best">151.17</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption><b>Table 13.</b> GenFirst prior weights for the SiT instantiation.</caption>
+                <thead>
+                  <tr><th>\(\lambda^{(1)}_{\mathrm{prior}}\)</th><th>\(\lambda^{(2)}_{\mathrm{prior}}\)</th><th>rFID &darr;</th><th>PSNR &uarr;</th><th>FID &darr;</th><th>IS &uarr;</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>1.00</td><td>0.10</td><td>0.61</td><td>24.57</td><td>4.44</td><td>154.25</td></tr>
+                  <tr class="ours"><td>0.10</td><td>0.01</td><td>0.57</td><td>25.13</td><td class="best">3.57</td><td class="best">166.49</td></tr>
+                  <tr><td>0.01</td><td>0.01</td><td class="best">0.48</td><td class="best">25.17</td><td>3.84</td><td>161.40</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p class="table-note">
+            After end-to-end training the extra normalizing flow becomes largely optional
+            (5.27 &rarr; 5.12), whereas on a frozen reconstruction-optimized VAE it is worth 74 FID points.
+            The latent space produced by GenFirst is already well suited to continuous AR modeling.
+          </p>
+        </div>
+      </details>
+
+      <details class="detail-block reveal">
+        <summary>What end-to-end training costs in reconstruction</summary>
+        <div class="detail-body">
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption><b>Table 12.</b> VAE reconstruction on ImageNet-256. End-to-end training reshapes the
+                latent space toward generation at a moderate, predictable reconstruction cost.</caption>
+              <thead>
+                <tr><th>VAE</th><th>rFID &darr;</th><th>PSNR &uarr;</th><th>SSIM &uarr;</th><th>LPIPS &darr;</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>FLUX.1-dev VAE</td><td class="best">0.18</td><td class="best">31.59</td><td class="best">0.90</td><td class="best">0.05</td></tr>
+                <tr class="ours"><td>E2E-trained (Version A: SiT-XL/2 on ImageNet, FLUX.1-dev init.)</td><td>0.23</td><td>29.43</td><td>0.85</td><td>0.07</td></tr>
+                <tr class="ours"><td>E2E-trained (Version B: MMDiT-L/2 on T2I, FLUX.1-dev init.)</td><td>0.21</td><td>29.37</td><td>0.85</td><td>0.07</td></tr>
+                <tr><td>SD-VAE</td><td>0.74</td><td>25.67</td><td>0.72</td><td>0.13</td></tr>
+                <tr class="ours"><td>E2E-trained (f8d4, SD-VAE init.)</td><td>0.57</td><td>25.13</td><td>0.71</td><td>0.14</td></tr>
+                <tr><td>VA-VAE</td><td>0.28</td><td>26.32</td><td>0.76</td><td>0.11</td></tr>
+                <tr class="ours"><td>E2E-trained (f16d32, VA-VAE init.)</td><td>0.36</td><td>25.82</td><td>0.74</td><td>0.12</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ==== TEXT TO IMAGE ==== -->
+<section id="t2i" class="section">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Text-to-image</span>
+      <h2>0.90 GenEval with a 1.3B MMDiT</h2>
+      <p class="lead">
+        The end-to-end phase produces a VAE &mdash; either with SiT-XL/2 on ImageNet (Version A) or with an
+        MMDiT-L/2 on the text-to-image mixture (Version B). The prior-only phase then trains the same
+        MMDiT-XL/2 on its latents at 256&times;256 for 200K steps, 512&times;512 for 80K steps, plus 40K steps
+        of fine-tuning.
+      </p>
+    </div>
+
+    <div class="table-wrap reveal">
+      <table class="data-table">
+        <caption><b>Table 8. GenEval and DPG-Bench.</b> <sup>&dagger;</sup> uses prompt rewriting;
+          <sup>*</sup> replaces the CLIP text encoder with Qwen3-1.7B.</caption>
+        <thead>
+          <tr>
+            <th>Method</th><th>#Params</th><th>Single</th><th>Two obj.</th><th>Count</th>
+            <th>Color</th><th>Position</th><th>Attr.</th><th>GenEval &uarr;</th><th>DPG-Bench &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>PixArt</td><td>4.3B+0.6B</td><td>0.98</td><td>0.50</td><td>0.44</td><td>0.80</td><td>0.08</td><td>0.07</td><td>0.48</td><td>71.11</td></tr>
+          <tr><td>DALL&middot;E 2</td><td>&ndash;</td><td>0.94</td><td>0.66</td><td>0.49</td><td>0.77</td><td>0.10</td><td>0.19</td><td>0.52</td><td>&ndash;</td></tr>
+          <tr><td>Show-o</td><td>1.3B</td><td>0.95</td><td>0.52</td><td>0.49</td><td>0.82</td><td>0.11</td><td>0.28</td><td>0.53</td><td>&ndash;</td></tr>
+          <tr><td>Emu3-Gen</td><td>8B</td><td>0.98</td><td>0.71</td><td>0.34</td><td>0.81</td><td>0.17</td><td>0.21</td><td>0.54</td><td>80.60</td></tr>
+          <tr><td>SDXL</td><td>0.81B+2.6B</td><td>0.98</td><td>0.74</td><td>0.39</td><td>0.85</td><td>0.15</td><td>0.23</td><td>0.55</td><td>74.65</td></tr>
+          <tr><td>Janus</td><td>1.3B</td><td>0.97</td><td>0.68</td><td>0.30</td><td>0.84</td><td>0.46</td><td>0.42</td><td>0.61</td><td>79.68</td></tr>
+          <tr><td>JanusFlow</td><td>1.3B</td><td>0.97</td><td>0.59</td><td>0.45</td><td>0.83</td><td>0.53</td><td>0.42</td><td>0.63</td><td>80.09</td></tr>
+          <tr><td>FLUX.1 [dev]</td><td>4.8B+12B</td><td>0.98</td><td>0.81</td><td>0.74</td><td>0.79</td><td>0.22</td><td>0.45</td><td>0.66</td><td>&ndash;</td></tr>
+          <tr><td>DALL&middot;E 3</td><td>&ndash;</td><td>0.96</td><td>0.87</td><td>0.47</td><td>0.83</td><td>0.43</td><td>0.45</td><td>0.67</td><td>83.50</td></tr>
+          <tr><td>SD3-Medium</td><td>5.5B+2B</td><td>0.99</td><td>0.94</td><td>0.72</td><td>0.89</td><td>0.33</td><td>0.60</td><td>0.74</td><td>84.08</td></tr>
+          <tr><td>Show-o2-7B</td><td>7B</td><td class="best">1.00</td><td>0.87</td><td>0.58</td><td>0.92</td><td>0.52</td><td>0.62</td><td>0.76<sup>&dagger;</sup></td><td>86.14</td></tr>
+          <tr><td>MetaQuery-XL</td><td>7B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>0.80<sup>&dagger;</sup></td><td>82.05</td></tr>
+          <tr><td>Janus-Pro-7B</td><td>7B</td><td>0.99</td><td>0.89</td><td>0.59</td><td>0.90</td><td>0.79</td><td>0.66</td><td>0.80</td><td>84.19</td></tr>
+          <tr><td>Z-Image-Turbo</td><td>4B+6B</td><td class="best">1.00</td><td>0.95</td><td>0.77</td><td>0.89</td><td>0.65</td><td>0.68</td><td>0.82</td><td>84.86</td></tr>
+          <tr><td>BLIP3-o-8B</td><td>8B</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>0.84</td><td>81.60</td></tr>
+          <tr><td>FLUX.2 [dev]</td><td>24B+32B</td><td class="best">1.00</td><td class="best">0.99</td><td>0.79</td><td>0.93</td><td>0.73</td><td>0.78</td><td>0.87</td><td>87.57</td></tr>
+          <tr><td>Qwen-Image</td><td>7B+20B</td><td>0.99</td><td>0.92</td><td class="best">0.89</td><td>0.88</td><td>0.76</td><td>0.77</td><td>0.87</td><td class="best">88.32</td></tr>
+          <tr><td>BAGEL-7B</td><td>7B</td><td>0.98</td><td>0.95</td><td>0.84</td><td class="best">0.95</td><td>0.78</td><td>0.77</td><td>0.88<sup>&dagger;</sup></td><td>&ndash;</td></tr>
+          <tr class="ours"><td>EiT (ours)</td><td>0.1B+1.3B</td><td class="best">1.00</td><td>0.94</td><td>0.83</td><td>0.94</td><td>0.87</td><td>0.82</td><td class="best">0.90</td><td>82.60</td></tr>
+          <tr class="ours"><td>EiT (ours)<sup>*</sup></td><td>1.7B+1.3B</td><td>0.99</td><td>0.94</td><td>0.73</td><td class="best">0.96</td><td class="best">0.89</td><td class="best">0.84</td><td>0.89</td><td>84.65</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note reveal">
+      With 1.3B generation parameters, EiT outperforms much larger text-to-image systems on GenEval, with the
+      largest margins on <b>position</b> (0.87) and <b>attribute binding</b> (0.82). Swapping CLIP for a
+      Qwen3-1.7B text encoder trades a little counting accuracy for +2.05 DPG-Bench.
+    </p>
+
+    <h3 class="center mt-3" style="font-size:1.15rem;">Same MMDiT, same data &mdash; only the VAE differs</h3>
+    <p class="muted center tiny" style="max-width:760px;margin:.4rem auto 1.3rem;">
+      Hover a sample (or flip the switch) to swap between the FLUX.1-dev VAE and our end-to-end trained VAE.
+      Click to open it full size; use &larr;/&rarr; to browse.
+    </p>
+
+    <div class="compare-toolbar reveal">
+      <span>Show:</span>
+      <span class="switch" id="compareSwitch">
+        <button data-side="ours" class="is-on">Ours (E2E VAE)</button>
+        <button data-side="base">FLUX.1-dev VAE</button>
+      </span>
+    </div>
+    <div class="compare-grid reveal" id="compareGrid"></div>
+    <div class="more-btn">
+      <button class="btn is-ghost" id="moreCompare">Show more prompts</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==== EXTENSION 1: SHARED LATENTS ==== -->
+<section id="shared-latents" class="section is-soft">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Extension experiment 1 &mdash; Shared latents</span>
+      <h2>Toward a shared latent space for generation and representation learning</h2>
+      <p class="lead">
+        The first of two <b>extension experiments</b> that push the same recipe past text-to-image.
+        If the generative objective can shape a latent space, representation learning can share it. We swap
+        the FLUX.1-dev encoder for a Qwen3-VL ViT plus a posterior projector and add representation
+        supervision <em>inside</em> the same end-to-end loop, so the features being aligned are exactly the
+        latents the diffusion model consumes.
+      </p>
+    </div>
+
+    <figure class="paper-figure reveal">
+      <img class="zoomable" src="static/images/fig9ab.png"
+           alt="Two ways of adding representation supervision to end-to-end training"
+           data-caption="Figure 9 (a-b). Adding representation supervision inside end-to-end training.">
+      <figcaption>
+        <b>Figure 9 (a&ndash;b). Two ways to add representation supervision.</b>
+        (a) Latent-level SigLIP supervision, so representation learning shapes exactly the latents the
+        generative model uses. (b) Caption-based VLM-NLL supervision applied to the intermediate
+        ViT features: they are fed to a frozen Qwen3-VL and the caption NLL is minimized &mdash; no in-batch
+        negatives needed.
+      </figcaption>
+    </figure>
+
+    <div class="table-wrap reveal mt-3">
+      <table class="data-table">
+        <caption><b>Table 9. Reconstruction, generation and representation quality of different visual
+          encoders.</b> The FLUX.1-dev encoder is replaced by the Qwen3-VL ViT plus a posterior projector;
+          Top-1 is an ImageNet linear probe.</caption>
+        <thead>
+          <tr><th>Encoder</th><th>Setting</th><th>rFID &darr;</th><th>PSNR &uarr;</th><th>GenEval &uarr;</th><th>DPG-Bench &uarr;</th><th>Top-1 Acc. &uarr;</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FLUX.1-dev VAE</td><td>Pretrained</td><td class="best">0.18</td><td class="best">31.59</td><td>&ndash;</td><td>&ndash;</td><td>3.1</td></tr>
+          <tr><td>Qwen3-VL ViT</td><td>Pretrained</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>79.64</td></tr>
+          <tr class="ours"><td>Qwen3-VL ViT + projector</td><td>E2E</td><td>0.42</td><td>27.79</td><td>0.89</td><td>83.70</td><td>77.71</td></tr>
+          <tr class="ours"><td>Qwen3-VL ViT + projector</td><td>E2E + SigLIP supervision</td><td>0.39</td><td>27.64</td><td class="best">0.90</td><td class="best">83.76</td><td>79.25</td></tr>
+          <tr class="ours"><td>Qwen3-VL ViT + projector</td><td>E2E + VLM-NLL supervision</td><td>0.46</td><td>27.19</td><td>0.89</td><td>83.49</td><td class="best">81.69</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note reveal">
+      Representation supervision can be folded into end-to-end training almost for free: caption-based
+      VLM-NLL supervision lifts linear-probe accuracy from 77.71 to <b>81.69</b>, which even
+      <i>exceeds</i> the pretrained Qwen3-VL ViT&rsquo;s 79.64, while GenEval and DPG-Bench stay at
+      0.89 / 83.49.
+    </p>
+
+    <div class="takeaway reveal mt-3">
+      Generation and representation learning can live in <b>one</b> latent space &mdash; no separate tokenizer
+      for the diffusion model and no frozen encoder for the probe.
+    </div>
+  </div>
+</section>
+
+<!-- ==== EXTENSION 2: UNIFIED MMDIT ==== -->
+<section id="unified-mmdit" class="section">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Extension experiment 2 &mdash; Unified MMDiT</span>
+      <h2>Unified text-image modeling via an end-to-end diffusion</h2>
+      <p class="lead">
+        The second <b>extension experiment</b> shows the framework is not tied to pixels. Here we replace one
+        modality outright: text is encoded into continuous latents as well, and a single block-causal MMDiT
+        learns both directions between the two latent spaces.
+      </p>
+    </div>
+
+    <figure class="paper-figure is-narrow reveal">
+      <img class="zoomable" src="static/images/fig9c.png"
+           alt="Unified text-image modeling via end-to-end diffusion"
+           data-caption="Figure 9 (c). Unified text-image modeling via stable end-to-end diffusion.">
+      <figcaption>
+        <b>Figure 9 (c). Unified text&ndash;image modeling with a block-causal diffusion transformer.</b>
+        Continuous text and image latents are jointly optimized for bidirectional text-to-image and
+        image-to-text generation; entropy terms keep either latent space from collapsing while reconstruction
+        losses keep both decodable.
+      </figcaption>
+    </figure>
+
+    <div class="card reveal mt-3">
+      <span class="tag is-accent">Setup</span>
+      <h3>Two latent spaces, one diffusion backbone</h3>
+      <p>
+        Text is encoded into continuous latents by a text VAE (initialized from Cola) and reconstructed with a
+        CE loss; text and image latents then enter a block-causal MMDiT trained on \(p(i|t)\) and \(p(t|i)\)
+        with equal probability. Both diffusion directions shape the latent representations, the entropy term
+        prevents collapse, and GenFirst balances latent modeling against reconstruction. Following the
+        text-to-image recipe, the end-to-end phase uses a block-causal <b>MMDiT-L/2</b> (24 blocks, width
+        1024) and the prior-only phase trains a fresh block-causal <b>MMDiT-XL/2</b> (28 blocks, width 1152)
+        from scratch. Because of compute limits, the end-to-end phase uses half the steps of our text-to-image
+        run and the prior-only phase only 30.8% of its samples.
+      </p>
+    </div>
+
+    <div class="table-wrap reveal mt-3">
+      <table class="data-table">
+        <caption><b>Table 10.</b> Frozen versus end-to-end trained text/image VAEs, with the same
+          block-causal MMDiT and the same three-stage recipe. Image-to-text is evaluated on the COCO
+          Karpathy test split with <code>pycocoevalcap</code>.</caption>
+        <thead>
+          <tr>
+            <th>Setting</th><th>GenEval &uarr;</th><th>DPG-Bench &uarr;</th>
+            <th>CIDEr &uarr;</th><th>BLEU-4 &uarr;</th><th>METEOR &uarr;</th><th>ROUGE-L &uarr;</th><th>SPICE &uarr;</th><th>CLIPScore &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Frozen text VAE + frozen image VAE</td><td>79.88</td><td>63.96</td><td>20.03</td><td>5.36</td><td>13.72</td><td>29.01</td><td>8.03</td><td>53.21</td></tr>
+          <tr class="ours"><td>E2E-trained text VAE + frozen image VAE</td><td>81.87</td><td>68.24</td><td>30.19</td><td>7.46</td><td>16.81</td><td>32.95</td><td>11.12</td><td>55.96</td></tr>
+          <tr class="ours"><td>E2E-joint-trained text VAE and image VAE</td><td class="best">86.57</td><td class="best">72.68</td><td class="best">33.28</td><td class="best">7.76</td><td class="best">17.74</td><td class="best">34.16</td><td class="best">11.81</td><td class="best">57.97</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note reveal">
+      Both arms use the same MMDiT and the same sampling configuration, so the gaps come entirely from how the
+      latent spaces were trained.
+    </p>
+
+    <figure class="paper-figure reveal mt-3">
+      <img class="zoomable" src="static/images/fig10.jpg"
+           alt="Qualitative comparison of the three latent-space settings"
+           data-caption="Figure 10. Qualitative comparison of the three latent-space settings.">
+      <figcaption>
+        <b>Figure 10. The three latent-space settings, same MMDiT and sampling configuration.</b>
+        Top: text-to-image on DPG-Bench &mdash; only the jointly trained latents render the cat rather than a
+        third teddy bear, and place the Opera House, Eiffel Tower and a snow-capped Everest together.
+        Bottom: image-to-text on the COCO Karpathy test split &mdash; captions go from incoherent to
+        &ldquo;children playing soccer in a field&rdquo;.
+      </figcaption>
+    </figure>
+
+    <div class="takeaway reveal mt-3">
+      Shaping the <b>text</b> latent space end-to-end is worth +1.99 GenEval and +10.2 CIDEr on its own;
+      shaping <b>both</b> latent spaces jointly adds another +4.70 GenEval, +4.44 DPG-Bench and +3.1 CIDEr.
+    </div>
+  </div>
+</section>
+
+<!-- ==== SAMPLES ==== -->
+<section id="samples" class="section is-soft">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Samples</span>
+      <h2>Class-conditional ImageNet generation</h2>
+      <p class="lead">
+        Uncurated samples with guidance from EiT (480 epochs) and EAR (640 epochs) at 256&times;256.
+        Click any block to view it full size; use &larr;/&rarr; to browse.
+      </p>
+    </div>
+
+    <figure class="paper-figure reveal">
+      <img class="zoomable" src="static/images/fig6.jpg"
+           alt="Class-to-image samples from EiT and EAR"
+           data-caption="Figure 6. Class-to-image samples from EiT (rows 1-2) and EAR (rows 3-4), CFG scale 4.">
+      <figcaption>
+        <b>Figure 6.</b> Class-to-image samples from EiT (rows 1&ndash;2) and EAR (rows 3&ndash;4) with
+        guidance, CFG scale 4.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ==== BIBTEX ==== -->
+<section id="bibtex" class="section">
+  <div class="container narrow">
+    <div class="section-heading reveal">
+      <span class="eyebrow">Cite</span>
+      <h2>BibTeX</h2>
+    </div>
+    <div class="bibtex-block reveal">
+      <button class="copy-btn">Copy</button>
+<pre>@article{zheng2026genfirst,
+  title={GenFirst: Generation Before Reconstruction for Stable End-to-End Latent Generative Modeling},
+  author={Zheng, Guangting and Zhang, Yiyuan and Yang, Tao and Chen, Yunpeng and Zhu, Rui and Deng, Jiajun and Zhang, Yanyong},
+  journal={arXiv preprint arXiv:2608.29335},
+  year={2026}
+}
+@inproceedings{zheng2026farmer,
+  title={Farmer: Flow autoregressive transformer over pixels},
+  author={Zheng, Guangting and Zhao, Qinyu and Yang, Tao and Xiao, Fei and Lin, Zhijie and Wu, Jie and Deng, Jiajun and Zhang, Yanyong and Zhu, Rui},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={25730--25741},
+  year={2026}
+}</pre>
+    </div>
+    <p class="muted center tiny mt-2">
+      Questions or feedback are very welcome &mdash;
+      <a href="mailto:zgt@mail.ustc.edu.cn">zgt@mail.ustc.edu.cn</a>.
+    </p>
+  </div>
+</section>
+
+<footer class="page-footer">
+  <div>
+    &copy; 2026 the authors. All trademarks belong to their respective owners.<br>
+    Page style adapted from the
+    <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> /
+    <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">Academic Project Page Template</a>.
+  </div>
+</footer>
+
+<!-- ==== Lightbox & back-to-top ==== -->
+<div class="lightbox" aria-hidden="true">
+  <button class="lb-btn lb-close" aria-label="Close">&#10005;</button>
+  <button class="lb-btn lb-prev" aria-label="Previous">&#8249;</button>
+  <button class="lb-btn lb-next" aria-label="Next">&#8250;</button>
+  <img alt="Sample preview">
+  <span class="lb-counter">1 / 1</span>
+  <span class="lb-caption"></span>
+</div>
+
+<button class="back-to-top" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
+</button>
+
+<script src="static/js/samples.js"></script>
+<script src="static/js/index.js"></script>
+</body>
+</html>

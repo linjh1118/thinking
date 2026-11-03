@@ -1,0 +1,1060 @@
+
+\section{More Analysis}
+
+\textbf{Fine-grained evaluation of text-to-image generation.}
+We further report the detailed GenEval and DPG-Bench results of our two text-to-image model variants in \cref{tab:t2i_eval_details}.
+Version A performs the end-to-end phase on ImageNet, whereas Version B performs the end-to-end phase on the text-to-image training data.
+The detailed training configurations of both variants are provided in \cref{app:training_details}.
+Version A performs slightly better overall, while the two variants remain close, indicating that end-to-end VAE training is effective on both ImageNet and text-to-image training data.
+
+
+\begin{table}[]
+\centering
+\scriptsize
+\caption{
+\textbf{Fine-grained evaluation of text-to-image generation.}
+We report category-wise results on GenEval~\cite{geneval} and DPG-Bench~\cite{dpg} for two model variants.
+}
+\label{tab:t2i_eval_details}
+\setlength{\tabcolsep}{4.0pt}
+
+\begin{minipage}{\linewidth}
+\centering
+\textbf{GenEval}\\[2pt]
+\begin{tabular}{lccccccc}
+\toprule
+Method
+& Single Obj.
+& Two Obj.
+& Counting
+& Color
+& Position
+& Color Attr.
+& Overall \\
+\midrule
+EiT (Version A)
+& \textbf{100.00}
+& \textbf{94.44}
+& \textbf{83.12}
+& 94.15
+& 86.75
+& \textbf{81.75}
+& \textbf{0.8987} \\
+EiT (Version B)
+& 99.06
+& 93.18
+& 82.81
+& \textbf{94.95}
+& \textbf{88.25}
+& 78.00
+& 0.8920 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+\vspace{5pt}
+
+\begin{minipage}{\linewidth}
+\centering
+\textbf{DPG-Bench}\\[2pt]
+\begin{tabular}{lcccccc}
+\toprule
+Method
+& Global
+& Entity
+& Attribute
+& Relation
+& Other 
+& Overall \\
+\midrule
+EiT (Version A)
+& \textbf{88.30}
+& 86.91
+& \textbf{88.75}
+& \textbf{89.64}
+& 85.66 
+& \textbf{82.60}\\
+EiT (Version B)
+& 84.26
+& \textbf{88.10}
+& 87.16
+& 88.87
+& \textbf{89.23} 
+& 82.06\\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+\end{table}
+
+\textbf{Effect of end-to-end training on VAE reconstruction.}
+We evaluate the reconstruction quality of different VAEs in \cref{tab:vae_reconstruction}.
+Compared with their corresponding pretrained VAEs, end-to-end trained VAEs show a moderate degradation in reconstruction metrics while maintaining strong reconstruction quality overall.
+For the FLUX.1-dev VAE, end-to-end training changes rFID from $0.18$ to $0.23/0.21$ and PSNR from $31.59$ to $29.43/29.37$ for Variants A/B.
+A similar trend is observed for SD-VAE and VA-VAE: the end-to-end trained variants retain comparable rFID, PSNR, SSIM, and LPIPS, although some reconstruction fidelity is sacrificed.
+This result is consistent with the generation--reconstruction trade-off discussed in \cref{subsec:no_single_optimum}: end-to-end training reshapes the latent space toward generative modeling at the cost of a moderate decrease in reconstruction quality.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{
+\textbf{VAE reconstruction evaluation on ImageNet-256.}
+While our end-to-end training substantially improves generation quality, the resulting VAEs maintain competitive reconstruction performance with only a minor degradation.
+}
+\label{tab:vae_reconstruction}
+\setlength{\tabcolsep}{5.0pt}
+
+\begin{tabular}{lcccc}
+\toprule
+VAE
+& rFID$\downarrow$
+& PSNR$\uparrow$
+& SSIM$\uparrow$
+& LPIPS$\downarrow$ \\
+\midrule
+FLUX.1-dev VAE~\cite{flux1}
+& 0.18
+& 31.59
+& 0.90
+& 0.05 \\
+E2E-trained VAE (Version A, Flux.1-dev VAE init.)
+& 0.23
+& 29.43
+& 0.85
+& 0.07 \\
+E2E-trained VAE (Version B, Flux.1-dev VAE init.)
+& 0.21
+& 29.37
+& 0.85
+& 0.07 \\
+\midrule
+SD-VAE~\cite{ldm}
+& 0.74
+& 25.67
+& 0.72
+& 0.13 \\
+E2E-trained VAE ($f8d4$, SD-VAE init.)
+& 0.57
+& 25.13
+& 0.71
+& 0.14 \\
+\midrule
+VA-VAE~\cite{vavae}
+& 0.28
+& 26.32
+& 0.76
+& 0.11 \\
+E2E-trained VAE ($f16d32$, VA-VAE init.)
+& 0.36
+& 25.82
+& 0.74
+& 0.12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Ablation on GenFirst prior weights for SiT.}
+We first use $(\lambda_{\mathrm{prior}}^{(1)},\lambda_{\mathrm{prior}}^{(2)})=(1,0.1)$, which already achieves reasonable generation and reconstruction performance.
+Reducing the prior weights to $(0.1,0.01)$ further improves both generation and reconstruction, with rFID decreasing from $0.61$ to $0.57$ and FID decreasing from $4.44$ to $3.57$.
+This suggests that $(1,0.1)$ still applies excessive prior pressure and does not reach a favorable generation--reconstruction trade-off.
+When the weights are further reduced to $(0.01,0.01)$, reconstruction continues to improve, but generation degrades.
+We therefore use $(0.1,0.01)$ as the default setting and leave finer tuning of the two-stage prior weights to future work due to computational constraints.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{
+\textbf{Ablation on GenFirst prior weights for SiT.}
+We vary the prior weights in the generation-first and reconstruction-refinement stages.
+}
+\label{tab:sit_prior_weights}
+\setlength{\tabcolsep}{4.5pt}
+
+\begin{tabular}{cc|cccccc}
+\toprule
+$\lambda_{\mathrm{prior}}^{(1)}$
+& $\lambda_{\mathrm{prior}}^{(2)}$
+& rFID$\downarrow$
+& PSNR$\uparrow$
+& SSIM$\uparrow$
+& LPIPS$\downarrow$
+& FID$\downarrow$
+& IS$\uparrow$ \\
+\midrule
+1.00
+& 0.10
+& 0.61
+& 24.57
+& 0.70
+& 0.15
+& 4.44
+& 154.25 \\
+0.10
+& 0.01
+& 0.57
+& 25.13
+& 0.71
+& 0.14
+& \textbf{3.57}
+& \textbf{166.49} \\
+0.01
+& 0.01
+& \textbf{0.48}
+& \textbf{25.17}
+& \textbf{0.72}
+& \textbf{0.14}
+& 3.84
+& 161.40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Effect of end-to-end training and REPA.}
+We further disentangle the contributions of end-to-end training and REPA~\cite{repa} in \cref{tab:e2e_repa_ablation}.
+Using SD-VAE~\cite{ldm} with vanilla SiT-XL/2~\cite{sit} yields an FID of $17.20$, while applying REPA during the prior-only phase improves it to $7.90$.
+Replacing the frozen SD-VAE with our end-to-end trained VAE already improves the vanilla SiT-XL/2 result to an FID of $8.09$, even without REPA in either training phase.
+Following REPA-E~\cite{repa_e}, introducing REPA during the end-to-end phase further improves the FID to 6.83.
+Applying REPA again during the subsequent prior-only phase further reduces the FID to $3.57$.
+These results show that end-to-end VAE training and REPA provide complementary rather than conflicting benefits: end-to-end training reshapes the latent space to make it easier for the generative model to learn, while REPA further improves generation through representation alignment.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{
+\textbf{Effect of end-to-end training and REPA.}
+We disentangle the contributions of end-to-end latent learning and representation alignment~\cite{repa} to SiT~\cite{sit} generation.
+}
+\label{tab:e2e_repa_ablation}
+\setlength{\tabcolsep}{7.0pt}
+
+\begin{tabular}{cccccc}
+\toprule
+\multicolumn{3}{c}{End-to-end phase} & \multicolumn{2}{c}{Prior-only phase (80 epochs)} & \multirow{2}{*}{FID$\downarrow$}\\
+\cmidrule(lr){1-3} \cmidrule(lr){4-5}
+VAE
+& Model & REPA & Model & REPA
+&  \\
+\midrule
+SD-VAE~\cite{ldm}
+& - & - & SiT-XL/2~\cite{sit} & \xmark
+& 17.20 \\
+SD-VAE~\cite{ldm}
+& - & - & SiT-XL/2~\cite{sit} & \cmark
+& 7.90 \\
+\midrule
+E2E-trained VAE (SD-VAE init.) & SiT-XL/2~\cite{sit} & \xmark & SiT-XL/2~\cite{sit} & \xmark
+& 8.09 \\
+E2E-trained VAE (SD-VAE init.) & SiT-XL/2~\cite{sit} & \cmark & SiT-XL/2~\cite{sit} & \xmark
+& 6.83 \\
+E2E-trained VAE (SD-VAE init.) & SiT-XL/2~\cite{sit} & \cmark & SiT-XL/2~\cite{sit} & \cmark
+& \textbf{3.57} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{A Shortcut Solution in Naive End-to-End Training}
+\label{app:collapse_shortcut}
+
+When the learned prior objective is strong while posterior entropy is weak, we
+observe that the encoder can reduce both the posterior variance and the diversity
+of posterior means. In the extreme case,
+\[
+\sigma_\phi^2(x)\rightarrow 0,
+\qquad
+\mu_\phi(x)\approx c,
+\]
+where $c$ is nearly constant across different images.
+Since the posterior noise becomes very small, the decoder may still exploit
+small residual differences in $\mu_\phi(x)$ for reconstruction, even though the
+overall latent distribution is already highly concentrated.
+
+For a diffusion or flow-matching prior, such a concentrated latent distribution
+also makes the denoising objective artificially easy. Consider the linear
+interpolation used by SiT,
+\[
+z_t=(1-t)\epsilon_t+t z,
+\qquad
+v=z-\epsilon_t.
+\]
+If the latent collapses to $z\approx c$, then
+\[
+z_t\approx(1-t)\epsilon_t+t c,
+\qquad
+v\approx\frac{c-z_t}{1-t}.
+\]
+Therefore, predicting the target velocity requires little knowledge of the image
+distribution: the model can approximately recover the target through a simple
+affine transformation of the noisy input around the nearly constant code $c$.
+The denoising loss can thus become small even though the generative model has
+not learned a meaningful latent distribution.
+
+This explains why preserving posterior entropy is important during end-to-end
+training. Increasing the entropy prevents $\sigma_\phi^2(x)$ from vanishing.
+Under non-trivial posterior noise, if all posterior means were also nearly
+identical, the latent samples of different images would become indistinguishable
+to the decoder. The reconstruction objective therefore encourages
+$\mu_\phi(x)$ to remain image-dependent and distributed across the latent space.
+Together, entropy preservation and reconstruction discourage both variance and
+mean collapse.
+Motivated by this observation, we tie the entropy weight to the prior weight in
+our default end-to-end objective,
+$\lambda_{\mathrm{ent}}=\lambda_{\mathrm{prior}}$.
+This keeps posterior-entropy preservation coupled to the strength of prior-fitting pressure and avoids the degenerate shortcut observed in naive end-to-end training.
+
+\section{Implementation Details}
+\label{app:implementation_details}
+
+\subsection{Training and Inference Details}
+\label{app:training_details}
+We provide the complete architecture, training, and inference configurations for
+EAR, EiT, and text-to-image EiT in
+\cref{tab:ear_details,tab:eit_details,tab:t2i_details}.
+Below, we summarize the training pipeline and the relationship between different
+resolutions and model variants.
+
+\textbf{EAR on ImageNet.}
+The detailed EAR configuration is provided in \cref{tab:ear_details}.
+For ImageNet $256\times256$, we jointly train the MAR VAE~\cite{mar} and the continuous AR prior~\cite{zheng2025farmer} from scratch using the two-stage GenFirst schedule.
+The resulting VAE is then reused for the resolution $512\times512$ experiment: we keep the
+VAE frozen and train a larger EAR prior on the higher-resolution latent
+sequences.
+Therefore, the resolution $512\times512$ experiment evaluates whether the latent space
+learned by GenFirst at resolution $256\times256$ transfers to higher-resolution generative
+modeling without further adapting the tokenizer.
+We follow FARMER~\cite{zheng2025farmer} for the continuous-AR parameterization
+and resampling-based classifier-free guidance.
+
+\textbf{EiT on ImageNet.}
+The ImageNet EiT configuration is summarized in \cref{tab:eit_details}.
+At ImageNet $256\times256$, training consists of an end-to-end phase followed by a prior-only phase. 
+During the end-to-end phase, the VAE and SiT are jointly optimized using the two-stage GenFirst schedule. 
+We then freeze the resulting VAE and train a new SiT on its latent space. 
+For resolution $512\times512$, we directly reuse and freeze the VA-VAE obtained from the resolution $256\times256$ end-to-end stage, and train only a new SiT at the higher resolution.
+We observe that the latent space changes rapidly during end-to-end training, which can leave the decoder insufficiently adapted to the updated latents.
+Therefore, for the ImageNet-$256$ EiT results in \cref{tab:imagenet256_sota} only, we additionally fine-tune the VAE decoder for 10K steps after the end-to-end stage. This improves the 80-epoch unguided gFID from $3.00$ to $2.79$. 
+This decoder fine-tuning is not used in the other EiT experiments.
+For the corresponding 80-epoch guided result, we use CFG scale $2.0$ with a guidance interval of $[0.2,0.85]$.
+Unless otherwise specified, the optimization and REPA settings follow REPA-E~\cite{repa_e}; complete architecture, training, and inference configurations are provided in \cref{tab:eit_details}.
+
+\textbf{Text-to-image EiT.}
+We consider two variants for obtaining an end-to-end trained FLUX.1-dev VAE~\cite{flux1}, as detailed in \cref{tab:t2i_details}.
+In \textit{Version A}, the VAE is jointly trained with a smaller MMDiT (MMDiT-L/2) directly on the text-to-image training data using GenFirst.
+In \textit{Version B}, the VAE is jointly trained with SiT-XL/2 on ImageNet using the same GenFirst setting as class-conditional EiT.
+These variants compare a VAE shaped directly by text-conditioned generation with one shaped by class-conditional ImageNet generation.
+After the end-to-end phase, we freeze the resulting VAE and train the same MMDiT-XL/2 prior for both variants.
+We first train at $256\times256$ for 200K steps, continue at $512\times512$ for 80K steps, and finally fine-tune on the OpenAI-4o dataset~\cite{open4o} at $512\times512$ for 40K steps.
+Complete architecture, optimization, and inference settings are provided in \cref{tab:t2i_details}.
+
+\begin{table*}[t]
+\centering
+\caption{
+\textbf{Detailed training configuration of EAR on ImageNet.}
+EAR-256 jointly trains the VAE and AR prior with GenFirst.
+For EAR-512, we reuse and freeze the VAE obtained from EAR-256 and train only
+the AR prior at the higher resolution.
+}
+\label{tab:ear_details}
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.10}
+
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration}
+& \textbf{EAR-256}
+& \textbf{EAR-512} \\
+\midrule
+
+\multicolumn{3}{l}{\textit{Architecture}} \\
+\midrule
+VAE architecture
+& MAR VAE~\cite{mar}
+& EAR-256 VAE (frozen) \\
+
+Latent configuration
+& $f16d16$
+& $f16d16$ \\
+
+AR backbone
+& EAR-312M
+& EAR-940M \\
+
+Transformer depth
+& 24
+& 36 \\
+
+Hidden dimension
+& 1024
+& 1280 \\
+
+Attention heads
+& 16
+& 20 \\
+
+GMM components $K$
+& 64
+& 1024 \\
+
+\midrule
+\multicolumn{3}{l}{\textit{Training}} \\
+\midrule
+
+Trainable modules
+& VAE + AR prior
+& AR prior only \\
+
+Training resolution
+& $256\times256$
+& $512\times512$ \\
+
+Generation-first stage
+& 500 epochs
+& -- \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $1.0 / 1.0$
+& -- \\
+
+Reconstruction-refinement stage
+& 140 epochs
+& -- \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $0.25 / 0.25$
+& -- \\
+
+Prior-only training
+& --
+& 320 epochs \\
+
+Global batch size
+& 512
+& 512 \\
+
+Optimizer
+& AdamW~\cite{adamw}, $\beta_1,\beta_2=0.9,0.999$
+& AdamW~\cite{adamw}, $\beta_1,\beta_2=0.9,0.999$ \\
+
+Learning rate
+& $1\times10^{-4}$
+& $1\times10^{-4}$ \\
+
+LR schedule
+& 10-epoch linear warmup, then constant
+& 10-epoch linear warmup, then constant \\
+
+EMA rate & 0.9999 & 0.9999 \\
+
+Class token drop (for CFG) & 0.1 & 0.1 \\
+\midrule
+\multicolumn{3}{l}{\textit{Inference}} \\
+\midrule
+
+Eval batch size & 50 & 50 \\
+Guidance
+& resampling-based CFG~\cite{zheng2025farmer}
+& resampling-based CFG~\cite{zheng2025farmer} \\
+
+Weight temperature (Propose stage) & 0.9 & 0.9\\
+Variance temperature (Propose stage) & 0.9 & 0.9\\
+Sample number from $p_c/p_u$ & 4/4 & 4/4\\
+Weight temperature (Weigh stage) & -0.55 & -0.5\\
+Variance temperature (Weigh stage) & 1.1 & 1.0 \\
+Resampling temperature & 0.9 & 1.0 \\
+CFG scale
+& 1.5
+& 2.0 \\
+
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{
+\textbf{Detailed training configuration of EiT on ImageNet.}
+EiT-256 first jointly trains the VAE and SiT with the two-stage GenFirst
+schedule, after which the VAE is frozen and SiT training continues.
+EiT-512 directly reuses and freezes the EiT-256 VAE and trains only SiT.
+}
+\label{tab:eit_details}
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.10}
+
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration}
+& \textbf{EiT-256}
+& \textbf{EiT-512} \\
+\midrule
+
+\multicolumn{3}{l}{\textit{Architecture}} \\
+\midrule
+
+VAE
+& SD-VAE / VA-VAE
+& EiT-256 VAE (frozen, VA-VAE version) \\
+
+Latent configuration
+& $f8d4$/$f16d32$
+& $f16d32$ \\
+
+Generative backbone
+& SiT-XL/2~\cite{sit} / SiT-XL/1~\cite{sit}
+& SiT-XL/1~\cite{sit} \\
+
+Transformer depth
+& 28
+& 28 \\
+
+Hidden dimension
+& 1152
+& 1152 \\
+
+Attention heads
+& 16
+& 16 \\
+
+\midrule
+\multicolumn{3}{l}{\textit{End-to-end phase}} \\
+\midrule
+
+Trainable modules
+& VAE + SiT
+& -- \\
+
+Generation-first stage
+& 80 epochs
+& -- \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $0.1 / 0.1$
+& -- \\
+
+Reconstruction-refinement stage
+& 40 epochs
+& -- \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $0.01 / 0.01$
+& -- \\
+
+\midrule
+\multicolumn{3}{l}{\textit{Prior-only phase}} \\
+\midrule
+
+VAE
+& frozen
+& frozen \\
+
+Trainable modules
+& SiT only
+& SiT only \\
+
+Training resolution
+& $256\times256$
+& $512\times512$ \\
+
+Training duration
+& 800 epochs
+& 400 epochs \\
+
+\midrule
+\multicolumn{3}{l}{\textit{Shared optimization}} \\
+\midrule
+
+Global batch size
+& 256
+& 256 \\
+
+Optimizer
+& AdamW~\cite{adamw}, $\beta_1,\beta_2=0.9,0.999$
+& AdamW~\cite{adamw}, $\beta_1,\beta_2=0.9,0.999$ \\
+
+Learning rate
+& $1\times10^{-4}$
+& $1\times10^{-4}$ \\
+
+LR schedule
+& constant
+& constant \\
+
+EMA rate & 0.9999 & 0.9999 \\
+
+Class token drop (for CFG) & 0.1 & 0.1 \\
+
+\midrule
+\multicolumn{3}{l}{\textit{REPA}} \\
+\midrule
+$\lambda$ for SiT & 0.5 & 0.5 \\
+$\lambda$ for VAE & 1.5 & 1.5 \\
+Alignment depth & 8 & 8 \\
+Encoder & DINOv2-B~\cite{dino} & DINOv2-B~\cite{dino} \\
+\midrule
+\multicolumn{3}{l}{\textit{Inference}} \\
+\midrule
+Guidance 
+& CFG~\cite{cfg}+Autoguidance~\cite{karras2024guiding}
+& CFG \\
+
+Sampler
+& SDE
+& SDE \\
+
+Sampling steps 
+& 250
+& 250 \\
+
+Weak model 
+& 20 epochs
+& -- \\
+
+Autoguidance scale 
+& 1.3 
+& -- \\
+
+CFG scale
+& 1.5
+& 2.5 \\
+
+Guidance interval 
+& [0.2, 0.7]
+& [0.2, 0.8]\\
+
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
+\begin{table*}[t]
+\centering
+\caption{
+\textbf{Detailed training configuration of EiT for text-to-image generation.}
+We consider two settings for the end-to-end latent-shaping phase:
+joint training with SiT on ImageNet or with a smaller MMDiT on the T2I training
+mixture. The resulting VAE is then frozen and used to train the target MMDiT.
+}
+\label{tab:t2i_details}
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.10}
+
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration}
+& \textbf{EiT (Version A)}
+& \textbf{EiT (Version B)} \\
+\midrule
+
+\multicolumn{3}{l}{\textit{Architecture}} \\
+\midrule
+
+VAE
+& FLUX.1-dev VAE~\cite{flux1}
+& FLUX.1-dev VAE~\cite{flux1} \\
+
+Latent configuration
+& $f8d16$
+& $f8d16$ \\
+
+Text Encoder 
+& --
+& clip-vit-large-patch14~\cite{clip}\\
+
+Generative backbone (E2E phase)
+& SiT-XL/2~\cite{sit}
+& MMDiT-L/2~\cite{mmdit} \\
+
+Backbone depth (E2E phase)
+& 28
+& 24 \\
+
+Hidden dimension (E2E phase)
+& 1152
+& 1024 \\
+
+Attention heads (E2E phase)
+& 16
+& 16 \\
+
+Training data (E2E phase)
+& ImageNet
+& T2I mixture \\
+
+Training resolution (E2E phase)
+& $256\times256$
+& $256\times256$ \\
+\midrule
+Text Encoder 
+& \multicolumn{2}{c}{clip-vit-large-patch14~\cite{clip}}\\
+
+Generative backbone (Frozen VAE phase)
+& \multicolumn{2}{c}{MMDiT-XL/2} \\
+
+Backbone depth (Frozen VAE phase)
+& \multicolumn{2}{c}{28} \\
+
+Hidden dimension (Frozen VAE phase)
+& \multicolumn{2}{c}{1152} \\
+
+Attention heads (Frozen VAE phase)
+& \multicolumn{2}{c}{16} \\
+
+Training data (Frozen VAE phase)
+& \multicolumn{2}{c}{T2I mixture} \\
+
+Training resolution (Frozen VAE phase)
+& \multicolumn{2}{c}{$256\times256$ (stage1), $512\times512$ (stage2, stage3)}\\
+
+\midrule
+\multicolumn{3}{l}{\textit{End-to-end phase}} \\
+\midrule
+
+Trainable modules
+& VAE + SiT
+& VAE + MMDiT \\
+
+Global batch size 
+& 256 
+& 256 \\
+
+Generation-first stage
+& 80 epochs
+& 400K steps \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $0.1 / 0.1$
+& $0.1 / 0.1$ \\
+
+Reconstruction-refinement stage
+& 40 epochs
+& 200K steps \\
+
+$\lambda_{\mathrm{prior}} / \lambda_{\mathrm{ent}}$
+& $0.01 / 0.01$
+& $0.01 / 0.01$ \\
+
+\midrule
+\multicolumn{3}{l}{\textit{Frozen-VAE MMDiT training}} \\
+\midrule
+
+VAE
+& \multicolumn{2}{c}{Frozen E2E-trained VAE} \\
+
+T2I mixture, $256^2$
+& \multicolumn{2}{c}{200K steps, global batch size 1536} \\
+
+T2I mixture, $512^2$
+& \multicolumn{2}{c}{80K steps, global batch size 512} \\
+
+4o data fine-tuning, $512^2$
+& \multicolumn{2}{c}{40K steps, global batch size 512} \\
+
+\midrule
+\multicolumn{3}{l}{\textit{Inference}} \\
+\midrule
+
+Sampler
+& \multicolumn{2}{c}{Euler} \\
+
+Sampling steps
+& \multicolumn{2}{c}{50} \\
+
+CFG scale
+& \multicolumn{2}{c}{7.0} \\
+
+CFG interval
+& \multicolumn{2}{c}{[0.35, 1.0]} \\
+
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
+\subsection{Details of Loss-Balancing Baselines}
+\label{app:loss_balancing}
+
+We provide additional implementation details for the loss-balancing baselines
+compared in \cref{tab:ablation_pz_method}. All variants use the same EAR
+architecture, dataset, and reconstruction-related loss weights; they differ only
+in how the influence of the generative objective is controlled during training.
+
+\textbf{Constant weighting.}
+We use a fixed prior weight $\lambda_{\mathrm{prior}}=1$ throughout 320 training epochs, with
+$\lambda_{\mathrm{ent}}=\lambda_{\mathrm{prior}}$.
+We observe that training largely converges around 260 epochs, with little additional improvement from longer training.
+Moreover, as shown in \cref{fig:abl_1}(a), smaller constant prior weights consistently yield worse generation--reconstruction trade-offs than $\lambda_{\mathrm{prior}}=1$.
+We therefore report $\lambda_{\mathrm{prior}}=1$ as the strongest constant-weight baseline.
+
+\textbf{Cosine decay.}
+We train for 320 epochs and smoothly decay the prior weight from $0.5$ to $0.1$
+with a cosine schedule. The entropy weight follows the same schedule,
+i.e., $\lambda_{\mathrm{ent}}=\lambda_{\mathrm{prior}}$. We performed a simple hyperparameter sweep but did not obtain better results than the constant-weight setting.
+
+\textbf{PI-based adaptive control.}
+We additionally test a feedback-based strategy inspired by ControlVAE~\cite{shao2020controlvae}. 
+Instead of prescribing a fixed schedule, the controller adjusts how strongly the generative objective updates the VAE encoder through a $w$. 
+Thus, $w=1.0$ allows the full generative gradient to propagate to the encoder, while smaller $w$ weakens this update.
+The controller uses the per-step reconstruction error as feedback with target $\ell^{*}=0.055$ following ControlVAE~\cite{shao2020controlvae}. 
+We initialize $w=1.0$ and constrain it to $[0.004096,1.0]$. 
+In our experiments, the reconstruction error is substantially above the target during early training, causing $w$ to rapidly decrease toward its lower bound. 
+It subsequently oscillates between different values, leading to abrupt changes in the gradient received by the latent encoder and numerical instability. 
+We also performed simple tuning of the controller hyperparameters, but did not obtain stable training under the tested configurations.
+
+\subsection{Toward a Shared Latent Space for Generation and Representation Learning}
+\label{app:und}
+
+As discussed in \cref{exp:further_extensions}, we further examine whether the
+end-to-end framework can learn a visual representation that simultaneously
+supports reconstruction, generation, and representation learning. In this section, we
+describe the autoencoder architecture, training schedule, and discrimination
+objectives used in the three settings reported in
+\cref{tab:und_ablation}.
+
+\textbf{Qwen3-VL-based visual tokenizer.}
+We replace the convolutional encoder of the FLUX.1-dev VAE~\cite{flux1} with the vision tower of Qwen3-VL-2B-Instruct~\cite{bai2025qwen3}. 
+At an input resolution of \(256\times256\), the patch size of 16 produces a \(16\times16\) grid of visual tokens. Each token is represented by a 1,024-dimensional feature before the spatial merger.
+We construct a Gaussian projector on top of these features. 
+We first apply a LayerNorm initialized from the normalization layer of the pretrained Qwen3-VL merger. 
+Two independent linear projections then map each 1,024-dimensional visual token to 64 dimensions, predicting the posterior mean and log-variance, respectively:
+\begin{equation*}
+    \boldsymbol{\mu}_i =
+    W_{\mu}\operatorname{LN}(\mathbf{h}_i)+b_{\mu},
+    \qquad
+    \log\boldsymbol{\sigma}^{2}_i =
+    W_{\sigma}\operatorname{LN}(\mathbf{h}_i)+b_{\sigma},
+\end{equation*}
+where \(\mathbf{h}_i\in\mathbb{R}^{1024}\) and
+\(\boldsymbol{\mu}_i,\log\boldsymbol{\sigma}^{2}_i\in\mathbb{R}^{64}\).
+The 64 outputs associated with each ViT token are reshaped into a \(2\times2\) block with 16 channels. 
+The resulting latent therefore has shape \(16\times32\times32\), matching both the dimensionality and spatial rate of the FLUX \(f8d16\) latent. 
+This allows us to retain the generative architecture and training setting used in our text-to-image experiments.
+The decoder is randomly initialized and consists of a 12-layer ViT with width 1,024 and 16 attention heads. 
+Each decoder token predicts a \(16\times16\) RGB patch. 
+We additionally employ two lightweight \(3\times3\) convolutional layers after assembling the image to reduce visible artifacts at patch boundaries.
+
+\textbf{Decoder warm-up.}
+Directly optimizing the randomly initialized decoder together with the pretrained vision tower exposes the encoder to large and uninformative reconstruction gradients at the beginning of training. 
+In preliminary experiments, this rapidly degraded the semantic structure inherited from Qwen3-VL. 
+We therefore first freeze the Qwen3-VL vision tower and train only the Gaussian bottleneck and decoder for 100K steps.
+In this warm-up stage, we apply only a weak KL regularizer with weight \(10^{-6}\); the adversarial loss is enabled after 10K steps. 
+
+\textbf{End-to-end training.}
+After decoder warm-up, we unfreeze the vision tower and jointly optimize the encoder, projector, decoder, and an MMDiT-L/2 generative prior. Apart from the discrimination objective, this stage follows the text-to-image end-to-end training recipe used in our main experiments, including the reconstruction losses, flow-matching objective, entropy regularization, and REPA alignment to DINOv2 features.
+
+Due to the available computational budget, we shorten the original two-stage schedule by a factor of two. 
+We first train for 200K steps with the prior weight set to \(0.1\).
+We then train for another 100K steps with the prior weight set to \(0.01\).
+For the two discrimination variants, the discrimination-loss weight is the same as the prior weight. 
+The global batch size is 256. 
+We compare the following three settings.
+
+\textbf{Stable E2E without discrimination supervision.}
+The first setting uses only reconstruction, generative, entropy, and REPA
+objectives.
+It serves as the generation--reconstruction baseline and does not receive an
+explicit discrimination objective.
+
+\textbf{Latent-level SigLIP supervision.}
+In the second setting, discrimination supervision is applied directly to the same normalized latent consumed by MMDiT, which is a \(16\times16\) sequence of 64-dimensional tokens. 
+A linear stem maps each token to width 1,024, after which a learnable query performs attention pooling. 
+The pooled feature is projected to the 768-dimensional CLIP image--text embedding space.
+Given normalized image and text embeddings \(\mathbf{v}_i\) and \(\mathbf{t}_j\), we use the sigmoid pairwise objective~\cite{zhai2023sigmoid}
+\begin{equation}
+    \mathcal{L}_{\mathrm{Sig}}
+    =
+    -\frac{1}{B}
+    \sum_{i=1}^{B}\sum_{j=1}^{B}
+    \log \sigma
+    \left[
+        y_{ij}
+        \left(
+            \tau\,\mathbf{v}_i^\top\mathbf{t}_j+\beta
+        \right)
+    \right],
+\end{equation}
+where \(y_{ij}=1\) for a matched image--caption pair and \(-1\) otherwise.
+Text features and negatives are gathered across workers, so the loss uses the global batch.
+
+We complement this objective with classification-based caption supervision~\cite{huang2024classification}.
+The pooled image feature predicts a bag of CLIP caption tokens. 
+Caption tokens form a multi-hot target, which is reweighted using online inverse document frequency and normalized into a probability distribution. 
+The corresponding soft cross-entropy is
+\begin{equation}
+    \mathcal{L}_{\mathrm{CLS}}
+    =
+    -\sum_{k}
+    \widetilde{q}_{k}
+    \log p_{k},
+    \qquad
+    \widetilde{q}_{k}
+    \propto
+    q_k\log\frac{N}{f_k}.
+\end{equation}
+This weighting suppresses frequent syntactic tokens and concentrates the gradient on visually informative content words. 
+The complete discrimination objective is
+\begin{equation}
+    \mathcal{L}_{\mathrm{disc}}^{\mathrm{SigLIP}}
+    =
+    \mathcal{L}_{\mathrm{Sig}}
+    + \mathcal{L}_{\mathrm{CLS}}.
+\end{equation}
+This objective directly shapes the latent representation used by the generative model.
+
+\textbf{Trunk-level VLM-NLL supervision.}
+In the third setting, we preserve the interface between the Qwen3-VL vision tower and its pretrained language model. 
+Rather than applying supervision after the 16-channel bottleneck latent, we branch from the ViT trunk and feed its native merged visual tokens to the frozen Qwen3-VL-2B language model. 
+We also retain the original DeepStack features injected into the early language-model layers.
+For an image \(x\) and its caption \(\mathbf{c}=(c_1,\ldots,c_T)\), the discrimination loss is the caption-token negative log-likelihood
+\begin{equation}
+    \mathcal{L}_{\mathrm{disc}}^{\mathrm{NLL}}
+    =
+    -\frac{1}{T}
+    \sum_{t=1}^{T}
+    \log p_{\mathrm{Qwen}}
+    \left(
+        c_t
+        \mid c_{<t},\,f_{\mathrm{ViT}}(x)
+    \right).
+\end{equation}
+The Qwen3-VL language model, language-model head, spatial merger, and DeepStack mergers are all frozen. 
+Consequently, the NLL can only be reduced by preserving visual features that remain readable by the original Qwen3-VL language model. 
+Unlike SigLIP supervision, the VLM-NLL objective does not depend on cross-sample negatives and therefore does not require a large global batch.
+
+\textbf{Evaluation.}
+We evaluate reconstruction using posterior-mean reconstructions on 50K
+ImageNet validation images and report rFID and PSNR. Semantic accessibility is
+measured by an ImageNet ridge linear probe trained on 100K images and evaluated
+on 10K validation images. 
+For final generation evaluation, we freeze each trained visual tokenizer and train the same MMDiT-XL pipeline used in our text-to-image experiments before evaluating GenEval and DPG-Bench.
+
+\subsection{Unified Text--Image Modeling via End-to-End Diffusion}
+\label{app:mm}
+
+As discussed in \cref{exp:further_extensions}, our end-to-end formulation is not restricted to image latents and can be applied to other modalities.
+We therefore extend our framework to text and jointly model text and images within a single diffusion backbone, allowing the generative objective to shape both text and image latent spaces.
+
+\textbf{Text latent representation.}
+We initialize the text VAE from Cola~\cite{cola}.
+% , which contains four Transformer encoder blocks and four decoder blocks with width $1536$, FFN dimension $6144$, $12$ attention heads, QK-norm, and RoPE over a $100$K-token BPE vocabulary.
+Each text token is encoded into a $16$-dimensional continuous latent, and the decoder reconstructs the original tokens with a cross-entropy loss.
+We train the encoder and decoder trunks together with the latent projections ($\sim$194M trainable parameters), while freezing the token embedding and output vocabulary head.
+The encoder applies a non-affine LayerNorm to the posterior mean, so we do not apply the additional latent normalization used for image latents.
+To handle variable-length captions efficiently, text sequences are packed without padding and converted to a dense $(B,L,d)$ representation with a validity mask only before entering the diffusion model.
+
+\textbf{Block-causal joint diffusion.}
+During the end-to-end phase, we jointly model text and image latents using a block-causal MMDiT-L/2~\cite{mmdit} with $24$ blocks, width $1024$, $16$ attention heads, and patch size $2$.
+The model maintains separate streams for the two modalities and couples them through joint attention.
+At $256\times256$ resolution, each image contains $16\times16=256$ latent tokens, while text contains at most $256$ latent tokens and is partitioned into blocks of $16$ tokens.
+Image tokens use bidirectional attention, whereas text tokens use block-causal attention, enabling block-wise generation of $p(t|i)$.
+
+We train text-to-image $p(i|t)$ and image-to-text $p(t|i)$ with equal sampling probability.
+For each sample, only the target modality is noised and supervised by the diffusion objective, while the conditioning modality is kept clean at $t=0$.
+Image timesteps are sampled independently per example, whereas text timesteps are sampled independently for each text block.
+For text generation, each noisy block attends to all preceding clean blocks and to the noisy tokens within the current block, allowing all blocks to be trained in parallel with clean prefix conditioning.
+Cross-modal attention is direction-dependent: image tokens attend to clean text for $p(i|t)$, while text tokens attend to clean image features for $p(t|i)$.
+For classifier-free guidance, we drop the conditioning modality with probability $0.1$ by disabling the corresponding cross-modal attention.
+
+\textbf{Training objective.}
+The text VAE follows the same end-to-end formulation as the image branch:
+\begin{equation}
+\mathcal{L}_{\mathrm{text}}
+=
+\mathcal{L}_{\mathrm{CE}}
++
+\lambda_{\mathrm{KL}}
+D_{\mathrm{KL}}\!\left(q_{\phi_t}(z_t|x)\,\|\,\mathcal{N}(0,I)\right)
+-
+\lambda_{\mathrm{ent}}
+\mathcal{H}\!\left(q_{\phi_t}(z|x)\right)
++
+\lambda_{\mathrm{prior}}
+\mathcal{L}_{\mathrm{prior}},
+\end{equation}
+where $\mathcal{L}_{\mathrm{prior}}$ is the flow-matching objective of the joint diffusion model and $\lambda_{\mathrm{KL}}=10^{-6}$.
+Following our analysis in \cref{subsec:prior_entropy}, the entropy term counteracts the prior-fitting pressure and prevents latent collapse.
+We apply the entropy term to a modality only when it is generated, since a clean conditioning modality does not receive prior-fitting pressure from the diffusion objective.
+For text-only end-to-end training, the image VAE remains frozen and only the text encoder receives generative gradients.
+For joint end-to-end training, both text and image VAEs are optimized under the same GenFirst schedule, allowing the bidirectional diffusion objectives to shape both latent spaces.
+
+\textbf{Training and evaluation.}
+We compare three latent-training settings.
+In the first setting, both the Cola text VAE and the FLUX.1-dev image VAE~\cite{flux1} are kept frozen, providing a fully frozen latent baseline.
+In the second setting, we end-to-end train the text VAE together with the block-causal MMDiT while keeping the FLUX.1-dev image VAE frozen, isolating the effect of reshaping the text latent space.
+In the third setting, both the Cola-initialized text VAE and the FLUX.1-dev image VAE are jointly optimized with the block-causal MMDiT, allowing the bidirectional generative objectives to reshape both latent spaces.
+End-to-end training is conducted at $256\times256$ resolution on the same dataset as our text-to-image experiments, with captions truncated to $256$ tokens.
+We use a batch size of $256$, AdamW~\cite{adamw} with learning rates of $10^{-4}$ for MMDiT and $10^{-5}$ for the text VAE, and gradient clipping at $1.0$.
+We use $\lambda_{\mathrm{prior}}=\lambda_{\mathrm{ent}}=0.1$ for the first $200$K steps and reduce both to $0.01$ for another $100$K steps.
+For joint end-to-end training, the same GenFirst schedule is applied to both text and image latent optimization.
+
+After end-to-end latent training, we freeze the resulting text and image VAEs and train a new block-causal MMDiT-XL/2 from scratch.
+The prior-only model uses $28$ blocks, width $1152$, and $16$ attention heads, matching the model scale of MMDiT-XL/2 in our main text-to-image experiments.
+We follow the same training protocol as our text-to-image experiments: $200$K steps at $256\times256$, $80$K steps at $512\times512$, followed by $40$K steps of fine-tuning on GPT-4o data.
+We evaluate text-to-image generation using GenEval and DPG-Bench. We evaluate image-to-text generation on the COCO Karpathy test split using CIDEr, BLEU-4, METEOR, ROUGE-L, SPICE, and CLIPScore.
+
+
+
+
+\section{More Qualitative Results}
+\cref{fig:vis_dm1,fig:vis_dm2,fig:vis_dm3,fig:vis_dm4} present additional uncurated examples on ImageNet $256\times256$ with EiT. 
+\cref{fig:vis_ar1,fig:vis_ar2,fig:vis_ar3,fig:vis_ar4} present additional uncurated examples on ImageNet $256\times256$ with EAR. 
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_dm1.pdf}
+    \caption{\textbf{Uncurated samples from EiT (480 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_dm1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_dm2.pdf}
+    \caption{\textbf{Uncurated samples from EiT (480 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_dm2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_dm3.pdf}
+    \caption{\textbf{Uncurated samples from EiT (480 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_dm3}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_dm4.pdf}
+    \caption{\textbf{Uncurated samples from EiT (480 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_dm4}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_ar1.pdf}
+    \caption{\textbf{Uncurated samples from EAR (640 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_ar1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_ar2.pdf}
+    \caption{\textbf{Uncurated samples from EAR (640 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_ar2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_ar3.pdf}
+    \caption{\textbf{Uncurated samples from EAR (640 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_ar3}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_appendix_vis_ar4.pdf}
+    \caption{\textbf{Uncurated samples from EAR (640 epochs) with guidance on ImageNet $256\times256$.}}
+    \label{fig:vis_ar4}
+\end{figure}
+
+

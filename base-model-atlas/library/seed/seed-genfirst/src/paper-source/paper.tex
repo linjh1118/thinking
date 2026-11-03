@@ -1,0 +1,1238 @@
+\documentclass[]{bytedance_seed}
+
+% single-column: \documentclass[]{bytedance_seed}, 
+%Please prioritize using single-column。
+
+% twocolumn: \documentclass[twocolumn]{bytedance_seed}
+
+\usepackage[toc,page,header]{appendix}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{minitoc}
+\usepackage{type1cm}
+\RequirePackage[T1]{fontenc}
+\usepackage{amssymb}
+\usepackage{pifont} % 引入 pifont 宏包
+\usepackage{algorithm} 
+%\usepackage{algorithmic} 
+\usepackage{algpseudocode} 
+\usepackage{makecell}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{makecell}
+\usepackage{soul}
+
+%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\Ex}{\mathbb{E}}
+\newcommand{\KL}{\mathbb{D}_{\text{KL}}}
+\newcommand{\cmark}{\ding{51}} % 对勾
+\newcommand{\xmark}{\ding{55}} % 叉号
+\newcommand{\Sref}[1]{\S\ref{#1}}
+\newcommand{\sref}[1]{\S\ref{#1}}
+\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\ie}{\textit{i.e.}}
+
+\definecolor{lightgray}{HTML}{E8E8E8}
+\definecolor{lightgreen}{HTML}{D2F3D7}
+\definecolor{lightred}{HTML}{F9D1D4}
+\definecolor{arm1}{HTML}{C0392B}  % frozen text + frozen image VAE
+\definecolor{arm2}{HTML}{C77700}  % E2E text VAE
+\definecolor{arm3}{HTML}{1A7F37}  % E2E text + image VAE (joint)
+\input{math_commands}
+
+%%%%%%%%%%%%%%%%%%%%
+
+\title{GenFirst: Generation Before Reconstruction for \\Stable End-to-End Latent Generative Modeling}
+\author[1,2]{Guangting Zheng}
+\author[2]{Yiyuan Zhang}
+\author[2]{Tao Yang}
+\author[2]{Yunpeng Chen}
+\author[2,\dagger]{Rui Zhu}
+\author[1]{\\Jiajun Deng}
+\author[1,\ddag]{Yanyong Zhang}
+% %论文单位请使用ByteDance Seed
+\affiliation[1]{University of Science and Technology of China}
+\affiliation[2]{ByteDance Seed}
+
+\contribution[\dagger]{Project lead}
+\contribution[\ddag]{Corresponding author}
+
+\abstract{
+Latent generative models typically follow a two-stage pipeline, training a variational autoencoder for reconstruction and then a generative model on the frozen latent space. 
+Since reconstruction-optimized latents are not necessarily generation-friendly, jointly training both models is an appealing alternative. 
+However, direct end-to-end training remains challenging, as it is prone to \textbf{latent collapse} and faces an \textbf{generation--reconstruction conflict}. 
+In this work, we revisit this problem by analyzing how different objectives shape the latent space and identify two key insights. 
+First, the entropy term in the Kullback-Leibler divergence (KL) objective is essential for preventing collapse: reconstruction and prior fitting both tend to shrink the posterior, while entropy preserves non-degenerate latent uncertainty.
+Second, reconstruction and generation exhibit asymmetric learning dynamics: reconstruction is fast and strongly supervised, whereas generation is slower and harder to optimize. 
+Motivated by these insights, we achieve the first direct end-to-end training without latent collapse and further propose GenFirst, a simple generation-before-reconstruction strategy. 
+The generative objective first shapes the latent space under weak reconstruction pressure, after which reconstruction is progressively strengthened to recover visual details. 
+We validate this strategy using both continuous autoregressive priors with exact likelihoods and SiT priors with implicit likelihoods. 
+With our end-to-end objective and GenFirst, SiT achieves a gFID of 0.97 with CFG and 1.45 without CFG on ImageNet $256\times256$, while MMDiT reaches a GenEval score of 0.90 on text-to-image generation.
+Beyond image generation, we further extend the framework to shared visual latents for generation and representation learning, and to continuous unified text--image generation.
+These results demonstrate the generality of stable end-to-end latent learning across generative priors and modalities.
+}
+
+\date{\today}
+\correspondence{\email{zgt@mail.ustc.edu.cn}}
+
+% You can add additional info fields as follows 
+\checkdata[Project Page]{\url{https://tom-zgt.github.io/GenFirst/}}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_Intro.pdf}
+    \caption{\textbf{Comparison of latent generative modeling paradigms.}
+    (a) Conventional two-stage methods train generative models on a fixed, reconstruction-optimized latent space that may be suboptimal for generation.
+    (b) Naïve end-to-end training allows the generative loss to update the encoder but causes latent collapse.
+    (c) REPA-E avoids collapse by stopping generative gradients and reshaping the latent space through an external representation-alignment loss, preventing the generative objective from directly shaping the latent space.
+    (d) Our method enables direct end-to-end training: the prior loss shapes a generation-friendly latent space, while the entropy term prevents collapse.}
+    \label{fig:intro}
+\end{figure}
+Latent generative models~\cite{ldm,maskdit,uvit,dit,sit,decoupled_dit,mar,llamagen,var,starflow} have become a dominant paradigm for high-resolution image generation. 
+Instead of modeling images directly in pixel space, they first use a variational autoencoder (VAE)~\cite{vae} or visual tokenizer to compress raw pixels into a low-dimensional latent space and then train a generative model on this latent distribution. Such a two-stage pipeline greatly reduces modeling complexity and has enabled huge progress in image generation. 
+However, recent works~\cite{repa,vavae,repa_e,simflow,rae} show that a VAE latent space optimized for reconstruction is not necessarily optimal for generation. 
+Reconstruction tends to preserve instance-level details, making the latent distribution overly dispersed and harder for generative models to fit and sample from. 
+This mismatch between reconstruction and generation has motivated diverse approaches, including improved autoencoders~\cite{vavae}, representation alignment~\cite{repa}, pixel-space generation~\cite{zheng2025farmer,jit,pixeldit,deco,cai2026hidream}, and end-to-end training~\cite{repa_e,simflow,chu2026end}. 
+Despite their different designs, these approaches all address a shared question: what representation is best suited for generative modeling?
+
+A natural solution is to jointly train the VAE and generative model, allowing the generative objective to directly shape the latent space.
+JetFormer~\cite{tschannen2024jetformer} and FARMER~\cite{zheng2025farmer} use invertible normalizing flows~\cite{nvp,tarflow} instead of VAEs, while SimFlow~\cite{simflow} jointly trains a VAE and normalizing flow with fixed VAE variance.
+REPA-E~\cite{repa_e} jointly trains diffusion models with a VAE, but observes severe latent collapse when gradients from the generative model are propagated to the VAE. 
+It therefore stops the diffusion gradient and instead uses representation alignment for indirect supervision. 
+Together, these designs highlight the promise of end-to-end latent generative modeling, while leaving its feasibility and optimization mechanism unclear.
+
+In this paper, we therefore ask the first fundamental question: \textbf{Is direct end-to-end training of VAEs and generative models feasible?}
+REPA-E~\cite{repa_e} observed that naively propagating the generative loss through the VAE causes latent collapse.
+To answer this question, we revisit end-to-end training from the perspective of the VAE objective and identify a previously overlooked prior--entropy imbalance (\sref{subsec:prior_entropy}).
+LDM~\cite{ldm} established a practical VAE training recipe widely adopted by modern latent generative models, where a small KL weight weakly regularizes the latent space.
+The KL regularizer in the VAE objective consists of a prior-fitting term and a negative posterior-entropy term.
+The former encourages latent samples to match the Gaussian prior, whereas the latter preserves posterior uncertainty and prevents degeneracy.
+In naive end-to-end training, the added generative objective introduces a strong prior-fitting force, while posterior entropy remains suppressed by the inherited small KL weight.
+This imbalance drives the posterior variance toward zero and the latent representations toward a nearly constant value, ultimately causing latent collapse (\sref{subsec:analysis}). 
+Our analysis turns latent collapse from an empirical failure mode into a diagnosable and correctable imbalance in the objective: stable end-to-end training requires explicitly preserving posterior entropy and balancing it against prior fitting.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_speed.pdf}
+    \caption{
+     \textbf{Visualization of the asymmetric learning dynamics between reconstruction and generation.} 
+     Reconstruction reaches good image fidelity within much fewer training steps, while generation requires a longer optimization process to learn a sampleable latent distribution.
+    }
+    \label{fig:rg_visual}
+\end{figure}
+
+After resolving the collapse issue, end-to-end training still faces a generation--reconstruction conflict~\cite{vavae}: reconstruction favors preserving instance-specific details, whereas generation favors a smoother and more modelable latent distribution, potentially discarding information needed for faithful reconstruction. 
+This results in a generation--reconstruction trade-off, where improving one objective often degrades the other (\sref{subsec:no_single_optimum}).
+
+Therefore, we ask a second fundamental question: \textbf{How can we mitigate the generation--reconstruction conflict to learn a latent space better suited for generative modeling?}
+As shown in \cref{fig:rg_visual}, our experiments reveal asymmetric learning dynamics between reconstruction and generation (\sref{subsec:loss_balancing}).
+Reconstruction improves rapidly under direct supervision, whereas generation requires longer optimization to learn a globally sampleable latent distribution.
+Strong reconstruction pressure early in training can therefore anchor the encoder to a reconstruction-oriented latent space that is difficult for the generative model to learn.
+Conversely, maintaining excessive generative pressure can limit the recovery of visual details needed for high-quality decoding.
+These observations suggest that the key is not only how the two objectives are weighted, but also when each objective shapes the latent space.
+
+
+This observation motivates \textbf{GenFirst}, a simple generation-before-reconstruction strategy for our end-to-end training framework.
+Rather than first learning a reconstruction-oriented latent space and then forcing the generative model to chase it, GenFirst allows the generative objective to shape the latent distribution early, under weak reconstruction pressure and explicit entropy preservation. 
+Once the latent distribution can be effectively modeled by the generative prior, reconstruction is progressively strengthened to recover visual details.
+This ordering aligns with the asymmetric learning dynamics of the two objectives: generation needs to shape the latent geometry early, while reconstruction, being faster and more directly
+supervised, can be strengthened later.
+
+We instantiate GenFirst in two representative settings. 
+First, we adopt a continuous autoregressive prior from FARMER~\cite{zheng2025farmer}, where exact likelihood is available and the
+prior--entropy balance can be directly analyzed.
+Second, we apply GenFirst to SiT~\cite{sit}, a flow-matching prior with an implicit likelihood, to evaluate whether the strategy generalizes beyond exact-likelihood models. 
+Across class-to-image and text-to-image generation, GenFirst consistently improves the generation--reconstruction trade-off, providing a practical and reliable recipe for stable end-to-end latent generative modeling.
+Beyond image generation, we further extend our end-to-end formulation to shared visual latents that support generation, representation learning, and reconstruction.
+We also apply it to continuous unified text--image modeling, demonstrating its generality across modalities.
+
+
+We summarize our contributions as follows:
+\begin{itemize}
+    \item We identify a prior--entropy imbalance as the key cause of latent collapse in direct end-to-end training and show that preserving posterior entropy is essential for preventing collapse.
+    \item 
+    We reveal the asymmetric learning dynamics of generation and reconstruction and 
+    propose a GenFirst strategy that first shapes a generation-friendly latent space and then progressively recovers visual details.
+    \item We validate GenFirst with both exact-likelihood continuous autoregressive priors and SiT-based flow-matching priors, achieving a FID of 0.97 on ImageNet and a GenEval score of 0.90 on text-to-image generation. We also validate its applicability across objectives and modalities by further experiments.
+\end{itemize}
+
+\section{Related Work}
+
+\textbf{Latent Generative Models.}
+Latent generative models~\cite{ldm,uvit,maskdit,dit,sit,llamagen,mar,var,himar,starflow} use image tokenizers, such as VAEs~\cite{ldm,vavae}, to compress images into a lower-dimensional latent space, which simplifies generative modeling while leaving high-frequency details to the tokenizer. 
+However, recent studies~\cite{repa,vavae,repa_e} show that a VAE latent space optimized for reconstruction is not necessarily optimal for generation.
+
+\textbf{Representation Learning for Generation.}
+Recent works explore how to obtain more generation-friendly representations.
+REPA~\cite{repa} improves diffusion models by aligning their intermediate hidden states with features from pretrained visual encoders such as DINOv2~\cite{dino}. 
+VA-VAE~\cite{vavae} applies representation alignment to VAE training, while REPA-E~\cite{repa_e} further propagates the REPA loss through the diffusion model to align the VAE latent space in an end-to-end manner. 
+Another line of work~\cite{tarflow,wang2025pixnerd,zheng2025farmer,jit,pixeldit,deco} revisits the original pixel representation and removes the VAE entirely. 
+However, pixel-space generative models still face the challenge of modeling high-dimensional data and often remain less efficient than latent generative models.
+
+\textbf{End-to-End Generative Modeling.}
+Several works study joint training of autoencoders and generative models. 
+LSGM~\cite{lsgm} jointly trains a VAE with score-based generative models using a complex design. 
+REPA-E~\cite{repa_e} jointly trains a VAE and a diffusion model by stopping the diffusion gradient to the VAE and introducing a representation alignment loss.
+JetFormer~\cite{tschannen2024jetformer} and FARMER~\cite{zheng2025farmer} jointly train lossless normalizing flows~\cite{kolesnikov2024jet,tarflow} and autoregressive models~\cite{llamagen} to map the data distribution to a latent distribution modeled by AR priors. 
+SimFlow and MIMFlow~\cite{simflow,chen2026mimflow} jointly train a VAE and normalizing flows by fixing the VAE variance. 
+Unified Latents \cite{heek2026unified} first jointly learns bitrate-controlled latents with an encoder, diffusion prior, and decoder, then freezes the encoder and retrains a larger generation-oriented latent diffusion prior for efficient, high-quality synthesis.
+However, existing works still lack a systematic understanding of direct end-to-end training between VAEs and generative models, especially the cause of latent collapse, the conflict between generation and reconstruction in shaping the latent space, and a simple general training strategy. 
+In this paper, we revisit end-to-end latent generative modeling from the VAE objective, identify a prior-entropy imbalance as the key cause of collapse, and propose a generation-before-reconstruction strategy.
+
+
+
+
+
+\section{Revisiting End-to-End Latent Generative Modeling}
+\label{sec:revisiting_e2e}
+A standard latent generative model is trained in two stages. 
+In the first stage, a VAE is trained to encode images into a continuous latent space. 
+Given an image $x$, the encoder $q_\phi(z|x)$ predicts a mean $\mu$ and a variance $\sigma^2$, which define a Gaussian posterior $\mathcal{N}(\mu, \mathrm{diag}(\sigma^2))$. 
+A latent vector $z$ is then sampled from this posterior and decoded by $D_\psi$ to reconstruct the image $\hat{x}=D_\psi(z)$. 
+The VAE is optimized with a reconstruction loss, typically an $\ell_1$ loss between $x$ and $\hat{x}$, together with perceptual losses computed on $\hat{x}$, including LPIPS and GAN losses. 
+In practice, a weak KL regularization term, usually with a very small weight such as $10^{-6}$~\cite{ldm}, is also applied to $\mu$ and $\sigma^2$ to mildly constrain the posterior distribution.
+The VAE training objective is
+\begin{equation}
+    \mathcal{L}_{\mathrm{VAE}}
+    =
+    \lambda_{\mathrm{rec}}\mathcal{L}_{\mathrm{rec}}
+    +
+    \lambda_{\mathrm{LPIPS}}\mathcal{L}_{\mathrm{LPIPS}}
+    +
+    \lambda_{\mathrm{GAN}}\mathcal{L}_{\mathrm{GAN}}
+    +
+    \lambda_{\mathrm{KL}}
+    D_{\mathrm{KL}}(q_\phi(z|x)\|p_0(z)).
+\end{equation}
+In the second stage, the pretrained VAE is frozen and a generative prior is trained on latents sampled from the encoder posterior.
+For an exact-likelihood generative prior $p_\theta(z)$, the prior loss is
+\begin{equation}
+    \mathcal{L}_{\mathrm{prior}}
+    =
+    \mathbb{E}_{x,\,z\sim q_\phi(z|x)}
+    \left[-\log p_\theta(z)\right].
+\end{equation}
+A natural end-to-end alternative is to jointly optimize the VAE and the prior:
+\begin{equation}
+    \mathcal{L}_{\mathrm{naive}}
+    =
+    \mathcal{L}_{\mathrm{VAE}}
+    +
+    \lambda_{\mathrm{prior}}\mathcal{L}_{\mathrm{prior}}.
+    \label{eq:naive_e2e}
+\end{equation}
+While this lets the prior directly shape the latent space, it also changes the forces acting on the encoder posterior. 
+Without proper balancing, the posterior can degenerate and cause latent collapse.
+
+\subsection{Prior-Entropy Imbalance Causes Latent Collapse}
+\label{subsec:prior_entropy}
+To understand why naive end-to-end training collapses, we revisit the KL term.
+For the standard Gaussian prior $p_0(z)=\mathcal{N}(0,I)$, the KL divergence can be decomposed as
+\begin{align}
+    D_{\mathrm{KL}}(q_\phi(z|x)\|p_0(z))
+    &=
+    \mathbb{E}_{q_\phi}
+    [\log q_\phi(z|x)-\log p_0(z)] \\
+    &=
+    \underbrace{
+    \mathbb{E}_{q_\phi}[-\log p_0(z)]
+    }_{\text{prior fitting}}
+    -
+    \underbrace{
+    \mathcal{H}(q_\phi(z|x))
+    }_{\text{entropy}}.
+\end{align}
+The prior-fitting term pulls latent samples toward high-probability regions of the reference prior $p_0(z)$.
+The entropy term counteracts this effect by keeping the posterior from degenerating into point masses.
+
+As described above, naive end-to-end training treats the VAE KL loss as an engineering regularizer and keeps the same tiny weight following LDM~\cite{ldm}, typically $10^{-6}$. 
+This overlooks the entropy-preserving role of the KL term when a learned prior loss is introduced.
+Once the generative objective is added, it introduces additional prior-fitting pressure and breaks the balance between prior fitting and posterior entropy: $\lambda_{\mathrm{prior}}+\lambda_{\mathrm{KL}}\gg\lambda_{\mathrm{KL}}$. 
+This prior--entropy imbalance drives the posterior variance toward zero and pushes the posterior means to collapse to nearly the same code, resulting in a collapsed latent space.
+Based on this analysis, we explicitly separate prior fitting and posterior entropy in \cref{eq:naive_e2e}, and use $\mathcal{L}_{\mathrm{prior}}$ to denote the generative objective that shapes the latent distribution:
+\begin{equation}
+    \mathcal{L}_{\mathrm{E2E}}
+    =
+    \lambda_{\mathrm{rec}}\mathcal{L}_{\mathrm{rec}}
+    +
+    \lambda_{\mathrm{LPIPS}}\mathcal{L}_{\mathrm{LPIPS}}
+    +
+    \lambda_{\mathrm{GAN}}\mathcal{L}_{\mathrm{GAN}}
+    +
+    \lambda_{\mathrm{prior}}\mathcal{L}_{\mathrm{prior}}
+    -
+    \lambda_{\mathrm{ent}}\mathcal{H}(q_\phi(z|x)).
+    \label{eq:e2e_objective}
+\end{equation}
+\textbf{In this view, the entropy term is not a minor regularizer, but rather provides a counteracting force to learned prior fitting and prevents latent collapse.}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_effect_v2.pdf}
+    \caption{Qualitative effects of each objective on the latent posterior. Here $z=\mu_\phi(x)+\sigma_\phi(x)\epsilon$.}
+    \label{fig:obj_effect}
+\end{figure}
+
+
+To further illustrate how different losses affect the latent space, we visualize two statistics: $\mathrm{Std}(\mu)$ and $\mathbb{E}[\sigma^2]$.
+$\mathrm{Std}(\mu)$ measures how widely the posterior means are distributed across images, while $\mathbb{E}[\sigma^2]$ measures the average posterior uncertainty.
+As shown in \cref{fig:obj_effect}, different objectives push the latent posterior in different directions.
+When reconstruction dominates, $\mathrm{Std}(\mu)$ increases but $\mathbb{E}[\sigma^2]$ decreases: images become easier to reconstruct, but the latent space contains gaps between codes and may be difficult to sample from.
+When prior fitting dominates without sufficient entropy, both $\mathrm{Std}(\mu)$ and $\mathbb{E}[\sigma^2]$ decrease, causing the posterior to collapse toward a nearly constant code.
+Adding the entropy term increases $\mathbb{E}[\sigma^2]$, increases posterior overlap and reduces gaps between sampled codes, which prevents collapse and improves sampleability.
+Additionally, we discuss a subtle shortcut solution behind the collapse behavior in \cref{app:collapse_shortcut}.
+
+\subsection{Generation--Reconstruction Trade-off}
+\label{subsec:no_single_optimum}
+After preventing latent collapse with entropy, end-to-end training still faces a generation--reconstruction conflict.
+To study this conflict, we keep the reconstruction-related loss weights the same as in the VAE training setting and vary only the prior loss weight.
+As shown in \cref{fig:abl_1}(a), increasing $\lambda_{\mathrm{prior}}$ improves generation but hurts reconstruction: gFID improves from $120.60$ to $8.06$, while rFID worsens from $0.53$ to $4.20$.
+This suggests that generation and reconstruction favor different operating points along the observed trade-off and cannot generally reach their individual optima at one prior weight.
+We analyze this problem using the continuous autoregressive prior from FARMER~\cite{zheng2025farmer}, where the exact likelihood is available: $\mathcal{L}_{\mathrm{prior}}^{\mathrm{AR}}
+    =
+    \mathbb{E}_{z\sim q_\phi(z|x)}
+    \left[
+    -\sum_i \log p_\theta(z_i|z_{<i})
+    \right]$.
+This setting allows us to directly control the strength of the generative objective.
+We then explore three natural strategies to mitigate this conflict, but find that they still fail to resolve it.
+
+\begin{figure}[t]
+    \centering
+
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/fig1a_dim_limited.png}
+        \caption{Latent dim}
+        \label{fig:latent_dim}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/fig1b_vae_size.png}
+        \caption{VAE size}
+        \label{fig:vae_size}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/fig1c_model_size.png}
+        \caption{Prior size}
+        \label{fig:prior_size}
+    \end{subfigure}
+
+    \caption{Larger latent dimension, VAE capacity, and prior capacity for balancing generation and reconstruction.}
+    \label{fig:mitigate_ways}
+\end{figure}
+
+\textbf{Increasing the latent dimension.}
+We first increase the latent dimension to relax the information bottleneck~\cite{vavae}.
+As shown in \cref{fig:latent_dim}, larger latent dimensions can tolerate stronger prior weights, but the improvement is limited: even increasing the dimension from 16 to 128 only supports $\lambda_{\mathrm{prior}}\approx0.1$ before reconstruction deteriorates.
+Moreover, a larger latent dimension makes the AR prior harder to model.
+Thus, increasing latent dimension shifts the trade-off but does not remove the generation--reconstruction conflict.
+
+\textbf{Scaling the VAE.}
+We next test whether a stronger VAE can recover details from a more generation-friendly latent space.
+Compared with the default VAE ($\mathrm{block}=2$), we increase both encoder and decoder depth ($\mathrm{block}=4$), or increase only the decoder depth.
+As shown in \cref{fig:vae_size}, scaling the VAE does not alleviate the conflict and can even hurt reconstruction, suggesting that simply increasing VAE capacity is insufficient.
+
+\textbf{Scaling the generative model.}
+Finally, we scale the AR model size to better fit complex latent distributions.
+As shown in \cref{fig:prior_size}, a larger prior improves generation but further degrades reconstruction, indicating stronger shaping pressure on the latent space.
+Therefore, scaling the prior can amplify the dominance of the generation objective rather than resolving the conflict.
+
+\subsection{Loss Balancing Is Not Enough}
+\label{subsec:loss_balancing}
+
+
+The above results show that increasing the latent dimension, scaling the VAE, or scaling the generative model does not remove the generation--reconstruction conflict. 
+We next examine whether better loss balancing can alleviate it. As shown in \cref{fig:abl_1}(a), the prior loss weight $\lambda_{\mathrm{prior}}$ strongly affects this trade-off. 
+We therefore test several common weighting schemes with simple tuning, including constant weighting, cosine decay, and PI-style adaptive control~\cite{shao2020controlvae}. 
+However, \cref{tab:ablation_pz_method} shows that none consistently achieves a satisfactory balance, highlighting the difficulty of dynamically balancing the two objectives.
+
+To understand this failure, we revisit the asymmetric learning dynamics between reconstruction and generation.
+As shown in \cref{fig:rg_visual}, reconstruction is a fast and strongly supervised mapping problem: given latent samples, the decoder receives direct supervision from the target images and can quickly recover visual details. 
+In contrast, generation is a slower distribution-modeling problem: the prior must learn the global latent distribution before it can produce realistic samples. 
+Therefore, reconstruction can reach good image fidelity within far fewer training steps, whereas generation requires substantially longer training to produce recognizable samples.
+Based on this observation, we propose a generation-before-reconstruction training strategy (\textbf{GenFirst}), which treats the conflict as an optimization-order problem rather than a pure loss-balancing problem.
+GenFirst lets the generative prior shape a generation-friendly latent space and then strengthens reconstruction to recover visual details within the latent space.
+
+\section{Method}
+\label{sec:method}
+Building on the analysis in \cref{sec:revisiting_e2e}, we jointly optimize the VAE and the latent generative model under a unified end-to-end objective. 
+We first describe the general formulation, then instantiate the latent prior with a continuous autoregressive model~\cite{zheng2025farmer} or SiT~\cite{sit}, and finally present GenFirst, our generation-before-reconstruction training strategy.
+\subsection{Stable End-to-End Latent Generative Training}
+\label{subsec:e2e_training}
+Given an image $x$, the encoder predicts the posterior parameters
+$\mu_\phi(x)$ and $\sigma_\phi(x)^2$, from which we sample
+$z =
+    \mu_\phi(x)
+    +
+    \sigma_\phi(x)\odot\epsilon_z,
+    \ 
+    \epsilon_z\sim\mathcal{N}(0,I)$.
+The decoder reconstructs the image as $\hat{x}=D_\psi(z)$. 
+We optimize the unified end-to-end objective in \cref{eq:e2e_objective}, where the form of $\mathcal{L}_{\mathrm{prior}}$ depends on the generative model.
+
+\textbf{Continuous autoregressive prior.}
+For the exact-likelihood autoregressive model, we minimize the latent
+negative log-likelihood:
+\begin{equation}
+    \mathcal{L}^{\mathrm{AR}}_{\mathrm{prior}}
+    =
+    \mathbb{E}_{x,c,\,z\sim q_\phi(z|x)}
+    \left[
+        -\log p_\theta(z|c)
+    \right],
+    \qquad
+    p_\theta(z|c)
+    =
+    \prod_{i=1}^{N}
+    p_\theta(z_i|z_{<i},c).
+    \label{eq:prior_loss_ar}
+\end{equation}
+
+\textbf{SiT prior.}
+For SiT, we train a velocity field instead of an explicit likelihood.
+Given $\epsilon_t\sim\mathcal{N}(0,I)$ and
+$t\sim\mathcal{U}(0,1)$, we construct
+\begin{equation}
+    z_t=(1-t)\epsilon_t+t z,
+    \qquad
+    v=z-\epsilon_t,
+\end{equation}
+and optimize
+\begin{equation}
+    \mathcal{L}^{\mathrm{SiT}}_{\mathrm{prior}}
+    =
+    \mathbb{E}_{x,\,z\sim q_\phi(z|x),\,\epsilon_t,\,t}
+    \left[
+        \left\|
+        v_\theta(z_t,t)-(z-\epsilon_t)
+        \right\|_2^2
+    \right].
+    \label{eq:prior_loss_sit}
+\end{equation}
+
+Since SiT perturbs $z$ with standard Gaussian noise, the latent value scale must remain bounded; otherwise, an excessively large $z$ would make the injected noise relatively too small, allowing the model to exploit a shortcut to reduce the denoising loss. 
+We therefore keep the standard VAE KL regularization with a small weight $10^{-6}$ for the SiT prior loss:
+\begin{equation}
+    \mathcal{L}^{\mathrm{SiT}}_{\mathrm{E2E}}
+    =
+    \mathcal{L}_{\mathrm{E2E}}
+    +
+    10^{-6}
+    D_{\mathrm{KL}}
+    \left(
+        q_\phi(z|x)\,\|\,\mathcal{N}(0,I)
+    \right).
+    \label{eq:sit_e2e}
+\end{equation}
+This small KL term is used only for latent-scale regularization and is distinct from the explicit posterior-entropy term in \cref{eq:e2e_objective}, which provides the primary anti-collapse regularization.
+
+\subsection{Continuous Autoregressive Prior}
+\label{subsec:ar_prior}
+
+We instantiate the exact-likelihood generative prior with the continuous autoregressive model from FARMER~\cite{zheng2025farmer}, and refer to this end-to-end autoregressive instantiation as \textbf{EAR}.
+EAR directly models the VAE latent distribution with an exact likelihood, providing a tractable prior loss for end-to-end training.
+
+
+Given an image $x$, the VAE encoder produces a latent tensor $z\in\mathbb{R}^{h\times w\times c}$.
+We flatten the spatial dimensions of $z$ into a sequence of $N=hw$ continuous tokens: $z = (z_1, z_2, \ldots, z_N), \  z_i\in\mathbb{R}^{c}$.
+The autoregressive prior factorizes the latent density as: $p_\theta(z|c)=\prod_{i=1}^{N}p_\theta(z_i|z_{<i},c)$, where $c$ denotes the class or text condition.
+We implement this prior with a causal Transformer following FARMER~\cite{zheng2025farmer}.
+Condition tokens are placed at the beginning of the sequence, and each latent token attends only to previous condition and latent tokens.
+At position $i$, the Transformer hidden state is used to predict the conditional density of the next continuous token $z_i$.
+Since each $z_i$ is continuous, we cannot use a discrete softmax head.
+Instead, we follow \cite{tschannen2023givt,tschannen2024jetformer,zheng2025farmer} and use a Gaussian mixture model (GMM) head.
+Given the hidden state $h_i$, the head predicts mixture weights, means, and variances for a $K$-component diagonal Gaussian mixture:
+\begin{equation}
+    p_\theta(z_i|z_{<i},c)
+    =
+    \sum_{k=1}^{K}
+    \pi_{i,k}
+    \mathcal{N}
+    \left(
+        z_i;
+        m_{i,k},
+        \mathrm{diag}(s_{i,k}^2)
+    \right).
+    \label{eq:gmm_head}
+\end{equation}
+The prior loss is the autoregressive negative log-likelihood in \cref{eq:prior_loss_ar}.
+During end-to-end training, this loss updates both the AR prior and the VAE encoder.
+Therefore, EAR not only learns to fit the current latent distribution, but also provides gradients that reshape the VAE latent space into one that is easier for the autoregressive prior to model.
+
+
+\subsection{Generation-before-Reconstruction Training}
+\label{subsec:gbr_training}
+
+Motivated by the asymmetric learning dynamics discussed in \cref{subsec:loss_balancing}, we propose generation-before-reconstruction (\textbf{GenFirst}), a two-stage schedule based on the same end-to-end objective in \cref{eq:e2e_objective}.
+Throughout training, we keep the reconstruction, LPIPS, and GAN weights unchanged from standard VAE training, and tie the entropy weight to the prior weight, i.e., $\lambda_{\mathrm{ent}}=\lambda_{\mathrm{prior}}$.
+GenFirst uses a larger prior weight in the generation-first stage and a smaller one in the reconstruction-refinement stage:
+\begin{equation}
+    \lambda_{\mathrm{prior}}^{(1)}
+    >
+    \lambda_{\mathrm{prior}}^{(2)},
+    \qquad
+    \lambda_{\mathrm{ent}}^{(s)}
+    =
+    \lambda_{\mathrm{prior}}^{(s)},
+    \quad s\in\{1,2\}.
+\end{equation}
+
+In the generation-first stage, the stronger generative objective plays the main role in shaping a generation-friendly latent space, while reconstruction preserves image information and posterior entropy prevents latent collapse.
+In the reconstruction-refinement stage, we reduce the prior and entropy weights so that reconstruction receives greater relative influence and recovers visual details without substantially disrupting the generation-friendly latent space formed in the first stage.
+In practice, we use a longer generation-first stage for latent-space formation and a shorter reconstruction-refinement stage for recovering visual details.
+
+Unlike cosine schedules or PI-style adaptive weighting~\cite{shao2020controlvae}, GenFirst does not merely adjust loss magnitudes; it explicitly separates latent-space formation from reconstruction refinement according to the asymmetric learning dynamics of generation and reconstruction.
+
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{subsec:exp_setup}
+Architecture configurations, dataset details, and stage-specific optimization details are provided in \cref{app:training_details}.
+
+\textbf{Datasets and metrics.}
+We evaluate class-conditional generation on ImageNet~\cite{imagenet} at $256\times256$ and $512\times512$ resolutions. 
+For text-to-image generation, we train on publicly available datasets~\cite{JourneyDB,midjounery23m,megalith,imagenet,cc12m,commoncatalog,open4o}, and evaluate on GenEval~\cite{geneval} and DPG-Bench~\cite{dpg}.
+For ImageNet generation, we report gFID~\cite{fid}, Inception Score (IS)~\cite{is}, Precision, and Recall~\cite{precision} using 50K generated samples. 
+For reconstruction, we report rFID, PSNR~\cite{psnr}, LPIPS~\cite{lpips}, and SSIM~\cite{ssim}.
+
+\textbf{EAR.}
+EAR combines the VAE architecture from MAR~\cite{mar}, using the $f16d16$ latent setting, with the continuous autoregressive prior from FARMER~\cite{zheng2025farmer}. 
+The VAE and AR prior are jointly trained from scratch using our end-to-end objective with GenFirst.
+We set $\lambda_{\mathrm{prior}}=\lambda_{\mathrm{ent}}=1$ for the 500-epoch generation-first stage and reduce both weights to $0.25$ for the 140-epoch reconstruction-refinement stage.
+We use a batch size of 512 and linearly warm up the learning rate to $1\times10^{-4}$ during the first 10 epochs, then keep it constant.
+
+\textbf{EiT.}
+EiT denotes our diffusion-based instantiation of the end-to-end framework.
+We use SiT~\cite{sit} for class-conditional ImageNet generation and MMDiT~\cite{mmdit} for text-to-image generation.
+Following REPA-E~\cite{repa_e}, training consists of an end-to-end phase followed by a prior-only phase. 
+During the end-to-end phase, the VAE and SiT are jointly optimized using our end-to-end objective with GenFirst.
+We set $\lambda_{\mathrm{prior}}=\lambda_{\mathrm{ent}}=0.1$ for the 80-epoch generation-first stage and reduce both weights to $0.01$ for the 40-epoch reconstruction-refinement stage.
+During the prior-only phase, we freeze the VAE and train SiT for an additional 800 epochs.
+Other optimization settings follow REPA-E~\cite{repa_e}.
+
+\textbf{High-resolution generation.}
+For both EAR and EiT, we reuse the VAE trained at $256\times256$ resolution and freeze it. We then train only the corresponding AR or SiT generative prior at $512\times512$ resolution.
+
+\textbf{Text-to-image generation.}
+We use the same two-phase training protocol for text-to-image generation.
+During the end-to-end phase, we consider two variants.
+\textit{Version A} jointly trains SiT-XL/2 and the FLUX.1-dev VAE on ImageNet using the same end-to-end protocol as class-conditional EiT.
+\textit{Version B} jointly trains a MMDiT-L/2~\cite{mmdit} and the FLUX.1-dev VAE directly on the text-to-image training data.
+During the prior-only phase, we freeze the resulting VAE and train the target MMDiT-XL/2 on the text-to-image dataset.
+Following UniDDT~\cite{wang2026uniddt} and PixelGen~\cite{ma2026pixelgen}, we train MMDiT at $256\times256$ for 200K steps and then at $512\times512$ for 80K steps. 
+We further fine-tune it on OpenAI-4o datasets~\cite{open4o} for 40K steps as $512\times512$.
+
+
+
+
+
+\subsection{Analysis}
+\label{subsec:analysis}
+For ease of analysis, unless otherwise specified, we use the exact-likelihood EAR as the default setting, and report gFID and IS without guidance.
+
+\textbf{Does end-to-end training learn a generation-friendly latent space?}
+We compare four protocols in \cref{tab:ear_sit_training_settings}:
+\textit{Frozen VAE} is the standard two-stage baseline; 
+\textit{Naive E2E} propagates the generative loss to the VAE without explicit entropy preservation; \textit{Stable E2E} uses our entropy-preserving objective and GenFirst strategy; 
+and \textit{Frozen E2E-trined VAE} freezes the VAE learned by our Stable E2E objective with GenFirst and trains a new prior from scratch.
+Naive E2E collapses for both EAR and SiT, whereas Stable E2E remains stable.
+More importantly, replacing the reconstruction-trained VAE with the frozen E2E-trained VAE substantially improves a newly trained prior: gFID decreases from $36.33$ to $5.67$ for EAR and from $7.90$ to $3.57$ for SiT.
+These results show that stable end-to-end training learns a more generation-friendly latent space.
+EAR and SiT exhibit different behaviors during joint training.
+For EAR, the tractable likelihood directly models the VAE latent density, so Stable E2E slightly outperforms retraining the prior on the frozen E2E-trained VAE.
+In contrast, SiT lacks an explicit likelihood over VAE latents, making joint VAE--SiT optimization less effective than freezing the E2E-trained VAE and training a new SiT prior.
+
+\begin{table}[!h]
+\scriptsize
+\centering
+\caption{
+\textbf{Stable end-to-end training learns a generation-friendly latent space.}
+EAR is trained until gFID converges, whereas SiT is evaluated after 80 epochs.
+Frozen E2E-trained VAE freezes the VAE obtained from Stable E2E and trains a new prior from scratch.
+\emph{Collapsed} indicates numerical instability with a NaN training loss.
+}
+
+\begin{minipage}{0.48\linewidth}
+\centering
+\textbf{EAR}\\[2mm]
+\setlength{\tabcolsep}{0.8mm}
+\begin{tabular}{lccccc}
+\toprule
+Setting & \makecell{gFID$\downarrow$} & IS$\uparrow$ & rFID$\downarrow$ & PSNR$\uparrow$ & SSIM$\uparrow$ \\
+\midrule
+Frozen VAE
+& 36.33 & 46.55 & \textbf{0.53} & \textbf{26.18} & \textbf{0.72} \\
+Naive E2E
+& 294.90 & 1.48 & 0.70 & 25.11 & 0.68 \\
+Stable E2E (ours)
+& \textbf{5.10} & \textbf{145.22} & 1.26 & 21.93 & 0.58 \\
+Frozen E2E-trained VAE
+& 5.67 & 137.39 & 1.26 & 21.93 & 0.58 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+\centering
+\textbf{SiT (80 epochs)}\\[2mm]
+\setlength{\tabcolsep}{0.8mm}
+\begin{tabular}{lccccc}
+\toprule
+Setting & \makecell{gFID$\downarrow$} & IS$\uparrow$ & rFID$\downarrow$ & PSNR$\uparrow$ & SSIM$\uparrow$ \\
+\midrule
+Frozen VAE
+& 7.90 & 122.60 & 0.74 & \textbf{25.67} & \textbf{0.72} \\
+Naive E2E
+& \multicolumn{5}{c}{Collapsed} \\
+Stable E2E (ours)
+& 92.38 & 13.94 & \textbf{0.57} & 25.13 & 0.71 \\
+Frozen E2E-trained VAE
+& \textbf{3.57} & \textbf{166.49} & \textbf{0.57} & 25.13 & 0.71 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+\label{tab:ear_sit_training_settings}
+\end{table}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/ablation_curves.pdf}
+    \caption{
+    \textbf{Generation--reconstruction trade-off and GenFirst schedule ablations.}
+We report gFID (blue solid line) and rFID (orange dashed line), where lower is better.
+(a) \textbf{Effect of prior loss weight.}
+All models are trained with the same architecture and training budget.
+No fixed prior weight achieves a favorable generation--reconstruction trade-off.
+(b) \textbf{Effect of the reconstruction-refinement-stage prior weight.}
+A moderate prior weight in the reconstruction refinement stage gives the best generation--reconstruction trade-off.
+(c) \textbf{Effect of the generation-first-stage duration.} gFID decreases with more generation-first-stage training epochs and saturates with further training.
+Circled points indicate the default settings.
+    }
+    \label{fig:abl_1}
+\end{figure}
+
+\begin{table}[!h]
+\scriptsize
+\centering
+\caption{
+\textbf{Comparison of loss balancing strategies.}
+GenFirst denotes our generation-before-reconstruction schedule. This experiment evaluates whether the generation-reconstruction conflict can be solved by simple weighting schedules, or whether the order of optimization matters. 
+\emph{Collapsed} indicates numerical instability with a NaN training loss.
+}
+\setlength{\tabcolsep}{2.1mm}{
+\begin{tabular}{cccccc}
+\toprule
+Strategy
+&
+gFID (w. CFG)$\downarrow$
+&
+IS (w. CFG)$\uparrow$
+&
+rFID$\downarrow$
+&
+PSNR$\uparrow$
+&
+SSIM$\uparrow$
+\\
+\midrule
+\textbf{GenFirst}
+&  \textbf{2.10} & 246.70	& 1.26 & 21.93 & 0.58 
+\\
+Constant
+&  3.04	& \textbf{251.2}	& 3.27 & 19.52 & 0.48 
+% 3.33	&19.86	&0.46
+\\
+Cosine decay
+&  5.45	& 136.11	& 0.66 & 23.87 & 0.67
+% 0.63	&24.49	&0.65
+\\
+PI adaptive
+&  \multicolumn{5}{c}{Collapsed}
+\\
+Frozen VAE
+& 6.97 & 147.04	& \textbf{0.53}	&\textbf{26.18}	&\textbf{0.72}
+\\
+\bottomrule
+\end{tabular}
+}
+\label{tab:ablation_pz_method}
+\end{table}
+
+\textbf{How does prior weighting affect the generation--reconstruction trade-off?} 
+As shown in \cref{fig:abl_1}(a), increasing the prior loss weight improves generation but degrades reconstruction. 
+When $\lambda_{\mathrm{prior}}$ increases from 0 to 1.0, gFID improves from 120.60 to 8.06 and IS increases from 13.07 to 113.51, showing that stronger prior fitting makes the latent distribution easier to model. 
+However, reconstruction quality drops substantially: rFID worsens from 0.53 to 4.20, PSNR decreases from 26.18 to 19.66, and SSIM decreases from 0.72 to 0.45. 
+This confirms that the key challenge in end-to-end training is balancing a generation-friendly latent distribution with sufficient information for faithful decoding.
+
+\textbf{Can simple loss balancing strategies resolve the conflict?}
+We compare GenFirst with three representative weighting baselines: constant weighting, cosine decay, and PI-based adaptive control~\cite{shao2020controlvae}; full settings are provided in \cref{app:loss_balancing}. 
+As shown in \cref{tab:ablation_pz_method}, the tested baselines reach different points on the generation--reconstruction trade-off. 
+Constant weighting achieves reasonable generation but degrades reconstruction (gFID $3.04$, rFID $3.27$), whereas cosine decay improves reconstruction at the cost of generation (gFID $5.45$, rFID $0.66$).
+The PI-controlled run becomes numerically unstable in our setting. 
+GenFirst achieves the best gFID among the evaluated strategies, with a gFID of $2.10$, an IS of $246.70$, and an rFID of $1.26$.
+These results suggest that it is difficult to solve the conflict by simply tuning or scheduling the prior weight; the optimization order is critical.
+
+\textbf{Effect of the reconstruction-refinement-stage prior weight.}
+We further study how much prior pressure should be kept during the reconstruction-refinement stage.
+As shown in \cref{fig:abl_1}(b), reducing the weight from $0.5$ to $0.25$ improves both objectives: gFID decreases from $5.55$ to $5.09$, while rFID decreases from $2.93$ to $1.29$.
+When the weight is further reduced to $0.1$, reconstruction improves slightly, but generation degrades to a gFID of $7.24$.
+We therefore set $\lambda_{\mathrm{prior}}^{(2)}=0.25$, which provides the best trade-off among the tested values.
+
+% \textbf{Effect of the first-stage training epoch.}
+\textbf{Effect of the generation-first-stage duration.}
+We also vary the first-stage training duration from 200 to 560 epochs.
+As shown in \cref{fig:abl_1}(c), the results remain relatively stable across this range, with gFID varying from $6.10$ to $6.42$ and rFID from $1.21$ to $1.42$.
+Training for 500 epochs achieves the lowest gFID and rFID among the evaluated settings, while extending training to 560 epochs brings no further improvement.
+We therefore use 500 epochs as the default generation-first-stage training epoch.
+
+
+\begin{wraptable}{r}{0.35\columnwidth}
+\vspace{-1.2\baselineskip}
+\centering
+\caption{
+\textbf{Scaling behavior of EAR.}
+The VAE is first jointly trained with an EAR-L prior under GenFirst; it is then frozen while we separately vary the EAR model size and the number of GMM components.
+}
+\label{tab:ear_scaling}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+% \vspace{-5.pt}
+\textbf{(a) EAR model scale.}\\[2pt]
+\begin{tabular*}{0.95\linewidth}{
+@{\extracolsep{\fill}}
+cccc
+@{}
+}
+\toprule
+Model & \#Params & gFID$\downarrow$ & IS$\uparrow$ \\
+\midrule
+B    & 174M & 13.85 & 79.00  \\
+L    & 477M & 5.67  & 137.39 \\
+XL   & 775M & 3.91  & 163.71 \\
+XXL  & 1.4B & 3.19  & 181.99 \\
+\bottomrule
+\end{tabular*}
+
+\vspace{5pt}
+\textbf{(b) GMM components.}\\[2pt]
+\begin{tabular*}{0.95\linewidth}{
+@{\extracolsep{\fill}}
+ccc
+@{}
+}
+\toprule
+GMM $K$ & gFID$\downarrow$ & IS$\uparrow$ \\
+\midrule
+32   & 6.08 & 132.70 \\
+64   & 5.67 & 137.39 \\
+128  & 5.64 & 137.24 \\
+1024 & 5.01 & 144.63 \\
+4096 & 5.00 & 144.99 \\
+\bottomrule
+\end{tabular*}
+\vspace{-1.5\baselineskip}
+\end{wraptable}
+
+\textbf{Scalability of the EAR prior.}
+We first jointly train the VAE with an EAR-L prior using GenFirst.
+We then freeze the VAE and train new EAR priors of different sizes from scratch on its latents, using a lightweight 6-layer normalizing-flow adapter~\cite{tarflow,tschannen2023givt}.
+As shown in \cref{tab:ear_scaling}(a), scaling the prior from 174M to 1.4B parameters consistently reduces gFID from $13.85$ to $3.19$, while IS increases from $79.00$ to $181.99$.
+This shows that GenFirst-trained latents continue to benefit from larger generative priors.
+
+\textbf{Effect of GMM capacity.}
+Using the same frozen VAE, we fix the autoregressive backbone to EAR-L and train new priors from scratch with different numbers of GMM components $K$.
+As shown in \cref{tab:ear_scaling}(b), increasing $K$ from 32 to 1024 improves gFID from $6.08$ to $5.01$ and IS from $132.70$ to $144.63$.
+Further increasing $K$ to 4096 brings only marginal gains, indicating that the benefit largely saturates beyond $K=1024$ in this setting.
+
+
+\begin{table*}[!t]
+\centering
+
+\begin{minipage}[t]{0.6\textwidth}
+\vspace{0pt}
+\centering
+\captionof{table}{
+\textbf{Comparison with REPA-E.}
+We compare EiT with REPA and REPA-E under different VAE initialization
+settings. All models are evaluated after 80 training epochs.
+}
+\label{tab:vae_initialization}
+
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method}
+& \textbf{gFID}$\downarrow$
+& \textbf{IS}$\uparrow$
+& \textbf{Prec.}$\uparrow$
+& \textbf{Rec.}$\uparrow$ \\
+\midrule
+REPA~\cite{repa}
+& 7.90 & 122.60 & 0.70 & \textbf{0.65} \\
+
+REPA-E (scratch)~\cite{repa_e}
+& 4.34 & 154.30 & 0.75 & 0.63 \\
+
+REPA-E (SD-VAE init.)~\cite{repa_e}
+& 4.07 & 161.80 & 0.76 & 0.62 \\
+
+REPA-E (VA-VAE init.)~\cite{repa_e}
+& 3.46 & 159.80 & 0.77 & 0.63 \\
+
+\textbf{EiT} (scratch)
+& 3.78 & 161.42 & \textbf{0.78} & 0.61 \\
+
+\textbf{EiT} (SD-VAE init.)
+& 3.57 & 166.49 & 0.77 & 0.62 \\
+
+\textbf{EiT} (VA-VAE init.)  
+& \textbf{2.79} & \textbf{175.40} & \textbf{0.78} & 0.63 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.37\textwidth}
+\vspace{0pt}
+\centering
+\captionof{table}{
+\textbf{Effect of an optional normalizing flow.}
+The VAE is frozen when training each AR prior.
+}
+\label{tab:optional_nf}
+
+\scriptsize
+\setlength{\tabcolsep}{3.pt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Setting}
+& \textbf{gFID}$\downarrow$
+& \textbf{IS}$\uparrow$ \\
+\midrule
+Frozen VAE + AR
+& 110.10 & 14.79 \\
+
+Frozen VAE + NF + AR
+& 36.33 & 46.55 \\
+\midrule
+Stable E2E VAE + AR
+& 5.27 & 149.28 \\
+
+Stable E2E VAE + NF + AR
+& \textbf{5.12} & \textbf{151.17} \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+\end{table*}
+
+\textbf{Comparison with REPA-E.}
+We compare EiT, which jointly optimizes SiT~\cite{sit} and the VAE using our end-to-end objective with GenFirst, with REPA~\cite{repa} and REPA-E~\cite{repa_e} under the same 80-epoch training budget in \cref{tab:vae_initialization}.
+Compared with REPA-E, EiT consistently achieves lower gFID across VAE initializations: $3.78$ vs.\ $4.34$ from scratch, $3.57$ vs.\ $4.07$ with SD-VAE initialization, and $2.79$ vs.\ $3.46$ with VA-VAE initialization. 
+These results show that our end-to-end formulation with GenFirst further improves generation beyond REPA-E.
+
+
+\textbf{Optional normalizing flow.}
+Following FARMER~\cite{zheng2025farmer}, we examine whether an additional
+normalizing flow (NF) is still needed for continuous AR modeling.
+As shown in \cref{tab:optional_nf}, adding NF to the frozen-VAE setting improves
+gFID from $110.10$ to $36.33$, indicating that NF transforms the
+reconstruction-optimized latent distribution into one that is easier for the AR
+prior to model.
+After end-to-end VAE training, however, the gain becomes marginal.
+This suggests that end-to-end training already produces a latent space well
+suited to continuous AR modeling, making the additional flow largely optional.
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_vis.pdf}
+    \caption{Class-to-image samples from EiT (row 1,2) and EAR (row 3,4) with guidance(CFG scale=4).}
+    \label{fig:vis}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/GbR_vis2.pdf}
+    \caption{\textbf{Qualitative comparison of text-to-image generation.} Both settings use the same model and training data; the \textbf{left} uses the FLUX.1-dev VAE and the \textbf{right} our end-to-end trained VAE. End-to-end training improves perceptual quality and fine-grained textures (rows 1--3), produces more plausible and coherent images (rows 4--5), and improves text alignment (row 6).}
+    \label{fig:vis2}
+\end{figure}
+
+
+\begin{table}[]
+% \vskip -0.1in
+\scriptsize 
+    \centering
+    \caption{\textbf{Class-conditional performance on ImageNet 256$\times$256.} $*$ indicates the results obtained by sampling images with low-temperature strategy.}
+    \setlength{\tabcolsep}{1.5mm}{
+\begin{tabular}{l cc cccc cccc}
+\toprule
+\multirow{2}{*}{Method} & \multirow{2}{*}{\makecell{Epochs}} & \multirow{2}{*}{\#Params} & \multicolumn{4}{c}{W/o guidance} & \multicolumn{4}{c}{W/ guidance} \\
+\cmidrule(lr){4-7} \cmidrule(lr){8-11}
+ & & & gFID$\downarrow$ & IS$\uparrow$ & Prec.$\uparrow$ & Rec.$\uparrow$ & gFID$\downarrow$ & IS$\uparrow$ & Prec.$\uparrow$ & Rec.$\uparrow$ \\
+\midrule
+\multicolumn{11}{l}{\textit{Pixel Space}} \\
+\arrayrulecolor{black!30}\midrule
+ADM~\citep{adm} &  400  &  554M  & 10.94 &  101.0 & 0.69 & 0.63 & 3.94 & 215.8 & \textbf{0.83} & 0.53\\
+RIN~\citep{jabri2022scalable} &  480  &  410M & 3.42  & 182.0  &  -   &  -   &  -   &   -    &  -   &  -  \\
+PixelFlow~\citep{chen2025pixelflow} & 320 & 677M &  - & -   &   -  &  -   & 1.98 & 282.1 & 0.81 & 0.60 \\
+PixNerd~\citep{wang2025pixnerd} & 160 & 700M &  -   &  -       &  - &  -  &  2.15 & 297.0 & 0.79 & 0.59 \\
+SiD2~\citep{hoogeboom2024simpler} &  1280   &   -   & -   &  - &  -   &  -   &  1.38   &   -    &  -   &  - \\
+TARFlow~\citep{tarflow} & 320 & 1.4B & -  & - & - & - & 4.69 & - & - & - \\
+JetFormer~\citep{tschannen2024jetformer} & 500 & 2.8B  & - & - & - & -  & 6.64 & - & 0.69 & 0.56 \\
+FARMER~\citep{zheng2025farmer} & 320 & 1.9B &  - & - & - & - & 3.60 & 269.2 & 0.81 & 0.51\\
+JiT~\citep{jit} & 600 & 2B &  - & - & - & - & 1.82 & 292.6 & 0.79 & 0.62\\
+PixelDiT~\citep{pixeldit} & 320 & 797M & - & - & - & - & 1.61 & 292.7 & 0.78 & 0.64\\
+DeCo~\citep{deco} & 600 & 682M & - & - & - & - & 1.69 & 304.0 & 0.79 & 0.63 \\
+\arrayrulecolor{black}\midrule
+\multicolumn{11}{l}{\textit{Latent Autoregressive}} \\
+\arrayrulecolor{black!30}\midrule
+GIVT~\citep{tschannen2023givt} & 500 & 1.67B & - & - & - & - & 2.59 & - &  0.81 & 0.57\\
+VAR~\citep{var} &  350  &  2.0B  & 1.92 & \textbf{323.1}  & \textbf{0.82} & 0.59 & 1.73 & \textbf{350.2} & 0.82 & 0.60\\
+MAR~\citep{mar} &  800  &  943M   & 2.35 &  227.8 & 0.79 & 0.62 & 1.55 & 303.7 & 0.81 & 0.62\\
+xAR~\citep{xar} &  800  & 1.1B  &  - & - & - & - & 1.24 & 301.6 & \textbf{0.83} & 0.64\\
+\arrayrulecolor{black}\midrule
+\multicolumn{11}{l}{\textit{Latent Diffusion}} \\
+\arrayrulecolor{black!30}\midrule
+DiT~\citep{dit} & 1400 & 675M &  9.62 & 121.5 & 0.67 & 0.67 & 2.27 & 278.2 & \textbf{0.83} & 0.57 \\
+MaskDiT~\citep{maskdit} & 1600 & 675M &  5.69 & 177.9 & 0.74 & 0.60 & 2.28 & 276.6 & 0.80 & 0.61 \\
+SiT~\citep{sit} & 1400 & 675M &  8.61 & 131.7 & 0.68 & 0.67 & 2.06 & 270.3 & 0.82 & 0.59 \\
+MDTv2~\citep{gao2023mdtv2} & 1080 & 675M &  - & - & - & - & 1.58 & 314.7 & 0.79 & 0.65 \\
+REPA~\citep{repa} & 800 & 675M &  5.78 & 158.3 & 0.70 & 0.68 & 1.29 & 306.3 & 0.79 & 0.64 \\
+VA-VAE~\citep{vavae} & 800 & 675M &  2.17 & 205.6 & 0.77 & 0.65 & 1.35 & 295.3 & 0.79 & 0.65 \\
+DDT~\citep{decoupled_dit} & 400 & 675M &  6.27 & 154.7 & 0.68 & \textbf{0.69} & 1.26 & 310.6 & 0.79 & 0.65\\
+RAE~\citep{rae} & 800 & 839M &  1.51 & 242.9 & 0.79 & 0.63 & 1.13 & 262.6 & 0.78 & \textbf{0.67} \\
+ \arrayrulecolor{black}\midrule
+\multicolumn{11}{l}{\textit{End-to-End Generative models}} \\
+\arrayrulecolor{black!30}\midrule
+SimFlow~\citep{simflow} & 160 & 1.4B &  13.72 & 105.2 & 0.67 & 0.62 & 2.15 & 276.8 & 0.83 & 0.57 \\
+REPA-E~\citep{repa_e}  & 800 & 675M &  1.69 & 219.3 & 0.77 & 0.67 & 1.12 & 302.9 & 0.79 & 0.66 \\
+\rowcolor{blue!8}\textbf{EAR (Ours) (w/o GenFirst)} & 500 & 312M & 5.17 & 147.5 & 0.70 &
+0.59 & 3.04 & 251.2 & 0.73 & 0.55\\
+\rowcolor{blue!8}\textbf{EAR (Ours)} & 500+140 & 312M & 6.10/3.83* & 138.4/164.0* & 0.65 & 0.64 & 2.10 & 246.7 & 0.72 & 0.59 \\
+\rowcolor{blue!8}\textbf{EiT (Ours)} & 80 & 675M & 2.79 & 175.4 & 0.78 & 0.63 & 1.38 & 271.3 & 0.79 & 0.63 \\
+\rowcolor{blue!8}\textbf{EiT (Ours)} & 480 & 675M & 1.60 & 216.8	& 0.78	& 0.65 & 0.988 & 270.7 & 0.79	& \textbf{0.67}\\
+\rowcolor{blue!8}\textbf{EiT (Ours)} & 800 & 675M & \textbf{1.45}	& 226.7	& 0.79	& 0.65 & \textbf{0.969} & 283.4 & 0.79	& \textbf{0.67}\\
+\arrayrulecolor{black}\bottomrule
+\end{tabular}
+}
+\label{tab:imagenet256_sota}
+% \vspace{-0.7cm}
+\end{table}
+
+\begin{table}[]
+% \vskip -0.1in
+\scriptsize 
+    \centering
+    \caption{\textbf{Class-conditional performance on ImageNet 512$\times$512.} }
+    \setlength{\tabcolsep}{2.0mm}{
+\begin{tabular}{lcccccc}
+\toprule
+Method & Epochs & \#Params & gFID$\downarrow$  &  IS$\uparrow$  & Prec.$\uparrow$ & Rec.$\uparrow$ \\
+\midrule
+BigGAN-deep~\citep{biggan} & - & 158M & 8.43 & 177.9 & 0.88 & 0.29 \\
+StyleGAN-XL~\citep{sauer2022stylegan} & - & -  & 2.41 &  267.8 & 0.77 & 0.52 \\
+\arrayrulecolor{black}\midrule
+VAR~\citep{var} & 350 & 2.3B & 2.63 & 303.2 & - & - \\
+MAGVIT-v2~\citep{magvitv2} & 1080 & 307M & 1.91 & 324.3 & - & - \\
+MAR~\citep{mar} & 800 & 481M & 1.73 & 279.9 & - & - \\
+XAR~\citep{xar} & 800 & 608M & 1.70 & 281.5 & - & - \\
+\arrayrulecolor{black}\midrule
+ADM~\citep{adm} & 871+210 & 731M & 3.85 &  221.7 & 0.84 & 0.53\\
+SiD2~\citep{hoogeboom2024simpler}  & - & - & 1.50   &    -     &   -  &   -  \\
+PixNerd~\cite{wang2025pixnerd} & 340 & 700M & 2.84 & 245.6 & 0.80 & 0.59 \\
+JiT~\cite{jit} & 600 & 2B & 1.78 & 306.8 & - & - \\
+PixelDiT~\cite{pixeldit} & 850 & 797M & 1.81 & 278.6 & 0.78 & 0.67 \\
+DeCo~\cite{deco} &  340 & 682M & 2.22 & 290.0 & 0.80 & 0.60 \\
+\arrayrulecolor{black!30}\midrule
+DiT~\citep{dit} & 600 & 674M & {3.04} &  {240.8} & 0.84 & 0.54 \\
+SiT~\citep{sit} & 600 & 674M & 2.62 &   252.2 & 0.84 & 0.57 \\
+% DiffiT~\citep{diffit}  & & - & 2.67  &  252.1 & 0.83 & 0.55 \\
+REPA~\citep{repa} & 200 & 675M & 2.08 &  274.6 & 0.83 & 0.58 \\
+Unified Latents~\cite{heek2026unified} & - & - & 1.31 & - & - & - \\
+DDT~\citep{decoupled_dit} & 356 & 675M & 1.28 &  305.1 & 0.80 & 0.63 \\
+EDM2~\citep{edm2} & - & 1.5B &1.25 & -& -& -\\
+RAE~\citep{rae} & 400 & 839M & 1.13 & 259.6 & 0.80 & 0.63 \\
+STARFlow~\citep{starflow} & - & 1.4B & 3.00 & -& -& - \\
+\arrayrulecolor{black}\midrule
+SimFlow + REPA-E & 160 & 1.4B & 2.74 & 304.9 & 0.81 & 0.57 \\
+\rowcolor{blue!8} \textbf{EAR (Ours)} & 320 & 940M & 1.87 & 280.0 & 0.82 & 0.58 \\
+\rowcolor{blue!8} \textbf{EiT (Ours)} & 80 & 675M & 1.63 & 278.9 & 0.81 & 0.61\\
+\rowcolor{blue!8} \textbf{EiT (Ours)} & 400 & 675M & 1.23 & 286.1 & 0.80 & 0.63 \\
+\arrayrulecolor{black}\bottomrule
+\end{tabular}
+}
+\label{tab:imagenet512_sota}
+% \vspace{-0.7cm}
+\end{table}
+
+\begin{table*}[t]
+\setlength\tabcolsep{4pt}
+\centering
+\scriptsize 
+\caption{Quantitative results on GenEval and DPG-Bench benchmarks. Best results are highlighted in \textbf{bold}. $\dagger$ indicates generation with prompt rewriting. $*$ indicates replacing the original CLIP~\cite{clip} text encoder with Qwen3-1.7B~\cite{bai2025qwen3}.}
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{2}{*}{Method} & \multirow{2}{*}{\#Params} & \multicolumn{7}{c}{GenEval} & \multirow{2}{*}{DPG-Bench} \\
+\cmidrule(lr){3-9}
+ & & Single-Obj & Two-Obj & Count & Color & Position & Attr & Overall & \\
+\midrule
+PixArt~\cite{pixart_sigma}  &   4.3B+0.6B     & 0.98  & 0.50  & 0.44  & 0.80  & 0.08  & 0.07  &  0.48 & 71.11 \\
+DALL-E 2\cite{dalle2}  & - & 0.94 & 0.66 & 0.49 & 0.77 & 0.10 & 0.19 & 0.52 & - \\
+Show-o~\cite{show_o}   &  1.3B     & 0.95  & 0.52  & 0.49  & 0.82  & 0.11  & 0.28  &  0.53 & - \\
+Emu3-Gen~\cite{emu3} &   8B    & 0.98  & 0.71  & 0.34  & 0.81  & 0.17  & 0.21  &  0.54 & 80.60 \\
+SDXL\cite{ldm}  & 0.81B+2.6B & 0.98 & 0.74 & 0.39 & 0.85 & 0.15 & 0.23 & 0.55 & 74.65  \\
+Janus\cite{janus} & 1.3B & 0.97 & 0.68 & 0.30 & 0.84 & 0.46 & 0.42 & 0.61 & 79.68\\
+JanusFlow~\cite{ma2025janusflow} &  1.3B    & 0.97  & 0.59  & 0.45  & 0.83  & 0.53  & 0.42  &  0.63 &  80.09 \\
+FLUX.1 [Dev]~\cite{flux1}    &  4.8B+12B    & 0.98  & 0.81  & 0.74  & 0.79  & 0.22  & 0.45  &  0.66 & - \\
+DALL-E 3\cite{dalle3}  & - & 0.96 & 0.87 & 0.47 & 0.83 & 0.43 & 0.45 & 0.67 & 83.50 \\
+SD3-Medium\cite{mmdit} & 5.5B+2B & 0.99 & 0.94 & 0.72 & 0.89 & 0.33 & 0.60 & 0.74 & 84.08 \\
+Show-o2-7B~\cite{show_o2} & 7B & 1.00 & 0.87 & 0.58 & 0.92 & 0.52 & 0.62 & 0.76$\dagger$ & 86.14 \\
+MetaQuery-XL\cite{metaquery} & 7B & - & - & - & - & - & - & 0.80$\dagger$ & 82.05 \\
+Janus-Pro-7B~\cite{chen2025januspro7b} &  7B  & 0.99  & 0.89  & 0.59  & 0.90  & 0.79  & 0.66  &  0.80  & 84.19\\
+Z-Image-Turbo~\cite{team2025zimage} & 4B+6B & 1.00 & 0.95 & 0.77 & 0.89 & 0.65 & 0.68 & 0.82 & 84.86 \\
+BLIP3-o-8B\cite{chen2025blip3} & 8B & - & - & - & - & - & - & 0.84 & 81.60 \\
+FLUX.2 [Dev]~\cite{flux-2-2025}    & 24B+32B & 1.00 & \textbf{0.99} & 0.79 & 0.93 & 0.73 & 0.78 & 0.87 & \textbf{87.57}\\
+Qwen-Image~\cite{qwenimage} &  7B+20B   & 0.99  & 0.92  & \textbf{0.89}  & 0.88  & 0.76  & 0.77  &  0.87 & 88.32 \\ 
+BAGEL-7B\cite{bagel} & 7B & 0.98 & 0.95 & 0.84 & 0.95 & 0.78 & 0.77 & 0.88$\dagger$ & -\\
+\midrule
+\rowcolor{blue!8} \textbf{EiT (Ours)}  & 0.1B+1.3B & \textbf{1.00} & 0.94 & 0.83 & 0.94 & 0.87 & 0.82 & \textbf{0.90} & 82.60
+    \\
+\rowcolor{blue!8} \textbf{EiT (Ours)$^{*}$}  & 1.7B+1.3B & 0.99 & 0.94 & 0.73 & \textbf{0.96} & \textbf{0.89} & \textbf{0.84} & 0.89 & 84.65
+    \\
+\bottomrule
+\end{tabular}
+\label{tab:GenEval}
+\end{table*}
+
+\subsection{Main Results}
+\label{subsec:main_results}
+
+\textbf{Class-conditional ImageNet generation.}
+We report results on ImageNet $256\times256$ and $512\times512$ in
+\cref{tab:imagenet256_sota,tab:imagenet512_sota}. We make three main
+observations.
+First, GenFirst benefits autoregressive generation. EAR uses only 312M parameters and achieves a guided gFID of $2.10$, outperforming substantially larger continuous AR baselines, including GIVT ($2.59$), FARMER ($3.60$), and JetFormer ($6.64$). 
+Second, using our end-to-end objective with GenFirst, EiT achieves a guided gFID of $\mathbf{0.988}$ on ImageNet $256\times256$ after only 480 training epochs. 
+To our knowledge, EiT is the first diffusion model reported to reach an FID below $1.0$ without using the Fréchet Distance (FD) loss~\cite{fd_loss}.
+With 800 epochs, EiT further achieves an unguided gFID of $\mathbf{1.45}$, the
+best result among the diffusion models compared in
+\cref{tab:imagenet256_sota}.
+Third, by jointly shaping the VAE latent space with the generative objective, GenFirst makes the latent space easier to model and substantially accelerates generative modeling. 
+After only 80 epochs, EiT achieves an unguided gFID of $2.79$, compared with $7.90$ for REPA and $3.46$ for REPA-E. 
+These results demonstrate that the learned latent space supports both exact-likelihood autoregressive and flow-matching generative priors.
+
+At ImageNet $512\times512$, EAR achieves a gFID of $1.87$, while EiT reaches $1.23$ after 400 epochs, showing that the end-to-end trained VAE at ImageNet $256\times256$ transfers effectively to higher-resolution generation.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/combined_training_curves.pdf}
+    \caption{
+\textbf{End-to-end training using GenFirst accelerates convergence across generation tasks.}
+(a) FID-50K without classifier-free guidance on class-conditional ImageNet generation.
+(b--c) GenEval and DPG scores for EiT Versions A/B and the SiT+REPA baseline on text-to-image generation.
+Both EiT variants surpass the baseline's 200K-step performance by 80K steps.
+Lower FID and higher GenEval and DPG scores indicate better performance.
+}
+    \label{fig:training_efficiency}
+\end{figure}
+
+\textbf{Text-to-image generation.}
+For text-to-image generation, the 1.3B EiT achieves an overall GenEval~\cite{geneval} score of $\mathbf{0.90}$, outperforming large-scale text-to-image models such as FLUX.2-dev~\cite{flux-2-2025} and Qwen-Image~\cite{qwenimage}, as well as unified multimodal models, including MetaQuery~\cite{metaquery} and BAGEL~\cite{bagel}.
+EiT also achieves a DPG-Bench~\cite{dpg} score of $82.60$, which further improves to 84.65 when replacing the original CLIP text encoder with the stronger Qwen3-1.7B~\cite{bai2025qwen3}.
+These results demonstrate strong compositional generation across object composition, counting, color, spatial relations, and attributes.
+
+\textbf{Training efficiency.}
+\cref{fig:training_efficiency} shows that GenFirst substantially accelerates convergence across both class-conditional and text-to-image generation.
+Specifically, we first jointly train the VAE and SiT using our end-to-end objective with GenFirst; we then freeze the resulting VAE and train a new SiT on this latent space.
+For class-conditional generation, GenFirst reaches FID 6.91 at 100K steps and FID 4.97 at 150K steps, outperforming the final results of SiT and REPA with at least $70\times$ and $26\times$ fewer training steps, respectively.
+It further matches REPA-E at approximately 2M steps, corresponding to a $2\times$ reduction in training cost, and reaches an FID of 1.45 at 4M steps.
+The same trend transfers to text-to-image generation.
+Both EiT variants exceed the GenEval and DPG scores of the 200K-step SiT+REPA baseline by 80K steps, while continuing to improve with additional training.
+These results show that end-to-end trained latent spaces accelerate the convergence of generative models.
+
+\textbf{Qualitative results.}
+\cref{fig:vis} presents class-conditional samples generated by EAR and EiT. 
+Both models produce diverse and visually coherent images with fine-grained details and strong correspondence to the input conditions.
+\cref{fig:vis2} compares text-to-image generation using the same MMDiT~\cite{mmdit} and training data, differing only in the VAE;
+the left uses the FLUX.1-dev VAE and the right our end-to-end trained VAE. 
+End-to-end training improves text-to-image generation in three aspects.
+First, it substantially improves perceptual quality and fine-grained textures.
+For example, the fisherman exhibits more realistic skin details and beard texture, while the cat shows finer and more natural fur; similar improvements are also visible in the butterfly, sandstone, and reflective material examples.
+Second, it improves generation plausibility and structural coherence.
+For example, the baseline generates a horse with three hind legs, whereas our end-to-end trained VAE produces a more anatomically plausible structure.
+Third, our end-to-end trained VAE improves text alignment.
+For example, it more faithfully captures the blooming tea inside the transparent teapot and correctly renders the specified count of three moons.
+
+
+\subsection{Further Extensions}
+\label{exp:further_extensions}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/Further_Exp.pdf}
+    \caption{
+\textbf{Further extension experiments.}
+(a) Stable end-to-end training with latent-level SigLIP supervision for learning a shared latent space for generation and representation learning.
+(b) Stable end-to-end training with caption-based VLM-NLL supervision applied to intermediate visual features.
+(c) Unified text--image modeling with a block-causal diffusion transformer, where continuous text and image latents are jointly optimized for bidirectional text-to-image and image-to-text generation.
+}
+    \label{fig:further_exp}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{
+Reconstruction and generation performance, and representation quality of different visual representations.
+}
+\label{tab:und_ablation}
+\setlength\tabcolsep{4pt}
+\centering
+\scriptsize
+\begin{tabular}{lccccccc}
+\toprule
+ \multirow{2}{*}{Encoder} & \multirow{2}{*}{Setting} & \multicolumn{2}{c}{Reconstruction} & \multicolumn{2}{c}{Generation} & \multirow{2}{*}{Top-1 Acc.$\uparrow$} \\
+ \cmidrule(lr){3-4} \cmidrule(lr){5-6} 
+ & & rFID$\downarrow$ & PSNR$\uparrow$ & GenEval$\uparrow$ & DPG-Bench$\uparrow$ & \\
+\midrule
+FLUX.1-dev VAE & Pretrained & \textbf{0.18} & \textbf{31.59} & -- & -- & 3.1 \\
+Qwen3-VL ViT & Pretrained & -- & -- & -- & -- & 79.64\\
+Qwen3-VL ViT+projector & E2E & 0.42 & 27.79 & 0.89 & 83.70 & 77.71\\
+Qwen3-VL ViT+projector & E2E + SigLIP supervision &  0.39 & 27.64 & \textbf{0.90} & \textbf{83.76} & 79.25\\
+Qwen3-VL ViT+projector & E2E + VLM-NLL supervision & 0.46 & 	
+27.19 & 0.89 & 83.49 & \textbf{81.69}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\textbf{Toward a shared latent space for generation and representation learning.}
+Our experiments above focus on end-to-end training where the latent space is shaped by the generative prior.
+Here, we further investigate whether the same framework can learn a shared latent space for both generation and representation learning, such that the latent space is generation-friendly, semantically rich, and supports high-quality reconstruction.
+As shown in \cref{fig:further_exp}, we explore two ways of introducing an representation-learning objective into the text-to-image end-to-end training setting described above.
+We replace the FLUX.1-dev VAE~\cite{flux1} encoder with the Vision Transformer (ViT)~\cite{vit} from Qwen3-VL~\cite{bai2025qwen3} followed by a dimension-reduction projector that predicts the posterior mean and variance.
+We randomly initialize the decoder, freeze the encoder, and first train the decoder for 100K steps for image reconstruction before end-to-end training.
+
+In the first setting (\cref{fig:further_exp}(a)), we directly impose representation supervision on the latent representation.
+Specifically, we apply a SigLIP loss~\cite{zhai2023sigmoid,tschannen2025siglip} across samples within each batch together with a classification-based supervision loss~\cite{huang2024classification} on the latent features.
+This design allows the representation-learning objective to directly shape the same latent representation used by the generative model.
+In the second setting (\cref{fig:further_exp}(b)), we use the intermediate ViT features from the encoder for representation supervision.
+We feed these visual features together with the corresponding image captions into Qwen3-VL and minimize the negative log-likelihood (NLL) of the caption tokens~\cite{tschannen2023image}.
+Unlike contrastive learning, which typically benefits strongly from large batch sizes due to its reliance on in-batch negatives, this objective is independent of cross-sample comparisons.
+
+As shown in \cref{tab:und_ablation}, end-to-end training with the generative objective alone achieves an ImageNet linear-probe accuracy of $77.71$.
+Adding latent-level SigLIP supervision improves the accuracy to $79.25$, while slightly improving generation and reconstruction, reaching $0.90$ GenEval, $83.76$ DPG-Bench, and $0.39$ rFID.
+VLM-NLL supervision yields a substantially larger semantic improvement, increasing linear-probe accuracy to $81.69$, which exceeds the $79.64$ accuracy of the pretrained Qwen3-VL ViT.
+Meanwhile, it largely preserves generative performance, achieving $0.89$ GenEval and $83.49$ DPG-Bench, with only a moderate change in reconstruction quality.
+These results show that representation supervision can be incorporated into our end-to-end framework while largely preserving the generation-friendly properties of the learned latent space.
+Overall, these results suggest that end-to-end latent learning can extend beyond generation and jointly support generation, representation learning, and reconstruction within a shared latent space.
+
+\begin{table}[t]
+\centering
+\caption{
+Text-to-image and image-to-text performance of frozen text/image VAEs versus our
+end-to-end trained counterparts, all with the same block-causal MMDiT and the same
+three-stage recipe. Image-to-text is evaluated on the COCO~\cite{lin2014microsoft} Karpathy test split with
+pycocoevalcap~\cite{pycocoevalcap}, following~\cite{chameleon,transfusion}.
+}
+\label{tab:mm_e2e}
+\setlength\tabcolsep{5pt}
+\centering
+\tiny
+\begin{tabular}{lcccccccc}
+\toprule
+ \multirow{2}{*}{Setting} & \multicolumn{2}{c}{Text-to-image} & \multicolumn{6}{c}{Image-to-text} \\
+ \cmidrule(lr){2-3} \cmidrule(lr){4-9}
+ & GenEval$\uparrow$ & DPG-Bench$\uparrow$ & CIDEr$\uparrow$ & BLEU-4$\uparrow$ & METEOR$\uparrow$ & ROUGE-L$\uparrow$ & SPICE$\uparrow$ & CLIPScore$\uparrow$ \\
+\midrule
+Frozen text VAE + frozen image VAE & 79.88 & 63.96 & 20.03 & 5.36 & 13.72 & 29.01 & 8.03 & 53.21 \\
+E2E-trained text VAE + frozen image VAE & 81.87 & 68.24 & 30.19 & 7.46 & 16.81 & 32.95 & 11.12 & 55.96 \\
+E2E-joint-trained text VAE and image VAE & \textbf{86.57} & \textbf{72.68} & \textbf{33.28} & \textbf{7.76} & \textbf{17.74} & \textbf{34.16} & \textbf{11.81} & \textbf{57.97} \tabularnewline
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=\linewidth]{figures/main_2row.pdf}
+\caption{
+\textbf{Qualitative comparison of the three latent-space settings.}
+All three settings use the same MMDiT and sampling configuration.
+\textbf{Top:} text-to-image generation on DPG-Bench.
+\textbf{Bottom:} image-to-text generation on COCO Karpathy test split.
+End-to-end trained latents improve prompt fidelity and caption coherence, with joint text--image latent training producing the strongest qualitative results.
+}
+\label{fig:mm_qualitative}
+\end{figure}
+
+
+\textbf{Unified text-image modeling via end-to-end diffusion.}
+We further investigate whether our end-to-end formulation can extend beyond image latents to jointly model text and images.
+As shown in \cref{fig:further_exp}(c), we encode text into continuous latent representations with a text VAE and reconstruct the original text through a decoder using a cross-entropy (CE) loss.
+We then feed both text and image latents into a block-causal MMDiT~\cite{mmdit} and train text-to-image $p(i|t)$ and image-to-text $p(t|i)$ generation.
+The block-causal MMDiT uses the same model scale as the MMDiT-XL/2 in our text-to-image experiments.
+The diffusion objectives from both directions shape the latent representations, while the entropy term prevents latent collapse.
+We apply the same GenFirst strategy to balance latent modeling and reconstruction.
+Due to computational constraints, the end-to-end phase uses only half as many training steps as our text-to-image experiment, while the subsequent prior-only phase uses only $30.8\%$ of its text-to-image training samples.
+
+We initialize the text VAE from Cola~\cite{cola} and first replace the frozen text VAE with its end-to-end trained counterpart while keeping the image VAE frozen.
+As shown in \cref{tab:mm_e2e}, this improves GenEval from $79.88$ to $81.87$ and DPG-Bench from $63.96$ to $68.24$, while also substantially improving image-to-text generation, with CIDEr increasing from $20.03$ to $30.19$.
+Jointly training both the text and image VAEs further improves performance to $86.57$ on GenEval and $72.68$ on DPG-Bench, while achieving a CIDEr~\cite{vedantam2015cider} score of $33.28$ for image-to-text generation.
+Consistent improvements are also observed across BLEU-4, METEOR, ROUGE-L, SPICE, and CLIPScore.
+The qualitative comparisons in \cref{fig:mm_qualitative} show the same trend: end-to-end trained latents improve prompt fidelity in text-to-image generation and produce more coherent and accurate captions in image-to-text generation.
+These results show that end-to-end latent learning extends beyond images and can jointly improve continuous text and image representations within a unified generative model.
+
+\section{Conclusion}
+We revisit end-to-end training of VAEs and generative models and make two key
+observations. First, we find that latent collapse in naive end-to-end training is
+mainly caused by a prior-entropy imbalance. 
+Second, we identify asymmetric learning dynamics underlying the generation--reconstruction conflict.
+Based on these observations, we introduce an entropy-preserving end-to-end objective that enables stable direct joint training and further propose GenFirst, a generation-before-reconstruction strategy that mitigates the generation--reconstruction conflict.
+Experiments show that our method learns more generation-friendly
+latent spaces and improves the generation--reconstruction trade-off. We hope this
+work provides a simple and practical recipe for stable end-to-end latent
+generative modeling.
+
+\section{Limitations}
+Although GenFirst enables stable end-to-end training and substantially alleviates the generation--reconstruction conflict, it does not completely eliminate the trade-off.
+The end-to-end trained VAE therefore still sacrifices some reconstruction fidelity, as reflected by metrics such as PSNR.
+Further improving reconstruction while preserving a generation-friendly latent space remains an important direction for future work.
+Additionally, EAR is limited by the current CFG strategy for continuous autoregressive models.
+Without CFG, scaling the EAR prior consistently improves gFID, whereas gFID with CFG does not improve accordingly.
+Developing stronger guidance methods for continuous autoregressive models is therefore left for future work.
+Finally, our text-to-image experiments use a substantially smaller training corpus than large-scale text-to-image models.
+Scaling the data and training budget may further reveal the potential of end-to-end learned latent spaces.
+
+\section*{Acknowledgments}
+We would like to extend our deepest appreciation to Qinyu Zhao, Qiushan Guo, Shuai Wang, Shuchen Xue, Hongcan Guo, and Yian Zhao for their insightful discussions and valuable support.
+
+
+
+\beginappendix
+\input{suppl}
+
+\clearpage
+
+\bibliographystyle{plainnat}
+\bibliography{main}
+
+\end{document}
