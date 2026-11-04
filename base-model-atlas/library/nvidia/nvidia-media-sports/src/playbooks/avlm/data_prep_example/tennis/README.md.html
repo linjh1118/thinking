@@ -1,0 +1,164 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tennis Data-Prep Example · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Tennis Data-Prep Example</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#tennis-data-prep-example">Tennis Data-Prep Example</a><a class="toc-l2" href="#requirements">Requirements</a><a class="toc-l2" href="#quick-start">Quick start</a><a class="toc-l2" href="#pipeline">Pipeline</a><a class="toc-l2" href="#categorical-evaluation-mode">Categorical evaluation mode</a><a class="toc-l2" href="#how-configs-generate-training-data">How configs generate training data</a><a class="toc-l2" href="#input-format">Input format</a><a class="toc-l2" href="#output-format">Output format</a><a class="toc-l2" href="#example-point-annotation">Example point annotation</a><a class="toc-l2" href="#template-examples">Template examples</a><a class="toc-l2" href="#sample-data">Sample data</a></nav></aside><main class="note"><h1 id="tennis-data-prep-example">Tennis Data-Prep Example</h1><p>This example includes <strong>sample raw annotation data from 2 tennis games</strong> (20 points) in <code>raw_tennis_data_input/</code> and walks through how that data is converted into <strong>HuggingFace conversation JSONL</strong> for train / validation / test under <code>training_tennis_data_output/</code>. <strong>Training videos are not included</strong> — only the annotation JSON.</p><p>Templates under <code>configs/</code> turn the raw annotations into QA and MCQ examples for training AVLMs. See the <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/TEMPLATE_EXAMPLES.MD.html">legacy examples</a> and <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/categorical_evaluation/categorical_data_samples/TEMPLATE_EXAMPLES_CATEGORICAL.MD.html">categorical examples</a>. Most questions need no LLM; legacy <code>mcq_*</code> templates use one only to write incorrect distractors.</p><h2 id="requirements">Requirements</h2><div class="table-wrap"><table><thead><tr><th>Need</th><th>Packages</th></tr></thead><tbody><tr><td><strong>Offline pipeline</strong> (deterministic MCQ + open-ended QA)</td><td>Python 3.10+, <code>tqdm</code></td></tr><tr><td><strong><code>mcq_*</code> LLM distractors</strong></td><td><code>openai</code>, <code>python-dotenv</code>; LLM API key in <code>dev_local.env</code> (copy from <code>dev.env</code>)</td></tr><tr><td><strong>Clip extraction</strong> (<code>build_sample_from_raw.py --extract-clips</code>)</td><td><code>ffmpeg</code> on <code>PATH</code> (system install or via <code>imageio-ffmpeg</code>; see repo <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/THIRD_PARTY_NOTICES">THIRD_PARTY_NOTICES</a>)</td></tr></tbody></table></div><p>Install Python dependencies in this directory with <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener">uv</a>:</p><pre><div class="code-lang">bash</div><code>cd avlm/data_prep_example/tennis
+uv sync &amp;&amp; source .venv/bin/activate</code></pre><h2 id="quick-start">Quick start</h2><p>Once the <a href="#requirements">Requirements</a> above are satisfied:</p><pre><div class="code-lang">bash</div><code>cd avlm/data_prep_example/tennis
+python prepare_training_data_pipeline.py</code></pre><p>Output lands in <code>training_tennis_data_output/</code>; final splits are in <code>training_tennis_data_output/data_splits_hf/*.jsonl</code>.</p><h2 id="pipeline">Pipeline</h2><p><img src="https://raw.githubusercontent.com/NVIDIA/sports-intelligence-playbooks/main/assets/AVLM_Training_Eval_Data_Generation.png" alt="AVLM Training and Evaluation Data Generation"></p><pre><div class="code-lang">code</div><code>raw_tennis_data_input/&lt;videoId&gt;.json
+      │  generate_mcq_qa.py   (templates in configs/)
+      ▼
+training_tennis_data_output/mcq_qa_per_video/&lt;videoId&gt;_derived_mcq_qa.json
+      │  split_dataset.py     (point-level split)
+      ▼
+training_tennis_data_output/data_splits_hf/tennis_mcq_qa_{train,validation,test_seen_videos,test_unseen_videos}.jsonl</code></pre><p>Each point becomes many training examples — one per question template.</p><h2 id="categorical-evaluation-mode">Categorical evaluation mode</h2><p>The categorical pipeline generates 39 MCQ/QA templates across five evaluation areas: visual recognition, commentary, match facts, rules/reasoning, and audio. It uses explicit point annotations and requires no LLM with the current config.</p><p>Run it on the included annotations without checking for local video files:</p><pre><div class="code-lang">bash</div><code>python prepare_training_data_pipeline.py \
+  --mode categorical \
+  --input-dir raw_tennis_data_input \
+  --output-dir training_tennis_data_output/categorical \
+  --video-root &quot;&quot;</code></pre><p>The output contains:</p><div class="table-wrap"><table><thead><tr><th>Directory</th><th>Contents</th></tr></thead><tbody><tr><td><code>generated/</code></td><td>HF JSONL splits + <code>per_video/</code> (canonical options; no metadata)</td></tr><tr><td><code>with_metadata/</code></td><td>Splits with open-ended evaluation metadata</td></tr><tr><td><code>with_metadata_paraphrased/</code></td><td>Metadata + split-specific MCQ paraphrases (<strong>recommended</strong>)</td></tr></tbody></table></div><p>Rules questions are selected from annotation triggers, capped at two per point, and ask for the general tennis rule. See the <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/categorical_evaluation/CATEGORICAL_EVAL.MD.html">categorical evaluation taxonomy</a> and <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/categorical_evaluation/tennis_rules_trigger_map.md">tennis rules trigger map</a> for details.</p><h2 id="how-configs-generate-training-data">How configs generate training data</h2><p>Both generators walk every annotated point and apply named templates from <code>configs/</code>: <code>generate_mcq_qa.py</code> uses the legacy MCQ/QA configs, while <code>generate_categorical_mcq_qa.py</code> uses the categorical evaluation config.</p><div class="table-wrap"><table><thead><tr><th>File</th><th>Role</th></tr></thead><tbody><tr><td><code>configs/generation/tennis_mcq_config.json</code></td><td>Multiple-choice templates (<code>server_winner</code>, <code>how_point_ended</code>, <code>score_after</code>, …)</td></tr><tr><td><code>configs/generation/tennis_qa_config.json</code></td><td>Open-ended QA (<code>point_caption</code>, <code>how_point_ended_description</code>, <code>audio_cues</code>)</td></tr><tr><td><code>configs/generation/tennis_categorical_eval_config.json</code></td><td>Categorical MCQ/QA templates with super- and fine-category metadata</td></tr><tr><td><code>configs/generation/question_types.json</code></td><td>Optional allow-list of template names to generate (omit to generate all)</td></tr></tbody></table></div><p>Each template specifies:</p><ul><li><strong><code>field</code></strong> — which point column supplies the ground-truth answer (e.g. <code>how_point_ended</code>)</li><li><strong><code>question</code></strong> — prompt text with placeholders (`<code>, </code>&lt;score_before&gt;`, …) filled from video metadata + point fields</li><li><strong><code>type</code></strong> — how to build the answer/options:</li><li><strong>categorical</strong> — the template defines a fixed list of multiple-choice options in the config (for example, the four server/winner combinations, or the set of "how the point ended" categories). The generator reads the annotated field, picks the matching option as the correct answer, and presents the full predefined list as the MCQ choices.</li><li><strong>numeric_range</strong> — the annotated field is a number (for example, <code>num_shots_exchanged</code>). The template maps numeric intervals to labeled answers (for example, 1 → "1 shot", 2 → "2 shots", 11–20 → "11–20 shots"). The generator finds which interval contains the annotated value and uses the corresponding label as the correct answer; the other interval labels are the distractors.</li><li><strong>open_ended</strong> — assistant reply is the annotation field verbatim</li><li><strong>llm_gen_distractor</strong> — MCQ where the correct option is still the annotated text, but three wrong options are written by an LLM (<code>mcq_*</code> templates only; needs <code>dev_local.env</code> API key)</li></ul><p>For each point, the generator: (1) resolves placeholders, (2) picks the correct option from the annotated field, (3) shuffles distractors, (4) wraps everything in an HF <code>conversation</code> with the point's relative <code>video</code> path.</p><p>Restrict types (see <a href="#requirements">Requirements</a>):</p><pre><div class="code-lang">bash</div><code>python prepare_training_data_pipeline.py \
+  --question-types-config configs/generation/question_types.json</code></pre><h2 id="input-format">Input format</h2><p><code>raw_tennis_data_input/&lt;videoId&gt;.json</code> — Data layout, one file per match:</p><pre><div class="code-lang">json</div><code>{
+  &quot;metadata&quot;: { &quot;name&quot;: &quot;...&quot;, &quot;status&quot;: &quot;...&quot; },
+  &quot;instances&quot;: [
+    { &quot;className&quot;: &quot;player_1_name&quot;, &quot;attributes&quot;: [{ &quot;name&quot;: &quot;Jack Draper&quot; }] },
+    {
+      &quot;className&quot;: &quot;table&quot;,
+      &quot;attributes&quot;: [{
+        &quot;name&quot;: [
+          {
+            &quot;id&quot;: &quot;6f7b9d82-...&quot;,
+            &quot;server&quot;: &quot;Player 2&quot;,
+            &quot;receiver&quot;: &quot;Player 1&quot;,
+            &quot;winner&quot;: &quot;Server&quot;,
+            &quot;how_point_ended&quot;: &quot;Unforced Error: ...&quot;,
+            &quot;point_caption&quot;: &quot;Alcaraz delivers a well-placed serve...&quot;,
+            &quot;score_before&quot;: &quot;0-0, 0-0&quot;,
+            &quot;score_after&quot;: &quot;0-0, 0-15&quot;,
+            &quot;start_time&quot;: 13.08,
+            &quot;end_time&quot;: 19,
+            &quot;video&quot;: &quot;sample_video_001/sample_video_001_seg_01_13_19_timeoffset_end_3.mp4&quot;
+          }
+        ]
+      }]
+    }
+  ]
+}</code></pre><h2 id="output-format">Output format</h2><p>One JSON object per line in the split JSONL files. Each record is one (video, question) pair in HF conversation form. The <code>class</code> field carries the question-type / template name (e.g. <code>server_winner</code>, <code>score_after</code>) the record was generated from:</p><pre><div class="code-lang">json</div><code>{
+  &quot;id&quot;: &quot;sample_video_001_ServerWinner_6f7b9d82-...&quot;,
+  &quot;class&quot;: &quot;server_winner&quot;,
+  &quot;conversation&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: [
+        {&quot;type&quot;: &quot;video&quot;, &quot;path&quot;: &quot;sample_video_001/sample_video_001_seg_01_13_19_timeoffset_end_3.mp4&quot;},
+        {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Who served and who won...?\n(A) ...\n(B) ...\n(C) ...\n(D) ...&quot;}
+      ]
+    },
+    {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;(A) Carlos Alcaraz served and Carlos Alcaraz won&quot;}]
+    }
+  ]
+}</code></pre><p>Open-ended QA omits the <code>(A)/(B)/...</code> options; the assistant text is the annotation field directly.</p><p>Splits: <strong>train</strong> / <strong>validation</strong> / <strong>test_seen_videos</strong> (seen match, held-out points) / <strong>test_unseen_videos</strong> (fully held-out match). All Q&amp;A for a point stay in the same split.</p><h2 id="example-point-annotation">Example point annotation</h2><p>One full point row from the <code>table</code> instance in <code>raw_tennis_data_input/sample_video_001.json</code> (Draper vs Alcaraz, first point):</p><pre><div class="code-lang">json</div><code>{
+  &quot;metadata&quot;: {},
+  &quot;id&quot;: &quot;6f7b9d82-1744-47a2-afb9-91507d3c8a90&quot;,
+  &quot;start_time&quot;: 13.08,
+  &quot;end_time&quot;: 19,
+  &quot;point_start_in_segment&quot;: &quot;Yes&quot;,
+  &quot;point_concluded_in_segment&quot;: &quot;Yes&quot;,
+  &quot;server&quot;: &quot;Player 2&quot;,
+  &quot;receiver&quot;: &quot;Player 1&quot;,
+  &quot;winner&quot;: &quot;Server&quot;,
+  &quot;num_serving_attempts_until_successful&quot;: &quot;1&quot;,
+  &quot;num_shots_exchanged&quot;: &quot;2&quot;,
+  &quot;score_before&quot;: &quot;\&quot;Draper vs. Alcaraz : {0-0, 0-0}\&quot;&quot;,
+  &quot;score_after&quot;: &quot;\&quot;Draper vs. Alcaraz : {0-0, 0-15}\&quot;&quot;,
+  &quot;how_point_ended&quot;: &quot;Unforced Error: player makes a mistake during the point without significant pressure such as hitting the ball outside of the court (long or wide) or into the net during a routine shot. Routine miss without pressure.&quot;,
+  &quot;how_point_ended_description&quot;: &quot;The point ended when Draper hit the ball into his own court with a forehand shot.&quot;,
+  &quot;point_caption&quot;: &quot;Alcaraz delivers a well-placed serve, followed by Draper hitting the ball into his own court, conceding the point to Alcaraz. The crowd starts clapping after the point.&quot;,
+  &quot;audio_cues&quot;: &quot;Whacks, squeaks, grunt, claps.&quot;,
+  &quot;qc_feedback&quot;: &quot;&quot;,
+  &quot;rework_counter&quot;: 0,
+  &quot;timestamp_correct&quot;: &quot;Yes&quot;,
+  &quot;audit_feedback&quot;: &quot;&quot;,
+  &quot;comments_audit&quot;: &quot;&quot;,
+  &quot;qc_pass_fail&quot;: 1,
+  &quot;audit_pass_fail&quot;: 1,
+  &quot;server_location&quot;: &quot;Near-court&quot;,
+  &quot;receiver_location&quot;: &quot;Far-court&quot;,
+  &quot;winner_shot_type&quot;: &quot;n/a&quot;,
+  &quot;winner_shot_trajectory&quot;: &quot;n/a&quot;,
+  &quot;winner_hand_used&quot;: &quot;n/a&quot;,
+  &quot;loser_shot_type&quot;: &quot;groundstroke with heavy topsin&quot;,
+  &quot;loser_shot_trajectory&quot;: &quot;cross court&quot;,
+  &quot;loser_hand_used&quot;: &quot;BH (backhand)&quot;,
+  &quot;loser_point_ended&quot;: &quot;net&quot;,
+  &quot;loser_lateral_movement&quot;: &quot;R2L (right to left)&quot;,
+  &quot;loser_depth_movement&quot;: &quot;No depth movement&quot;,
+  &quot;video&quot;: &quot;sample_video_001/sample_video_001_seg_01_13_19_timeoffset_end_3.mp4&quot;
+}</code></pre><h2 id="template-examples">Template examples</h2><ul><li><a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/TEMPLATE_EXAMPLES.MD.html">Legacy/default examples</a></li><li><a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/avlm/data_prep_example/tennis/categorical_evaluation/categorical_data_samples/TEMPLATE_EXAMPLES_CATEGORICAL.MD.html">Categorical examples</a></li></ul><h2 id="sample-data">Sample data</h2><div class="table-wrap"><table><thead><tr><th>Video</th><th>Match</th><th>Points</th><th>Split role (seed 42)</th></tr></thead><tbody><tr><td><code>sample_video_001</code></td><td>Draper vs Alcaraz</td><td>10</td><td>seen → train / val / test_seen</td></tr><tr><td><code>sample_video_002</code></td><td>Federer vs Benneteau</td><td>10</td><td>held out → test_unseen</td></tr></tbody></table></div></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

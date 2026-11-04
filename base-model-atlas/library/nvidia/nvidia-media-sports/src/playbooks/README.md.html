@@ -1,0 +1,161 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NVIDIA Sports Intelligence Playbooks - AVLM · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>NVIDIA Sports Intelligence Playbooks - AVLM</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#nvidia-sports-intelligence-playbooks-avlm">NVIDIA Sports Intelligence Playbooks - AVLM</a><a class="toc-l2" href="#repository-layout">Repository layout</a><a class="toc-l2" href="#getting-started">Getting started</a><a class="toc-l3" href="#containers">Containers</a><a class="toc-l3" href="#suggested-first-path">Suggested first path</a><a class="toc-l2" href="#video-and-audio-decoding">Video and audio decoding</a><a class="toc-l2" href="#license">License</a><a class="toc-l2" href="#contributions">Contributions</a></nav></aside><main class="note"><p><img src="https://raw.githubusercontent.com/NVIDIA/sports-intelligence-playbooks/main/assets/sports_intelligence_bright_canvas_banner.jpg" alt="Sports Intelligence"></p><h1 id="nvidia-sports-intelligence-playbooks-avlm">NVIDIA Sports Intelligence Playbooks - AVLM</h1><p>This repository provides a starter kit for sports-intelligence built on <strong>NVIDIA AI stack</strong>: playbooks, training recipes, and launch scripts using <strong>Multimodal Language Models</strong>.</p><p>Public recipes cover generic fine-tuning; these playbooks are a sports-focused multimodal baseline with video/audio data, eval, and distributed train/infer workflows wired in. The training and inference scripts themselves are still generic enough to reuse for other multimodal applications beyond sports.</p><blockquote><strong>Model compatibility:</strong> Current recipes and configurations have been tested with the reference model documented in the training guide. The NeMo AutoModel stack supports <a href="https://github.com/NVIDIA-NeMo/Automodel/tree/main/nemo_automodel/components/models" target="_blank" rel="noopener">additional models</a>, and support for additional multimodal models is planned after testing confirms they meet our quality bar for sports intelligence.</blockquote><p><strong>What you get</strong></p><ul><li>End-to-end path: annotation → QA/MCQ data prep → SFT/LoRA → inference → evaluation</li><li>Video+audio recipes with resolution and frame-sampling knobs suited to sports clips</li><li>Measurable eval: per-class MCQ plus LLM-judge for open-ended answers</li><li>Reproducible Slurm/generic launches, checkpoint conversion/parity, and inference→eval pipelines</li><li>Side-by-side AutoModel vs Megatron-Bridge (SFT and LoRA)</li><li>Practical notes from debugging and optimizing multimodal training for sports</li></ul><p><strong>Docs:</strong> <a href="https://nvidia.github.io/sports-intelligence-playbooks/" target="_blank" rel="noopener">Sports Intelligence documentation</a></p><p><img src="https://raw.githubusercontent.com/NVIDIA/sports-intelligence-playbooks/main/assets/tennis_demo_video/tennis_demo_preview.gif" alt="Tennis demo preview (0:30–0:41, 12 fps)"> See the full-length video demo on our tennis checkpoint <a href="https://huggingface.co/nvidia/NVIDIA-NemotronLabs-AI-for-Media-Sports-Tennis" target="_blank" rel="noopener">HuggingFace</a> repo.</p><p>The playbooks cover one full AVLM round—from collecting and annotating multimodal sports data, through train/eval preparation, SFT/LoRA training, inference, and evaluation, with deployment as the next step. The repository layout below maps each stage to concrete scripts and guides; the two training stacks are interchangeable options for the training and inference steps.</p><p><img src="https://raw.githubusercontent.com/NVIDIA/sports-intelligence-playbooks/main/assets/AVLM_training_lifecycle.png" alt="AVLM Training Lifecycle"></p><p>Two training stacks:</p><ul><li><strong><a href="https://github.com/NVIDIA-NeMo/Automodel" target="_blank" rel="noopener">NeMo AutoModel</a></strong> — full SFT and LoRA; generic (local) and Slurm launchers; container <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/-/containers/nemo-automodel/26.06.00" target="_blank" rel="noopener"><code>nemo-automodel:26.06.00</code></a>.</li><li><strong><a href="https://github.com/NVIDIA-NeMo/Megatron-Bridge" target="_blank" rel="noopener">Megatron-Bridge</a></strong> — full SFT and LoRA; generic (local) and Slurm launchers; container <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/-/containers/nemo/26.06.00" target="_blank" rel="noopener"><code>nemo:26.06.00</code></a>.</li></ul><p><strong>AutoModel</strong> trains on Hugging Face checkpoints and is the easier on-ramp for most users. <strong>Megatron-Bridge</strong> uses Megatron-format checkpoints and richer parallelism (after HF→Megatron conversion), which is better when you need that scale and control.</p><p><img src="https://raw.githubusercontent.com/NVIDIA/sports-intelligence-playbooks/main/assets/avlm_dual_stacks_block_diagram.png" alt="AVLM Training &amp;amp; Inference Stacks"></p><h2 id="repository-layout">Repository layout</h2><div class="table-wrap"><table>
+  <thead>
+    <tr>
+      <th>Area</th>
+      <th>Component</th>
+      <th>Path</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2"><b>Data prep</b></td>
+      <td>Tennis QA / MCQ generation</td>
+      <td><code>avlm/data_prep_example/tennis/</code></td>
+    </tr>
+    <tr>
+      <td>Basketball (BARD) QA / MCQ generation</td>
+      <td><code>avlm/data_prep_example/basketball/</code></td>
+    </tr>
+    <tr>
+      <td rowspan="6"><b>Training</b></td>
+      <td>AutoModel SFT</td>
+      <td><code>avlm/training/automodel/sft/</code> (<code>generic/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td>AutoModel LoRA</td>
+      <td><code>avlm/training/automodel/lora/</code> (<code>generic/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td>Megatron-Bridge SFT</td>
+      <td><code>avlm/training/megatron-bridge/sft/</code> (<code>generic/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td>Megatron-Bridge LoRA</td>
+      <td><code>avlm/training/megatron-bridge/lora/</code> (<code>generic/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td>HF ↔ Megatron conversion</td>
+      <td><code>avlm/training/megatron-bridge/hf_megatron_conversion/</code></td>
+    </tr>
+    <tr>
+      <td>Hyperparameter search</td>
+      <td><code>avlm/training/hyperparam_search/</code></td>
+    </tr>
+    <tr>
+      <td><b>Quantization</b></td>
+      <td>Nemotron-3-Nano-Omni FP8 / NVFP4 PTQ</td>
+      <td><code>avlm/quantization/ptq/nemotron_3_nano_omni/modelopt/</code></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><b>Inference</b></td>
+      <td>AutoModel</td>
+      <td><code>avlm/inference/automodel/</code> (<code>configs/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td>Megatron-Bridge</td>
+      <td><code>avlm/inference/megatron-bridge/</code> (<code>configs/</code> + <code>slurm/</code>)</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><b>Evaluation</b></td>
+      <td>MCQ eval</td>
+      <td><code>avlm/evals/mcq/</code></td>
+    </tr>
+    <tr>
+      <td>LLM-judge eval</td>
+      <td><code>avlm/evals/qa_llm_judge/</code></td>
+    </tr>
+    <tr>
+      <td><b>Dependencies</b></td>
+      <td>DeepEP</td>
+      <td><code>wheels/deepep/</code> (pre-Hopper / A100; post-Hopper ships in <code>nemo-automodel</code>)</td>
+    </tr>
+  </tbody>
+</table></div><h2 id="getting-started">Getting started</h2><p>Full walkthrough: <a href="https://nvidia.github.io/sports-intelligence-playbooks/latest/multimodal/training/setup.html" target="_blank" rel="noopener">training setup</a>.</p><p>Clone this repo, <code>cd</code> to the root, and run launchers from there. Choose <strong>one</strong> stack under <code>avlm/training/</code> — AutoModel (HF checkpoints) or Megatron-Bridge (Megatron checkpoints + Bridge recipes).</p><h3 id="containers">Containers</h3><div class="table-wrap"><table><thead><tr><th>Stack</th><th>NGC container</th></tr></thead><tbody><tr><td>AutoModel</td><td><a href="https://catalog.ngc.nvidia.com/orgs/nvidia/-/containers/nemo-automodel/26.06.00" target="_blank" rel="noopener"><code>nemo-automodel:26.06.00</code></a></td></tr><tr><td>Megatron-Bridge</td><td><a href="https://catalog.ngc.nvidia.com/orgs/nvidia/-/containers/nemo/26.06.00" target="_blank" rel="noopener"><code>nemo:26.06.00</code></a></td></tr></tbody></table></div><p>Pull and run with Docker (e.g. for local GPUs / <code>generic/</code> training):</p><pre><div class="code-lang">bash</div><code># NeMo AutoModel
+docker pull nvcr.io/nvidia/nemo-automodel:26.06.00
+docker run --gpus all -it --rm \
+  -v &quot;$PWD&quot;:/workspace -w /workspace \
+  nvcr.io/nvidia/nemo-automodel:26.06.00 bash
+
+# NeMo Framework (Megatron-Bridge)
+docker pull nvcr.io/nvidia/nemo:26.06.00
+docker run --gpus all -it --rm \
+  -v &quot;$PWD&quot;:/workspace -w /workspace \
+  nvcr.io/nvidia/nemo:26.06.00 bash</code></pre><p>On Slurm clusters that use <strong>enroot</strong>, convert each NGC image once to a <code>.sqsh</code> squashfs file for job launches (no Docker daemon on compute nodes). Then set <code>CONTAINER_IMAGE</code> in <code>launch_local.yaml</code> to that <code>.sqsh</code> path:</p><pre><div class="code-lang">bash</div><code># NeMo AutoModel
+enroot import -o nemo-automodel_26_06.sqsh \
+  docker://nvcr.io/nvidia/nemo-automodel:26.06.00
+
+# NeMo Framework (Megatron-Bridge)
+enroot import -o nemo_26_06_00.sqsh \
+  docker://nvcr.io/nvidia/nemo:26.06.00</code></pre><p>SFT and LoRA dirs share the same shape: <code>configs/</code> (recipe YAML), <code>generic/</code> (train when GPUs are already up), <code>slurm/</code> (interactive + <code>sbatch</code>). Copy <code>launch.yaml</code> → <code>launch_local.yaml</code>, then set <code>CONTAINER_IMAGE</code>, <code>CACHE_DIR</code>, and cluster fields. Framework code defaults to the container install (<code>/opt/Automodel</code> or <code>/opt/Megatron-Bridge</code>); optional git bootstrap is only for pinning a different upstream commit (see the stack guides).</p><h3 id="suggested-first-path">Suggested first path</h3><ol><li>Edit the recipe YAML (train/val JSONL paths and video root).</li><li>Smoke on <strong>1 node × 8 GPUs</strong> via <code>generic/</code> or Slurm interactive before multinode <code>sbatch</code>.</li><li><strong>AutoModel / DeepEP:</strong> post-Hopper images already include DeepEP; on pre-Hopper (e.g. A100) the matching wheel under <code>wheels/deepep/</code> is installed automatically when the recipe uses <code>dispatcher: deepep</code>.</li></ol><h2 id="video-and-audio-decoding">Video and audio decoding</h2><p>Codec binaries are not included in this release. Training, inference, and data-prep workflows may install decode dependencies via pip when they are missing from the NeMo container, including:</p><ul><li><strong>decord</strong> (x86_64) / <strong>decord2</strong> (Linux aarch64, same <code>import decord</code>) — video frame decoding</li><li><strong>imageio-ffmpeg</strong> — prebuilt <strong>FFmpeg</strong> when system FFmpeg is not available</li><li><strong>librosa</strong> — audio decoding (with audioread fallbacks)</li></ul><p>See <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/THIRD_PARTY_NOTICES">THIRD_PARTY_NOTICES</a> for full package lists, install behavior, and data-prep requirements. FFmpeg (system install or via <code>imageio-ffmpeg</code>) may include <strong>LGPL- and/or GPL-licensed</strong> components; review those terms before redistribution.</p><h2 id="license">License</h2><p>All NVIDIA-authored code and published documentation in this repository is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0.txt" target="_blank" rel="noopener">Apache License, Version 2.0</a> (Apache-2.0). See <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/LICENSE">LICENSE</a> for the full license text. The GitHub Pages site is served from prebuilt HTML under <code>docs/</code>.</p><p>Third-party components used by the playbooks (Python dependencies, decode libraries, optional wheels, and NGC container baseline) are listed in <a href="https://github.com/NVIDIA/sports-intelligence-playbooks/blob/main/THIRD_PARTY_NOTICES">THIRD_PARTY_NOTICES</a>.</p><h2 id="contributions">Contributions</h2><p>This project is currently not accepting contributions.</p></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

@@ -1,0 +1,5 @@
+Field                                                                                               |  Response
+:---------------------------------------------------------------------------------------------------|:---------------
+Participation considerations from adversely impacted groups (protected classes) in model design and testing:  |  None
+Bias Metric (If Measured):                                                   |  Basketball play-level Q&A accuracy on a category-balanced subset of the Test (unseen games) partition — fully held-out games (MCQ and open-ended). Specific demographic bias metrics have not been separately measured for this fine-tuned release.
+Measures taken to mitigate against unwanted bias:                                                   |  Fine-tuning data was generated from the public BARD basketball dataset with quality gates (per-class ambiguity filters, answer-option balancing, exclusion of clips with corrupt labels). Custom scripts and distribution analysis are applied across annotation categories and games to assess potential bias.

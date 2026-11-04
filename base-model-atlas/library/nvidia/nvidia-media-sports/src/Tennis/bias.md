@@ -1,0 +1,5 @@
+Field                                                                                               |  Response
+:---------------------------------------------------------------------------------------------------|:---------------
+Participation considerations from adversely impacted groups (protected classes) in model design and testing:  |  None
+Bias Metric (If Measured):                                                   |  Tennis point-level Q&A accuracy on the Test (unseen matches) partition — fully held-out matches (MCQ and open-ended). Specific demographic bias metrics have not been separately measured for this fine-tuned release.
+Measures taken to mitigate against unwanted bias:                                                   |  Fine-tuning data was curated from in-house tennis datasets with quality filtering. Custom scripts and distribution analysis are applied across annotation categories and match types to assess potential bias.
