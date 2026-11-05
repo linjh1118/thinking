@@ -1,0 +1,2991 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Image generation · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Image generation</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#image-generation">Image generation</a><a class="toc-l2" href="#overview">Overview</a><a class="toc-l3" href="#image-api">Image API</a><a class="toc-l3" href="#responses-api">Responses API</a><a class="toc-l3" href="#choosing-the-right-api">Choosing the right API</a><a class="toc-l3" href="#gpt-image-2-6">GPT Image 2.6</a><a class="toc-l3" href="#safety-identifiers">Safety identifiers</a><a class="toc-l2" href="#generate-images">Generate Images</a><a class="toc-l3" href="#multi-turn-image-generation">Multi-turn image generation</a><a class="toc-l3" href="#streaming">Streaming</a><a class="toc-l3" href="#revised-prompt">Revised prompt</a><a class="toc-l2" href="#edit-images">Edit Images</a><a class="toc-l3" href="#create-a-new-image-using-image-references">Create a new image using image references</a><a class="toc-l3" href="#guide-an-edit-with-markup">Guide an edit with markup</a><a class="toc-l3" href="#edit-an-image-using-a-mask">Edit an image using a mask</a><a class="toc-l2" href="#customize-image-output">Customize Image Output</a><a class="toc-l3" href="#size-and-quality-options">Size and quality options</a><a class="toc-l3" href="#output-format">Output format</a><a class="toc-l3" href="#generate-svg-output">Generate SVG output</a><a class="toc-l3" href="#generate-animated-gif-output">Generate animated GIF output</a><a class="toc-l2" href="#limitations">Limitations</a><a class="toc-l3" href="#content-moderation">Content Moderation</a><a class="toc-l3" href="#handling-blocked-requests-and-other-errors">Handling blocked requests and other errors</a><a class="toc-l3" href="#supported-models">Supported models</a><a class="toc-l2" href="#cost-and-latency">Cost and latency</a><a class="toc-l3" href="#gpt-image-2-6-costs">GPT Image 2.6 costs</a><a class="toc-l3" href="#gpt-image-2-5-costs">GPT Image 2.5 costs</a><a class="toc-l3" href="#cached-input-pricing">Cached input pricing</a><a class="toc-l3" href="#calculating-costs">Calculating costs</a><a class="toc-l3" href="#partial-images-cost">Partial images cost</a><a class="toc-l2" href="#earlier-gpt-image-models">Earlier GPT Image models</a><a class="toc-l3" href="#image-input-fidelity">Image input fidelity</a><a class="toc-l3" href="#models-prior-to-gpt-image-2">Models prior to gpt-image-2</a><a class="toc-l3" href="#historical-output-costs">Historical output costs</a></nav></aside><main class="note"><h1 id="image-generation">Image generation</h1><blockquote>For the complete documentation index, see <a href="https://developers.openai.com/llms.txt">llms.txt</a>. Markdown versions of documentation pages are available by appending <code>.md</code> to the page URL.</blockquote><h2 id="overview">Overview</h2><p>The API lets you generate and edit images from text prompts using <code>gpt-image-2.5-sunburst</code> and <code>gpt-image-2.5-flare</code>. Choose Sunburst for workflows where editing precision matters most, and Flare for fast, high-quality everyday image generation. You can access image generation capabilities through two APIs:</p><h3 id="image-api">Image API</h3><p>The <a href="https://developers.openai.com/api/reference/resources/images" target="_blank" rel="noopener">Image API</a> provides two endpoints, each with distinct capabilities:</p><ul><li><strong>Generations</strong>: <a href="#generate-images">Generate images</a> from scratch based on a text prompt</li><li><strong>Edits</strong>: <a href="#edit-images">Modify existing images</a> using a new prompt, either partially or entirely</li></ul><h3 id="responses-api">Responses API</h3><p>The <a href="https://developers.openai.com/api/reference/resources/responses/methods/create#responses-create-tools" target="_blank" rel="noopener">Responses API</a> allows you to generate images as part of conversations or multi-step flows. It supports image generation as a <a href="https://developers.openai.com/api/docs/guides/tools?api-mode=responses" target="_blank" rel="noopener">built-in tool</a>, and accepts image inputs and outputs within context.</p><p>Compared to the Image API, it adds:</p><ul><li><strong>Multi-turn editing</strong>: Iteratively make high fidelity edits to images with prompting</li><li><strong>Flexible inputs</strong>: Accept image <a href="https://developers.openai.com/api/reference/resources/files" target="_blank" rel="noopener">File</a> IDs as input images, not just bytes</li></ul><p>For mainline models that can call the image generation tool, refer to <a href="#supported-models">supported models</a>.</p><h3 id="choosing-the-right-api">Choosing the right API</h3><ul><li>If you only need to generate or edit a single image from one prompt, the Image API is your best choice.</li><li>If you want to build conversational, editable image experiences with GPT Image, go with the Responses API.</li></ul><p>With the Image API, set <code>model</code> to <code>gpt-image-2.5-sunburst</code> or <code>gpt-image-2.5-flare</code> directly. With the Responses API, select a supported mainline model at the top level and specify <code>gpt-image-2.5-sunburst</code> or <code>gpt-image-2.5-flare</code> in the image generation tool's <code>model</code> field.</p><p>Both APIs let you <a href="#customize-image-output">customize output</a> by adjusting quality, size, format, and compression.</p><p>To ensure these models are used responsibly, you may need to complete the <a href="https://help.openai.com/en/articles/10910291-api-organization-verification" target="_blank" rel="noopener">API Organization Verification</a> from your <a href="https://platform.openai.com/settings/organization/general" target="_blank" rel="noopener">developer console</a> before using GPT Image models.</p><h3 id="gpt-image-2-6">GPT Image 2.6</h3><p>GPT Image 2.6 includes <a href="https://developers.openai.com/api/docs/models/gpt-image-2.6-sunburst" target="_blank" rel="noopener">Sunburst</a> for detailed visual work and <a href="https://developers.openai.com/api/docs/models/gpt-image-2.6-flare" target="_blank" rel="noopener">Flare</a> for fast iteration. Both models support complexity control, markup-guided edits, SVG output, and animated GIF output through the Image API. The existing examples below use GPT Image 2.5.</p><h4 id="set-image-complexity">Set image complexity</h4><p>Use the <code>complexity</code> request field to control how much the image model plans before rendering. Lower complexity can suit focused edits, such as changing a background or a sign. Higher complexity can help with dense text, complex layouts, and relationships between objects. Higher complexity can increase latency and introduce unwanted changes, so compare results for your task.</p><p>The supported complexity levels for Sunburst and Flare are <code>low</code>, <code>medium</code>, and <code>high</code>. If you omit <code>complexity</code>, both models use <code>high</code>. The separate <code>quality</code> setting controls rendering quality.</p><p>Adjusting complexity has no separate fee.</p><p>Sunburst generated these paper-cut football scenes from the same prompt at medium quality. Compare the trophy, the uniforms, and the placement of the “CHAMPIONS” sign as complexity changes.</p><p>Low complexity</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/paper-cut-football-effort-low-gpt-image-2-6-sunburst.webp" alt="Players in red lift a trophy topped with a crown. A CHAMPIONS banner spans the foreground."></p><p>Medium complexity</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/paper-cut-football-effort-medium-gpt-image-2-6-sunburst.webp" alt="Players in red shirts with team crests lift a trophy decorated with a laurel wreath above a CHAMPIONS banner."></p><p>High complexity</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/paper-cut-football-effort-high-gpt-image-2-6-sunburst.webp" alt="Players in folded blue paper jerseys fill the foreground. A CHAMPIONS sign hangs in the stands behind them."></p><h3 id="safety-identifiers">Safety identifiers</h3><p>If your application serves individual end users, include a stable, privacy-preserving <code>safety_identifier</code> in each <a href="https://developers.openai.com/api/reference/resources/images/methods/generate" target="_blank" rel="noopener">image generation</a> or <a href="https://developers.openai.com/api/reference/resources/images/methods/edit" target="_blank" rel="noopener">image edit</a> request. Hash a username or email address instead of sending identifying information, and keep the identifier to 128 characters or fewer. Safety identifiers are recommended but not required.</p><p>The Images API <code>user</code> parameter is deprecated. Send the same identifier as <code>safety_identifier</code> instead. Existing requests using <code>user</code> remain supported. A nonempty <code>safety_identifier</code> takes precedence over <code>user</code>; when <code>safety_identifier</code> is omitted, <code>null</code>, or an empty string, the API uses <code>user</code> when available.</p><p><img src="https://developers.openai.com/images/image-25-article/mug.png" alt="A beige coffee mug on a wooden table"></p><h2 id="generate-images">Generate Images</h2><p>You can use the <a href="https://developers.openai.com/api/reference/resources/images" target="_blank" rel="noopener">image generation endpoint</a> to create images based on text prompts, or the <a href="https://developers.openai.com/api/docs/guides/tools?api-mode=responses" target="_blank" rel="noopener">image generation tool</a> in the Responses API to generate images as part of a conversation.</p><p>To learn more about customizing the output (size, quality, format, compression), refer to the <a href="#customize-image-output">customize image output</a> section below.</p><p>You can set the <code>n</code> parameter to generate multiple images at once in a single request (by default, the API returns a single image).</p><p>Image API</p><p>Generate an image</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+import fs from &quot;fs&quot;;
+const openai = new OpenAI();
+
+const prompt = `
+A children&#x27;s book drawing of a veterinarian using a stethoscope to
+listen to the heartbeat of a baby otter.
+`;
+
+const result = await openai.images.generate({
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  prompt,
+});
+
+// Save the image to a file
+const image_base64 = result.data[0].b64_json;
+const image_bytes = Buffer.from(image_base64, &quot;base64&quot;);
+fs.writeFileSync(&quot;otter.png&quot;, image_bytes);</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+prompt = &quot;&quot;&quot;
+A children&#x27;s book drawing of a veterinarian using a stethoscope to
+listen to the heartbeat of a baby otter.
+&quot;&quot;&quot;
+
+result = client.images.generate(model=&quot;gpt-image-2.5-sunburst&quot;, prompt=prompt)
+
+image_base64 = result.data[0].b64_json
+image_bytes = base64.b64decode(image_base64)
+
+# Save the image to a file
+with open(&quot;otter.png&quot;, &quot;wb&quot;) as f:
+    f.write(image_bytes)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	result, err := client.Images.Generate(context.Background(), openai.ImageGenerateParams{
+		Model: openai.ImageModel(&quot;gpt-image-2.5-sunburst&quot;),
+		Prompt: &quot;A children&#x27;s book drawing of a veterinarian using a stethoscope to &quot; +
+			&quot;listen to the heartbeat of a baby otter.&quot;,
+	})
+	if err != nil {
+		panic(err)
+	}
+	image, err := base64.StdEncoding.DecodeString(result.Data[0].B64JSON)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(&quot;otter.png&quot;, image, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.images.ImageGenerateParams;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+var images =
+    client
+        .images()
+        .generate(
+            ImageGenerateParams.builder()
+                .model(&quot;gpt-image-2.5-sunburst&quot;)
+                .prompt(&quot;A watercolor robot reading in a library&quot;)
+                .build());
+
+Files.write(
+    Path.of(&quot;generated-image.png&quot;),
+    Base64.getDecoder().decode(images.data().orElseThrow().get(0).b64Json().orElseThrow()));</code></pre><pre><div class="code-lang">csharp</div><code>using OpenAI.Images;
+
+string key = Environment.GetEnvironmentVariable(&quot;OPENAI_API_KEY&quot;)!;
+string model = &quot;gpt-image-2.5-sunburst&quot;;
+ImageClient client = new(model, key);
+
+GeneratedImage image = await client.GenerateImageAsync(
+    &quot;A children&#x27;s book drawing of a veterinarian using a stethoscope to &quot;
+        + &quot;listen to the heartbeat of a baby otter.&quot;
+);
+
+await File.WriteAllBytesAsync(&quot;otter.png&quot;, image.ImageBytes.ToArray());</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+result = client.images.generate(
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  prompt: &quot;A watercolor robot reading in a library&quot;
+)
+generated_image = result.data&amp;.first or raise &quot;No image returned&quot;
+File.binwrite(
+  &quot;generated-image.png&quot;,
+  Base64.strict_decode64(generated_image.b64_json)
+)</code></pre><pre><div class="code-lang">bash</div><code>curl -X POST &quot;https://api.openai.com/v1/images/generations&quot; \
+    -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot; \
+    -H &quot;Content-type: application/json&quot; \
+    -d &#x27;{
+        &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;,
+        &quot;prompt&quot;: &quot;A children&#x27;\&#x27;&#x27;s book drawing of a veterinarian using a stethoscope to listen to the heartbeat of a baby otter.&quot;
+    }&#x27; | jq -r &#x27;.data[0].b64_json&#x27; | base64 --decode &gt; otter.png</code></pre><pre><div class="code-lang">bash</div><code>openai images generate \
+  --model gpt-image-2.5-sunburst \
+  --prompt &quot;A children&#x27;s book drawing of a veterinarian using a stethoscope to listen to the heartbeat of a baby otter.&quot; \
+  --raw-output \
+  --transform &#x27;data.0.b64_json&#x27; | base64 --decode &gt; otter.png</code></pre><p>Responses API</p><p>Generate an image</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+const openai = new OpenAI();
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input:
+    &quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+// Save the image to a file
+const imageData = response.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(&quot;otter.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+response = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+# Save the image to a file
+image_data = [
+    output.result
+    for output in response.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data:
+    image_base64 = image_data[0]
+    with open(&quot;otter.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveFirstGeneratedImage(response, &quot;otter.png&quot;)
+}
+
+func saveFirstGeneratedImage(response *responses.Response, filename string) {
+	for _, output := range response.Output {
+		if output.Type != &quot;image_generation_call&quot; {
+			continue
+		}
+		image, err := base64.StdEncoding.DecodeString(output.AsImageGenerationCall().Result)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(filename, image, 0o600); err != nil {
+			panic(err)
+		}
+		return
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.Tool;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+ResponseCreateParams params =
+    ResponseCreateParams.builder()
+        .model(&quot;gpt-6-astra&quot;)
+        .input(&quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;)
+        .addTool(Tool.ImageGeneration.builder().build())
+        .build();
+
+var image =
+    client.responses().create(params).output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No image generation call returned&quot;));
+String encoded =
+    image.result().orElseThrow(() -&gt; new IllegalStateException(&quot;No image returned&quot;));
+Files.write(Path.of(&quot;otter.png&quot;), Base64.getDecoder().decode(encoded));</code></pre><pre><div class="code-lang">csharp</div><code>using OpenAI.Responses;
+#pragma warning disable OPENAI001
+
+string key = Environment.GetEnvironmentVariable(&quot;OPENAI_API_KEY&quot;)!;
+ResponsesClient client = new(key);
+
+CreateResponseOptions options = new() { Model = &quot;gpt-6-astra&quot; };
+options.InputItems.Add(
+    ResponseItem.CreateUserMessageItem(
+        &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;
+    )
+);
+options.Tools.Add(ResponseTool.CreateImageGenerationTool(model: &quot;gpt-image-2.5-sunburst&quot;));
+
+ResponseResult response = await client.CreateResponseAsync(options);
+ImageGenerationCallResponseItem image = response
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .FirstOrDefault()
+    ?? throw new InvalidOperationException(&quot;No generated image was returned.&quot;);
+await File.WriteAllBytesAsync(&quot;otter.png&quot;, image.ImageResultBytes.ToArray());</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+response = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+image_call = response.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless image_call.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+encoded_image = image_call.result or raise &quot;No image returned&quot;
+File.binwrite(&quot;otter.png&quot;, Base64.strict_decode64(encoded_image))</code></pre><h3 id="multi-turn-image-generation">Multi-turn image generation</h3><p>With the Responses API, you can build multi-turn conversations involving image generation either by providing image generation calls outputs within context (you can also just use the image ID), or by using the <a href="https://developers.openai.com/api/docs/guides/conversation-state?api-mode=responses#openai-apis-for-conversation-state" target="_blank" rel="noopener"><code>previous_response_id</code> parameter</a>. This lets you iterate on images across multiple turns—refining prompts, applying new instructions, and evolving the visual output as the conversation progresses.</p><p>With the Responses API image generation tool, supported tool models can choose whether to generate a new image or edit one already in the conversation. The optional <code>action</code> parameter controls this behavior: keep <code>action: &quot;auto&quot;</code> to let the model decide, set <code>action: &quot;generate&quot;</code> to always create a new image, or set <code>action: &quot;edit&quot;</code> to force editing when an image is in context.</p><p>Force image creation with action</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+const openai = new OpenAI();
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input:
+    &quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+  tools: [
+    { type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot;, action: &quot;generate&quot; },
+  ],
+});
+
+// Save the image to a file
+const imageData = response.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(&quot;otter.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+response = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+    tools=[
+        {&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;, &quot;action&quot;: &quot;generate&quot;}
+    ],
+)
+
+# Save the image to a file
+image_data = [
+    output.result
+    for output in response.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data:
+    image_base64 = image_data[0]
+    with open(&quot;otter.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;, Action: &quot;generate&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	for _, output := range response.Output {
+		if output.Type != &quot;image_generation_call&quot; {
+			continue
+		}
+		image, err := base64.StdEncoding.DecodeString(output.AsImageGenerationCall().Result)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(&quot;otter.png&quot;, image, 0o600); err != nil {
+			panic(err)
+		}
+		return
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.Tool;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+ResponseCreateParams params =
+    ResponseCreateParams.builder()
+        .model(&quot;gpt-6-astra&quot;)
+        .input(&quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;)
+        .addTool(
+            Tool.ImageGeneration.builder().action(Tool.ImageGeneration.Action.GENERATE).build())
+        .build();
+
+String imageResult =
+    client.responses().create(params).output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .flatMap(call -&gt; call.result().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No generated image returned&quot;));
+Path output = Path.of(System.getenv().getOrDefault(&quot;OPENAI_EXAMPLE_OUTPUT_PATH&quot;, &quot;otter.png&quot;));
+Files.write(output, Base64.getDecoder().decode(imageResult));
+System.out.println(output);</code></pre><pre><div class="code-lang">csharp</div><code>using OpenAI.Responses;
+#pragma warning disable OPENAI001
+
+string key = Environment.GetEnvironmentVariable(&quot;OPENAI_API_KEY&quot;)!;
+ResponsesClient client = new(key);
+
+CreateResponseOptions options = new() { Model = &quot;gpt-6-astra&quot; };
+options.InputItems.Add(
+    ResponseItem.CreateUserMessageItem(
+        &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;
+    )
+);
+options.Tools.Add(
+    ResponseTool.CreateImageGenerationTool(
+        model: &quot;gpt-image-2.5-sunburst&quot;,
+        action: ImageGenerationToolAction.Generate
+    )
+);
+
+ResponseResult response = await client.CreateResponseAsync(options);
+ImageGenerationCallResponseItem image = response
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .FirstOrDefault()
+    ?? throw new InvalidOperationException(&quot;No generated image was returned.&quot;);
+await File.WriteAllBytesAsync(&quot;otter.png&quot;, image.ImageResultBytes.ToArray());</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+response = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;,
+      action: :generate
+    }
+  ]
+)
+
+image_call = response.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless image_call.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+encoded_image = image_call.result or raise &quot;No image returned&quot;
+output_path = ENV.fetch(&quot;OPENAI_EXAMPLE_OUTPUT_PATH&quot;, &quot;otter.png&quot;)
+File.binwrite(output_path, Base64.decode64(encoded_image))
+puts(output_path)</code></pre><p>If you force <code>edit</code> without providing an image in context, the call will return an error. Leave <code>action</code> at <code>auto</code> to have the model decide when to generate or edit.</p><p>Using previous response ID</p><p>Multi-turn image generation</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+const openai = new OpenAI();
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input:
+    &quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+const imageData = response.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(&quot;cat_and_otter.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+}
+
+// Follow up
+
+const response_fwup = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  previous_response_id: response.id,
+  input: &quot;Now make it look realistic&quot;,
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+const imageData_fwup = response_fwup.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData_fwup.length &gt; 0) {
+  const imageBase64 = imageData_fwup[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(
+    &quot;cat_and_otter_realistic.png&quot;,
+    Buffer.from(imageBase64, &quot;base64&quot;)
+  );
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+response = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+image_data = [
+    output.result
+    for output in response.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data:
+    image_base64 = image_data[0]
+
+    with open(&quot;cat_and_otter.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))
+
+
+# Follow up
+
+response_fwup = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    previous_response_id=response.id,
+    input=&quot;Now make it look realistic&quot;,
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+image_data_fwup = [
+    output.result
+    for output in response_fwup.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data_fwup:
+    image_base64 = image_data_fwup[0]
+    with open(&quot;cat_and_otter_realistic.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	first, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveFirstGeneratedImage(first, &quot;cat_and_otter.png&quot;)
+
+	followUp, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model:              &quot;gpt-6-astra&quot;,
+		PreviousResponseID: openai.String(first.ID),
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Now make it look realistic&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveFirstGeneratedImage(followUp, &quot;cat_and_otter_realistic.png&quot;)
+}
+
+func saveFirstGeneratedImage(response *responses.Response, filename string) {
+	for _, output := range response.Output {
+		if output.Type != &quot;image_generation_call&quot; {
+			continue
+		}
+		image, err := base64.StdEncoding.DecodeString(output.AsImageGenerationCall().Result)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(filename, image, 0o600); err != nil {
+			panic(err)
+		}
+		return
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.Tool;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+var first =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .input(
+                    &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;)
+                .addTool(Tool.ImageGeneration.builder().build())
+                .build());
+var firstImage =
+    first.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No image generation call returned&quot;));
+Files.write(
+    Path.of(&quot;cat_and_otter.png&quot;),
+    Base64.getDecoder()
+        .decode(
+            firstImage
+                .result()
+                .orElseThrow(() -&gt; new IllegalStateException(&quot;No image returned&quot;))));
+
+var second =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .input(&quot;Now make it look realistic.&quot;)
+                .previousResponseId(first.id())
+                .addTool(Tool.ImageGeneration.builder().build())
+                .build());
+var secondImage =
+    second.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(
+            () -&gt; new IllegalStateException(&quot;No follow-up image generation call returned&quot;));
+Files.write(
+    Path.of(&quot;cat_and_otter_realistic.png&quot;),
+    Base64.getDecoder()
+        .decode(
+            secondImage
+                .result()
+                .orElseThrow(() -&gt; new IllegalStateException(&quot;No follow-up image returned&quot;))));</code></pre><pre><div class="code-lang">csharp</div><code>using OpenAI.Responses;
+#pragma warning disable OPENAI001
+
+string key = Environment.GetEnvironmentVariable(&quot;OPENAI_API_KEY&quot;)!;
+ResponsesClient client = new(key);
+
+CreateResponseOptions options = new() { Model = &quot;gpt-6-astra&quot; };
+options.Tools.Add(ResponseTool.CreateImageGenerationTool(model: &quot;gpt-image-2.5-sunburst&quot;));
+options.InputItems.Add(
+    ResponseItem.CreateUserMessageItem(
+        &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;
+    )
+);
+
+ResponseResult first = await client.CreateResponseAsync(options);
+ImageGenerationCallResponseItem initialImage = first
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .First();
+await File.WriteAllBytesAsync(&quot;cat_and_otter.png&quot;, initialImage.ImageResultBytes.ToArray());
+
+CreateResponseOptions followUp = new()
+{
+    Model = &quot;gpt-6-astra&quot;,
+    PreviousResponseId = first.Id,
+};
+followUp.Tools.Add(ResponseTool.CreateImageGenerationTool(model: &quot;gpt-image-2.5-sunburst&quot;));
+followUp.InputItems.Add(ResponseItem.CreateUserMessageItem(&quot;Now make it look realistic.&quot;));
+
+ResponseResult second = await client.CreateResponseAsync(followUp);
+ImageGenerationCallResponseItem updatedImage = second
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .First();
+await File.WriteAllBytesAsync(
+    &quot;cat_and_otter_realistic.png&quot;,
+    updatedImage.ImageResultBytes.ToArray()
+);</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+first = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+first_image = first.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless first_image.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+encoded_image = first_image.result or raise &quot;No image returned&quot;
+File.binwrite(&quot;cat_and_otter.png&quot;, Base64.strict_decode64(encoded_image))
+
+follow_up = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Now make it look realistic.&quot;,
+  previous_response_id: first.id,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+follow_up_image = follow_up.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless follow_up_image.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No follow-up image generation call returned&quot;
+end
+
+encoded_image = follow_up_image.result or raise &quot;No follow-up image returned&quot;
+File.binwrite(&quot;cat_and_otter_realistic.png&quot;, Base64.strict_decode64(encoded_image))</code></pre><p>Using image ID</p><p>Multi-turn image generation</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+const openai = new OpenAI();
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input:
+    &quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+const imageGenerationCalls = response.output.filter(
+  (output) =&gt; output.type === &quot;image_generation_call&quot;
+);
+
+const imageData = imageGenerationCalls.map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(&quot;cat_and_otter.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+}
+
+// Follow up
+
+const response_fwup = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: &quot;user&quot;,
+      content: [{ type: &quot;input_text&quot;, text: &quot;Now make it look realistic&quot; }],
+    },
+    {
+      type: &quot;image_generation_call&quot;,
+      id: imageGenerationCalls[0].id,
+    },
+  ],
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+const imageData_fwup = response_fwup.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData_fwup.length &gt; 0) {
+  const imageBase64 = imageData_fwup[0];
+  const fs = await import(&quot;fs&quot;);
+  fs.writeFileSync(
+    &quot;cat_and_otter_realistic.png&quot;,
+    Buffer.from(imageBase64, &quot;base64&quot;)
+  );
+}</code></pre><pre><div class="code-lang">python</div><code>import openai
+import base64
+
+response = openai.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;,
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+image_generation_calls = [
+    output for output in response.output if output.type == &quot;image_generation_call&quot;
+]
+
+image_data = [output.result for output in image_generation_calls]
+
+if image_data:
+    image_base64 = image_data[0]
+
+    with open(&quot;cat_and_otter.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))
+
+
+# Follow up
+
+response_fwup = openai.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [{&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: &quot;Now make it look realistic&quot;}],
+        },
+        {
+            &quot;type&quot;: &quot;image_generation_call&quot;,
+            &quot;id&quot;: image_generation_calls[0].id,
+        },
+    ],
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+image_data_fwup = [
+    output.result
+    for output in response_fwup.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data_fwup:
+    image_base64 = image_data_fwup[0]
+    with open(&quot;cat_and_otter_realistic.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;encoding/json&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	first, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	call := firstImageGenerationCall(first)
+	saveImage(&quot;cat_and_otter.png&quot;, call.Result)
+	input := outputAsInput(first.Output)
+	input = append(input, responses.ResponseInputItemParamOfMessage(
+		responses.ResponseInputMessageContentListParam{responses.ResponseInputContentParamOfInputText(&quot;Now make it look realistic&quot;)},
+		responses.EasyInputMessageRoleUser,
+	))
+
+	followUp, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{OfInputItemList: input},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveImage(&quot;cat_and_otter_realistic.png&quot;, firstImageGenerationCall(followUp).Result)
+}
+
+func firstImageGenerationCall(response *responses.Response) responses.ResponseOutputItemImageGenerationCall {
+	for _, output := range response.Output {
+		if output.Type == &quot;image_generation_call&quot; {
+			return output.AsImageGenerationCall()
+		}
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}
+
+func outputAsInput(output []responses.ResponseOutputItemUnion) []responses.ResponseInputItemUnionParam {
+	input := make([]responses.ResponseInputItemUnionParam, 0, len(output))
+	for _, item := range output {
+		var converted responses.ResponseInputItemUnion
+		if err := json.Unmarshal([]byte(item.RawJSON()), &amp;converted); err != nil {
+			panic(err)
+		}
+		input = append(input, converted.ToParam())
+	}
+	return input
+}
+
+func saveImage(filename, encoded string) {
+	image, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(filename, image, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.JsonValue;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseInputItem;
+import com.openai.models.responses.Tool;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+
+var first =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .input(
+                    &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;)
+                .addTool(Tool.ImageGeneration.builder().build())
+                .build());
+var firstImage =
+    first.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No image generation call returned&quot;));
+Files.write(
+    Path.of(&quot;cat_and_otter.png&quot;),
+    Base64.getDecoder()
+        .decode(
+            firstImage
+                .result()
+                .orElseThrow(() -&gt; new IllegalStateException(&quot;No image returned&quot;))));
+
+var second =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .inputOfResponse(
+                    List.of(
+                        ResponseInputItem.ofMessage(
+                            ResponseInputItem.Message.builder()
+                                .role(ResponseInputItem.Message.Role.USER)
+                                .addInputTextContent(&quot;Now make it look realistic.&quot;)
+                                .build()),
+                        JsonValue.from(
+                                Map.of(&quot;type&quot;, &quot;image_generation_call&quot;, &quot;id&quot;, firstImage.id()))
+                            .convert(ResponseInputItem.class)))
+                .addTool(Tool.ImageGeneration.builder().build())
+                .build());
+var secondImage =
+    second.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(
+            () -&gt; new IllegalStateException(&quot;No follow-up image generation call returned&quot;));
+Files.write(
+    Path.of(&quot;cat_and_otter_realistic.png&quot;),
+    Base64.getDecoder()
+        .decode(
+            secondImage
+                .result()
+                .orElseThrow(() -&gt; new IllegalStateException(&quot;No follow-up image returned&quot;))));</code></pre><pre><div class="code-lang">csharp</div><code>using OpenAI.Responses;
+#pragma warning disable OPENAI001
+
+string key = Environment.GetEnvironmentVariable(&quot;OPENAI_API_KEY&quot;)!;
+ResponsesClient client = new(key);
+
+CreateResponseOptions options = new() { Model = &quot;gpt-6-astra&quot; };
+options.Tools.Add(ResponseTool.CreateImageGenerationTool(model: &quot;gpt-image-2.5-sunburst&quot;));
+options.InputItems.Add(
+    ResponseItem.CreateUserMessageItem(
+        &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;
+    )
+);
+
+ResponseResult first = await client.CreateResponseAsync(options);
+ImageGenerationCallResponseItem initialImage = first
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .First();
+await File.WriteAllBytesAsync(&quot;cat_and_otter.png&quot;, initialImage.ImageResultBytes.ToArray());
+
+CreateResponseOptions followUp = new() { Model = &quot;gpt-6-astra&quot; };
+followUp.Tools.Add(ResponseTool.CreateImageGenerationTool(model: &quot;gpt-image-2.5-sunburst&quot;));
+followUp.InputItems.Add(ResponseItem.CreateUserMessageItem(&quot;Now make it look realistic.&quot;));
+followUp.InputItems.Add(ResponseItem.CreateReferenceItem(initialImage.Id));
+
+ResponseResult second = await client.CreateResponseAsync(followUp);
+ImageGenerationCallResponseItem updatedImage = second
+    .OutputItems.OfType&lt;ImageGenerationCallResponseItem&gt;()
+    .First();
+await File.WriteAllBytesAsync(
+    &quot;cat_and_otter_realistic.png&quot;,
+    updatedImage.ImageResultBytes.ToArray()
+);</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+first = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Generate an image of a gray tabby cat hugging an otter with an orange scarf.&quot;,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+first_image = first.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless first_image.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+encoded_image = first_image.result or raise &quot;No image returned&quot;
+File.binwrite(&quot;cat_and_otter.png&quot;, Base64.strict_decode64(encoded_image))
+
+follow_up = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: :user,
+      content: [
+        {
+          type: :input_text,
+          text: &quot;Now make it look realistic.&quot;
+        }
+      ]
+    },
+    {
+      type: :image_generation_call,
+      id: first_image.id
+    }
+  ],
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+follow_up_image = follow_up.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless follow_up_image.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No follow-up image generation call returned&quot;
+end
+
+encoded_image = follow_up_image.result or raise &quot;No follow-up image returned&quot;
+File.binwrite(&quot;cat_and_otter_realistic.png&quot;, Base64.strict_decode64(encoded_image))</code></pre><h4 id="result">Result</h4><div class="table-wrap">  <table>
+    <tbody>
+      <tr>
+        <td>
+          &quot;Generate an image of gray tabby cat hugging an otter with an orange
+          scarf&quot;
+        </td>
+        <td>
+          ![A cat and an otter](https://developers.openai.com/images/image-25-article/cat_and_otter.png)
+        </td>
+      </tr>
+      <tr>
+        <td>
+          &quot;Now make it look realistic&quot;
+        </td>
+        <td>
+          ![A cat and an otter](https://developers.openai.com/images/image-25-article/cat_and_otter_realistic.png)
+        </td>
+      </tr>
+    </tbody>
+  </table></div><h3 id="streaming">Streaming</h3><p>The Responses API and Image API support streaming image generation. You can stream partial images as the APIs generate them, providing a more interactive experience.</p><p>You can adjust the <code>partial_images</code> parameter to receive 0-3 partial images.</p><ul><li>If you set <code>partial_images</code> to 0, you will only receive the final image.</li><li>For values larger than zero, you may not receive the full number of partial images you requested if the full image is generated more quickly.</li></ul><p>Responses API</p><p>Stream an image</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+import fs from &quot;fs&quot;;
+const openai = new OpenAI();
+
+function saveBase64Image(filename, imageBase64) {
+  const imageBuffer = Buffer.from(imageBase64, &quot;base64&quot;);
+  fs.writeFileSync(filename, imageBuffer);
+}
+
+const stream = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input:
+    &quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;,
+  stream: true,
+  tools: [
+    { type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot;, partial_images: 2 },
+  ],
+});
+
+for await (const event of stream) {
+  if (event.type === &quot;response.image_generation_call.partial_image&quot;) {
+    const idx = event.partial_image_index;
+    saveBase64Image(`river-partial-${idx}.png`, event.partial_image_b64);
+  } else if (event.type === &quot;response.completed&quot;) {
+    const imageData = event.response.output
+      .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+      .map((output) =&gt; output.result);
+
+    if (imageData.length &gt; 0) {
+      saveBase64Image(&quot;river-final.png&quot;, imageData[0]);
+    }
+  }
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+
+def save_base64_image(filename, image_base64):
+    image_bytes = base64.b64decode(image_base64)
+    with open(filename, &quot;wb&quot;) as f:
+        f.write(image_bytes)
+
+
+stream = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=&quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;,
+    stream=True,
+    tools=[
+        {&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;, &quot;partial_images&quot;: 2}
+    ],
+)
+
+for event in stream:
+    if event.type == &quot;response.image_generation_call.partial_image&quot;:
+        idx = event.partial_image_index
+        save_base64_image(f&quot;river-partial-{idx}.png&quot;, event.partial_image_b64)
+    elif event.type == &quot;response.completed&quot;:
+        image_data = [
+            output.result
+            for output in event.response.output
+            if output.type == &quot;image_generation_call&quot;
+        ]
+
+        if image_data:
+            save_base64_image(&quot;river-final.png&quot;, image_data[0])</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;fmt&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	stream := client.Responses.NewStreaming(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfString: openai.String(&quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;),
+		},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;, PartialImages: openai.Int(2)}}},
+	})
+	for stream.Next() {
+		event := stream.Current()
+		if event.Type == &quot;response.image_generation_call.partial_image&quot; {
+			partial := event.AsResponseImageGenerationCallPartialImage()
+			saveImage(fmt.Sprintf(&quot;river-partial-%d.png&quot;, partial.PartialImageIndex), partial.PartialImageB64)
+		}
+		if event.Type == &quot;response.completed&quot; {
+			for _, output := range event.AsResponseCompleted().Response.Output {
+				if output.Type == &quot;image_generation_call&quot; {
+					saveImage(&quot;river-final.png&quot;, output.AsImageGenerationCall().Result)
+				}
+			}
+		}
+	}
+	if err := stream.Err(); err != nil {
+		panic(err)
+	}
+}
+
+func saveImage(filename, encoded string) {
+	image, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(filename, image, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.http.StreamResponse;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseStreamEvent;
+import com.openai.models.responses.Tool;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+ResponseCreateParams params =
+    ResponseCreateParams.builder()
+        .model(&quot;gpt-6-astra&quot;)
+        .input(&quot;Generate an image of a river made of white owl feathers.&quot;)
+        .addTool(Tool.ImageGeneration.builder().partialImages(2).build())
+        .build();
+
+try (StreamResponse&lt;ResponseStreamEvent&gt; stream = client.responses().createStreaming(params)) {
+  var events = stream.stream().iterator();
+  while (events.hasNext()) {
+    ResponseStreamEvent event = events.next();
+    if (event.imageGenerationCallPartialImage().isPresent()) {
+      var partial = event.imageGenerationCallPartialImage().orElseThrow();
+      Files.write(
+          Path.of(&quot;river-partial-&quot; + partial.partialImageIndex() + &quot;.png&quot;),
+          Base64.getDecoder().decode(partial.partialImageB64()));
+    }
+    if (event.completed().isPresent()) {
+      var image =
+          event.completed().orElseThrow().response().output().stream()
+              .flatMap(item -&gt; item.imageGenerationCall().stream())
+              .findFirst()
+              .orElseThrow(() -&gt; new IllegalStateException(&quot;No generated image returned&quot;));
+      Files.write(
+          Path.of(&quot;river-final.png&quot;),
+          Base64.getDecoder()
+              .decode(
+                  image
+                      .result()
+                      .orElseThrow(
+                          () -&gt; new IllegalStateException(&quot;No final image returned&quot;))));
+    }
+  }
+}</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+stream = client.responses.stream(
+  model: &quot;gpt-6-astra&quot;,
+  input: &quot;Generate an image of a river made of white owl feathers.&quot;,
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;,
+      partial_images: 2
+    }
+  ]
+)
+
+stream.each do |event|
+  case event
+  when OpenAI::Models::Responses::ResponseImageGenCallPartialImageEvent
+    image = Base64.strict_decode64(event.partial_image_b64)
+    File.binwrite(&quot;river-partial-#{event.partial_image_index}.png&quot;, image)
+  when OpenAI::Models::Responses::ResponseCompletedEvent
+    image_call = event.response.output.find do |item|
+      item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+    end
+    next unless image_call.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+
+    File.binwrite(
+      &quot;river-final.png&quot;,
+      Base64.strict_decode64(image_call.result)
+    )
+  end
+end</code></pre><p>Image API</p><p>Stream an image</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+const prompt =
+  &quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;;
+const stream = await openai.images.generate({
+  prompt: prompt,
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  stream: true,
+  partial_images: 2,
+});
+
+for await (const event of stream) {
+  if (event.type === &quot;image_generation.partial_image&quot;) {
+    const idx = event.partial_image_index;
+    const imageBase64 = event.b64_json;
+    const imageBuffer = Buffer.from(imageBase64, &quot;base64&quot;);
+    fs.writeFileSync(`river${idx}.png`, imageBuffer);
+  }
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+stream = client.images.generate(
+    prompt=&quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;,
+    model=&quot;gpt-image-2.5-sunburst&quot;,
+    stream=True,
+    partial_images=2,
+)
+
+for event in stream:
+    if event.type == &quot;image_generation.partial_image&quot;:
+        idx = event.partial_image_index
+        image_base64 = event.b64_json
+        image_bytes = base64.b64decode(image_base64)
+        with open(f&quot;river{idx}.png&quot;, &quot;wb&quot;) as f:
+            f.write(image_bytes)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;fmt&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	stream := client.Images.GenerateStreaming(context.Background(), openai.ImageGenerateParams{
+		Model:         openai.ImageModel(&quot;gpt-image-2.5-sunburst&quot;),
+		Prompt:        &quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;,
+		PartialImages: openai.Int(2),
+	})
+	for stream.Next() {
+		event := stream.Current()
+		if event.Type != &quot;image_generation.partial_image&quot; {
+			continue
+		}
+		partial := event.AsImageGenerationPartialImage()
+		saveImage(fmt.Sprintf(&quot;river%d.png&quot;, partial.PartialImageIndex), partial.B64JSON)
+	}
+	if err := stream.Err(); err != nil {
+		panic(err)
+	}
+}
+
+func saveImage(filename, encoded string) {
+	image, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(filename, image, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.images.ImageGenerateParams;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+var params =
+    ImageGenerateParams.builder()
+        .prompt(
+            &quot;Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape&quot;)
+        .model(&quot;gpt-image-2.5-sunburst&quot;)
+        .partialImages(2)
+        .build();
+try (var stream = client.images().generateStreaming(params)) {
+  var events = stream.stream().iterator();
+  while (events.hasNext()) {
+    var event = events.next();
+    if (event.generationPartialImage().isPresent()) {
+      var partial = event.generationPartialImage().orElseThrow();
+      Files.write(
+          Path.of(&quot;river&quot; + partial.partialImageIndex() + &quot;.png&quot;),
+          Base64.getDecoder().decode(partial.b64Json()));
+    }
+  }
+}</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+
+client = OpenAI::Client.new
+stream = client.images.generate_stream_raw(
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  prompt: &quot;A river made of white owl feathers in a winter landscape&quot;,
+  partial_images: 2
+)
+
+stream.each do |event|
+  next unless event.is_a?(OpenAI::Models::ImageGenPartialImageEvent)
+
+  image = Base64.strict_decode64(event.b64_json)
+  File.binwrite(&quot;river#{event.partial_image_index}.png&quot;, image)
+end</code></pre><h4 id="result-2">Result</h4><div class="table-wrap"><table><thead><tr><th>Partial 1</th><th>Partial 2</th><th>Final image</th></tr></thead><tbody><tr><td><img src="https://developers.openai.com/images/image-25-article/river-partial-0.png" alt="1st partial"></td><td><img src="https://developers.openai.com/images/image-25-article/river-partial-1.png" alt="2nd partial"></td><td><img src="https://developers.openai.com/images/image-25-article/river-final.png" alt="Final image"></td></tr></tbody></table></div><p>Prompt: Draw a gorgeous image of a river made of white owl feathers, snaking its way through a serene winter landscape</p><h3 id="revised-prompt">Revised prompt</h3><p>When using the image generation tool in the Responses API, the mainline model (for example, <code>gpt-5.5</code>) will automatically revise your prompt for improved performance.</p><p>You can access the revised prompt in the <code>revised_prompt</code> field of the image generation call:</p><p>Revised prompt response</p><pre><div class="code-lang">json</div><code>{
+  &quot;id&quot;: &quot;ig_123&quot;,
+  &quot;type&quot;: &quot;image_generation_call&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;revised_prompt&quot;: &quot;A gray tabby cat hugging an otter. The otter is wearing an orange scarf. Both animals are cute and friendly, depicted in a warm, heartwarming style.&quot;,
+  &quot;result&quot;: &quot;...&quot;
+}</code></pre><h2 id="edit-images">Edit Images</h2><p>The <a href="https://developers.openai.com/api/reference/resources/images" target="_blank" rel="noopener">image edits</a> endpoint lets you:</p><ul><li>Edit existing images</li><li>Generate new images using other images as a reference</li><li>Edit parts of an image by uploading an image and mask that identifies the areas to replace</li></ul><h3 id="create-a-new-image-using-image-references">Create a new image using image references</h3><p>You can use one or more images as a reference to generate a new image.</p><p>In this example, we'll use 4 input images to generate a new image of a gift basket containing the items in the reference images.</p><p>Responses API</p><p>With the Responses API, you can provide input images in 3 different ways:</p><ul><li>By providing a fully qualified URL</li><li>By providing an image as a Base64-encoded data URL</li><li>By providing a file ID (created with the <a href="https://developers.openai.com/api/reference/resources/files" target="_blank" rel="noopener">Files API</a>)</li></ul><h4 id="create-a-file">Create a File</h4><p>Create a File</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+async function createFile(filePath) {
+  const fileContent = fs.createReadStream(filePath);
+  const result = await openai.files.create({
+    file: fileContent,
+    purpose: &quot;vision&quot;,
+  });
+  return result.id;
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+
+client = OpenAI()
+
+
+def create_file(file_path):
+    with open(file_path, &quot;rb&quot;) as file_content:
+        result = client.files.create(
+            file=file_content,
+            purpose=&quot;vision&quot;,
+        )
+        return result.id</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	file, err := os.Open(&quot;image.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	uploaded, err := client.Files.New(context.Background(), openai.FileNewParams{
+		File:    file,
+		Purpose: openai.FilePurposeVision,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(uploaded.ID)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.files.FileCreateParams;
+import com.openai.models.files.FilePurpose;
+import java.nio.file.Path;
+
+var file =
+    client
+        .files()
+        .create(
+            FileCreateParams.builder()
+                .file(Path.of(System.getenv(&quot;OPENAI_EXAMPLE_FILE_PATH&quot;)))
+                .purpose(FilePurpose.VISION)
+                .build());
+
+System.out.println(file.id());</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;openai&quot;
+require &quot;pathname&quot;
+
+client = OpenAI::Client.new
+file = client.files.create(
+  file: Pathname(&quot;image.png&quot;),
+  purpose: OpenAI::Models::FilePurpose::VISION
+)
+puts(file.id)</code></pre><h4 id="create-a-base64-encoded-image">Create a base64 encoded image</h4><p>Create a base64 encoded image</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+
+function encodeImage(filePath) {
+  const base64Image = fs.readFileSync(filePath, &quot;base64&quot;);
+  return base64Image;
+}</code></pre><pre><div class="code-lang">python</div><code>import base64
+
+
+def encode_image(file_path):
+    with open(file_path, &quot;rb&quot;) as f:
+        base64_image = base64.b64encode(f.read()).decode(&quot;utf-8&quot;)
+    return base64_image</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;encoding/base64&quot;
+	&quot;fmt&quot;
+	&quot;os&quot;
+)
+
+func main() {
+	image, err := os.ReadFile(&quot;image.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(base64.StdEncoding.EncodeToString(image))
+}</code></pre><pre><div class="code-lang">java</div><code>import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+System.out.println(encodeImage(Path.of(&quot;example.png&quot;)));
+
+private static String encodeImage(Path path) throws java.io.IOException {
+  return Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+}</code></pre><pre><div class="code-lang">csharp</div><code>using System;
+
+Console.WriteLine(EncodeImage(&quot;example.png&quot;));
+
+static string EncodeImage(string filePath) =&gt; Convert.ToBase64String(File.ReadAllBytes(filePath));</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+
+image = File.binread(&quot;image.png&quot;)
+puts(Base64.strict_encode64(image))</code></pre><p>Edit an image</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+function encodeImage(filePath) {
+  return fs.readFileSync(filePath, &quot;base64&quot;);
+}
+
+async function createFile(filePath) {
+  const result = await openai.files.create({
+    file: fs.createReadStream(filePath),
+    purpose: &quot;vision&quot;,
+  });
+  return result.id;
+}
+
+const prompt = `Generate a photorealistic image of a gift basket on a white background
+labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+containing all the items in the reference pictures.`;
+
+const base64Image1 = encodeImage(&quot;fixtures/body-lotion.png&quot;);
+const base64Image2 = encodeImage(&quot;fixtures/soap.png&quot;);
+const fileId1 = await createFile(&quot;fixtures/bath-bomb.png&quot;);
+const fileId2 = await createFile(&quot;fixtures/incense-kit.png&quot;);
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: &quot;user&quot;,
+      content: [
+        { type: &quot;input_text&quot;, text: prompt },
+        {
+          type: &quot;input_image&quot;,
+          image_url: `data:image/png;base64,${base64Image1}`,
+          detail: &quot;auto&quot;,
+        },
+        {
+          type: &quot;input_image&quot;,
+          image_url: `data:image/png;base64,${base64Image2}`,
+          detail: &quot;auto&quot;,
+        },
+        {
+          type: &quot;input_image&quot;,
+          file_id: fileId1,
+          detail: &quot;auto&quot;,
+        },
+        {
+          type: &quot;input_image&quot;,
+          file_id: fileId2,
+          detail: &quot;auto&quot;,
+        },
+      ],
+    },
+  ],
+  tools: [{ type: &quot;image_generation&quot;, model: &quot;gpt-image-2.5-sunburst&quot; }],
+});
+
+const imageData = response.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  fs.writeFileSync(&quot;gift-basket.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+} else {
+  console.log(response.output_text);
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+
+def encode_image(file_path):
+    with open(file_path, &quot;rb&quot;) as image_file:
+        return base64.b64encode(image_file.read()).decode(&quot;utf-8&quot;)
+
+
+def create_file(file_path):
+    with open(file_path, &quot;rb&quot;) as file_content:
+        result = client.files.create(file=file_content, purpose=&quot;vision&quot;)
+    return result.id
+
+
+prompt = &quot;&quot;&quot;Generate a photorealistic image of a gift basket on a white background
+labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+containing all the items in the reference pictures.&quot;&quot;&quot;
+
+base64_image1 = encode_image(&quot;body-lotion.png&quot;)
+base64_image2 = encode_image(&quot;soap.png&quot;)
+file_id1 = create_file(&quot;bath-bomb.png&quot;)
+file_id2 = create_file(&quot;incense-kit.png&quot;)
+
+response = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: prompt},
+                {
+                    &quot;type&quot;: &quot;input_image&quot;,
+                    &quot;image_url&quot;: f&quot;data:image/png;base64,{base64_image1}&quot;,
+                },
+                {
+                    &quot;type&quot;: &quot;input_image&quot;,
+                    &quot;image_url&quot;: f&quot;data:image/png;base64,{base64_image2}&quot;,
+                },
+                {
+                    &quot;type&quot;: &quot;input_image&quot;,
+                    &quot;file_id&quot;: file_id1,
+                },
+                {
+                    &quot;type&quot;: &quot;input_image&quot;,
+                    &quot;file_id&quot;: file_id2,
+                },
+            ],
+        }
+    ],
+    tools=[{&quot;type&quot;: &quot;image_generation&quot;, &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;}],
+)
+
+image_generation_calls = [
+    output for output in response.output if output.type == &quot;image_generation_call&quot;
+]
+
+image_data = [output.result for output in image_generation_calls]
+
+if image_data:
+    image_base64 = image_data[0]
+    with open(&quot;gift-basket.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))
+else:
+    print(response.output_text)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	bathBombID := uploadImage(client, &quot;bath-bomb.png&quot;)
+	incenseKitID := uploadImage(client, &quot;incense-kit.png&quot;)
+
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{OfInputItemList: responses.ResponseInputParam{
+			responses.ResponseInputItemParamOfMessage(
+				responses.ResponseInputMessageContentListParam{
+					responses.ResponseInputContentParamOfInputText(&quot;Generate a photorealistic image of a gift basket on a white background labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font, containing all the items in the reference pictures.&quot;),
+					{OfInputImage: &amp;responses.ResponseInputImageParam{ImageURL: openai.String(dataURL(&quot;body-lotion.png&quot;)), Detail: responses.ResponseInputImageDetailAuto}},
+					{OfInputImage: &amp;responses.ResponseInputImageParam{ImageURL: openai.String(dataURL(&quot;soap.png&quot;)), Detail: responses.ResponseInputImageDetailAuto}},
+					{OfInputImage: &amp;responses.ResponseInputImageParam{FileID: openai.String(bathBombID), Detail: responses.ResponseInputImageDetailAuto}},
+					{OfInputImage: &amp;responses.ResponseInputImageParam{FileID: openai.String(incenseKitID), Detail: responses.ResponseInputImageDetailAuto}},
+				},
+				responses.EasyInputMessageRoleUser,
+			),
+		}},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{Model: &quot;gpt-image-2.5-sunburst&quot;}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveFirstGeneratedImage(response, &quot;gift-basket.png&quot;)
+}
+
+func uploadImage(client openai.Client, filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	uploaded, err := client.Files.New(context.Background(), openai.FileNewParams{File: file, Purpose: openai.FilePurposeVision})
+	if err != nil {
+		panic(err)
+	}
+	return uploaded.ID
+}
+
+func dataURL(filename string) string {
+	image, err := os.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	return &quot;data:image/png;base64,&quot; + base64.StdEncoding.EncodeToString(image)
+}
+
+func saveFirstGeneratedImage(response *responses.Response, filename string) {
+	for _, output := range response.Output {
+		if output.Type != &quot;image_generation_call&quot; {
+			continue
+		}
+		image, err := base64.StdEncoding.DecodeString(output.AsImageGenerationCall().Result)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(filename, image, 0o600); err != nil {
+			panic(err)
+		}
+		return
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.files.FileCreateParams;
+import com.openai.models.files.FilePurpose;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseInputImage;
+import com.openai.models.responses.ResponseInputItem;
+import com.openai.models.responses.Tool;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+import java.util.List;
+
+Path lotionImage = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH&quot;));
+Path soapImage = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_2&quot;));
+Path bathBombImage = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_3&quot;));
+Path incenseImage = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_4&quot;));
+String lotionBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(lotionImage));
+String soapBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(soapImage));
+var firstFile =
+    client
+        .files()
+        .create(
+            FileCreateParams.builder().file(bathBombImage).purpose(FilePurpose.VISION).build());
+var secondFile =
+    client
+        .files()
+        .create(
+            FileCreateParams.builder().file(incenseImage).purpose(FilePurpose.VISION).build());
+String prompt =
+    &quot;&quot;&quot;
+    Generate a photorealistic image of a gift basket on a white background
+    labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+    containing all the items in the reference pictures.
+    &quot;&quot;&quot;;
+var input =
+    ResponseInputItem.ofMessage(
+        ResponseInputItem.Message.builder()
+            .role(ResponseInputItem.Message.Role.USER)
+            .addInputTextContent(prompt)
+            .addContent(
+                ResponseInputImage.builder()
+                    .detail(ResponseInputImage.Detail.AUTO)
+                    .imageUrl(&quot;data:image/png;base64,&quot; + lotionBase64)
+                    .build())
+            .addContent(
+                ResponseInputImage.builder()
+                    .detail(ResponseInputImage.Detail.AUTO)
+                    .imageUrl(&quot;data:image/png;base64,&quot; + soapBase64)
+                    .build())
+            .addContent(
+                ResponseInputImage.builder()
+                    .detail(ResponseInputImage.Detail.AUTO)
+                    .fileId(firstFile.id())
+                    .build())
+            .addContent(
+                ResponseInputImage.builder()
+                    .detail(ResponseInputImage.Detail.AUTO)
+                    .fileId(secondFile.id())
+                    .build())
+            .build());
+var response =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .inputOfResponse(List.of(input))
+                .addTool(Tool.ImageGeneration.builder().build())
+                .build());
+var image =
+    response.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No image generation call returned&quot;));
+Files.write(
+    Path.of(&quot;gift-basket.png&quot;),
+    Base64.getDecoder()
+        .decode(
+            image.result().orElseThrow(() -&gt; new IllegalStateException(&quot;No image returned&quot;))));</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+require &quot;pathname&quot;
+
+client = OpenAI::Client.new
+base64_images = [&quot;body-lotion.png&quot;, &quot;soap.png&quot;].map do |path|
+  Base64.strict_encode64(File.binread(path))
+end
+file_ids = [
+  client.files.create(file: Pathname(&quot;bath-bomb.png&quot;), purpose: :vision).id,
+  client.files.create(file: Pathname(&quot;incense-kit.png&quot;), purpose: :vision).id
+]
+prompt = &lt;&lt;~PROMPT
+  Generate a photorealistic image of a gift basket on a white background
+  labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+  containing all the items in the reference pictures.
+PROMPT
+response = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: :user,
+      content: [
+        {
+          type: :input_text,
+          text: prompt
+        },
+        *base64_images.map do |image|
+          {
+            type: :input_image,
+            image_url: &quot;data:image/png;base64,#{image}&quot;
+          }
+        end,
+        *file_ids.map do |file_id|
+          {
+            type: :input_image,
+            file_id: file_id
+          }
+        end
+      ]
+    }
+  ],
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;
+    }
+  ]
+)
+
+image_call = response.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless image_call.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+File.binwrite(&quot;gift-basket.png&quot;, Base64.strict_decode64(image_call.result))</code></pre><p>Image API</p><p>Edit an image</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI, { toFile } from &quot;openai&quot;;
+
+const client = new OpenAI();
+
+const prompt = `
+Generate a photorealistic image of a gift basket on a white background
+labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+containing all the items in the reference pictures.
+`;
+
+const imageFiles = [
+  &quot;fixtures/bath-bomb.png&quot;,
+  &quot;fixtures/body-lotion.png&quot;,
+  &quot;fixtures/incense-kit.png&quot;,
+  &quot;fixtures/soap.png&quot;,
+];
+
+const images = await Promise.all(
+  imageFiles.map(
+    async (file) =&gt;
+      await toFile(fs.createReadStream(file), null, {
+        type: &quot;image/png&quot;,
+      })
+  )
+);
+
+const response = await client.images.edit({
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  image: images,
+  prompt,
+});
+
+// Save the image to a file
+const image_base64 = response.data[0].b64_json;
+const image_bytes = Buffer.from(image_base64, &quot;base64&quot;);
+fs.writeFileSync(&quot;basket.png&quot;, image_bytes);</code></pre><pre><div class="code-lang">python</div><code>import base64
+from openai import OpenAI
+
+client = OpenAI()
+
+prompt = &quot;&quot;&quot;
+Generate a photorealistic image of a gift basket on a white background
+labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+containing all the items in the reference pictures.
+&quot;&quot;&quot;
+
+result = client.images.edit(
+    model=&quot;gpt-image-2.5-sunburst&quot;,
+    image=[
+        open(&quot;body-lotion.png&quot;, &quot;rb&quot;),
+        open(&quot;bath-bomb.png&quot;, &quot;rb&quot;),
+        open(&quot;incense-kit.png&quot;, &quot;rb&quot;),
+        open(&quot;soap.png&quot;, &quot;rb&quot;),
+    ],
+    prompt=prompt,
+)
+
+image_base64 = result.data[0].b64_json
+image_bytes = base64.b64decode(image_base64)
+
+# Save the image to a file
+with open(&quot;gift-basket.png&quot;, &quot;wb&quot;) as f:
+    f.write(image_bytes)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;io&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	files, closeFiles := openImages(
+		&quot;bath-bomb.png&quot;,
+		&quot;body-lotion.png&quot;,
+		&quot;incense-kit.png&quot;,
+		&quot;soap.png&quot;,
+	)
+	defer closeFiles()
+
+	response, err := client.Images.Edit(context.Background(), openai.ImageEditParams{
+		Model: openai.ImageModel(&quot;gpt-image-2.5-sunburst&quot;),
+		Image: openai.ImageEditParamsImageUnion{OfFileArray: files},
+		Prompt: &quot;Generate a photorealistic image of a gift basket on a white background &quot; +
+			&quot;labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font, containing all the items in the reference pictures.&quot;,
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveImage(&quot;basket.png&quot;, response.Data[0].B64JSON)
+}
+
+func openImages(names ...string) ([]io.Reader, func()) {
+	images := make([]io.Reader, 0, len(names))
+	files := make([]*os.File, 0, len(names))
+	for _, name := range names {
+		file, err := os.Open(name)
+		if err != nil {
+			closeFiles(files)
+			panic(err)
+		}
+		images = append(images, openai.File(file, name, &quot;image/png&quot;))
+		files = append(files, file)
+	}
+	return images, func() { closeFiles(files) }
+}
+
+func closeFiles(files []*os.File) {
+	for _, file := range files {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}
+}
+
+func saveImage(filename, encoded string) {
+	image, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(filename, image, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.MultipartField;
+import com.openai.models.images.ImageEditParams;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+import java.util.List;
+
+Path lotion = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH&quot;));
+Path soap = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_2&quot;));
+Path bathBomb = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_3&quot;));
+Path incense = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_PATH_4&quot;));
+try (InputStream lotionImage = Files.newInputStream(lotion);
+    InputStream bathBombImage = Files.newInputStream(bathBomb);
+    InputStream incenseImage = Files.newInputStream(incense);
+    InputStream soapImage = Files.newInputStream(soap)) {
+  var images =
+      client
+          .images()
+          .edit(
+              ImageEditParams.builder()
+                  .model(&quot;gpt-image-2.5-sunburst&quot;)
+                  .image(
+                      MultipartField.&lt;ImageEditParams.Image&gt;builder()
+                          .value(
+                              ImageEditParams.Image.ofInputStreams(
+                                  List.of(lotionImage, bathBombImage, incenseImage, soapImage)))
+                          .contentType(&quot;image/png&quot;)
+                          .filename(&quot;gift-basket-reference.png&quot;)
+                          .build())
+                  .prompt(
+                      &quot;&quot;&quot;
+                      Generate a photorealistic image of a gift basket on a white background
+                      labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+                      containing all the items in the reference pictures.
+                      &quot;&quot;&quot;)
+                  .build());
+
+  Files.write(
+      Path.of(&quot;gift-basket.png&quot;),
+      Base64.getDecoder().decode(images.data().orElseThrow().get(0).b64Json().orElseThrow()));
+}</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+require &quot;pathname&quot;
+
+client = OpenAI::Client.new
+images = %w[body-lotion.png bath-bomb.png incense-kit.png soap.png].map do |path|
+  OpenAI::FilePart.new(Pathname(path), content_type: &quot;image/png&quot;)
+end
+result = client.images.edit(
+  image: images,
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  prompt: &lt;&lt;~PROMPT
+    Generate a photorealistic image of a gift basket on a white background
+    labeled &#x27;Relax &amp; Unwind&#x27; with a ribbon and handwriting-like font,
+    containing all the items in the reference pictures.
+  PROMPT
+)
+generated_image = result.data&amp;.first or raise &quot;No image returned&quot;
+File.binwrite(&quot;gift-basket.png&quot;, Base64.strict_decode64(generated_image.b64_json))</code></pre><pre><div class="code-lang">bash</div><code>curl -s -D &gt;(grep -i x-request-id &gt;&amp;2) \
+  -o &gt;(jq -r &#x27;.data[0].b64_json&#x27; | base64 --decode &gt; gift-basket.png) \
+  -X POST &quot;https://api.openai.com/v1/images/edits&quot; \
+  -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot; \
+  -F &quot;model=gpt-image-2.5-sunburst&quot; \
+  -F &quot;image[]=@body-lotion.png&quot; \
+  -F &quot;image[]=@bath-bomb.png&quot; \
+  -F &quot;image[]=@incense-kit.png&quot; \
+  -F &quot;image[]=@soap.png&quot; \
+  -F &#x27;prompt=Generate a photorealistic image of a gift basket on a white background labeled &quot;Relax &amp; Unwind&quot; with a ribbon and handwriting-like font, containing all the items in the reference pictures&#x27;</code></pre><pre><div class="code-lang">bash</div><code>openai images edit \
+  --model gpt-image-2.5-sunburst \
+  --image body-lotion.png \
+  --image bath-bomb.png \
+  --image incense-kit.png \
+  --image soap.png \
+  --prompt &#x27;Generate a photorealistic image of a gift basket on a white background labeled &quot;Relax &amp; Unwind&quot; with a ribbon and handwriting-like font, containing all the items in the reference pictures&#x27; \
+  --raw-output \
+  --transform &#x27;data.0.b64_json&#x27; | base64 --decode &gt; gift-basket.png</code></pre><h3 id="guide-an-edit-with-markup">Guide an edit with markup</h3><p>Use the Image API’s <code>POST /v1/images/edits</code> endpoint for markup-guided edits with supported GPT Image 2.5 and 2.6 models. For regional edits with the Responses API, use a <a href="#edit-an-image-using-a-mask">mask</a>. Use an annotation layer to show where a change should happen and describe the change in <code>prompt</code>.</p><p>For example, download the <a href="https://developers.openai.com/images/platform/guides/image-prompting/kitchen.webp" target="_blank" rel="noopener">kitchen photo</a> and <a href="https://developers.openai.com/images/platform/guides/image-prompting/markup-vase-overlay-gpt-image-2-6.png" target="_blank" rel="noopener">transparent overlay</a> into the same directory. The overlay circles the vase to recolor.</p><p>Edit the circled vase with the Image API</p><pre><div class="code-lang">python</div><code>import base64
+from pathlib import Path
+
+from openai import OpenAI
+
+client = OpenAI()
+overlay = Path(&quot;markup-vase-overlay-gpt-image-2-6.png&quot;)
+with open(&quot;kitchen.webp&quot;, &quot;rb&quot;) as image, overlay.open(&quot;rb&quot;) as markup:
+    result = client.images.edit(
+        model=&quot;gpt-image-2.6-flare&quot;,
+        image=(&quot;kitchen.webp&quot;, image, &quot;image/webp&quot;),
+        markup=(overlay.name, markup, &quot;image/png&quot;),
+        quality=&quot;medium&quot;,
+        prompt=(
+            &quot;Recolor the striped vase inside the red circle to solid cobalt blue ceramic. &quot;
+            &quot;Keep its shape, the dried stems, and the rest of the kitchen unchanged. &quot;
+            &quot;Remove the red circle from the finished photo.&quot;
+        ),
+    )
+
+Path(&quot;vase.png&quot;).write_bytes(base64.b64decode(result.data[0].b64_json))</code></pre><pre><div class="code-lang">go</div><code>client := openai.NewClient()
+image, err := os.Open(&quot;kitchen.webp&quot;)
+if err != nil {
+	panic(err)
+}
+defer image.Close()
+markup, err := os.Open(&quot;markup-vase-overlay-gpt-image-2-6.png&quot;)
+if err != nil {
+	panic(err)
+}
+defer markup.Close()
+
+response, err := client.Images.Edit(context.Background(), openai.ImageEditParams{
+	Model:   openai.ImageModel(&quot;gpt-image-2.6-flare&quot;),
+	Image:   openai.ImageEditParamsImageUnion{OfFile: openai.File(image, &quot;kitchen.webp&quot;, &quot;image/webp&quot;)},
+	Markup:  openai.File(markup, &quot;markup-vase-overlay-gpt-image-2-6.png&quot;, &quot;image/png&quot;),
+	Quality: &quot;medium&quot;,
+	Prompt: &quot;Recolor the striped vase inside the red circle to solid cobalt blue ceramic. &quot; +
+		&quot;Keep its shape, the dried stems, and the rest of the kitchen unchanged. &quot; +
+		&quot;Remove the red circle from the finished photo.&quot;,
+})
+if err != nil {
+	panic(err)
+}
+result, err := base64.StdEncoding.DecodeString(response.Data[0].B64JSON)
+if err != nil {
+	panic(err)
+}
+if err := os.WriteFile(&quot;vase.png&quot;, result, 0o600); err != nil {
+	panic(err)
+}</code></pre><pre><div class="code-lang">bash</div><code>set -euo pipefail
+
+curl --fail --silent --show-error https://api.openai.com/v1/images/edits \
+  -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot; \
+  -F model=gpt-image-2.6-flare \
+  -F quality=medium \
+  -F &#x27;image=@kitchen.webp;type=image/webp&#x27; \
+  -F &#x27;markup=@markup-vase-overlay-gpt-image-2-6.png;type=image/png&#x27; \
+  -F &#x27;prompt=Recolor the striped vase inside the red circle to solid cobalt blue ceramic. Keep its shape, the dried stems, and the rest of the kitchen unchanged. Remove the red circle from the finished photo.&#x27; |
+  jq -er &#x27;.data[0].b64_json&#x27; | base64 --decode &gt; vase.png</code></pre><p>Photo with the overlay</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/markup-vase-input-gpt-image-2-6.webp" alt="Kitchen photo with a red circle around the striped vase on the dining table"></p><p>Flare output</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/markup-vase-gpt-image-2-6-flare.webp" alt="Flare edit of the kitchen with a blue vase and dried stems on the table"></p><ol><li>Keep the original image as the first input image.</li><li>Create a separate transparent PNG containing your circles, sketches, or other annotations. After orientation, the annotation layer and the first image must have the same width and height. The PNG must contain transparent pixels; do not flatten it onto the original image.</li><li>Send the annotation layer as <code>markup</code>. Multipart requests accept a file upload. JSON requests accept an object containing exactly one of <code>image_url</code> or <code>file_id</code>; <code>image_url</code> can contain an HTTPS URL or a base64 data URL. JSON edit requests use <code>images</code> for the input image array.</li><li>Describe the requested change and the details you want to preserve. Review the result before using it.</li></ol><p>Markup applies to the first input image. Additional images serve as references. The first input image and the annotation layer can each contain at most 16,777,216 pixels. The annotation file also has a 50 MB size limit. Do not combine <code>markup</code> with <code>mask</code> or <code>prompt_rewriter</code>.</p><h3 id="edit-an-image-using-a-mask">Edit an image using a mask</h3><p>You can provide a mask to indicate which part of the image should be edited.</p><p>When using a mask with GPT Image, additional instructions are sent to the model to help guide the editing process accordingly.</p><p>Masking with GPT Image is entirely prompt-based. The model uses the mask as guidance, but may not follow its exact shape with complete precision.</p><p>If you provide multiple input images, the mask will be applied to the first image.</p><p>Responses API</p><p>Edit an image with a mask</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+async function createFile(filePath) {
+  const result = await openai.files.create({
+    file: fs.createReadStream(filePath),
+    purpose: &quot;vision&quot;,
+  });
+  return result.id;
+}
+
+const fileId = await createFile(&quot;fixtures/sunlit_lounge.png&quot;);
+const maskId = await createFile(&quot;fixtures/mask.png&quot;);
+
+const response = await openai.responses.create({
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: &quot;user&quot;,
+      content: [
+        {
+          type: &quot;input_text&quot;,
+          text: &quot;generate an image of the same sunlit indoor lounge area with a pool but the pool should contain a flamingo&quot;,
+        },
+        {
+          type: &quot;input_image&quot;,
+          file_id: fileId,
+          detail: &quot;auto&quot;,
+        },
+      ],
+    },
+  ],
+  tools: [
+    {
+      type: &quot;image_generation&quot;,
+      model: &quot;gpt-image-2.5-sunburst&quot;,
+      quality: &quot;high&quot;,
+      input_image_mask: {
+        file_id: maskId,
+      },
+    },
+  ],
+});
+
+const imageData = response.output
+  .filter((output) =&gt; output.type === &quot;image_generation_call&quot;)
+  .map((output) =&gt; output.result);
+
+if (imageData.length &gt; 0) {
+  const imageBase64 = imageData[0];
+  fs.writeFileSync(&quot;lounge.png&quot;, Buffer.from(imageBase64, &quot;base64&quot;));
+}</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+
+def create_file(file_path):
+    with open(file_path, &quot;rb&quot;) as file_content:
+        result = client.files.create(file=file_content, purpose=&quot;vision&quot;)
+    return result.id
+
+
+fileId = create_file(&quot;sunlit_lounge.png&quot;)
+maskId = create_file(&quot;mask.png&quot;)
+
+response = client.responses.create(
+    model=&quot;gpt-6-astra&quot;,
+    input=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;input_text&quot;,
+                    &quot;text&quot;: &quot;generate an image of the same sunlit indoor lounge area with a pool but the pool should contain a flamingo&quot;,
+                },
+                {
+                    &quot;type&quot;: &quot;input_image&quot;,
+                    &quot;file_id&quot;: fileId,
+                },
+            ],
+        },
+    ],
+    tools=[
+        {
+            &quot;type&quot;: &quot;image_generation&quot;,
+            &quot;model&quot;: &quot;gpt-image-2.5-sunburst&quot;,
+            &quot;quality&quot;: &quot;high&quot;,
+            &quot;input_image_mask&quot;: {
+                &quot;file_id&quot;: maskId,
+            },
+        },
+    ],
+)
+
+image_data = [
+    output.result
+    for output in response.output
+    if output.type == &quot;image_generation_call&quot;
+]
+
+if image_data:
+    image_base64 = image_data[0]
+    with open(&quot;lounge.png&quot;, &quot;wb&quot;) as f:
+        f.write(base64.b64decode(image_base64))</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+	&quot;github.com/openai/openai-go/v3/responses&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	imageID := uploadImage(client, &quot;sunlit_lounge.png&quot;)
+	maskID := uploadImage(client, &quot;mask.png&quot;)
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: &quot;gpt-6-astra&quot;,
+		Input: responses.ResponseNewParamsInputUnion{OfInputItemList: responses.ResponseInputParam{
+			responses.ResponseInputItemParamOfMessage(
+				responses.ResponseInputMessageContentListParam{
+					responses.ResponseInputContentParamOfInputText(&quot;Generate an image of the same sunlit indoor lounge area with a pool, but the pool should contain a flamingo.&quot;),
+					{OfInputImage: &amp;responses.ResponseInputImageParam{FileID: openai.String(imageID), Detail: responses.ResponseInputImageDetailAuto}},
+				},
+				responses.EasyInputMessageRoleUser,
+			),
+		}},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &amp;responses.ToolImageGenerationParam{
+			Model:          &quot;gpt-image-2.5-sunburst&quot;,
+			Quality:        &quot;high&quot;,
+			InputImageMask: responses.ToolImageGenerationInputImageMaskParam{FileID: openai.String(maskID)},
+		}}},
+	})
+	if err != nil {
+		panic(err)
+	}
+	saveFirstGeneratedImage(response, &quot;lounge.png&quot;)
+}
+
+func uploadImage(client openai.Client, filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	uploaded, err := client.Files.New(context.Background(), openai.FileNewParams{File: file, Purpose: openai.FilePurposeVision})
+	if err != nil {
+		panic(err)
+	}
+	return uploaded.ID
+}
+
+func saveFirstGeneratedImage(response *responses.Response, filename string) {
+	for _, output := range response.Output {
+		if output.Type != &quot;image_generation_call&quot; {
+			continue
+		}
+		image, err := base64.StdEncoding.DecodeString(output.AsImageGenerationCall().Result)
+		if err != nil {
+			panic(err)
+		}
+		if err := os.WriteFile(filename, image, 0o600); err != nil {
+			panic(err)
+		}
+		return
+	}
+	panic(&quot;response did not include an image generation call&quot;)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.files.FileCreateParams;
+import com.openai.models.files.FilePurpose;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseInputImage;
+import com.openai.models.responses.ResponseInputItem;
+import com.openai.models.responses.Tool;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+import java.util.List;
+
+var image =
+    client
+        .files()
+        .create(
+            FileCreateParams.builder()
+                .file(Path.of(System.getenv(&quot;OPENAI_EXAMPLE_FILE_PATH&quot;)))
+                .purpose(FilePurpose.VISION)
+                .build());
+
+var mask =
+    client
+        .files()
+        .create(
+            FileCreateParams.builder()
+                .file(Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_MASK_PATH&quot;)))
+                .purpose(FilePurpose.VISION)
+                .build());
+
+var response =
+    client
+        .responses()
+        .create(
+            ResponseCreateParams.builder()
+                .model(&quot;gpt-6-astra&quot;)
+                .inputOfResponse(
+                    List.of(
+                        ResponseInputItem.ofMessage(
+                            ResponseInputItem.Message.builder()
+                                .role(ResponseInputItem.Message.Role.USER)
+                                .addInputTextContent(&quot;Add a flamingo to the pool.&quot;)
+                                .addContent(
+                                    ResponseInputImage.builder()
+                                        .detail(ResponseInputImage.Detail.AUTO)
+                                        .fileId(image.id())
+                                        .build())
+                                .build())))
+                .addTool(
+                    Tool.ImageGeneration.builder()
+                        .inputImageMask(
+                            Tool.ImageGeneration.InputImageMask.builder()
+                                .fileId(mask.id())
+                                .build())
+                        .build())
+                .build());
+
+String imageResult =
+    response.output().stream()
+        .flatMap(item -&gt; item.imageGenerationCall().stream())
+        .flatMap(call -&gt; call.result().stream())
+        .findFirst()
+        .orElseThrow(() -&gt; new IllegalStateException(&quot;No generated image returned&quot;));
+Files.write(Path.of(&quot;lounge.png&quot;), Base64.getDecoder().decode(imageResult));</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;base64&quot;
+require &quot;openai&quot;
+require &quot;pathname&quot;
+
+client = OpenAI::Client.new
+image = client.files.create(file: Pathname(&quot;sunlit_lounge.png&quot;), purpose: :vision)
+mask = client.files.create(file: Pathname(&quot;mask.png&quot;), purpose: :vision)
+response = client.responses.create(
+  model: &quot;gpt-6-astra&quot;,
+  input: [
+    {
+      role: :user,
+      content: [
+        {
+          type: :input_text,
+          text: &quot;Add a flamingo to the pool.&quot;
+        },
+        {
+          type: :input_image,
+          file_id: image.id
+        }
+      ]
+    }
+  ],
+  tools: [
+    {
+      type: :image_generation,
+      model: &quot;gpt-image-2.5-sunburst&quot;,
+      input_image_mask: { file_id: mask.id }
+    }
+  ]
+)
+
+image_call = response.output.find do |item|
+  item.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+end
+unless image_call.is_a?(OpenAI::Models::Responses::ResponseOutputItem::ImageGenerationCall)
+  raise &quot;No image generation call returned&quot;
+end
+
+File.binwrite(&quot;lounge.png&quot;, Base64.strict_decode64(image_call.result))</code></pre><p>Image API</p><p>Edit an image with a mask</p><pre><div class="code-lang">javascript</div><code>import fs from &quot;fs&quot;;
+import OpenAI, { toFile } from &quot;openai&quot;;
+
+const client = new OpenAI();
+
+const rsp = await client.images.edit({
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  image: await toFile(fs.createReadStream(&quot;fixtures/sunlit_lounge.png&quot;), null, {
+    type: &quot;image/png&quot;,
+  }),
+  mask: await toFile(fs.createReadStream(&quot;fixtures/mask.png&quot;), null, {
+    type: &quot;image/png&quot;,
+  }),
+  prompt: &quot;A sunlit indoor lounge area with a pool containing a flamingo&quot;,
+});
+
+// Save the image to a file
+const image_base64 = rsp.data[0].b64_json;
+const image_bytes = Buffer.from(image_base64, &quot;base64&quot;);
+fs.writeFileSync(&quot;lounge.png&quot;, image_bytes);</code></pre><pre><div class="code-lang">python</div><code>from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+result = client.images.edit(
+    model=&quot;gpt-image-2.5-sunburst&quot;,
+    image=open(&quot;sunlit_lounge.png&quot;, &quot;rb&quot;),
+    mask=open(&quot;mask.png&quot;, &quot;rb&quot;),
+    prompt=&quot;A sunlit indoor lounge area with a pool containing a flamingo&quot;,
+)
+
+image_base64 = result.data[0].b64_json
+image_bytes = base64.b64decode(image_base64)
+
+# Save the image to a file
+with open(&quot;composition.png&quot;, &quot;wb&quot;) as f:
+    f.write(image_bytes)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/base64&quot;
+	&quot;os&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	image, err := os.Open(&quot;sunlit_lounge.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	defer image.Close()
+	mask, err := os.Open(&quot;mask.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	defer mask.Close()
+
+	response, err := client.Images.Edit(context.Background(), openai.ImageEditParams{
+		Model:  openai.ImageModel(&quot;gpt-image-2.5-sunburst&quot;),
+		Image:  openai.ImageEditParamsImageUnion{OfFile: openai.File(image, &quot;sunlit_lounge.png&quot;, &quot;image/png&quot;)},
+		Mask:   openai.File(mask, &quot;mask.png&quot;, &quot;image/png&quot;),
+		Prompt: &quot;A sunlit indoor lounge area with a pool containing a flamingo&quot;,
+	})
+	if err != nil {
+		panic(err)
+	}
+	result, err := base64.StdEncoding.DecodeString(response.Data[0].B64JSON)
+	if err != nil {
+		panic(err)
+	}
+	if err := os.WriteFile(&quot;lounge.png&quot;, result, 0o600); err != nil {
+		panic(err)
+	}
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.MultipartField;
+import com.openai.models.images.ImageEditParams;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
+
+Path imagePath = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_FILE_PATH&quot;));
+Path maskPath = Path.of(System.getenv(&quot;OPENAI_EXAMPLE_IMAGE_MASK_PATH&quot;));
+try (InputStream image = Files.newInputStream(imagePath);
+    InputStream mask = Files.newInputStream(maskPath)) {
+  var images =
+      client
+          .images()
+          .edit(
+              ImageEditParams.builder()
+                  .model(&quot;gpt-image-2.5-sunburst&quot;)
+                  .image(
+                      MultipartField.&lt;ImageEditParams.Image&gt;builder()
+                          .value(ImageEditParams.Image.ofInputStream(image))
+                          .contentType(&quot;image/png&quot;)
+                          .filename(imagePath.getFileName().toString())
+                          .build())
+                  .prompt(&quot;A sunlit indoor lounge area with a pool containing a flamingo&quot;)
+                  .mask(
+                      MultipartField.&lt;InputStream&gt;builder()
+                          .value(mask)
+                          .contentType(&quot;image/png&quot;)
+                          .filename(maskPath.getFileName().toString())
+                          .build())
+                  .build());
+
+  Files.write(
+      Path.of(&quot;lounge.png&quot;),
+      Base64.getDecoder().decode(images.data().orElseThrow().get(0).b64Json().orElseThrow()));
+}</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;openai&quot;
+require &quot;pathname&quot;
+require &quot;base64&quot;
+
+client = OpenAI::Client.new
+image = OpenAI::FilePart.new(Pathname(&quot;sunlit_lounge.png&quot;), content_type: &quot;image/png&quot;)
+mask = OpenAI::FilePart.new(Pathname(&quot;mask.png&quot;), content_type: &quot;image/png&quot;)
+result = client.images.edit(
+  image: image,
+  mask: mask,
+  model: &quot;gpt-image-2.5-sunburst&quot;,
+  prompt: &quot;A sunlit indoor lounge area with a pool containing a flamingo&quot;
+)
+generated_image = result.data&amp;.first or raise &quot;No image returned&quot;
+File.binwrite(&quot;lounge.png&quot;, Base64.strict_decode64(generated_image.b64_json))</code></pre><pre><div class="code-lang">bash</div><code>curl -s -D &gt;(grep -i x-request-id &gt;&amp;2) \
+  -o &gt;(jq -r &#x27;.data[0].b64_json&#x27; | base64 --decode &gt; lounge.png) \
+  -X POST &quot;https://api.openai.com/v1/images/edits&quot; \
+  -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot; \
+  -F &quot;model=gpt-image-2.5-sunburst&quot; \
+  -F &quot;mask=@mask.png&quot; \
+  -F &quot;image[]=@sunlit_lounge.png&quot; \
+  -F &#x27;prompt=A sunlit indoor lounge area with a pool containing a flamingo&#x27;</code></pre><pre><div class="code-lang">bash</div><code>openai images edit \
+  --model gpt-image-2.5-sunburst \
+  --image sunlit_lounge.png \
+  --mask mask.png \
+  --prompt &quot;A sunlit indoor lounge area with a pool containing a flamingo&quot; \
+  --raw-output \
+  --transform &#x27;data.0.b64_json&#x27; | base64 --decode &gt; out.png</code></pre><div class="table-wrap"><table><thead><tr><th>Image</th><th>Mask</th><th>Output</th></tr></thead><tbody><tr><td><img src="https://cdn.openai.com/API/docs/images/sunlit_lounge.png" alt="A pink room with a pool"></td><td><img src="https://cdn.openai.com/API/docs/images/mask.png" alt="A mask in part of the pool"></td><td><img src="https://developers.openai.com/images/image-25-article/sunlit_lounge_result.png" alt="The original pool with an inflatable flamingo replacing the mask"></td></tr></tbody></table></div><p>Prompt: a sunlit indoor lounge area with a pool containing a flamingo</p><h4 id="mask-requirements">Mask requirements</h4><p>The image to edit and mask must be of the same format and size (less than 50MB in size).</p><p>The mask image must also contain an alpha channel. If you're using an image editing tool to create the mask, make sure to save the mask with an alpha channel.</p><p>You can modify a black and white image programmatically to add an alpha channel.</p><p>Add an alpha channel to a black and white mask</p><pre><div class="code-lang">python</div><code>from PIL import Image
+from io import BytesIO
+
+# 1. Load your black &amp; white mask as a grayscale image
+mask = Image.open(&quot;mask.png&quot;).convert(&quot;L&quot;)
+
+# 2. Convert it to RGBA so it has space for an alpha channel
+mask_rgba = mask.convert(&quot;RGBA&quot;)
+
+# 3. Then use the mask itself to fill that alpha channel
+mask_rgba.putalpha(mask)
+
+# 4. Convert the mask into bytes
+buf = BytesIO()
+mask_rgba.save(buf, format=&quot;PNG&quot;)
+mask_bytes = buf.getvalue()
+
+# 5. Save the resulting file
+img_path_mask_alpha = &quot;mask_alpha.png&quot;
+with open(img_path_mask_alpha, &quot;wb&quot;) as f:
+    f.write(mask_bytes)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;image&quot;
+	&quot;image/color&quot;
+	&quot;image/png&quot;
+	&quot;os&quot;
+)
+
+func main() {
+	file, err := os.Open(&quot;mask.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	mask, _, err := image.Decode(file)
+	if err != nil {
+		panic(err)
+	}
+	bounds := mask.Bounds()
+	withAlpha := image.NewNRGBA(bounds)
+	for y := bounds.Min.Y; y &lt; bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x &lt; bounds.Max.X; x++ {
+			gray := color.GrayModel.Convert(mask.At(x, y)).(color.Gray)
+			withAlpha.SetNRGBA(x, y, color.NRGBA{R: gray.Y, G: gray.Y, B: gray.Y, A: gray.Y})
+		}
+	}
+
+	output, err := os.Create(&quot;mask_alpha.png&quot;)
+	if err != nil {
+		panic(err)
+	}
+	if err := png.Encode(output, withAlpha); err != nil {
+		panic(err)
+	}
+	if err := output.Close(); err != nil {
+		panic(err)
+	}
+}</code></pre><h2 id="customize-image-output">Customize Image Output</h2><p>You can configure the following output options:</p><ul><li><strong>Size</strong>: Image dimensions (for example, <code>1024x1024</code>, <code>1024x1536</code>)</li><li><strong>Quality</strong>: Rendering quality (for example, <code>low</code>, <code>medium</code>, <code>high</code>)</li><li><strong>Format</strong>: File output format</li><li><strong>Compression</strong>: Compression level (0-100%) for JPEG and WebP formats</li><li><strong>Background</strong>: Transparent, opaque, or automatic</li></ul><p><code>size</code>, <code>quality</code>, and <code>background</code> support the <code>auto</code> option, where the model will automatically select the best option based on the prompt.</p><h3 id="size-and-quality-options">Size and quality options</h3><p><code>gpt-image-2.5-sunburst</code> and <code>gpt-image-2.5-flare</code> add <code>xhigh</code> and <code>max</code> quality settings. Both default to <code>auto</code>. Earlier GPT Image models support quality settings up to <code>high</code>.</p><div class="table-wrap"><table><thead><tr><th>Setting</th><th>Options</th></tr></thead><tbody><tr><td>Recommended sizes</td><td><code>1024x1024</code> (square), <code>1536x1024</code> (landscape), <code>1024x1536</code> (portrait)</td></tr><tr><td>Quality</td><td><code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>, <code>auto</code></td></tr></tbody></table></div><p>Both models also support custom dimensions as <code>WIDTHxHEIGHT</code> strings, such as <code>1536x864</code>. Width and height must be multiples of 16, the aspect ratio must be between 1:3 and 3:1, and neither edge may exceed 3840 pixels. The total pixel count must be between 655,360 and 8,294,400 (4K). Resolutions above <code>2560x1440</code> are experimental.</p><p>For transparent backgrounds with either model, set <code>background: &quot;transparent&quot;</code> and use <code>output_format: &quot;png&quot;</code> or <code>&quot;webp&quot;</code>.</p><p>Use <code>quality: &quot;low&quot;</code> for quick drafts. For final assets, compare higher quality settings to find the right balance of detail, latency, and cost.</p><h3 id="output-format">Output format</h3><p>The Image API returns base64-encoded image data. The default format is <code>png</code>, but you can also request <code>jpeg</code> or <code>webp</code>.</p><p>If using <code>jpeg</code> or <code>webp</code>, you can also specify the <code>output_compression</code> parameter to control the compression level (0-100%). For example, <code>output_compression=50</code> will compress the image by 50%.</p><p>Using <code>jpeg</code> is faster than <code>png</code>, so you should prioritize this format if latency is a concern.</p><h3 id="generate-svg-output">Generate SVG output</h3><p>Set <code>output_format: &quot;svg&quot;</code> on <code>POST /v1/images/generations</code>. Use SVG for graphics that need editable paths, shapes, and colors, such as icons and illustrations.</p><p>Set <code>n</code> to <code>1</code>. SVG output does not support streaming, partial images, <code>output_compression</code>, or <code>prompt_rewriter</code>. The image edit endpoint does not support SVG output, and an SVG is not a supported raster input for image edits.</p><p>The API creates a reference image and uses it to produce the SVG. The <code>quality</code> setting controls that reference image. Decode <code>data[0].b64_json</code> as base64 and save the resulting UTF-8 XML bytes with a <code>.svg</code> extension. The returned document contains static vector content; it does not support scripts, external resources, or embedded raster images.</p><p>Flare and Sunburst generated these SVG logos from the same prompt for a Field &amp; Flour bakery logo.</p><p>GPT Image 2.6 Flare</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/field-and-flour-gpt-image-2-6-flare.svg" alt="Flare SVG with a golden loaf above a two-line cream Field &amp;amp; Flour wordmark."></p><p>GPT Image 2.6 Sunburst</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/field-and-flour-gpt-image-2-6-sunburst.svg" alt="Sunburst SVG with a steaming loaf between wheat sprigs above the Field &amp;amp; Flour wordmark and a rolling pin."></p><h3 id="generate-animated-gif-output">Generate animated GIF output</h3><p>Set <code>output_format: &quot;gif&quot;</code> on <code>POST /v1/images/generations</code>. Describe the subject, motion, and desired loop in your prompt. GIF output is for image generation; the image edit endpoint does not support GIF output.</p><p>Use these request fields to control the animation:</p><div class="table-wrap"><table><thead><tr><th>Field</th><th>Values</th><th>Default</th></tr></thead><tbody><tr><td><code>frame_count</code></td><td>2–64 frames</td><td>9</td></tr><tr><td><code>frame_duration_ms</code></td><td>20–2000 milliseconds per frame, rounded to 10 ms</td><td>200</td></tr><tr><td><code>size</code></td><td><code>auto</code>, or <code>WIDTHxHEIGHT</code> with positive dimensions that are multiples of 16</td><td><code>auto</code></td></tr></tbody></table></div><p><code>size</code> describes each finished frame. The frame count, frame dimensions, and number of animations must fit the model's size limits and the total request pixel budget. If the request exceeds those limits, reduce <code>frame_count</code>, the frame dimensions, or <code>n</code>. Use <code>auto</code> to let the API choose a frame size within the model's limits.</p><p>The response contains the finished animation. Decode each result's <code>b64_json</code> value as base64 and save the bytes with a <code>.gif</code> extension. GIF output does not support streaming, partial images, custom <code>output_compression</code>, or <code>prompt_rewriter</code>. Use <code>frame_count</code> and <code>frame_duration_ms</code> only with GIF output.</p><p>Sunburst generated this lantern animation with <code>frame_count=9</code> and <code>frame_duration_ms=200</code>. The monkey returns to its starting pose after 1.8 seconds.</p><p><img src="https://developers.openai.com/images/platform/guides/image-prompting/monkey-lantern-gpt-image-2-6-sunburst.gif" alt="A monkey in a green coat lifts a glowing lantern, blinks, and lowers it again in front of a snowy cabin."></p><h2 id="limitations">Limitations</h2><p>GPT Image models are powerful and versatile image generation models, but they still have some limitations to be aware of:</p><ul><li><strong>Latency:</strong> Complex prompts may take up to 2 minutes to process.</li><li><strong>Text Rendering:</strong> Although significantly improved, the model can still struggle with precise text placement and clarity.</li><li><strong>Consistency:</strong> While capable of producing consistent imagery, the model may occasionally struggle to maintain visual consistency for recurring characters or brand elements across multiple generations.</li><li><strong>Composition Control:</strong> Despite improved instruction following, the model may have difficulty placing elements precisely in structured or layout-sensitive compositions.</li></ul><h3 id="content-moderation">Content Moderation</h3><p>All prompts and generated images are filtered in accordance with our <a href="https://openai.com/policies/usage-policies/" target="_blank" rel="noopener">content policy</a>.</p><p>For image generation using GPT Image models, you can control moderation strictness with the <code>moderation</code> parameter. This parameter supports two values:</p><ul><li><code>auto</code> (default): Standard filtering that seeks to limit creating certain categories of potentially age-inappropriate content.</li><li><code>low</code>: Less restrictive filtering.</li></ul><h3 id="handling-blocked-requests-and-other-errors">Handling blocked requests and other errors</h3><p>Handle image generation failures the same way you handle other API errors: check the HTTP status or SDK exception type, log the request ID, and refer to the <a href="https://developers.openai.com/api/docs/guides/error-codes" target="_blank" rel="noopener">error codes guide</a> for authentication, quota, rate-limit, and server failures. Retry transient rate-limit and server failures with backoff. Don't automatically retry quota errors or image generation user errors that require changing the request.</p><p>Some image generation failures are user-correctable and may return <code>error.type = &quot;image_generation_user_error&quot;</code>. Don't automatically retry these errors without modifying the prompt or input images. For programmatic handling, use <code>error.code</code> as the stable discriminator.</p><p>When <code>error.code = &quot;moderation_blocked&quot;</code>, the error may also include an optional <code>error.moderation_details</code> object:</p><pre><div class="code-lang">json</div><code>{
+  &quot;error&quot;: {
+    &quot;type&quot;: &quot;image_generation_user_error&quot;,
+    &quot;code&quot;: &quot;moderation_blocked&quot;,
+    &quot;moderation_details&quot;: {
+      &quot;moderation_stage&quot;: &quot;input&quot;,
+      &quot;categories&quot;: [&quot;harassment&quot;]
+    }
+  }
+}</code></pre><p>The <code>moderation_details</code> object provides coarse debugging context without exposing internal classifier labels or scores.</p><p><code>moderation_stage</code> can be:</p><ul><li><code>input</code>: The block came from the prompt or request inputs.</li><li><code>output</code>: The block came from a generated image or downstream output moderation stage.</li><li><code>unknown</code>: A rare fallback when provenance is hard to determine.</li></ul><p><code>categories</code> contains coarse public labels. For example, you might see values like <code>harassment</code>, <code>self-harm</code>, <code>sexual</code>, or <code>violence</code>.</p><p>For most apps, keep the primary end-user message generic. Use <code>moderation_details</code> for developer logs, support workflows, analytics, and light remediation hints.</p><p>Handle moderation-blocked image generation errors</p><pre><div class="code-lang">javascript</div><code>import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+try {
+  // The same error handling pattern applies to image generation requests,
+  // image edits, and Responses API tool calls that generate images.
+  await openai.images.generate({
+    model: &quot;gpt-image-2.5-sunburst&quot;,
+    prompt: &quot;Create a poster humiliating my coworker with insulting captions&quot;,
+  });
+} catch (error) {
+  if (error?.code !== &quot;moderation_blocked&quot;) {
+    throw error;
+  }
+
+  const moderationDetails = error.error?.moderation_details;
+  const categories = moderationDetails?.categories ?? [];
+  const stage = moderationDetails?.moderation_stage;
+
+  let hint =
+    &quot;This request could not be completed because it did not meet safety requirements.&quot;;
+
+  if (categories.includes(&quot;harassment&quot;)) {
+    hint =
+      &quot;Try removing abusive or targeting language and focus on neutral visual details instead.&quot;;
+  } else if (stage === &quot;input&quot;) {
+    hint =
+      &quot;Try revising the prompt or input images and submit the request again.&quot;;
+  } else if (stage === &quot;output&quot;) {
+    hint =
+      &quot;The generated result was blocked by a safety check. Try changing the prompt and generating again.&quot;;
+  }
+
+  console.error(&quot;Image generation blocked&quot;, {
+    request_id: error?.requestID,
+    code: error?.code,
+    moderation_details: moderationDetails,
+  });
+
+  console.log(hint);
+}</code></pre><pre><div class="code-lang">python</div><code>import openai
+from openai import OpenAI
+
+client = OpenAI()
+
+try:
+    # The same error handling pattern applies to image generation requests,
+    # image edits, and Responses API tool calls that generate images.
+    client.images.generate(
+        model=&quot;gpt-image-2.5-sunburst&quot;,
+        prompt=&quot;Create a poster humiliating my coworker with insulting captions&quot;,
+    )
+except openai.BadRequestError as error:
+    if error.code != &quot;moderation_blocked&quot;:
+        raise
+
+    error_body = error.body if isinstance(error.body, dict) else {}
+    moderation_details = error_body.get(&quot;moderation_details&quot;) or {}
+    categories = moderation_details.get(&quot;categories&quot;) or []
+    stage = moderation_details.get(&quot;moderation_stage&quot;)
+
+    hint = &quot;This request could not be completed because it did not meet safety requirements.&quot;
+
+    if &quot;harassment&quot; in categories:
+        hint = &quot;Try removing abusive or targeting language and focus on neutral visual details instead.&quot;
+    elif stage == &quot;input&quot;:
+        hint = &quot;Try revising the prompt or input images and submit the request again.&quot;
+    elif stage == &quot;output&quot;:
+        hint = &quot;The generated result was blocked by a safety check. Try changing the prompt and generating again.&quot;
+
+    print(
+        &quot;Image generation blocked&quot;,
+        {
+            &quot;request_id&quot;: error.request_id,
+            &quot;code&quot;: error.code,
+            &quot;moderation_details&quot;: moderation_details,
+        },
+    )
+
+    print(hint)</code></pre><pre><div class="code-lang">go</div><code>package main
+
+import (
+	&quot;context&quot;
+	&quot;encoding/json&quot;
+	&quot;errors&quot;
+	&quot;fmt&quot;
+	&quot;slices&quot;
+
+	&quot;github.com/openai/openai-go/v3&quot;
+)
+
+func main() {
+	client := openai.NewClient()
+	_, err := client.Images.Generate(context.Background(), openai.ImageGenerateParams{
+		Model:  openai.ImageModel(&quot;gpt-image-2.5-sunburst&quot;),
+		Prompt: &quot;Create a poster humiliating my coworker with insulting captions&quot;,
+	})
+	if err == nil {
+		return
+	}
+
+	var apiError *openai.Error
+	if !errors.As(err, &amp;apiError) || apiError.Code != &quot;moderation_blocked&quot; {
+		panic(err)
+	}
+
+	var body struct {
+		ModerationDetails struct {
+			Categories      []string `json:&quot;categories&quot;`
+			ModerationStage string   `json:&quot;moderation_stage&quot;`
+		} `json:&quot;moderation_details&quot;`
+	}
+	if err := json.Unmarshal([]byte(apiError.RawJSON()), &amp;body); err != nil {
+		panic(err)
+	}
+
+	hint := &quot;This request could not be completed because it did not meet safety requirements.&quot;
+	if slices.Contains(body.ModerationDetails.Categories, &quot;harassment&quot;) {
+		hint = &quot;Try removing abusive or targeting language and focus on neutral visual details instead.&quot;
+	} else if body.ModerationDetails.ModerationStage == &quot;input&quot; {
+		hint = &quot;Try revising the prompt or input images and submit the request again.&quot;
+	} else if body.ModerationDetails.ModerationStage == &quot;output&quot; {
+		hint = &quot;The generated result was blocked by a safety check. Try changing the prompt and generating again.&quot;
+	}
+
+	fmt.Printf(&quot;Image generation blocked (%s): %s\n&quot;, apiError.Code, hint)
+}</code></pre><pre><div class="code-lang">java</div><code>import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.errors.BadRequestException;
+import com.openai.models.images.ImageGenerateParams;
+import java.util.List;
+import java.util.Map;
+
+try {
+  var images =
+      client
+          .images()
+          .generate(
+              ImageGenerateParams.builder()
+                  .model(&quot;gpt-image-2.5-sunburst&quot;)
+                  .prompt(&quot;Create a poster humiliating my coworker with insulting captions&quot;)
+                  .build());
+
+  System.out.println(images.data().orElseThrow().get(0).b64Json().orElseThrow());
+} catch (BadRequestException error) {
+  if (!error.code().orElse(&quot;&quot;).equals(&quot;moderation_blocked&quot;)) {
+    throw error;
+  }
+  Map&lt;?, ?&gt; body = error.body().convert(Map.class);
+  Object detailsValue = body.get(&quot;moderation_details&quot;);
+  Map&lt;?, ?&gt; details = detailsValue instanceof Map&lt;?, ?&gt; values ? values : Map.of();
+  Object categories = details.get(&quot;categories&quot;);
+  Object stage = details.get(&quot;moderation_stage&quot;);
+
+  String hint = &quot;This request did not meet safety requirements.&quot;;
+  if (categories instanceof List&lt;?&gt; values &amp;&amp; values.contains(&quot;harassment&quot;)) {
+    hint = &quot;Remove abusive or targeting language and focus on neutral visual details.&quot;;
+  } else if (&quot;input&quot;.equals(stage)) {
+    hint = &quot;Revise the prompt or input images, then submit the request again.&quot;;
+  } else if (&quot;output&quot;.equals(stage)) {
+    hint = &quot;Change the prompt and generate again; the generated result was blocked.&quot;;
+  }
+  System.err.println(&quot;Image generation blocked (&quot; + error.code().orElseThrow() + &quot;): &quot; + hint);
+}</code></pre><pre><div class="code-lang">ruby</div><code>require &quot;openai&quot;
+
+client = OpenAI::Client.new
+begin
+  client.images.generate(
+    model: &quot;gpt-image-2.5-sunburst&quot;,
+    prompt: &quot;Create a poster humiliating my coworker with insulting captions&quot;
+  )
+rescue OpenAI::Errors::BadRequestError =&gt; error
+  raise unless error.code == &quot;moderation_blocked&quot;
+
+  body = Hash.try_convert(error.body) || {}
+  body = Hash.try_convert(body[:error] || body[&quot;error&quot;]) || body
+  moderation_details = body[:moderation_details] || body[&quot;moderation_details&quot;] || {}
+  categories = moderation_details[:categories] || moderation_details[&quot;categories&quot;] || []
+  stage = moderation_details[:moderation_stage] || moderation_details[&quot;moderation_stage&quot;]
+
+  hint = &quot;This request did not meet safety requirements.&quot;
+  if categories.include?(&quot;harassment&quot;)
+    hint = &quot;Remove abusive or targeting language and focus on neutral visual details.&quot;
+  elsif stage == &quot;input&quot;
+    hint = &quot;Revise the prompt or input images, then submit the request again.&quot;
+  elsif stage == &quot;output&quot;
+    hint = &quot;Change the prompt and generate again; the generated result was blocked.&quot;
+  end
+
+  warn(&quot;Image generation blocked (#{error.code}): #{hint}&quot;)
+end</code></pre><h3 id="supported-models">Supported models</h3><p>When using image generation in the Responses API, <code>gpt-5</code> and newer models should support the image generation tool. <a href="https://developers.openai.com/api/docs/models" target="_blank" rel="noopener">Check the model detail page for your model</a> to confirm if your desired model can use the image generation tool.</p><h2 id="cost-and-latency">Cost and latency</h2><h3 id="gpt-image-2-6-costs">GPT Image 2.6 costs</h3><p>Image output costs $30 per million billable tokens. Use the <a href="#calculating-costs">calculator</a> to estimate the output cost for one image.</p><p>See <a href="https://developers.openai.com/api/docs/pricing#image-generation" target="_blank" rel="noopener">image generation pricing</a> for text and image rates per million tokens.</p><p>Markup-guided edits use the same token rates as other edits, with no extra fee. For SVG output, you pay the image model’s rate for the reference image and the authoring model’s rate for the tokens it uses to produce the SVG. The total depends on how many tokens each model uses.</p><h3 id="gpt-image-2-5-costs">GPT Image 2.5 costs</h3><p>Responses API requests include the mainline model's token usage in addition to image generation costs.</p><p>Both GPT Image 2.5 models use the same token rates: $8 per million image input tokens, $2 per million cached image input tokens, $30 per million image output tokens, $5 per million text input tokens, and $1.25 per million cached text input tokens. See <a href="https://developers.openai.com/api/docs/pricing#image-generation" target="_blank" rel="noopener">pricing</a>.</p><p>Use the response's <code>usage</code> to measure token consumption for your prompts, sizes, and quality settings. Equal token rates don't mean equal cost per image: token consumption can differ by model and quality setting. For older-model pricing examples, see <a href="#earlier-gpt-image-models">Earlier GPT Image models</a>.</p><h3 id="cached-input-pricing">Cached input pricing</h3><p>For GPT Image 2 and GPT Image 2.5, cached input pricing applies only to the image generation tool in the Responses API. It doesn't apply to direct Images API requests, including <code>/v1/images/edits</code>.</p><p>Cached image generation inputs are reflected in billing, but their cached token counts aren't included in the Responses API output. The response's <code>usage</code> can't verify these cache hits.</p><h3 id="calculating-costs">Calculating costs</h3><p>Select a model, quality, and size to estimate output tokens and image output cost. For GPT Image 2.6 and 2.5 Sunburst and Flare, the quality options are <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, and <code>max</code>. For <code>gpt-image-2</code>, the options are <code>low</code>, <code>medium</code>, and <code>high</code>. The models can use different token counts for the same quality setting and share the same price per image output token. Use explicit quality and size values for this estimate; <code>auto</code> depends on the generated image.</p><p>&lt;GptImageTokenCalculator client:load outputPricePerMillion={Number( pricing.latest.subsections .find((section) =&gt; section.price_type === "Image tokens") ?.items.find((item) =&gt; item.name === "gpt-image-2")?.values.main.output )} /&gt;</p><h3 id="partial-images-cost">Partial images cost</h3><p>If you want to <a href="#streaming">stream image generation</a> using the <code>partial_images</code> parameter, each partial image will incur an additional 100 image output tokens.</p><h2 id="earlier-gpt-image-models">Earlier GPT Image models</h2><p>The details below apply to earlier models, not Sunburst or Flare. For new integrations, use one of the GPT Image 2.5 models described above.</p><p>GPT Image 2 settings and input fidelity</p><p><code>gpt-image-2</code> accepts any resolution in the <code>size</code> parameter when it satisfies the constraints below. Square images are typically fastest to generate.</p><div class="table-wrap"><table>
+  <tbody>
+    <tr>
+      <td>Popular sizes</td>
+      <td>
+        
+          
+            `1024x1024` (square)
+          
+          
+            `1536x1024` (landscape)
+          
+          
+            `1024x1536` (portrait)
+          
+          
+            `2048x2048` (2K square)
+          
+          
+            `2048x1152` (2K landscape)
+          
+          
+            `3840x2160` (4K landscape)
+          
+          
+            `2160x3840` (4K portrait)
+          
+          
+            `auto` (default)
+          
+        
+      </td>
+    </tr>
+    <tr>
+      <td>Size constraints</td>
+      <td>
+        
+          
+            Maximum edge length must be less than or equal to 
+            `3840px`
+          
+          
+            Both edges must be multiples of `16px`
+          
+          
+            Long edge to short edge ratio must not exceed `3:1`
+          
+          
+            Total pixels must be at least `655,360` and no more than 
+            `8,294,400`
+          
+        
+      </td>
+    </tr>
+    <tr>
+      <td>Quality options</td>
+      <td>
+        
+          
+            `low`
+          
+          
+            `medium`
+          
+          
+            `high`
+          
+          
+            `auto` (default)
+          
+        
+      </td>
+    </tr>
+  </tbody>
+</table></div><h3 id="image-input-fidelity">Image input fidelity</h3><p>The <code>input_fidelity</code> parameter controls how strongly a model preserves details from input images during edits and reference-image workflows. For <code>gpt-image-2</code>, omit this parameter; the API doesn't allow changing it because the model processes every image input at high fidelity automatically.</p><p>Because <code>gpt-image-2</code> always processes image inputs at high fidelity, image input tokens can be higher for edit requests that include reference images. To understand the cost implications, refer to the <a href="https://developers.openai.com/api/docs/guides/images-vision?api-mode=responses#calculating-costs" target="_blank" rel="noopener">vision costs</a> section.</p><p>Older-model pricing examples</p><h3 id="models-prior-to-gpt-image-2">Models prior to <code>gpt-image-2</code></h3><p>GPT Image models prior to <code>gpt-image-2</code> generate images by first producing specialized image tokens. Both latency and eventual cost are proportional to the number of tokens required to render an image—larger image sizes and higher quality settings result in more tokens.</p><p>The number of tokens generated depends on image dimensions and quality:</p><div class="table-wrap"><table><thead><tr><th>Quality</th><th>Square (1024×1024)</th><th>Portrait (1024×1536)</th><th>Landscape (1536×1024)</th></tr></thead><tbody><tr><td>Low</td><td>272 tokens</td><td>408 tokens</td><td>400 tokens</td></tr><tr><td>Medium</td><td>1056 tokens</td><td>1584 tokens</td><td>1568 tokens</td></tr><tr><td>High</td><td>4160 tokens</td><td>6240 tokens</td><td>6208 tokens</td></tr></tbody></table></div><p>Note that you will also need to account for <a href="https://developers.openai.com/api/docs/guides/images-vision?api-mode=responses#calculating-costs" target="_blank" rel="noopener">input tokens</a>: text tokens for the prompt and image tokens for the input images if editing images. Because <code>gpt-image-2</code> always processes image inputs at high fidelity, edit requests that include reference images can use more input tokens.</p><p>Refer to the <a href="https://developers.openai.com/api/docs/pricing#image-generation" target="_blank" rel="noopener">pricing page</a> for current text and image token prices, and use the <a href="#calculating-costs">Calculating costs</a> section to estimate image output costs.</p><p>The final cost is the sum of:</p><ul><li>input text tokens</li><li>input image tokens if using the edits endpoint</li><li>image output tokens</li></ul><h3 id="historical-output-costs">Historical output costs</h3><p><code>gpt-image-2</code> supports thousands of valid resolutions; the table below lists the same sizes used for previous GPT Image models for comparison. For GPT Image 1.5, GPT Image 1, and GPT Image 1 Mini, the legacy per-image output pricing table is also listed below. You should still account for text and image input tokens when estimating the total cost of a request.</p><p><code>gpt-image-1</code> was shut down on October 23, 2026. Its prices below are retained for historical comparisons. See the <a href="https://developers.openai.com/api/docs/deprecations#2026-04-22-legacy-gpt-model-snapshots" target="_blank" rel="noopener">deprecation notice</a> for replacement models.</p><p>A larger non-square resolution can sometimes produce fewer output tokens than a smaller or square resolution at the same quality setting.</p><div class="table-wrap"><table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>
+        Quality
+      </th>
+      <th>1024 × 1024</th>
+      <th>1024 × 1536</th>
+      <th>1536 × 1024</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="3">
+        GPT Image 2
+        
+
+        
+Additional sizes available
+
+      </td>
+      <td>Low</td>
+      <td>$0.006</td>
+      <td>$0.005</td>
+      <td>$0.005</td>
+    </tr>
+    <tr>
+      <td>Medium</td>
+      <td>$0.053</td>
+      <td>$0.041</td>
+      <td>$0.041</td>
+    </tr>
+    <tr>
+      <td>High</td>
+      <td>$0.211</td>
+      <td>$0.165</td>
+      <td>$0.165</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3">
+        GPT Image 1.5
+      </td>
+      <td>Low</td>
+      <td>$0.009</td>
+      <td>$0.013</td>
+      <td>$0.013</td>
+    </tr>
+    <tr>
+      <td>Medium</td>
+      <td>$0.034</td>
+      <td>$0.05</td>
+      <td>$0.05</td>
+    </tr>
+    <tr>
+      <td>High</td>
+      <td>$0.133</td>
+      <td>$0.2</td>
+      <td>$0.2</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3">
+        GPT Image 1
+      </td>
+      <td>Low</td>
+      <td>$0.011</td>
+      <td>$0.016</td>
+      <td>$0.016</td>
+    </tr>
+    <tr>
+      <td>Medium</td>
+      <td>$0.042</td>
+      <td>$0.063</td>
+      <td>$0.063</td>
+    </tr>
+    <tr>
+      <td>High</td>
+      <td>$0.167</td>
+      <td>$0.25</td>
+      <td>$0.25</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3">
+        GPT Image 1 Mini
+      </td>
+      <td>Low</td>
+      <td>$0.005</td>
+      <td>$0.006</td>
+      <td>$0.006</td>
+    </tr>
+    <tr>
+      <td>Medium</td>
+      <td>$0.011</td>
+      <td>$0.015</td>
+      <td>$0.015</td>
+    </tr>
+    <tr>
+      <td>High</td>
+      <td>$0.036</td>
+      <td>$0.052</td>
+      <td>$0.052</td>
+    </tr>
+
+  </tbody>
+</table></div></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

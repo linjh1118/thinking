@@ -18,7 +18,7 @@ related: ["[[Kimi-K3]]", "[[Kimi-K2.6]]"]
 > 这次最值得研究的不是“又大了多少参数”，而是**沿用 K3 做更大规模后训练，把数百领域的联合 RL、长上下文执行、沙箱与环境质量检查一起扩展**。官方在长程编码、CAD、金融和事实准确性上给出了结果与大量评测脚注；但没有披露可复现的 K3.1 训练 recipe。Pro 与 Highspeed 合并为 K3.1 family，不把加速服务当另一代。
 
 > [!warning] 原始资料不足：当前不能达到完整技术报告精读深度
-> 本笔记已逐段阅读官方博客、全部评测脚注并保存八张官方图。**本轮未找到独立 K3.1 Tech Report、已发布 HF model card 或完整权重**，因此无法达到 K3 原报告那种架构、训练超参数、数据比例、消融与复现审计的深度。这里明确承认资料不足，不用 K3 的旧报告填成 K3.1 的新增事实。权重只是承诺在 **2026-11-04 前**开放，不能写成目前已可下载。
+> 本笔记已逐段阅读官方博客、全部评测脚注并保存八张官方图。**现已核到官方 HF 模型卡、配置、许可证和权重文件列表，独立 K3.1 Tech Report 仍待核**，因此无法达到 K3 原报告那种架构、训练超参数、数据比例、消融与复现审计的深度。这里明确承认资料不足，不用 K3 的旧报告填成 K3.1 的新增事实。发布博客承诺在 11 月 4 日前开放；11 月 5 日巡检核见官方 HF 仓库。11 月 2 日是仓库初始提交时间，公开可见时间尚待独立证实。
 
 ![Kimi K3.1 Pro 官方主视觉](src/assets/hero.webp)
 
@@ -30,7 +30,7 @@ related: ["[[Kimi-K3]]", "[[Kimi-K2.6]]"]
 | K3.1 定位 | K3 的后训练升级，3T-class，1M-token context | 新预训练架构、精确 3T 总参数或 3T 激活参数 |
 | Pro Highspeed | 同时推出，官方称速度为 Pro 的 2–3 倍 | 独立新正代，或同等预算下所有任务端到端固定快 3 倍 |
 | 服务渠道 | Kimi.com、移动端、Kimi Work、Kimi Code、API | 每个账号、地区与企业默认都已打开 |
-| 开放权重 | 承诺在 11 月 4 日前发布 | HF 原卡/权重已经发布，或已确定许可证与实际部署成本 |
+| 开放权重 | 官方 HF 卡、配置、许可证和权重分片列表已核到 | 精确公开日、实际部署成本、Highspeed 同预算对照仍需证据 |
 
 API 模型名为 `kimi-k3.1-pro` / `kimi-k3.1-pro-highspeed`。企业管理员在首发时需要主动启用，默认关闭；Kimi Work 要求 3.1.0 或更新版。API 的 Zero Data Retention 是服务选项，不是“所有产品永不保存数据”的普遍承诺。本轮没有调用服务、提交私有数据或下载权重。
 
@@ -132,7 +132,7 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 - 对 simulator/task 失败先做环境诊断：固定模型，检查工具、状态与 oracle；不能把坏环境反馈直接变成偏好或 RL 负奖励。
 - 固定任务与工具，分别记录 claim-level factuality、最终产物质量、pass@1/pass@k、总 token、工具调用和 wall time；Highspeed 是否降低每成功任务成本需要实际对照，不从 2–3× 服务宣传外推。
 
-待补：完整权重及 license、HF 原卡、独立技术报告、后训练样本/奖励/采样比例与消融、同预算 Highspeed 质量/时延。只补证据，不预填结论。
+待补：独立技术报告、后训练样本/奖励/采样比例与消融、同预算 Highspeed 质量/时延、权重首次公开的精确时点。
 
 ## 来源与关联
 
@@ -142,3 +142,9 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 - [[Kimi-K2.6]]：从执行密集任务到更长程交付的历史对照。
 
 > 📊 相关可视化: [[kimi_k3_1_poster_zh.html|Kimi K3.1 中文研究 Poster]]
+
+## 11 月 5 日核见官方权重仓库
+
+[Moonshot 官方 HF 模型卡](https://huggingface.co/moonshotai/Kimi-K3.1-Pro)列出 2.8T 总参数、104B 激活参数、93 层、1,048,576 token 上下文、MoonViT-V2 视觉编码器，以及 QAT 的 MXFP4 权重和 MXFP8 激活。69 层 KDA 搭配 24 层 Gated DSA；后者替换 K3 的全注意力 Gated MLA，索引 Top-K 为 2,048。稀疏索引选择的是注意力候选，上下文窗口是可接受的输入范围，两者不是同一限制。
+
+这一披露补足了博客中缺失的架构和权重信息。保留 10 月 24 日服务首发日期。官方仓库的 [提交历史](https://huggingface.co/moonshotai/Kimi-K3.1-Pro/commits/main)记录 11 月 2 日初始提交；本轮只核验文件清单，未下载权重。发布使用专用 [Kimi K3.1 Pro License](https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/main/LICENSE)。后训练样本比例、具体 RL 超参数和长上下文延迟仍无完整证据。

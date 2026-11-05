@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPT-Image 2.6 · 专项模型研究 Poster</title>
+<style>
+:root{color-scheme:dark;--bg:#0f1117;--card:#171d2b;--text:#eef0ff;--muted:#b7bfd5;--line:#424864;--accent:#c2b1ff}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f5fc;--card:#fff;--text:#192137;--muted:#48536c;--line:#cbd0e1;--accent:#5040a5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,sans-serif}main{max-width:1450px;margin:auto;padding:clamp(14px,3vw,45px)}header{padding:30px 32px;background:linear-gradient(112deg,#282557,#15294b);color:#fff;border-radius:18px}h1{margin:.15em 0;font-size:clamp(32px,5vw,68px);line-height:1.1}header a{color:#e4dcff}header p{max-width:65ch}.eyebrow{font-size:.85em;letter-spacing:.13em;color:#d2c9ff}.columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:20px}section{background:var(--card);border:1px solid var(--line);padding:20px;border-radius:15px}h2{color:var(--accent);margin:0 0 .5em;font-size:1.2em}h3{margin:.6em 0 .1em;font-size:1em}p{margin:.35em 0 .7em}figure{margin:0;min-width:0}img{width:100%;height:auto;border-radius:8px;display:block}figcaption,small{color:var(--muted)}.samples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:.6em 0}a{color:var(--accent)}.flag{border-left:3px solid #bd8a51;padding-left:10px}.number{font-size:1.6em;color:var(--accent);font-weight:750}@media(max-width:840px){.columns{grid-template-columns:1fr}header{padding:24px 16px}}
+</style>
+<style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body><main>
+<header><div class="eyebrow">OpenAI · 2026-11-04 · 图像生成与编辑支线</div><h1>GPT-Image 2.6</h1><p>一个家族，两档模型。用复杂度管理规划，用质量控制细节，分别验收编辑、动图与矢量输出。</p><a href="GPT-Image-2.6-Family.html">研读笔记</a> · <a href="https://openai.com/index/introducing-images-2-6/">官方发布</a> · <a href="https://deploymentsafety.openai.com/chatgpt-images-2-6">系统卡</a></header>
+<div class="columns">
+<section><h2>01 · 家族与任务</h2><h3>Flare</h3><p>速度优先，适合初稿和频繁改动。官方最低约 6 秒对应低 quality 示例条件。</p><h3>Sunburst</h3><p>细节与精确编辑优先，适合复杂布局、品牌资产和多轮修订。</p><h3>接口与交付</h3><p>两款支持 Images API 生成与编辑。同标价仍要比较总 token、迭代轮数及到成品的时间。GIF 看跨帧稳定，SVG 查可编辑性与实际渲染。</p></section>
+<section><h2>02 · 同条件只改 Complexity</h2><p>官方 Sunburst 样例固定提示、尺寸和 medium quality。比较构图、奖杯与文字位置。</p>
+<div class="samples"><figure><a href="src/assets/complexity-low.webp"><img src="src/assets/complexity-low.webp" alt="低复杂度的官方足球剪纸样例"></a><figcaption>Low</figcaption></figure><figure><a href="src/assets/complexity-medium.webp"><img src="src/assets/complexity-medium.webp" alt="中复杂度的官方足球剪纸样例"></a><figcaption>Medium</figcaption></figure><figure><a href="src/assets/complexity-high.webp"><img src="src/assets/complexity-high.webp" alt="高复杂度的官方足球剪纸样例"></a><figcaption>High</figcaption></figure></div>
+<small>展示的是官方示例，不是独立的速度或质量比较。</small></section>
+<section><h2>03 · 审核与证据边界</h2><p class="number">3,077</p><p>系统卡固定的对抗请求数。Flare 审核后呈现违规图像 1.49% → 2.14%，总体差异不显著。审核前非违规比例 78.36% → 75.04%，官方报告为显著下降。</p><p>GIF 需要检查跨帧含义。来源披露结合 C2PA 与不可见 SynthID 水印。</p><p class="flag">资料达到系统卡与产品接口级。参数量、架构、计算量及独立质量／延迟对照未披露。</p></section>
+</div></main><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

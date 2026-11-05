@@ -1946,7 +1946,13 @@ def render_inline_md(text: str, destination: Path, targets: dict[str, Path]) -> 
     # Preserve inline code before escaping the remaining prose.
     text = re.sub(r"`([^`]+)`", lambda m: hold(f"<code>{html.escape(m.group(1))}</code>"), text)
     text = html.escape(text, quote=False)
-    text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", lambda m: hold(f'<img src="{html.escape(m.group(2), quote=True)}" alt="{html.escape(m.group(1), quote=True)}">'), text)
+    def markdown_image(match: re.Match[str]) -> str:
+        alt, source = (html.unescape(value) for value in match.groups())
+        if source.startswith("<") and source.endswith(">"):
+            source = source[1:-1]
+        return hold(f'<img src="{html.escape(source, quote=True)}" alt="{html.escape(alt, quote=True)}">')
+
+    text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", markdown_image, text)
     text = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", lambda m: hold(f'<a href="{html.escape(m.group(2), quote=True)}" target="_blank" rel="noopener">{m.group(1)}</a>'), text)
     def local_link(m: re.Match[str]) -> str:
         label, href = m.group(1), html.unescape(m.group(2)).strip()
@@ -2470,6 +2476,15 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
         owner, repository, revision, original_path = parts
         file_base = f"https://github.com/{owner}/{repository}/blob/{revision}/"
         asset_base = f"https://raw.githubusercontent.com/{owner}/{repository}/{revision}/"
+    elif parsed.netloc == "developers.openai.com":
+        text = published.read_text()
+        text = re.sub(
+            r'(href|src)=(["\'])(/(?!/)[^"\']*)\2',
+            lambda m: f"{m[1]}={m[2]}https://developers.openai.com{m[3]}{m[2]}",
+            text,
+        )
+        published.write_text(text)
+        return
     else:
         return
     base_dir = str(Path(original_path).parent)
