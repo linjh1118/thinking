@@ -1,0 +1,607 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2610.24766">打开官方原文 ↗</a> · <a href="echo-paper.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>ECHO: Efficient Causal Self-Recursion BeyondAuxiliary Multi-Token Prediction Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+1 Introduction 
+2 Related Work 
+2.1 Multi-Token Prediction 
+2.2 Post-hoc Drafter 
+2.3 Looped Transformers 
+3 ECHO: Efficient Causal Self-Recursion 
+3.1 Direct Multi-Horizon Supervision via Final-Layer Sharing 
+Causal Self-Recursion: 
+Sharing improves downstream performance, especially in reasoning capability. 
+Sharing promotes longer-horizon supervision. 
+3.2 Affordable Long-Horizon Supervision via Dynamic Depth Sampling (DDS) 
+Dynamic Depth Sampling. 
+DDS lowers the MTP training overhead while preserving downstream benefit. 
+4 Pushing the Frontier of Speculative Decoding under Realistic Serving 
+4.1 Training Shallow, Drafting Deep 
+DDS aligns training with speculative decoding. 
+Extrapolating Beyond the Training Horizon. 
+4.2 Staying Aligned under realistic setting 
+Causal Drafting Matters in Open-Ended Generation. 
+Joint Pretraining Closes the Alignment Gap. 
+5 The Advantage Holds across Data, Depth and Runs 
+5.1 Scaling with Data 
+ECHO’s advantage persists with more pretraining data. 
+5.2 Scaling with Depth 
+ECHO’s advantage holds across sampling depths. 
+5.3 Stability across Runs 
+ECHO’s lead is robust to training and evaluation noise. 
+6 Experiment Setup 
+7 Conclusion 
+References 
+A Experiment Setup 
+A.1 Pretraining 
+A.2 Benchmark Evaluation 
+A.3 Speculative Decoding under Serving 
+B Decayed Depth Supervision and Accepted Length 
+Derivation of . 
+Data not generated by the target. 
+C Full Benchmark Results 
+D Stability across Pretraining Runs 
+Twice the training budget. 
+E Next-Token Loss Does Not Separate the Two Objectives 
+The same holds along depth. 
+F After Supervised Finetuning 
+G Decode Speedup under Serving 
+H Comparability of Reported Baselines in Inference 
+I Artifact Licensing 
+J AI Use Disclosure License: CC BY 4.0 arXiv:2610.24766v1 [cs.CL] 17 Oct 2026 † † footnotetext: Project lead. 
+ECHO: Efficient Causal Self-Recursion Beyond Auxiliary Multi-Token Prediction Yuxuan Zhou 1† , Junyuan Shang 1 , Tianyu Wang 2 , Chunrui Zheng 1 , Zichang Liu 1 , Wenbin Chang 1 , Shuohuan Wang 1 , Dianhai Yu 1 1 ERNIE Team, Baidu 2 Independent Researcher https://github.com/ernie-research/ECHO 
+1 Introduction (a) Benchmark gain by task class over the fourteen benchmarks of Tables 1 and 3 , each panel against the DeepSeek baseline of
+its own stage. ECHO-1.5 (3) matches ECHO-3’s gain at half its MTP overhead. (b) Accepted length against serving depth K K , filled inside the trained depth
+and hollow beyond it. ECHO keeps gaining where auxiliary MTP saturates. Figure 1: Multi-horizon supervision on the backbone’s own final layer buys downstream performance after pre-training and supervised fine-tuning (a) and drafting depth beyond what was
+trained (b). 
+Large language models (LLMs) ( Achiam et al., 2023 ; Touvron et al., 2023 ; Bai et al., 2023 ; Liu et al., 2024a ) are predominantly trained with the Next-Token Prediction (NTP) objective.
+While NTP has demonstrated remarkable scalability and effectiveness,
+it provides supervision only at the immediate next-token horizon,
+leaving potentially useful future information unexploited.
+Moreover, autoregressive decoding remains inherently sequential,
+resulting in limited inference throughput. 
+To better utilize future information,
+recent work has explored Multi-Token Prediction (MTP)
+as an auxiliary objective on top of NTP.
+By introducing additional future-token prediction targets,
+MTP provides denser supervision during training and can generate draft tokens for speculative decoding, enabling inference acceleration. 
+Early MTP methods predict multiple future positions independently from the same hidden state Gloeckle et al. (2024) , providing denser supervision but ignoring causal dependencies among future tokens. Subsequent causal MTP methods such as DeepSeek-V3 Liu et al. (2024a) address this limitation by introducing autoregressive dependencies among future prediction steps, significantly improving prediction quality and improving the backbone model’s overall performance Liu et al. (2024a) ; Blakeman et al. (2025) ; Zeng et al. (2026) . 
+However, both causal and parallel MTP remain auxiliary by construction: future-token prediction is carried out by dedicated modules attached to the backbone, rather than being integrated into the autoregressive generation process itself. This leads to two limitations: 
+1. 
+Indirect Multi-Horizon Supervision 
+MTP losses primarily supervise the auxiliary prediction modules.
+Consequently, the backbone model receives multi-horizon learning signals only indirectly, potentially limiting their impact on long-horizon planning. 
+2. 
+Costly Long-Horizon Supervision 
+Denser supervision requires deeper prediction horizons, yet each additional horizon adds a prediction module in memory and another pass in compute.
+This cost limits the prediction horizon in large-scale causal MTP pretraining, typically to a single draft token. 
+To address the above limitations, we introduce Efficient Causal Self-Recursion (ECHO) , a causal self-recursive
+framework that reuses the backbone’s final layer for future prediction and
+samples per-step prediction depths with decaying probabilities to reduce the amortized MTP training overhead. 
+Final-layer parameter sharing ensures that multi-horizon losses directly shape the backbone, rather than being absorbed by horizon-specific auxiliary modules.
+As shown in Figure 3(a) , this allows ECHO to benefit from deeper supervision: its downstream performance continues to improve at depth 3, whereas DeepSeek’s MTP ( Liu et al., 2024a ) does not, consistent with observations in MiMo ( LLM-Core Xiaomi, 2025 ) .
+More fundamentally, training the same parameters responsible for next-token generation to predict multiple future tokens encourages the backbone to anticipate how the sequence unfolds over subsequent steps, as evidenced by ECHO’s substantial gains on reasoning tasks. 
+To make long-horizon supervision computationally efficient, we introduce Dynamic Depth Sampling (DDS) , which samples prediction depths with decaying probabilities. This simultaneously reduces the amortized MTP training overhead and mitigates the impact of increasing prediction errors and supervision noise at greater depths. After supervised finetuning, ECHO’s advantage grows further. 
+Beyond its pretraining benefits, ECHO entirely eliminates the need for post-hoc drafter finetuning . DDS makes longer-horizon supervision affordable, while final-layer parameter sharing enables depth extrapolation: since the same shared layer is reused at every draft step, ECHO can extend drafting beyond the trained prediction depth while maintaining high acceptance rates, at an amortized MTP training overhead of only 1.5 depth-1 steps (see Section 4.1 ). By drafting directly with its pretrained weights, ECHO avoids the overfitting to academic benchmarks associated with post-hoc drafter finetuning ( Liu et al., 2026 ) , yielding substantial acceptance-length gains in realistic, high-entropy generation settings as shown in Figure 3(b) . 
+Our main contributions are summarized as follows: 
+• 
+We introduce Efficient Causal Self-Recursion (ECHO) , which predicts every future horizon by recursively applying the backbone’s own final layer, with the per-step prediction depth drawn from a distribution decaying along depth. 
+• 
+ECHO imposes direct multi-horizon supervision, beating auxiliary MTP on reasoning and code at matched depth while holding on QA &amp; multiple choice, and widening its lead on both classes after supervised finetuning. 
+• 
+ECHO makes long-horizon prediction cheap in compute and free in parameters, and keeps gaining acceptance when extrapolating in depth, where auxiliary MTP saturates. It eliminates drafter finetuning entirely, yet outperforms post-hoc drafters, especially on open-ended generation. 
+2 Related Work 
+2.1 Multi-Token Prediction 
+Multi-Token Prediction (MTP) augments next-token prediction with future-token targets, improving language modeling while providing draft tokens for speculative decoding. It inherits the architecture of speculative draft models and differs in the training regime: draft models are finetuned post-hoc against a frozen backbone on a limited dataset, whereas MTP modules are optimized jointly with the backbone throughout pretraining. 
+Parallel MTP predicts multiple future positions independently from several output heads on a shared backbone Gloeckle et al. (2024) , following Medusa Cai et al. (2024) . Causal MTP instead follows EAGLE Li et al. (2024) : DeepSeek-V3 Liu et al. (2024a) feeds dedicated prediction modules the previous hidden state together with shifted token embeddings, preserving autoregressive dependencies among future steps, and GLM-5 Zeng et al. (2026) shares those parameters across all depths, as EAGLE does, to reduce memory cost. 
+2.2 Post-hoc Drafter 
+Post-hoc drafters are trained on top of a frozen target model by finetuning on target-generated responses, and differ mainly in how a block of draft tokens is produced.
+Medusa Cai et al. (2024) attaches parallel heads that draft every position from the final hidden state, while EAGLE-3 Li et al. (2025) re-enters a lightweight decoder once per drafted token, conditioned on target hidden states, preserving token-to-token dependency.
+Recent parallel drafters build on DFlash Chen et al. (2026) , which predicts the whole block in one pass, with DSpark Cheng et al. (2026) restoring intra-block dependency through a lightweight causal head. 
+Two limitations are nonetheless inherent to post-hoc drafting.
+First, the drafter is narrowly aligned with the target, being finetuned on a dataset orders of magnitude smaller than the pretraining corpus.
+Second, scaling that training to the pretraining corpus is compute-heavy from the multi-step or multi-layer overhead, which has not been shown to improve the backbone’s downstream performance and may even degrade training.
+ECHO overcomes both: joint pretraining aligns it with the target, and its supervision improves the backbone at modest overhead. 
+2.3 Looped Transformers 
+Looped transformers reuse a shared block of layers across iterations, buying computational depth without new parameters: parameter efficiency ( Lan et al., 2020 ) , adaptive computation ( Dehghani et al., 2019 ) , reasoning at LLM scale ( Saunshi et al., 2025 ; Zhu et al., 2025 ) , test-time compute scaling ( Geiping et al., 2025 ) , and depth allocated per token ( Bae et al., 2025 ) . In all of them recursion refines the same token position under a next-token objective; ECHO instead recurses along the horizon, each step conditioning on the next future token to predict one position further ahead. 
+Yet both buy structure rather than recall, and for looping that is a trade: at matched parameters and compute it leads on reasoning but trails on perplexity and closed-book QA ( Saunshi et al., 2025 ) , and at scale its gain is credited to knowledge manipulation rather than capacity, measured against external dense families rather than a same-recipe baseline ( Zhu et al., 2025 ) . ECHO pays no such price: mathematics, reasoning and code gain while multiple choice and closed-book QA hold ( Figure 3(a) ), and both classes gain after finetuning ( Figure 4(b) ). Looping, latent chain-of-thought ( Hao et al., 2025 ) and ECHO thus price latent computation differently: repeated passes over one position, annotated chains, and extra positions — the one price that accepted tokens can repay. Embedding Layer x t x_{t} x t + 1 x_{t+1} x t + 2 x_{t+2} x t + 3 x_{t+3} t = 1 t\!=\!1 t &gt; 1 t&gt;1 Decoder Layer × ( L − 1 ) \times\,(L-1) Decoder Layer × ( L − 1 ) \times\,(L-1) Decoder Layer × ( L − 1 ) \times\,(L-1) Decoder Layer L L Fusion Layer × D \times\,D Output Head D = 3 D\!=\!3 D = 1 D\!=\!1 D = 2 D\!=\!2 D = 1 D\!=\!1 t = 1 t\!=\!1 t = 2 t\!=\!2 t = 3 t\!=\!3 t = 4 t\!=\!4 y t + 4 y_{\scriptscriptstyle t+4} y t + 3 y_{\scriptscriptstyle t+3} y t + 5 y_{\scriptscriptstyle t+5} y t + 2 y_{\scriptscriptstyle t+2} y t + 3 y_{\scriptscriptstyle t+3} y t + 4 y_{\scriptscriptstyle t+4} y t + 5 y_{\scriptscriptstyle t+5} y t + 1 y_{\scriptscriptstyle t+1} y t + 2 y_{\scriptscriptstyle t+2} y t + 3 y_{\scriptscriptstyle t+3} y t + 4 y_{\scriptscriptstyle t+4} concatenate shared layer Dynamic Depth Sampling D ∼ π ⁡ ( k ) D\sim\pi(k) D = 1 D\!=\!1 0.6 D = 2 D\!=\!2 0.3 D = 3 D\!=\!3 0.1 Fusion Layer RMSNorm RMSNorm h t h_{t} h t + 1 h_{t+1} h t + 2 h_{t+2} h t + 3 h_{t+3} Linear Projection to Decoder Layer L L Figure 2: Overview of ECHO. The backbone’s final decoder layer L L and output head are reused to predict every future horizon. Dynamic Depth Sampling (DDS) draws one prediction depth D ∼ π D\sim\pi per optimizer step, with probabilities that decay along depth. Green blocks denote layers shared with the backbone. 
+3 ECHO: Efficient Causal Self-Recursion 
+We first show that final-layer sharing benefits the backbone through direct multi-horizon supervision, and then dynamic depth sampling makes it affordable at greater depth. 
+3.1 Direct Multi-Horizon Supervision via Final-Layer Sharing 
+We show that reusing the backbone’s final layer turns multi-horizon supervision into a direct training signal: downstream performance improves over auxiliary MTP, and shows further gains at greater depth. Causal Self-Recursion: 
+we follow the autoregressive design of DeepSeek-V3 ( Liu et al., 2024a ) to preserve causal dependency, where each additional horizon is predicted from the previous final-layer hidden state h t − 1 L h^{L}_{t-1} and the embedding e ⁡ ( y t ) e(y_{t}) of the previously predicted token. As shown in Figure 2 ,
+rather than attaching a dedicated module for each depth, we recursively apply the backbone’s final decoder layer T L ​ ( ⋅ ) T^{L}(\cdot) and output head at every horizon, connected to the previous step by a lightweight fusion layer F ⁡ ( ⋅ ) F(\cdot) : 
+h t L = { h 1 L , t = 1 , T L ​ ( F ⁡ ( h t − 1 L , e ⁡ ( x t ) ) ) , t &gt; 1 , h^{L}_{t}=\begin{cases}h^{L}_{1},&amp;t=1,\\
+T^{L}\big(F\left(h^{L}_{t-1},e(x_{t})\right)\big),&amp;t&gt;1,\end{cases} (1) 
+apart from the lightweight fusion layer, every parameter used for future prediction is also used for next-token generation. Supervision from every horizon shapes the backbone directly, and the same layer can be applied repeatedly to draft beyond the trained depth. 
+We show two benefits of the resulting direct multi-horizon supervision: Sharing improves downstream performance, especially in reasoning capability. 
+To isolate the effect of sharing, we compare ECHO with DeepSeek’s MTP ( Liu et al., 2024a ) at matched prediction depth ( Figure 3(a) ).
+Under this comparison, sharing the final layer gives ECHO the lead at depth 1, most clearly on math, reasoning and code ( + 0.79 +0.79 , + 0.57 +0.57 and + 1.35 +1.35 ), and it reaches + 2.63 +2.63 on reasoning and + 2.23 +2.23 on code at depth 3.
+The difference lies in where multi-horizon supervision mainly lands.
+With auxiliary modules, the signal is largely absorbed by the modules dedicated to individual horizons, leaving the backbone’s hidden layers specialized for the next token ( Mehra et al., 2025 ) .
+Sharing removes this bottleneck by construction: since the final layer predicts every horizon, supervision from all horizons is concentrated on the parameters that generate the next token. Sharing promotes longer-horizon supervision. 
+To examine how each design uses added depth, we compare each family with itself from depth 1 to depth 3.
+Averaged over all fourteen benchmarks, deeper supervision improves ECHO by 0.63 0.63 points, whereas DeepSeek’s MTP gains only 0.16 0.16 , and ECHO’s advantage on reasoning and code persists as depth increases ( Figure 3(a) ).
+This divergence follows from where each new horizon’s loss goes: in ECHO it reaches the backbone directly, whereas in DeepSeek’s MTP it mostly trains the newly added module, as discussed above.
+This explains why auxiliary MTP rarely goes deeper in practice: DeepSeek-V3 trains with a single MTP module ( Liu et al., 2024a ) , and MiMo finds that adding MTP layers brings no further improvement ( LLM-Core Xiaomi, 2025 ) . 
+(a) In pretraining, the gain concentrates on reasoning and code, and grows with depth. (b) At inference, it keeps the longest accepted length, widening with entropy. Figure 3: What final-layer sharing buys, in pretraining and at inference. (a) Mean per-task score difference from MTP-1 within each task category, over the
+fourteen benchmarks of Table 1 , with the category size below
+each label and the fourteen-task averages in the legend.
+(b) Accepted length at T = 1 T{=}1 with rejection sampling, against the target’s
+predictive entropy; the warm-start EAGLE-3 drafter is trained from DeepSeek’s MTP
+baseline, following Kimi Team (2026) . 
+3.2 Affordable Long-Horizon Supervision via Dynamic Depth Sampling (DDS) 
+We show that dynamically sampling the training depth lowers the cost of long-horizon supervision without sacrificing its gains in downstream performance and drafting quality. Dynamic Depth Sampling. 
+At each optimizer step, DDS draws a prediction depth D ∼ π ⁡ ( k ) D\sim\pi(k) over { 1 , … , K } \{1,\dots,K\} and unrolls the recursion of equation 1 for depths 1 1 through D D ( Figure 2 ), so the MTP training overhead scales with the expected depth 
+𝔼 ⁡ [ D ] = ∑ k = 1 K k ​ π ​ ( k ) . \mathbb{E}[D]=\sum_{k=1}^{K}k\,\pi(k). (2) 
+In practice, we use π = ( 0.6 , 0.3 , 0.1 ) \pi=(0.6,0.3,0.1) with K = 3 K{=}3 , giving 𝔼 ⁡ [ D ] = 1.5 \mathbb{E}[D]=1.5 , half the overhead of training all three depths.
+Throughout, this MTP training overhead is reported in units of the depth-1 module, that is, unrolls of the shared layer per optimizer step; it is the increment on top of the backbone, not the end-to-end cost of a training step. DDS lowers the MTP training overhead while preserving downstream benefit. 
+ECHO-1.5 (3) matches ECHO-3 on the benchmark average ( 36.34 36.34 vs. 36.36 36.36 , Figure 3(a) ) at half the MTP training overhead.
+This holds because DDS changes how often each depth is trained, not which depths are trained.
+Since depths are sampled from { 1 , 2 , 3 } \{1,2,3\} , ECHO-1.5 (3) still receives depth-3 supervision, only not at every step, so it keeps the benefit of long-horizon supervision without unrolling every depth in every batch.
+Because deeper horizons condition on longer chains of recursive hidden states, their supervision grows noisier with depth, so DDS concentrates training on reliable shallow positions and protects the shared backbone from deep-horizon noise, much as stochastic depth trains deeper layers less often ( Huang et al., 2016 ) .
+At this cost, ECHO-1.5 (3) also outperforms MTP-1 on math, reasoning and code ( + 1.00 +1.00 , + 1.31 +1.31 , + 2.37 +2.37 ) and still leads MTP-3 at twice its budget ( + 0.55 +0.55 , + 2.31 +2.31 , + 1.67 +1.67 ; Figures 3(a) and 1 ). 
+4 Pushing the Frontier of Speculative Decoding under Realistic Serving 
+We analyze how ECHO’s end-to-end paradigm intrinsically aligns the drafter with the target, entirely eliminating the need for post-hoc drafter finetuning. 
+4.1 Training Shallow, Drafting Deep 
+We first show how DDS aligns training with the acceptance dynamics of speculative decoding, then demonstrate how last-layer sharing enables depth extrapolation beyond the trained depth. DDS aligns training with speculative decoding. 
+At inference, the drafter proposes K K tokens and the target verifies them in parallel, but draft tokens are committed only up to the first rejection ( Leviathan et al., 2023 ) .
+With acceptance rate a i ∈ ( 0 , 1 ] a_{i}\in(0,1] at position i i , position d d is reached with probability ∏ i = 1 d − 1 a i \prod_{i=1}^{d-1}a_{i} ( Wu et al., 2026 ; Zhou et al., 2026 ) , so the expected accepted length is 
+𝔼 ⁡ [ τ ] = 1 + ∑ d = 1 K ∏ i = 1 d a i , \mathbb{E}[\tau]=1+\sum_{d=1}^{K}\prod_{i=1}^{d}a_{i}, (3) 
+where τ \tau is the accepted length, the bonus token plus the accepted drafts.
+A rejection at depth k k thus truncates the c k = K − k + 1 c_{k}=K-k+1 drafts at and after it, so shallow depths dominate accepted length.
+DDS effectively trains depth k k with a frequency that decays along depth, 
+f k = ℙ ⁡ ( D ≥ k ) = ∑ j = k K π ⁡ ( j ) , f_{k}=\mathbb{P}(D\geq k)=\sum_{j=k}^{K}\pi(j), (4) 
+so π = ( 0.6 , 0.3 , 0.1 ) \pi=(0.6,0.3,0.1) gives f = ( 1 , 0.4 , 0.1 ) f=(1,0.4,0.1) .
+Under lossless verification, the rejection rate is 1 − a k = TV ⁡ ( p k , q k ) 1-a_{k}=\mathrm{TV}(p_{k},q_{k}) ( Leviathan et al., 2023 ) .
+LK losses ( Samarin et al., 2026 ) exploit this identity to optimize acceptance directly, but treat each position equally.
+Instead, relating the rejection rate to the data distribution d k d_{k} and accounting for truncation across depths gives ( Appendix B ) 
+𝔼 ⁡ [ τ ] ≥ 1 + K − 1 2 ​ ℒ MTP ​ ( f ) ≥ 1 + K − 1 2 ​ ℒ MTP ​ ( 𝟏 ) , \mathbb{E}[\tau]\ \geq\ 1+K-\tfrac{1}{\sqrt{2}}\,\mathcal{L}_{\text{MTP}}(f)\ \geq\ 1+K-\tfrac{1}{\sqrt{2}}\,\mathcal{L}_{\text{MTP}}(\mathbf{1}), (5) 
+where ℒ MTP ​ ( f ) = ∑ k c k 2 / f k ​ ∑ k f k KL ( d k ∥ q k ) \mathcal{L}_{\text{MTP}}(f)=\sqrt{\sum_{k}c_{k}^{2}/f_{k}}\,\sqrt{\sum_{k}f_{k}\mathrm{KL}(d_{k}\,\|\,q_{k})} bounds the MTP loss.
+The last inequality compares DDS with the uniform depth supervision ( f = 𝟏 f=\mathbf{1} ) and holds for schedules that decay toward the optimum ( Proposition B.1 ).
+The uniform depth supervision weights every depth’s error equally, whereas decaying f k f_{k} tightens the bound, so reducing the training loss translates more directly into accepted length.
+DDS thus concentrates target-draft alignment on the shallow depths that determine acceptance, preserving accepted length despite reduced supervision at greater depths.
+Existing drafters encode this decay by reweighting the loss while still training every depth at every step ( Chen et al., 2026 ; Cheng et al., 2026 ) ;
+DDS instead encodes it in how often each depth is trained, so the training compute follows the decay. Extrapolating Beyond the Training Horizon. 
+We refer to drafting beyond the maximum depth seen during training as depth extrapolation . As shown in Figure 1(b) , beyond the trained depth ( K &gt; 3 K&gt;3 ), ECHO keeps gaining at a nearly constant rate, and ECHO-1.5 (3) retains this gain at half the MTP training overhead of ECHO-3, whereas the gains of MTP-3 shrink with each step and saturate. Sharing also makes extrapolation the natural complement to DDS: training concentrates supervision on shallow depths, and recursion carries it to deeper ones at inference. 
+4.2 Staying Aligned under realistic setting 
+We then show that ECHO outperforms existing post-hoc drafters, with larger gains on high-entropy, realistic, and open-ended tasks, thanks to two complementary factors: causal drafting ensures consistency among draft tokens, while joint pretraining aligns the draft distribution with the target. (a) Deeper sampling trails ECHO-1.5 (3) before finetuning. (b) Finetuning widens the lead on both classes. (c) The lead against the spread two matched runs measure. Figure 4: The advantage persists under deeper sampling, supervised finetuning
+and a doubled token budget. Mean
+per-task gain over the matched DeepSeek baseline, by task class: MTP-1 before
+finetuning, MTP-1-Instruct after it. ( 4(c) ) shows the gap at
+step 78k and at step 156k, and the error bars are the run-to-run standard deviation
+from an independent repeat of the 78k recipe, 0.08 0.08 on reasoning &amp; code and 0.38 0.38 on QA &amp; multiple choice. Doubling the budget moves
+the reasoning &amp; code gap by 0.01 0.01 , a sixth of that spread, whereas the repeat
+moves the QA &amp; multiple choice gap by 0.54 0.54 , more than its own. The reasoning &amp; code
+advantage therefore survives both conditions and the run-to-run spread, while the
+QA &amp; multiple choice difference stays inside it. Causal Drafting Matters in Open-Ended Generation. 
+As shown in Figure 3(b) , ECHO and other causal drafters outperform parallel drafters on high-entropy tasks, consistent with Liu et al. (2026) ; Figure 8 shows the same ordering in decode speedup.
+When the next tokens are uncertain, the target’s choice is hard to anticipate, so the probability of acceptance falls off steeply with depth and most of a long draft is discarded.
+A causal drafter adapts to this by extending its draft step by step, while a parallel drafter emits a fixed-length block whose deeper tokens are mostly rejected at verification.
+The balance shifts on simple code and mathematics benchmarks such as HumanEval, MBPP, and GSM8K, where long stretches of output are determined by syntax or derivation, and block-parallel drafting becomes worthwhile ( Liu et al., 2026 ) , whereas realistic software engineering tasks such as SWE-bench remain high-entropy and still favor causal drafting ( Figure 3(b) ).
+Such simple tasks, however, are a small fraction of real-world usage, account for under 8% of consumer ChatGPT messages, while open-ended practical guidance, information seeking, and writing account for nearly 80% ( Chatterji et al., 2025 ) . Joint Pretraining Closes the Alignment Gap. 
+Acceptance depends on how closely the draft distribution matches the target’s ( Leviathan et al., 2023 ; Zhou et al., 2024 ) , and a drafter can better match the target where it has seen the target’s data. ECHO is trained with the target end-to-end and sees its full pretraining corpus. In contrast, auxiliary drafters are fit to a frozen target on a small finetuning set, so their acceptance drops under distribution shift ( Liu et al., 2024b ; Hong et al., 2025 ) .
+The EAGLE-3 pair in Figure 3(b) isolates this effect: with architecture and finetuning data held fixed, warm-started EAGLE-3 achieves a longer accepted length than its cold-start counterpart, consistent with recent findings that pretrained initialization strengthens drafters, most on out-of-domain inputs ( Bie et al., 2026 ) .
+Yet on open-ended tasks, warm-starting still falls short of ECHO, with the largest gap on SWE-bench.
+ECHO is instead optimized jointly with the target on every pretraining update, so its alignment is maintained throughout training, in line with the high acceptance rates reported for MTP modules trained jointly during pretraining ( Liu et al., 2024a ; LLM-Core Xiaomi, 2025 ) . 
+5 The Advantage Holds across Data, Depth and Runs 
+We finally examine whether ECHO’s advantage holds along three axes: more pretraining data, deeper sampling, and repeated runs. 
+5.1 Scaling with Data ECHO’s advantage persists with more pretraining data. 
+We extend pretraining of ECHO-1 and DeepSeek’s MTP-1 from step 78k to step 156k, doubling the token budget.
+Both models improve, and ECHO-1 keeps its lead over DeepSeek’s MTP-1 measured at the same step: + 0.52 +0.52 at step 78k and + 0.50 +0.50 at step 156k, and on reasoning &amp; code it is + 0.88 +0.88 and + 0.89 +0.89 ( Figure 4(c) , Table 2 ).
+This indicates that ECHO’s advantage is stable under data scaling rather than an early-training effect that more data would erase. 
+5.2 Scaling with Depth ECHO’s advantage holds across sampling depths. 
+We next train ECHO-2 (7) , which samples D D over { 1 , … , 7 } \{1,\dots,7\} with 𝔼 ⁡ [ D ] = 2 \mathbb{E}[D]=2 , at 4 / 3 4/3 the MTP training overhead of ECHO-1.5 (3) .
+It trails ECHO-1.5 (3) in pretraining but overtakes it after SFT by 0.49, reaching the largest lead over DeepSeek’s MTP-Instruct of any configuration ( + 2.10 +2.10 ; Table 3 ).
+The gap in pretraining may be due to errors accumulating at deeper positions, which makes their supervision noisier and draws training away from the reliable shallow depths.
+After SFT, however, the deeper supervision appears to pay off, possibly because finetuning makes better use of what the backbone learned. 
+5.3 Stability across Runs ECHO’s lead is robust to training and evaluation noise. 
+A reported gap can come from noise rather than the method itself.
+We eliminate evaluation noise by decoding greedily, so the remaining source is training.
+To measure it, we pretrain ECHO-1 and DeepSeek’s MTP-1 a second time under the same recipe and compare the two runs at the same step.
+Across the two runs, ECHO leads DeepSeek’s MTP-1 by + 0.52 +0.52 and + 0.78 +0.78 , and its lead on reasoning &amp; code shifts by only 0.11 0.11 ( Figure 4(c) ; Appendix D ).
+ECHO’s overall and reasoning &amp; code leads are therefore reproducible across runs. 
+6 Experiment Setup 
+Full architecture, prompt, scoring and speculative decoding details are given in Appendix A . 
+Models and Baselines : Every configuration shares a 10B-A1B Latent MoE backbone ( Blakeman et al., 2025 ) with 24 layers, multi-head latent attention ( Liu et al., 2024a ) , and 256 routed experts with eight active per token ( Dai et al., 2024 ) , trained under the same recipe so that the comparison isolates the MTP design. 
+Pretraining : 600B tokens at sequence length 4,096 and batch size 1,920 in bfloat16 with Muon ( Jordan et al., 2024 ) , on 24 nodes of eight H800 GPUs. 
+Dynamic Depth Sampling : ECHO-1.5 (3) samples D D over { 1 , 2 , 3 } \{1,2,3\} with π = ( 0.6 , 0.3 , 0.1 ) \pi=(0.6,0.3,0.1) , giving 𝔼 ⁡ [ D ] = 1.5 \mathbb{E}[D]=1.5 and ECHO-2 (7) samples over { 1 , … , 7 } \{1,\dots,7\} with π = ( 0.520 , 0.220 , 0.121 , 0.068 , 0.036 , 0.019 , 0.016 ) \pi=(0.520,0.220,0.121,0.068,0.036,0.019,0.016) , giving 𝔼 ⁡ [ D ] = 2 \mathbb{E}[D]=2 . 
+Supervised Finetuning : Every configuration is finetuned with the same recipe, 5,000 steps over one pass of an in-house chat corpus at context length 32,768, keeping its pretrained MTP depths. 
+Computational Cost :
+Each pretraining run takes approximately 3 days on 192 NVIDIA H800 GPUs with a global batch size of 1,920, followed by 5 hours of SFT on the same hardware. Post-hoc drafter training uses 24 H800 GPUs with a global batch size of 48, requiring about 22 hours for EAGLE-3, 19 hours for DFlash, and 55 hours for DSpark. 
+Benchmark Evaluation : Fourteen few-shot ( Brown et al., 2020 ) benchmarks decoded greedily, grouped by task form into mathematics, reasoning, multi-subject multiple choice, code and closed-book question answering, with CoT prompting ( Wei et al., 2022 ) on MATH, GSM8K and BBH. 
+Speculative decoding: We adopt the same temperature setting ( T = 1 T=1 ) for both the target and draft models, following Bebop ( Li et al., 2026b ) and GLM-5.2 ( GLM Team, 2026 ) . This matters for RL training: rejection sampling with draft temperature &gt; 0 &gt;0 keeps acceptance stable as target entropy rises, whereas greedy drafting degrades sharply at higher temperatures ( Li et al., 2026b ) . All drafters are served with SGLang on a single node of eight H800 GPUs and budget-matched at seven proposed positions plus one bonus token per verification step. We report decode-only throughput and mean accepted length on ten tasks, split by the target model’s predictive entropy into predictable and open-ended groups. 
+7 Conclusion 
+We presented ECHO, which turns multi-token prediction from an auxiliary task into part of the autoregressive objective.
+By reusing the backbone’s own final layer at every horizon, ECHO lets multi-horizon supervision shape the parameters that generate the next token, and Dynamic Depth Sampling makes deeper horizons affordable by training them less often.
+Unlike auxiliary MTP such as DeepSeek, ECHO improves with added depth, and ECHO-1.5 (3) matches the downstream gain of ECHO-3 at half the MTP overhead. 
+At inference, the same shared layer makes the pretrained model its own drafter with close draft-target alignment: it drafts beyond its trained depth where auxiliary modules saturate, and it outperforms post-hoc drafters on open-ended, high-entropy generation.
+This advantage holds under a doubled token budget, a repeated pretraining run, and supervised finetuning. 
+Limitations 
+Due to compute constraints, pretraining was repeated once and finetuning was run with a single seed.
+How far the gains from added depth and from depth extrapolation extend, how DDS behaves at greater depths, and why deeper sampling pays off only after finetuning are left to future work. 
+References 
+Achiam et al. (2023) J. Achiam, S. Adler, S. Agarwal, L. Ahmad, I. Akkaya, F. L. Aleman, D. Almeida, J. Altenschmidt, S. Altman, S. Anadkat, et al. GPT-4 technical report . arXiv preprint arXiv:2303.08774 . Cited by: §1 . 
+Bae et al. (2025) S. Bae, Y. Kim, R. Bayat, S. Kim, J. Ha, T. Schuster, A. Fisch, H. Harutyunyan, Z. Ji, A. Courville, and S. Yun Mixture-of-recursions: learning dynamic recursive depths for adaptive token-level computation . In Advances in Neural Information Processing Systems , Cited by: §2.3 . 
+Bai et al. (2023) J. Bai, S. Bai, Y. Chu, Z. Cui, K. Dang, X. Deng, Y. Fan, W. Ge, Y. Han, F. Huang, et al. Qwen technical report . arXiv preprint arXiv:2309.16609 . Cited by: §1 . 
+Bang et al. (2025) Y. Bang, Z. Ji, A. Schelten, A. Hartshorn, T. Fowler, C. Zhang, N. Cancedda, and P. Fung HalluLens: LLM hallucination benchmark . In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 24128–24156 . Cited by: §A.2 . 
+Bie et al. (2026) F. Bie, Y. Jian, Y. Yu, Z. Zhou, Z. Shao, B. Athiwaratkun, S. L. Song, C. Xu, X. Wu, and T. Zhang Osprey: target-agnostic pre-training makes stronger drafters in speculative decoding . In Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing , Note: arXiv:2609.09338 Cited by: §4.2 . 
+Bisk et al. (2020) Y. Bisk, R. Zellers, R. Le Bras, J. Gao, and Y. Choi PIQA: reasoning about physical commonsense in natural language . In Proceedings of the AAAI Conference on Artificial Intelligence , Cited by: §A.2 . 
+Blakeman et al. (2025) A. Blakeman, A. Grattafiori, A. Basant, A. Gupta, A. Khattar, A. Renduchintala, A. Vavre, A. Shukla, A. Bercovich, A. Ficek, et al. NVIDIA Nemotron 3: efficient and open intelligence . arXiv preprint arXiv:2512.20856 . Cited by: §A.1 , §1 , §6 . 
+Brown et al. (2020) T. B. Brown, B. Mann, N. Ryder, M. Subbiah, J. Kaplan, P. Dhariwal, A. Neelakantan, P. Shyam, G. Sastry, A. Askell, et al. Language models are few-shot learners . In Advances in Neural Information Processing Systems , Cited by: §A.2 , §6 . 
+Cai et al. (2024) T. Cai, Y. Li, Z. Geng, H. Peng, J. D. Lee, D. Chen, and T. Dao MEDUSA: simple LLM inference acceleration framework with multiple decoding heads . In International Conference on Machine Learning , Cited by: §2.1 , §2.2 . 
+Chatterji et al. (2025) A. Chatterji, T. Cunningham, D. J. Deming, Z. Hitzig, C. Ong, C. Y. Shan, and K. Wadman How people use ChatGPT . Working Paper Technical Report 34255 , National Bureau of Economic Research . Cited by: §4.2 . 
+Chen et al. (2026) J. Chen, Y. Liang, and Z. Liu DFlash: block diffusion for flash speculative decoding . External Links: 2602.06036 , Link Cited by: §A.3 , §2.2 , §4.1 . 
+Chen et al. (2021) M. Chen, J. Tworek, H. Jun, Q. Yuan, H. P. d. O. Pinto, J. Kaplan, H. Edwards, Y. Burda, N. Joseph, G. Brockman, et al. Evaluating large language models trained on code . arXiv preprint arXiv:2107.03374 . Cited by: §A.2 . 
+Cheng et al. (2026) X. Cheng, X. Yu, C. Shao, J. Li, Y. Xiong, Y. Qian, J. Zhu, S. Ma, X. Zhang, J. Ye, Q. Chen, C. Deng, J. Yu, D. Dai, Z. Zhang, Y. Wei, Y. Tan, W. Yang, R. Xu, Y. Wu, Z. Xu, X. Wang, M. Chen, R. Tian, X. Bi, Z. Hao, S. Chen, H. Cao, W. Zhang, A. Xu, H. Zhang, D. Zhao, and W. Liang DSpark: confidence-scheduled speculative decoding with semi-autoregressive generation . External Links: 2607.05147 , Link Cited by: §A.3 , §A.3 , §2.2 , §4.1 . 
+Cobbe et al. (2021) K. Cobbe, V. Kosaraju, M. Bavarian, M. Chen, H. Jun, L. Kaiser, M. Plappert, J. Tworek, J. Hilton, R. Nakano, C. Hesse, and J. Schulman Training verifiers to solve math word problems . arXiv preprint arXiv:2110.14168 . Cited by: §A.2 . 
+Dai et al. (2024) D. Dai, C. Deng, C. Zhao, R. Xu, H. Gao, D. Chen, J. Li, W. Zeng, X. Yu, Y. Wu, et al. DeepSeekMoE: towards ultimate expert specialization in mixture-of-experts language models . In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 1280–1297 . Cited by: §A.1 , §6 . 
+Dehghani et al. (2019) M. Dehghani, S. Gouws, O. Vinyals, J. Uszkoreit, and L. Kaiser Universal transformers . In International Conference on Learning Representations , Cited by: §2.3 . 
+Gao et al. (2024) L. Gao, J. Tow, B. Abbasi, S. Biderman, S. Black, A. DiPofi, C. Foster, L. Golding, J. Hsu, A. Le Noac’h, H. Li, K. McDonell, N. Muennighoff, C. Ociepa, J. Phang, L. Reynolds, H. Schoelkopf, A. Skowron, L. Sutawika, E. Tang, A. Thite, B. Wang, K. Wang, and A. Zou A framework for few-shot language model evaluation . Note: Zenodo, version v0.4.3 External Links: Document , Link Cited by: §A.2 . 
+Geiping et al. (2025) J. Geiping, S. McLeish, N. Jain, J. Kirchenbauer, S. Singh, B. R. Bartoldson, B. Kailkhura, A. Bhatele, and T. Goldstein Scaling up test-time compute with latent reasoning: a recurrent depth approach . In Advances in Neural Information Processing Systems , Cited by: §2.3 . 
+GLM Team (2026) GLM Team GLM-5.2: built for long-horizon tasks . Note: https://z.ai/blog/glm-5.2 Z.ai blog Cited by: §6 . 
+Gloeckle et al. (2024) F. Gloeckle, B. Y. Idrissi, B. Rozière, D. Lopez-Paz, and G. Synnaeve Better &amp; faster large language models via multi-token prediction . In International Conference on Machine Learning , Cited by: §1 , §2.1 . 
+Hao et al. (2025) S. Hao, S. Sukhbaatar, D. Su, X. Li, Z. Hu, J. Weston, and Y. Tian Training large language models to reason in a continuous latent space . In Conference on Language Modeling , Cited by: §2.3 . 
+Hendrycks et al. (2021a) D. Hendrycks, C. Burns, S. Basart, A. Zou, M. Mazeika, D. Song, and J. Steinhardt Measuring massive multitask language understanding . In International Conference on Learning Representations , Cited by: §A.2 . 
+Hendrycks et al. (2021b) D. Hendrycks, C. Burns, S. Kadavath, A. Arora, S. Basart, E. Tang, D. Song, and J. Steinhardt Measuring mathematical problem solving with the MATH dataset . In Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track (Round 2) , Cited by: §A.2 . 
+Hong et al. (2025) F. Hong, R. Raju, J. L. Li, B. Li, U. Thakker, A. Ravichandran, S. Jain, and C. Hu Training domain draft models for speculative decoding: best practices and insights . arXiv preprint arXiv:2503.07807 . Cited by: §4.2 . 
+Huang et al. (2016) G. Huang, Y. Sun, Z. Liu, D. Sedra, and K. Q. Weinberger Deep networks with stochastic depth . In European Conference on Computer Vision (ECCV) , pp. 646–661 . Cited by: §3.2 . 
+Huang et al. (2026) J. Huang, Y. Zhang, Q. Zhang, H. Lin, H. Xu, and L. Zhang Domino: decoupling causal modeling from autoregressive drafting in speculative decoding . External Links: 2605.29707 , Link Cited by: Appendix H . 
+Jain et al. (2025) N. Jain, K. Han, A. Gu, W. Li, F. Yan, T. Zhang, S. Wang, A. Solar-Lezama, K. Sen, and I. Stoica LiveCodeBench: holistic and contamination free evaluation of large language models for code . In International Conference on Learning Representations , Cited by: §A.2 . 
+Jordan et al. (2024) K. Jordan, Y. Jin, V. Boza, J. You, F. Cesista, L. Newhouse, and J. Bernstein Muon: an optimizer for hidden layers in neural networks . External Links: Link Cited by: §A.1 , §6 . 
+Kazemi et al. (2025) M. Kazemi, B. Fatemi, H. Bansal, J. Palowitch, C. Anastasiou, S. V. Mehta, L. K. Jain, V. Aglietti, D. Jindal, Y. P. Chen, et al. BIG-Bench extra hard . In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 26473–26501 . Cited by: §A.2 . 
+Kimi Team (2026) Kimi Team Kimi K3: open frontier intelligence . External Links: 2607.24653 , Link Cited by: §A.3 , Figure 8 , Figure 3 . 
+Lan et al. (2020) Z. Lan, M. Chen, S. Goodman, K. Gimpel, P. Sharma, and R. Soricut ALBERT: a lite BERT for self-supervised learning of language representations . In International Conference on Learning Representations , Cited by: §2.3 . 
+Leviathan et al. (2023) Y. Leviathan, M. Kalman, and Y. Matias Fast inference from transformers via speculative decoding . In Proceedings of the 40th International Conference on Machine Learning , Proceedings of Machine Learning Research , Vol. 202 , pp. 19274–19286 . Cited by: Appendix B , §4.1 , §4.1 , §4.2 . 
+Li et al. (2026a) S. Li, C. Wang, Y. Zhu, Y. Wang, F. Yin, S. Shi, Y. Chen, X. Dong, Q. Chen, J. Pan, J. Li, L. Xie, Y. Zhang, L. Yu, Y. Wen, I. Tsang, and T. Zhang SpecForge: a flexible and efficient open-source training framework for speculative decoding . External Links: 2603.18567 , Link Cited by: §A.3 . 
+Li et al. (2026b) Y. Li, H. Jiang, Y. Xu, J. Yang, Y. Zhang, Y. Cao, Y. Shen, F. Zhou, R. Men, J. Zhang, A. Yang, B. Yu, B. Zheng, F. Huang, J. Lin, D. Liu, and J. Zhou Breaking entropy bounds: accelerating rl training via mtp with rejection sampling . External Links: 2606.12370 , Link Cited by: §6 . 
+Li et al. (2024) Y. Li, F. Wei, C. Zhang, and H. Zhang EAGLE: speculative sampling requires rethinking feature uncertainty . In International Conference on Machine Learning , Cited by: §2.1 . 
+Li et al. (2025) Y. Li, F. Wei, C. Zhang, and H. Zhang EAGLE-3: scaling up inference acceleration of large language models via training-time test . In Advances in Neural Information Processing Systems , Cited by: §A.3 , §2.2 . 
+Liu et al. (2024a) A. Liu, B. Feng, B. Xue, B. Wang, B. Wu, C. Lu, C. Zhao, C. Deng, C. Zhang, C. Ruan, et al. DeepSeek-V3 technical report . arXiv preprint arXiv:2412.19437 . Cited by: §A.1 , §A.1 , §A.1 , §A.2 , §A.2 , §1 , §1 , §1 , §2.1 , §3.1 , §3.1 , §3.1 , §4.2 , §6 . 
+Liu et al. (2026) H. Liu, R. Cen, J. Shi, G. Qin, J. Zhang, T. Liu, R. Fan, G. Zhao, R. Xie, K. Zhang, S. Liu, G. Yu, and J. Zhu AngelSpec: towards real-world high performance inference with speculative decoding . External Links: 2607.25852 , Link Cited by: §A.3 , §A.3 , §1 , §4.2 . 
+Liu et al. (2023) J. Liu, C. S. Xia, Y. Wang, and L. Zhang Is your code generated by ChatGPT really correct? Rigorous evaluation of large language models for code generation . Advances in neural information processing systems 36 , pp. 21558–21572 . Cited by: §A.2 . 
+Liu et al. (2024b) X. Liu, L. Hu, P. Bailis, A. Cheung, Z. Deng, I. Stoica, and H. Zhang Online speculative decoding . In Proceedings of the 41st International Conference on Machine Learning , Proceedings of Machine Learning Research , Vol. 235 . Cited by: §4.2 . 
+LLM-Core Xiaomi (2025) LLM-Core Xiaomi MiMo: unlocking the reasoning potential of language model – from pretraining to posttraining . arXiv preprint arXiv:2505.07608 . Cited by: §1 , §3.1 , §4.2 . 
+Mallen et al. (2023) A. Mallen, A. Asai, V. Zhong, R. Das, D. Khashabi, and H. Hajishirzi When not to trust language models: investigating effectiveness of parametric and non-parametric memories . In Proceedings of the 61st annual meeting of the association for computational linguistics (volume 1: Long papers) , pp. 9802–9822 . Cited by: §A.2 . 
+Mehra et al. (2025) S. Mehra, J. A. Garcia, and L. Mauch On multi-token prediction for efficient LLM inference . In ICLR 2025 Workshop on Sparsity in LLMs (SLLM) , Note: arXiv:2502.09419 Cited by: §3.1 . 
+Qiu et al. (2025) Z. Qiu, Z. Wang, B. Zheng, Z. Huang, K. Wen, S. Yang, R. Men, L. Yu, F. Huang, S. Huang, et al. Gated attention for large language models: non-linearity, sparsity, and attention-sink-free . Advances in Neural Information Processing Systems 38 , pp. 100092–100118 . Cited by: §A.1 . 
+Rein et al. (2024) D. Rein, B. L. Hou, A. C. Stickland, J. Petty, R. Y. Pang, J. Dirani, J. Michael, and S. R. Bowman GPQA: a graduate-level Google-Proof Q&amp;A benchmark . In First Conference on Language Modeling , Cited by: §A.2 . 
+Sakaguchi et al. (2021) K. Sakaguchi, R. L. Bras, C. Bhagavatula, and Y. Choi WinoGrande: an adversarial Winograd schema challenge at scale . Communications of the ACM 64 ( 9 ), pp. 99–106 . Cited by: §A.2 . 
+Samarin et al. (2026) A. Samarin, S. Krutikov, A. Shevtsov, S. Skvortsov, F. Fisin, and A. Golubev LK losses: direct acceptance rate optimization for speculative decoding . In Proceedings of the 43rd International Conference on Machine Learning , Cited by: §4.1 . 
+Saunshi et al. (2025) N. Saunshi, N. Dikkala, Z. Li, S. Kumar, and S. J Reddi Reasoning with latent thoughts: on the power of looped transformers . In International Conference on Learning Representations , Cited by: §2.3 , §2.3 . 
+Shazeer (2020) N. Shazeer GLU variants improve transformer . arXiv preprint arXiv:2002.05202 . Cited by: §A.1 . 
+Su et al. (2024) J. Su, M. Ahmed, Y. Lu, S. Pan, W. Bo, and Y. Liu RoFormer: enhanced transformer with rotary position embedding . Neurocomputing 568 , pp. 127063 . Cited by: §A.1 . 
+Suzgun et al. (2023) M. Suzgun, N. Scales, N. Schärli, S. Gehrmann, Y. Tay, H. W. Chung, A. Chowdhery, Q. Le, E. Chi, D. Zhou, et al. Challenging BIG-Bench tasks and whether chain-of-thought can solve them . In Findings of the Association for Computational Linguistics: ACL 2023 , pp. 13003–13051 . Cited by: §A.2 , §A.2 . 
+Touvron et al. (2023) H. Touvron, L. Martin, K. Stone, P. Albert, A. Almahairi, Y. Babaei, N. Bashlykov, S. Batra, P. Bhargava, S. Bhosale, et al. Llama 2: open foundation and fine-tuned chat models . arXiv preprint arXiv:2307.09288 . Cited by: §1 . 
+Wang et al. (2024) Y. Wang, X. Ma, G. Zhang, Y. Ni, A. Chandra, S. Guo, W. Ren, A. Arulraj, X. He, Z. Jiang, et al. MMLU-Pro: a more robust and challenging multi-task language understanding benchmark . Advances in Neural Information Processing Systems 37 , pp. 95266–95290 . Cited by: §A.2 . 
+Wei et al. (2024) J. Wei, N. Karina, H. W. Chung, Y. J. Jiao, S. Papay, A. Glaese, J. Schulman, and W. Fedus Measuring short-form factuality in large language models . arXiv preprint arXiv:2411.04368 . Cited by: §A.2 . 
+Wei et al. (2022) J. Wei, X. Wang, D. Schuurmans, M. Bosma, B. Ichter, F. Xia, E. Chi, Q. V. Le, and D. Zhou Chain-of-thought prompting elicits reasoning in large language models . In Advances in Neural Information Processing Systems , Cited by: §A.2 , §6 . 
+Wu et al. (2026) T. Wu, Y. Yao, Z. Qi, H. Zheng, Z. Wang, H. Ma, L. Liao, H. Lakkaraju, J. Li, and Y. Du D-PACE: dynamic position-aware cross-entropy for parallel speculative drafting . arXiv preprint arXiv:2605.18810 . Cited by: §4.1 . 
+Yang et al. (2018) Z. Yang, P. Qi, S. Zhang, Y. Bengio, W. Cohen, R. Salakhutdinov, and C. D. Manning HotpotQA: a dataset for diverse, explainable multi-hop question answering . In Proceedings of the 2018 conference on empirical methods in natural language processing , pp. 2369–2380 . Cited by: §A.2 . 
+Zeng et al. (2026) A. Zeng, X. Lv, Z. Hou, Z. Du, Q. Zheng, B. Chen, D. Yin, C. Ge, C. Huang, C. Xie, et al. GLM-5: from vibe coding to agentic engineering . arXiv preprint arXiv:2602.15763 . Cited by: §1 , §2.1 . 
+Zhou et al. (2024) Y. Zhou, K. Lyu, A. S. Rawat, A. K. Menon, A. Rostamizadeh, S. Kumar, J. Kagy, and R. Agarwal DistillSpec: improving speculative decoding via knowledge distillation . In International Conference on Learning Representations , Cited by: §4.2 . 
+Zhou et al. (2026) Y. Zhou, F. Huang, H. Li, F. Wu, T. Wang, J. Zhang, J. Lin, and Z. Cheng Overcoming joint intractability with lossless hierarchical speculative decoding . External Links: 2601.05724 , Link Cited by: §4.1 . 
+Zhu et al. (2025) R. Zhu, Z. Wang, K. Hua, T. Zhang, Z. Li, H. Que, B. Wei, Z. Wen, F. Yin, H. Xing, et al. Scaling latent reasoning via looped language models . arXiv preprint arXiv:2510.25741 . Cited by: §2.3 , §2.3 . 
+Appendix A Experiment Setup 
+A.1 Pretraining 
+Model Architecture : The backbone is a 10B-A1B Latent Mixture-of-Experts transformer ( Blakeman et al., 2025 ) , that is 10B parameters in total with 1B activated per token, stacked as 24 layers of hidden size 1,024 with 16 attention heads. Attention is multi-head latent ( Liu et al., 2024a ) , with 512-dimensional query and key–value latents, and we add gated attention ( Qiu et al., 2025 ) , per-head query–key normalization and rotary positional embeddings ( Su et al., 2024 ) . Every layer is a mixture of experts in a latent space: the expert block projects the hidden state down to 512 dimensions, runs 256 fine-grained routed experts ( Dai et al., 2024 ) of intermediate size 1,024 there, and projects back, with the router reading the hidden state rather than the latent. A sigmoid gate sends each token to eight routed experts, balanced by a sequence-level auxiliary loss, plus one shared expert. The SwiGLU ( Shazeer, 2020 ) feed-forward width is 5,120 and the vocabulary holds 201,216 tokens. 
+Training Settings : We train the model on 600B tokens with a context sequence length of 4,096 and a global batch size of 1,920. Training uses bfloat16 precision and the Muon optimizer ( Jordan et al., 2024 ) , with AdamW retained for the embeddings, the biases, the output head and the expert router, a learning rate of 6 × 10 − 4 6\times 10^{-4} , a warmup of 1,000 steps, weight decay of 0.1 0.1 , and gradient clipping at 1.0 1.0 . Following Liu et al. (2024a) , we set the MTP loss scaling factor to 0.3 0.3 . Pretraining runs on 24 nodes of eight H800 GPUs each, with eight-way expert parallelism, stage-one optimizer sharding, no tensor or pipeline parallelism, and full activation recomputation. 
+Computational Cost :
+Each pretraining run is conducted on 24 nodes with eight NVIDIA H800 80GB GPUs per node (192 GPUs in total), taking approximately three days to complete. Supervised finetuning uses the same hardware configuration and takes approximately five hours per run.
+For the post-hoc speculative decoding baselines, we train the draft models on three nodes (24 H800 80GB GPUs), using a global batch size of 48. EAGLE-3 (cold-start and warm-start) and DFlash use a per-GPU batch size of 2 without gradient accumulation, whereas DSpark uses a per-GPU batch size of 1 with two gradient accumulation steps due to GPU memory constraints. EAGLE-3 requires approximately 22 hours per run in measured wall-clock time. Based on the recorded compute time and an estimated 1.27 × \times overhead for startup, checkpointing, and cluster variability, DSpark requires approximately 55 hours, while DFlash requires approximately 19 hours. 
+Methods Compared : All six configurations are trained under the recipe above, so the comparison isolates the MTP design. ECHO reuses the backbone’s last layer as the body of every MTP depth; DeepSeek’s MTP baselines follow Liu et al. (2024a) and keep an independent module per depth, sharing only the embedding and the output head. ECHO-1 and MTP-1 train one depth, ECHO-3 and MTP-3 train three at every step, ECHO-1.5 (3) samples depths one to three with 𝔼 ⁡ [ D ] = 1.5 \mathbb{E}[D]=1.5 , and ECHO-2 (7) extends dynamic depth sampling to depths one through seven with 𝔼 ⁡ [ D ] = 2 \mathbb{E}[D]=2 . The two cost-matched comparisons are ECHO-1 against MTP-1 at equal depth-one cost, and ECHO-1.5 (3) against MTP-3 at half the MTP cost. 
+Dynamic Depth Sampling : The sampled depth is D ∼ π D\sim\pi , where π \pi places probabilities 0.6, 0.3 and 0.1 on depths 1, 2 and 3, so 𝔼 ⁡ [ D ] = 1.5 \mathbb{E}[D]=1.5 . Each optimizer step draws one D D and trains depths 1 through D D , and every micro-batch in the step shares the same D D , which keeps per-step compute constant. Averaging the loss over the D D trained depths gives depth d d the weight 𝔼 [ 𝟏 { D ≥ d } / D ] \mathbb{E}[\mathbf{1}\{D\geq d\}/D] , and these weights sum to one: ECHO reweights depths by how often it samples them, not by attaching a per-depth loss coefficient. D D is a deterministic function of the seed and the step index, so every rank derives it without communication and a resumed run continues the same sequence. 
+Supervised Finetuning : All configurations adopt an identical recipe: 5,000 steps over one pass of an in-house chat SFT corpus at a context length of 32,768, with eight-way context parallelism. Each keeps the MTP depths it was pretrained with, so the finetuned comparison isolates the same design difference as the pretrained one. 
+A.2 Benchmark Evaluation 
+Evaluation Setup : We evaluate the pretrained checkpoints on fourteen few-shot benchmarks, grouped by the form of the task following Liu et al. (2024a) : mathematics with MATH ( Hendrycks et al., 2021b ) and GSM8K ( Cobbe et al., 2021 ) ; reasoning with BBH ( Suzgun et al., 2023 ) , BBEH ( Kazemi et al., 2025 ) , WinoGrande ( Sakaguchi et al., 2021 ) and PIQA ( Bisk et al., 2020 ) ; multi-subject multiple choice with MMLU ( Hendrycks et al., 2021a ) and MMLU-Pro ( Wang et al., 2024 ) ; code with HumanEval+ and MBPP+ ( Liu et al., 2023 ) and LiveCodeBench ( Jain et al., 2025 ) ; closed-book question answering with PopQA ( Mallen et al., 2023 ) , PreciseWikiQA ( Bang et al., 2025 ) and HotpotQA ( Yang et al., 2018 ) . We report unweighted averages within each group and across all fourteen benchmarks. Benchmarks such as GPQA ( Rein et al., 2024 ) , SimpleQA ( Wei et al., 2024 ) and HMMT are left out for lack of resolution rather than for any defect in their scoring: every configuration scores near their floor, so the row moves more than it resolves. 
+Prompts and Decoding : All benchmarks are evaluated in the few-shot in-context format ( Brown et al., 2020 ) . Chain-of-thought prompting ( Wei et al., 2022 ) is used on MATH, GSM8K and BBH, with eight, eight and four demonstrations respectively. The remaining benchmarks are prompted to answer directly, with five demonstrations for the multiple-choice benchmarks, ten for closed-book question answering and two for BBEH. BBH is released under both a chain-of-thought and an answer-directly prompt over the same items for examining the chain-of-thought effect ( Suzgun et al., 2023 ) ; we report its chain-of-thought form in the main results. Decoding is greedy throughout. Generation is capped per benchmark: two tokens for MMLU and eleven for MMLU-Pro, which are answered with a single option label; 65 65 for the closed-book sets and 101 101 for PopQA; 401 401 for MATH, 512 512 for GSM8K, BBEH and HumanEval+, 601 601 for BBH, 768 768 for LiveCodeBench and 8192 8192 for MBPP+. WinoGrande and PIQA involve no generation. Stop sequences are applied when the answer is extracted rather than during decoding, so the cap is what bounds each output. 
+Scoring and Averaging : Each benchmark’s score is an unweighted macro-average over its sub-tasks rather than a per-item micro-average. Four scoring rules are used, one per group of benchmarks. GSM8K, MATH, BBH, MMLU and MMLU-Pro are scored by rule from the extracted answer. HumanEval+, MBPP+ and LiveCodeBench are scored as pass@1 by execution ( Chen et al., 2021 ) . WinoGrande and PIQA are scored by length-normalized log-likelihood over the candidate continuations rather than by generation, as in Liu et al. (2024a) , with the normalization of Gao et al. (2024) . PreciseWikiQA, HotpotQA, PopQA and BBEH are graded against the reference answer by an LLM judge. In Table 1 the three factual-knowledge sets are graded by gpt-oss-120b and BBEH by Claude Opus 4.8; in Table 3 all four are graded by Claude Opus 4.8. Of these, the three factual-knowledge sets report the F1 of overall accuracy and accuracy among attempted items, with abstentions in the denominator of the former only. Category averages and the overall figure are unweighted means over benchmarks. 
+A.3 Speculative Decoding under Serving 
+Serving Stack : All serving measurements use SGLang on one node of eight H800 GPUs, with tensor parallelism 8 and FlashAttention-3. 
+Drafters : All drafters are budget-matched at seven proposed positions plus one target bonus token, i.e. eight verification slots per request per step. ECHO reuses the target’s final layer and full output head. EAGLE-3 ( Li et al., 2025 ) uses one draft layer with a reduced 32,000-entry head scattered back to target width, in a cold-start and a warm-start variant; following Kimi Team (2026) , the warm start initializes the draft from DeepSeek’s pretrained MTP weights, and is always normalized by the baseline of its own run. DSpark ( Cheng et al., 2026 ) and DFlash ( Chen et al., 2026 ) are block-parallel with five draft layers, the former adding a low-rank Markov transition bias. 
+Serving Metric : We report decode-only throughput, decoded tokens over summed per-request decode latency, which excludes prefill; metrics that include prefill confound the comparison across tasks with differing prompt lengths. Speedup is recomputed against the baseline of the same run, and accepted length is decoded tokens per verification step. 
+Tasks : Serving results use ten tasks in two groups, split by predictive entropy as in Liu et al. (2026) . Predictable, following the commonly adopted SpecForge benchmarks ( Li et al., 2026a ) : HumanEval, MBPP, MATH-500, GSM8K, LiveCodeBench. Open-ended: SWE-bench, Arena-Hard, MT-Bench, summarization, Alpaca. Question answering, retrieval-augmented generation, translation and AIME-25 are excluded, all having median outputs of twenty to thirty tokens, too few verification steps for a stable decode-only ratio. The entropy axis is the target’s own predictive entropy, measured separately. 
+Verification Budget : DSpark is evaluated with its confidence scheduler disabled, verifying the full draft block at every step, as in the diagnostic baseline of Cheng et al. (2026) . The scheduler is a calibrated cost model rather than a threshold: it needs a latency curve re-profiled for each GPU and backend ( Cheng et al., 2026 ; Liu et al., 2026 ) , and a confidence head calibrated on the serving distribution, since the survival probabilities it multiplies must be absolute rather than merely well-ranked. That calibration does not transfer, because the mechanism assumes acceptance varies sharply across domains in the first place. With the head enabled but neither artifact available, per-step cost rose 5–14% and nothing was pruned. 
+Depth Extrapolation : The depth sweep of Figure 1(b) uses a separate harness. We report the accepted length obtained at serving depth K K , τ K = 1 + ∑ j ≤ K ∏ i ≤ j p i \tau_{K}=1+\sum_{j\leq K}\prod_{i\leq j}p_{i} , for conditional acceptance rate p i p_{i} at depth i i . The expression is exact rather than a fit: the draft loop reaches depth i + 1 i+1 only after depth i i is accepted, so ∏ i ≤ j p i \prod_{i\leq j}p_{i} is the probability that the first j j drafted tokens are all accepted, and summing those probabilities gives their expected number. Runs use draft depth K = 7 K{=}7 , greedy on both sides, 256 new tokens, and pool GSM8K, HumanEval and MATH-500 weighted by rounds. 
+Appendix B Decayed Depth Supervision and Accepted Length 
+Let p k p_{k} , q k q_{k} , and d k d_{k} be the target, draft, and data next-token distributions at depth k k , each conditioned on the current prefix.
+Let δ k = 1 − a k \delta_{k}=1-a_{k} , c k = K − k + 1 c_{k}=K-k+1 , and A k = KL ( d k ∥ q k ) A_{k}=\mathrm{KL}(d_{k}\,\|\,q_{k}) , the drafter distributional loss at depth k k .
+We assume the drafter is trained on target-generated data, so d k = p k d_{k}=p_{k} and A k = KL ( p k ∥ q k ) A_{k}=\mathrm{KL}(p_{k}\,\|\,q_{k}) .
+All quantities are averaged over prefixes, which we assume follow the training data distribution at inference; each inequality below holds pointwise for every prefix and therefore after averaging, with Jensen’s inequality moving the average inside square roots where needed. Derivation of Eq. 5 . 
+The full chain is 
+𝔼 ⁡ [ τ ] ​ ≥ ( i ) ​ 1 + K − ∑ k = 1 K c k ​ TV ​ ( p k , q k ) ​ ≥ ( i ​ i ) ​ 1 + K − 1 2 ​ Q ​ ≥ ( i ​ i ​ i ) ​ 1 + K − 1 2 ​ ℒ MTP ​ ( f ) ​ ≥ ( i ​ v ) ​ 1 + K − 1 2 ​ ℒ MTP ​ ( 𝟏 ) , \mathbb{E}[\tau]\ \overset{(i)}{\geq}\ 1+K-\sum_{k=1}^{K}c_{k}\,\mathrm{TV}(p_{k},q_{k})\ \overset{(ii)}{\geq}\ 1+K-\tfrac{1}{\sqrt{2}}\,Q\ \overset{(iii)}{\geq}\ 1+K-\tfrac{1}{\sqrt{2}}\,\mathcal{L}_{\text{MTP}}(f)\ \overset{(iv)}{\geq}\ 1+K-\tfrac{1}{\sqrt{2}}\,\mathcal{L}_{\text{MTP}}(\mathbf{1}), (6) 
+with Q = ∑ k c k ​ A k Q=\sum_{k}c_{k}\sqrt{A_{k}} . 
+(i) Union bound. By Eq. 3 , 1 + K − 𝔼 ⁡ [ τ ] = ∑ d = 1 K ( 1 − ∏ i ≤ d ( 1 − δ i ) ) 1+K-\mathbb{E}[\tau]=\sum_{d=1}^{K}\bigl(1-\prod_{i\leq d}(1-\delta_{i})\bigr) , where each term is the probability that draft d d is not accepted.
+The probability of at least one rejection among depths 1 , … , d 1,\dots,d is at most ∑ i ≤ d δ i \sum_{i\leq d}\delta_{i} , a bound tight up to second-order terms in δ \delta .
+Summing over d d , each δ k \delta_{k} is counted once for each of the c k c_{k} values d ≥ k d\geq k , and δ k = TV ⁡ ( p k , q k ) \delta_{k}=\mathrm{TV}(p_{k},q_{k}) under lossless verification ( Leviathan et al., 2023 ) . 
+(ii) Pinsker’s inequality. Since d k = p k d_{k}=p_{k} , Pinsker’s inequality gives TV ⁡ ( p k , q k ) = TV ⁡ ( d k , q k ) ≤ A k / 2 \mathrm{TV}(p_{k},q_{k})=\mathrm{TV}(d_{k},q_{k})\leq\sqrt{A_{k}/2} . 
+(iii) Cauchy–Schwarz. Writing c k ​ A k = ( c k / f k ) ⋅ f k ​ A k c_{k}\sqrt{A_{k}}=(c_{k}/\sqrt{f_{k}})\cdot\sqrt{f_{k}A_{k}} , 
+Q ≤ ℒ MTP ​ ( f ) = ∑ k = 1 K c k 2 f k ​ ∑ k = 1 K f k ​ A k , Q\ \leq\ \mathcal{L}_{\text{MTP}}(f)=\sqrt{\sum_{k=1}^{K}\frac{c_{k}^{2}}{f_{k}}}\ \sqrt{\sum_{k=1}^{K}f_{k}A_{k}}, (7) 
+with equality if and only if f k ∝ c k / A k f_{k}\propto c_{k}/\sqrt{A_{k}} .
+Since ℒ MTP ​ ( λ ​ f ) = ℒ MTP ​ ( f ) \mathcal{L}_{\text{MTP}}(\lambda f)=\mathcal{L}_{\text{MTP}}(f) for any λ &gt; 0 \lambda&gt;0 , schedules with different compute budgets can be compared directly.
+For MTP- K K , ℒ MTP ​ ( 𝟏 ) = ∑ k c k 2 ​ ∑ k A k \mathcal{L}_{\text{MTP}}(\mathbf{1})=\sqrt{\sum_{k}c_{k}^{2}}\,\sqrt{\sum_{k}A_{k}} , with ∑ k c k 2 = K ⁡ ( K + 1 ) ​ ( 2 ​ K + 1 ) / 6 \sum_{k}c_{k}^{2}=K(K+1)(2K+1)/6 . 
+(iv) Decayed schedules. This is Proposition B.1 (c). Proposition B.1 . 
+Suppose K ≥ 2 K\geq 2 and 0 &lt; A 1 ≤ ⋯ ≤ A K 0&lt;A_{1}\leq\dots\leq A_{K} , and let f k ⋆ ∝ c k / A k f^{\star}_{k}\propto c_{k}/\sqrt{A_{k}} . Then
+(a) f ⋆ f^{\star} is strictly decreasing in k k ;
+(b) ℒ MTP ​ ( 𝟏 ) &gt; Q \mathcal{L}_{\text{MTP}}(\mathbf{1})&gt;Q ;
+(c) for f k ( t ) = ( f k ⋆ ) t f^{(t)}_{k}=(f^{\star}_{k})^{t} , ℒ MTP ​ ( f ( t ) ) \mathcal{L}_{\text{MTP}}(f^{(t)}) is nonincreasing in t ∈ [ 0 , 1 ] t\in[0,1] , from ℒ MTP ​ ( 𝟏 ) \mathcal{L}_{\text{MTP}}(\mathbf{1}) at t = 0 t=0 to Q Q at t = 1 t=1 . Proof. 
+(a) c k c_{k} is strictly decreasing and 1 / A k 1/\sqrt{A_{k}} is nonincreasing, both positive.
+(b) By (a), 𝟏 \mathbf{1} is not proportional to f ⋆ f^{\star} , so equality in Eq. 7 fails.
+(c) With u k = log ⁡ f k ⋆ u_{k}=\log f^{\star}_{k} , the function F ( t ) = 2 log ℒ MTP ( f ( t ) ) = log ∑ k c k 2 e − t ​ u k + log ∑ k A k e t ​ u k F(t)=2\log\mathcal{L}_{\text{MTP}}(f^{(t)})=\log\sum_{k}c_{k}^{2}e^{-tu_{k}}+\log\sum_{k}A_{k}e^{tu_{k}} is a sum of log-sum-exps of affine functions, hence convex, and is minimized at t = 1 t=1 by the equality condition of Eq. 7 ; a convex function is nonincreasing to the left of its minimizer.
+∎ 
+The assumption A 1 ≤ ⋯ ≤ A K A_{1}\leq\dots\leq A_{K} reflects that acceptance decays with depth. Proposition B.1 concerns how tightly the training loss bounds lost length; that DDS attains comparable 𝔼 ⁡ [ τ ] \mathbb{E}[\tau] at lower cost is verified empirically. Data not generated by the target. 
+If d k ≠ p k d_{k}\neq p_{k} , step (ii) uses the triangle inequality TV ⁡ ( p k , q k ) ≤ TV ⁡ ( d k , q k ) + TV ⁡ ( d k , p k ) \mathrm{TV}(p_{k},q_{k})\leq\mathrm{TV}(d_{k},q_{k})+\mathrm{TV}(d_{k},p_{k}) and Pinsker on both terms, which adds 1 2 ​ ∑ k c k ​ KL ( d k ∥ p k ) \tfrac{1}{\sqrt{2}}\sum_{k}c_{k}\sqrt{\mathrm{KL}(d_{k}\,\|\,p_{k})} to every bound in Eq. 6 .
+This term depends on neither the drafter nor the schedule, so steps (iii), (iv), and Proposition B.1 are unchanged. 
+Appendix C Full Benchmark Results 
+Table 1 gives the per-benchmark scores behind the category gains of Figure 3(a) , for all six pretrained configurations over the fourteen benchmarks of the reported scope. 
+Provenance of the cells : nine of the fourteen rows are scored by us under the protocol of Appendix A . The other five are reported by an internal evaluation platform and are reproduced here as it returned them: PreciseWikiQA, HotpotQA and PopQA, graded by gpt-oss-120b over its full sets of 5,000 5{,}000 , 7,405 7{,}405 and 14,256 14{,}256 items, together with MATH ( 4,739 4{,}739 items, scored by rule) and MBPP+ ( 378 378 items, scored by execution). That platform’s answer-extraction and judging rules are not published with this paper, so these five rows cannot be reproduced exactly from outside it. Our own runs of them exist but measure a different quantity — a different few-shot prefix, an answer-extraction rule that does not match on MATH, a weaker test bar on MBPP+, and a 600 600 -item sample under a different judge on the three closed-book sets — so they are not offered as a second reading. 
+Category Benchmark ECHO-1 ECHO-3 ECHO-1.5 (3) MTP-1 MTP-3 ECHO-2 (7) 
+Mathematics GSM8K 61.49 59.82 63.31 61.64 63.08 61.33 
+MATH 36.04 36.01 34.64 34.31 33.78 33.56 
+Reasoning BBH 46.44 50.02 48.55 46.91 40.18 48.45 
+BBEH 6.63 6.41 6.09 5.33 6.96 5.43 
+PIQA 77.57 78.26 78.38 77.68 77.97 78.09 
+WinoGrande 63.85 64.01 64.40 62.27 63.06 62.59 
+Multi-subject MC MMLU 55.93 57.10 56.93 56.39 58.59 56.95 
+MMLU-Pro 26.02 26.37 27.58 26.60 29.37 27.90 
+Code HumanEval+ 26.22 29.88 29.27 23.17 25.00 26.83 
+MBPP+ 47.62 48.68 47.62 47.62 47.88 47.88 
+LiveCodeBench 7.00 7.00 7.00 6.00 6.00 5.25 
+Closed-book QA PreciseWikiQA 7.88 8.30 8.13 7.48 7.52 7.54 
+HotpotQA 21.35 21.29 20.65 21.18 20.86 20.57 
+PopQA 16.23 15.83 16.16 16.44 15.09 15.57 
+Overall Average (14 tasks) 35.73 36.36 36.34 35.22 35.38 35.57 Table 1: Per-benchmark scores at step 78,000 (base models, no EMA). 
+Appendix D Stability across Pretraining Runs 
+Two of the configurations were pretrained a second time under the same recipe, and the comparison survives it. Over the fourteen benchmarks of the reported scope, ECHO MTP-1 leads DeepSeek’s MTP-1 by 0.52 points in the baseline run and by 0.78 in the repeat. Reasoning ( + 0.57 +0.57 then + 1.33 +1.33 ) and code ( + 1.35 +1.35 then + 1.69 +1.69 ) both grow, multi-subject multiple choice turns in ECHO’s favor ( − 0.52 -0.52 then + 1.30 +1.30 ), closed-book QA stays within a fifth of a point of zero in both, and mathematics is the one category that moves the other way ( + 0.79 +0.79 then − 0.73 -0.73 ). Two evaluations of the same weights differ by 0.27 points per benchmark, which puts the noise at 0.13 on a fourteen-benchmark gap and 0.30 on a category gap. Table 2 gives the three column groups, and Figure 4(c) draws the two classes with the spread these two runs measure. Twice the training budget. 
+The baseline run was then carried to step 156,000 156{,}000 on both sides, twice its token budget. Over the fourteen rows ECHO’s lead holds, + 0.52 +0.52 at step 78k against + 0.50 +0.50 at step 156k, a change of − 0.02 -0.02 against a spread of 0.14 0.14 across rows, with seven rows in its favor at each step, and every bucket is reproduced to within 0.2 0.2 points. Doubling the budget therefore leaves both the overall gap and the category ordering where they were. Repeating the run reproduces the overall gap to 0.26 0.26 points but not its split across categories, which moves by 0.3 0.3 to 1.8 1.8 points. 
+Baseline Repeat run Twice the budget 
+run 1, step 78k run 2, step 78k run 1, step 156k 
+Benchmark ECHO DeepSeek ECHO DeepSeek ECHO DeepSeek 
+GSM8K 61.49 61.64 60.05 60.73 64.82 65.05 
+MATH 36.04 34.31 34.58 35.37 38.49 36.65 
+BBH 46.44 46.91 48.15 47.79 48.31 48.79 
+BBEH 6.63 5.33 5.83 5.59 6.18 5.29 
+PIQA 77.57 77.68 78.67 76.64 79.71 79.59 
+WinoGrande 63.85 62.27 64.96 62.27 65.67 63.30 
+MMLU 55.93 56.39 56.08 56.30 59.23 59.36 
+MMLU-Pro 26.02 26.60 27.04 24.21 26.23 27.28 
+HumanEval+ 26.22 23.17 28.05 25.00 29.88 26.83 
+MBPP+ 47.62 47.62 49.21 48.68 50.00 50.26 
+LiveCodeBench 7.00 6.00 6.75 5.25 7.25 6.50 
+PreciseWikiQA 7.88 7.48 8.12 8.00 8.56 9.18 
+HotpotQA 21.35 21.18 22.11 22.10 23.23 21.90 
+PopQA 16.23 16.44 15.48 16.20 16.38 16.97 Table 2: One recipe under two perturbations, both against the same baseline. Baseline is the run reported in Table 1 . Repeat run is an independent
+pretraining run of the same recipe at the same step. Twice the budget is the
+baseline run continued to step 156k. 
+Appendix E Next-Token Loss Does Not Separate the Two Objectives 
+Figure 5 separates the objective into its two terms. On the backbone’s next-token
+loss the two runs are indistinguishable: the gap averages 0.004 0.004 over the 78k steps and stays
+between 0.004 0.004 and 0.005 0.005 in every 10k-step window, with ECHO-1 marginally above MTP-1
+throughout. The MTP loss carries a larger gap in the same direction, 0.011 0.011 at step 78k.
+On the same token budget the two objectives therefore arrive at the same next-token likelihood,
+and neither margin is one the method is meant to win. Figure 5: Training loss of ECHO-1 and MTP-1 over the first 78k steps of the baseline run,
+separated into the backbone’s next-token loss (left) and the MTP loss (right).
+The logged objective is the weighted sum ℒ = ℒ backbone + 0.3 ​ ℒ MTP \mathcal{L}=\mathcal{L}_{\mathrm{backbone}}+0.3\,\mathcal{L}_{\mathrm{MTP}} , and the left
+panel is recovered by subtracting the weighted MTP loss from it. Each curve is an
+exponential moving average over all 78,000 78{,}000 logged steps, with no subsampling; the
+vertical range is clipped to what the curves occupy after step 12k, so the first few
+thousand steps run above the frame. 
+This is the expected outcome rather than a negative result. ECHO’s multi-horizon objective adds no
+capacity to the next-token head; it changes what the shared representation is required to support.
+In predicting the next token the model is held responsible for several future positions at once,
+which constrains the hidden state towards features that stay predictive beyond one step. The effect
+of such a constraint is regularization, and regularization does not surface in the quantity it
+constrains: next-token cross-entropy is the term both objectives already optimize, so matching it
+is the premise of the comparison rather than its outcome. The two configurations separate
+downstream instead, in the benchmark gaps of Tables 1 and 2 and in
+the draft quality that Section 4 converts into decode speedup. Figure 6: The same two terms across both families, over the steps all five runs share.
+ECHO-1.5 (3) ’s event files start at step 60k on our side and the first thousand of
+those go to the moving average’s warm-up, which fixes the window at 61k–78k; the
+full-run view of the depth-1 pair is Figure 5 . On the backbone term (left) the
+five lie within 0.006 0.006 and the ordering follows the family rather than the depth; the
+depth-1 term (right) is where added depth shows up. The same holds along depth. 
+Figure 6 repeats the split for all
+five configurations, ECHO-1, ECHO-1.5 (3) and ECHO-3 against MTP-1 and MTP-3, over the
+steps all the runs share. Within a family the backbone term barely moves with depth: the three ECHO
+configurations end within 0.002 0.002 of each other, and MTP-3 sits 0.0017 0.0017 below MTP-1. Across all
+five it spans 0.006 0.006 , and the ordering is not ours to like — MTP-3 holds the lowest backbone
+loss of any configuration, 1.676 1.676 against ECHO-3’s 1.682 1.682 , while ECHO-3 leads it by 0.97 0.97 points over the fourteen benchmarks of Table 1 . What does move is the MTP
+term, and it moves the way the weighting predicts: the per-step loss is averaged over the depths
+trained at that step, so adding depths takes weight off depth 1, and the depth-1 term rises by 0.027 0.027 from ECHO-1.5 (3) to ECHO-3 and by 0.048 0.048 from MTP-1 to MTP-3. At matched depth 3
+the two designs divide the horizons: reusing the final layer fits the nearest one better
+( 1.902 1.902 against 1.911 1.911 ) and the separate modules fit the far ones better ( 1.992 1.992 and 2.045 2.045 against 2.002 2.002 and 2.083 2.083 at depths 2 and 3). ECHO-1.5 (3) ’s deeper terms are logged only
+on the steps that sample them, 39.5 % 39.5\% and 9.8 % 9.8\% of steps for depths 2 and 3, which is the f k = ℙ ⁡ ( D ≥ k ) = ( 1 , 0.4 , 0.1 ) f_{k}=\mathbb{P}(D\geq k)=(1,0.4,0.1) that π = ( 0.6 , 0.3 , 0.1 ) \pi=(0.6,0.3,0.1) prescribes in Equation 4 . At matched step those sampled depths are where the saving is paid for: Figure 7 puts ECHO-1.5 (3) ’s depth-2 term 0.051 0.051 above ECHO-3’s at step 78k
+and its depth-3 term 0.132 0.132 above, with the curves running parallel rather than converging.
+That is the shape of the trade, and it stops there. Depth 1, which both train at every step,
+costs nothing at all ( 1.874 1.874 against 1.902 1.902 , in ECHO-1.5 (3) ’s favour); the fourteen-task
+average is within 0.02 0.02 ( 36.34 36.34 against 36.36 36.36 , Table 1 ); and the
+accepted length holds beyond the trained depth ( Figure 1(b) ). None of these margins is
+where the comparison is settled, which is this
+section’s point: the terms of the training objective do not rank the two designs. 
+Appendix F After Supervised Finetuning 
+The pretrained checkpoints were finetuned on the chat SFT corpus, and Table 3 reports the fourteen in-scope benchmarks for the two ECHO
+configurations against DeepSeek’s MTP baseline finetuned the same way.
+ECHO keeps its lead after
+finetuning, + 1.61 +1.61 and + 2.10 +2.10 points over the fourteen rows, and the
+lead is again larger on reasoning and code than on QA and multiple choice.
+Three caveats apply. The cells are decoded greedily, so
+repeating an evaluation does not move the rule- and execution-graded rows, and no
+error bars are drawn for them. The four judge-graded rows, BBEH and the three
+closed-book sets, do carry grader variability.
+BBH is read in its chain-of-thought form: under the answer-directly prompt the
+finetuned output degenerates to a constant option label. 
+Category Benchmark MTP-Instruct ECHO-1.5 (3) -Instruct ECHO-2 (7) -Instruct 
+Mathematics GSM8K 61.87 62.70 65.20 
+MATH 31.05 38.54 38.27 
+Reasoning BBH 54.41 54.24 58.06 
+BBEH 11.30 10.33 10.00 
+PIQA 74.49 74.38 74.38 
+WinoGrande 61.17 61.09 61.56 
+Multi-subject MC MMLU 49.17 52.46 55.53 
+MMLU-Pro 29.06 32.25 31.28 
+Code HumanEval+ 47.56 48.78 51.83 
+MBPP+ 44.97 51.59 46.30 
+LiveCodeBench 8.75 11.25 9.75 
+Closed-book QA PreciseWikiQA 4.22 4.90 5.06 
+HotpotQA 19.04 16.82 19.16 
+PopQA 10.69 10.94 10.77 
+Overall Average (14 tasks) 36.27 37.88 38.37 Table 3: The fourteen in-scope benchmarks after one round of supervised
+finetuning. Every cell is scored under the protocol of Table 1 . 
+Appendix G Decode Speedup under Serving 
+Figure 8 reports the cells of Figure 3(b) as decode speedup instead of accepted length; the ordering of the drafters is the one discussed in Section 4 . 
+Appendix H Comparability of Reported Baselines in Inference 
+The evaluation scales differ systematically. EAGLE-3 reports results across a wide range of target sizes, from Vicuna-13B up to LLaMA-3.3-70B, whereas the parallel drafters cluster at the small end: Domino ( Huang et al., 2026 ) evaluates only Qwen3-4B and Qwen3-8B, DSpark extends to Qwen3-14B, and the largest target any of them reports is Qwen3-Coder-30B-A3B, a sparse model with roughly 3B active parameters, so its per-token cost is closer to a 4B dense model than to a 30B one. No paper in this family evaluates a dense target above 14B ( Table 4 ). Table 4: Target models evaluated by each method, ordered by model size. 
+Model Qwen3-4B LLaMA-3.1-8B Qwen3-8B Gemma4-12B Vicuna-13B Qwen3-14B Qwen3-Coder-30B-A3B LLaMA-3.3-70B 
+EAGLE-3 ✗ ✓ ✗ ✗ ✓ ✗ ✗ ✓ 
+DFlash ✓ ✓ ✓ ✗ ✗ ✗ ✓ ✗ 
+Domino ✓ ✗ ✓ ✗ ✗ ✗ ✗ ✗ 
+DSpark ✓ ✗ ✓ ✓ ✗ ✓ ✗ ✗ 
+Beyond scale, the EAGLE-3 checkpoints these papers evaluate were never fairly trained ( Table 5 ). DFlash and Domino used public checkpoints released by AngelSlim with the different training datasets and fewer samples. Drafter capacity is uncontrolled as well: at every target, the block-parallel drafter carries 2.1 2.1 – 2.6 × 2.6\times the parameters of the EAGLE-3 head. Table 5: Training data and drafter capacity in the DFlash-family papers’ comparisons against EAGLE-3. Drafter parameter counts are computed from released configs. 
+Method Model Training datasets Samples Draft params 
+DFlash Qwen3-4B / 8B Nemotron V2, CodeAlpaca, ShareGPT, UltraChat, LongAlign 800K 459M 
+EAGLE-3 Qwen3-4B / 8B ShareGPT, UltraChat 530K 218M 
+Domino Qwen3-8B Open-PerfectBlend 1.42M 1049M 
+EAGLE-3 Qwen3-8B ShareGPT, UltraChat 530K 400M 
+DSpark Qwen3-4B / 8B / 14B Open-PerfectBlend 1.3M 459M / 1049M / 1573M 
+EAGLE-3 Qwen3-4B / 8B / 14B Open-PerfectBlend 1.3M 218M / 400M / 609M 
+Although DSpark controls the data axis: it retrains EAGLE-3 and DSpark within a single framework on identical training dataset, however, its evaluation restricts EAGLE-3 to chain drafting instead of the original tree drafting. The released code proposes one token per step and returns a single trajectory with no tree construction, top-k expansion, or candidate reranking. The baseline is therefore matched in data but evaluated in a degraded configuration, and its acceptance length understates what the method achieves as published. Figure 7: The depth-2 term at matched pretraining step. ECHO-1.5 (3) samples depth 2 on 39.5 % 39.5\% of steps where ECHO-3 trains it on all of them, so the sampled series carries fewer
+points over this window, 6,721 6{,}721 against 17,000 17{,}000 . Fewer is not biased: at depth 1,
+which both configurations train every step, the loss on the steps that also sample depth 2
+differs from the loss on the steps that do not by + 0.0002 +0.0002 , against a standard error of 0.0004 0.0004 . 
+Appendix I Artifact Licensing 
+Table 6 summarizes the
+licenses and usage terms of the training and
+evaluation datasets used in our experiments.
+The pretraining corpus and in-house SFT dataset
+are proprietary and subject to restricted
+redistribution. All fourteen evaluation benchmarks
+are used solely for research evaluation and are
+not redistributed.
+The use of these artifacts follows their applicable
+licenses and access conditions. Figure 8: Decode speedup at T = 1 T{=}1 with rejection sampling, over the same cells as Figure 3(b) . The
+warm-start EAGLE-3 drafter is trained from DeepSeek’s MTP baseline, following Kimi Team (2026) , and is normalized by the baseline of its own run. 
+Type Artifact License / Terms of Use 
+Training Data 
+Pretraining 600B-token corpus Proprietary (redistribution restricted) 
+SFT In-house chat corpus Proprietary (redistribution restricted) 
+Model Weights and Checkpoints 
+Weights DeepSeek-V3 pretrained weights DeepSeek Model License 
+Model gpt-oss-120b Apache-2.0 
+Evaluation Datasets 
+Mathematics MATH MIT (repository) 
+Mathematics GSM8K MIT 
+Reasoning BBH MIT 
+Reasoning BBEH CC BY 4.0 (data) 
+Reasoning WinoGrande Apache-2.0 
+Reasoning PIQA Not specified 
+Multi-subject MMLU MIT 
+Multi-subject MMLU-Pro MIT 
+Code HumanEval+ Apache-2.0 (EvalPlus) 
+Code MBPP+ Apache-2.0 (EvalPlus) 
+Code LiveCodeBench MIT (code); data terms unclear 
+QA PopQA MIT (repository) 
+QA PreciseWikiQA CC BY-NC 4.0 (HalluLens) 
+QA HotpotQA CC BY-SA 4.0 
+Additional Serving Benchmarks 
+Code HumanEval MIT 
+Code MBPP CC BY 4.0 
+Mathematics MATH-500 MIT 
+Software SWE-bench MIT (repository) 
+Chat Arena-Hard Apache-2.0 (repository) 
+Chat MT-Bench Not confirmed (prompt dataset) 
+Summarization Summarization prompts Not specified 
+Instruction Stanford Alpaca CC BY-NC 4.0 
+Software and Implementations 
+Serving SGLang v0.4 Apache-2.0 
+Attention FlashAttention-3 BSD-3-Clause 
+Drafter EAGLE-3 Apache-2.0 
+Drafter DFlash MIT 
+Drafter DSpark MIT 
+Evaluation EvalPlus Apache-2.0 (repository) Table 6: Licenses and terms of use for the scientific
+artifacts used in our experiments, including training
+data, pretrained models, evaluation benchmarks, and
+third-party software. Repository-level licenses are
+distinguished from dataset-specific and model-weight
+licenses where applicable. 
+Appendix J AI Use Disclosure 
+During the preparation of this manuscript, the authors used ChatGPT (OpenAI) to assist with language editing, grammatical corrections, and improving the clarity of author-written text. The AI tool was not used to generate research findings or experimental results. All AI-assisted modifications were reviewed and verified by the authors, who take full responsibility for the content of this manuscript. Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
