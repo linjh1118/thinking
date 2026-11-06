@@ -1273,7 +1273,6 @@ BRANCH_MODEL_NODES = {
         ("2607", "Gemini 3.6 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
         ("2608", "Gemini 3.7 Flash", "Flash", "https://deepmind.google/models/model-cards/"),
         ("260902", "Gemini 3.8 Flash Cyber", "Cyber", "https://deepmind.google/models/gemini/cyber/"),
-        ("2608", "Gemini Omni Flash", "Omni", "https://deepmind.google/models/model-cards/"),
         ("2511", "Nano Banana", "Image", "https://ai.google.dev/gemini-api/docs/models"),
         ("2608", "Nano Banana 2", "Image", "https://ai.google.dev/gemini-api/docs/models"),
         ("2608", "Nano Banana 2 Lite", "Image", "https://ai.google.dev/gemini-api/docs/models"),

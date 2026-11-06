@@ -1,0 +1,1290 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/omni-1-2-flash">打开官方原文 ↗</a> · <a href="api-model-page.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Gemini Omni 1.2 Flash  |  Gemini Enterprise Agent Platform  |  Google Cloud Documentation Skip to main content Documentation close 
+Get Started 
+Get Started with Google Cloud 
+Product List 
+Cloud Customer Care 
+Featured Products 
+Agent Platform 
+Apigee API Management 
+BigQuery 
+Compute Engine 
+Cloud CDN 
+Cloud Run 
+Cloud Storage 
+Cloud SQL 
+Gemini Enterprise 
+Google Kubernetes Engine 
+Looker 
+Cross-product Tools 
+Access and resources management 
+Costs and usage management 
+Infrastructure as code 
+SDK, languages, frameworks, and tools 
+Technology Areas 
+AI and ML 
+Application development 
+Application hosting 
+Compute 
+Data analytics and pipelines 
+Databases 
+Distributed, hybrid, and multicloud 
+Industry solutions 
+Migration 
+Networking 
+Observability and monitoring 
+Security 
+Storage / Console 
+English 
+Deutsch 
+Español – América Latina 
+Français 
+Português – Brasil 
+中文 – 简体 
+日本語 
+한국어 Sign in 
+Gemini Enterprise Agent Platform Start free Overview Studio Agents Models Notebooks API reference Pricing 
+Agent Platform 
+Generative AI Engineering Blog 
+Documentation 
+More 
+Overview 
+Studio 
+Agents 
+Models 
+Notebooks 
+API reference 
+Pricing 
+More 
+Engineering Blog 
+Console 
+Overview 
+Beginner&#x27;s guide 
+Get started 
+Get started with Agent Platform 
+Develop Gemini API code with the Gen AI SDK 
+Connect to the Knowledge MCP server 
+Get an API key 
+Configure application default credentials 
+Migrate from Google AI Studio to Agent Platform 
+Get started with Gemini 4 
+Get started with Gemini 3 
+Developer guides for Gemini models 
+Gemini 4 Argon 
+Gemini 3.8 Live 
+Gemini 3.8 Flash 
+Gemini 3.7 Flash 
+Gemini 3.6 Flash 
+Gemini 3.5 Flash 
+Google GenAI libraries 
+Generative AI cookbook 
+Access Gemini models using OpenAI libraries 
+Express mode 
+Overview 
+Console tutorial 
+API tutorial 
+Select models 
+Model Garden 
+Overview of Model Garden 
+Use models in Model Garden 
+Test model capabilities 
+Google Models 
+All Google models 
+Gemini 
+Migrate to the latest Gemini models 
+Argon 
+4 Argon 
+Pro 
+3.1 Pro 
+2.5 Pro 
+Flash 
+3.8 Flash 
+3.7 Flash 
+3.6 Flash 
+3.5 Flash 
+3 Flash 
+2.5 Flash 
+2.5 Flash Live API 
+Flash-Lite 
+3.5 Flash-Lite 
+3.1 Flash-Lite 
+2.5 Flash-Lite 
+Image 
+Nano Banana 2.1 
+Nano Banana 2 
+Nano Banana 2 Lite 
+Nano Banana Pro 
+Nano Banana 
+Virtual Try-On 
+Omni 
+Omni 1.2 Flash 
+Omni 1.1 Flash 
+Omni Flash 
+Cyber 
+3.8 Flash Cyber 
+Live 
+3.8 Live 
+Text-to-Speech 
+Gemini 3.8 Flash TTS 
+Gemini 3.8 Flash-Lite TTS 
+Transcribe 
+Gemini 3.5 Transcribe 
+Translate 
+Gemini 3.5 Live Translate 
+Embedding 
+Gemini Embedding 2 
+Robotics 
+Gemini Robotics ER 2 
+Overview 
+Model information 
+Spatial reasoning 
+Agentic capabilities 
+Task orchestration 
+Video understanding 
+Veo 
+Veo 3.1 
+Lyria 
+Lyria 2 
+Lyria 3 
+Model versions 
+Partner Models 
+Partner models overview 
+Claude 
+Overview 
+Use Claude models on Google Cloud (Anthropic-managed) 
+Request predictions 
+Quotas for Anthropic Claude models 
+Anthropic managed Claude API audit logging 
+Batch predictions 
+Structured outputs 
+Prompt caching 
+Count tokens 
+Web search 
+Safety classifiers 
+Cyber Verification Program 
+Claude models 
+Fable 
+Fable 5.1 
+Fable 5 
+Opus 
+Opus 5.5 
+Opus 5 
+Opus 4.8 
+Opus 4.7 
+Opus 4.6 
+Opus 4.5 
+Sonnet 
+Sonnet 5.5 
+Sonnet 5 
+Sonnet 4.6 
+Sonnet 4.5 
+Haiku 
+Haiku 5.5 
+Haiku 4.5 
+Grok 
+Overview 
+Responses API 
+Function calling 
+Structured output 
+Reasoning 
+Model details 
+Grok 4.20 
+Grok 4.3 
+Grok 4.6 
+Grok 4.7 
+Mistral AI 
+Overview 
+Model details 
+Mistral Medium 3 
+Mistral OCR (25.05) 
+Mistral Small 3.1 (25.03) 
+Codestral 2 
+Meta 
+Overview 
+Model details 
+Muse Spark 1.3 
+Deploy partner models from Model Garden 
+Partner model deprecations 
+Open Models 
+Overview 
+AlphaFold 3 
+AlphaGenome 
+DeepSeek 
+Overview 
+DeepSeek-V4.1-Flash 
+DeepSeek-V3.2 
+DeepSeek-V3.1 
+DeepSeek-R1-0528 
+DeepSeek-OCR 
+Embedding (e5) 
+Multilingual E5 Small 
+Multilingual E5 Large 
+Google Gemma 
+Model-as-a-Service (MaaS) 
+Gemma-4-26B-A4B-IT MaaS 
+Use Gemma 
+Tutorial: Deploy and inference Gemma (GPU) 
+Tutorial: Deploy and inference Gemma (TPU) 
+Kimi 
+Overview 
+Kimi K2 Thinking 
+Llama 
+Overview 
+Request predictions 
+Model details 
+Llama 4 Maverick 
+Llama 4 Scout 
+Llama 3.3 
+MiniMax 
+Overview 
+MiniMax M2 
+OpenAI 
+Overview 
+OpenAI gpt-oss-120b 
+OpenAI gpt-oss-20b 
+Qwen 
+Overview 
+Qwen 3 Next Instruct 80B 
+Qwen 3 Next Thinking 80B 
+Qwen 3 Coder 
+Qwen 3 235B 
+ZAI.org 
+Overview 
+GLM 5.2 
+GLM 5 
+GLM 4.7 
+Managed open models (MaaS) 
+Overview 
+Use open models via Model as a Service (MaaS) 
+Grant access to open models 
+API 
+Call MaaS APIs for open models 
+Function calling 
+Thinking 
+Structured output 
+Batch prediction 
+Open model deprecations 
+Self-deployed open models 
+Overview 
+Deploy open models 
+Deploy open models from Model Garden 
+Deploy open models with prebuilt containers 
+Deploy open models with a custom vLLM container 
+Deploy models with custom weights 
+Use Hugging Face Models 
+Tutorials 
+Optimize model performance with advanced features in Model Garden 
+Hex-LLM 
+Comprehensive guide to vLLM for Text and Multimodal LLM Serving (GPU) 
+vLLM TPU 
+xDiT 
+Deploy Llamma 3 models with SpotVM and Reservations 
+Build 
+Prompt design 
+Introduction to prompting 
+Prompting strategies 
+Overview 
+Give clear and specific instructions 
+Use system instructions 
+Include few-shot examples 
+Add contextual information 
+Structure prompts 
+Compare prompts 
+Instruct the model to explain its reasoning 
+Break down complex tasks 
+Experiment with parameter values 
+Prompt iteration strategies 
+Task-specific prompt guidance 
+Design multimodal prompts 
+Design chat prompts 
+Capabilities 
+Safety 
+Overview 
+Responsible AI 
+System instructions for safety 
+Configure content filters 
+Gemini for safety filtering and content moderation 
+Abuse monitoring 
+Process blocked responses 
+Content Credentials 
+AI Content Detection API 
+Text and code generation 
+Text generation 
+System instructions 
+Structured output 
+Content generation parameters 
+Image generation 
+Generate images with Gemini 
+Generate images from video with Gemini 
+Edit images with Gemini 
+Gemini image generation best practices 
+Generate Virtual Try-On images 
+Gemini image generation limitations 
+Responsible AI and usage for Gemini image generation 
+Video generation 
+Overview 
+Text to video 
+First frame image to video 
+First and last frames to video 
+Generate videos from references 
+Extend videos 
+Edit videos 
+Upscale videos 
+Prompt guide 
+Video best practices 
+Responsible AI for Veo 
+Music generation 
+Introduction to Lyria 
+Generate music using Lyria 
+Lyria prompt guide 
+Audio generation 
+Overview 
+Create a custom voice with voice design 
+Replicate voices 
+Prompting guide 
+Migration guide 
+Media analysis 
+Image understanding 
+Video understanding 
+Audio understanding 
+Document understanding 
+Bounding box detection 
+URL context 
+Thinking 
+Overview 
+Thought signatures 
+Prompting guide 
+Interactions API 
+Overview 
+Developer guide 
+Live API 
+Overview 
+Get started 
+Get started using the Gen AI SDK 
+Get started using WebSockets 
+Get started using ADK 
+Start and manage live sessions 
+Send audio and video streams 
+Configure live avatars 
+Configure language and voice 
+Configure Gemini capabilities 
+Asynchronous function calling 
+Best practices with Live API 
+Troubleshooting Live API 
+Demo apps and resources 
+Migrate from Gemini 2.5 Flash Live API to Gemini 3.8 Live 
+Embeddings 
+Overview 
+Text embeddings 
+Get text embeddings 
+Choose an embeddings task type 
+Get multimodal embeddings 
+Get batch embeddings inferences 
+Translation 
+Transcribe speech 
+Model tools 
+Code execution 
+Computer use 
+Function calling 
+Grounding 
+Overview 
+Grounding with Google Search 
+Grounding with Google Maps 
+Grounding with Agent Search 
+Grounding with your search API 
+Grounding responses using RAG 
+Grounding with Elasticsearch 
+Grounding with Parallel web search 
+Grounding with Exa web search 
+Web Grounding for Enterprise 
+Development tools 
+Use AI-powered prompt writing tools 
+Overview 
+Optimize prompts 
+Overview 
+Zero-shot optimizer 
+Few-shot optimizer 
+Data-driven optimizer 
+Use prompt templates 
+Manage prompts with the SDK 
+Model tuning 
+Introduction to tuning 
+Tuning Gemini models 
+Supervised fine-tuning 
+About supervised fine-tuning 
+Prepare your data 
+Use supervised fine-tuning 
+Supported modalities 
+Text tuning 
+Document tuning 
+Image tuning 
+Audio tuning 
+Video tuning 
+Tune function calling 
+Reinforcement learning fine-tuning 
+About reinforcement learning fine-tuning 
+Quickstart using the console 
+Quickstart using the API 
+Reinforcement learning fine-tuning job 
+Overview 
+Tuning dataset 
+Hyperparameters 
+Reward functions 
+Metrics and monitoring 
+Continuous tuning 
+Preference tuning 
+About preference tuning 
+Prepare your data 
+Use preference tuning 
+Use tuning checkpoints 
+Use continuous tuning 
+Tuning recommendations with LoRA and QLoRA 
+Open models 
+Supervised and distillation fine-tuning 
+Embeddings models 
+Tune text embeddings models 
+Translation models 
+About supervised fine-tuning 
+Prepare your data 
+Use supervised fine-tuning 
+Migrate 
+Call Agent Platform models using OpenAI libraries 
+Overview 
+Authenticate 
+Examples 
+Migrate from OpenAI SDK 
+Evaluate 
+Overview 
+Tutorial: Perform evaluation using the console 
+Perform evaluation using the GenAI Client in Agent Platform SDK 
+Tutorial: Evaluate models using the GenAI Client in Agent Platform SDK 
+Define your evaluation metrics 
+Define your evaluation metrics 
+Details for managed rubric-based metrics 
+Prepare your evaluation dataset 
+Run an evaluation 
+View and interpret evaluation results 
+Evaluate agents 
+Alternative evaluation methods 
+Evaluate using the evaluation module in Agent Platform SDK 
+Tutorial: Perform evaluation using the evaluation module in Agent Platform SDK 
+Define your evaluation metrics 
+Prepare your evaluation dataset 
+Run an evaluation 
+Interpret evaluation results 
+Templates for model-based metrics 
+Evaluate agents 
+Evaluate a judge model 
+Configure a judge model 
+Run AutoSxS pipeline 
+Run a computation-based evaluation pipeline 
+Deploy 
+Consumption options overview 
+Provisioned Throughput 
+Provisioned Throughput overview 
+Supported models 
+Calculate Provisioned Throughput requirements 
+Provisioned Throughput for Live API 
+Provisioned Throughput for Gemini Nano Banana models 
+Provisioned Throughput for Gemini Omni models 
+Provisioned Throughput for Veo models 
+Single Zone Provisioned Throughput 
+Purchase Provisioned Throughput 
+Use Provisioned Throughput 
+PayGo 
+Standard PayGo 
+Priority PayGo 
+Flex PayGo 
+Batch inference 
+Overview 
+Create batch job from Cloud Storage 
+Create batch job from BigQuery 
+Resume an incomplete batch job 
+Quotas and system limits 
+Cache reused prompt context 
+Overview 
+Create a context cache 
+Use a context cache 
+Get context cache information 
+Update a context cache 
+Delete a context cache 
+Context cache for fine-tuned Gemini models 
+Deploy generative AI models 
+Troubleshooting error code 429 
+Retry strategy 
+Administer 
+Access control 
+Networking 
+Security controls 
+Control access to Model Garden models 
+Enable Data Access audit logs 
+Save and share prompts 
+Monitor models 
+Monitor cost using custom metadata labels 
+Log inference request metadata 
+Request-response logging 
+Secure a gen AI app by using IAP 
+Overview 
+Set up your project and source repository 
+Create a Cloud Run service 
+Create a load balancer 
+Configure IAP 
+Test your IAP-secured app 
+Clean up your project 
+Build your own model 
+Overview 
+MLOps on Agent Platform 
+Interfaces for Agent Platform 
+Agent Platform beginner&#x27;s guides 
+Train an AutoML model 
+Train a custom model 
+Get inferences from a custom model 
+Train a model using Agent Platform and the Python SDK 
+Introduction 
+Prerequisites 
+Create a notebook 
+Create a dataset 
+Create a training script 
+Train a model 
+Make an inference 
+Integrated ML frameworks 
+PyTorch 
+TensorFlow 
+Agent Platform for BigQuery users 
+Glossary 
+Get started 
+Set up a project and a development environment 
+Install the Agent Platform SDK for Python 
+Authenticate to Agent Platform 
+Choose a training method 
+Try a tutorial 
+Tutorials overview 
+AutoML tutorials 
+Hello image data 
+Overview 
+Set up your project and environment 
+Create a dataset and import images 
+Train an AutoML image classification model 
+Evaluate and analyze model performance 
+Deploy a model to an endpoint and make an inference 
+Clean up your project 
+Hello tabular data 
+Overview 
+Set up your project and environment 
+Create a dataset and train an AutoML classification model 
+Deploy a model and request an inference 
+Clean up your project 
+Custom training tutorials 
+Train a custom tabular model 
+Train a TensorFlow Keras image classification model 
+Overview 
+Set up your project and environment 
+Train a custom image classification model 
+Serve predictions from a custom image classification model 
+Clean up your project 
+Fine-tune an image classification model with custom data 
+Use Agent Platform development tools 
+Development tools overview 
+Use the Agent Platform SDK 
+Overview 
+Introduction to the Agent Platform SDK for Python 
+Python version 2.0.1 migration guide 
+Agent Platform SDK for Python classes 
+Agent Platform SDK classes overview 
+Data classes 
+Training classes 
+Model classes 
+Prediction classes 
+Tracking classes 
+Terraform support for Agent Platform 
+Agent Platform Training 
+Overview 
+Agent Platform serverless training 
+Overview of serverless training in Agent Platform 
+Load and prepare data 
+Data preparation overview 
+Use Cloud Storage as a mounted file system 
+Mount an NFS share for serverless training 
+Use managed datasets 
+Prepare training application 
+Understand the serverless training service 
+Prepare training code 
+Use prebuilt containers 
+Create a Python training application for a prebuilt container 
+Prebuilt containers for serverless training 
+Use custom containers 
+Custom containers for serverless training 
+Create a custom container 
+Containerize and run training code locally 
+Train on a persistent resource 
+Overview 
+Create persistent resource 
+Run training jobs on a persistent resource 
+Get persistent resource information 
+Reboot a persistent resource 
+Delete a persistent resource 
+Configure training job 
+Choose a custom training method 
+Configure container settings for training 
+Configure compute resources for training 
+Use reservations with training 
+Use Spot VMs with training 
+Submit training job 
+Create custom jobs 
+Hyperparameter tuning 
+Hyperparameter tuning overview 
+Use hyperparameter tuning 
+Create training pipelines 
+Schedule jobs based on resource availability 
+Use distributed training 
+Training with Cloud TPU VMs 
+Use private IP for custom training 
+Use Private Service Connect interface for training (recommended) 
+Monitor and debug 
+Monitor and debug training using an interactive shell 
+Profile model training performance 
+Tutorial: Build a pipeline for continuous training 
+Create custom organization policy constraints 
+Gemini Enterprise Agent Platform clusters 
+Overview 
+Get started with training clusters 
+Deployment considerations 
+Compute resources 
+Networking 
+Storage 
+Orchestration 
+Create and manage clusters 
+Create cluster 
+View clusters 
+Manage cluster 
+Manage accounts and job scheduling on a cluster 
+Cluster resiliency 
+Monitor resilience events with a dashboard 
+Feature guides 
+Using Flex Start VMs with Slurm clusters 
+Run workload on cluster 
+Run prebuilt workloads 
+Visualizing jobs with TensorBoard 
+Manage training clusters using Slurm 
+Ray on Agent Platform 
+Ray on Agent Platform overview 
+Set up for Ray on Agent Platform 
+Create a Ray cluster on Agent Platform 
+Monitor Ray clusters on Agent Platform 
+Scale a Ray cluster on Agent Platform 
+Develop a Ray application on Agent Platform 
+Run Spark on Ray cluster on Agent Platform 
+Use Ray on Agent Platform with BigQuery 
+Deploy a model and get inferences 
+Delete a Ray cluster 
+Perform Neural Architecture Search 
+Overview 
+Set up environment 
+Beginner tutorials 
+Best practices and workflow 
+Proxy task design 
+Optimize training speed for PyTorch 
+Use prebuilt training containers and search spaces 
+Optimize using Agent Platform Vizier 
+Overview of Agent Platform Vizier 
+Create Agent Platform Vizier studies 
+AutoML model development 
+AutoML training overview 
+Image data 
+Classification 
+Prepare data 
+Create dataset 
+Train model 
+Evaluate model 
+Get predictions 
+Interpret results 
+Object detection 
+Prepare data 
+Create dataset 
+Train model 
+Evaluate model 
+Get predictions 
+Interpret results 
+Encode image data using Base64 
+Export an AutoML Edge model 
+Tabular data 
+Overview 
+Introduction to tabular data 
+Tabular Workflows 
+Overview 
+End-to-End AutoML 
+Overview 
+Train a model 
+Get online inferences 
+Get batch inferences 
+Forecasting 
+Overview 
+Train a model 
+Get online inferences 
+Get batch inferences 
+Pricing 
+Service accounts 
+Manage quotas 
+Perform classification and regression with AutoML 
+Overview 
+Quickstart: AutoML Classification (Cloud Console) 
+Prepare training data 
+Create a dataset 
+Train a model 
+Evaluate model 
+View model architecture 
+Get online inferences 
+Get batch inferences 
+Export model 
+Perform forecasting with AutoML 
+Overview 
+Prepare training data 
+Create a dataset 
+Train a model 
+Evaluate model 
+Get inferences 
+Hierarchical forecasting 
+Perform forecasting with ARIMA+ 
+Perform forecasting with Prophet 
+Perform entity reconciliation 
+Feature attributions for classification and regression 
+Feature attributions for forecasting 
+Data types and transformations for tabular AutoML data 
+Training parameters for forecasting 
+Data splits for tabular data 
+Best practices for creating tabular training data 
+Train an AutoML Edge model 
+Using the Console 
+Using the API 
+Generative AI model development 
+Overview 
+Create and manage datasets 
+Overview 
+Data splits for AutoML models 
+Create an annotation set 
+Delete an annotation set 
+Add labels (console) 
+Export metadata and annotations from a dataset 
+Manage image dataset versions (API only) 
+Get inferences 
+Overview 
+Configure models for inference 
+Export model artifacts for inference 
+Prebuilt containers for inference 
+Custom container requirements for inference 
+Use a custom container for inference 
+Use arbitrary custom routes 
+Use the optimized TensorFlow runtime 
+Serve inferences with NVIDIA Triton 
+Custom inference routines 
+Get online inferences 
+Create an endpoint 
+Choose an endpoint type 
+Create a public endpoint 
+Use dedicated public endpoints (recommended) 
+Use dedicated private endpoints based on Private Service Connect (recommended) 
+Use private services access endpoints 
+Deploy a model to an endpoint 
+Overview of model deployment 
+Compute resources for inference 
+Deploy a model by using the Google Cloud console 
+Deploy a model by using the gcloud CLI or Agent Platform API 
+Use autoscaling for inference 
+Use a rolling deployment to replace a deployed model 
+Undeploy a model and delete the endpoint 
+Use Cloud TPUs for online inference 
+Use reservations with online inference 
+Use Flex-start VMs with inference 
+Use Spot VMs with inference 
+Get an online inference 
+View online inference metrics 
+View endpoint metrics 
+View DCGM metrics 
+View AI AutoMetrics 
+Share resources across deployments 
+Use online inference logging 
+Get batch inferences 
+Get batch inferences from a custom model 
+Use reservations with batch inference 
+Get batch prediction from a self-deployed Model Garden model 
+Serve generative AI models 
+Deploy generative AI models 
+Serve Gemma open models using Cloud TPUs with Saxml 
+Serve Llama 3 open models using multi-host Cloud TPUs with Saxml 
+Serve a DeepSeek-V3 model using multi-host GPU deployment 
+Custom organization policies 
+Machine learning operations (MLOps) 
+Manage features 
+Feature management in Agent Platform 
+Agent Platform Feature Store 
+About Agent Platform Feature Store 
+Set up features 
+Prepare data source 
+Create a feature group 
+Create a feature 
+Set up online serving 
+Online serving types 
+Create an online store instance 
+Create a feature view instance 
+Control access 
+Control access to resources 
+Sync online store 
+Start a data sync 
+List sync operations 
+Update features in a feature view 
+Serve features 
+Serve features from online store 
+Serve historical feature values 
+Monitor 
+Monitor features 
+Manage feature resources 
+List feature groups 
+List features 
+Update a feature group 
+Update a feature 
+Delete a feature group 
+Delete a feature 
+Manage online store resources 
+List online stores 
+List feature views 
+Update an online store 
+Update a feature view 
+Delete an online store 
+Delete a feature view 
+Feature metadata 
+Update labels 
+Search for resources 
+Search for resources 
+Manage embeddings 
+Search using embeddings 
+Notebook tutorials 
+Agent Platform Feature Store tutorial notebooks 
+Manage models 
+Introduction to Agent Platform Model Registry 
+Versioning in Model Registry 
+Import models to Model Registry 
+Copy models in Model Registry 
+Delete a model 
+Integrate with BigQuery ML 
+Use model aliases 
+Use model labels 
+Evaluate models 
+Model evaluation in Agent Platform 
+Perform model evaluation in Agent Platform 
+Model evaluation for fairness 
+Introduction to model evaluation for fairness 
+Data bias metrics for Agent Platform 
+Model bias metrics for Agent Platform 
+Orchestrate ML workflows using pipelines 
+Introduction 
+Interfaces 
+Configure your project 
+Build a pipeline 
+Run a pipeline 
+Use pipeline templates 
+Create, upload, and use a pipeline template 
+Use a prebuilt template from the Template Gallery 
+Configure your pipeline 
+Configure execution caching 
+Configure failure policy 
+Configure retries for a pipeline task 
+Specify machine types for a pipeline step 
+Request Google Cloud machine resources with Agent Platform Pipelines 
+Configure Private Service Connect interface (recommended) 
+Configure secrets with Secret Manager 
+Configure a pipeline run on a persistent resource 
+Schedule and trigger pipeline runs 
+Schedule a pipeline run with scheduler API 
+Trigger a pipeline run with Pub/Sub 
+Cancel or delete pipeline runs 
+Cancel pipeline runs 
+Delete pipeline runs 
+Rerun a pipeline 
+Monitor pipeline execution 
+View pipeline metrics 
+View pipeline job logs 
+Route logs to a Cloud Pub/Sub sink 
+Configure email notifications 
+Visualize results 
+Visualize and analyze pipeline results 
+Track the lineage of pipeline artifacts 
+Output HTML and Markdown 
+Resource labeling by Agent Platform Pipelines 
+Understand pipeline run costs 
+Migrate from Kubeflow Pipelines to Agent Platform Pipelines 
+Use custom constraints 
+Google Cloud Pipeline Components 
+Quickstart 
+Introduction to Google Cloud Pipeline Components 
+Google Cloud Pipeline Component list 
+Use Google Cloud Pipeline Components 
+Build your own pipeline components 
+Agent Platform Pipelines tutorials 
+Tutorial notebooks 
+Track and analyze your ML metadata 
+Introduction to Vertex ML Metadata 
+Data model and resources 
+Configure your project&#x27;s metadata store 
+Use Vertex ML Metadata 
+Track Vertex ML Metadata 
+Analyze Vertex ML Metadata 
+Manage Vertex ML Metadata 
+System schemas 
+Create and use custom schemas 
+Use custom constraints with metadata stores 
+Monitor model quality 
+Introduction to Model Monitoring 
+Model Monitoring v2 
+Set up model monitoring 
+Run monitoring jobs 
+Manage model monitors 
+Model Monitoring v1 
+Provide schemas to Model Monitoring 
+Monitor feature skew and drift 
+Model Monitoring for batch predictions 
+Track Experiments 
+Introduction to Agent Platform Experiments 
+Set up for Agent Platform Experiments 
+Create an experiment 
+Create and manage experiment runs 
+Log data 
+Autolog data to an experiment run 
+Manually log data to an experiment run 
+Log models to an experiment run 
+Track executions and artifacts 
+Add pipeline run to experiment 
+Run training job with experiment tracking 
+Compare and analyze runs 
+Use Agent Platform TensorBoard 
+Introduction to Agent Platform TensorBoard 
+Set up Agent Platform TensorBoard 
+Configure training script 
+Use Agent Platform TensorBoard with custom training 
+Use Agent Platform TensorBoard with Agent Platform Pipelines 
+Manually log TensorBoard data 
+Upload existing logs 
+View Agent Platform TensorBoard 
+Notebook tutorials 
+Get started with Agent Platform Experiments 
+Compare pipeline runs 
+Model training 
+Compare models 
+Autologging 
+Custom training autologging 
+Track parameters and metrics for custom training 
+Delete outdated Agent Platform TensorBoard experiments 
+Agent Platform TensorBoard custom training with custom container 
+Agent Platform TensorBoard custom training with prebuilt container 
+Agent Platform TensorBoard hyperparameter tuning with HParams dashboard 
+Profile model training performance using Cloud Profiler 
+Profile model training performance using Cloud Profiler in custom training with prebuilt container 
+Agent Platform TensorBoard integration with Agent Platform Pipelines 
+Administer 
+Access control 
+Access control with IAM 
+IAM permissions 
+Set up a project for a team 
+Control access to Agent Platform endpoints 
+Use a custom service account 
+Use customer-managed encryption keys 
+Access Transparency 
+Monitor Agent Platform resources 
+Cloud Monitoring metrics 
+Audit logging information 
+Networking 
+Networking access overview 
+Accessing the Agent Platform API 
+Accessing Agent Platform services through private services access 
+Accessing Agent Platform services through PSC endpoints 
+Accessing Agent Platform services through PSC interfaces 
+Set up VPC Network Peering 
+Set up connectivity to other networks 
+Set up a Private Service Connect interface 
+Tutorial: Access training pipelines privately from on-premises 
+Tutorial: Access a Vector Search index privately from on-premises 
+Tutorial: Access the Generative AI API from on-premises 
+Tutorial: Access batch predictions privately from on-premises 
+Tutorial: Create a Agent Platform Workbench instance in a VPC network 
+Security 
+VPC Service Controls 
+Allow public endpoint access to protected resources from outside a perimeter 
+Allow multicloud access to protected resources from outside a perimeter 
+Allow access to protected resources from inside a perimeter 
+Name resources 
+Samples and tutorials 
+Notebook tutorials 
+Code samples 
+Code samples for all products 
+Get Started 
+Get Started with Google Cloud 
+Product List 
+Cloud Customer Care 
+Featured Products 
+Agent Platform 
+Apigee API Management 
+BigQuery 
+Compute Engine 
+Cloud CDN 
+Cloud Run 
+Cloud Storage 
+Cloud SQL 
+Gemini Enterprise 
+Google Kubernetes Engine 
+Looker 
+Cross-product Tools 
+Access and resources management 
+Costs and usage management 
+Infrastructure as code 
+SDK, languages, frameworks, and tools 
+Technology Areas 
+AI and ML 
+Application development 
+Application hosting 
+Compute 
+Data analytics and pipelines 
+Databases 
+Distributed, hybrid, and multicloud 
+Industry solutions 
+Migration 
+Networking 
+Observability and monitoring 
+Security 
+Storage 
+Agent Platform 
+Generative AI 
+Home 
+Documentation 
+AI and ML 
+Gemini Enterprise Agent Platform 
+Models Send feedback 
+Gemini Omni 1.2 Flash Stay organized with collections Save and categorize content based on your preferences. 
+Gemini Omni 1.2 Flash is a multimodal model designed for video, image,
+and text tasks. Omni 1.2 Flash is optimized for
+video generation, editing, extension, and standalone video upscaling, generating
+or editing video output with synchronized audio up to 15 seconds at 360p, 720p,
+1080p, or 4K resolution alongside text responses in a single model. 
+Try in Agent Studio View in Model Garden Deploy example app Pricing Note: &quot;Deploy example app&quot; requires a Google Cloud project with billing and Agent Platform API enabled. 
+Model ID gemini-omni-1.2-flash 
+Modalities description Text Input and output photo Image Input only mic_off Audio Not supported videocam Video Input and output 
+Token limits Maximum input tokens 131,072 
+Maximum output tokens 260,640 
+Capabilities 
+Thinking Supported 
+System instructions Not supported 
+Structured output Not supported 
+Context caching Not supported 
+RAG Engine Not supported 
+Tuning Not supported 
+Image generation Not supported 
+Edit images Not supported 
+Interleaved images and text Not supported 
+Generate videos from text Supported 
+Generate videos from an image Supported 
+Generate videos from references Supported 
+Videos from first and last frames Supported 
+Sound generation Speech, music, sound effects Supported 
+Video editing Supported 
+Extend videos Supported 
+Upscale videos Supported 
+Content Credentials (C2PA) Supported 
+Agentic video understanding Not supported 
+Tools 
+Grounding Not supported 
+Code execution Not supported 
+Function calling Not supported 
+URL context Not supported 
+Computer use Not supported 
+APIs 
+GenerateContent API Not supported 
+Interactions API Supported 
+Gemini Live API Not supported 
+Count Tokens API Supported 
+Chat Completions API Not supported 
+Consumption options 
+Provisioned Throughput Supported 
+Batch inference Not supported 
+Pay-as-you-go Standard PayGo Supported 
+Fixed quota Supported 
+Technical specifications Image photo 
+Maximum images per prompt:
+      10 
+Maximum file size per file for inline data or direct uploads through the console:
+      20 MB 
+Maximum file size per file from Google Cloud Storage:
+      30 MB 
+Supported MIME types: image/png , image/jpeg , image/webp , image/heic , image/heif 
+Text description 
+Maximum file size per file for the API or Cloud Storage imports:
+      50 MB 
+Maximum file size per file for direct uploads through the console:
+      7 MB 
+Supported MIME types: text/plain 
+Video videocam 
+Maximum video length (with audio):
+      15 seconds 
+Maximum video length (without audio):
+      15 seconds 
+Maximum input video length (video understanding):
+      10 minutes 
+Maximum input video length (editing):
+      15 seconds 
+Maximum input video length (extension):
+      Any duration (uses up to the last 10 seconds) 
+Maximum input video length (upscaling):
+      15 seconds 
+Output video duration (generation and editing):
+      3 to 15 seconds (3 to 10 seconds for first and last frames) 
+Output video duration (extension):
+      3 to 10 seconds (concatenated onto up to the last 30 seconds of the input video) 
+Maximum number of videos per prompt:
+      3 
+Supported aspect ratios:
+      16:9, 9:16 
+Supported resolutions:
+      360p, 720p, 1080p, 4k 
+Supported MIME types: video/x-flv , video/quicktime , video/mpeg , video/mpegs , video/mpg , video/mp4 , video/webm , video/wmv , video/3gpp 
+Parameter defaults tune 
+Temperature: 0.0-2.0 (default 1.0) 
+topP: 0.0-1.0 (default 0.95) 
+candidateCount: 1 
+Supported regions 
+Model availability 
+Global: global 
+
+Provisioned Throughput 
+Global: global 
+
+Standard PayGo 
+Global: global 
+Versions 
+gemini-omni-1.2-flash 
+Launch stage: GA 
+Release date: November 5, 2026 
+Retirement date † : November 5, 2027 or later 
+Security controls Online prediction 
+Data residency 
+CMEK 
+VPC-SC 
+AXT 
+See Security controls for more information. 
+† Listed retirement dates refer to retirement of support in Gemini Enterprise Agent Platform. Models may
+  remain accessible through the Gemini API after these dates have passed. The
+  Gemini API is not a Google Cloud offering and is subject to its own terms of service.
+  For details, see the Gemini API documentation . Send feedback 
+Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 4.0 License , and code samples are licensed under the Apache 2.0 License . For details, see the Google Developers Site Policies . Java is a registered trademark of Oracle and/or its affiliates. 
+Last updated 2026-11-05 UTC. Need to tell us more? [[[&quot;Easy to understand&quot;,&quot;easyToUnderstand&quot;,&quot;thumb-up&quot;],[&quot;Solved my problem&quot;,&quot;solvedMyProblem&quot;,&quot;thumb-up&quot;],[&quot;Other&quot;,&quot;otherUp&quot;,&quot;thumb-up&quot;]],[[&quot;Hard to understand&quot;,&quot;hardToUnderstand&quot;,&quot;thumb-down&quot;],[&quot;Incorrect information or sample code&quot;,&quot;incorrectInformationOrSampleCode&quot;,&quot;thumb-down&quot;],[&quot;Missing the information/samples I need&quot;,&quot;missingTheInformationSamplesINeed&quot;,&quot;thumb-down&quot;],[&quot;Other&quot;,&quot;otherDown&quot;,&quot;thumb-down&quot;]],[&quot;Last updated 2026-11-05 UTC.&quot;],[],[]] 
+
+Products and pricing 
+See all products 
+Google Cloud pricing 
+Google Cloud Marketplace 
+Contact sales 
+
+Support 
+Community forums 
+Support 
+Release Notes 
+System status 
+
+Resources 
+GitHub 
+Getting Started with Google Cloud 
+Code samples 
+Cloud Architecture Center 
+Training and Certification 
+Builders Hub 
+
+Engage 
+Blog 
+Events 
+X (Twitter) 
+Google Cloud on YouTube 
+Google Cloud Tech on YouTube 
+Android 
+Chrome 
+Firebase 
+Google AI 
+About Google 
+Privacy 
+Site terms 
+Google Cloud terms 
+Manage cookies 
+Our third decade of climate action: join us 
+Sign up for the Google Cloud newsletter Subscribe 
+English 
+Deutsch 
+Español – América Latina 
+Français 
+Português – Brasil 
+中文 – 简体 
+日本語 
+한국어</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
