@@ -1,0 +1,103 @@
+\documentclass[]{bytedance_seed}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xspace}
+\usepackage{marvosym}
+
+\numberwithin{equation}{section}
+\allowdisplaybreaks[2]
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\renewcommand{\proofname}{Proof}
+
+\newcommand{\Lcal}{\mathcal{L}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\data}{p_{\mathrm{data}}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\ind}{\mathbbm{1}}
+\newcommand{\sg}{\operatorname{sg}}
+\newcommand{\method}{$\mathcal{C}ola2$\xspace}
+\pdfstringdefDisableCommands{\def\method{Cola2}}
+\newcommand{\obsbox}[1]{%
+    \begin{tcolorbox}[colframe=black!70, colback=lightgray!15, boxrule=1pt, arc=2mm]
+        \small#1
+    \end{tcolorbox}
+}
+
+% Add the HKU crest to the top-right of the first page.
+\fancypagestyle{firststyle}{%
+  \fancyhf{}%
+  \fancyhead[L]{\vskip 4mm\includegraphics[width=53.3mm,height=6mm]{seed/seed_logo.png}}%
+  \fancyhead[R]{\vskip 1mm\raisebox{-5mm}[0pt][0pt]{\includegraphics[height=15mm]{img/hku-crest.pdf}}}%
+}
+
+\title{\raisebox{-0.3ex}{\includegraphics[height=2.3ex]{img/cola.pdf}} Cola2: Co-Adaptive Hierarchical Language Modeling with Continuous Semantic Compression and\\ Balanced Discrete Generation}
+
+\author[1,2,\ddagger]{Hongcan Guo}
+\author[2,3]{Yian Zhao}
+\author[2]{Feng Wang}
+\author[4]{Shen Nie}
+\author[2,\ddagger]{Guoqiang Wei}
+\author[2,\dagger,\ddagger]{\\Yan Zeng}
+\author[1,\text{\Letter}]{Hengshuang Zhao}
+
+\affiliation[1]{The University of Hong Kong}
+\affiliation[2]{ByteDance Seed}
+\affiliation[3]{Peking University}
+\affiliation{\\$^{4}$Renmin University of China}
+
+\contribution[\dagger]{Project Lead}
+\contribution[\ddagger]{Major Contributor}
+\contribution[\text{\Letter}]{Corresponding author}
+
+\abstract{
+Hierarchical language generation separates continuous semantic modeling from discrete text realization, but its effectiveness depends on what information the latent space should compress and how the discrete generator should use it. We propose \method, which jointly studies continuous semantic compression, the discrete reconstruction--generation balance, and their co-adaptation. \method dynamically segments text into semantic spans, controls the compression rate with an auxiliary-loss-free negative-feedback mechanism, and combines reconstruction and generation supervision to learn compact and predictive latent representations. A block-causal masked diffusion model (MDM) decoder is jointly trained under clean, noisy, and dropped latent conditions, and classifier-free guidance (CFG) adjusts the balance between semantic reconstruction and autonomous generation. During training, token-prediction gradients update the encoder through the latents, driving the continuous representation and discrete generation to co-adapt, while Flow Matching prior learning is decoupled from representation learning via stop-gradient. At inference, the generated text is re-encoded under the fixed span layout, keeping the latent history consistent with the actual text context. Systematic component analyses and controlled comparisons on five downstream tasks with about 210B training tokens validate the core designs and show competitive, unsaturated scaling. With only 346.03B source tokens, the unconverged checkpoint reaches a 60.10 eight-task average and surpasses Llama-3-8B on HellaSwag and StoryCloze despite its over $43{\times}$ larger reported pretraining budget. These results indicate effective transfer of the Qwen-initialized causal decoder's generation capability and substantial scaling headroom for hierarchical language generation. More broadly, continuous-latent hierarchical modeling can combine effectively with established token-space generation paradigms, including autoregressive and masked-diffusion decoders.
+}
+
+\date{\today}
+\projectlead{Yan Zeng at \email{zengyan.yanne@bytedance.com}}
+\correspondence{Hengshuang Zhao at \email{hszhao@cs.hku.hk}}
+
+\checkdata[Project Page]{\url{https://hongcanguo.github.io/Cola2}}
+
+\begin{document}
+\maketitle
+
+\input{sections/introduction}
+\input{sections/relatedwork}
+\input{sections/approach}
+\input{sections/experiments}
+\input{sections/futurework}
+\input{sections/conclusion}
+
+\clearpage
+
+\bibliographystyle{plainnat}
+\bibliography{main}
+
+\clearpage
+
+\beginappendix
+
+\input{sections/appendix}
+
+\end{document}

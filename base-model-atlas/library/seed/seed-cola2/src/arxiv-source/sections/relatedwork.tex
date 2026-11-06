@@ -1,0 +1,14 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Semantic Compression and Hierarchical Language Models}
+
+Fixed-granularity methods shorten the modeled sequence through chunking or downsampling~\citep{nawrot2022hierarchical,yu2023megabyte}. Adaptive compression methods dynamically aggregate bytes or tokens according to content~\citep{pagnoni2025byte,hwang2026dynamic,qu2025dynamic}. Concept-level methods organize generation through sentence representations or concept prediction~\citep{barrault2024large,cao2026ncp}. In contrast, \method maintains the target compression rate through negative-feedback control without an auxiliary compression-rate loss, and combines reconstruction and generation supervision to learn compact and predictive continuous semantic representations.
+
+\subsection{Token-Space Language Models}
+
+Autoregressive methods generate text serially, token by token~\citep{brown2020language,grattafiori2024llama,yang2025qwen3}. Discrete diffusion methods predict multiple positions in parallel through iterative denoising~\citep{austin2021structured,lou2023discrete,sahoo2024simple,nie2026large,ye2508dream,sahoo2025diffusion}, and have been further extended to block-level generation and token editing~\citep{arriola2025block,bie2025llada2,bie2026llada2}. Continuous-augmented methods use paired continuous states to assist discrete denoising~\citep{zheng2026continuously,zhou2025coevolutionary,uziel2026crocodil}. In contrast, \method learns a semantic prior in a compressed latent space and then performs conditional generation with a discrete decoder, handling semantic modeling and text realization hierarchically.
+
+\subsection{Continuous Representations and Latent-Space Language Models}
+
+Token-aligned methods perform diffusion or flow modeling on continuous representations~\citep{li2022diffusion,gong2022diffuseq,gulrajani2023likelihood,chen2026langflow,yang2026continuous,lee2026flow,hu2026elf}. Autoencoder-based latent-space methods separate latent generation from text decoding~\citep{lovelace2023latent,zhang2023planner,meshchaninov2026cosmos}. Joint-learning methods further co-optimize the latent space and the generative model~\citep{guo2026continuous,meshchaninov2026train}. In contrast, \method drives representation learning with discrete reconstruction and generation supervision while isolating the prior-fitting gradient, so that semantic compression and the decoder's reconstruction--generation balance are optimized jointly.

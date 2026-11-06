@@ -1,0 +1,417 @@
+\section{Cola2: Continuous Latent Diffusion for Hierarchical Text Modeling}
+\label{sec:method}
+
+We formulate hierarchical text generation as a continuous latent-variable model and, from an information-decomposition perspective, discuss semantic compression, the reconstruction--generation balance, and continuous--discrete co-adaptation (Section~\ref{sec:theory}). We then present the unified model, training procedure, latent-feedback inference procedure, and computational cost (Sections~\ref{sec:workflow}--\ref{sec:cost}).
+
+\subsection{Probabilistic and Information-Theoretic Perspective}
+\label{sec:theory}
+
+\subsubsection{Hierarchical Probabilistic Modeling}
+
+Let $C$ denote the observed context, $Y$ the text to be generated, and $Z=(z_1,\ldots,z_K)$ a continuous latent sequence with $z_k\in\R^{d_z}$. If $Y$ contains $T$ tokens, the compression rate is $\rho=K/T$. \method factorizes the text probability into a continuous latent prior and discrete conditional generation:
+\begin{equation}
+    p(Y\mid C)
+    =
+    \int p_\theta(Z\mid C)\,
+    p_\psi(Y\mid C,Z)\dd Z.
+    \label{eq:main-prob}
+\end{equation}
+During training, introducing the encoder $q_\phi(Z\mid C,Y)$ as an approximate posterior yields the conditional evidence lower bound (ELBO)
+\begin{equation}
+\begin{aligned}
+    \Lcal_{\mathrm{cELBO}}
+    ={}&
+    \E_{q_\phi} [\log p_\psi(Y\mid C,Z)]\\
+    &-\KL\!\left(q_\phi(Z\mid C,Y)\,\|\,p_\theta(Z\mid C)\right)
+    \le \log p(Y\mid C).
+\end{aligned}
+\label{eq:main-celbo}
+\end{equation}
+Defining the conditional aggregated posterior
+\begin{equation}
+    \bar q_\phi(Z\mid C)
+    =
+    \int q_\phi(Z\mid C,Y)\,\data(Y\mid C)\dd Y,
+    \label{eq:main-agg}
+\end{equation}
+the average negative ELBO decomposes as
+\begin{equation}
+\begin{aligned}
+    -\E\Lcal_{\mathrm{cELBO}}
+    ={}&
+    \E[-\log p_\psi(Y\mid C,Z)]
+    +I(Y;Z\mid C)\\
+    &+\E_C\KL\!\left(\bar q_\phi(Z\mid C)\,\|\,p_\theta(Z\mid C)\right).
+\end{aligned}
+\label{eq:main-elbo-decomp}
+\end{equation}
+Thus, the encoder determines which information is retained within the limited latent capacity, the discrete generator decoder implements $p_\psi(Y\mid C,Z)$, and the latent DiT only needs to fit the $p_\theta(Z\mid C)$ induced by the online encoder.
+
+\subsubsection{Semantic Compression and Information Density}
+
+Given $C$, the uncertainty of the target text satisfies
+\begin{equation}
+    H(Y\mid C)
+    =I(Y;Z\mid C)+H(Y\mid C,Z).
+    \label{eq:main-info}
+\end{equation}
+If $S$ denotes a high-level semantic variable determined by $Y$, the chain rule of mutual information gives
+\begin{equation}
+\begin{aligned}
+    H(Y\mid C)
+    ={}&\underbrace{I(S;Z\mid C)}_{\text{semantic information}}
+    +\underbrace{I(Y;Z\mid S,C)}_{\text{local residual information}}\\
+    &+\underbrace{H(Y\mid C,Z)}_{\text{discrete generation residual}}.
+\end{aligned}
+\label{eq:main-decomp}
+\end{equation}
+Under the compression constraint $K=\rho T$, whether the latents are worth further modeling in continuous space depends not only on whether $K$ is sufficiently short, but more importantly on whether the information retained in the limited latent positions is semantic and predictive. To characterize this, we define the analytical quantity
+\begin{equation}
+    \mathcal D_{\mathrm{sem}}
+    :=\frac{I(S;Z\mid C)}{K}
+    =\frac{I(S;Z\mid C)}{\rho T},
+    \label{eq:main-sem-density}
+\end{equation}
+which measures the density of high-level semantic information carried per latent position. This quantity characterizes the design objective rather than serving as a loss estimated directly during training.
+
+Furthermore, partitioning $Y$ into a visible part $Y^{\mathrm{vis}}$ and a target part $Y^{\mathrm{tar}}$ gives
+\begin{equation}
+\begin{aligned}
+    I(Y^{\mathrm{tar}};Z\mid C,Y^{\mathrm{vis}})
+    ={}&H(Y^{\mathrm{tar}}\mid C,Y^{\mathrm{vis}})\\
+    &-H(Y^{\mathrm{tar}}\mid C,Y^{\mathrm{vis}},Z).
+\end{aligned}
+\label{eq:main-predictive-info}
+\end{equation}
+Therefore, beyond local reconstructability, a high-quality latent space should also reduce the conditional uncertainty of future or missing tokens, i.e., concentrate more generative information within its limited capacity. Section~\ref{sec:workflow} instantiates this principle through dynamic semantic compression and generation-oriented latent supervision.
+
+\subsubsection{Reconstruction--Generation Balance and Continuous--Discrete Co-adaptation}
+
+Let $\widetilde Z$ be the latent condition obtained by passing $Z$ through a stochastic degradation channel, satisfying the conditional Markov chain $Y\rightarrow Z\rightarrow\widetilde Z$ given $C$. By the data processing inequality,
+\begin{equation}
+    I(Y;Z\mid C)
+    \ge I(Y;\widetilde Z\mid C),
+    \qquad
+    H(Y\mid C,Z)
+    \le H(Y\mid C,\widetilde Z).
+    \label{eq:main-recon-gen-dpi}
+\end{equation}
+When the latent condition is intact, the decoder's main task is to realize the continuous semantics as the corresponding discrete tokens; as the condition is perturbed or removed, $H(Y\mid C,\widetilde Z)$ increases, and more uncertainty must be handled by the decoder's own discrete prediction capability. This gives an information-theoretic form of the reconstruction--generation trade-off.
+
+On the other hand, since $H(Y\mid C)$ is determined by the data distribution, changing the encoder effectively reallocates
+\begin{equation}
+    H(Y\mid C)
+    =I(Y;Z_\phi\mid C)+H(Y\mid C,Z_\phi).
+    \label{eq:main-coadapt-info}
+\end{equation}
+If $E_\phi$ is fixed before the decoder is trained, this allocation is determined before the discrete generator is learned. \method instead jointly optimizes
+\begin{equation}
+    (\phi^\star,\psi^\star)
+    =\arg\min_{\phi,\psi}
+    \E_{\data(C,Y)}
+    \E_{q_\phi(Z\mid C,Y)}
+    [-\log p_\psi(Y\mid C,Z)]
+    \quad
+    \text{s.t.}\quad \frac{K}{T}\approx\rho^\star,
+    \label{eq:main-coadapt-opt}
+\end{equation}
+so that token prediction retains a direct gradient to the encoder:
+\begin{equation}
+    \nabla_\phi\Lcal_{\mathrm{tok}}
+    =
+    \frac{\partial\Lcal_{\mathrm{tok}}}{\partial Z}
+    \frac{\partial Z}{\partial\phi}
+    \neq0.
+    \label{eq:main-coadapt-grad}
+\end{equation}
+This lets the continuous latent space and the discrete realization co-adapt: the encoder learns semantic representations better suited to reconstruction and generation by the actual decoder, while latent-prior fitting is decoupled from this representation learning. The concrete mechanisms for compression, reliability training, gradient routing, and inference alignment are given in the next section.
+
+\subsection{Workflow}
+\label{sec:workflow}
+
+Figure~\ref{fig:method_overview} instantiates the above information decomposition with three coordinated modules: the compression variational autoencoder (VAE) encoder $E_\phi$ learns continuous latents, the discrete generator decoder $D_\psi$ realizes the latent condition as discrete tokens, and the block-causal DiT $G_\theta$ learns the generative distribution of the detached online latents. Their relationship can be summarized as
+\begin{equation}
+    (C,Y)\xrightarrow{\ E_\phi\ } Z,
+    \qquad
+    (C,Z)\xrightarrow{\ D_\psi\ }Y,
+    \qquad
+    \sg(Z)\xrightarrow{\ \Lcal_{\mathrm{FM}}\ }G_\theta.
+    \label{eq:workflow-overview}
+\end{equation}
+Here $D_\psi$ is a \emph{block-causal masked-diffusion decoder} (MDM), which is causal across blocks and performs bidirectional token denoising within the current block. Stage~1 jointly learns $E_\phi$ and $D_\psi$; Stage~2 retains this pathway and additionally trains a detached latent DiT. Full implementation details are given in Appendix~\ref{app:workflow-details}.
+
+\subsubsection{Model Architecture}
+\label{subsec:workflow-arch}
+
+\paragraph{Compression VAE encoder.}
+The target sequence $Y=(y_1,\ldots,y_T)$ is dynamically partitioned into $K$ contiguous spans. Let $\mathcal S_k$ denote the token index set of the $k$-th span and $L_k=|\mathcal S_k|$ its length. Then
+\begin{equation}
+    \bigcup_{k=1}^{K}\mathcal S_k=\{1,\ldots,T\},
+    \qquad
+    1\le L_k\le L_{\max},
+    \qquad
+    \rho=\frac{K}{T}.
+    \label{eq:workflow-spans}
+\end{equation}
+The encoder $E_\phi$ first performs dynamic segmentation over token representations, then aggregates bidirectionally within each span and models causally along the latent axis, yielding a diagonal Gaussian posterior
+\begin{equation}
+    q_\phi(z_k\mid C,Y)
+    =\Normal\!\left(\mu_k,\operatorname{diag}(\sigma_k^2)\right),
+    \qquad
+    z_k=\mu_k+\sigma_k\odot\epsilon_k,
+    \quad \epsilon_k\sim\Normal(0,I).
+    \label{eq:workflow-posterior}
+\end{equation}
+The compression rate is maintained near the target $\rho^\star$ by an independent, gradient-free rate-bias controller rather than learned through an additional differentiable rate loss. The dynamic boundaries, span-local pooling, and convergence properties of the controller are given in Appendix~\ref{app:segmentation}.
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/main/cola2_workflow.pdf}
+    \caption{\textbf{Method overview.} Stage~1 jointly trains the compression encoder and the reconstruction--generation balanced decoder; Stage~2 additionally trains a DiT on detached latents; at inference, the DiT generates latents block by block and the decoder decodes them into tokens.}
+    \label{fig:method_overview}
+\end{figure}
+
+\paragraph{Latent-to-token interface and block-causal MDM decoder.}
+Each latent is first projected into the decoder hidden space, and a duration head predicts the number of tokens it covers:
+\begin{equation}
+    p_\psi(L_k\mid z_k)
+    =\operatorname{softmax}\!\big(\operatorname{MLP}_{\mathrm{dur}}(W_{\mathrm{in}}z_k)\big).
+    \label{eq:workflow-duration}
+\end{equation}
+Given the span lengths, the latents are expanded into a token-aligned condition $H^Z=(h^Z_1,\ldots,h^Z_T)$. If $g(t)=k$ indicates that token $t$ belongs to span $k$, then
+\begin{equation}
+    h^Z_t
+    =\operatorname{Expand}\!\left(z_{g(t)},j_t,L_{g(t)}\right),
+    \label{eq:workflow-expand}
+\end{equation}
+where $j_t$ is the relative position of token $t$ within its span. The block-causal MDM decoder $D_\psi$ then predicts the target tokens in token space:
+\begin{equation}
+    p_\psi(y_t\mid \mathcal K_t,H^Z_t)
+    =\operatorname{softmax}\!\big(\operatorname{Head}(D_\psi(\mathcal K_t),H^Z_t)\big),
+    \label{eq:workflow-discrete-generator}
+\end{equation}
+where $\mathcal K_t$ contains the historical clean blocks and the current masked block; attention is causal across blocks and bidirectional denoising is allowed within the current block, which cannot read its own clean copy. The attention mask and training objective are detailed in Appendix~\ref{app:discrete-generator-details}.
+
+\paragraph{Latent generator.}
+The latent sequence is partitioned into contiguous blocks of fixed size $B$,
+\begin{equation}
+    \mathcal B_j
+    =\{(j-1)B+1,\ldots,\min(jB,K)\},
+    \qquad
+    J=\left\lceil\frac{K}{B}\right\rceil .
+    \label{eq:workflow-blocks}
+\end{equation}
+The generator $G_\theta$ is a block-causal DiT: causal across blocks and bidirectional within the current block. It learns $p_\theta(Z\mid C)$ in continuous latent space via Flow Matching. High-level generation therefore iterates along a latent axis of length $K\approx\rho T$, while discrete details are recovered by $D_\psi$ in token space.
+
+\subsubsection{Training Procedure and Objectives}
+\label{subsec:workflow-train}
+
+\paragraph{Stage 1: semantic compression and reconstruction--generation co-adaptation.}
+Stage~1 jointly optimizes $E_\phi$, the latent-to-token interface, and $D_\psi$. To cover the spectrum in Eq.~\eqref{eq:main-recon-gen-dpi} from strong-condition reconstruction to weak-condition generation, we sample one of three mutually exclusive condition-reliability states for each latent block. Let $A\in\{\textsf{cond},\textsf{noise},\textsf{drop}\}$ and define
+\begin{equation}
+    \widetilde Z_A=
+    \begin{cases}
+        Z, & A=\textsf{cond},\\
+        (1-u^{\mathrm c})Z+u^{\mathrm c}\varepsilon,
+        & A=\textsf{noise},\\
+        \varnothing, & A=\textsf{drop},
+    \end{cases}
+    \qquad
+    \varepsilon\sim\Normal(0,I),
+    \label{eq:workflow-reliability}
+\end{equation}
+where $\varnothing$ removes only the latent condition of the current block while retaining the same discrete token context. Let $\Lcal_{\mathrm{tok}}^{A}$ denote the MDM prediction objective under state $A$. The three states form
+\begin{equation}
+    \Lcal_{\mathrm{bal}}
+    =\lambda_{\mathrm c}\Lcal_{\mathrm{tok}}^{\textsf{cond}}
+    +\lambda_{\mathrm n}\Lcal_{\mathrm{tok}}^{\textsf{noise}}
+    +\lambda_{\mathrm d}\Lcal_{\mathrm{tok}}^{\textsf{drop}},
+    \label{eq:workflow-balance-loss}
+\end{equation}
+where $\Lcal_{\mathrm{tok}}^{A}$ is the masked denoising loss under the corresponding state, defined in Appendix~\ref{app:discrete-generator-details}.
+
+To increase the generative information in Eq.~\eqref{eq:main-predictive-info}, we additionally introduce
+\begin{equation}
+    \Lcal_{\mathrm{gen}}=\Lcal_{\mathrm{encmask}},
+    \label{eq:workflow-gen-loss}
+\end{equation}
+which masks part of the encoder input under a fixed span layout and directly supervises the encoder through the corresponding token prediction. Thus,
+\begin{equation}
+    \Lcal_{\mathrm{DGD}}
+    =\Lcal_{\mathrm{bal}}
+    +\lambda_{\mathrm{gen}}\Lcal_{\mathrm{gen}}.
+    \label{eq:workflow-dg-loss}
+\end{equation}
+
+The KL regularization of the diagonal Gaussian posterior is
+\begin{equation}
+    \Lcal_{\mathrm{KL}}
+    =\frac{K_{\mathrm{ref}}d_{\mathrm{ref}}}{T_{\mathrm{ref}}}
+    \frac{1}{Kd_z}\sum_{k=1}^{K}
+    \KL\!\left(q_\phi(z_k\mid C,Y)\,\|\,\Normal(0,I)\right),
+    \label{eq:workflow-kl}
+\end{equation}
+and the duration predictor is supervised with ground-truth span lengths, giving $\Lcal_{\mathrm{dur}}$. The unified Stage~1 objective is
+\begin{equation}
+    \Lcal^{(1)}
+    =\Lcal_{\mathrm{DGD}}
+    +\beta_{\mathrm{KL}}\Lcal_{\mathrm{KL}}
+    +\lambda_{\mathrm{dur}}\Lcal_{\mathrm{dur}}.
+    \label{eq:workflow-stage1}
+\end{equation}
+Its key gradient relation is
+\begin{equation}
+    \nabla_\phi\Lcal_{\mathrm{DGD}}
+    =\frac{\partial\Lcal_{\mathrm{DGD}}}{\partial Z}
+     \frac{\partial Z}{\partial\phi}
+    \neq0,
+    \label{eq:workflow-dec-to-enc-grad}
+\end{equation}
+i.e., discrete token prediction directly shapes the encoder latents, so that $E_\phi$ and $D_\psi$ jointly determine the information allocation in Eq.~\eqref{eq:main-coadapt-info}. This pathway remains active in Stage~2.
+
+\paragraph{Stage 2: detached latent diffusion co-training.}
+Stage~2 retains Eq.~\eqref{eq:workflow-stage1} and adds only detached latent-prior fitting. Let $\bar Z=\sg(Z)$; for the $j$-th latent block, we sample
+\begin{equation}
+    u_j=\sigma(\xi_j),
+    \qquad
+    \xi_j\sim\Normal(\mu_u,\sigma_u^2),
+    \label{eq:workflow-logitnormal}
+\end{equation}
+and all latents within the block share the same $u_j$. Under the linear Flow Matching path,
+\begin{equation}
+    z_u=(1-u)\bar z+u\epsilon,
+    \qquad
+    v^\star=\epsilon-\bar z,
+    \qquad
+    \epsilon\sim\Normal(0,I),
+    \label{eq:workflow-flow}
+\end{equation}
+which gives
+\begin{equation}
+    \Lcal_{\mathrm{FM}}
+    =\E\!\left[\left\|G_\theta(z_u,u;\bar Z_{<j})-v^\star\right\|_2^2\right].
+    \label{eq:workflow-fm}
+\end{equation}
+The total Stage~2 objective is therefore
+\begin{equation}
+    \Lcal^{(2)}
+    =\Lcal^{(1)}+\lambda_{\mathrm{FM}}\Lcal_{\mathrm{FM}},
+    \label{eq:workflow-stage2}
+\end{equation}
+and hence
+\begin{equation}
+    \nabla_\phi\Lcal_{\mathrm{FM}}=0,
+    \qquad
+    \nabla_\phi\Lcal_{\mathrm{DGD}}\neq0,
+    \label{eq:workflow-gradient-routing}
+\end{equation}
+i.e., prior fitting is decoupled from representation learning, while the continuous representation and the discrete realization remain co-adapted end to end. The complete gradient routing is given in Appendix~\ref{app:stage2-details}.
+
+\subsubsection{Inference Procedure}
+\label{subsec:workflow-infer}
+
+\paragraph{Propose--decode--re-encode--commit.}
+Given a prompt $C$, the encoder takes the posterior mode to obtain $K_{\mathrm p}$ prompt latents. Writing
+\begin{equation}
+    K_{\mathrm p}
+    =B\left\lfloor\frac{K_{\mathrm p}}{B}\right\rfloor+r,
+    \qquad 0\le r<B,
+    \label{eq:workflow-prompt}
+\end{equation}
+only the complete block-aligned prefix is persistently committed; the trailing $r$ latents and their tokens serve as the clean prefix of the first generated block, and the remaining $B-r$ latent slots are initialized from Gaussian noise.
+
+The $j$-th generated block follows a unified transaction
+\begin{equation}
+    Z_j^{\mathrm{prop}}
+    \xrightarrow{\ D_\psi\ }
+    Y_j
+    \xrightarrow{\ E_\phi(\,\cdot\,;\widehat{\mathcal S}_j)\ }
+    Z_j^{\mathrm{corr}}
+    \xrightarrow{\ \mathrm{commit}\ }
+    \mathcal K_{j+1},
+    \label{eq:workflow-feedback}
+\end{equation}
+where $\widehat{\mathcal S}_j$ is the span layout already determined by the duration predictor; feedback does not rerun the dynamic segmenter. The proposal serves only the current token block, and the persistent latent history always stores $Z_j^{\mathrm{corr}}$.
+
+This design first preserves train--inference consistency. During training, the clean history is obtained by encoding ground-truth tokens; at inference,
+\begin{equation}
+    Z_{\le j}^{\mathrm{hist}}
+    =E_\phi\!\left(Y_{\le j};\widehat{\mathcal S}_{\le j}\right),
+    \label{eq:workflow-train-infer-consistency}
+\end{equation}
+so the latent history read by the next block is still produced by the same encoder path as in training.
+
+It also keeps the continuous latent context aligned with the discrete token context:
+\begin{equation}
+    \mathcal K^{Z}_{\le j}
+    \equiv
+    E_\phi\!\left(\mathcal K^{Y}_{\le j};\widehat{\mathcal S}_{\le j}\right).
+    \label{eq:workflow-context-alignment}
+\end{equation}
+If $Z_j^{\mathrm{prop}}$ were committed directly, the subsequent DiT history and the token history actually generated by the decoder could stem from different semantic states, causing cumulative context bias; fixed-span feedback projects both back onto the same committed history. The cache protocol is detailed in Appendix~\ref{app:inference-details}.
+
+\paragraph{Two-level CFG.}
+The latent DiT modulates the historical latent condition in velocity space:
+\begin{equation}
+    \hat v_\gamma=v_{\mathrm u}+\gamma_{\mathrm{gen}}(v_{\mathrm c}-v_{\mathrm u}),
+    \label{eq:workflow-cfg}
+\end{equation}
+where $v_{\mathrm c}$ and $v_{\mathrm u}$ are the velocity outputs with and without the historical latent condition, respectively, and $\gamma_{\mathrm{gen}}$ is the guidance scale. Its local probabilistic interpretation is given in Appendix~\ref{app:cfg}.
+
+The MDM decoder uses \texttt{masked\_only} conditioning, so the historical token KV contains no latent condition, and applies prefix--latent two-axis CFG in logit space. Fixing the current masked block and the span layout, let $\ell_{ab}$ denote the logits obtained by keeping ($1$) or masking ($0$) the historical token prefix and the current latent condition, where $a,b\in\{0,1\}$ correspond to the two conditions, respectively. With two-axis scales $\gamma_{\mathrm p},\gamma_{\mathrm z}$, we define
+\begin{equation}
+\begin{aligned}
+    \ell_{\gamma_{\mathrm p},\gamma_{\mathrm z}}
+    ={}&\gamma_{\mathrm p}\gamma_{\mathrm z}\ell_{11}
+      +\gamma_{\mathrm p}(1-\gamma_{\mathrm z})\ell_{10}\\
+      &+(1-\gamma_{\mathrm p})\gamma_{\mathrm z}\ell_{01}
+      +(1-\gamma_{\mathrm p})(1-\gamma_{\mathrm z})\ell_{00}.
+\end{aligned}
+\label{eq:workflow-prefix-cfg}
+\end{equation}
+Setting $\gamma_{\mathrm p}=1$ modulates only the latent, setting $\gamma_{\mathrm z}=1$ modulates only the prefix, and setting both to $1$ recovers the fully conditioned branch. This rule changes neither the training objective nor the feedback protocol. The four-branch definition and cache implementation are given in Appendices~\ref{app:prefix-cfg} and~\ref{app:prefix-cfg-implementation}.
+
+Let $S_{\mathrm{gen}}$ be the number of DiT denoising steps. On the uniform time grid $u_i=1-i/S_{\mathrm{gen}}$, the explicit Euler update is
+\begin{equation}
+    Z_j^{(i+1)}
+    =Z_j^{(i)}
+    -\frac{1}{S_{\mathrm{gen}}}
+    \hat v_\gamma\!\left(Z_j^{(i)},u_i\right),
+    \qquad i=0,\ldots,S_{\mathrm{gen}}-1.
+    \label{eq:workflow-euler}
+\end{equation}
+Given the proposal, $D_\psi$ completes the current token block with a few iterative demasking steps, followed by the feedback correction in Eq.~\eqref{eq:workflow-feedback}.
+
+\subsection{Computational Cost}
+\label{sec:cost}
+
+Let $D_s$ be the training token budget of Stage~$s$, $c_{\mathrm{rep}}^{(s)}$ the average per-token cost of the encoder--decoder path in that stage, and $c_G^{(2)}$ the average per-token cost of the added DiT, both including the corresponding attention and output projections. Then
+\begin{equation}
+    \mathcal C_{\mathrm{train}}
+    \approx
+    D_1c_{\mathrm{rep}}^{(1)}
+    +D_2\big(c_{\mathrm{rep}}^{(2)}+c_G^{(2)}\big).
+    \label{eq:cost-train-total}
+\end{equation}
+Under the same prior architecture and a comparable layout, $K=\rho T$ reduces the dominant linear-layer and attention-pair terms to $\mathcal O(\rho)$ and $\mathcal O(\rho^2)$ of their token-axis counterparts, respectively, but the representation path persists in both stages.
+
+Inference cost consists of DiT proposal/commit, discrete decoding (including condition preparation), and fixed-span feedback, denoted by $\mathcal C_G^{\mathrm{infer}}$, $\mathcal C_D^{\mathrm{infer}}$, and $\mathcal C_{\mathrm{fb}}$, respectively. Taking as reference the AR cost $\mathcal C_{\mathrm{AR}}^{\mathrm{infer}}$ under the same prompt/output budget and accounting convention,
+\begin{equation}
+    R_{\mathrm{infer}}
+    =\frac{\mathcal C_G^{\mathrm{infer}}
+           +\mathcal C_D^{\mathrm{infer}}
+           +\mathcal C_{\mathrm{fb}}}
+          {\mathcal C_{\mathrm{AR}}^{\mathrm{infer}}}.
+    \label{eq:cost-infer-ratio}
+\end{equation}
+Both sides exclude the one-time prefill but retain the cost of subsequently reading the prompt KV.
+
+Let $\rho_{\mathrm{gen}}$ be the realized latent/token ratio of the generated text, and let $H_D$ and $H_F$ be the numbers of per-block call rounds for condition preparation/decoding/clean-token commit and for feedback/corrected-cache commit, respectively. Ignoring boundary effects and assuming ideally parallel CFG branches, the number of serial call rounds $\mathcal H$ satisfies
+\begin{equation}
+    \frac{\mathcal H_{\text{\method}}}{\mathcal H_{\mathrm{AR}}}
+    \approx
+    \frac{\rho_{\mathrm{gen}}}{B}
+    \big(S_{\mathrm{gen}}+H_D+H_F\big).
+    \label{eq:cost-depth}
+\end{equation}
+This is a forward-round proxy rather than a latency guarantee. The end-to-end cost also depends on the actual number of CFG branches, the token decoder, and feedback; per-term counts, the AR comparison, and the KV analysis are given in Appendix~\ref{app:compute-details}.

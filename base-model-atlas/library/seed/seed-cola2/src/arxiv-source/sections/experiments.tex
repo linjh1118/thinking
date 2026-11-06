@@ -1,0 +1,339 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\begingroup
+\setcounter{topnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.85}
+\setlength{\floatsep}{7pt plus 2pt minus 2pt}
+\newcounter{expobs}
+\newcommand{\obs}{\refstepcounter{expobs}Obs.~\theexpobs}
+
+Following the training pipeline in Section~\ref{sec:workflow}, our experiments address three questions: (1) how to build a compressed latent space that is semantically rich and easy to model; (2) how to train the latent generator; and (3) how the decoder should allocate its capacity between conditional reconstruction and autonomous generation.
+
+\subsection{Experimental Setup}
+\label{subsec:exp-setup}
+
+\textbf{Datasets.} For the component analyses and controlled scaling experiments, we train on the open-source OLMo~2 pretraining corpus~\citep{olmo20242}. The component analyses are conducted mainly on LAMBADA and examine the construction of the semantic latent space, the learning of the latent generator, and the reconstruction--generation balance of the decoder. The controlled scaling experiments are conducted on five downstream tasks, RACE~\citep{lai2017race}, OBQA~\citep{mihaylov2018can}, Story Cloze~\citep{mostafazadeh2016corpus}, LAMBADA~\citep{paperno2016lambada}, and SQuAD~\citep{rajpurkar2016squad}, and compare how different generation paradigms improve as training scales. The post-pretraining comparison additionally evaluates HellaSwag~\citep{zellers2019hellaswag}, NarrativeQA~\citep{kovcisky2018narrativeqa}, ARC-Easy~\citep{clark2018think}, TruthfulQA~\citep{lin2022truthfulqa}, and MMLU~\citep{hendrycks2020measuring}.
+
+\textbf{Baselines.} Component studies compare \method variants and DLCM~\citep{qu2025dynamic} for rate control. Controlled scaling compares AR~\citep{brown2020language}, LLaDA~\citep{nie2026large}, Cola DLM~\citep{guo2026continuous}, and the uncompressed Cola-MDM ($\rho=1$) under matched model size, data, and evaluation; Cola-MDM shares the \method-MDM decoder to isolate the effect of compression. Post-pretraining comparisons use Llama-3-8B~\citep{grattafiori2024llama}, Qwen2.5-7B~\citep{hui2024qwen2}, Qwen3-8B-Base~\citep{yang2025qwen3}, and LLaDA-8B-Base~\citep{nie2026large}.
+
+\textbf{Metrics.} Answers are extracted from model outputs according to each task format, and accuracy (\%) is computed by exact match. All tasks except LAMBADA use few-shot prompting. The internal ablations report LAMBADA accuracy by default, and the controlled scaling experiments report the accuracy on all five tasks and their average.
+
+\textbf{Settings.} In the component analyses and controlled scaling experiments, we use the OLMo~2 (dolma2) tokenizer and the AdamW optimizer with $\beta=(0.9,0.95)$, weight decay $0.01$, and a maximum sequence length of $512$. Stage~1 jointly trains the encoder and decoder; Stage~2 trains the DiT while continuing to update the VAE, and blocks the Flow Matching gradient from reaching the encoder. The learning rates of the Stage~1 VAE and the Stage~2 DiT both start at $10^{-6}$, increase linearly over $5{,}000$ warmup steps to $10^{-4}$ and $1.5\times10^{-4}$, respectively, and then follow cosine decay to $10^{-6}$ at step $50{,}000$ and $10^{-5}$ at step $1{,}000{,}000$, respectively. In Stage~2, the VAE learning rate continues from Stage~1 with a $5{,}000$-step transition, and the encoder learning rate is $0.1\times$ that of the decoder. Unless otherwise stated, each latent covers $2$ tokens on average, the latent dimension is $64$, and the maximum span length is $8$. DiT noise times follow a logit-normal distribution ($\mathrm{loc}=2.0$, $\mathrm{scale}=1.0$); the decoder samples clean, noisy, and dropped latent conditions per block with probabilities $0.2$, $0.4$, and $0.4$, respectively. Inference uses $8$ DiT denoising steps and $4$ MDM demasking steps by default, and the controlled scaling experiments train on about $210$B tokens.
+
+\subsection{Building the Semantic Latent Space}
+\label{subsec:exp-stage1}
+
+\subsubsection{Dynamic Segmentation and Rate Control}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage1_latent/fig1_segmentation_and_rate_control.pdf}
+    \caption{\textbf{Segmentation and rate control.} Dynamic segmentation outperforms fixed-length and random segmentation; auxiliary-free negative-feedback control outperforms DLCM~\citep{qu2025dynamic}.}
+    \label{fig:exp-stage1-segmentation}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage1_latent/fig2_vae_architecture.pdf}
+    \caption{\textbf{VAE architecture.} Left: the allocation of encoder layers matters more than depth, with $0{+}2{+}2$ performing best. Right: intra-span bidirectional attention is the best pooling operator.}
+    \label{fig:exp-stage1-architecture}
+\end{figure}
+
+\textbf{\obs{} Dynamic segmentation is essential.} With $\rho=1/2$ and $L_{\max}=4$, dynamic segmentation ($25.0\%$) outperforms random spans and fixed-length segmentation by $4.4$ and $8.2$ points (Figure~\ref{fig:exp-stage1-segmentation}); relaxing $L_{\max}$ to $8$ reaches $29.4\%$, exceeding the uncompressed model ($28.7\%$), which shows that content-based compression is not only lossless but also beneficial.
+
+\textbf{\obs{} Feedback rate control beats an auxiliary rate loss.} Under the same setting, the former reaches $25.0\%$ whereas DLCM~\citep{qu2025dynamic} reaches only $18.4\%$: directly regulating the hard compression rate avoids the competition between the rate loss and representation learning.
+
+\subsubsection{VAE Architecture}
+
+\textbf{\obs{} Encoder layout matters more than size.} The four-layer $0{+}2{+}2$ encoder achieves the best result of $29.6\%$, outperforming all six-layer variants ($20.9$--$26.3\%$); removing the pooling layers ($2{+}0{+}2$) yields only $15.7\%$, whereas reallocating decoder layers has almost no effect ($25.0\%$ vs.\ $24.9\%$; Figure~\ref{fig:exp-stage1-architecture}, left). An oversized encoder makes the latent distribution more complex and harder for the DiT to model. Intra-span bidirectional attention performs best ($26.7\%$), followed by block-causal attention ($25.0\%$), while fully causal attention, endpoint pooling, and mean pooling all stay at or below $19.0\%$ (Figure~\ref{fig:exp-stage1-architecture}, right).
+
+\subsubsection{Compression and Latent Capacity}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage1_latent/fig3_latent_width_and_max_span.pdf}
+    \caption{\textbf{Latent width and maximum span length.} Left: $d_z$ has an interior optimum. Right: the effect of $L_{\max}$ is non-monotonic.}
+    \label{fig:exp-stage1-capacity}
+    \label{fig:exp-stage1-maxspan}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage1_latent/fig4b_span_length_distribution.pdf}
+    \caption{\textbf{Distribution of the number of tokens covered by each latent.} Increasing $L_{\max}$ reduces the number of forcibly truncated spans.}
+    \label{fig:exp-stage1-span-distribution}
+\end{figure}
+
+\begin{table}[t]
+    \centering
+    \caption{\textbf{Best configuration at each compression level.} Accuracy decreases as compression becomes stronger.}
+    \label{tab:exp-stage1-compression}
+    \small
+    \setlength{\tabcolsep}{10pt}
+    \renewcommand{\arraystretch}{1.10}
+    \begin{tabular}{cccc}
+        \toprule
+        \textbf{Mean span length} & \textbf{Latent width $d_z$} & \textbf{$L_{\max}$} & \textbf{LAMBADA (\%)} \\
+        \midrule
+        $2$ & $64$  & $8$  & \textbf{32.3} \\
+        $3$ & $128$ & $8$  & 26.9 \\
+        $4$ & $256$ & $18$ & 25.2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage1_latent/fig5_generative_loss_on_encoder.pdf}
+    \caption{\textbf{Generative supervision.} Left: generative objectives substantially outperform pure reconstruction. Middle: the gain is larger when the encoder is trainable. Right: co-evolving the encoder and decoder with the generative loss performs best.}
+    \label{fig:exp-stage1-generative}
+\end{figure}
+
+\textbf{\obs{} Wider latents are not always better.} With mean span length $2$, accuracy peaks at $32.3\%$ at $d_z=64$ and drops to $14.5\%$ at $d_z=512$ (Figure~\ref{fig:exp-stage1-capacity}, left). A larger $d_z$ adds capacity, but also increases the complexity of the distribution that the DiT must fit.
+
+\textbf{\obs{} Compression rate, $d_z$, and $L_{\max}$ must be tuned jointly.} Even with the best configuration at each compression level, accuracy still falls from $32.3\%$ (span length $2$) to $25.2\%$ (span length $4$), as shown in Table~\ref{tab:exp-stage1-compression}. The effect of $L_{\max}$ (Figure~\ref{fig:exp-stage1-maxspan}, right) is governed by the truncation ratio (Figure~\ref{fig:exp-stage1-span-distribution}): when truncation is frequent, a smaller $L_{\max}$ keeps each latent simpler; once the cap mass drops to about $1\%$ (span length $4$, $L_{\max}=18$), preserving complete semantic spans dominates and accuracy rises to $21.7\%$.
+
+\subsubsection{Generative Supervision of the Encoder}
+
+\begin{lemma}[Generative Supervision Promotes Predictive Representations]
+\label{lem:semantic}
+When the supervised tokens are hidden from the encoder, the generative objective cannot be satisfied by copying the current targets. When the encoder is trainable, reducing this objective encourages the latent to retain information predictive of missing or future tokens. If the encoder is frozen, the objective only improves the decoder's use of information already present in the latent. See Appendix~\ref{app:semantic} for the proof.
+\end{lemma}
+
+\textbf{\obs{} Generative supervision is key; its form is secondary.} Pure reconstruction reaches only $15.7\%$, and adding the Span-AR or BERT-style objective raises accuracy to $25.2\%$ and $26.5\%$, respectively (Figure~\ref{fig:exp-stage1-generative}). With a frozen encoder, the BERT-style objective yields a $2.2$-point gain ($28.9\%\to31.1\%$), and unfreezing the encoder reaches $35.2\%$. Consistent with Lemma~\ref{lem:semantic}, the generative objective improves both the completion ability of the decoder and the latent itself.
+
+\textbf{\obs{} Encoder and decoder should co-evolve.} With the MDM decoder, a frozen encoder yields $47.6\%$, end-to-end co-evolution raises accuracy to $53.5\%$, and further adding the generative loss reaches $58.2\%$ (Figure~\ref{fig:exp-stage1-generative}, right). What the latent should retain must be determined jointly with what the decoder can complete.
+
+\subsection{Learning the Latent Generator}
+\label{subsec:exp-stage2}
+
+\subsubsection{VAE Update Policy and Gradient Detachment}
+
+\begin{lemma}[Prior Fitting and Representation Learning Should Be Decoupled]
+\label{lem:hacking}
+The DiT Flow Matching objective only requires the current latent to be easier for the prior to fit; its gradient is not guaranteed to align with the token-side representation objective. Applying stop-gradient to the DiT path ensures that prior fitting does not directly rewrite the encoder, while preserving end-to-end encoder updates from the decoder token loss. See Appendix~\ref{app:hacking} for the proof.
+\end{lemma}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage2_dit/fig6_vae_policy_and_noise_schedule.pdf}
+    \caption{\textbf{VAE update policy and noise schedule.} Left: continuing to train the VAE while detaching the DiT gradient performs best. Right: differences relative to $\mathrm{loc}=2.0$; all three configurations are optimal at $2.0$.}
+    \label{fig:exp-stage2-update}
+    \label{fig:exp-stage2-noise}
+\end{figure}
+
+\textbf{\obs{} Keep training the VAE, but detach the DiT gradient.} A trainable VAE reaches $32.8\%$, whereas a frozen VAE reaches only $28.7\%$ (Figure~\ref{fig:exp-stage2-update}, left). Allowing the DiT gradient to flow into the encoder yields a $2.2$-point lead early on, but this is overtaken after $80$k steps and becomes a $1.0$-point deficit at $140$k steps (Table~\ref{tab:exp-stage2-gradient}). This supports Lemma~\ref{lem:hacking}: the DiT gradient rewrites the latent to be easier to fit rather than more useful for text modeling, and detaching the gradient blocks this latent hacking.
+
+\subsubsection{Noise-Schedule Calibration}
+
+\begin{lemma}[Effective Noise Is Jointly Determined by the Latent and Diffusion]
+\label{lem:noise}
+At the same DiT timestep, the available latent signal is affected by both VAE posterior uncertainty and diffusion corruption. Consequently, changing the noise scale of the Stage~1 latent changes the effective signal-to-noise ratio induced by the same DiT schedule, so the noise schedule must be calibrated jointly with the latent distribution. See Appendix~\ref{app:noise} for the proof.
+\end{lemma}
+
+\textbf{\obs{} The noise schedule must match the representation.} All three configurations achieve their best results at $\mathrm{loc}=2.0$, and deviating from it costs $0.3$--$3.0$ points, with the magnitude varying with $d_z$ and the compression level (Figure~\ref{fig:exp-stage2-noise}, right). By Lemma~\ref{lem:noise}, the schedule should be recalibrated when the representation changes.
+
+\subsubsection{Block Size and Generator Capacity}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage2_dit/fig8_block_size.pdf}
+    \caption{\textbf{DiT block size and capacity.} Left: moderate block sizes are optimal. Right: larger DiTs yield flatter curves.}
+    \label{fig:exp-stage2-block}
+
+    \vspace{0.5em}
+    \includegraphics[width=\textwidth]{figures/stage2_dit/fig9_dit_infer_steps.pdf}
+    \caption{\textbf{DiT inference.} Left: generator CFG sweep. Right: the DiT saturates at $8$ steps.}
+    \label{fig:exp-stage2-steps}
+\end{figure}
+
+\textbf{\obs{} Moderate blocks are best, and larger DiTs tolerate larger blocks.} For the 2B DiT, $B=4$ is optimal ($36.4\%$), whereas $B=1$ and $B=24$ reach only $31.8\%$ and $27.3\%$, respectively (Figure~\ref{fig:exp-stage2-block}, left). In the right panel of Figure~\ref{fig:exp-stage2-block}, the slope of the decline for $B>8$ becomes monotonically flatter with DiT size: the loss from $B=8\!\to\!16$ decreases from $4.5$ points for 2B to $3.4$ points for 7B and $2.7$ points for 32B, and the same trend holds at mean span length $4$. A larger DiT can jointly model more latents within a single block, which enlarges the range of block sizes it can use effectively.
+
+\subsubsection{Generator Guidance and Inference Steps}
+
+\textbf{\obs{} The generator needs strong CFG and about $8$ steps.} At $8$ steps, accuracy rises from $12.2\%$ at $\gamma_{\mathrm{gen}}=1$ to $37.1\%$ at $\gamma_{\mathrm{gen}}=14$; at $16$ steps, the peak moves to $\gamma_{\mathrm{gen}}=20$ ($38.5\%$) (Figure~\ref{fig:exp-stage2-steps}, left). Using $1$ and $4$ steps loses about $14$ and $5$ points, respectively, whereas results between $8$ and $128$ steps differ by at most $0.3$ points (Figure~\ref{fig:exp-stage2-steps}, right).
+
+\subsection{Balancing the Reconstruction--Generation Decoder}
+\label{subsec:exp-stage3}
+
+\begin{lemma}[Latent-Condition Strength Determines Residual Generation]
+\label{lem:decoder}
+Given the same discrete context, a more reliable latent condition provides more information and leaves less residual uncertainty for the decoder to generate on its own; when the latent is corrupted or removed, the residual uncertainty increases accordingly. Thus, mixed \textsf{cond}/\textsf{noise}/\textsf{drop} training covers the continuum from conditional reconstruction to autonomous generation. See Appendix~\ref{app:decoder} for the proof.
+\end{lemma}
+
+\subsubsection{Decoder Type}
+
+\textbf{\obs{} Decoder factorization matters little.} At every checkpoint, the gap between them is at most $1.4$ points, and the leader alternates during training (Table~\ref{tab:exp-stage3-decoder-type}): AR-MTP leads by $0.9$ points at $50$k steps, whereas MDM leads by $0.7$ and $1.4$ points at $100$k and $150$k steps. This indicates that, given a shared latent--token interface, the specific decoder factorization is not the decisive factor for performance, and the hierarchical framework applies to both; subsequent experiments use the MDM decoder.
+
+\subsubsection{Decoder Data Partition}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage3_decoder/fig10_decoder_data_partition.pdf}
+    \caption{\textbf{Decoder data partition.} Left: varying the noisy-to-clean ratio. Right: varying the drop ratio. Reconstruction accuracy (right axis) stays above $99.5\%$ throughout; $0.4/0.4/0.2$ gives the best balance.}
+    \label{fig:exp-stage3-partition}
+\end{figure}
+
+\begin{table}[t]
+    \centering
+    \caption{\textbf{Whether the DiT gradient flows into the encoder.} Gradient injection leads early, but is overtaken by full detachment in the middle and late stages of training.}
+    \label{tab:exp-stage2-gradient}
+    \small
+    \setlength{\tabcolsep}{10pt}
+    \renewcommand{\arraystretch}{1.10}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Gradient policy} & \textbf{20k steps} & \textbf{80k steps} & \textbf{140k steps} \\
+        \midrule
+        Full detachment (ours)                   & 21.4 & \textbf{30.4} & \textbf{33.1} \\
+        DiT velocity loss injected every 10 steps & \textbf{23.6} & 29.9 & 32.1 \\
+        \midrule
+        Difference (ours $-$ injection)          & $-2.2$ & $+0.5$ & $+1.0$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage3_decoder/fig11_decoder_cfg.pdf}
+    \caption{\textbf{Decoder guidance and parameter allocation.} Left: the balanced decoder is optimal at $w_{\mathrm{dec}}=-0.9$. Right: with 3B total parameters, a $2$B DiT with a $1$B decoder is optimal.}
+    \label{fig:exp-stage3-cfg}
+    \label{fig:exp-stage3-allocation}
+\end{figure}
+
+\begin{table}[t]
+    \centering
+    \caption{\textbf{Decoder factorization.} The two decoders perform similarly.}
+    \label{tab:exp-stage3-decoder-type}
+    \small
+    \setlength{\tabcolsep}{10pt}
+    \renewcommand{\arraystretch}{1.10}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Decoder} & \textbf{50k steps} & \textbf{100k steps} & \textbf{150k steps} \\
+        \midrule
+        AR-MTP decoder & \textbf{39.7} & 43.7 & 44.1 \\
+        MDM decoder    & 38.8 & \textbf{44.4} & \textbf{45.5} \\
+        \midrule
+        Difference (MDM $-$ AR-MTP) & $-0.9$ & $+0.7$ & $+1.4$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{\obs{} Train mostly on noisy and dropped conditions, but keep clean ones.} Reconstruction accuracy stays above $99.5\%$ in all configurations, even when only $10\%$ of blocks are clean (Figure~\ref{fig:exp-stage3-partition}), so most of the data can be devoted to generation under degraded conditions. With the drop ratio fixed at $0.2$, shifting noisy/clean from $0.0/0.8$ to $0.6/0.2$ raises LAMBADA accuracy from $39.5\%$ to $43.2\%$; raising the drop ratio from $0.2$ to $0.4$ adds another $2.2$--$2.4$ points, while pushing further brings no gain (noisy $0.7$: $42.7\%$; drop $0.7$: $43.1\%$). The selected $0.4/0.4/0.2$ (drop/noisy/clean) ties for the best result of $44.7\%$ while retaining more clean data, confirming the reconstruction--generation continuum in Lemma~\ref{lem:decoder}.
+
+\subsubsection{Decoder Guidance}
+
+\textbf{\obs{} Decoder CFG must match the training mixture.} The balanced decoder reaches $44.7\%$ at $w_{\mathrm{dec}}=-0.9$ and collapses rapidly at more negative weights, whereas the clean-heavy decoder reaches at best $40.3\%$ (Figure~\ref{fig:exp-stage3-cfg}, left), indicating that inference-time guidance cannot compensate for an imbalanced training distribution.
+
+\subsubsection{Decoder Capacity}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage3_decoder/fig12_decoder_size.pdf}
+    \caption{\textbf{Scaling the decoder with a fixed DiT.} Accuracy improves monotonically with decoder size.}
+    \label{fig:exp-stage3-size}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/stage3_decoder/fig13_demask_and_latent_ablation.pdf}
+    \caption{\textbf{Decoder inference and latent ablation.} Left: $8$/$8$ steps are optimal. Right: corrupting the latent substantially degrades performance, with shuffling being the most harmful.}
+    \label{fig:exp-stage3-demask}
+\end{figure}
+
+\textbf{\obs{} Under a fixed budget, the DiT matters more.} With the DiT fixed, increasing the decoder from 500M to 2B yields monotonic gains of $2.1$--$2.4$ points (Figure~\ref{fig:exp-stage3-size}); under a total budget of 3B, a $2$B DiT with a $1$B decoder ($44.4\%$) outperforms the other allocations by $3.3$--$4.4$ points, and imbalance in either direction degrades performance (Figure~\ref{fig:exp-stage3-allocation}, right).
+
+\subsubsection{Demasking Steps and Latent Use}
+
+\textbf{\obs{} Demasking saturates at about $8$ steps.} $8$ DiT/$8$ demasking steps achieve the best result of $49.0\%$ (Figure~\ref{fig:exp-stage3-demask}, left); fewer than $8$ DiT steps cause a clear drop, while increasing demasking can partially compensate when the DiT uses too few steps. The $8$/$4$ setting ($48.2\%$) is only $0.8$ points below the optimum and serves as the default low-cost setting.
+
+\textbf{\obs{} The decoder relies on aligned latents.} Zeroing, resampling, and shuffling the latent reduce accuracy from $46.5\%$ to $41.2\%$, $39.3\%$, and $34.3\%$, respectively (Figure~\ref{fig:exp-stage3-demask}, right). Zeroing corresponds to the \textsf{drop} state seen in training and therefore degrades more gracefully; shuffled latents are statistically realistic but semantically misaligned and cause the largest damage, showing that the decoder follows the latent content.
+
+\subsection{Scaling Experiments}
+\label{subsec:exp-scaling}
+
+\subsubsection{Controlled Scaling Trends}
+\label{subsec:exp-scaling-controlled}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/scaling/scaling_scatter_trend.pdf}
+    \caption{\textbf{Scaling trends with training tokens.} Cola-MDM achieves the strongest overall scaling; \method-MDM also exhibits strong and unsaturated scaling potential under compression.}
+    \label{fig:exp-scaling}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/scaling/best_decoder_cfg_trend.pdf}
+    \caption{\textbf{Optimal decoder CFG weight during training.} For both models, the optimal weight remains within $[-1.0,-0.8]$, consistent with the $-0.9$ selected in Section~\ref{subsec:exp-stage3}, and drifts slowly toward $0$ during training; the drift of \method-MDM is more gradual, consistent with its slower convergence.}
+    \label{fig:exp-scaling-cfg}
+\end{figure}
+
+Figure~\ref{fig:exp-scaling} extends training to about $210$B tokens and compares the models on RACE, OBQA, Story Cloze, LAMBADA, and SQuAD. Cola-MDM ($\rho=1$) and \method-MDM (with the compression VAE from Section~\ref{subsec:exp-stage1}) share the MDM decoder selected in Section~\ref{subsec:exp-stage3}, which separates the effect of the decoder design from that of dynamic compression.
+
+\textbf{\obs{} The MDM decoder yields the strongest scaling.} Cola-MDM finally reaches a task average of about $34.5\%$, higher than AR (about $33\%$), and about $64\%$ on LAMBADA, about $15$ points above Cola DLM. The weakness of Cola DLM on generative tasks stems from its decoder rather than from the hierarchical framework.
+
+\textbf{\obs{} Compression preserves semantic tasks, with costs on exact-token tasks.} \method-MDM matches AR on LAMBADA (about $61\%$) and leads substantially on RACE (about $10.5\%$ vs.\ $4.5\%$), with the gap concentrated on SQuAD and Story Cloze, which rely on verbatim reproduction.
+
+\textbf{\obs{} The compressed variant converges more slowly but keeps closing the gap.} Since each latent summarizes more tokens, the latent DiT converges more slowly than the discrete generator. As training continues, the latent condition becomes increasingly useful: after about $150$B tokens, the average gap to LLaDA shrinks from about $4$ to $1.5$ points without saturating. The mixed decoder setting $w_{\mathrm{dec}}=-0.9$ ($44.7\%$) also outperforms both the latent-free ($43.5\%$) and fully conditioned ($37.0\%$) settings, confirming that latent semantics and discrete generation are complementary.
+
+\subsubsection{Post-Pretraining Benchmark Comparison}
+\label{subsec:exp-pretrained}
+
+The final checkpoint evaluated here uses a separate large-scale recipe from the controlled scaling study. It is trained on OLMo~2 pretraining data retokenized with the Qwen3-4B tokenizer, using length-$4096$ sequences. The decoder and the VAE encoder embedding are initialized from Qwen3-4B-Base. During decoder training, masked positions are represented by \texttt{[MASK]} inputs, while decoder self-attention remains causal. Stage~I trains the dynamic-compression VAE on $52.43$B source tokens. Stage~II jointly updates the VAE and an approximately 4B-parameter latent DiT, with detached VAE latents, on an additional $125.83$B source tokens. Stage~III freezes the Stage-II EMA VAE and continues training only the DiT on $167.77$B source tokens. The total is $346.03$B source tokens. Architecture, optimization, objective, EMA, and state-transition details are provided in Appendix~\ref{app:final-pretraining}.
+
+Inference uses a low-noise-biased eight-step Euler DiT schedule, $t_i=T(1-i/8)^2$ for $i=0,\ldots,8$, with DiT CFG set to $10$. Decoder CFG is $-0.9$, each decoding call generates one latent span, dynamic duration and latent feedback are enabled, and decoding is greedy.
+
+We compare this checkpoint with representative 7B--8B pretrained models across eight downstream tasks. Each \method task score reported below is the average of three sampled evaluations. Because the models' training recipes, tokenizers, and token-counting conventions differ, this comparison contextualizes post-pretraining performance rather than isolating the effect of the generation paradigm.
+
+\begin{table}[t]
+    \centering
+    \caption{\textbf{Post-pretraining evaluation.} Accuracy (\%) on eight downstream tasks, with tasks grouped by evaluation focus and models by generation paradigm. \method uses $346.03$B source tokens; the models are not compute-matched.}
+    \label{tab:exp-pretrained-comparison}
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.10}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccccc}
+        \toprule
+        & \multicolumn{3}{c}{\textbf{Autoregressive}}
+        & \multicolumn{1}{c}{\textbf{Discrete diffusion}}
+        & \multicolumn{1}{c}{\textbf{Continuous diffusion}} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}
+        \textbf{Task} & \textbf{Llama-3-8B} & \textbf{Qwen2.5-7B} & \textbf{Qwen3-8B-Base} & \textbf{LLaDA-8B-Base} & \textbf{\method} \\
+        \midrule
+        \textit{Pretraining tokens} & 15T+ & 18T & ${\sim}$36T & 2.3T & 346B \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Reading comprehension}} \\
+        \quad RACE        & 75.77 & 89.95 & 90.65 & 87.40 & 69.91 \\
+        \quad NarrativeQA & 42.70 & 32.90 & 37.30 & 36.00 & 32.70 \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Commonsense reasoning}} \\
+        \quad HellaSwag   & 39.21 & 75.67 & 68.13 & 69.65 & 41.75 \\
+        \quad StoryCloze  & 79.49 & 95.09 & 97.44 & 95.94 & 80.42 \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Language modeling}} \\
+        \quad LAMBADA     & 75.70 & 71.82 & 71.20 & 67.90 & 63.00 \\
+        \midrule
+        \multicolumn{6}{l}{\textit{Knowledge-oriented QA}} \\
+        \quad ARC-Easy    & 90.86 & 96.00 & 97.35 & 93.85 & 87.62 \\
+        \quad TruthfulQA  & 63.04 & 69.03 & 72.58 & 64.87 & 54.10 \\
+        \quad MMLU        & 63.19 & 70.16 & 72.31 & 61.27 & 51.32 \\
+        \midrule
+        \textbf{8-task average} & \textbf{66.25} & \textbf{75.08} & \textbf{75.87} & \textbf{72.11} & \textbf{60.10} \\
+        \bottomrule
+    \end{tabular*}
+\end{table}
+
+\textbf{\obs{} \method shows strong scaling potential under a limited training budget.} With only $346.03$B source tokens and before convergence, \method reaches an eight-task average of $60.10$, only $6.15$ points behind Llama-3-8B ($66.25$), which uses at least $15$T tokens---over $43{\times}$ more data. \method also surpasses Llama-3-8B on HellaSwag ($41.75$ vs.\ $39.21$) and StoryCloze ($80.42$ vs.\ $79.49$), while reaching $87.62$ on ARC-Easy. These results indicate substantial scaling headroom and successful transfer of the Qwen-initialized causal decoder's text generation capability. More broadly, continuous-latent hierarchical modeling can integrate effectively with established token-space generation paradigms, including autoregressive and masked-diffusion decoders.
+
+\subsection{Summary}
+
+The results support the design of \method in three respects. \textbf{Semantic compression:} dynamic segmentation and generative supervision keep the latents strongly semantic at high compression rates; the former slightly surpasses the uncompressed model with an appropriate $L_{\max}$, and the latter raises accuracy from $15.7\%$ to $26.7\%$. \textbf{Reconstruction--generation balance:} mixed training dominated by noisy and dropped conditions enables the decoder both to faithfully use the latent (shuffling the latent costs $12.2$ points) and to autonomously generate the residual information. \textbf{Continuous--discrete co-adaptation:} the information placed in the latent should be determined by the decoder; co-training the encoder and decoder yields a $5.9$-point gain, and both continue to benefit from more training data, giving the hierarchical model scaling trends comparable to or better than AR and LLaDA.
+
+\FloatBarrier
+\endgroup
