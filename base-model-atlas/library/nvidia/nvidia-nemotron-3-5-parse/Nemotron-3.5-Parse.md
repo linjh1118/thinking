@@ -7,7 +7,7 @@ url: "https://huggingface.co/nvidia/Nemotron-3.5-Parse"
 tags: [base-model, nemotron, document-parsing, ocr, data-construction]
 status: read
 created: 2026-10-18
-updated: 2026-10-28
+updated: 2026-11-07
 ---
 
 # Nemotron 3.5 Parse：不只是读出文字，还要保留可用结构
@@ -17,6 +17,24 @@ updated: 2026-10-28
 
 > [!warning] 资料仍不足以复建完整训练与因果消融
 > 已补读10月21日官方Tech Blog，新增官方图与训练/系统证据；原先“只有示意图/没有相关结果”的描述不再适用。仍缺本版独立Tech Report、完整训练recipe、预算与关键因果消融，因此达不到完整技术报告精读深度。图1、2是研读重绘，图3为官方原图；本轮不下载权重、PDF或执行推理。
+
+## 11 月 7 日更新 · DFlash2 草稿权重与 H200 吞吐
+
+NVIDIA 在北京时间 11 月 5 日添加原生 DFlash2，11 月 7 日 06:57 更新草稿权重。此次登记的是后一次权重更新。DFlash2 是可选的 89.3M 草稿模型，需要原 Parse 模型验证提议并共享其嵌入和输出头。把它加在原 Parse 条目下，沿用 10 月 17 日的 Parse 首发日。
+
+| 单 H200、BF16 | 处理页/秒 | 完整页/秒 | 并发 | ParseBench 既有分数 |
+|---|---:|---:|---:|---:|
+| 单遍 | 18.57 | 18.29 | 512 | 72.74 |
+| 双遍 | 14.60 | 14.33 | 128 | 74.92 |
+| 三遍 | 13.49 | 13.24 | 256 | 75.20 |
+
+NVIDIA 对 2,078 页分别跑三次，按完整页吞吐的中位数选择各模式的最佳已测配置。上述计时包含 HTTP、服务队列和请求之间的裁切准备，排除了初始页面准备、预热与最终渲染写盘。达到生成上限的页仍计入处理页，但不计入完整页。准确率沿用参考协议，不能用这些速度数值反推新的准确率或逐字等价性。旧 H100 结果留在下文，供按各自协议追溯。
+
+![NVIDIA 官方图 · 单遍原生并发协议下的 DFlash2、MTP 与基础推理](src/assets/dflash2-concurrency-20261107.png)
+
+图中的原生贪心并发协议和上表的 HTTP 多遍协议分别计时。在原生单遍中，低并发的最佳已测草稿长度多为 32，512 并发则为 16，说明延长草稿只在部分负载下划算。复测应分别固定 GPU、并发、草稿长度和页完成定义，再检验速度与输出差异。
+
+[HF 固定更新提交](https://huggingface.co/nvidia/Nemotron-3.5-Parse/commit/72ad4d71dd827135ee581502363e14748008900a) · [官方吞吐协议](https://huggingface.co/nvidia/Nemotron-3.5-Parse/blob/72ad4d71dd827135ee581502363e14748008900a/reference/dflash2-passes/README.md)
 
 ## 日期与谱系：10 月 17 日，而非发现日或建仓日
 
