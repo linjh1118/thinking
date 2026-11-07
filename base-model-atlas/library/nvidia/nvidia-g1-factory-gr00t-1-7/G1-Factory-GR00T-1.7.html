@@ -1,0 +1,104 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GR00T N1.7 · G1 Factory 微调与 DSRL 引导 · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>GR00T N1.7 · G1 Factory 微调与 DSRL 引导</h2><div class="meta">model-note · 2026<br>model-note, robotics, agent-training, diffusion-policy, rl</div><nav><a class="toc-l1" href="#g1-factory">G1 Factory · 让冻结的机器人策略学会选择噪声</a><a class="toc-l2" href="#section-2">定位与两个检查点</a><a class="toc-l2" href="#section-3">方法与训练</a><a class="toc-l3" href="#vla-g1-factory">从通用 VLA 到 G1 Factory</a><a class="toc-l3" href="#dsrl">DSRL 怎样改变动作</a><a class="toc-l2" href="#section-6">评测与可支持的结论</a><a class="toc-l2" href="#section-7">复现与研究启发</a><a class="toc-l2" href="#section-8">来源与未核实范围</a></nav></aside><main class="note"><h1 id="g1-factory">G1 Factory · 让冻结的机器人策略学会选择噪声</h1><aside class="callout tldr"><div class="callout-title">我的判断</div><div>这组检查点把两个问题拆开。先把通用 GR00T N1.7 微调到 Unitree G1 的工厂操作任务，再用一个约 6.44M 的 actor 选择扩散策略的初始噪声。后一阶段冻结 3.144B 的底层策略，用单任务 RL 改善动作选择。在同一批 300 个仿真 episode 上，PushButton 成功率从 61.3% 提到 82.0%。这个对照支持研究潜空间引导，但数据不足以证明九项任务都受益。</div></aside><aside class="callout warning"><div class="callout-title">资料充分度与日期边界</div><div>已读两份完整官方模型卡、上游 GR00T 卡、微调配置及 steering checkpoint 的 manifest，并归档官方架构图。两个模型卡均声明 2026-10-19 发布，但这两个 HF 仓库当前可见的首次上传提交为 11 月 7 日。Atlas 按模型卡声明补到 10 月 19 日，先前公开渠道仍待核。G1-Factory 项目页返回 404，训练数据卡返回 401，因此不能达到完整训练复现与独立技术报告精读标准。未下载权重或运行仿真。</div></aside><style id="note-tabs-style">[data-note-panel][hidden]{display:none!important}.note-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:24px 0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.note-tabs button{font:inherit;font-family:Inter,sans-serif;font-size:13px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 13px;cursor:pointer}.note-tabs button[aria-selected="true"]{background:#223d66;color:#eaf2ff;border-color:#6689ba}.note-tabs button:focus-visible{outline:3px solid #70d9ff}.note [data-note-panel]>h2:first-child{margin-top:20px}html[data-theme="light"] .note-tabs button[aria-selected="true"]{background:#dceaff;color:#15375e;border-color:#7ca1ce}</style><nav class="note-tabs" role="tablist" aria-label="研读板块"><button type="button" role="tab" id="note-tab-0" aria-controls="note-panel-0" aria-selected="true" tabindex="0" data-note-tab="0">定位与两个检查点</button><button type="button" role="tab" id="note-tab-1" aria-controls="note-panel-1" aria-selected="false" tabindex="-1" data-note-tab="1">方法与训练</button><button type="button" role="tab" id="note-tab-2" aria-controls="note-panel-2" aria-selected="false" tabindex="-1" data-note-tab="2">评测与可支持的结论</button><button type="button" role="tab" id="note-tab-3" aria-controls="note-panel-3" aria-selected="false" tabindex="-1" data-note-tab="3">复现与研究启发</button><button type="button" role="tab" id="note-tab-4" aria-controls="note-panel-4" aria-selected="false" tabindex="-1" data-note-tab="4">来源与未核实范围</button></nav><section role="tabpanel" id="note-panel-0" aria-labelledby="note-tab-0" data-note-panel="0"><h2 id="section-2">定位与两个检查点</h2><p><strong>一句话</strong>　把机器人 embodiment 适配与冻结策略的 RL 引导放在一个研读节点中比较。</p><div class="table-wrap"><table><thead><tr><th>检查点</th><th>参数与作用</th><th>相互关系</th></tr></thead><tbody><tr><td>G1-Factory-GR00T-1.7</td><td>3,144,016,000 参数，九项任务微调 VLA</td><td>基于 GR00T N1.7，提供动作生成器</td></tr><tr><td>Isaac-RLPT-GR00T-1.7-G1-Factory-PushButton-DSRL</td><td>steering actor 为 6,442,182 参数</td><td>选择初始噪声，依赖冻结的上述 G1 策略</td></tr></tbody></table></div><p>这里的一张图像、31 维上半身状态和英文指令共同决定一块动作。图像是头部相机原生 640×480 RGB，31 维依次包含双臂、双手及腰部。输出是一块 40×35 的连续动作，其中 31 维对应上半身关节目标，另有 1 维底盘高度和 3 维导航指令，由单独全身控制器产生腿部动作。</p></section><section role="tabpanel" id="note-panel-1" aria-labelledby="note-tab-1" data-note-panel="1" hidden><h2 id="section-3">方法与训练</h2><p><strong>一句话</strong>　微调负责学到工厂动作分布，RL actor 在这个已学分布中选择更有利的起点。</p><p><img src="src/assets/handdrawn.png" alt="G1 Factory 与 DSRL 两条推理路径的手绘示意"></p><h3 id="vla-g1-factory">从通用 VLA 到 G1 Factory</h3><p>官方架构是 Cosmos-Reason2-2B 视觉语言骨干、4 层视觉语言 self-attention 模块和 32 层 Flow Matching 动作 Transformer，动作头执行 4 个去噪步。微调时冻结语言骨干，更新视觉编码器、projector 与动作头。</p><p><img src="src/assets/parent-architecture.png" alt="上游 GR00T N1.7 官方架构图"></p><p><em>图来自上游通用 GR00T 模型卡，用于解释骨干。它未独立展示本次 G1 Factory 微调的全部实现细节。</em></p><p>九项任务共 900 条遥操作示范，每项 100 条，约 40 万帧，按 50 Hz 记录。微调为 20,000 步、8 GPU、全局 batch 32，AdamW 学习率 1e−4、cosine 调度、5% warm-up、weight decay 1e−5、state dropout 0.2、seed 42。模型卡给出这些设置，数据卡访问失败使本次无法逐轨迹审查质量与任务覆盖。</p><h3 id="dsrl">DSRL 怎样改变动作</h3><p>普通扩散动作策略从高斯噪声出发去噪。DSRL 训练一个独立 Transformer actor，输入 31 维关节状态和相机的 768 维 DINOv2 特征，输出限制在 [−2,2] 的 40×35 噪声。冻结的 VLA 从该噪声生成动作，所以 RL 的控制变量是动作分布的潜起点。</p><p>训练采用 SAC 和 Transformer critic ensemble。actor 在推理时工作，critic 与优化器保存在 learner state 中用于训练恢复。关键约束是训练与评测使用相同噪声边界，否则每个 steering action 都会被重新缩放。</p><div class="table-wrap"><table><thead><tr><th>RL 设置</th><th>官方记录</th></tr></thead><tbody><tr><td>任务与奖励</td><td>单场景 PushButton，成功 1，其他 0</td></tr><tr><td>训练预算</td><td>80,000 环境步计划，发布 checkpoint 位于 72,488 步</td></tr><tr><td>体验量</td><td>manifest 记录 253 个 episode、9,114 个已完成 rollout</td></tr><tr><td>初始化与探索</td><td>actor 均值 0、log std −0.46，warm-up 用高斯 latent</td></tr><tr><td>正则与熵</td><td>熵系数固定 0.05，Gaussian prior std 0.63 的 KL 正则</td></tr><tr><td>每次决定</td><td>40 个 latent，seed 0</td></tr></tbody></table></div><p>这说明代码、数据、训练环境与解码配置必须一起固定。仅替换 actor 权重，未必能还原原先的闭环动作分布。</p></section><section role="tabpanel" id="note-panel-2" aria-labelledby="note-tab-2" data-note-panel="2" hidden><h2 id="section-6">评测与可支持的结论</h2><p><strong>一句话</strong>　九任务基线与 300 episode 的 steering 对照使用两套评测协议，应分别阅读。</p><div class="table-wrap"><table><thead><tr><th>九任务官方基线，每任务 100 episode</th><th>成功率</th></tr></thead><tbody><tr><td>BoxLift</td><td>98%</td></tr><tr><td>BoxLiftFloor</td><td>96%</td></tr><tr><td>BoxTableToShelfPnP</td><td>77%</td></tr><tr><td>DrillLift</td><td>66%</td></tr><tr><td>DrillLiftObs</td><td>75%</td></tr><tr><td>DrillPnP</td><td>69%</td></tr><tr><td>PickDrillFromHolder</td><td>44%</td></tr><tr><td>PushButton</td><td>42%</td></tr><tr><td>PushShelfForward</td><td>58%</td></tr><tr><td>平均</td><td>69.4%</td></tr></tbody></table></div><p>上述基线使用 CPU physics，每条 episode 最多 20 秒。DSRL 的配对对照另用 Isaac Sim 6.2 / Isaac Lab 3.0，逐场景运行同一批 300 个 held-out episode，种子为 5050–5199 和 6000–6149。达到按键成功条件或 1,000 步（20 秒）上限后结束。</p><div class="table-wrap"><table><thead><tr><th>相同 300 episode、相同评测器</th><th>成功数</th><th>成功率</th></tr></thead><tbody><tr><td>冻结 G1 策略</td><td>184 / 300</td><td>61.3%</td></tr><tr><td>冻结 G1 策略加 DSRL actor</td><td>246 / 300</td><td>82.0%</td></tr></tbody></table></div><p>绝对提升为 20.7 个百分点。模型卡给出的差值 95% 区间约为 +13.9 至 +27.4 个百分点，但缺少逐 episode 配对结果，无法独立验证配对不确定性。300 次对照中的 61.3% 才是这一实验对应的基线。</p><p>训练中的 checkpoint 按 17 次评估中最佳的一次选择，当时是 20 个 episode 中成功 13 个。独立 300 次 held-out 评测减少了直接在选择集合上报分的问题，仍需要多训练种子和不同场景对照来判断稳定性。</p></section><section role="tabpanel" id="note-panel-3" aria-labelledby="note-tab-3" data-note-panel="3" hidden><h2 id="section-7">复现与研究启发</h2><p><strong>一句话</strong>　先控制 embodiment、相机、归一化与评测种子，再比较潜噪声引导的收益。</p><ul><li>固定 G1 baseline 与 steering checkpoint 的 SHA256SUMS，保留处理器、归一化统计和 embodiment mapping。</li><li>使用原生 640×480 相机输入、相同噪声界限与 task instruction。基线和 steering 用相同 held-out seeds，保存逐 episode 结果及超时原因。</li><li>在相同环境步预算下，对比随机 latent、无 KL 引导和官方 SAC+KL。逐步扩大训练种子与场景范围，并检查其余八项任务是否受损。</li><li>单 L40/L40S、48GB 显存可同时运行模拟器和策略，官方参考 50 episode 约 45 分钟。这是其软件栈上的运行提示，本次没有计时复测。</li></ul><aside class="callout insight"><div class="callout-title">对 Agent Training 的启发</div><div>这是一种把基础策略能力与小规模在线适配解耦的实验形式。值得检验的变量包括潜动作空间边界、先验正则强度和回报稀疏度。对文字工具代理，可以类比研究冻结生成器上的可学习决策模块，但这组机器人实验尚不能证明文字任务收益。</div></aside></section><section role="tabpanel" id="note-panel-4" aria-labelledby="note-tab-4" data-note-panel="4" hidden><h2 id="section-8">来源与未核实范围</h2><p><strong>一句话</strong>　两份官方模型卡是本次 G1 微调与 DSRL 实验的直接证据，关联论文解释上游方法。</p><ul><li><a href="https://huggingface.co/nvidia/G1-Factory-GR00T-1.7" target="_blank" rel="noopener">HF Model Card · G1 微调策略</a></li><li><a href="https://huggingface.co/nvidia/Isaac-RLPT-GR00T-1.7-G1-Factory-PushButton-DSRL" target="_blank" rel="noopener">HF Model Card · DSRL steering</a></li><li><a href="https://huggingface.co/nvidia/GR00T-N1.7-3B" target="_blank" rel="noopener">上游 GR00T N1.7</a></li><li><a href="https://arxiv.org/abs/2506.15799" target="_blank" rel="noopener">关联 Tech Report · DSRL</a> · <a href="https://arxiv.org/abs/2503.14734" target="_blank" rel="noopener">关联 Tech Report · GR00T N1</a></li><li><a href="src/factory_model_card.md.html">本地原始模型卡</a> · <a href="src/steering_model_card.md.html">steering 原卡</a> · <a href="src/retrieval_manifest.json">归档清单</a></li></ul><p>尚缺 10 月 19 日已公开下载的历史证明、可读的 G1 Factory 源工程与训练数据，以及本次 checkpoint 的独立技术报告。已有来源足以展开训练与协议分析，不能据此宣称完成从头复现。</p><blockquote>📊 相关可视化 <a class="wikilink" href="g1_factory_poster_zh.html">G1 Factory 中文 Poster</a></blockquote></section><script id="note-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-note-tab]')];
+function select(index) {
+    tabs.forEach(tab => {
+        const active = tab.dataset.noteTab === String(index);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+}
+function reveal() {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) { select(panel.dataset.notePanel); requestAnimationFrame(() => target.scrollIntoView({block:'start'})); }
+}
+tabs.forEach((tab,index) => {
+    tab.onclick = () => select(tab.dataset.noteTab);
+    tab.onkeydown = event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    };
+});
+document.addEventListener('click',event => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) select(panel.dataset.notePanel);
+});
+window.addEventListener('hashchange',reveal); reveal();
+})();</script></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
