@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DSpine</title>
+<meta name="description" content="DSpine: Draft in Parallel, Condition Through Depth. Adjacent causal injection for parallel speculative decoding.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 82 104"%3E%3Cpath d="M66,22 C60,11 49,9 39,9 C22,9 12,17 12,29 C12,43 26,47 39,50 C54,53 66,58 66,72 C66,85 55,91 39,91 C26,91 15,86 11,76" fill="none" stroke="%230E9F6E" stroke-width="2.6"/%3E%3Cpolygon points="74.3,17.4 73.0,15.2 71.6,13.1 69.9,11.1 68.0,9.2 66.0,7.4 63.8,5.8 61.6,4.5 59.3,3.3 56.9,2.3 54.5,1.5 49.0,19.7 50.2,20.1 51.3,20.6 52.3,21.1 53.3,21.6 54.1,22.3 54.9,23.0 55.7,23.7 56.4,24.6 57.0,25.5 57.6,26.5" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="47.1,-0.0 44.9,-0.3 42.7,-0.4 40.5,-0.5 38.4,-0.5 36.2,-0.4 34.0,-0.3 31.7,-0.0 29.4,0.3 27.1,0.8 24.8,1.4 30.0,19.6 31.3,19.3 32.7,19.0 34.1,18.8 35.6,18.6 37.1,18.5 38.6,18.5 40.2,18.5 41.7,18.6 43.3,18.7 44.8,18.8" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="17.3,4.4 15.1,5.7 12.8,7.3 10.7,9.2 8.8,11.3 7.1,13.6 5.6,16.1 4.4,18.8 3.5,21.5 2.9,24.2 2.6,27.0 21.5,28.3 21.6,27.3 21.8,26.4 22.1,25.6 22.4,24.9 22.8,24.2 23.3,23.5 23.9,22.9 24.7,22.2 25.5,21.6 26.4,21.1" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="3.4,36.0 4.3,38.9 5.6,41.6 7.3,44.2 9.2,46.5 11.2,48.5 13.4,50.2 15.5,51.6 17.7,52.9 19.8,53.9 21.9,54.9 29.1,37.3 27.8,36.7 26.6,36.1 25.5,35.5 24.6,34.8 23.8,34.2 23.1,33.6 22.6,33.0 22.3,32.4 22.0,31.8 21.8,31.2" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="28.5,57.1 30.5,57.7 32.4,58.2 34.4,58.7 36.3,59.1 38.3,59.6 40.0,59.9 41.6,60.3 43.2,60.7 44.8,61.2 46.3,61.7 52.3,43.6 50.3,43.0 48.2,42.4 46.2,41.9 44.2,41.4 42.2,41.0 40.6,40.6 38.8,40.2 37.1,39.8 35.5,39.3 33.9,38.9" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="50.5,63.4 51.7,64.0 52.7,64.7 53.5,65.3 54.3,66.0 54.9,66.6 55.3,67.2 55.7,67.9 56.0,68.6 56.2,69.4 56.4,70.3 75.2,67.8 74.7,65.0 73.9,62.2 72.7,59.5 71.3,56.9 69.5,54.5 67.6,52.4 65.5,50.6 63.4,49.0 61.2,47.6 59.1,46.4" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="56.4,73.7 56.2,74.5 56.0,75.3 55.7,75.9 55.3,76.5 54.9,77.1 54.3,77.7 53.6,78.2 52.8,78.7 51.9,79.2 50.8,79.7 57.8,97.4 60.1,96.3 62.5,95.1 64.8,93.6 67.0,91.8 69.1,89.7 70.9,87.3 72.5,84.8 73.8,82.0 74.6,79.2 75.2,76.4" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="46.7,80.8 45.3,81.1 43.8,81.3 42.3,81.4 40.7,81.5 39.2,81.5 37.7,81.5 36.2,81.4 34.7,81.3 33.3,81.1 31.9,80.8 28.0,99.4 30.3,99.8 32.5,100.1 34.8,100.4 37.0,100.5 39.3,100.5 41.4,100.5 43.6,100.3 45.8,100.2 48.1,99.9 50.3,99.5" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Cpolygon points="27.7,79.6 26.5,79.1 25.4,78.5 24.4,77.9 23.5,77.3 22.7,76.5 21.9,75.8 21.3,75.1 20.7,74.2 20.2,73.4 19.8,72.5 2.2,79.5 3.3,82.0 4.7,84.4 6.2,86.7 8.0,88.7 9.9,90.6 11.9,92.3 14.0,93.8 16.2,95.1 18.4,96.3 20.7,97.3" fill="%23C65D0A" stroke="%23C65D0A" stroke-width="2.2" stroke-linejoin="round"/%3E%3Ccircle cx="48.9" cy="9.9" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="24.6" cy="11.5" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="12.1" cy="30.6" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="28.4" cy="47.1" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="52.1" cy="53.7" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="66.0" cy="72.0" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="51.4" cy="89.5" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3Ccircle cx="27.0" cy="89.4" r="3.1" fill="%230E9F6E" stroke="%23FFFFFF" stroke-width="1.3"/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a single centered column. Headings, author block, charts and captions are centered; running text is
+   left-aligned inside a narrow centered measure. The two comparisons (results, then method) come first. */
+:root {
+  --bg: #FFFFFF;
+  --ink: #131B28;
+  --ink-2: #3A4658;
+  --muted: #667285;
+  --faint: #9AA5B3;
+  --line: #E4E8ED;
+  --line-strong: #CAD2DB;
+  --soft: #F4F6F9;
+  --accent: #C65D0A;       /* DSpine, as in the paper's result figures */
+  --accent-soft: #FBEEE3;
+  --spine: #0E9F6E;        /* layer-wise injection, as in the paper's overview figure */
+  --spine-soft: #DCF3E8;
+  --alert: #CF3F3F;
+  --plate: #FFFFFF;
+  --plate-pad: 0px;         /* paper figures sit directly on the white page */
+  --node: #EEF2F6;
+  --node-line: #CBD3DC;
+  --node-done: #FFFFFF;
+  --node-done-line: #7E8C9D;
+  --slab: #F3F6F9;
+  --slab-on: #E4EBF2;
+  --on-accent: #FFFFFF;
+  /* method colors of the paper's figures */
+  --c-ar: #77848F;
+  --c-dflash: #56B4E9;
+  --c-dflash-ref: #3D9BD6;
+  --c-domino: #CC79A7;
+  --c-dspark: #00896B;
+  --c-dflash2: #0060A0;
+  --c-dspine: #C65D0A;
+  --c-draft: #35618C;      /* latency breakdown segments, as in the paper */
+  --c-head: #4E9E8E;
+  --c-verify: #D5DADF;
+  --rowband: #FDF6F0;
+
+  --font-display: "Bricolage Grotesque", "Source Sans 3", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --wide: 1280px;
+  --measure: 64rem;        /* running text and the figures aligned with it */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E131A; --ink: #E7ECF2; --ink-2: #C3CCD7; --muted: #95A1B0; --faint: #5F6B7A; --line: #222C38;
+    --line-strong: #334152; --soft: #161E28; --accent: #F0883E; --accent-soft: #3A2415; --spine: #33C68D;
+    --spine-soft: #12301F; --alert: #F07272; --plate: #FFFFFF; --plate-pad: 12px; --node: #1B2533; --node-line: #2F3E51;
+    --node-done: #243244; --node-done-line: #7D90A6; --slab: #151D27; --slab-on: #1E2A38; --on-accent: #FFFFFF;
+    --c-ar: #8D99A8; --c-dflash: #6CC3F0; --c-dflash-ref: #5AAFE6; --c-domino: #DE8FBC; --c-dspark: #2BB38E;
+    --c-dflash2: #4A9FE0; --c-dspine: #F0883E; --c-draft: #6B97C6; --c-head: #5DB5A3; --c-verify: #3A4655; --rowband: #221A13;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E131A; --ink: #E7ECF2; --ink-2: #C3CCD7; --muted: #95A1B0; --faint: #5F6B7A; --line: #222C38;
+  --line-strong: #334152; --soft: #161E28; --accent: #F0883E; --accent-soft: #3A2415; --spine: #33C68D;
+  --spine-soft: #12301F; --alert: #F07272; --plate: #FFFFFF; --plate-pad: 12px; --node: #1B2533; --node-line: #2F3E51;
+  --node-done: #243244; --node-done-line: #7D90A6; --slab: #151D27; --slab-on: #1E2A38; --on-accent: #FFFFFF;
+  --c-ar: #8D99A8; --c-dflash: #6CC3F0; --c-dflash-ref: #5AAFE6; --c-domino: #DE8FBC; --c-dspark: #2BB38E;
+  --c-dflash2: #4A9FE0; --c-dspine: #F0883E; --c-draft: #6B97C6; --c-head: #5DB5A3; --c-verify: #3A4655; --rowband: #221A13;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.65 var(--font-body); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; height: auto; display: block; margin-inline: auto; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+p { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -.015em; }
+.page { max-width: var(--wide); margin-inline: auto; padding-inline: 24px; }
+@media (max-width: 520px) { .page { padding-inline: 16px; } }
+.measure { max-width: var(--measure); margin-inline: auto; }
+.measure p + p { margin-top: 1em; }
+
+/* ---------- title block ---------- */
+.hero { padding-block: 48px 8px; text-align: center; }
+.logo { margin: 0; font: 700 clamp(3.1rem, 8.5vw, 4.8rem)/1 var(--font-display); letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
+.logo-s { display: inline-block; height: .70em; width: auto; vertical-align: baseline; position: relative; top: .028em; margin: 0 .006em 0 .03em; overflow: visible; }
+.lg-cord { fill: none; stroke: var(--spine); stroke-width: 2.6; }
+.lg-vert { fill: var(--accent); stroke: var(--accent); stroke-width: 2.2; stroke-linejoin: round; }
+.lg-joint { fill: var(--spine); stroke: var(--bg); stroke-width: 1.3; transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .lg-joint { animation: joint 1.1s cubic-bezier(.3, 1.4, .5, 1) both; }
+  .lg-joint:nth-of-type(2) { animation-delay: .08s; } .lg-joint:nth-of-type(3) { animation-delay: .16s; }
+  .lg-joint:nth-of-type(4) { animation-delay: .24s; } .lg-joint:nth-of-type(5) { animation-delay: .32s; }
+  .lg-joint:nth-of-type(6) { animation-delay: .40s; } .lg-joint:nth-of-type(7) { animation-delay: .48s; }
+  .lg-joint:nth-of-type(8) { animation-delay: .56s; }
+  @keyframes joint { from { transform: scale(.35); opacity: .35; } to { transform: scale(1); opacity: 1; } }
+}
+.hero h1 { margin: 18px auto 0; font-size: clamp(1.7rem, 3.6vw, 2.45rem); line-height: 1.12; font-weight: 700; max-width: 26ch; }
+.hero .subtitle { margin-top: 8px; font: 600 clamp(1.05rem, 1.9vw, 1.28rem)/1.35 var(--font-display); color: var(--ink-2); }
+.authors { margin: 22px auto 0; font-size: 17px; line-height: 1.75; max-width: 46rem; text-wrap: balance; }
+.authors span { white-space: nowrap; }
+@media (min-width: 1000px) {
+  .hero h1 { max-width: none; }
+  .authors { max-width: var(--measure); }
+}
+sup { font-size: .68em; color: var(--muted); }
+.affils { margin-top: 4px; font-size: 15px; color: var(--muted); display: flex; justify-content: center; flex-wrap: wrap; gap: 2px 20px; }
+.contrib { margin-top: 2px; font-size: 13.5px; color: var(--faint); }
+.actions { margin-top: 22px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding-inline: 18px; border-radius: 999px; background: var(--ink); color: var(--bg); text-decoration: none; font: 600 15px/1 var(--font-body); transition: opacity .15s; }
+.btn:hover { opacity: .86; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+
+/* ---------- sections ---------- */
+section { padding-block: 56px; }
+section + section { border-top: 1px solid var(--line); }
+section.first { padding-top: 36px; border-top: 0; }
+.sec-title { text-align: center; font-size: clamp(1.55rem, 2.8vw, 2rem); line-height: 1.15; font-weight: 700; }
+.sec-lead { margin: 12px auto 0; max-width: var(--measure); text-align: center; color: var(--muted); font-size: 17px; }
+figure { margin: 28px 0 0; }
+.plate { background: var(--plate); border-radius: 10px; padding: var(--plate-pad); overflow-x: auto; }
+.plate img { width: 100%; }
+.in-measure { max-width: var(--measure); margin-inline: auto; }   /* same width as the running text below */   /* SVG figures carry their 396 pt size as width; scale them to the column */
+figcaption { margin: 12px auto 0; max-width: 50rem; text-align: center; font-size: 14.5px; color: var(--muted); }
+figcaption b { color: var(--ink-2); font-weight: 600; }
+.hl { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+.hl-g { color: var(--spine); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ---------- updates and headline results ---------- */
+.overview { margin-top: 30px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.news { padding: 24px 24px 0; }
+.news .sec-title { font-size: 1.2rem; text-align: center; }
+.news-list { width: max-content; max-width: 100%; margin: 12px auto 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.5; }
+.news-list li { display: grid; grid-template-columns: 82px minmax(0, max-content); gap: 12px; align-items: baseline; padding-block: 3px; color: var(--ink-2); }
+/* Each announcement stays on one line whenever it fits (narrow screens shrink the text below); only on extremely
+   narrow screens does it wrap, aligned after the icon, instead of scrolling sideways. */
+.news-list p { padding-left: 23px; text-indent: -23px; }   /* 23px = icon 1.2 x 14px + 6px margin */
+.news-list time { color: var(--muted); font: 500 12px/1.5 var(--font-mono); white-space: nowrap; }
+.news-icon { display: inline-block; width: 1.2em; margin-right: 6px; font-size: 14px; text-align: center; text-indent: 0; }
+.news-list a { color: var(--accent); font-weight: 600; text-decoration: none; text-underline-offset: 3px; }
+.news-list a:hover { color: var(--accent); text-decoration: underline; }
+.overview #teaser { padding: 24px 20px 26px; border-top: 0; }
+.teaser-heading { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0 4px 20px; text-align: center; }
+.teaser-heading h2 { font-size: 1.3rem; line-height: 1.25; }
+.teaser-meta { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.teaser-figure { margin: 0; }
+#teaser figcaption { margin-top: 18px; max-width: 52rem; font-size: 14px; line-height: 1.6; }
+.overview + section { margin-top: 48px; border-top: 1px solid var(--line); }
+@media (max-width: 700px) {
+  .overview { margin-top: 24px; border-radius: 12px; }
+  .news { padding: 24px 0 0; }   /* the page gutter already separates the list from the screen edge */
+  /* From a 374px-wide viewport up these are exactly 14px / 74px / 8px / 11px; below that the whole row shrinks with
+     the screen (down to 11px text) so each announcement still fits on one line. */
+  .news-list { font-size: clamp(11px, 3.75vw, 14px); }
+  .news-list li { grid-template-columns: clamp(58.2px, 19.83vw, 74px) minmax(0, max-content); gap: clamp(6.3px, 2.15vw, 8px); }
+  .news-list time { font-size: clamp(8.7px, 2.95vw, 11px); }
+  .overview #teaser { padding: 20px 14px; }
+  .teaser-heading { flex-direction: column; gap: 6px; margin: 0 2px 18px; }
+  .teaser-heading h2 { font-size: 1.2rem; }
+  .teaser-meta { font-size: 12px; white-space: normal; }
+  .overview + section { margin-top: 36px; }
+}
+
+/* ---------- charts (redrawn from the paper's figure data) ---------- */
+.chartbox { padding: 0; }
+.chart-scroll { overflow-x: auto; }
+.chart-scroll svg { display: block; width: 100%; min-width: 760px; height: auto; }
+.keys { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 18px; font-size: 13.5px; color: var(--ink-2); margin-bottom: 6px; }
+.keys span { display: inline-flex; align-items: center; gap: 7px; }
+.keys svg { width: 26px; height: 12px; flex: none; }
+.ct { font: 500 11.5px var(--font-body); fill: var(--ink-2); }
+.ct-num { font: 500 11px var(--font-body); fill: var(--muted); font-variant-numeric: tabular-nums; }
+.ct-col { font: 700 13px var(--font-body); fill: var(--ink); }
+.ct-row { font: 700 13px var(--font-body); fill: var(--ink); }
+.ct-axis { font: 500 12.5px var(--font-body); fill: var(--ink-2); }
+.strip-t { font: 500 10.5px var(--font-body); fill: var(--ink); font-variant-numeric: tabular-nums; }
+.grid { stroke: var(--line); stroke-width: 1; }
+.axis { stroke: var(--ink-2); stroke-width: 1; }
+.cut { stroke: var(--bg); stroke-width: 2.6; }
+.brk { stroke: var(--ink-2); stroke-width: 1.1; }
+.bar { stroke: var(--bg); stroke-width: .6; }
+.bar-dflash { fill: color-mix(in srgb, var(--c-dflash) 50%, var(--bg)); }
+.bar-domino { fill: color-mix(in srgb, var(--c-domino) 50%, var(--bg)); }
+.bar-dspark { fill: color-mix(in srgb, var(--c-dspark) 50%, var(--bg)); }
+.bar-dflash2 { fill: color-mix(in srgb, var(--c-dflash2) 50%, var(--bg)); }
+.bar-dspine { fill: var(--c-dspine); }
+.ln { fill: none; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.ln-ar { stroke: var(--c-ar); stroke-width: 1.1; stroke-dasharray: 4 3; }
+.ln-domino { stroke: var(--c-domino); }
+.ln-dspark { stroke: var(--c-dspark); }
+.ln-dflash2 { stroke: var(--c-dflash2); }
+.ln-dspine { stroke: var(--c-dspine); stroke-width: 2.8; }
+.ln-ref { stroke: var(--c-dflash-ref); stroke-width: 1.5; stroke-dasharray: 6 3; }
+.band { fill: var(--c-dspine); opacity: .16; }
+.mk { stroke: var(--bg); stroke-width: .8; }
+.mk-ar { fill: var(--c-ar); stroke: none; }
+.mk-domino { fill: var(--c-domino); }
+.mk-dspark { fill: var(--c-dspark); }
+.mk-dflash2 { fill: var(--c-dflash2); }
+.mk-dspine { fill: var(--c-dspine); stroke-width: 1.3; }
+.rowband { fill: var(--rowband); }
+.lseg { stroke: none; }
+.seg-draft { fill: var(--c-draft); } .seg-inj { fill: var(--accent); } .seg-head { fill: var(--c-head); } .seg-verify { fill: var(--c-verify); }
+.seam { stroke: var(--bg); stroke-width: 1.2; }
+.row-name { font: 500 13.5px var(--font-body); fill: var(--ink); }
+.row-name.ours { fill: var(--accent); font-weight: 700; }
+.lab-draft { font: 600 11px var(--font-body); fill: #FFFFFF; font-variant-numeric: tabular-nums; }
+.lab-head { font: 600 11px var(--font-body); fill: #1E2328; font-variant-numeric: tabular-nums; }
+.lab-verify { font: 500 11px var(--font-body); fill: var(--muted); font-variant-numeric: tabular-nums; }
+.lab-inj { font: 700 11px var(--font-body); fill: var(--accent); font-variant-numeric: tabular-nums; }
+.lab-total { font: 500 12.5px var(--font-body); fill: var(--ink); font-variant-numeric: tabular-nums; }
+.lab-total.ours, .lab-red { font: 700 12.5px var(--font-body); fill: var(--accent); font-variant-numeric: tabular-nums; }
+.callout { stroke: var(--accent); stroke-width: 1; }
+.dim { stroke: var(--accent); stroke-width: 1.5; }
+.drop { stroke: var(--accent); stroke-width: 1.1; stroke-dasharray: 3 2.5; }
+
+/* ---------- method comparison (animation) ---------- */
+.ctx { margin: 16px auto 0; text-align: center; font-size: 15px; color: var(--muted); }
+.ctx .q { font: 500 14px/1.4 var(--font-mono); color: var(--ink); }
+.ctx .q b { background: var(--ink); color: var(--bg); border-radius: 4px; padding: 0 5px; font-weight: 500; }
+.panels { margin-top: 22px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 960px) { .panels { grid-template-columns: minmax(0, 1fr); max-width: 440px; margin-inline: auto; } }
+.panel { border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 6px; display: grid; gap: 6px; text-align: center; min-width: 0; background: var(--bg); }
+.panel.ours { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.panel h3 { font-size: 17px; font-weight: 700; }
+.panel .who { font: 500 12px/1.3 var(--font-mono); color: var(--muted); }
+.panel.ours .who { color: var(--accent); }
+.chip { justify-self: center; display: inline-flex; align-items: center; gap: 6px; font: 500 11.5px/1 var(--font-mono); padding: 5px 9px; border-radius: 999px; background: var(--soft); color: var(--muted); transition: background .25s, color .25s; }
+.chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); flex: none; }
+.chip.live-o { background: var(--accent-soft); color: var(--accent); }
+.chip.live-o i { background: var(--accent); }
+.chip.live-g { background: var(--spine-soft); color: var(--spine); }
+.chip.live-g i { background: var(--spine); }
+.panel svg { width: 100%; height: auto; display: block; }
+.timeline { margin: 16px auto 0; max-width: 720px; display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.icon-btn svg { width: 13px; height: 13px; }
+.text-btn { height: 36px; padding-inline: 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink); font: 600 14px/1 var(--font-body); cursor: pointer; }
+.icon-btn:hover, .text-btn:hover { border-color: var(--ink-2); }
+.track { position: relative; padding-bottom: 18px; min-width: 0; }
+.track input[type=range] { width: 100%; margin: 0; accent-color: var(--accent); }
+.phases { position: absolute; left: 0; right: 0; bottom: 0; height: 14px; font: 500 10.5px/14px var(--font-mono); color: var(--faint); }
+.phases span { position: absolute; top: 0; white-space: nowrap; transition: color .2s; }
+.phases span.on { color: var(--ink); }
+@media (max-width: 560px) { .phases span.minor { display: none; } }
+.legend { margin-top: 12px; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 22px; font-size: 13.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { width: 30px; height: 14px; flex: none; }
+.demo-note { margin: 8px auto 0; max-width: var(--measure); text-align: center; font-size: 13px; color: var(--faint); }
+
+.rowlab { font: 500 9.5px var(--font-mono); fill: var(--faint); }
+.slab { fill: var(--slab); transition: fill .2s; }
+.slab.on { fill: var(--slab-on); }
+.node { fill: var(--node); stroke: var(--node-line); stroke-width: 1; transition: fill .2s, stroke .2s; }
+.node.done { fill: var(--node-done); stroke: var(--node-done-line); }
+.node.inj { fill: var(--spine-soft); stroke: var(--spine); }
+.vline { stroke: var(--line-strong); stroke-width: 1.2; }
+.pulse { fill: var(--ink-2); }
+.pulse.g { fill: var(--spine); }
+.inj-line { stroke: var(--spine); stroke-width: 2; }
+.inj-head { fill: var(--spine); }
+.gate { fill: var(--bg); stroke: var(--spine); stroke-width: 1.6; transition: fill .15s; }
+.gate.flash { fill: var(--spine); }
+.head { fill: var(--bg); stroke: var(--line-strong); stroke-width: 1.2; transition: stroke .2s, fill .2s; }
+.head.on { stroke: var(--ink-2); }
+.head.cond { stroke: var(--accent); fill: var(--accent-soft); }
+.tok { fill: var(--bg); stroke: var(--ink-2); stroke-width: 1.2; }
+.tok-t { font: 600 11px var(--font-body); fill: var(--ink); }
+.anchor { fill: var(--ink); }
+.anchor-t { font: 600 11px var(--font-body); fill: var(--bg); }
+.mask { fill: var(--bg); stroke: var(--faint); stroke-dasharray: 3 2; }
+.mask-t { font: 500 9.5px var(--font-mono); fill: var(--faint); }
+.cond-line { stroke: var(--accent); stroke-width: 2; fill: none; }
+.cond-head { fill: var(--accent); }
+.badge { fill: var(--accent); }
+.badge-t { font: 700 9px var(--font-mono); fill: var(--on-accent); }
+.gcell { fill: var(--accent-soft); stroke: var(--accent); stroke-width: .6; transition: fill .15s; }
+.gcell.sel { fill: var(--accent); }
+.head-fill { fill: var(--ink-2); opacity: .16; }
+.head-fill.o { fill: var(--accent); opacity: .5; }
+.dbar-track { fill: var(--soft); }
+.dbar { fill: var(--faint); }
+.dbar.ours { fill: var(--accent); }
+.cap.acc { fill: var(--accent); }
+.mismatch { fill: none; stroke: var(--alert); stroke-width: 1.6; stroke-dasharray: 4 3; }
+.cap { font: 600 10.5px var(--font-body); fill: var(--muted); }
+.cap.bad { fill: var(--alert); }
+.cap.good { fill: var(--spine); }
+
+/* ---------- text blocks ---------- */
+.points { margin: 26px auto 0; max-width: var(--measure); display: grid; gap: 14px; }
+.points p b { color: var(--ink); }
+.points p { color: var(--ink-2); }
+
+/* ---------- table ---------- */
+.seg-row { margin-top: 30px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: none; color: var(--muted); font: 600 13.5px/1 var(--font-body); height: 30px; padding-inline: 12px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.table-wrap { margin-top: 14px; overflow-x: auto; }
+table { border-collapse: collapse; margin-inline: auto; font-variant-numeric: tabular-nums; border-top: 1.5px solid var(--ink-2); border-bottom: 1.5px solid var(--ink-2); }
+th, td { padding: 9px 12px; text-align: center; white-space: nowrap; font-size: 15px; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 600; font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--ink-2); }
+thead tr.grp th { border-bottom: 0; color: var(--faint); font-weight: 500; font-size: 12.5px; padding-bottom: 0; }
+td.best { font-weight: 700; }
+td.second { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--faint); }
+tr.ours td { background: var(--accent-soft); }
+tr.ours td:first-child { color: var(--accent); font-weight: 700; }
+.tnote { margin-top: 10px; text-align: center; font-size: 14px; color: var(--muted); }
+.tnote b { color: var(--accent); }
+
+/* ---------- citation & footer ---------- */
+.bib { position: relative; margin: 22px auto 0; max-width: 860px; }
+.bib pre { margin: 0; background: var(--soft); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font: 500 13px/1.7 var(--font-mono); color: var(--ink-2); }
+.bib .text-btn { position: absolute; top: 10px; right: 10px; height: 30px; font-size: 13px; }
+footer { border-top: 1px solid var(--line); padding-block: 28px 44px; text-align: center; color: var(--faint); font-size: 13.5px; }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- ================================================================ title -->
+  <header class="hero">
+    <p class="logo" role="img" aria-label="DSpine">D<svg class="logo-s" viewBox="-2 -2 82 104" aria-hidden="true"><path d="M66,22 C60,11 49,9 39,9 C22,9 12,17 12,29 C12,43 26,47 39,50 C54,53 66,58 66,72 C66,85 55,91 39,91 C26,91 15,86 11,76" class="lg-cord"/><polygon points="74.3,17.4 73.0,15.2 71.6,13.1 69.9,11.1 68.0,9.2 66.0,7.4 63.8,5.8 61.6,4.5 59.3,3.3 56.9,2.3 54.5,1.5 49.0,19.7 50.2,20.1 51.3,20.6 52.3,21.1 53.3,21.6 54.1,22.3 54.9,23.0 55.7,23.7 56.4,24.6 57.0,25.5 57.6,26.5" class="lg-vert"/><polygon points="47.1,-0.0 44.9,-0.3 42.7,-0.4 40.5,-0.5 38.4,-0.5 36.2,-0.4 34.0,-0.3 31.7,-0.0 29.4,0.3 27.1,0.8 24.8,1.4 30.0,19.6 31.3,19.3 32.7,19.0 34.1,18.8 35.6,18.6 37.1,18.5 38.6,18.5 40.2,18.5 41.7,18.6 43.3,18.7 44.8,18.8" class="lg-vert"/><polygon points="17.3,4.4 15.1,5.7 12.8,7.3 10.7,9.2 8.8,11.3 7.1,13.6 5.6,16.1 4.4,18.8 3.5,21.5 2.9,24.2 2.6,27.0 21.5,28.3 21.6,27.3 21.8,26.4 22.1,25.6 22.4,24.9 22.8,24.2 23.3,23.5 23.9,22.9 24.7,22.2 25.5,21.6 26.4,21.1" class="lg-vert"/><polygon points="3.4,36.0 4.3,38.9 5.6,41.6 7.3,44.2 9.2,46.5 11.2,48.5 13.4,50.2 15.5,51.6 17.7,52.9 19.8,53.9 21.9,54.9 29.1,37.3 27.8,36.7 26.6,36.1 25.5,35.5 24.6,34.8 23.8,34.2 23.1,33.6 22.6,33.0 22.3,32.4 22.0,31.8 21.8,31.2" class="lg-vert"/><polygon points="28.5,57.1 30.5,57.7 32.4,58.2 34.4,58.7 36.3,59.1 38.3,59.6 40.0,59.9 41.6,60.3 43.2,60.7 44.8,61.2 46.3,61.7 52.3,43.6 50.3,43.0 48.2,42.4 46.2,41.9 44.2,41.4 42.2,41.0 40.6,40.6 38.8,40.2 37.1,39.8 35.5,39.3 33.9,38.9" class="lg-vert"/><polygon points="50.5,63.4 51.7,64.0 52.7,64.7 53.5,65.3 54.3,66.0 54.9,66.6 55.3,67.2 55.7,67.9 56.0,68.6 56.2,69.4 56.4,70.3 75.2,67.8 74.7,65.0 73.9,62.2 72.7,59.5 71.3,56.9 69.5,54.5 67.6,52.4 65.5,50.6 63.4,49.0 61.2,47.6 59.1,46.4" class="lg-vert"/><polygon points="56.4,73.7 56.2,74.5 56.0,75.3 55.7,75.9 55.3,76.5 54.9,77.1 54.3,77.7 53.6,78.2 52.8,78.7 51.9,79.2 50.8,79.7 57.8,97.4 60.1,96.3 62.5,95.1 64.8,93.6 67.0,91.8 69.1,89.7 70.9,87.3 72.5,84.8 73.8,82.0 74.6,79.2 75.2,76.4" class="lg-vert"/><polygon points="46.7,80.8 45.3,81.1 43.8,81.3 42.3,81.4 40.7,81.5 39.2,81.5 37.7,81.5 36.2,81.4 34.7,81.3 33.3,81.1 31.9,80.8 28.0,99.4 30.3,99.8 32.5,100.1 34.8,100.4 37.0,100.5 39.3,100.5 41.4,100.5 43.6,100.3 45.8,100.2 48.1,99.9 50.3,99.5" class="lg-vert"/><polygon points="27.7,79.6 26.5,79.1 25.4,78.5 24.4,77.9 23.5,77.3 22.7,76.5 21.9,75.8 21.3,75.1 20.7,74.2 20.2,73.4 19.8,72.5 2.2,79.5 3.3,82.0 4.7,84.4 6.2,86.7 8.0,88.7 9.9,90.6 11.9,92.3 14.0,93.8 16.2,95.1 18.4,96.3 20.7,97.3" class="lg-vert"/><circle cx="48.9" cy="9.9" r="3.1" class="lg-joint"/><circle cx="24.6" cy="11.5" r="3.1" class="lg-joint"/><circle cx="12.1" cy="30.6" r="3.1" class="lg-joint"/><circle cx="28.4" cy="47.1" r="3.1" class="lg-joint"/><circle cx="52.1" cy="53.7" r="3.1" class="lg-joint"/><circle cx="66.0" cy="72.0" r="3.1" class="lg-joint"/><circle cx="51.4" cy="89.5" r="3.1" class="lg-joint"/><circle cx="27.0" cy="89.4" r="3.1" class="lg-joint"/></svg>pine</p>
+    <h1>Draft in Parallel, Condition Through Depth</h1>
+    <p class="subtitle">Adjacent Causal Injection for Speculative Decoding</p>
+    <p class="authors">
+      <span>Haohui Zhang<sup>1,2†</sup>,</span> <span>Keyu Chen<sup>2†§</sup>,</span> <span>Haocheng Sun<sup>3</sup>,</span> <span>Bo Ke<sup>2</sup>,</span>
+      <span>Zhan Yin<sup>2</sup>,</span> <span>Jianfeng He<sup>2</sup>,</span> <span>Yinsong Liu<sup>2</sup>,</span>
+      <span>Weibo Gu<sup>2</sup>,</span> <span>Ruizhi Qiao<sup>2</sup>,</span> <span>Xing Sun<sup>2</sup>,</span> <span>Bo Jiang<sup>1*</sup></span>
+    </p>
+    <div class="affils"><span><sup>1</sup>Shanghai Jiao Tong University</span><span><sup>2</sup>Tencent YouTu Lab</span><span><sup>3</sup>Xiamen University</span></div>
+    <p class="contrib">† Equal contribution&nbsp;&nbsp;§ Project lead&nbsp;&nbsp;* Corresponding author</p>
+    <div class="actions">
+      <a class="btn" href="https://arxiv.org/abs/2609.36173" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9.5 1.5V5H13M6 8.5h5M6 11h5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="https://github.com/tencent/dspine" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.5 7.5 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.8-3.6 4 .3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="https://huggingface.co/collections/tencent/dspine" target="_blank" rel="noopener">
+        <span aria-hidden="true">🤗</span>
+        Hugging Face
+      </a>
+      <a class="btn" href="#citation">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 2.5C3.8 2.5 3.5 3.6 3.5 5v1.2c0 .9-.6 1.6-1.5 1.8.9.2 1.5.9 1.5 1.8V11c0 1.4.3 2.5 2 2.5M10.5 2.5c1.7 0 2 1.1 2 2.5v1.2c0 .9.6 1.6 1.5 1.8-.9.2-1.5.9-1.5 1.8V11c0 1.4-.3 2.5-2 2.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        BibTeX
+      </a>
+    </div>
+  </header>
+
+  <!-- ================================================================ updates and headline results -->
+  <section class="news" id="news" aria-labelledby="news-title">
+    <h2 class="sec-title" id="news-title">News</h2>
+    <ul class="news-list">
+      <!-- Add future updates at the top, with one dated item per announcement. -->
+      <li>
+        <time datetime="2026-11">[Nov 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">💻</span>Added support for <a href="https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16" target="_blank" rel="noopener">Qwen3.8-27B inference</a>.</p>
+      </li>
+      <li>
+        <time datetime="2026-11">[Nov 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">🍎</span>Added support for Apple Silicon inference via <span style="white-space: nowrap">mlx-lm</span> and <span style="white-space: nowrap">SGLang-MLX.</span></p>
+      </li>
+      <li>
+        <time datetime="2026-10">[Oct 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">🚀</span><a href="https://github.com/sgl-project/SpecForge/pull/1038" target="_blank" rel="noopener">Training code</a> released in SpecForge.</p>
+      </li>
+      <li>
+        <time datetime="2026-10">[Oct 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">🤗</span><a href="https://huggingface.co/tencent/Qwen3-8B-DSpine-b16" target="_blank" rel="noopener">Qwen3-8B draft weights</a> released.</p>
+      </li>
+      <li>
+        <time datetime="2026-10">[Oct 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">💻</span><a href="https://github.com/tencent/dspine" target="_blank" rel="noopener">Inference code</a> released.</p>
+      </li>
+      <li>
+        <time datetime="2026-10">[Oct 2026]</time>
+        <p><span class="news-icon" aria-hidden="true">📄</span><a href="https://arxiv.org/abs/2609.36173" target="_blank" rel="noopener">Paper</a> released on arXiv.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ================================================================ results comparison -->
+  <div class="overview">
+  <section class="first" id="teaser" aria-labelledby="teaser-title">
+    <div class="teaser-heading">
+      <h2 id="teaser-title">Acceptance Length</h2>
+      <p class="teaser-meta">Qwen3-8B · 7 benchmarks · T = 0, 1</p>
+    </div>
+    <figure class="teaser-figure">
+      <div class="chartbox">
+        <div class="keys" id="acc-keys"></div>
+        <div class="chart-scroll"><svg id="acc-chart" role="img" aria-label="Mean acceptance length of DFlash, Domino, DSpark, DFlash2 and DSpine on seven benchmarks with Qwen3-8B at temperatures 0 and 1. DSpine is longest everywhere."></svg></div>
+      </div>
+      <figcaption><b>DSpine drafts are accepted longest on every benchmark.</b> Mean acceptance length with Qwen3-8B on seven math, code, and chat benchmarks at temperatures 0 and 1; the strip gives DSpine's margin over the strongest baseline. At temperature 0, DSpine raises the mean from DFlash's 3.77 to <span class="hl">4.82 (+27.8%)</span>.</figcaption>
+    </figure>
+  </section>
+  </div>
+
+  <!-- ================================================================ method comparison -->
+  <section id="idea">
+    <h2 class="sec-title">Where does the predecessor come in?</h2>
+    <p class="sec-lead">A parallel drafter predicts a whole block in one pass, so each position commits before its predecessors do. DSpine passes each predecessor's prediction into its successor at every layer, and reuses the same gate once the token is decoded.</p>
+    <p class="ctx">Verified context <span class="q">“… the flight from Boston lands <b>in</b>”</span>, then draft three tokens</p>
+    <div class="panels" id="demo">
+      <div class="panel" data-kind="none">
+        <h3>Parallel drafting</h3>
+        <div class="who">DFlash</div>
+        <div class="chip" data-chip><i></i><span>Predecessor: never used</span></div>
+        <svg viewBox="0 0 320 350" role="img" aria-label="DFlash: every position is predicted independently; the chosen tokens Los and York do not fit together."></svg>
+      </div>
+      <div class="panel ours" data-kind="dspine">
+        <h3>Condition through depth</h3>
+        <div class="who">DSpine</div>
+        <div class="chip" data-chip><i></i><span>Predecessor: from layer 1 on</span></div>
+        <svg viewBox="0 0 320 350" role="img" aria-label="DSpine: each predecessor's predicted feature is injected into its successor at every layer; after the last layer, all candidate-pair scores are computed at once and the tokens are read off by lookup."></svg>
+      </div>
+      <div class="panel" data-kind="post">
+        <h3>Serial post-backbone head</h3>
+        <div class="who">Domino · DSpark</div>
+        <div class="chip" data-chip><i></i><span>Predecessor: after the last layer</span></div>
+        <svg viewBox="0 0 320 350" role="img" aria-label="Serial post-backbone head: the predecessor token only enters after the last layer, and each position runs its own head pass after the previous token is chosen."></svg>
+      </div>
+    </div>
+    <div class="timeline">
+      <button class="icon-btn" id="demo-play" type="button" aria-label="Play">
+        <svg viewBox="0 0 14 14" aria-hidden="true" id="demo-play-icon"><path d="M3.5 2.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L4.4 1.7a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>
+      </button>
+      <button class="text-btn" id="demo-replay" type="button">Replay</button>
+      <div class="track">
+        <input type="range" id="demo-scrub" min="0" max="1000" value="1000" aria-label="Animation time">
+        <div class="phases" id="demo-phases"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><svg viewBox="0 0 30 14" aria-hidden="true"><line x1="1" y1="7" x2="25" y2="7" stroke="var(--spine)" stroke-width="2"/><polygon points="29,7 23,4 23,10" fill="var(--spine)"/><circle cx="13" cy="7" r="4" fill="var(--bg)" stroke="var(--spine)" stroke-width="1.6"/></svg>Gated injection of the predecessor's prediction</span>
+      <span><svg viewBox="0 0 30 14" aria-hidden="true"><line x1="1" y1="7" x2="25" y2="7" stroke="var(--accent)" stroke-width="2"/><polygon points="29,7 23,4 23,10" fill="var(--accent)"/></svg>Conditioning on the decoded predecessor</span>
+      <span><svg viewBox="0 0 30 14" aria-hidden="true"><g transform="translate(8 0)"><rect x="0" y="0" width="14" height="14" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width=".8"/><rect x="4.7" y="4.7" width="4.6" height="4.6" fill="var(--accent)"/></g></svg>Transition cache: all K×K pair scores in one parallel pass</span>
+    </div>
+    <p class="demo-note">Decode bars are to scale with the measured post-backbone head time per round (Qwen3-8B, SGLang): Domino 0.97 ms and DSpark 0.88 ms (bar at their mean), DSpine 0.36 ms.</p>
+  </section>
+
+  <!-- ================================================================ abstract -->
+  <section id="abstract">
+    <h2 class="sec-title">Abstract</h2>
+    <div class="measure" style="margin-top:20px">
+      <p>Parallel speculative drafting generates multiple candidates in one backbone pass, but independent token selection can produce inconsistent continuations that shorten the accepted prefix. Existing methods mostly leave conditional decoding to a lightweight module after the backbone, which limits the flow of predecessor information to successors. Our analysis of DFlash shows that early positions already form recoverable predictions in shallow layers, and that accurate adjacent predecessors help successors more when they enter earlier.</p>
+      <p>We therefore propose DSpine, a drafter with causal conditioning injection throughout the backbone: at every layer, gated adjacent injection writes each predecessor's predicted feature into its successor, so the causal conditioning chain unfolds over network depth while all positions update in parallel. A unified transfer space built from the target model's output embeddings unifies layer-wise injection with predecessor-conditioned decoding, and layer-wise output-embedding supervision promotes the formation of predicted features in shallow layers. Fused kernels and a transition cache execute both efficiently in parallel within SGLang.</p>
+      <p>Across seven math, code, and chat benchmarks, DSpine achieves the longest acceptance length at both temperatures on Qwen3-4B and Qwen3-8B. At temperature zero on Qwen3-8B, it raises the seven-benchmark mean from DFlash's 3.77 to 4.82 (+27.8%); in SGLang serving tests, it delivers 23.3% higher throughput than DFlash on average.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ observations -->
+  <section id="observations">
+    <h2 class="sec-title">Motivation</h2>
+    <p class="sec-lead">We probe the official Qwen3-8B DFlash drafter, using the target's greedy continuations as the correct tokens.</p>
+    <figure class="in-measure">
+      <div class="plate"><img src="assets/observations.svg" width="396" height="127" alt="Three panels: readout accuracy by layer and block position; gain from correct prefixes by layer; gain in successor accuracy when the adjacent predecessor comes from the correct token at different layers."></div>
+      <figcaption>(a) Readout accuracy of each layer by block position. (b) Gain in consecutive correct tokens when the drafted prefix is replaced by the correct prefix at the filled layers. (c) Gain in successor accuracy when the adjacent predecessor's features come from the correct token at the marked layers.</figcaption>
+    </figure>
+    <div class="points">
+      <p><b>Earlier positions form predictions at shallower depth.</b> At the same shallow layer, early block positions are read out far more accurately than distant ones, so a prefix could condition successors that are still forming. Correct prefix features from an early layer on raise consecutive correct tokens by <span class="hl-g">6.7%</span>, and moving the same number of injections earlier lifts the gain from 1.2% to 4.3%.</p>
+      <p><b>The adjacent predecessor matters, and so does when it arrives.</b> With correct earlier history, swapping only the predecessor for its draft prediction lowers successor accuracy by <span class="hl-g">31.8 points</span>; supplying the same correct predecessor earlier rather than later gains 14.8 points.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ method -->
+  <section id="method">
+    <h2 class="sec-title">Method</h2>
+    <p class="sec-lead">One injection carries predecessor information from the first layer to the last write.</p>
+    <figure class="in-measure">
+      <div class="plate"><img src="assets/overview.jpg" width="4500" height="1644" alt="DSpine overview: (a) injection passes predecessor features to successors at every layer, and transition-cached decoding selects each token conditioned on its selected predecessor; (b) one injection layer with gate, message, and write-back."></div>
+      <figcaption>(a) Injection passes predecessor features to successors at every layer (green); after the final layer, transition-cached decoding selects each token conditioned on its selected predecessor (orange). (b) One injection layer: predecessor and successor features jointly gate how much of the predecessor's message enters the successor's residual stream.</figcaption>
+    </figure>
+    <div class="points">
+      <p><b>Unified transfer space.</b> Hidden states mix a predecessor's prediction with its context, so DSpine passes the prediction itself, in a fixed space built from the target LM head's output embeddings. An undecided predecessor sends a predicted feature; a decoded token enters as its embedding. Both take the same form, so one pathway carries either.</p>
+      <p><b>Adjacent causal injection.</b> After every layer, each position receives a gated message from its immediate predecessor only. With block-causal attention, the dependency chain unfolds over depth while every layer still updates all positions in parallel.</p>
+      <p><b>Predecessor-conditioned decoding.</b> Once a predecessor's token is decoded, its embedding replaces the predicted feature and the last write is redone, with no new module. A transition cache scores all K×K candidate pairs in parallel, so selection becomes a lookup.</p>
+      <p><b>Layer-wise output-embedding supervision.</b> Each layer's predicted feature is aligned by cosine with the correct token's embedding, which helps features form in shallow layers and keeps them close to the embeddings used in decoding.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================ results -->
+  <section id="results">
+    <h2 class="sec-title">Results</h2>
+    <p class="sec-lead">All drafters are retrained on the same ShareGPT data with the same budget (five layers, block size 16, six epochs) and evaluated in SGLang on GSM8K, MATH-500, HumanEval, MBPP, LiveCodeBench, MT-Bench, and Arena-Hard.</p>
+
+    <div class="seg-row">
+      <div class="seg" role="group" aria-label="Target model">
+        <button type="button" id="m-8b" data-model="8b" aria-pressed="true">Qwen3-8B</button>
+        <button type="button" id="m-4b" data-model="4b" aria-pressed="false">Qwen3-4B</button>
+      </div>
+      <div class="seg" role="group" aria-label="Temperature">
+        <button type="button" id="t-0" data-temp="0" aria-pressed="true">T = 0</button>
+        <button type="button" id="t-1" data-temp="1" aria-pressed="false">T = 1</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="tau-table">
+        <thead>
+          <tr class="grp"><th></th><th colspan="2">Math</th><th colspan="3">Code</th><th colspan="2">Chat</th><th></th></tr>
+          <tr><th>Method</th><th>GSM8K</th><th>MATH-500</th><th>HumanEval</th><th>MBPP</th><th>LCB</th><th>MT-Bench</th><th>Arena-Hard</th><th>Avg.</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="tnote" id="tau-note"></p>
+
+    <figure class="in-measure">
+      <div class="chartbox">
+        <div class="keys" id="tps-keys"></div>
+        <div class="chart-scroll"><svg id="tps-chart" role="img" aria-label="SGLang serving throughput gain over DFlash on GSM8K, MATH-500, HumanEval and MBPP at concurrency 2 to 32 for Qwen3-8B and Qwen3-4B. DSpine is highest in every setting."></svg></div>
+      </div>
+      <figcaption><b>Serving throughput in SGLang</b>, as the gain over DFlash (k tokens/s, temperature 0). The dashed zero line is DFlash; shading and the strip give DSpine's lead over DFlash2, the strongest baseline. DSpine is fastest in all 40 settings; on Qwen3-8B it averages <span class="hl">+23.3%</span> over DFlash and +11.1% over DFlash2, reaching up to 4.0× over autoregressive decoding.</figcaption>
+    </figure>
+
+    <figure class="in-measure">
+      <div class="chartbox">
+        <div class="keys" id="lat-keys"></div>
+        <div class="chart-scroll"><svg id="lat-chart" role="img" aria-label="Qwen3-8B decoding time per round and per generated token in SGLang, split into draft backbone, parallel injection, post-backbone head and verify, for Domino, DSpark, DFlash2 and DSpine."></svg></div>
+      </div>
+      <figcaption><b>Decoding time breakdown</b> for Qwen3-8B. Injection adds at most 0.15 ms per round, and transition-cached decoding costs less than half the post-backbone heads of DSpark and Domino; DSpine spends 10.9% less time per generated token than DFlash2.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ================================================================ citation -->
+  <section id="citation">
+    <h2 class="sec-title">BibTeX</h2>
+    <div class="bib">
+      <pre id="bibtex">@article{zhang2026dspine,
+  title   = {Draft in Parallel, Condition Through Depth: Adjacent Causal Injection for Speculative Decoding},
+  author  = {Zhang, Haohui and Chen, Keyu and Sun, Haocheng and Gu, Weibo and Qiao, Ruizhi and Sun, Xing and Jiang, Bo},
+  journal = {arXiv preprint arXiv:2609.36173},
+  year    = {2026}
+}</pre>
+      <button class="text-btn" id="copy-bib" type="button">Copy</button>
+    </div>
+  </section>
+</main>
+<footer>Shanghai Jiao Tong University · Tencent YouTu Lab · Xiamen University</footer>
+
+<script>
+/* Table 1 of the paper, rounded to two decimals as printed.
+   Source: research/paper-6ep-migration-20260921/figures/acceptance_length/data.json (sha256 91cbf5379da36cb4...),
+   which extract_data.py checked cell by cell against the paper's Table 1. Column order: GSM8K, MATH-500, HumanEval,
+   MBPP, LCB, MT-Bench, Arena-Hard, Avg. */
+const TAU = {"8b":{"0":{"DFlash":[4.25,4.23,3.92,3.93,3.53,3.27,3.3,3.77],"Domino":[4.83,4.81,4.21,4.31,3.9,3.58,3.61,4.18],"DSpark":[4.99,4.9,4.43,4.5,4.01,3.69,3.69,4.32],"DFlash2":[5.03,5.1,4.43,4.52,4.09,3.71,3.82,4.39],"DSpine":[5.67,5.49,4.94,4.98,4.46,4.11,4.12,4.82]},"1":{"DFlash":[3.96,3.86,3.59,3.56,2.99,2.97,2.8,3.39],"Domino":[4.52,4.3,3.79,3.85,3.23,3.18,2.99,3.69],"DSpark":[4.61,4.48,4.07,4.12,3.49,3.37,3.26,3.92],"DFlash2":[4.56,4.47,4.04,4.06,3.5,3.35,3.29,3.9],"DSpine":[5.31,5.05,4.63,4.61,3.91,3.79,3.62,4.42]}},"4b":{"0":{"DFlash":[4.16,4.14,3.77,3.92,3.42,3.29,3.26,3.71],"Domino":[4.79,4.73,4.22,4.39,3.79,3.66,3.61,4.17],"DSpark":[5.0,4.9,4.38,4.59,3.93,3.8,3.71,4.33],"DFlash2":[5.14,5.15,4.59,4.72,4.1,3.9,3.91,4.5],"DSpine":[5.53,5.38,4.79,5.04,4.29,4.19,4.02,4.75]},"1":{"DFlash":[3.98,3.82,3.62,3.65,2.99,3.16,2.89,3.44],"Domino":[4.58,4.31,4.0,4.09,3.25,3.42,3.16,3.83],"DSpark":[4.64,4.47,4.12,4.2,3.48,3.51,3.33,3.96],"DFlash2":[4.63,4.51,4.1,4.2,3.5,3.51,3.44,3.98],"DSpine":[5.22,4.94,4.59,4.67,3.79,3.84,3.64,4.38]}}};
+/* DSpine's margin on Avg. over the strongest baseline, computed from unrounded values (paper §5.2). */
+const MARGIN = {"8b":{"0":["+10.0%","DFlash2"],"1":["+12.8%","DSpark"]},"4b":{"0":["+5.4%","DFlash2"],"1":["+10.1%","DFlash2"]}};
+/* Chart data from the figures' own sources, checked against the paper figures cell by cell:
+   ACC_STRIP from acceptance_length/data.json (DSpine over the strongest baseline, unrounded, %); TPS from
+   sglang_throughput/data.json (k tokens/s); TPS_STRIP = DSpine over DFlash2, the strongest baseline in all 40 settings. */
+const ACC_STRIP = {"8b":{"0":[12.8,7.7,11.5,10.3,8.8,10.7,7.9],"1":[15.2,12.7,13.6,11.9,11.5,12.4,10.2]},"4b":{"0":[7.6,4.4,4.2,6.7,4.7,7.3,2.7],"1":[12.6,9.6,11.5,11.3,8.1,9.5,5.8]}};
+const ACC_GMAX = 15.176;
+const TPS = {"8b":{"gsm8k":{"AR":[0.38085,0.74709,1.40481,2.72915,4.92168],"DFlash":[1.16264,2.19104,3.79906,5.34917,6.32691],"Domino":[1.19349,2.22861,3.88397,5.57599,6.6754],"DSpark":[1.22342,2.27981,3.93133,5.65556,6.78851],"DFlash2":[1.32746,2.47347,4.23431,5.89931,6.97548],"DSpine":[1.47954,2.75789,4.70353,6.73189,7.82493]},"math500":{"AR":[0.37994,0.74286,1.39355,2.62882,4.52429],"DFlash":[1.21784,2.32865,4.01689,5.58104,6.58866],"Domino":[1.24095,2.34522,4.13832,5.86973,6.92739],"DSpark":[1.25962,2.382,4.13567,5.91357,7.03226],"DFlash2":[1.40327,2.64651,4.5421,6.32183,7.3843],"DSpine":[1.52206,2.87481,4.96782,7.02968,8.1996]},"humaneval":{"AR":[0.37907,0.73499,1.36166,2.54065,4.35524],"DFlash":[1.10655,2.07718,3.59534,4.92469,5.59493],"Domino":[1.08433,2.0121,3.51519,5.0649,5.78874],"DSpark":[1.12623,2.08144,3.61755,5.08776,5.86064],"DFlash2":[1.2247,2.32934,3.87647,5.43287,6.14119],"DSpine":[1.35352,2.54145,4.32533,6.15785,6.96311]},"mbpp":{"AR":[0.38051,0.73987,1.39262,2.68201,4.705],"DFlash":[1.1568,2.12883,3.72514,5.28918,6.14675],"Domino":[1.13864,2.11671,3.67725,5.33756,6.30195],"DSpark":[1.17618,2.17445,3.80142,5.50075,6.44048],"DFlash2":[1.27529,2.33291,4.04222,5.66694,6.64628],"DSpine":[1.39893,2.58644,4.46458,6.41113,7.32142]}},"4b":{"gsm8k":{"AR":[0.55227,1.07169,2.05887,3.79404,6.76835],"DFlash":[1.61497,2.9906,5.25031,7.87321,9.53411],"Domino":[1.62557,3.00097,5.25407,7.90916,10.00033],"DSpark":[1.66338,3.05742,5.29631,7.94952,10.0021],"DFlash2":[1.87557,3.45991,6.01465,8.80659,10.68349],"DSpine":[2.01815,3.69849,6.44222,9.52669,11.54145]},"math500":{"AR":[0.54968,1.06112,2.01187,3.57699,6.10664],"DFlash":[1.67275,3.14393,5.60494,8.19179,10.11462],"Domino":[1.68204,3.15606,5.584,8.47404,10.70787],"DSpark":[1.70691,3.22015,5.68107,8.50848,10.45402],"DFlash2":[1.99071,3.69111,6.45181,9.63818,11.45255],"DSpine":[2.08677,3.90587,6.96147,10.21667,12.36694]},"humaneval":{"AR":[0.55002,1.05994,2.02679,3.65413,5.14778],"DFlash":[1.5115,2.78805,4.80941,7.32588,8.61733],"Domino":[1.49379,2.78402,4.71381,7.25014,8.75695],"DSpark":[1.5239,2.83273,4.83153,7.31912,8.62969],"DFlash2":[1.75545,3.34652,5.48768,8.33422,9.51539],"DSpine":[1.83974,3.44586,5.87407,8.69917,10.13449]},"mbpp":{"AR":[0.54869,1.06197,1.99599,3.52496,5.82842],"DFlash":[1.59781,2.98013,5.21088,7.79607,9.26485],"Domino":[1.56853,2.93194,5.06326,7.7755,9.44803],"DSpark":[1.6237,3.02328,5.27382,7.80323,9.51463],"DFlash2":[1.82958,3.37623,6.06405,8.77093,10.2865],"DSpine":[1.94759,3.67319,6.34597,9.36917,11.07193]}}};
+const TPS_STRIP = {"8b":{"gsm8k":[11.5,11.5,11.1,14.1,12.2],"math500":[8.5,8.6,9.4,11.2,11.0],"humaneval":[10.5,9.1,11.6,13.3,13.4],"mbpp":[9.7,10.9,10.4,13.1,10.2]},"4b":{"gsm8k":[7.6,6.9,7.1,8.2,8.0],"math500":[4.8,5.8,7.9,6.0,8.0],"humaneval":[4.8,3.0,7.0,4.4,6.5],"mbpp":[6.5,8.8,4.6,6.8,7.6]}};
+const TPS_GMAX = 14.1;
+/* Latency breakdown (paper Figure 6) from research/paper-6ep-migration-20260921/figures/phase_timing/data.json
+   (sha256 a2afa038db119412...): Qwen3-8B, one H200, 200 GSM8K prompts, concurrency 1, T = 0.
+   Segments: draft backbone, parallel injection, post-backbone head, verify. Labels are pre-formatted as in the paper. */
+const LAT = {"order":["domino","dspark","dflash2","dspine"],"names":{"domino":"Domino","dspark":"DSpark","dflash2":"DFlash2","dspine":"DSpine"},"red":"−10.9%","panels":{"per_round":{"domino":{"v":[1.156545,0.0,0.965822,5.394355],"draft":2.122367,"total":7.516722,"lab":["1.16","0.00","0.97","5.39"],"labTotal":"7.52"},"dspark":{"v":[1.219853,0.0,0.884375,5.44395],"draft":2.104228,"total":7.548178,"lab":["1.22","0.00","0.88","5.44"],"labTotal":"7.55"},"dflash2":{"v":[1.348645,0.0,0.388989,5.453292],"draft":1.737634,"total":7.190926,"lab":["1.35","0.00","0.39","5.45"],"labTotal":"7.19"},"dspine":{"v":[1.165473,0.153022,0.360938,5.45909],"draft":1.679432,"total":7.138522,"lab":["1.17","0.15","0.36","5.46"],"labTotal":"7.14"}},"per_token":{"domino":{"v":[0.248411,0.0,0.207447,1.15864],"draft":0.455858,"total":1.614498,"lab":["0.25","0.00","0.21","1.16"],"labTotal":"1.61"},"dspark":{"v":[0.252884,0.0,0.183337,1.128567],"draft":0.436221,"total":1.564788,"lab":["0.25","0.00","0.18","1.13"],"labTotal":"1.56"},"dflash2":{"v":[0.277928,0.0,0.080163,1.123813],"draft":0.358091,"total":1.481904,"lab":["0.28","0.00","0.08","1.12"],"labTotal":"1.48"},"dspine":{"v":[0.215639,0.028312,0.066782,1.010054],"draft":0.310733,"total":1.320787,"lab":["0.22","0.03","0.07","1.01"],"labTotal":"1.32"}}}};
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs, parent) => {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+const svgText = (s, attrs, parent) => { const e = svgEl('text', attrs, parent); e.textContent = s; return e; };
+const svgTitle = (parent, s) => { const e = svgEl('title', {}, parent); e.textContent = s; };
+const fmt = v => (v < 0 ? '−' : '') + Math.abs(v).toString();
+const METHOD_ORDER = ['DFlash', 'Domino', 'DSpark', 'DFlash2', 'DSpine'];
+const cls = m => m.toLowerCase();
+
+/* Keys (legends) above the two charts, as HTML so they wrap on narrow screens. */
+(function keys() {
+  const bar = m => `<span><svg viewBox="0 0 26 12" aria-hidden="true"><rect x="6" y="1" width="14" height="10" rx="1.5" class="bar bar-${cls(m)}"/></svg>${m}</span>`;
+  document.getElementById('acc-keys').innerHTML = METHOD_ORDER.map(bar).join('');
+  const mk = { Domino: '<path d="M13,2 L17,6 L13,10 L9,6 Z" class="mk mk-domino"/>', DSpark: '<rect x="9.5" y="2.5" width="7" height="7" class="mk mk-dspark"/>',
+               DFlash2: '<path d="M13,1.8 L17.2,9.6 L8.8,9.6 Z" class="mk mk-dflash2"/>', DSpine: '<circle cx="13" cy="6" r="4.2" class="mk mk-dspine"/>' };
+  const line = m => `<span><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6" class="ln ln-${cls(m)}"/>${mk[m]}</svg>${m}</span>`;
+  document.getElementById('tps-keys').innerHTML =
+    '<span><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6" class="ln ln-ar"/><circle cx="13" cy="6" r="2.2" class="mk-ar"/></svg>AR</span>' +
+    '<span><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6" class="ln-ref"/></svg>DFlash</span>' +
+    ['Domino', 'DSpark', 'DFlash2', 'DSpine'].map(line).join('');
+  const seg = (c, n) => `<span><svg viewBox="0 0 26 12" aria-hidden="true"><rect x="6" y="1" width="14" height="10" rx="1.5" class="${c}"/></svg>${n}</span>`;
+  document.getElementById('lat-keys').innerHTML = seg('seg-draft', 'Draft backbone') + seg('seg-inj', 'Parallel injection') + seg('seg-head', 'Post-backbone head') + seg('seg-verify', 'Verify');
+})();
+
+/* Break scale shared by both charts: identity above B, compressed C-fold below (continuous at B), as in the paper. */
+const breakScale = (B, C) => y => (y >= B ? y : B + (y - B) * C);
+const tintStrip = (g, gmax) => `fill: color-mix(in srgb, var(--accent) ${(5 + 37 * g / gmax).toFixed(0)}%, var(--bg))`;
+const breakMarks = (svg, x, y) => {
+  svgEl('line', { x1: x - 4, y1: y + 1.5, x2: x + 4, y2: y - 4.5, class: 'brk' }, svg);
+  svgEl('line', { x1: x - 4, y1: y + 5.5, x2: x + 4, y2: y - 0.5, class: 'brk' }, svg);
+};
+
+/* ------------------------------------------------------------------ acceptance length (paper Figure 1) */
+(function accChart() {
+  const svg = document.getElementById('acc-chart');
+  const DOM = ['GSM8K', 'MATH-500', 'HumanEval', 'MBPP', 'LCB', 'MT-Bench', 'Arena-Hard'];
+  const W = 1000, L = 58, R = 58, GAP = 10, NC = DOM.length;   // equal side margins: the panels sit centered
+  const pw = (W - L - R - GAP * (NC - 1)) / NC;
+  const COLT = 18, STRIP = 20, SG = 4, PH = 150, RG = 26;
+  const MODELS = ['8b'];                     // user 2026-09-29: the headline chart shows Qwen3-8B only
+  const rowTop = i => COLT + 12 + i * (STRIP + SG + PH + RG);
+  const H = rowTop(MODELS.length) - RG + 44;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const temps = ['0', '1'];
+  MODELS.forEach((m, i) => {
+    const top = rowTop(i), y0 = top + STRIP + SG, y1 = y0 + PH;
+    const vals = [];
+    temps.forEach(t => METHOD_ORDER.forEach(me => vals.push(...TAU[m][t][me].slice(0, NC))));
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    const B = lo - 0.06 * (hi - lo), f = breakScale(B, 0.18);
+    const zlo = f(0), zhi = zlo + (hi - zlo) / 0.94;
+    const Y = v => y1 - (f(v) - zlo) / (zhi - zlo) * PH;
+    const ticks = [0];
+    for (let v = Math.ceil(B); v <= Math.floor(hi); v++) ticks.push(v);
+    for (let c = 0; c < NC; c++) {
+      const x0 = L + c * (pw + GAP);
+      ticks.forEach(v => { if (v > 0) svgEl('line', { x1: x0, y1: Y(v), x2: x0 + pw, y2: Y(v), class: 'grid' }, svg); });
+      temps.forEach((t, ti) => {
+        const g = ACC_STRIP[m][t][c];
+        svgEl('rect', { x: x0 + ti * pw / 2 + (ti ? 1 : 0), y: top, width: pw / 2 - 1, height: STRIP, style: tintStrip(g, ACC_GMAX) }, svg);
+        svgText(`+${g.toFixed(1)}%`, { x: x0 + pw * (0.25 + 0.5 * ti), y: top + STRIP / 2 + 3.8, 'text-anchor': 'middle', class: 'strip-t' }, svg);
+        const cx = x0 + pw * (0.25 + 0.5 * ti), bw = 0.86 * (pw / 2) / METHOD_ORDER.length;
+        METHOD_ORDER.forEach((me, k) => {
+          const v = TAU[m][t][me][c], bx = cx + (k - 2) * bw - bw / 2;
+          const r = svgEl('rect', { x: bx, y: Y(v), width: bw, height: Y(0) - Y(v), class: `bar bar-${cls(me)}` }, svg);
+          svgTitle(r, `${me} · ${DOM[c]} · T = ${t}: ${v.toFixed(2)}`);
+        });
+        if (i === MODELS.length - 1) svgText(t, { x: cx, y: y1 + 15, 'text-anchor': 'middle', class: 'ct' }, svg);
+      });
+      svgEl('line', { x1: x0, y1: Y(B), x2: x0 + pw, y2: Y(B), class: 'cut' }, svg);   // the bars cross the break
+      svgEl('line', { x1: x0, y1: y1, x2: x0 + pw, y2: y1, class: 'axis' }, svg);
+      svgEl('line', { x1: x0, y1: y1, x2: x0, y2: y0, class: 'axis' }, svg);
+      if (c === 0) {
+        ticks.forEach(v => {
+          svgEl('line', { x1: x0 - 3.5, y1: Y(v), x2: x0, y2: Y(v), class: 'axis' }, svg);
+          svgText(fmt(v), { x: x0 - 6, y: Y(v) + 3.8, 'text-anchor': 'end', class: 'ct-num' }, svg);
+        });
+        svgEl('line', { x1: x0 - 5, y1: Y(B), x2: x0 + 5, y2: Y(B), class: 'cut' }, svg);
+        breakMarks(svg, x0, Y(B));
+        svgText('vs. best', { x: x0 - 6, y: top + STRIP / 2 + 3.8, 'text-anchor': 'end', class: 'ct' }, svg);
+      }
+      if (i === 0) svgText(DOM[c], { x: x0 + pw / 2, y: COLT, 'text-anchor': 'middle', class: 'ct-col' }, svg);
+    }
+  });
+  const mid = rowTop(0) + STRIP + SG + PH / 2;
+  svgText('Acceptance length τ', { x: 0, y: 0, transform: `translate(${L - 30} ${mid}) rotate(-90)`, 'text-anchor': 'middle', class: 'ct-axis' }, svg);
+  svgText('Temperature', { x: L + (W - L - R) / 2, y: H - 6, 'text-anchor': 'middle', class: 'ct-axis' }, svg);
+})();
+
+/* ------------------------------------------------------------------ SGLang throughput (paper Figure 5) */
+(function tpsChart() {
+  const svg = document.getElementById('tps-chart');
+  const TASKS = [['gsm8k', 'GSM8K'], ['math500', 'MATH-500'], ['humaneval', 'HumanEval'], ['mbpp', 'MBPP']];
+  const CONC = [2, 4, 8, 16, 32];
+  const W = 1000, L = 104, R = 6, GAP = 14, NC = TASKS.length;
+  const pw = (W - L - R - GAP * (NC - 1)) / NC;
+  const COLT = 18, STRIP = 20, SG = 4, PH = 150, RG = 26;
+  const rowTop = i => COLT + 12 + i * (STRIP + SG + PH + RG);
+  const H = rowTop(2) - RG + 44;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const lx = Math.log2(2 / 1.41), hx = Math.log2(32 * 1.41);
+  const edges = [2 / 1.41, ...CONC.slice(1).map((c, k) => Math.sqrt(c * CONC[k])), 32 * 1.41];
+  const marker = (me, x, y, g) => {
+    if (me === 'Domino') return svgEl('path', { d: `M${x},${y - 4.2} L${x + 4.2},${y} L${x},${y + 4.2} L${x - 4.2},${y} Z`, class: 'mk mk-domino' }, g);
+    if (me === 'DSpark') return svgEl('rect', { x: x - 3.4, y: y - 3.4, width: 6.8, height: 6.8, class: 'mk mk-dspark' }, g);
+    if (me === 'DFlash2') return svgEl('path', { d: `M${x},${y - 4.3} L${x + 4.2},${y + 3.3} L${x - 4.2},${y + 3.3} Z`, class: 'mk mk-dflash2' }, g);
+    if (me === 'DSpine') return svgEl('circle', { cx: x, cy: y, r: 4.4, class: 'mk mk-dspine' }, g);
+    return svgEl('circle', { cx: x, cy: y, r: 2.2, class: 'mk-ar' }, g);
+  };
+  ['8b', '4b'].forEach((m, i) => {
+    const top = rowTop(i), y0 = top + STRIP + SG, y1 = y0 + PH;
+    const diff = (t, me) => TPS[m][t][me].map((v, k) => v - TPS[m][t].DFlash[k]);
+    const drawn = ['Domino', 'DSpark', 'DFlash2', 'DSpine'];
+    const vals = [], arv = [];
+    TASKS.forEach(([t]) => { drawn.forEach(me => vals.push(...diff(t, me))); arv.push(...diff(t, 'AR')); });
+    const lo = Math.min(Math.min(...vals), 0), hi = Math.max(...vals), arMin = Math.min(...arv);
+    const B = lo - 0.06 * (hi - lo), f = breakScale(B, 0.18);
+    const zlo = f(arMin) - 0.04 * (hi - f(arMin)), zhi = zlo + (hi - zlo) / 0.95;
+    const Y = v => y1 - (f(v) - zlo) / (zhi - zlo) * PH;
+    const step = hi < 2 ? 0.5 : 1;
+    const ticks = [];
+    for (let v = 0; v <= hi + 1e-9; v += step) ticks.push(+v.toFixed(2));
+    const n = Math.floor(-arMin / (2 * step) + 1e-9);
+    if (n >= 1) ticks.unshift(-2 * step * n);
+    TASKS.forEach(([t, label], c) => {
+      const x0 = L + c * (pw + GAP);
+      const X = k => x0 + (Math.log2(k) - lx) / (hx - lx) * pw;
+      ticks.forEach(v => { if (v !== 0) svgEl('line', { x1: x0, y1: Y(v), x2: x0 + pw, y2: Y(v), class: 'grid' }, svg); });
+      CONC.forEach((k, j) => svgEl('line', { x1: X(k), y1: y0, x2: X(k), y2: y1, class: 'grid' }, svg));
+      CONC.forEach((k, j) => {
+        const g = TPS_STRIP[m][t][j], xa = X(edges[j]), xb = X(edges[j + 1]);
+        svgEl('rect', { x: xa + (j ? 0.5 : 0), y: top, width: xb - xa - (j ? 1 : 0.5), height: STRIP, style: tintStrip(g, TPS_GMAX) }, svg);
+        svgText(`+${g.toFixed(1)}%`, { x: X(k), y: top + STRIP / 2 + 3.8, 'text-anchor': 'middle', class: 'strip-t' }, svg);
+      });
+      const pts = me => diff(t, me).map((v, k) => [X(CONC[k]), Y(v)]);
+      const dsp = pts('DSpine'), d2 = pts('DFlash2');
+      svgEl('polygon', { points: [...dsp, ...d2.slice().reverse()].map(p => p.map(v => v.toFixed(1)).join(',')).join(' '), class: 'band' }, svg);
+      svgEl('line', { x1: x0, y1: Y(0), x2: x0 + pw, y2: Y(0), class: 'ln-ref' }, svg);
+      ['AR', ...drawn].forEach(me => {
+        const p = pts(me), g = svgEl('g', {}, svg);
+        svgEl('polyline', { points: p.map(q => q.map(v => v.toFixed(1)).join(',')).join(' '), class: `ln ln-${cls(me)}` }, g);
+        const raw = TPS[m][t][me];
+        p.forEach(([x, y], k) => {
+          const mk = marker(me, x, y, g);
+          const dv = diff(t, me)[k];
+          svgTitle(mk, `${me} · ${label} · concurrency ${CONC[k]}: ${raw[k].toFixed(2)}k tokens/s (${dv >= 0 ? '+' : '−'}${Math.abs(dv).toFixed(2)}k vs. DFlash)`);
+        });
+      });
+      svgEl('line', { x1: x0, y1: y1, x2: x0 + pw, y2: y1, class: 'axis' }, svg);
+      svgEl('line', { x1: x0, y1: y1, x2: x0, y2: y0, class: 'axis' }, svg);
+      if (c === 0) {
+        ticks.forEach(v => {
+          svgEl('line', { x1: x0 - 3.5, y1: Y(v), x2: x0, y2: Y(v), class: 'axis' }, svg);
+          svgText(fmt(v), { x: x0 - 6, y: Y(v) + 3.8, 'text-anchor': 'end', class: 'ct-num' }, svg);
+        });
+        svgEl('line', { x1: x0 - 5, y1: Y(B), x2: x0 + 5, y2: Y(B), class: 'cut' }, svg);
+        breakMarks(svg, x0, Y(B));
+        svgText('vs. DFlash2', { x: x0 - 6, y: top + STRIP / 2 + 3.8, 'text-anchor': 'end', class: 'ct' }, svg);
+      }
+      if (i === 1) CONC.forEach(k => svgText(String(k), { x: X(k), y: y1 + 15, 'text-anchor': 'middle', class: 'ct' }, svg));
+      if (i === 0) svgText(label, { x: x0 + pw / 2, y: COLT, 'text-anchor': 'middle', class: 'ct-col' }, svg);
+    });
+    svgText(m === '8b' ? 'Qwen3-8B' : 'Qwen3-4B', { x: 0, y: 0, transform: `translate(42 ${(y0 + y1) / 2}) rotate(-90)`, 'text-anchor': 'middle', class: 'ct-row' }, svg);
+  });
+  const mid = (rowTop(0) + rowTop(1) + STRIP + SG + PH) / 2 + (STRIP + SG) / 2;
+  svgText('Gain over DFlash (k tokens/s)', { x: 0, y: 0, transform: `translate(14 ${mid}) rotate(-90)`, 'text-anchor': 'middle', class: 'ct-axis' }, svg);
+  svgText('Concurrency', { x: L + (W - L - R) / 2, y: H - 6, 'text-anchor': 'middle', class: 'ct-axis' }, svg);
+})();
+
+/* ------------------------------------------------------------------ latency breakdown (paper Figure 6)
+   Two panels of stacked bars in time order (draft backbone, DSpine's injection, post-backbone head, verify); each x axis
+   is split into two windows at the same ms-per-px scale, window 1 from 0 and window 2 around the totals, as in the paper. */
+(function latChart() {
+  const svg = document.getElementById('lat-chart');
+  const SEGC = ['seg-draft', 'seg-inj', 'seg-head', 'seg-verify'];
+  const SEGN = ['Draft backbone', 'Parallel injection', 'Post-backbone head', 'Verify'];
+  const W = 1000, L = 92, R = 10, PG = 50, G = 16;
+  const pw = (W - L - R - PG) / 2;
+  const PITCH = 40, BAR = 18, TOP = 16, n = LAT.order.length, iOurs = LAT.order.indexOf('dspine');
+  const yc = i => TOP + PITCH / 2 + i * PITCH;
+  const AX = yc(n - 1) + BAR / 2 + 30, H = AX + 50;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const PANELS = [
+    { key: 'per_round', xlabel: '(a) Time per round (ms)', w1: [0, 2.5], w2: [6.85, 7.88], t1: [0, 0.5, 1, 1.5, 2], t2: [7, 7.5], segLabels: true, marker: false },
+    { key: 'per_token', xlabel: '(b) Time per generated token (ms)', w1: [0, 0.58], w2: [1.25, 1.73], t1: [0, 0.1, 0.2, 0.3, 0.4, 0.5], t2: [1.3, 1.4, 1.5, 1.6, 1.7], segLabels: false, marker: true },
+  ];
+  svgEl('rect', { x: 4, y: yc(iOurs) - PITCH / 2, width: W - 8, height: AX - 2 - (yc(iOurs) - PITCH / 2), class: 'rowband' }, svg);
+  LAT.order.forEach((a, i) => svgText(LAT.names[a], { x: L - 12, y: yc(i) + 4.5, 'text-anchor': 'end', class: 'row-name' + (a === 'dspine' ? ' ours' : '') }, svg));
+  PANELS.forEach((P, pi) => {
+    const x0 = L + pi * (pw + PG);
+    const s = (pw - G) / ((P.w1[1] - P.w1[0]) + (P.w2[1] - P.w2[0]));        // px per ms, shared by both windows
+    const w1 = (P.w1[1] - P.w1[0]) * s;
+    const wins = [[P.w1, x0], [P.w2, x0 + w1 + G]];
+    const X = v => (v <= P.w1[1] ? x0 + (v - P.w1[0]) * s : x0 + w1 + G + (v - P.w2[0]) * s);
+    [P.t1, P.t2].forEach(ts => ts.forEach(t => {
+      const x = X(t);
+      svgEl('line', { x1: x, y1: TOP - 4, x2: x, y2: AX, class: 'grid' }, svg);
+      svgEl('line', { x1: x, y1: AX, x2: x, y2: AX + 4, class: 'axis' }, svg);
+      svgText(t === 0 ? '0' : t.toFixed(1), { x, y: AX + 17, 'text-anchor': 'middle', class: 'ct-num' }, svg);
+    }));
+    LAT.order.forEach((a, i) => {
+      const d = LAT.panels[P.key][a];
+      let left = 0;
+      d.v.forEach((v, k) => {
+        if (v <= 0) return;
+        const a0 = left, a1 = left + v;
+        wins.forEach(([[lo, hi], wx]) => {
+          const u0 = Math.max(a0, lo), u1 = Math.min(a1, hi);
+          if (u1 <= u0) return;
+          const r = svgEl('rect', { x: wx + (u0 - lo) * s, y: yc(i) - BAR / 2, width: (u1 - u0) * s, height: BAR, class: 'lseg ' + SEGC[k] }, svg);
+          svgTitle(r, `${LAT.names[a]} · ${SEGN[k]}: ${d.lab[k]} ms`);
+        });
+        if (left > 0) svgEl('line', { x1: X(left), y1: yc(i) - BAR / 2, x2: X(left), y2: yc(i) + BAR / 2, class: 'seam' }, svg);
+        left = a1;
+      });
+      if (P.segLabels) {
+        let l2 = 0;
+        d.v.forEach((v, k) => {
+          if (k < 3 && v > 0) {
+            const cx = X(l2 + v / 2);
+            if (k === 1) {                                                   // too narrow: label below the bar
+              svgEl('line', { x1: cx, y1: yc(i) + BAR / 2, x2: cx, y2: yc(i) + BAR / 2 + 6, class: 'callout' }, svg);
+              svgText(d.lab[k], { x: cx, y: yc(i) + BAR / 2 + 17, 'text-anchor': 'middle', class: 'lab-inj' }, svg);
+            } else {
+              svgText(d.lab[k], { x: cx, y: yc(i) + 4, 'text-anchor': 'middle', class: k === 0 ? 'lab-draft' : 'lab-head' }, svg);
+            }
+          }
+          l2 += v;
+        });
+      }
+      svgText(d.lab[3], { x: x0 + w1 - 6, y: yc(i) + 4, 'text-anchor': 'end', class: 'lab-verify' }, svg);
+      svgText(d.labTotal, { x: X(d.total) + 6, y: yc(i) + 4.5, class: 'lab-total' + (a === 'dspine' ? ' ours' : '') }, svg);
+    });
+    if (P.marker) {                                                          // DSpine's saving against DFlash2, to scale
+      const yr = yc(LAT.order.indexOf('dflash2')), yd = yc(iOurs);
+      const xs = X(LAT.panels[P.key].dspine.total), xr = X(LAT.panels[P.key].dflash2.total), ydim = yd + BAR / 2 + 7;
+      svgEl('line', { x1: xs, y1: ydim, x2: xr, y2: ydim, class: 'dim' }, svg);
+      [xs, xr].forEach(x => svgEl('line', { x1: x, y1: ydim - 4, x2: x, y2: ydim + 4, class: 'dim' }, svg));
+      svgEl('line', { x1: xr, y1: yr + BAR / 2, x2: xr, y2: ydim - 4, class: 'drop' }, svg);
+      svgText(LAT.red, { x: xr + 6, y: yd + 4.5, class: 'lab-red' }, svg);
+    }
+    wins.forEach(([[lo, hi], wx]) => svgEl('line', { x1: wx, y1: AX, x2: wx + (hi - lo) * s, y2: AX, class: 'axis' }, svg));
+    [x0 + w1, x0 + w1 + G].forEach(xe => svgEl('line', { x1: xe - 3, y1: AX + 5, x2: xe + 3, y2: AX - 5, class: 'brk' }, svg));
+    svgEl('line', { x1: x0, y1: TOP - 4, x2: x0, y2: AX, class: 'axis' }, svg);
+    svgText(P.xlabel, { x: x0 + pw / 2, y: H - 8, 'text-anchor': 'middle', class: 'ct-axis' }, svg);
+  });
+})();
+
+(function table() {
+  const body = document.querySelector('#tau-table tbody');
+  const note = document.getElementById('tau-note');
+  let model = '8b', temp = '0';
+  function render() {
+    const rows = TAU[model][temp];
+    const cols = rows.DSpine.length;
+    const rank = [];
+    for (let c = 0; c < cols; c++) {                       // rank on the printed values, so ties are marked alike
+      const vals = [...new Set(METHOD_ORDER.map(m => rows[m][c]))].sort((a, b) => b - a);
+      rank.push({ best: vals[0], second: vals[1] });
+    }
+    body.innerHTML = METHOD_ORDER.map(m => {
+      const cells = rows[m].map((v, c) => {
+        const k = v === rank[c].best ? 'best' : v === rank[c].second ? 'second' : '';
+        return `<td${k ? ` class="${k}"` : ''}>${v.toFixed(2)}</td>`;
+      }).join('');
+      return `<tr${m === 'DSpine' ? ' class="ours"' : ''}><td>${m}</td>${cells}</tr>`;
+    }).join('');
+    const [g, ref] = MARGIN[model][temp];
+    note.innerHTML = `Average acceptance length τ. Bold marks the best, underline the second best. DSpine leads the strongest baseline (${ref}) by <b>${g}</b> on average.`;
+  }
+  const bind = (attr, set) => document.querySelectorAll(`[data-${attr}]`).forEach(b => b.addEventListener('click', () => {
+    set(b.dataset[attr]);
+    document.querySelectorAll(`[data-${attr}]`).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render();
+  }));
+  bind('model', v => { model = v; });
+  bind('temp', v => { temp = v; });
+  render();
+})();
+
+(function copyBib() {
+  const btn = document.getElementById('copy-bib');
+  const pre = document.getElementById('bibtex');
+  const flash = s => { btn.textContent = s; setTimeout(() => { btn.textContent = 'Copy'; }, 1600); };
+  const select = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); flash('Selected'); };
+  btn.addEventListener('click', () => {
+    try { navigator.clipboard.writeText(pre.textContent).then(() => flash('Copied'), select); } catch (e) { select(); }
+  });
+})();
+
+/* ------------------------------------------------------------------------------------------------------------
+   Method comparison animation. One clock drives three panels, so the reader can compare when predecessor
+   information reaches a successor and how the last step is decoded:
+   - DFlash: never; every position picks its own token.
+   - Serial post-backbone head (Domino, DSpark): only after the last layer, one head pass per position, each waiting
+     for the previous token (both run a per-position head on the chosen predecessor in SGLang).
+   - DSpine: at every layer from the first one on; after the last layer, one parallel pass scores all K x K candidate
+     pairs (transition cache) and the tokens are then read off by lookup.
+   The decode bars are drawn to scale with the measured post-backbone head time per round (paper Fig. 6, Qwen3-8B,
+   SGLang): Domino 0.97 ms, DSpark 0.88 ms, DSpine 0.36 ms; the decode phases of the animation keep the same ratio.
+   render(P, t) depends only on t, so the scrubber can jump anywhere.
+   ------------------------------------------------------------------------------------------------------------ */
+(function demo() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const X = [88, 152, 216, 280];            // anchor + three draft positions
+  const NW = 36, NH = 20;
+  const Y_IN = 22, Y_L = [68, 108, 148, 188], Y_HEAD = 238, Y_OUT = 282, Y_CAP = 318, Y_BAR = 338;
+  const L0 = 0.6, LD = 1.2, NL = Y_L.length;
+  const D = L0 + NL * LD;                   // decoding starts at 5.4 s
+  const H0 = D + 0.35;                      // heads receive the last layer
+  const POST_END = H0 + 2.2, DSP_END = H0 + 2.2 * 0.36 / 0.925;   // decode time to scale: 0.925 ms (Domino/DSpark mean) vs 0.36 ms
+  const TMAX = POST_END + 0.9;              // the story ends just after the serial head finishes
+  const HOLD = 2.4;                         // pause on the finished frame before looping
+  const BAR_X = 62, BAR_W = 244, MS_PX = BAR_W / 1.0;   // decode bar: 1 ms = the full track
+  const WORDS = { none: ['Los', 'York', ','], post: ['Los', 'Angeles', ','], dspine: ['Los', 'Angeles', ','] };
+  // serial head: three passes back to back, each followed by the arrow that feeds its token to the next head
+  const PASS = 2.2 / 3, ARW = 0.18;
+  const T_POST = {
+    head: [[H0, H0 + PASS - ARW], [H0 + PASS, H0 + 2 * PASS - ARW], [H0 + 2 * PASS, H0 + 3 * PASS - ARW]],
+    arrow: [[H0 + PASS - ARW, H0 + PASS], [H0 + 2 * PASS - ARW, H0 + 2 * PASS]],
+  };
+  T_POST.tok = T_POST.head.map(h => h[1]);
+  T_POST.cap = POST_END + 0.1;
+  // DSpine: every head and both transition tables fill at once, then a quick lookup walk
+  const PAR = [H0, H0 + (DSP_END - H0) * 0.62];
+  const LK = (DSP_END - PAR[1]) / 3;
+  const T_DSP = { par: PAR, tok: [PAR[1] + LK, PAR[1] + 2 * LK, PAR[1] + 3 * LK], arrow: [[PAR[1] + LK, PAR[1] + 1.6 * LK], [PAR[1] + 2 * LK, PAR[1] + 2.6 * LK]], cap: DSP_END + 0.1 };
+  const layerStart = k => L0 + k * LD;
+
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const prog = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+  const ease = p => p * p * (3 - 2 * p);
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const txt = (s, attrs, parent) => { const e = el('text', attrs, parent); e.textContent = s; return e; };
+  const arrowHead = (x1, y1, x2, y2, s) => {
+    const a = Math.atan2(y2 - y1, x2 - x1);
+    return [[x2, y2], [x2 - s * Math.cos(a - 0.5), y2 - s * Math.sin(a - 0.5)], [x2 - s * Math.cos(a + 0.5), y2 - s * Math.sin(a + 0.5)]]
+      .map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
+  };
+  const showIf = (e, on) => e.setAttribute('opacity', on ? 1 : 0);
+
+  function build(svg, kind) {
+    const P = { kind, slabs: [], nodes: [], vl: [], inj: [], heads: [], fills: [], toks: [], cond: [], grids: [], badges: [] };
+    [['input', Y_IN], ['layer 1', Y_L[0]], ['layer 2', Y_L[1]], ['layer 3', Y_L[2]], ['layer L', Y_L[3]], ['head', Y_HEAD], ['output', Y_OUT]]
+      .forEach(([s, y]) => txt(s, { x: 4, y: y + 3.5, class: 'rowlab' }, svg));
+    Y_L.forEach(y => P.slabs.push(el('rect', { x: 62, y: y - 15, width: 244, height: 30, rx: 8, class: 'slab' }, svg)));
+    X.forEach((x, c) => {
+      const segs = [[Y_IN + 11, Y_L[0] - NH / 2]];
+      for (let k = 1; k < NL; k++) segs.push([Y_L[k - 1] + NH / 2, Y_L[k] - NH / 2]);
+      if (c > 0) { segs.push([Y_L[NL - 1] + NH / 2, Y_HEAD - 9]); segs.push([Y_HEAD + 9, Y_OUT - 12]); }
+      P.vl.push(segs.map(([a, b]) => {
+        el('line', { x1: x, y1: a, x2: x, y2: b, class: 'vline' }, svg);
+        return { a, b, dot: el('circle', { cx: x, cy: a, r: 2.6, class: 'pulse', opacity: 0 }, svg) };
+      }));
+    });
+    if (kind === 'dspine') {
+      Y_L.forEach(y => {
+        const row = [];
+        for (let c = 1; c < X.length; c++) {
+          const x1 = X[c - 1] + NW / 2 + 1, x2 = X[c] - NW / 2 - 1;
+          const line = el('line', { x1, y1: y, x2: x2 - 4, y2: y, class: 'inj-line', opacity: .22 }, svg);
+          const hd = el('polygon', { points: arrowHead(x1, y, x2, y, 5.5), class: 'inj-head', opacity: .22 }, svg);
+          const gate = el('circle', { cx: (x1 + x2) / 2 - 1, cy: y, r: 3.8, class: 'gate' }, svg);
+          const dot = el('circle', { cx: x1, cy: y, r: 2.6, class: 'pulse g', opacity: 0 }, svg);
+          row.push({ x1, x2, line, hd, gate, dot });
+        }
+        P.inj.push(row);
+      });
+    }
+    Y_L.forEach(y => P.nodes.push(X.map(x => el('rect', { x: x - NW / 2, y: y - NH / 2, width: NW, height: NH, rx: 5, class: 'node' }, svg))));
+    el('rect', { x: X[0] - 20, y: Y_IN - 11, width: 40, height: 22, rx: 11, class: 'anchor' }, svg);
+    txt('in', { x: X[0], y: Y_IN + 4, 'text-anchor': 'middle', class: 'anchor-t' }, svg);
+    for (let c = 1; c < X.length; c++) {
+      el('rect', { x: X[c] - 20, y: Y_IN - 11, width: 40, height: 22, rx: 11, class: 'mask' }, svg);
+      txt('[M]', { x: X[c], y: Y_IN + 3.5, 'text-anchor': 'middle', class: 'mask-t' }, svg);
+    }
+    // conditioning arrows from the decoded token at t-1: into the next head (serial) or onto a row of the cache (DSpine)
+    if (kind !== 'none') {
+      for (let c = 2; c < X.length; c++) {
+        const x1 = X[c - 1] + 16, y1 = Y_OUT - 12;
+        const x2 = kind === 'dspine' ? (X[c - 1] + X[c]) / 2 : X[c] - NW / 2 + 2;
+        const y2 = kind === 'dspine' ? Y_HEAD + 12 : Y_HEAD + 9;
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        const g = el('g', { opacity: 0 }, svg);
+        const path = el('path', { d: `M${x1},${y1} L${x2},${y2}`, class: 'cond-line', 'stroke-dasharray': len.toFixed(1), 'stroke-dashoffset': len.toFixed(1) }, g);
+        const hd = el('polygon', { points: arrowHead(x1, y1, x2, y2, 6), class: 'cond-head', opacity: 0 }, g);
+        P.cond.push({ g, path, hd, len });
+      }
+    }
+    // heads (with a fill that shows the head's computation) and output tokens
+    for (let c = 1; c < X.length; c++) {
+      P.heads.push(el('rect', { x: X[c] - NW / 2, y: Y_HEAD - 9, width: NW, height: 18, rx: 9, class: 'head' }, svg));
+      const clip = el('clipPath', { id: `hc-${kind}-${c}` }, svg);
+      el('rect', { x: X[c] - NW / 2, y: Y_HEAD - 9, width: NW, height: 18, rx: 9 }, clip);
+      P.fills.push(el('rect', { x: X[c] - NW / 2, y: Y_HEAD - 9, width: 0, height: 18, class: 'head-fill', 'clip-path': `url(#hc-${kind}-${c})` }, svg));
+      const g = el('g', { opacity: 0 }, svg);
+      el('rect', { x: X[c] - 27, y: Y_OUT - 12, width: 54, height: 24, rx: 12, class: 'tok' }, g);
+      txt(WORDS[kind][c - 1], { x: X[c], y: Y_OUT + 4, 'text-anchor': 'middle', class: 'tok-t' }, g);
+      P.toks.push(g);
+      if (kind === 'post') {
+        const b = el('g', { opacity: 0 }, svg);
+        el('circle', { cx: X[c] + NW / 2 + 1, cy: Y_HEAD - 9, r: 6.5, class: 'badge' }, b);
+        txt(String(c), { x: X[c] + NW / 2 + 1, y: Y_HEAD - 5.8, 'text-anchor': 'middle', class: 'badge-t' }, b);
+        P.badges.push(b);
+      }
+    }
+    // DSpine: transition cache for the transitions 1->2 and 2->3, on the head row between the heads
+    if (kind === 'dspine') {
+      [2, 3].forEach(c => {
+        const S = 7, gx = (X[c - 1] + X[c]) / 2 - 1.5 * S, gy = Y_HEAD - 1.5 * S, cells = [];
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) cells.push(el('rect', { x: gx + j * S, y: gy + i * S, width: S - 0.8, height: S - 0.8, rx: 1, class: 'gcell', opacity: 0 }, svg));
+        P.grids.push({ cells, sel: c === 2 ? 3 : 7 });   // the cell the lookup lands on
+      });
+      P.parLabel = txt('all at once', { x: X[1] - NW / 2 - 6, y: Y_HEAD + 3.5, 'text-anchor': 'end', class: 'cap acc', opacity: 0 }, svg);
+    }
+    if (kind === 'none') P.mismatch = el('rect', { x: X[1] - 31, y: Y_OUT - 16, width: X[2] - X[1] + 62, height: 32, rx: 16, class: 'mismatch', opacity: 0 }, svg);
+    const caps = {
+      none: ['“Los York”: each likely, together wrong', 'cap bad'],
+      post: ['Consistent, but one head pass per position', 'cap'],
+      dspine: ['Consistent; K×K scores at once, then lookup', 'cap good'],
+    };
+    P.cap = txt(caps[kind][0], { x: 184, y: Y_CAP, 'text-anchor': 'middle', class: caps[kind][1], opacity: 0 }, svg);
+    // decode bar: head time per round, to scale
+    if (kind !== 'none') {
+      txt('decode', { x: 4, y: Y_BAR + 3.5, class: 'rowlab' }, svg);
+      el('rect', { x: BAR_X, y: Y_BAR - 3, width: BAR_W, height: 6, rx: 3, class: 'dbar-track' }, svg);
+      P.dbar = el('rect', { x: BAR_X, y: Y_BAR - 3, width: 0, height: 6, rx: 3, class: kind === 'dspine' ? 'dbar ours' : 'dbar' }, svg);
+      P.dbarEnd = kind === 'dspine' ? 0.36 : 0.925;
+    }
+    return P;
+  }
+
+  function moveV(seg, p) {
+    showIf(seg.dot, p > 0 && p < 1);
+    seg.dot.setAttribute('cy', (seg.a + (seg.b - seg.a) * ease(p)).toFixed(1));
+  }
+
+  function render(P, t) {
+    for (let k = 0; k < NL; k++) {
+      const s = layerStart(k);
+      P.slabs[k].classList.toggle('on', t >= s && t < s + LD);
+      const arrived = t >= s + 0.42, injected = P.kind === 'dspine' && t >= s + 0.95;
+      P.nodes[k].forEach((n, c) => { n.classList.toggle('done', arrived); n.classList.toggle('inj', injected && c > 0); });
+      P.vl.forEach(row => moveV(row[k], prog(t, s, s + 0.42)));
+      if (P.kind === 'dspine') P.inj[k].forEach(a => {
+        const p = prog(t, s + 0.5, s + 0.95);
+        showIf(a.dot, p > 0 && p < 1);
+        a.dot.setAttribute('cx', (a.x1 + (a.x2 - a.x1) * ease(p)).toFixed(1));
+        const lit = t >= s + 0.5;
+        a.line.setAttribute('opacity', lit ? 1 : .22);
+        a.hd.setAttribute('opacity', lit ? 1 : .22);
+        a.gate.classList.toggle('flash', t >= s + 0.66 && t < s + 0.86);
+      });
+    }
+    const tokT = P.kind === 'none' ? [D + 0.6, D + 0.6, D + 0.6] : P.kind === 'post' ? T_POST.tok : T_DSP.tok;
+    P.vl.forEach((row, c) => {
+      if (c === 0) return;
+      moveV(row[NL], prog(t, D, H0));
+      moveV(row[NL + 1], prog(t, tokT[c - 1] - 0.2, tokT[c - 1]));
+    });
+    // heads: DFlash reads its LM head at once; the serial head fills one head after another; DSpine fills all at once
+    P.heads.forEach((h, i) => {
+      h.classList.toggle('on', t >= H0);
+      let p = 0;
+      if (P.kind === 'none') p = prog(t, H0, D + 0.6);
+      if (P.kind === 'post') p = prog(t, T_POST.head[i][0], T_POST.head[i][1]);
+      if (P.kind === 'dspine') p = prog(t, T_DSP.par[0], T_DSP.par[1]);
+      P.fills[i].setAttribute('width', (NW * p).toFixed(1));
+      P.fills[i].setAttribute('class', 'head-fill' + (P.kind === 'none' ? '' : ' o'));
+      h.classList.toggle('cond', P.kind !== 'none' && p > 0 && p < 1);
+    });
+    P.toks.forEach((g, i) => showIf(g, t >= tokT[i]));
+    const timing = P.kind === 'post' ? T_POST : P.kind === 'dspine' ? T_DSP : null;
+    P.cond.forEach((a, i) => {
+      const [a0, a1] = timing.arrow[i], p = prog(t, a0, a1);
+      showIf(a.g, t >= a0);
+      a.path.setAttribute('stroke-dashoffset', (a.len * (1 - ease(p))).toFixed(1));
+      showIf(a.hd, p >= 1);
+    });
+    P.badges.forEach((b, i) => showIf(b, t >= T_POST.head[i][0]));
+    if (P.kind === 'dspine') {
+      const gp = prog(t, T_DSP.par[0], T_DSP.par[1]);
+      P.grids.forEach((g, gi) => g.cells.forEach((cell, j) => {
+        showIf(cell, gp > j / 9);
+        cell.classList.toggle('sel', t >= T_DSP.tok[gi + 1] - 0.05 && j === g.sel);
+      }));
+      showIf(P.parLabel, t >= T_DSP.par[0] + 0.05);
+    }
+    if (P.dbar) {
+      const end = P.kind === 'dspine' ? DSP_END : POST_END;
+      P.dbar.setAttribute('width', (P.dbarEnd * MS_PX * prog(t, H0, end)).toFixed(1));
+    }
+    if (P.mismatch) showIf(P.mismatch, t >= D + 1.1);
+    showIf(P.cap, t >= (P.kind === 'none' ? D + 1.1 : timing.cap));
+    if (P.kind === 'post') P.chip.className = 'chip' + (t >= H0 ? ' live-o' : '');
+    if (P.kind === 'dspine') P.chip.className = 'chip' + (t >= layerStart(0) + 0.5 ? ' live-g' : '');
+  }
+
+  const root = document.getElementById('demo');
+  if (!root) return;
+  const panels = [...root.querySelectorAll('.panel')].map(p => {
+    const P = build(p.querySelector('svg'), p.dataset.kind);
+    P.chip = p.querySelector('[data-chip]');
+    return P;
+  });
+
+  const phaseBox = document.getElementById('demo-phases');
+  const phases = [['Input', 0, 'minor'], ['Layer 1', layerStart(0), ''], ['Layer 2', layerStart(1), 'minor'], ['Layer 3', layerStart(2), 'minor'], ['Layer L', layerStart(3), ''], ['Decode', D, '']]
+    .map(([name, s, cls]) => {
+      const e = document.createElement('span');
+      e.textContent = name; e.className = cls;
+      e.style.left = `${(s / TMAX) * 100}%`;
+      phaseBox.appendChild(e);
+      return { e, s };
+    });
+
+  const scrub = document.getElementById('demo-scrub');
+  const playBtn = document.getElementById('demo-play');
+  const playIcon = document.getElementById('demo-play-icon');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasIO = 'IntersectionObserver' in window;
+  let t = TMAX, playing = false, last = 0, holdUntil = 0, visible = !hasIO, started = false, userPaused = false;
+
+  function draw() {
+    panels.forEach(P => render(P, t));
+    scrub.value = String(Math.round((t / TMAX) * 1000));
+    phases.forEach((p, i) => p.e.classList.toggle('on', t >= p.s && (i === phases.length - 1 || t < phases[i + 1].s)));
+  }
+  function setPlaying(v) {
+    playing = v;
+    playBtn.setAttribute('aria-label', v ? 'Pause' : 'Play');
+    playIcon.innerHTML = v
+      ? '<rect x="2.5" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="8.5" y="2" width="3" height="10" rx="1" fill="currentColor"/>'
+      : '<path d="M3.5 2.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L4.4 1.7a.6.6 0 0 0-.9.5z" fill="currentColor"/>';
+    if (v) { last = performance.now(); requestAnimationFrame(tick); }
+  }
+  function tick(now) {
+    if (!playing) return;
+    if (!visible) { setPlaying(false); return; }          // resumes when scrolled back into view
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (holdUntil) { if (now >= holdUntil) { holdUntil = 0; t = 0; } }
+    else { t += dt; if (t >= TMAX) { t = TMAX; holdUntil = now + HOLD * 1000; } }
+    draw();
+    requestAnimationFrame(tick);
+  }
+  playBtn.addEventListener('click', () => {
+    if (playing) { userPaused = true; setPlaying(false); return; }
+    userPaused = false; visible = true;
+    if (t >= TMAX) { t = 0; holdUntil = 0; }
+    setPlaying(true);
+  });
+  document.getElementById('demo-replay').addEventListener('click', () => {
+    t = 0; holdUntil = 0; userPaused = false; visible = true; draw();
+    if (!playing) setPlaying(true);
+  });
+  scrub.addEventListener('input', () => {
+    t = (Number(scrub.value) / 1000) * TMAX; holdUntil = 0;
+    if (playing) setPlaying(false);
+    userPaused = true; draw();
+  });
+
+  draw();                                    // complete at rest: the page opens on the finished comparison
+  if (hasIO) {
+    new IntersectionObserver(entries => entries.forEach(e => {
+      visible = e.isIntersecting;
+      if (!visible || reduce || userPaused || playing) return;
+      if (!started) { started = true; t = 0; holdUntil = 0; draw(); }
+      setPlaying(true);
+    }), { threshold: 0.3 }).observe(root);
+  }
+})();
+</script>
+</body>
+</html>

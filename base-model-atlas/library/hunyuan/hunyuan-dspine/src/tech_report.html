@@ -1,0 +1,451 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2609.36173v2">打开官方原文 ↗</a> · <a href="tech_report.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Draft in Parallel, Condition Through Depth: Adjacent Causal Injection for Speculative Decoding Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+Abstract 
+1 Introduction 
+2 Preliminaries 
+2.1 Speculative Decoding 
+2.2 Parallel Drafting 
+3 When and How Prefix Predictions Condition Parallel Drafting 
+3.1 Early Predictive Cues and the Timing of Conditioning 
+3.2 Adjacent Predecessors Shape Successor Predictions 
+4 DSpine: Adjacent Causal Injection and Output-Embedding Supervision 
+4.1 Unified Transfer Space 
+4.2 Adjacent Causal Injection 
+Block-causal attention. 
+Propagation through depth. 
+Fused layer-wise injection. 
+4.3 Predecessor-Conditioned Decoding 
+Transition-cached decoding. 
+4.4 Layer-Wise Output-Embedding Supervision 
+Directional alignment. 
+4.5 Training 
+5 Experiments 
+5.1 Experimental Setup 
+Models and evaluations. 
+Baselines. 
+Implementation. 
+5.2 Main Results 
+5.3 Serving Throughput 
+5.4 Decoding Latency Breakdown 
+5.5 Ablation Study 
+Effect of each component. 
+Supervision target. 
+6 Related Work 
+7 Conclusion 
+References 
+A Implementation Details of DSpine 
+Architecture. 
+Unified transfer space. 
+Initialization. 
+Losses. 
+Correct-predecessor curriculum. 
+Training setup. 
+B Details of the Conditioning Experiments 
+B.1 Setup, Readouts, and Metrics 
+B.2 Prefix Content and Timing 
+B.3 Adjacent Predecessor versus Earlier History 
+B.4 Timing of Predecessor Features 
+C Experimental Details 
+Evaluation. 
+Lossless verification. 
+Decoding at temperature one. 
+Serving. 
+Supervision targets. License: CC BY 4.0 arXiv:2609.36173v2 [cs.LG] 10 Oct 2026 
+Draft in Parallel, Condition Through Depth: Adjacent Causal Injection for Speculative Decoding Haohui Zhang 1,2,† Keyu Chen 2,†,‡ Haocheng Sun 3 Weibo Gu 2 Ruizhi Qiao 2 Xing Sun 2 Bo Jiang 1,∗ Affiliation: 1 Shanghai Jiao Tong University 2 Tencent YouTu Lab 3 Xiamen University Abstract 
+Parallel speculative drafting generates multiple candidates in one backbone pass, but independent token selection can produce inconsistent continuations that shorten the accepted prefix. Existing methods mostly leave conditional decoding to a lightweight module after the backbone, which limits the flow of predecessor information to successors. Our analysis of DFlash shows that early positions already form recoverable predictions in shallow layers, and that accurate adjacent predecessors help successors more when they enter earlier. We therefore propose DSpine, a drafter with causal conditioning injection throughout the backbone: at every layer, gated adjacent injection writes each predecessor’s predicted feature into its successor, so the causal conditioning chain unfolds over network depth while all positions update in parallel. A unified transfer space built from the target model’s output embeddings unifies layer-wise injection with predecessor-conditioned decoding, and layer-wise output-embedding supervision promotes the formation of predicted features in shallow layers. Fused kernels and a transition cache execute both efficiently in parallel within SGLang. Across seven math, code, and chat benchmarks, DSpine achieves the longest acceptance length at both temperatures on Qwen3-4B and Qwen3-8B. At temperature zero on Qwen3-8B, it raises the seven-benchmark mean from DFlash’s 3.77 to 4.82 (+27.8%); in SGLang serving tests, it delivers 23.3% higher throughput than DFlash on average. Figure 1: Mean acceptance length across seven math, code, and chat benchmarks. DSpine leads all compared parallel drafters on Qwen3-8B and Qwen3-4B at temperatures 0 and 1; the annotations report its margin over the strongest baseline in each setting. 
+1 Introduction 
+Autoregressive decoding is a major source of latency in large language models. Speculative decoding accelerates it without changing the target model: a lightweight drafter proposes multiple candidates, and the target model verifies them in a single forward pass ( Leviathan et al., 2023 ) . Its speedup depends on how many candidates are accepted per round and how cheaply they are drafted. Autoregressive drafters such as EAGLE-3 reuse target-model features to improve predictions but still require one sequential drafting step per draft position ( Li et al., 2025 ) . Inspired by diffusion language modeling, DFlash instead predicts a masked block in parallel within one forward pass conditioned on target context features, so a longer draft adds no sequential drafting steps ( Chen et al., 2026 ) . 
+This shift also changes how token dependencies are established. Autoregressive drafting conditions each successor on its already selected predecessors, whereas positions in a parallel draft must form predictions before their predecessors commit to tokens, so individually plausible candidates can be inconsistent when combined. Because the target accepts candidates in prefix order, a single inconsistency truncates the rest of the round’s draft, leaving much of the cheaply drafted block unaccepted. Reducing drafting cost must therefore go hand in hand with establishing effective predecessor conditioning inside parallel computation. 
+Recent work improves token consistency in parallel drafts through lightweight conditioning modules. Inside the draft backbone, DFlash2 mixes adjacent positions through local convolutions, but these blend neighboring hidden states without separating the predecessor’s predictive information from the rest of its state ( DFlash2 Team, 2026 ) . Domino, DSpark, and DFlash2’s path selector instead condition on the predecessor after the backbone to adjust token distributions or candidate selection ( Huang et al., 2026 ; Cheng et al., 2026 ; DFlash2 Team, 2026 ) . Conditional decoding in these methods is thus left to a lightweight module after the backbone, which limits the flow of predecessor information to successors. Moreover, the predecessor information these modules pass is confined to the final-layer vocabulary space, so it can neither be combined with in-layer features nor exploit the rich intermediate features formed across the backbone. 
+Our empirical study yields two key insights. (1) Earlier positions form predictions at shallower depth: layer-wise readouts already recover substantial token-predictive information at early positions in shallow layers ( Figure 2 (a)), so the prefix could condition successors whose computation is still in progress. (2) Successor prediction depends on both the content of the adjacent predecessor and when it enters the network: even with correct earlier context, replacing only the adjacent predecessor with its draft prediction sharply lowers successor accuracy, and injecting the same correct predecessor features earlier clearly improves it ( Figure 2 (c)). 
+Guided by these insights, we propose DSpine , a drafter with causal conditioning injection throughout the backbone. At every layer, a gated adjacent injection module writes each predecessor’s predicted feature into its successor, so that the causal conditioning chain unfolds over network depth while all positions update in parallel. We further build a unified transfer space from the output embeddings of the target model, which unifies layer-wise injection with the information transfer in predecessor-conditioned decoding. We also design layer-wise output-embedding supervision that aligns the predicted features with this space, promoting their formation in shallow layers and reducing their discrepancy from token embeddings. Finally, we introduce a transition cache that precomputes the scores of all adjacent candidate pairs in parallel, turning sequential conditional decoding into parallel computation. Our contributions are: 
+• 
+We identify recoverable shallow prefix predictions and the effect of predecessor-conditioning timing, motivating dependency formation across network depth. 
+• 
+We propose DSpine, which injects causal conditioning throughout the backbone and links it to predecessor-conditioned decoding through a unified output-embedding space with layer-wise supervision. 
+• 
+We demonstrate that DSpine surpasses baselines trained on the same data in both acceptance length and SGLang throughput: on Qwen3-8B, it raises the mean acceptance length from 3.77 for DFlash to 4.82 ( Figure 1 ), and its SGLang throughput exceeds that of DFlash by 23.3%. 
+2 Preliminaries 
+2.1 Speculative Decoding 
+Given a confirmed context x ≤ 0 x_{\leq 0} , a drafter proposes M M candidates x ^ 1 : M \hat{x}_{1:M} , which the target model verifies in one forward pass ( Leviathan et al., 2023 ) . Let q draft , t q_{\mathrm{draft},t} be the actual proposal distribution given this context and preceding candidates; both it and the target distribution p t p_{t} include their respective sampling transformations. Conditional on acceptance of all preceding candidates, candidate t t is accepted with probability 
+min ( 1 , p t ​ ( x ^ t ) q draft , t ​ ( x ^ t ) ) , p t ( v ) = p target ( v ∣ x ≤ 0 , x ^ 1 : t − 1 ) . \min\!\left(1,\frac{p_{t}(\hat{x}_{t})}{q_{\mathrm{draft},t}(\hat{x}_{t})}\right),\qquad p_{t}(v)=p_{\mathrm{target}}(v\mid x_{\leq 0},\hat{x}_{1:t-1}). (1) 
+At the first rejection, the remaining draft is discarded and a replacement is sampled from the corrected distribution ( Equation 11 ); if all candidates pass, the target supplies an additional token. Greedy decoding accepts candidates matching the target’s choice under the same prefix. 
+The average acceptance length τ = 𝔼 ⁡ [ N acc ] + 1 \tau=\mathbb{E}[N_{\mathrm{acc}}]+1 is the number of tokens advanced per round, where N acc N_{\mathrm{acc}} counts consecutively accepted draft tokens and the extra one is the correction or additional target token. For a fixed runtime configuration, ignoring prefill and termination costs, the average time per output token (TPOT) is approximately 
+TPOT spec ≈ T draft + T verify τ , \mathrm{TPOT}_{\mathrm{spec}}\approx\frac{T_{\mathrm{draft}}+T_{\mathrm{verify}}}{\tau}, (2) 
+where T draft T_{\mathrm{draft}} and T verify T_{\mathrm{verify}} are mean per-round costs, including sampling and cache management. Later candidates contribute only when the preceding prefix is accepted, and acceptance gains must compensate for added drafting cost. 
+2.2 Parallel Drafting 
+DFlash-style parallel drafters process a block of M + 1 M+1 positions, the known anchor x 0 x_{0} followed by M M masked candidate positions ( Chen et al., 2026 ; Zhang et al., 2026 ) . In DFlash, fused target-model features over x &lt; 0 x_{&lt;0} supply K/V at every layer. The backbone updates all positions in one pass with bidirectional block attention, and the LM head shared with the target produces candidate distributions. 
+An autoregressive drafter generates each token conditioned on the predecessors it has drafted, whereas a DFlash-style drafter predicts every position from the confirmed context alone, so the block proposal factorizes over positions: 
+q draft ( x ^ 1 : M ∣ x ≤ 0 ) = ∏ t = 1 M q draft , t ( x ^ t ∣ x ≤ 0 ) . q_{\mathrm{draft}}(\hat{x}_{1:M}\mid x_{\leq 0})=\prod_{t=1}^{M}q_{\mathrm{draft},t}(\hat{x}_{t}\mid x_{\leq 0}). (3) 
+Each position thus marginalizes over its possible predecessors instead of conditioning on the one actually drafted, and individually likely tokens can form inconsistent combinations. Because verification accepts candidates in prefix order, such inconsistencies cut the accepted prefix, and acceptance decays rapidly at later positions ( Cheng et al., 2026 ) . 
+3 When and How Prefix Predictions Condition Parallel Drafting 
+This section asks whether evolving prefix predictions can condition successor computation in parallel drafting. We first examine when predictive information becomes recoverable and when reliable prefix conditions are most useful, then turn to the immediate predecessor: its contribution beyond earlier history and the timing of its use. We use the frozen official Qwen3-8B-DFlash-b16 with greedy Qwen3-8B continuations as the correct tokens; datasets, metrics, and full results are in Appendix B . Figure 2: (a) Readout accuracy of each layer, grouped by block position. (b) Gain in consecutive correct tokens when the drafted prefix is replaced by the correct prefix at the filled (orange) layers; top: from one layer onward; bottom: at two layers, moving the earlier one. (c) Gain in successor accuracy when, at the specified layers, the adjacent predecessor’s features come from the correct token rather than its draft prediction (L1–L5: all layers); line color marks whether the history before the predecessor is correct (orange) or drafted (blue). 
+3.1 Early Predictive Cues and the Timing of Conditioning 
+To examine when predictive information emerges, we read out predictions from each layer. Intermediate DFlash states lie outside the input space of the target LM head and cannot be decoded directly, so for each layer we fit, on separate data, an equal-capacity lightweight low-rank projection that maps its frozen states into the space decoded by the frozen LM head. At the same shallow depth, early positions are read out much more accurately than distant ones, while all position groups improve with depth ( Figure 2 (a)). Although positions update in parallel, predictive information is not equally available: prefixes already carry recoverable cues while successor predictions are still forming, so prefixes could condition successor computation before selecting their own tokens. 
+We next examine when more accurate prefix conditions are most useful. With a correct token as the anchor, we fill the preceding prefix with draft predictions or correct tokens, which the target model encodes for DFlash’s existing context pathway. Sustained access to correct-prefix features from an early layer yields a 6.7% relative gain in consecutive correct tokens over the all-draft-prefix baseline, and delaying it reduces the gain ( Figure 2 (b), sustained conditioning). 
+Earlier access, however, also means that more layers receive correct features. To isolate timing, we fix the total number of injection layers and vary only their placement: earlier injection raises the relative gain from 1.2% to 4.3% ( Figure 2 (b), timing control). Thus, even at a fixed number of uses, earlier access to reliable conditions improves successor prediction: a reliable prefix is valuable not only for more accurate content but also for timely use as successor representations form. 
+3.2 Adjacent Predecessors Shape Successor Predictions 
+We next examine how the immediate predecessor affects successor prediction. Keeping the target-encoded earlier history correct, we use the predecessor as the anchor of a new draft block: replacing only the correct predecessor with its draft prediction lowers successor accuracy by 31.8 percentage points on average over three block positions (L1–L5 in Figure 2 (c)). Correct earlier history thus does not fully compensate for an inaccurate predecessor: the adjacent token supplies additional predictive cues for its successor. 
+The predecessor’s effect also depends on when it enters successor computation. Keeping the draft-predicted anchor, we replace its K/V at selected layers with the same-layer K/V cached from a forward pass with the correct predecessor. With correct earlier history, the same number of injection layers, and the same predecessor K/V at the final layer, earlier injection improves successor accuracy over later injection by 14.8 points on average ( Figure 2 (c)), indicating that adjacent conditions affect how successor representations form. 
+These two observations are complementary: shallow prefix states already carry recoverable predictive cues, and accurate predecessor features help successors more when supplied earlier. Motivated by this, we explore transmitting predecessor prediction features to successors from shallow layers, letting token dependencies build up progressively through network depth ( Section 4 ). 
+4 DSpine: Adjacent Causal Injection and Output-Embedding Supervision 
+In parallel drafting, every position predicts before its predecessors commit to tokens, so a successor cannot know which token its predecessor will take ( Section 2.2 ). DSpine gives each successor what its immediate predecessor is predicting. The observations in Section 3 determine where this information comes from and when it arrives: from the adjacent predecessor, which supplies cues that earlier history cannot replace, and from the first layer on, since shallow prefix states already carry recoverable cues and accurate predecessor features help more when supplied earlier. 
+Figure 3 (a) outlines the resulting forward pass. After every Transformer layer, each position receives the feature its predecessor currently predicts, and a gate decides how much of it to absorb; all positions still update in parallel within a single forward pass. After the final layer, each position proposes its top- K K candidates, and tokens are selected from left to right: once a predecessor’s token is selected, it is written into its successor through the same injection, which yields the successor’s final scores. We describe what is passed ( Section 4.1 ), how it is passed inside the backbone ( Section 4.2 ), how the same pathway completes decoding ( Section 4.3 ), and how the passed features are supervised and the drafter is trained ( Sections 4.4 and 4.5 ). Figure 3: Overview of DSpine. (a) Injection passes predecessor features to successors at every layer (green); after the final layer, transition-cached decoding selects each token conditioned on its selected predecessor (orange). (b) One injection layer: predecessor and successor features jointly gate how much of the predecessor’s message enters the successor’s residual stream; training adds cosine alignment to C C and, with probability p p , substitutes C y t − 1 C_{y_{t-1}} for the predecessor feature. 
+4.1 Unified Transfer Space 
+Existing parallel drafters pass predecessor information to a successor in two ways: inside the backbone, as hidden states mixed across positions by attention or similar operations; after the backbone, as the selected predecessor token fed to an additional module. The former mixes the predecessor’s prediction with the context it has gathered, leaving the successor to infer which token the predecessor favors; the latter provides a decided token but only after all layers have been computed. DSpine passes the predecessor’s prediction itself from the first layer on, expressed in a space where vectors name tokens. 
+The target LM head scores token v v as E v ⊤ ​ h E_{v}^{\top}h , so its output embeddings naturally encode which token a state predicts. We build the unified transfer space from them: we ℓ 2 \ell_{2} -normalize the rows of the LM head, apply PCA whitening, keep r r principal directions, and normalize each row again to obtain a fixed embedding table C C ( Appendix A ); whitening removes the component shared by all tokens, so that directions in C C distinguish tokens. Two kinds of information enter this space. A predecessor whose token is still undetermined contributes a predicted feature: each layer projects its pre-injection state u ℓ , t u_{\ell,t} , the output of the ℓ \ell -th Transformer layer, to z ℓ , t = f ℓ ​ ( u ℓ , t ) = r ​ normalize ⁡ ( R ℓ ​ u ℓ , t ) z_{\ell,t}=f_{\ell}(u_{\ell,t})=\sqrt{r}\,\normalize(R_{\ell}u_{\ell,t}) without intermediate vocabulary decoding, where R ℓ R_{\ell} is a layer-specific learned projection to r r dimensions and normalize \normalize denotes ℓ 2 \ell_{2} normalization. A known token x x , namely the anchor or a decoded predecessor, enters directly as its embedding r ​ C x \sqrt{r}\,C_{x} . Because both take the same form, a single pathway can carry either a prediction or a decided token: DSpine passes predicted features inside the backbone and decoded tokens in predecessor-conditioned decoding. 
+4.2 Adjacent Causal Injection 
+After the ℓ \ell -th Transformer layer, position t t receives a message from its immediate predecessor only. Shallow predecessor features are still forming and vary in reliability, so the successor gates how much of the message to absorb: the receiver feature z ℓ , t z_{\ell,t} and the predecessor feature z ℓ , t − 1 z_{\ell,t-1} jointly determine the gate, while the predecessor feature is projected into a message that is gated and written back to the residual stream: 
+g ℓ , t \displaystyle g_{\ell,t} = σ ⁡ ( G q ​ z ℓ , t + G p ​ z ℓ , t − 1 + b ) , \displaystyle=\sigma\!\left(G_{q}z_{\ell,t}+G_{p}z_{\ell,t-1}+b\right), (4) 
+m ℓ , t \displaystyle m_{\ell,t} = A ​ z ℓ , t − 1 , \displaystyle=Az_{\ell,t-1}, 
+h ℓ , t \displaystyle h_{\ell,t} = u ℓ , t + RMS ⁡ ( u ℓ , t ) ​ W ℓ ​ ( g ℓ , t ⊙ m ℓ , t ) . \displaystyle=u_{\ell,t}+\RMS(u_{\ell,t})\,W_{\ell}\left(g_{\ell,t}\odot m_{\ell,t}\right). (5) 
+Here σ \sigma is the sigmoid function; A A , G q G_{q} , G p G_{p} , and b b are shared across layers, and each layer has its own write matrix W ℓ W_{\ell} . All messages use pre-update features, so injection within a layer runs in parallel across positions; the anchor remains unchanged. Block-causal attention. 
+Unlike DFlash and other parallel drafters with bidirectional block attention, DSpine uses block-causal attention in all L L backbone layers: position t t attends only to target-context K/V and block positions 0 , … , t 0,\ldots,t . Attention and injection thus share the predecessor-to-successor direction, and the correct information injected into a position during training cannot flow back to earlier positions ( Section 4.5 ). Drafting remains a single, block-parallel forward pass. Propagation through depth. 
+Because earlier access to accurate predecessor features benefits successor prediction ( Figure 2 (c)), injection starts at the first layer and its effects propagate through depth: messages received at one layer enter the next layer’s computation, shaping the predicted features that successors send onward. For example, information that t − 1 t-1 receives from t − 2 t-2 at layer ℓ \ell can influence the message sent to t t at layer ℓ + 1 \ell+1 ( Figure 3 (a)). The causal conditioning chain thus unfolds over network depth while positions within each layer update in parallel; earlier context remains accessible through block-causal attention. Fused layer-wise injection. 
+Layer-wise injection consists of small normalization, projection, gating, and residual-write operations, which a direct implementation executes as many kernel launches with intermediate tensor traffic. We merge the three projections into one matrix multiplication and use two fused kernels, one for the gated message and one for the residual write together with the next layer’s input normalization, all executed within the draft backbone’s CUDA graph. 
+4.3 Predecessor-Conditioned Decoding Figure 4: Transition cache. (a) Serial conditional scoring. (b) Parallel transition precomputation followed by sequential selection; greedy implementation shown. 
+Predecessor-conditioned decoding conditions each position on the token actually decoded at its predecessor, rather than on its predicted feature, and it needs no new module. The final-layer output h L , t h_{L,t} first passes through the final RMSNorm and shared LM head to determine each position’s initial top- K K candidates. A decoded predecessor is a known token, so it enters the unified transfer space directly and passes through the same final-layer injection: for a token s s at position t − 1 t-1 , we replace the predicted feature z L , t − 1 z_{L,t-1} with r ​ C s \sqrt{r}\,C_{s} , changing both gate and message, and redo the final-layer write ( Equation 5 ) from the cached pre-injection state u L , t u_{L,t} . We denote the output by h t o ​ ( s ) h_{t}^{\mathrm{o}}(s) and call this step last-write refinement ; the shared LM head maps it to conditional scores S t ​ ( s , v ) S_{t}(s,v) over the initial candidates. Transition-cached decoding. 
+Because each position’s scores depend on the predecessor’s choice, computing them directly proceeds sequentially across positions. The transition cache removes this sequential computation: once the backbone has fixed each position’s pre-injection state u L , t u_{L,t} and top- K K candidate set 𝒱 t = { v t , 1 , … , v t , K } \mathcal{V}_{t}=\{v_{t,1},\ldots,v_{t,K}\} , last-write refinement depends only on the predecessor’s token, so before selection we compute the refined final-layer features for all predecessor candidates in parallel and score the successor candidates, organized as T t ​ [ i , j ] = S t ​ ( v t − 1 , i , v t , j ) T_{t}[i,j]=S_{t}(v_{t-1,i},v_{t,j}) ( Figure 4 ). Enumerating all K 2 K^{2} pairs per transition trades additional scoring work for a shorter sequential dependency chain; in practice, K = 16 K=16 suffices at a small additional cost ( Section 5.4 ). Selection then proceeds through the cache from the first position, without any sequential matrix operations. 
+4.4 Layer-Wise Output-Embedding Supervision 
+The predicted features that injection passes serve two roles, and the final-layer loss shapes them only indirectly through later computation. First, they condition successors from the first layer on, yet in shallow layers they carry recoverable cues but are still forming ( Figure 2 (a)). Second, the injection receives predicted features inside the backbone but token embeddings in predecessor-conditioned decoding, so the two should lie close in the unified transfer space. DSpine therefore aligns the predicted features at every layer directly with the correct token’s embedding, promoting their formation in shallow layers and narrowing their gap to the token embeddings used in predecessor-conditioned decoding. Directional alignment. 
+With the projection f ℓ f_{\ell} used for injection, we read e ℓ , i = f ℓ ​ ( h ℓ , i ) e_{\ell,i}=f_{\ell}(h_{\ell,i}) from post-injection states and align it with the correct token’s embedding C y i C_{y_{i}} : 
+ℒ emb = ∑ ℓ = 1 L ∑ i w i ​ [ 1 − cos ⁡ ( e ℓ , i , C y i ) ] . \mathcal{L}_{\mathrm{emb}}=\sum_{\ell=1}^{L}\sum_{i}w_{i}\left[1-\cos\!\left(e_{\ell,i},C_{y_{i}}\right)\right]. (6) 
+where w i = exp ( − ( t i − 1 ) / γ ) w_{i}=\exp(-(t_{i}-1)/\gamma) is the decay weight for block position t i t_{i} . Because the readout follows injection, this loss trains both the formation of each feature and the successor’s use of the received message; it constrains only the direction of a low-dimensional projection, leaving the full hidden state free for contextual computation. 
+4.5 Training 
+We sample draft blocks from training sequences and train the drafter with the target model, shared input embeddings, and LM head frozen. Training supervises two outputs. The first is the ordinary final-layer output, which predicts over the full vocabulary and determines the top- K K candidates. The second is the output of last-write refinement: as at inference, it replaces the predicted predecessor feature with a token embedding and redoes the final-layer write, except that the correct predecessor token is used, and predicts only over those candidates. Both receive the same loss below, jointly training candidate generation and predecessor-conditioned decoding. 
+Let q i q_{i} and p i p_{i} denote the draft and target distributions at position i i under the correct prefix. Following the loss design of DSpark ( Cheng et al., 2026 ) , the loss is a weighted mix of token cross-entropy and probability ℓ 1 \ell_{1} distance: 
+ℒ dist = ∑ i w i ​ [ − α ​ log ⁡ q i ​ ( y i ) + ( 1 − α ) ​ ‖ q i − p i ‖ 1 ] , \mathcal{L}_{\mathrm{dist}}=\sum_{i}w_{i}\Bigl[-\alpha\log q_{i}(y_{i})+(1-\alpha)\,\|q_{i}-p_{i}\|_{1}\Bigr], (7) 
+where α \alpha is the mixing weight. The output of last-write refinement is also included in ℒ dist \mathcal{L}_{\mathrm{dist}} , except that its distributions are restricted to the top- K K candidates, with the target renormalized to that set. 
+Early in training, predicted features carry little reliable information, which gives the injection little to learn from. We therefore replace shallow-layer predecessor features with correct-token embeddings with some probability, keeping receiver features model-derived ( Bengio et al., 2015 ) , and gradually phase this replacement out; the unified transfer space makes this substitution direct. Last-write refinement always uses correct predecessors. The overall training objective weights layer-wise supervision by λ \lambda (coefficients and schedules in Appendix A ): 
+ℒ = ℒ dist + λ ​ ℒ emb . \mathcal{L}=\mathcal{L}_{\mathrm{dist}}+\lambda\,\mathcal{L}_{\mathrm{emb}}. (8) 
+5 Experiments 
+5.1 Experimental Setup Models and evaluations. 
+We conduct experiments on Qwen3-4B and Qwen3-8B ( Yang et al., 2025 ) with thinking mode disabled, covering three task categories: Math : GSM8K ( Cobbe et al., 2021 ) and MATH-500 ( Lightman et al., 2023 ) ; Code : HumanEval ( Chen et al., 2021 ) , MBPP ( Austin et al., 2021 ) , and LiveCodeBench (LCB) ( Jain et al., 2024 ) ; Chat : MT-Bench ( Zheng et al., 2023a ) and Arena-Hard ( Li et al., 2024a ) . On all seven benchmarks, we measure the average acceptance length τ \tau ( Section 2.1 ) in SGLang ( Zheng et al., 2023b ) at temperatures 0 and 1; serving throughput is measured on GSM8K, MATH-500, HumanEval, and MBPP at temperature 0 and concurrency 2–32, with the same fixed verification budget for all methods ( Appendix C ). Baselines. 
+We compare with four representative state-of-the-art parallel drafters: DFlash ( Chen et al., 2026 ) , Domino ( Huang et al., 2026 ) , DSpark ( Cheng et al., 2026 ) , and DFlash2 ( DFlash2 Team, 2026 ) . DFlash selects tokens independently across positions; the other three build on the DFlash backbone to model intra-block dependencies. Implementation. 
+For each target model, all drafters are retrained on the same ShareGPT data, with responses regenerated by the target; backbones use five layers and a block size of 16 and are trained for six epochs with the same global batch size and learning-rate schedule ( Appendix A ). 
+5.2 Main Results Table 1: Average acceptance length τ \tau on Qwen3 models. Each cell gives temperature 0 / 1; bold marks the best result for each model and temperature, and underline marks the second best. 
+Model Method Math Code Chat Overall 
+GSM8K MATH-500 HumanEval MBPP LCB MT-Bench Arena-Hard Avg. 
+DFlash 4.25 / 3.96 4.23 / 3.86 3.92 / 3.59 3.93 / 3.56 3.53 / 2.99 3.27 / 2.97 3.30 / 2.80 3.77 / 3.39 
+Domino 4.83 / 4.52 4.81 / 4.30 4.21 / 3.79 4.31 / 3.85 3.90 / 3.23 3.58 / 3.18 3.61 / 2.99 4.18 / 3.69 
+Qwen3-8B DSpark 4.99 / 4.61 4.90 / 4.48 4.43 / 4.07 4.50 / 4.12 4.01 / 3.49 3.69 / 3.37 3.69 / 3.26 4.32 / 3.92 
+DFlash2 5.03 / 4.56 5.10 / 4.47 4.43 / 4.04 4.52 / 4.06 4.09 / 3.50 3.71 / 3.35 3.82 / 3.29 4.39 / 3.90 
+DSpine (ours) 5.67 / 5.31 5.49 / 5.05 4.94 / 4.63 4.98 / 4.61 4.46 / 3.91 4.11 / 3.79 4.12 / 3.62 4.82 / 4.42 
+DFlash 4.16 / 3.98 4.14 / 3.82 3.77 / 3.62 3.92 / 3.65 3.42 / 2.99 3.29 / 3.16 3.26 / 2.89 3.71 / 3.44 
+Domino 4.79 / 4.58 4.73 / 4.31 4.22 / 4.00 4.39 / 4.09 3.79 / 3.25 3.66 / 3.42 3.61 / 3.16 4.17 / 3.83 
+Qwen3-4B DSpark 5.00 / 4.64 4.90 / 4.47 4.38 / 4.12 4.59 / 4.20 3.93 / 3.48 3.80 / 3.51 3.71 / 3.33 4.33 / 3.96 
+DFlash2 5.14 / 4.63 5.15 / 4.51 4.59 / 4.10 4.72 / 4.20 4.10 / 3.50 3.90 / 3.51 3.91 / 3.44 4.50 / 3.98 
+DSpine (ours) 5.53 / 5.22 5.38 / 4.94 4.79 / 4.59 5.04 / 4.67 4.29 / 3.79 4.19 / 3.84 4.02 / 3.64 4.75 / 4.38 
+As shown in Table 1 , DSpine achieves the longest acceptance length on all benchmarks for both models at both temperatures. On Qwen3-8B, it raises the average τ \tau of DFlash from 3.77 to 4.82 and leads the strongest baseline by 10.0% with greedy decoding (DFlash2) and by 12.8% under sampling (DSpark); on Qwen3-4B, its lead over the strongest baseline, DFlash2, is 5.4% and 10.1%, respectively. Domino, DSpark, and DFlash2, which condition on predecessors after the backbone, already improve substantially over DFlash, while DSpine, which conditions on predecessors at every layer and again at token selection, extends the gain further, with a larger lead under sampling (see Appendix C for each method’s proposal policy at temperature one). 
+5.3 Serving Throughput Figure 5: Serving throughput gain over DFlash on SGLang, in thousands of tokens per second (temperature zero). The dashed zero line is DFlash; shading and the strip above each panel give the lead of DSpine over DFlash2, the strongest baseline. 
+As shown in Figure 5 , DSpine achieves the highest throughput at every task and concurrency level on both models: on Qwen3-8B it outperforms the strongest baseline, DFlash2, by 11.1% on average and reaches up to 4.0 × \times speedup over autoregressive decoding ( Table 8 ); on Qwen3-4B it leads DFlash2 by 6.5% on average. The gain in acceptance length thus carries over to serving, and the extra cost of layer-wise injection and transition-cached decoding ( Section 5.4 ) does not offset it. 
+5.4 Decoding Latency Breakdown Figure 6: Module-level breakdown of Qwen3-8B decoding time on SGLang. 
+To examine where decoding time goes, we time each decoding round of Qwen3-8B in SGLang, split into a draft stage and a verification stage. As shown in Figure 6 , verification takes 72–76% of round time and costs about the same for all methods. DSpine’s parallel injection adds at most 0.15 ms per round across all five layers, and its predecessor-conditioned decoding, which scores candidates and selects through the transition cache ( Section 4.3 ), costs less than half as much as the post-backbone heads of DSpark and Domino. Overall, a DSpine round costs about as much as a DFlash2 round (7.14 vs. 7.19 ms), and because more tokens are accepted per round, DSpine spends 10.9% less decoding time per generated token than DFlash2. 
+5.5 Ablation Study Table 2: Ablation of module 
+Dataset Full w/o last-write refinement w/o refinement &amp; injection 
+MATH-500 5.49 5.11 4.93 
+MBPP 4.98 4.65 4.54 
+MT-Bench 4.11 3.82 3.67 Table 3: Ablation of supervision loss 
+Dataset None (DFlash) Token CE Embedding cosine 
+MATH-500 3.75 3.67 3.85 
+MBPP 3.48 3.40 3.63 
+MT-Bench 2.91 2.84 2.99 Effect of each component. 
+We train each variant in Table 3 independently. Removing last-write refinement reduces τ \tau by 6.6–7.1%, and further removing parallel injection enlarges the drop to 8.8–10.7%. Both components improve acceptance length, and their contributions are complementary. Supervision target. 
+Table 3 compares intermediate-layer supervision: directional supervision toward compact output embeddings improves acceptance length, whereas per-layer full-vocabulary cross-entropy falls below the unsupervised baseline. This supports the design of Section 4.4 , as forcing intermediate states to classify tokens may interfere with later layers’ contextual computation. 
+6 Related Work 
+Speculative decoding lets a lightweight drafter propose tokens that the target model verifies losslessly ( Leviathan et al., 2023 ; Chen et al., 2023 ) . Follow-ups mainly improve the drafter: Medusa predicts several positions with independent heads, Hydra makes these heads depend on drafted tokens ( Cai et al., 2024 ; Ankner et al., 2024 ) , the EAGLE series drafts autoregressively from target features ( Li et al., 2024b ; Li et al., 2024c ; Li et al., 2025 ) , and tree verification checks multiple continuations per round ( Miao et al., 2024 ; Li et al., 2024c ) . Autoregressive drafting conditions each token on its predecessors but costs one sequential step per token. 
+Parallel decoding methods predict multiple positions at once ( Stern et al., 2018 ; An et al., 2026 ; Liu et al., 2026 ; Christopher et al., 2025 ; Li et al., 2026 ; Chen et al., 2025 ) . DFlash drafts a block in one pass of a lightweight block-diffusion model conditioned on target features ( Chen et al., 2026 ) ; follow-ups add layer-wise target conditioning, position-weighted losses, or draft trees ( Zhang et al., 2026 ; Wu et al., 2026 ; Ringel and Romano, 2026 ) . Since positions predict before their predecessors commit, the resulting tokens can be inconsistent ( Stern et al., 2018 ; Cheng et al., 2026 ) . Most remedies restore this dependency after the backbone, through a causal correction branch (Domino), a sequential head (DSpark), or a path selector over top- k k candidates (DFlash2) ( Huang et al., 2026 ; Cheng et al., 2026 ; DFlash2 Team, 2026 ) , as well as previous-token conditioning, block refinement, or adjacent-candidate scoring ( Rheinboldt et al., 2026 ; Wang et al., 2026 ; Rusanovsky et al., 2026 ) . Inside the backbone, DFlash2 adds causal two-tap convolutions, and DART and JetSpec use causal block attention ( DFlash2 Team, 2026 ; Liu et al., 2026 ; Hu et al., 2026 ) . DSpine also uses block-causal attention but additionally injects each predecessor’s predicted feature, supervised in a unified transfer space, into its successor at every layer; the same injection carries decoded tokens in predecessor-conditioned decoding. 
+7 Conclusion 
+DSpine injects causal conditioning throughout the backbone, building intra-block token dependencies over network depth within a single parallel drafting pass. Gated adjacent injection passes predecessor features to successors at every layer, and a unified transfer space with layer-wise supervision links this injection to predecessor-conditioned decoding. A transition cache precomputes the scores of all adjacent candidate pairs in parallel, turning sequential conditional decoding into parallel computation. Across math, code, and chat tasks, DSpine improves acceptance length over representative parallel drafters and translates these gains into higher SGLang serving throughput. These results motivate further study of in-layer information transfer, including more flexible communication ranges and interactions in other parallel decoding architectures. 
+References 
+Leviathan et al. (2023) Yaniv Leviathan, Matan Kalman, and Yossi Matias. Fast inference from transformers via speculative decoding. In Andreas Krause, Emma Brunskill, Kyunghyun Cho, Barbara Engelhardt,
+Sivan Sabato, and Jonathan Scarlett, editors, Proceedings of the 40th
+International Conference on Machine Learning , volume 202 of Proceedings of Machine Learning Research , pages 19274–19286. PMLR,
+2023. 
+Li et al. (2025) Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang. EAGLE-3: Scaling up inference acceleration of large language models
+via training-time test. In Advances in Neural Information Processing Systems ,
+volume 38, 2025. 10.52202/085713-4562 . URL https://papers.nips.cc/paper_files/paper/2025/hash/c7b5a35ea98b62512a869c19ea7b03cb-Abstract-Conference.html . 
+Chen et al. (2026) Jian Chen, Yesheng Liang, and Zhijian Liu. DFlash: Block diffusion for flash speculative decoding. In Proceedings of the 43rd International Conference on Machine
+Learning , volume 306 of Proceedings of Machine Learning Research .
+PMLR, 2026. 
+DFlash2 Team (2026) DFlash2 Team. DFlash 2: Keep drafting parallel. Blog post, August 2026. URL https://inco.ai/blog/dflash2/ . 
+Huang et al. (2026) Jianuo Huang, Yaojie Zhang, Qituan Zhang, Hao Lin, Hanlin Xu, and Linfeng
+Zhang. Domino: Decoupling causal modeling from autoregressive drafting in
+speculative decoding. arXiv preprint arXiv:2605.29707, 2026. URL https://arxiv.org/abs/2605.29707 . 
+Cheng et al. (2026) Xin Cheng, Xingkai Yu, Chenze Shao, Jiashi Li, Yunfan Xiong, Yi Qian, Jiaqi
+Zhu, Shirong Ma, Xiaokang Zhang, Jiasheng Ye, Qinyu Chen, Chengqi Deng,
+Jiping Yu, Damai Dai, Zhengyan Zhang, Yixuan Wei, Yixuan Tan, Wenkai Yang,
+Runxin Xu, Yu Wu, Zhean Xu, Xuanyu Wang, Muyang Chen, Rui Tian, Xiao Bi,
+Zhewen Hao, Shaoyuan Chen, Huanqi Cao, Wentao Zhang, Anyi Xu, Huishuai Zhang,
+Dongyan Zhao, and Wenfeng Liang. DSpark: Confidence-scheduled speculative decoding with
+semi-autoregressive generation. arXiv preprint arXiv:2607.05147, 2026. URL https://arxiv.org/abs/2607.05147 . 
+Zhang et al. (2026) Jiebin Zhang, Zhenghan Yu, Song Liu, Eugene J. Yu, Zheng Li, Dawei Zhu,
+Jiangshan Duo, Weimin Xiong, Yifan Song, Guanghua Yu, Jianchen Zhu, and
+Sujian Li. DFlare: Scaling up draft capacity for block diffusion speculative
+decoding. arXiv preprint arXiv:2606.02091, 2026. URL https://arxiv.org/abs/2606.02091 . 
+Bengio et al. (2015) Samy Bengio, Oriol Vinyals, Navdeep Jaitly, and Noam Shazeer. Scheduled sampling for sequence prediction with recurrent neural
+networks. In C. Cortes, N. Lawrence, D. Lee, M. Sugiyama, and R. Garnett,
+editors, Advances in Neural Information Processing Systems , volume 28.
+Curran Associates, Inc., 2015. 
+Yang et al. (2025) An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen
+Yu, Chang Gao, Chengen Huang, Chenxu Lv, et al. Qwen3 technical report, 2025. 
+Cobbe et al. (2021) Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz
+Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano,
+Christopher Hesse, and John Schulman. Training verifiers to solve math word problems, 2021. 
+Lightman et al. (2023) Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Bowen Baker, Teddy
+Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. Let’s verify step by step, 2023. 
+Chen et al. (2021) Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de Oliveira
+Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg
+Brockman, et al. Evaluating large language models trained on code, 2021. 
+Austin et al. (2021) Jacob Austin, Augustus Odena, Maxwell Nye, Maarten Bosma, Henryk Michalewski,
+David Dohan, Ellen Jiang, Carrie Cai, Michael Terry, Quoc Le, and Charles
+Sutton. Program synthesis with large language models, 2021. 
+Jain et al. (2024) Naman Jain, King Han, Alex Gu, Wen-Ding Li, Fanjia Yan, Tianjun Zhang, Sida
+Wang, Armando Solar-Lezama, Koushik Sen, and Ion Stoica. LiveCodeBench: Holistic and contamination free evaluation of large
+language models for code, 2024. 
+Zheng et al. (2023a) Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao
+Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, et al. Judging LLM-as-a-judge with MT-Bench and Chatbot Arena,
+2023a. 
+Li et al. (2024a) Tianle Li, Wei-Lin Chiang, Evan Frick, Lisa Dunlap, Tianhao Wu, Banghua Zhu,
+Joseph E. Gonzalez, and Ion Stoica. From crowdsourced data to high-quality benchmarks: Arena-Hard and
+BenchBuilder pipeline, 2024a. 
+Zheng et al. (2023b) Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Chuyue Sun, Jeff Huang, Cody Hao
+Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E. Gonzalez, Clark
+Barrett, and Ying Sheng. SGLang: Efficient execution of structured language model programs,
+2023b. 
+Chen et al. (2023) Charlie Chen, Sebastian Borgeaud, Geoffrey Irving, Jean-Baptiste Lespiau,
+Laurent Sifre, and John Jumper. Accelerating large language model decoding with speculative sampling. arXiv preprint arXiv:2302.01318, 2023. URL https://arxiv.org/abs/2302.01318 . 
+Cai et al. (2024) Tianle Cai, Yuhong Li, Zhengyang Geng, Hongwu Peng, Jason D. Lee, Deming Chen,
+and Tri Dao. Medusa: Simple LLM inference acceleration framework with multiple
+decoding heads. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian
+Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors, Proceedings of the 41st International Conference on Machine Learning ,
+volume 235 of Proceedings of Machine Learning Research , pages
+5209–5235. PMLR, 2024. 
+Ankner et al. (2024) Zachary Ankner, Rishab Parthasarathy, Aniruddha Nrusimha, Christopher Rinard,
+Jonathan Ragan-Kelley, and William Brandon. Hydra: Sequentially-dependent draft heads for Medusa decoding. In First Conference on Language Modeling , 2024. URL https://openreview.net/forum?id=FbhjirzvJG . 
+Li et al. (2024b) Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang. EAGLE: Speculative sampling requires rethinking feature
+uncertainty. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian
+Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors, Proceedings of the 41st International Conference on Machine Learning ,
+volume 235 of Proceedings of Machine Learning Research , pages
+28935–28948. PMLR, 2024b. 
+Li et al. (2024c) Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang. EAGLE-2: Faster inference of language models with dynamic draft
+trees. In Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen, editors, Proceedings of the 2024 Conference on Empirical Methods in Natural
+Language Processing , pages 7421–7432, Miami, Florida, USA, November
+2024c. Association for Computational Linguistics. 10.18653/v1/2024.emnlp-main.422 . URL https://aclanthology.org/2024.emnlp-main.422/ . 
+Miao et al. (2024) Xupeng Miao, Gabriele Oliaro, Zhihao Zhang, Xinhao Cheng, Zeyu Wang, Zhengxin
+Zhang, Rae Ying Yee Wong, Alan Zhu, Lijie Yang, Xiaoxiang Shi, Chunan Shi,
+Zhuoming Chen, Daiyaan Arfeen, Reyna Abhyankar, and Zhihao Jia. SpecInfer: Accelerating large language model serving with
+tree-based speculative inference and verification. In Proceedings of the 29th ACM International Conference on
+Architectural Support for Programming Languages and Operating Systems, Volume
+3 , ASPLOS ’24, pages 932–949. ACM, 2024. 10.1145/3620666.3651335 . 
+Stern et al. (2018) Mitchell Stern, Noam Shazeer, and Jakob Uszkoreit. Blockwise parallel decoding for deep autoregressive models. In S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi,
+and R. Garnett, editors, Advances in Neural Information Processing
+Systems , volume 31. Curran Associates, Inc., 2018. 
+An et al. (2026) Zihao An, Huajun Bai, Ziqiong Liu, Dong Li, and Emad Barsoum. PARD: Accelerating LLM inference with low-cost PARallel draft
+model adaptation. In The Fourteenth International Conference on Learning
+Representations , 2026. URL https://openreview.net/forum?id=XbOyv7iVGL . 
+Liu et al. (2026) Fuliang Liu, Xue Li, Ketai Zhao, Yinxi Gao, Ziyan Zhou, Zhonghui Zhang, Zhibin
+Wang, Wanchun Dou, Sheng Zhong, and Chen Tian. DART: Diffusion-inspired speculative decoding for fast LLM
+inference. arXiv preprint arXiv:2601.19278, 2026. URL https://arxiv.org/abs/2601.19278 . 
+Christopher et al. (2025) Jacob K Christopher, Brian R. Bartoldson, Tal Ben-Nun, Michael Cardei, Bhavya
+Kailkhura, and Ferdinando Fioretto. Speculative diffusion decoding: Accelerating language generation
+through diffusion. In Luis Chiruzzo, Alan Ritter, and Lu Wang, editors, Proceedings of the 2025 Conference of the Nations of the Americas
+Chapter of the Association for Computational Linguistics: Human Language
+Technologies (Volume 1: Long Papers) , pages 12042–12059, Albuquerque, New
+Mexico, April 2025. Association for Computational Linguistics. 10.18653/v1/2025.naacl-long.601 . URL https://aclanthology.org/2025.naacl-long.601/ . 
+Li et al. (2026) Guanghao Li, Zhihui Fu, Min Fang, Qibin Zhao, Ming Tang, Chun Yuan, and Jun
+Wang. DiffuSpec: Unlocking diffusion language models for speculative
+decoding. In Maria Liakata, Viviane P. Moreira, Jiajun Zhang, and David
+Jurgens, editors, Findings of the Association for Computational
+Linguistics: ACL 2026 , pages 20896–20910, San Diego, California, United
+States, July 2026. Association for Computational Linguistics. 10.18653/v1/2026.findings-acl.1048 . URL https://aclanthology.org/2026.findings-acl.1048/ . 
+Chen et al. (2025) Keyu Chen, Zhifeng Shen, Daohai Yu, Haoqian Wu, Wei Wen, Jianfeng He, Ruizhi
+Qiao, and Xing Sun. ASPD: Unlocking adaptive serial-parallel decoding by exploring
+intrinsic parallelism in LLMs. arXiv preprint arXiv:2508.08895, 2025. URL https://arxiv.org/abs/2508.08895 . 
+Wu et al. (2026) Tianyu Wu, Yu Yao, Zhenting Qi, Han Zheng, Zhuohan Wang, Haoran Ma, Lawrence
+Liao, Himabindu Lakkaraju, Ju Li, and Yilun Du. D-PACE: Dynamic position-aware cross-entropy for parallel
+speculative drafting. arXiv preprint arXiv:2605.18810, 2026. URL https://arxiv.org/abs/2605.18810 . 
+Ringel and Romano (2026) Liran Ringel and Yaniv Romano. Accelerating speculative decoding with block diffusion draft trees. arXiv preprint arXiv:2604.12989, 2026. URL https://arxiv.org/abs/2604.12989 . 
+Rheinboldt et al. (2026) Peer Rheinboldt, Frédéric Berdoz, and Roger Wattenhofer. TreeFlash: Parallel AR-approximation for faster speculative
+decoding. arXiv preprint arXiv:2606.03819, 2026. URL https://arxiv.org/abs/2606.03819 . 
+Wang et al. (2026) Zheng Wang, Davis Wertheimer, Yu Chin Fabian Lim, Mudhakar Srivatsa, Raghu K.
+Ganti, Minjia Zhang, and Naigang Wang. xPress: Parallel refinement for diffusion drafters in speculative
+decoding. arXiv preprint arXiv:2608.02438, 2026. URL https://arxiv.org/abs/2608.02438 . 
+Rusanovsky et al. (2026) Matan Rusanovsky, Yoav Miron, Roy Uziel, Omer Belhasin, Hao Guo, Ran
+Zilberstein, Maor Ashkenazi, and Michael Elad. LiLiCorr: Lightweight likelihood correlation of parallel drafts for
+speculative decoding. arXiv preprint arXiv:2608.20530, 2026. URL https://arxiv.org/abs/2608.20530 . 
+Hu et al. (2026) Lanxiang Hu, Zhaoxiang Feng, Yulun Wu, Haoran Yuan, Yujie Zhao, Yu-Yang Qian,
+Bojun Wang, Peng Zhao, Daxin Jiang, Yibo Zhu, Tajana Rosing, and Hao Zhang. JetSpec: Breaking the scaling ceiling of speculative decoding with
+parallel tree drafting. arXiv preprint arXiv:2606.18394, 2026. URL https://arxiv.org/abs/2606.18394 . 
+Shah et al. (2024) Jay Shah, Ganesh Bikshandi, Ying Zhang, Vijay Thakkar, Pradeep Ramani, and Tri
+Dao. FlashAttention-3: Fast and accurate attention with asynchrony and
+low-precision, 2024. 
+Appendix A Implementation Details of DSpine Architecture. 
+DSpine builds on the DFlash drafter for Qwen3-8B ( Table 4 ): five Transformer layers with block-causal attention, target context features fused from five target layers and supplied as K/V to every layer, and the target’s input embedding and LM head shared and frozen. Injection adds about 33M parameters, roughly 3% of the backbone. Unified transfer space. 
+Let E ¯ v \bar{E}_{v} be the ℓ 2 \ell_{2} -normalized LM-head row of token v v and μ \mu its mean over the vocabulary, and let P r P_{r} and Λ r \Lambda_{r} hold the top r r eigenvectors and eigenvalues of the centered Gram matrix ∑ v ( E ¯ v − μ ) ​ ( E ¯ v − μ ) ⊤ \sum_{v}(\bar{E}_{v}-\mu)(\bar{E}_{v}-\mu)^{\top} . The table is C v = normalize ( Λ r − 1 / 2 P r ⊤ ( E ¯ v − μ ) ) C_{v}=\normalize\bigl(\Lambda_{r}^{-1/2}P_{r}^{\top}(\bar{E}_{v}-\mu)\bigr) , fixed and shared by all layers. Initialization. 
+Each readout matrix R ℓ R_{\ell} is initialized with P r ⊤ P_{r}^{\top} ; the write matrices W ℓ W_{\ell} and the predecessor gate matrix G p G_{p} are zero-initialized with b = 0 b=0 , so every injection starts as the identity map. Losses. 
+Both the backbone output and the last-write refinement output use α = 0.1 \alpha=0.1 in Equation 7 and are summed with equal weight. The layer-wise supervision weight is λ = β t ​ sg ⁡ ( CE bb ) \lambda=\beta_{t}\,\sg(\mathrm{CE}_{\mathrm{bb}}) , where CE bb \mathrm{CE}_{\mathrm{bb}} is the token cross-entropy of the backbone output and β t \beta_{t} rises linearly from 0 to 0.5 over the first 146 steps. For last-write refinement, the cross-entropy term is computed only where the correct token lies among the K = 16 K=16 candidates, and the ℓ 1 \ell_{1} term only where the candidates hold more than 10 − 4 10^{-4} of the target probability, against the target distribution renormalized to the candidates. Correct-predecessor curriculum. 
+Each draft block is selected with probability p p by one draw shared by layers 1–3, which then use r ​ C y t − 1 \sqrt{r}\,C_{y_{t-1}} as predecessor input. p p is 0.5 0.5 for the first sixth of training and decays linearly to zero at one third. Training setup. 
+All drafters share the same training configuration: the same ShareGPT data with responses regenerated by the target model with thinking disabled, the same draft block of one anchor and 15 candidates, a global batch of 112 sequences, AdamW without weight decay at a peak learning rate of 6 × 10 − 4 6\times 10^{-4} with 4% linear warmup (146 steps) and cosine decay to zero, a maximum training sequence length of 3,072 tokens, and six epochs (3,655 steps). Table 4 lists the remaining DSpine hyperparameters. Table 4: Remaining DSpine hyperparameters for Qwen3-8B. 
+Hyperparameter Value 
+Draft layers L L 5 
+Hidden size 4096 
+Target feature layers { 1 , 9 , 17 , 25 , 33 } \{1,9,17,25,33\} 
+Transfer-space dimension r r 1024 
+Message dimension a a 512 
+Candidates K K 16 
+Anchors per sequence 512 
+Gradient-norm clip 1.0 
+Position decay γ \gamma 7 
+Loss mixing α \alpha 0.1 
+Appendix B Details of the Conditioning Experiments 
+B.1 Setup, Readouts, and Metrics 
+We use the GSM8K test set and HumanEval with the frozen official Qwen3-8B-DFlash-b16 drafter; greedy Qwen3-8B continuations (thinking disabled, at most 1,024 new tokens) serve as correct tokens. Each block contains one anchor and 15 candidates. 
+For layer ℓ \ell , the readout is 
+q ℓ = softmax ⁡ ( E ⁡ [ n ⁡ ( h ℓ ) + U ℓ ​ V ℓ ​ n ​ ( h ℓ ) + b ℓ ] ) , q_{\ell}=\softmax\!\left(E[n(h_{\ell})+U_{\ell}V_{\ell}n(h_{\ell})+b_{\ell}]\right), (9) 
+where E E is the frozen target LM head, n n is RMS normalization without a trainable scale, and U ℓ ​ V ℓ U_{\ell}V_{\ell} has rank 64. Each readout is fitted with cross-entropy on 500 GSM8K training questions and selected on another 100, both disjoint from the test data (AdamW, three epochs, batch size 256, learning rate 10 − 3 10^{-3} , weight decay 10 − 4 10^{-4} , 5% warmup, cosine decay). 
+For T T evaluated positions, the number of consecutive correct tokens is 
+K T = ∑ j = 1 T ∏ t = 1 j 𝕀 [ y ^ t = y t ] , K_{T}=\sum_{j=1}^{T}\prod_{t=1}^{j}\mathbb{I}[\hat{y}_{t}=y_{t}], (10) 
+which, unlike τ \tau , compares predictions with fixed correct continuations. We average blocks within each task and then over tasks; panels (b) and (c) of Figure 2 average GSM8K and HumanEval with equal weight. 
+B.2 Prefix Content and Timing 
+We fix the correct token x 7 x_{7} as a new anchor and fill x 1 , … , x 6 x_{1},\ldots,x_{6} with either draft predictions (P) or correct tokens (G), keeping earlier context unchanged. The target model encodes the context up to x 6 x_{6} , and its fused features enter each draft layer as K/V; layer 1 always receives P features, while layers 2–5 follow the chosen schedule. We evaluate x 8 , … , x 15 x_{8},\ldots,x_{15} and report the relative gain in K 8 K_{8} over the all-P schedule. Table 5 lists all schedules, and Figure 2 (b) shows the average of the two datasets. Table 5: Prefix-timing conditions. Schedules list layers 1–5; P/G denotes predicted/correct prefix features. Gains in K 8 K_{8} are relative to the all-P baseline. 
+Schedule GSM8K gain (%) HumanEval gain (%) 
+P P P P P +0.00 +0.00 
+P G G G G +6.23 +7.12 
+P P G G G +1.87 +3.93 
+P P P P G − - 0.18 +0.26 
+P G P P G +4.18 +4.50 
+P P G P G +1.06 +3.09 
+P P P G G +0.70 +1.73 
+B.3 Adjacent Predecessor versus Earlier History 
+For original-block positions 4, 8, and 12, we use the immediately preceding token as a new anchor; the earlier history and the anchor independently take draft predictions or correct tokens. The history is encoded by the target model and the predecessor enters the drafter through its input embedding, so each evaluated token is the first candidate of its new block. Table 6 reports the gain from correcting only the predecessor; the L1–L5 points in Figure 2 (c) average it over the three positions. Correcting the predecessor helps in every setting; at position 12 with correct history, accuracy rises from 51.00% to 93.50% on GSM8K and from 48.78% to 91.31% on HumanEval. Table 6: Accuracy gain (percentage points) from correcting only the predecessor. History refers to tokens before the predecessor; positions refer to the original block. 
+Dataset History Position 4 Position 8 Position 12 
+GSM8K Predicted 14.88 19.63 23.38 
+GSM8K Correct 17.62 31.87 42.50 
+HumanEval Predicted 14.02 23.63 19.51 
+HumanEval Correct 17.53 38.72 42.53 
+B.4 Timing of Predecessor Features 
+We cache the predecessor’s K/V at every layer in two forward passes, one with the predicted and one with the correct predecessor, and substitute the correct K/V only at selected layers. The comparison supplies correct features twice: at layer 5 and at one of layers 2–4. The all-predicted and all-correct schedules reproduce the two native forward passes, so the L1–L5 points in Figure 2 (c) equal the content effect in Section B.3 . Averaged over the three positions, L2+L5 improves accuracy over L4+L5 by 14.33 and 15.24 points on GSM8K and HumanEval with correct history ( Table 7 ), and by 9.63 and 8.99 points with predicted history. Table 7: L2+L5 minus L4+L5 with correct earlier history. Accuracy differences are in percentage points; K 4 K_{4} counts at most four consecutive correct candidates, excluding the anchor. 
+Dataset Position Accuracy difference K 4 K_{4} difference 
+GSM8K 4 7.38 0.226 
+GSM8K 8 17.00 0.565 
+GSM8K 12 18.63 0.755 
+HumanEval 4 11.28 0.280 
+HumanEval 8 15.85 0.694 
+HumanEval 12 18.60 0.745 
+Appendix C Experimental Details Table 8: SGLang throughput (tokens/s; Figure 5 ). Green: speedup over AR; bold: best speculative method. 
+Task Method Qwen3-8B (concurrency) Qwen3-4B (concurrency) 
+2 4 8 16 32 2 4 8 16 32 
+Baseline 381 747 1405 2729 4922 552 1072 2059 3794 6768 
+DFlash 1163 3.05 × \times 2191 2.93 × \times 3799 2.70 × \times 5349 1.96 × \times 6327 1.29 × \times 1615 2.92 × \times 2991 2.79 × \times 5250 2.55 × \times 7873 2.08 × \times 9534 1.41 × \times 
+GSM8K Domino 1193 3.13 × \times 2229 2.98 × \times 3884 2.76 × \times 5576 2.04 × \times 6675 1.36 × \times 1626 2.94 × \times 3001 2.80 × \times 5254 2.55 × \times 7909 2.08 × \times 10000 1.48 × \times 
+DSpark 1223 3.21 × \times 2280 3.05 × \times 3931 2.80 × \times 5656 2.07 × \times 6789 1.38 × \times 1663 3.01 × \times 3057 2.85 × \times 5296 2.57 × \times 7950 2.10 × \times 10002 1.48 × \times 
+DFlash2 1327 3.49 × \times 2473 3.31 × \times 4234 3.01 × \times 5899 2.16 × \times 6975 1.42 × \times 1876 3.40 × \times 3460 3.23 × \times 6015 2.92 × \times 8807 2.32 × \times 10683 1.58 × \times 
+DSpine 1480 3.88× 2758 3.69× 4704 3.35× 6732 2.47× 7825 1.59× 2018 3.65× 3698 3.45× 6442 3.13× 9527 2.51× 11541 1.71× 
+Baseline 380 743 1394 2629 4524 550 1061 2012 3577 6107 
+DFlash 1218 3.21 × \times 2329 3.13 × \times 4017 2.88 × \times 5581 2.12 × \times 6589 1.46 × \times 1673 3.04 × \times 3144 2.96 × \times 5605 2.79 × \times 8192 2.29 × \times 10115 1.66 × \times 
+MATH-500 Domino 1241 3.27 × \times 2345 3.16 × \times 4138 2.97 × \times 5870 2.23 × \times 6927 1.53 × \times 1682 3.06 × \times 3156 2.97 × \times 5584 2.78 × \times 8474 2.37 × \times 10708 1.75 × \times 
+DSpark 1260 3.32 × \times 2382 3.21 × \times 4136 2.97 × \times 5914 2.25 × \times 7032 1.55 × \times 1707 3.11 × \times 3220 3.03 × \times 5681 2.82 × \times 8508 2.38 × \times 10454 1.71 × \times 
+DFlash2 1403 3.69 × \times 2647 3.56 × \times 4542 3.26 × \times 6322 2.40 × \times 7384 1.63 × \times 1991 3.62 × \times 3691 3.48 × \times 6452 3.21 × \times 9638 2.69 × \times 11453 1.88 × \times 
+DSpine 1522 4.01× 2875 3.87× 4968 3.56× 7030 2.67× 8200 1.81× 2087 3.80× 3906 3.68× 6961 3.46× 10217 2.86× 12367 2.03× 
+Baseline 379 735 1362 2541 4355 550 1060 2027 3654 5148 
+DFlash 1107 2.92 × \times 2077 2.83 × \times 3595 2.64 × \times 4925 1.94 × \times 5595 1.28 × \times 1512 2.75 × \times 2788 2.63 × \times 4809 2.37 × \times 7326 2.00 × \times 8617 1.67 × \times 
+HumanEval Domino 1084 2.86 × \times 2012 2.74 × \times 3515 2.58 × \times 5065 1.99 × \times 5789 1.33 × \times 1494 2.72 × \times 2784 2.63 × \times 4714 2.33 × \times 7250 1.98 × \times 8757 1.70 × \times 
+DSpark 1126 2.97 × \times 2081 2.83 × \times 3618 2.66 × \times 5088 2.00 × \times 5861 1.35 × \times 1524 2.77 × \times 2833 2.67 × \times 4832 2.38 × \times 7319 2.00 × \times 8630 1.68 × \times 
+DFlash2 1225 3.23 × \times 2329 3.17 × \times 3876 2.85 × \times 5433 2.14 × \times 6141 1.41 × \times 1755 3.19 × \times 3347 3.16 × \times 5488 2.71 × \times 8334 2.28 × \times 9515 1.85 × \times 
+DSpine 1354 3.57× 2541 3.46× 4325 3.18× 6158 2.42× 6963 1.60× 1840 3.34× 3446 3.25× 5874 2.90× 8699 2.38× 10134 1.97× 
+Baseline 381 740 1393 2682 4705 549 1062 1996 3525 5828 
+DFlash 1157 3.04 × \times 2129 2.88 × \times 3725 2.67 × \times 5289 1.97 × \times 6147 1.31 × \times 1598 2.91 × \times 2980 2.81 × \times 5211 2.61 × \times 7796 2.21 × \times 9265 1.59 × \times 
+MBPP Domino 1139 2.99 × \times 2117 2.86 × \times 3677 2.64 × \times 5338 1.99 × \times 6302 1.34 × \times 1569 2.86 × \times 2932 2.76 × \times 5063 2.54 × \times 7775 2.21 × \times 9448 1.62 × \times 
+DSpark 1176 3.09 × \times 2174 2.94 × \times 3801 2.73 × \times 5501 2.05 × \times 6440 1.37 × \times 1624 2.96 × \times 3023 2.85 × \times 5274 2.64 × \times 7803 2.21 × \times 9515 1.63 × \times 
+DFlash2 1275 3.35 × \times 2333 3.15 × \times 4042 2.90 × \times 5667 2.11 × \times 6646 1.41 × \times 1830 3.33 × \times 3376 3.18 × \times 6064 3.04 × \times 8771 2.49 × \times 10287 1.76 × \times 
+DSpine 1399 3.68× 2586 3.50× 4465 3.21× 6411 2.39× 7321 1.56× 1948 3.55× 3673 3.46× 6346 3.18× 9369 2.66× 11072 1.90× Evaluation. 
+Each benchmark uses its complete test set (1,319 GSM8K, 500 MATH-500, 164 HumanEval, 500 MBPP, 1,055 LCB, 80 MT-Bench, and 500 Arena-Hard prompts; MT-Bench runs both turns). All methods receive identical prompts without a system message and generate at most 2,048 new tokens. Acceptance length in Table 1 is measured in SGLang with eight single-GPU instances, each serving up to 16 concurrent requests; at temperature one, tokens are sampled from the full target distribution. Every method proposes 15 draft tokens per round. τ \tau is averaged over the responses of each benchmark, and Avg. is the unweighted mean over benchmarks. Lossless verification. 
+If the first rejection occurs at position j j , we keep x ^ 1 : j − 1 \hat{x}_{1:j-1} and sample a replacement from 
+p j corr ​ ( v ) = [ p j ​ ( v ) − q draft , j ​ ( v ) ] + ∑ u ∈ 𝒱 [ p j ​ ( u ) − q draft , j ​ ( u ) ] + , [ a ] + = max ⁡ ( a , 0 ) , p_{j}^{\mathrm{corr}}(v)=\frac{[p_{j}(v)-q_{\mathrm{draft},j}(v)]_{+}}{\sum_{u\in\mathcal{V}}[p_{j}(u)-q_{\mathrm{draft},j}(u)]_{+}},\qquad[a]_{+}=\max(a,0), (11) 
+where 𝒱 \mathcal{V} is the vocabulary; if all M M candidates are accepted, one additional token is sampled from the target. Together with Equation 1 , this preserves the target distribution. Decoding at temperature one. 
+All methods use SGLang’s lossless verification. DSpark, DFlash2, and DSpine sample their proposals, the latter two from the softmax of their selector or transition-cache scores over the top-16 candidates of each position, and apply rejection sampling with these proposal probabilities; DFlash and Domino propose greedily and accept a candidate when it matches the token sampled from the target. Serving. 
+Each instance uses one GPU (tensor parallelism one, BF16, FlashAttention-3 ( Shah et al., 2024 ) , CUDA graphs) at temperature zero with at most 2,048 output tokens on the complete GSM8K, MATH-500, HumanEval, and MBPP test sets, with identical prompts in the same order. Throughput is the total number of output tokens divided by the wall-clock time of the whole workload, including prefill and scheduling. All methods use the same static budget of 15 draft tokens per round. Supervision targets. 
+The variants in Table 3 use the same training data, disable injection, and are trained for three epochs (1,827 steps); token CE decodes every layer through the shared final RMSNorm and the frozen target LM head. All variants are evaluated in SGLang at temperature zero. Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

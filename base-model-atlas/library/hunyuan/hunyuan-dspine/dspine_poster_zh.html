@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSpine · 中文研究 Poster</title>
+
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style>.poster-tabs{display:flex;gap:10px;padding:16px 20px;border-bottom:1px solid #78350f;flex-wrap:wrap}.poster-tabs button{background:#292524;border:1px solid #78563a;color:#e7e5e4;padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;line-height:1.4;font-family:inherit}.poster-tabs button[aria-selected="true"]{background:#78350f;border-color:#fbbf24;color:#fef3c7}.poster-panel[hidden]{display:none!important}.poster a{color:#fbbf24}html[data-theme="light"] .poster-tabs button{background:#f4ede3;color:#30251e}html[data-theme="light"] .poster-tabs button[aria-selected="true"]{background:#fde68a;border-color:#a16207}</style><style>html[data-theme="light"] .poster .score-box .sub{color:#f5e6d1!important}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body>
+
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>📚 BrainHao · </span><a href="DSpine.html">详细研读笔记</a> · <a href="https://arxiv.org/html/2609.36173v2">Tech Report · HTML</a> · <a href="https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16">🤗 HF Model Card</a> · <a href="https://github.com/Tencent/DSpine">官方代码</a></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">腾讯 · DSpine | arXiv 2609.36173v2</span>
+    <div class="zh-title">并行起草，沿深度传递因果条件</div>
+    <h1>Draft in Parallel, <span>Condition Through Depth</span></h1>
+    <div class="authors">Haohui Zhang、Keyu Chen、Haocheng Sun 等 · 8B / 27B 目标适配共用一条支线</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">5 层</div><div class="sub">27B 适配<br>草稿结构</div></div>
+    <div class="score-box"><div class="num">16</div><div class="sub">DSpine<br>block size</div></div>
+    <div class="score-box"><div class="num">3.84×</div><div class="sub">Office low<br>相对 AR 回放吞吐</div></div>
+    <div class="score-box"><div class="num">11/07</div><div class="sub">2026 北京时间<br>27B 同族公开更新</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<div class="poster-tabs" role="tablist" aria-label="DSpine Poster 板块"><button type="button" id="poster-tab-0" role="tab" aria-controls="poster-panel-0" aria-selected="true">方法与训练</button><button type="button" id="poster-tab-1" role="tab" aria-controls="poster-panel-1" aria-selected="false">评测与部署</button><button type="button" id="poster-tab-2" role="tab" aria-controls="poster-panel-2" aria-selected="false">日期与来源</button></div><div><section class="poster-panel" id="poster-panel-0" role="tabpanel" aria-labelledby="poster-tab-0"><div class="main-grid"><div class="col"><div class="sec-head c-amber"><div class="nc">1</div><h2>并行生成也需要一致前缀</h2></div><p class="body">独立并行预测的 token 各自可能合理，拼起来却未必相容。目标按前缀核验：一个早期错误会截断后面整段候选。</p><div class="gap-box g1"><div class="title">问题定位</div><p>浅层的前几个位置已经有可读出的预测；同样准确的前驱信息，越早进入后继计算越有帮助。</p></div><div class="gap-box g2"><div class="title">方法定位</div><p>DSpine 是依附目标的草稿模型，不独立作答。8B/27B 是目标模型标识，不是草稿的参数量。</p></div><p class="body">目标模型、共享输入 embedding 与 LM head 冻结。草稿在一次前向中并行更新多个位置，因果信息通过网络深度逐层向后传播。</p></div><div class="col"><div class="sec-head c-orange"><div class="nc">2</div><h2>把前驱预测注入每一层</h2></div><div class="fig-box"><a href="src/assets/official-overview.png"><img src="src/assets/official-overview.png" alt="DSpine 官方机制图"></a><div class="fig-cap">官方图：门控相邻注入、最后条件修正 · 点击看原图</div></div><div class="gap-box g2"><div class="title">层内消息</div><p>前驱与后继共同门控预测特征的残差写入。消息使用共同的更新前快照，保持位置并行。</p></div><div class="gap-box g3"><div class="title">最终候选选择</div><p>用已选前驱 token 修正后继的最后写入；top-K 候选对的转移分数预先缓存，避免顺序矩阵计算。</p></div><p class="body">block-causal attention 防止训练注入的正确 token 反向泄漏。目标核验仍是最终接受机制。</p></div><div class="col"><div class="sec-head c-green"><div class="nc">3</div><h2>训练能传递的浅层预测</h2></div><div class="fig-box"><a href="src/assets/handdrawn.png"><img src="src/assets/handdrawn.png" alt="DSpine 手绘机制示意"></a><div class="fig-cap">研读示意：并行位置、逐层传播 · 点击看原图</div></div><div class="gap-box g1"><div class="title">两类监督</div><p>最终普通/条件修正输出蒸馏目标概率；逐层 cosine 对齐紧凑输出嵌入。逐层全词表 CE 的消融反而更差。</p></div><p class="body">论文 8B：ShareGPT、6 epochs / 3,655 步，batch 112，最长 3,072；AdamW 6e-4、4% warm-up，无 weight decay。浅层正确前驱替换逐步退火。</p><p class="body">这些不是 27B 的训练配方。当前卡缺少足够训练与硬件信息，不能宣称完成复现。</p></div></div></section><section class="poster-panel" id="poster-panel-1" role="tabpanel" aria-labelledby="poster-tab-1" hidden=""><div class="main-grid"><div class="col"><div class="sec-head c-amber"><div class="nc">1</div><h2>论文：ShareGPT 同配置重训</h2></div><p class="body">8B 七任务接受长度均值；T=0 / T=1 分列。</p><table class="rtable"><thead><tr><th>方法</th><th>T=0</th><th>T=1</th></tr></thead><tbody><tr><td class="left">DFlash</td><td>3.77</td><td>3.39</td></tr><tr><td class="left">DFlash2</td><td>4.39</td><td>3.90</td></tr><tr><td class="left">DSpine</td><td>4.82</td><td>4.42</td></tr></tbody></table><p class="body">论文另报服务吞吐对 DFlash 平均 +23.3%，对 DFlash2 平均 +11.1%。接受长度提升不是吞吐提升。</p><table class="rtable"><thead><tr><th>8B 消融 T=0</th><th>完整</th><th>去修正</th><th>再去注入</th></tr></thead><tbody><tr><td class="left">MATH-500</td><td>5.49</td><td>5.11</td><td>4.93</td></tr><tr><td class="left">MBPP</td><td>4.98</td><td>4.65</td><td>4.54</td></tr><tr><td class="left">MT-Bench</td><td>4.11</td><td>3.82</td><td>3.67</td></tr></tbody></table><div class="gap-box g1"><div class="title">服务口径</div><p>BF16/FA3、TP=1、CUDA graph；T=0、并发2–32；同提示顺序与核验预算，wall time含prefill和调度。</p></div></div><div class="col"><div class="sec-head c-orange"><div class="nc">2</div><h2>8B 原卡：另一套训练数据</h2></div><p class="body">当前模型卡使用 Open-PerfectBlend；不覆盖论文 ShareGPT 表。以下 T=0 接受长度，完整双温度表见笔记。</p><table class="rtable"><thead><tr><th>任务</th><th>DFlash2</th><th>DSpine</th></tr></thead><tbody><tr><td class="left">GSM8K</td><td>10.06</td><td>10.55</td></tr><tr><td class="left">MATH-500</td><td>10.04</td><td>10.30</td></tr><tr><td class="left">HumanEval</td><td>7.99</td><td>8.27</td></tr><tr><td class="left">MBPP</td><td>7.33</td><td>7.66</td></tr><tr><td class="left">LiveCodeBench</td><td>6.96</td><td>7.25</td></tr><tr><td class="left">MT-Bench</td><td>5.40</td><td>5.63</td></tr><tr><td class="left">Arena-Hard</td><td>5.06</td><td>5.13</td></tr><tr><td class="left">T=0 均值</td><td>7.55</td><td>7.83</td></tr><tr><td class="left">T=1 均值</td><td>6.53</td><td>6.98</td></tr></tbody></table><div class="gap-box g2"><div class="title">不要跨表挑最大值</div><p>4.82 与 7.83 对应不同数据和检查点协议。不能写成一个未经核实的同条件进步曲线。</p></div></div><div class="col"><div class="sec-head c-green"><div class="nc">3</div><h2>27B：Agent 请求回放吞吐</h2></div><p class="body">low 模式 tokens/s；不是任务成功率。</p><table class="rtable"><thead><tr><th>回放子集</th><th>AR</th><th>DFlash2</th><th>DSpine</th></tr></thead><tbody><tr><td class="left">Code</td><td>253.35</td><td>590.27</td><td>686.23</td></tr><tr><td class="left">Web</td><td>247.40</td><td>639.74</td><td>773.19</td></tr><tr><td class="left">Office</td><td>210.03</td><td>664.77</td><td>805.53</td></tr><tr><td class="left">SWE Pro</td><td>241.86</td><td>657.71</td><td>713.41</td></tr><tr><td class="left">τ²-bench</td><td>301.39</td><td>891.37</td><td>964.30</td></tr></tbody></table><div class="gap-box g1"><div class="title">3.84× 的分母</div><p>805.53 / 210.03，是相对AR；相对DFlash2只有约1.21×。没有证明真实闭环Agent任务质量提高。</p></div><div class="gap-box g3"><div class="title">比较存在系统条件差异</div><p>SGLang0.5.22 / BF16 / FA3 / 并发8；DSpine block16、DFlash2 block8，前者还启用动态核验与ReplaySSM。</p></div><p class="body">每子集20对话，回放tool-decision前缀、启用prefix cache；采样T=1/top_p=.95/top_k=20。未报告完整硬件、重复实验与误差条。</p></div></div></section><section class="poster-panel" id="poster-panel-2" role="tabpanel" aria-labelledby="poster-tab-2" hidden=""><div class="main-grid"><div class="col"><div class="sec-head c-amber"><div class="nc">1</div><h2>家族与更新分开记</h2></div><div class="gap-box g1"><div class="title">论文时间</div><p>v1：9/28 19:44 UTC→北京时间9/29；v2：10/10。论文发表不等于权重公开。</p></div><div class="gap-box g2"><div class="title">8B 精确公开日待核</div><p>权重上传10/16，代码初始提交北京时间10/17；官方News只写10月。家族归2026-10，不伪造精确首发日。</p></div><div class="gap-box g3"><div class="title">27B 同族更新：11/07</div><p>HF权重上传22:33，官方GitHub代码支持23:57，均北京时间11/7；只增加同族更新事件，不拆第二个家族。</p></div></div><div class="col"><div class="sec-head c-orange"><div class="nc">2</div><h2>部署前固定所有条件</h2></div><p class="body">Python3.11+；官方27B示例为单GPU、最多8请求、BF16、FA3。DSPINE草稿槽16，ReplaySSM与SSM float32 / extra_buffer配置需要匹配。</p><div class="gap-box g2"><div class="title">两个窗口不是一回事</div><p>草稿滑窗8,192；目标服务示例context 131,072。后者不代表草稿本身看到131K历史。</p></div><div class="gap-box g1"><div class="title">SPS 要按负载调</div><p>默认verify16只是起点；按GPU、并发、任务与核验预算调表。MLX支持不继承CUDA吞吐成绩。</p></div><p class="body">本次没有下载权重、安装代码或运行服务；硬件最低配置、27B训练配方和真实Agent收益仍待验证。</p></div><div class="col"><div class="sec-head c-green"><div class="nc">3</div><h2>一手材料与研究判断</h2></div><p class="body"><a href="https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16">🤗 27B HF Model Card</a><br><a href="https://huggingface.co/tencent/Qwen3-8B-DSpine-b16">🤗 8B HF Model Card</a><br><a href="https://arxiv.org/html/2609.36173v2">📄 Tech Report · HTML</a><br><a href="https://arxiv.org/pdf/2609.36173">📄 Tech Report · PDF（未下载）</a><br><a href="https://github.com/Tencent/DSpine">💻 官方代码</a> · <a href="https://dspine-project.github.io">Project Page</a></p><div class="gap-box g3"><div class="title">资料充分度</div><p>正文与附录、模型卡、配置、官方图及调参说明已读；27B硬件、训练和重复实验披露不足，达不到完整复现验收。</p></div><p class="body">研究上应冻结目标policy，分别评价接受长度、吞吐、请求时延、显存、输出一致性与任务成功率。把基础设施收益和Agent能力收益分开。</p></div></div></section></div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip"><div class="bhead">一条家族</div><p>8B/27B目标适配共一节点；草稿不是新的基础模型。</p></div>
+  <div class="bstrip"><div class="bhead">日期有边界</div><p>11/7更新可追溯；家族首次公开日不由createdAt推断。</p></div>
+  <div class="bstrip"><div class="bhead">三套评测</div><p>ShareGPT论文、8B原卡、27B回放表分别阅读。</p></div>
+  <div class="bstrip"><div class="bhead">复现看系统</div><p>固定目标、采样、并发、核验与缓存，再谈速度收益。</p></div>
+</div>
+
+</div><!-- /poster -->
+
+
+<script>document.querySelectorAll('.poster-tabs [role=tab]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.poster-tabs [role=tab]').forEach(tab=>tab.setAttribute('aria-selected',String(tab===button)));document.querySelectorAll('.poster-panel').forEach(panel=>panel.hidden=panel.id!==button.getAttribute('aria-controls'));}));</script><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
