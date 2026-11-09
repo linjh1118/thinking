@@ -1,19 +1,20 @@
 ---
-title: "Cosmos3 — Nano / Super：统一推理、生成与动作"
+title: "Cosmos3 — Edge / Nano / Super：统一推理、生成与动作"
 type: model-note
+html_tabs: true
 authors: [NVIDIA]
 year: 2026
 url: "https://huggingface.co/nvidia/Cosmos3-Nano"
 tags: [model-note, world-model, physical-ai, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-11-09
 ---
 
 # Cosmos3：把世界理解与多模态生成放进一个家族
 
 > [!tldr] 核心判断
-> Cosmos3 的关键不是“能生成视频”，而是用 MoT 框架容纳自回归文本推理和连续模态去噪。Nano 16B、Super 64B 是同一正代的两个尺寸，合并研读。它可以成为环境观察和轨迹合成器，但没有显式物理引擎，不能直接成为任务成功验证器。
+> Cosmos3 的关键不是“能生成视频”，而是用 MoT 框架容纳自回归文本推理和连续模态去噪。Edge 4B、Nano 16B、Super 64B 归入同一 Cosmos3 正代 family；尺寸分支合读，具体接口和首发时间分开核对。它可以成为环境观察和轨迹合成器，但没有显式物理引擎，不能直接成为任务成功验证器。
 
 > [!warning] 原始资料与阅读深度
 > 本轮亲自阅读 Nano / Super 完整 HF 模型卡，保存官方评估原图与项目网页。基础 Tech Report 存在，按“不下载 PDF”的要求仅保留链接；完整报告本轮未读。原卡对 loss、消融和评估统计协议披露有限，因此**未达到完整技术报告精读深度**，不补造图中无法可靠读取的数字，也不声称已复现。
@@ -82,6 +83,33 @@ updated: 2026-10-21
 正向动态预测、逆向动作推断、在线策略是不同条件下的问题。逆向推断能看完整轨迹，不能把其误差当作在线执行成功率。其他 reasoning / visual-audio 原图仍可从原卡查看；本地保留的是以上两张，不把局部存档描述成全部附件离线镜像。
 
 动作图还区分 MT-init / PT-init。以 Robotics forward-dynamics PSNR 为例：Super 为 26.04 / 22.69，Nano 为 25.52 / 23.24，Ctrl-World 为 22.99；这些初始化条件不是新增尺寸 SKU，也不能混合选最好数字代表同一个未经适配 checkpoint。AV inverse-dynamics 的 RTE/ATE 与图像 PSNR 量纲不同，不能合并排名。
+
+## Edge 4B：历史尺寸分支补充（2026-11-09研读）
+
+本轮新读 Cosmos3-Edge 完整模型卡。卡片明确首发 **2026-07-20**，并有 **2026-08-25** 的生成器检查点、默认配置、示例和评测更新声明。两者都是历史时间，不能把本次README导航调整或今天发现模型卡记成11月新发布，也不另造一个Cosmos4正代。
+
+| 维度 | Edge | Nano / Super |
+|---|---|---|
+| 卡片参数量 | 4B | 16B / 64B |
+| 卡片明确首发 | 2026-07-20 | 2026-05-31 |
+| 归类 | 同一Cosmos3 family的尺寸分支 | 保留原节点和5月家族首发日 |
+| Generator视频范围 | 50–150帧、12–30fps；256p/480p | 不套用Edge限制到其他分支 |
+| Reasoner声明上下文 | 最多256K；服务示例配置131072 | 模型声明上限与运行配置分开 |
+| 生成训练数据中的Action计数 | 7M | 原Nano/Super卡为8M，不能相互覆盖 |
+
+![Edge官方整体评估图](src/assets/edge-overall.png)
+
+图是Edge原卡中的完整比较面板。带星号的Robot Policy来自DROID后训练变体，不是未适配的4B基础检查点；不能把模型小与机器人部署成功直接连成因果结论。
+
+![Edge官方图生视频评估图](src/assets/edge-image2video.png)
+
+图中Edge / Nano的PAIBench-G Overall为81.1 / 82.4，PhysicsIQ为34.1 / 41.2；Edge吞吐6.71 frames/s高于Nano的2.66，但质量指标有取舍，不能概括成“小模型全面领先”。RBench为55.1 / 54.5，结论也取决于评价维度。
+
+官方图生视频比较使用480p、24fps，并在单H100 eager模式下测frames/s。PBR另有不同后端的延迟表：单卡、batch1、480p/189帧条件下，H100 SXM80GB的图生视频为vLLM-Omni **27.64秒**、PyTorch **23.92秒**。它们是运行条件下的生成延迟，不能写成24fps实时生成。Reasoner的并发、TTFT和token吞吐又是另一套协议，不混成一个速度数字。
+
+原卡还给出B200、H20、工作站与Jetson平台结果，但“支持某平台”不是所有任务、精度与上下文配置都已验证；本次不安装运行时，也不声称复现这些成绩。Edge沿用MoT双塔和显式的身体/动作表征限制，同样不具有可靠物理求解器的保证。
+
+🤗 [Edge HF Model Card](https://huggingface.co/nvidia/Cosmos3-Edge) · [[src/Cosmos3-Edge|原始MD]] · [官方8月25日更新声明](https://huggingface.co/nvidia/Cosmos3-Edge/discussions/62)
 
 ## 工程与能力边界
 

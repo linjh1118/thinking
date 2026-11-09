@@ -2191,6 +2191,7 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
     # blocks.  Normalize those blocks before the Obsidian-style renderer so
     # readers see the actual card instead of escaped <div>/<img> source text.
     hf_asset_base = ""
+    hf_asset_map: dict[str, str] = {}
     if "huggingface_model_cards" in source_file.parts:
         repo = source_file.stem
         hf_asset_base = f"https://huggingface.co/deepseek-ai/{repo}/resolve/main/"
@@ -2216,6 +2217,7 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                     else:
                         entry = documents.get(source_file.name, {})
                     raw_url = entry.get("url", "")
+                hf_asset_map = entry.get("assets", {})
                 match = re.fullmatch(
                     r"(https://huggingface\.co/[^/]+/[^/]+)/(?:raw|resolve)/main/README\.md",
                     raw_url,
@@ -2244,6 +2246,11 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
             hf_asset_base = f"https://huggingface.co/{repo}/resolve/main/"
     def local_card_asset(reference: str) -> str:
         """Prefer model-local figures, including images shared by history cards."""
+        # Family cards can use the same figure basename for different plots.
+        # An explicit per-document mapping takes precedence over basename reuse.
+        mapped = hf_asset_map.get(reference)
+        if mapped and (source_file.parent / mapped).is_file():
+            return mapped
         if (source_file.parent / reference).is_file():
             return reference
         candidates = [source_file.parent / "assets" / Path(reference).name]
