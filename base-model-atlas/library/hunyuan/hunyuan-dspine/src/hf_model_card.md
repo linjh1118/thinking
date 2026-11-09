@@ -33,7 +33,7 @@ This checkpoint is a five-layer draft model for [Qwen3.8-27B](https://huggingfac
 - **Draft blocks:** DSpine 16; official [DFlash2](https://huggingface.co/z-lab/Qwen3.8-27B-DFlash2) 8.
 - **DSpine inference:** dynamic verification referencing [DSpark](https://github.com/deepseek-ai/DeepSpec), with [ReplaySSM](https://github.com/Johnny-Liou/ReplaySSM) enabled.
 - **General benchmarks:** `xhigh` reasoning, greedy and temperature sampling, at most 4,096 new tokens.
-- **Agent benchmarks:** temperature sampling with `low` and `xhigh` reasoning; 20 conversations per subset, all recorded tool-decision prefixes replayed in order, prefix caching enabled, at most 32,768 new tokens per request.
+- **Agent benchmarks:** We evaluate [WorkBuddy Bench](https://github.com/Tencent/workbuddy-bench) (Code/Web/Office) using CodeBuddy sandbox trajectories: `low`/`xhigh` reasoning, temperature sampling, 20 conversations per subset, all tool-call prefixes replayed in order, prefix caching, and up to 32,768 new tokens per request.
 - **Temperature sampling:** `temperature=1.0`, `top_p=0.95`, `top_k=20`.
 
 ## Results

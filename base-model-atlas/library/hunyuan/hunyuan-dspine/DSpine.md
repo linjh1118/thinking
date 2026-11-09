@@ -107,7 +107,7 @@ updated: 2026-11-08
 | MBPP | 5.04 | 6.14 | 4.79 | 5.41 |
 | MT-Bench | 4.11 | 4.48 | 3.89 | 4.03 |
 
-Agent 数据每个子集 20 段对话，按顺序回放记录好的 tool-decision prefixes，打开 prefix cache；采样 temperature=1、top_p=0.95、top_k=20，最多生成 32,768 token。通用任务的上限则是 4,096。回放吞吐是输出 token 总数除并发回放 wall time，**没有证明真实工具执行、浏览等待、任务成功率或用户体验同比改善**。
+11月9日当前27B原卡进一步明确，WorkBuddy Bench的Code/Web/Office使用CodeBuddy沙箱轨迹；这是评估来源说明补充，未新增模型或改变表中数值。[官方Bench仓库](https://github.com/Tencent/workbuddy-bench)。Agent 数据每个子集 20 段对话，按顺序回放记录好的 tool-decision prefixes，打开 prefix cache；采样 temperature=1、top_p=0.95、top_k=20，最多生成 32,768 token。通用任务的上限则是 4,096。回放吞吐是输出 token 总数除并发回放 wall time，**没有证明真实工具执行、浏览等待、任务成功率或用户体验同比改善**。
 
 | Agent 接受长度 | DFlash2 low | DSpine low | DFlash2 xhigh | DSpine xhigh |
 |---|---:|---:|---:|---:|
