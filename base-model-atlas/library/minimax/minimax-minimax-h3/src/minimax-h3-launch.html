@@ -1,0 +1,145 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://www.minimax.io/blog/minimax-h3">打开官方原文 ↗</a> · <a href="minimax-h3-launch.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>MiniMax H3: An Open Model Breaking the Boundaries Between Tasks and Modalities - MiniMax Research | MiniMax Models LLM MiniMax M3.1 Flash MiniMax M3 VIDEO MiniMax H3 SPEECH &amp; MUSIC MiniMax Speech 2.8 MiniMax Music 3.0 API M Plan MiniMax Code Research Company About News Investor Relations Contact Us Log in MiniMax Code API Platform Log in MiniMax Code API Platform Models LLM MiniMax M3.1 Flash NEW MiniMax M3 NEW VIDEO MiniMax H3 NEW SPEECH &amp; MUSIC MiniMax Speech 2.8 NEW MiniMax Music 3.0 NEW API M Plan MiniMax Code Research Company About News Investor Relations 
+MiniMax H3: An Open Model Breaking the Boundaries Between Tasks and Modalities 2026-07-31 AI H3 Multimodal Video Generation 
+
+Today, we&#x27;re launching MiniMax H3, a general-purpose multimodal generation model. H3 understands unified context across text, images, video, and audio, generating video with native stereo sound, up to 15 seconds at 2K resolution. 
+Early testing shows H3 is ready for commercial content creation across a wide range of use cases, excelling at instruction following, accurate text and brand rendering, and V2V motion transfer. With precise, controllable multimodal generation and editing, H3 is built for advertising, branding, e-commerce, product design, UI/UX, gaming, and more. 
+Powered by technologies including Contextual Omni Representation, H3-VAE, H3-Omni Transformer, and In-Context Regeneration, H3 delivers industry-leading price-performance. We offer 2K resolution by default. At 2K, H3&#x27;s per-second price is less than a third of mainstream models, and at 768p, it&#x27;s less than half the price of mainstream models&#x27; 720p. 
+Closed-source models have long dominated video generation, with slower iteration and a less open ecosystem than fields like large language models. To support the open-source community, accelerate compatibility with a broader range of AI hardware, and make it easier for users to build their own customized versions, we plan to open up the model weights in the coming days, subject to applicable laws and regulations. Hardware compatibility has been a key consideration since the earliest stages of H3&#x27;s design. 
+Multimodal context understanding 
+Real creative work requires blending complex information across modalities, pulling in images, audio, video, and more as input sources. For example, the prompt for the shot below is: &quot;Reference the Hitchcock camera movement from Video 1, have the character in Image 2 sing, with the vocals matching Audio 3.&quot; Just describe the relationship between the context and the target video in words. H3 handles the complex, full-modality understanding on its own. 
+Input: Your browser does not support this video. Please use another browser. 
+Video 1 
+Image 2 Your browser does not support this audio. Please use another browser. 
+Audio 3 
+H3-Generated Video: Your browser does not support this video. Please use another browser. 
+2K Performance Your browser does not support this video. Please use another browser. 
+Native Stereo Sound Your browser does not support this video. Please use another browser. 
+H3 Use Cases 
+Film Opening Titles Your browser does not support this video. Please use another browser. 
+Product Website Your browser does not support this video. Please use another browser. 
+Animated Poster Your browser does not support this video. Please use another browser. 
+Advertising &amp; E-commerce Your browser does not support this video. Please use another browser. 
+H3&#x27;s Design Philosophy 
+Breaking the Boundaries Between Tasks: From Specialized to General-Purpose 
+We previously developed two generations of models: Hailuo 01 built the system from the ground up, and Hailuo 02 focused on improving core components like architectural efficiency, data quality, and scale. 
+In designing H3, we recognized the limitations of prior generative models around task boundaries: image generation was typically split into separate expert models for T2I, editing, subject reference, motion reference, and style reference; voice, sound effects, and music in audio generation were largely studied as separate domains; and video generation was further fragmented into text-to-video, image-to-video, first-and-last-frame, subject reference, motion reference, voice reference, video editing, and more, with clear boundaries between image, video, and audio as well. 
+These siloed tasks, capabilities, and modalities constrained creative freedom in practice. And, on the training side, capped the model&#x27;s ability to generalize. Both point to major room for change, in application paradigm and training paradigm alike. So the first principle guiding H3&#x27;s development was unifying and generalizing across tasks. 
+Based on this, here&#x27;s a brief overview of H3&#x27;s pretraining paradigm: 
+Data and Tasks 
+Text-to-image 
+Text-to-video 
+With jointly generated audio, all audio output is native stereo 
+Native multi-shot modeling 
+Text-to-audio 
+No separation between voice, sound effects, and music — all jointly modeled 
+Generalized reference and editing 
+Image-to-image reference and editing 
+Image-to-video reference and editing 
+Audio-to-audio reference and editing 
+Audio-video-to-audio-video reference and editing 
+In our design, &quot;generalized reference and editing&quot; means: 
+Built entirely from real, natural data, giving it strong data scalability 
+Reference and editing relationships expressed through natural language rather than confined to a fixed task set; language (or intelligence structure, broadly speaking) is the bridge to generalization 
+Architecture 
+Fuse diverse data types and tasks as early as possible — the right mixing ratio is key 
+Training Strategy 
+Fuse diverse data types and tasks as early as possible in training — the right mixing ratio is key 
+These choices all point to the same goal: giving H3 broad multimodal context understanding and generation capabilities from the pretraining stage onward. 
+Earlier we talked about the shift in training paradigm, so how is the application landscape for video models changing as well? 
+We&#x27;re seeing creators describe their intent directly in natural language, rather than just entering a simple visual prompt. As multimodal understanding, instruction following, and complex task execution keep improving, video models will be able to grasp fuller creative intent, handle more complex content needs, and gradually move from &quot;generating a clip&quot; to genuinely participating in the entire content production process. 
+H3&#x27;s Technical Choices 
+H3 is built on a simple design philosophy, but bringing it to life was extraordinarily complex. From Hailuo 01 and Hailuo 02 to H3, each generation has been an order of magnitude more complex to build than the last. 
+A brief look at some of H3&#x27;s core technologies: 
+H3-Contextual Omni Representation 
+One of the most important things we did in engineering H3 was strengthening its captioning capability. 
+Introducing multimodal context further broadened what &quot;caption&quot; needs to cover, we&#x27;re not just describing the target video anymore, but the relationship between context and target video, and even relationships among elements within the context itself. 
+We need to jointly describe video and audio, and that audio-visual relationship gets even more complex across multiple shots. 
+This is fundamentally a form of Contextual Omni Representation, where language acts as the generalizable bridge and interpreter, unifying &quot;tasks&quot; into an open, descriptive form. This is the root of H3&#x27;s broad instruction-following ability. 
+To get there, we built dedicated models and a full-modality understanding pipeline. Most source material requires around 100K tokens of inference, distilled down to an average of roughly 4K tokens. 
+H3-VAE: A Major Boost in Architectural Efficiency 
+The H series has continuously pushed forward on tokenizer technology. With H3, we completely overhauled our previous tokenizer, achieving across-the-board gains in reconstruction quality and learnability, giving H3 a competitive edge in efficiency. Its high compression ratio also delivers a 4x gain in effective sequence length, substantially cutting training and inference costs, and it&#x27;s the key technology behind our native 2K resolution support. 
+H3-Omni Transformer 
+H3-Omni Transformer: An Architecture Built for Task Generalization 
+In keeping with H3&#x27;s design philosophy that &quot;architecture should serve the task,&quot; generality and efficiency were the only two goals. Notably, we set aside the Hailuo-02 architecture, despite the significant architectural advantages it once gave us, because it would introduce unnecessary complexity for a model built around task generalization. We believe task generalization is an irreversible trend, and architectural tricks should give way to how the model is defined. 
+In H3, the introduction of multimodal context tripled the variance in sequence length, and the compute workloads for understanding and generation became markedly more heterogeneous. We adopted a training architecture that separates understanding and generation workloads, fine-tuning hardware utilization for each, while jointly balancing per-sample heterogeneous compute against load balancing across samples. End to end, this lifted training throughput by nearly 30%. 
+H3-In-context Regeneration 
+For H3&#x27;s 2K output, instead of using a conventional dedicated super-resolution module, we have the H3 base model regenerate its own low-resolution output in-context. This brings two advantages: first, the regeneration process maximally reuses the generative capability already built into the H3 base model; second, the in-context approach lets it draw on the original multimodal context again to produce high-resolution output, recovering details that traditional super-resolution can only &quot;guess&quot; at and often can&#x27;t restore, like small text and fine detail. 
+We&#x27;ll be sharing the full H3 Technical Report soon. We look forward to hearing your feedback. 
+Our Vision &amp; What&#x27;s Next 
+Language, images, video, and audio are fundamental modalities of human experience. They are deeply interconnected and serve as our primary interfaces with the world. Together, they form multimodal contexts that can communicate a vast range of information efficiently, and the ability to express and share information is itself a form of productivity . 
+For multimodal understanding and generation, we view language as a generalizable, scalable computational system. That is why we believe multimodal intelligence should be deeply grounded in language. 
+H3 still has room to grow, and here are our priorities for future versions: 
+Strong multimodal understanding is the foundation of high-quality generation, and there is significant room to improve. In the next generation of the H series, we plan to integrate capabilities from our M-series models. 
+H3&#x27;s current model size leaves room for improvement across several capabilities. Scaling is a clear path forward, and we believe stronger task generalization will allow us to fully unlock its potential. 
+Visual detail can still be improved in certain scenarios. We will continue pushing toward higher resolutions and greater visual fidelity. 
+Intelligence with Everyone.</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
