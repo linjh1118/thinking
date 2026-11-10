@@ -2292,6 +2292,13 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
         alt_match = re.search(r'\balt=["\']([^"\']*)', attrs, re.I)
         return f"![{alt_match.group(1) if alt_match else ''}]({src_match.group(1)})"
     raw = re.sub(r"<img\b([^>]*?)/?>", html_image, raw, flags=re.I)
+    # A line break within a pipe-table cell must not create a new Markdown row.
+    # Keep its text together before splitting the document into physical lines.
+    raw = "\n".join(
+        re.sub(r"<br\s*/?>", " ", line, flags=re.I)
+        if line.lstrip().startswith("|") else line
+        for line in raw.split("\n")
+    )
     raw = re.sub(r"<br\s*/?>", "\n", raw, flags=re.I)
     raw = re.sub(r"<hr\s*/?>", "\n---\n", raw, flags=re.I)
     raw = re.sub(r"</?(?:div|p|a|span|details|summary|figure|figcaption)[^>]*>", "", raw, flags=re.I)

@@ -14,6 +14,42 @@ from build_base_model_atlas import render_inline_md
 
 
 class InlineMarkdownTests(unittest.TestCase):
+    def test_pipe_table_breaks_preserve_headers_and_cell_alignment(self):
+        from html.parser import HTMLParser
+
+        class Cells(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.rows = []
+                self.cell = None
+
+            def handle_starttag(self, tag, attrs):
+                if tag == 'tr':
+                    self.rows.append([])
+                elif tag in {'th', 'td'}:
+                    self.cell = []
+
+            def handle_data(self, data):
+                if self.cell is not None:
+                    self.cell.append(data)
+
+            def handle_endtag(self, tag):
+                if tag in {'th', 'td'}:
+                    self.rows[-1].append(''.join(self.cell))
+                    self.cell = None
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, output = root / 'card.md', root / 'card.html'
+            source.write_text('| Model | DER ↓<br>(full) | SCA ↑<br/>(full) |\n'
+                              '| --- | --- | --- |\n'
+                              '| Model A | **13.18** | 76.83 |\n')
+            atlas.render_markdown(source, output, {})
+            parser = Cells()
+            parser.feed(output.read_text())
+            self.assertEqual(parser.rows, [['Model', 'DER ↓ (full)', 'SCA ↑ (full)'],
+                                           ['Model A', '13.18', '76.83']])
+
     def test_native_card_tables_keep_merged_cells_and_strip_executable_html(self):
         raw = '<table onclick="bad()"><tr><th colspan="2">Result</th></tr><tr><td rowspan="2" style="color:red">9.49</td><td><b>Offline</b><script>alert(1)</script></td></tr></table>'
         clean = atlas.sanitize_card_table(raw)

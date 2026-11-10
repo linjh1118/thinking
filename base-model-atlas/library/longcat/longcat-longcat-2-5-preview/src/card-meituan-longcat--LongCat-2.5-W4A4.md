@@ -129,7 +129,7 @@ Unless otherwise specified, all LongCat-2.5 results use `enable_thinking=on`, `t
 **Agentic**
 
 4. BrowseComp: Custom lightweight harness with Verify and Discard-All modules (Discard-All threshold 256K), capped at 1,024 exploration rounds; only the `search` and `browse_with_goal` tools are available.
-5. HLE w/ tools: Text-only subset, evaluated with Claude Code (v2.1.116); maximum generation length 256K tokens.
+5. HLE w/ tools: Full set, evaluated with Claude Code (v2.1.116); maximum generation length 256K tokens.
 6. MCP Atlas: Reasoning effort set to "max", temperature = 0.7, top_p = 0.95, 256K context.
 7. AutomationBench (public v1.0.6): All 600 public tasks, evaluated with the benchmark's official evaluation code; temperature = 1.0, top_p = 0.95.
 8. JobBench (Main 65): Claude Code harness (v2.1.280); scoring follows the official JobBench LLM-as-judge protocol (chained rubrics over the submitted deliverables) with gemini-3.6-flash as the judge; temperature = 1.0, top_p = 0.95, thinking enabled.

@@ -1,0 +1,314 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://huggingface.co/blog/nvidia/nemotron-diarization">打开官方原文 ↗</a> · <a href="Official%20Tech%20Blog.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>**Know Who Spoke When: Build Real-Time, Multi-Speaker AI with NVIDIA Nemotron 3 Diarization** Hugging Face Search models, datasets, users... Ctrl K 
+Models 
+Datasets 
+Spaces 
+Buckets 
+Docs 
+Enterprise 
+Pricing 
+
+Website 
+Tasks 
+HuggingChat 
+Collections 
+Languages 
+Organizations 
+Community 
+Blog 
+Posts 
+Daily Papers 
+Hardware 
+Learn 
+Discord 
+Forum 
+GitHub 
+Solutions 
+Team &amp; Enterprise 
+Hugging Face PRO 
+Enterprise Support 
+Inference Providers 
+Inference Endpoints 
+Storage Buckets 
+
+Log In 
+Sign Up Back to Articles 
+Know Who Spoke When: Build Real-Time, Multi-Speaker AI with NVIDIA Nemotron 3 Diarization Community Article Published
+					September 23, 2026 Upvote 73 
+
+
+
+
+
+
++67 Francesco fciannella Follow nvidia Ivan Medennikov imedennikov Follow nvidia Taejin Park taejinp Follow nvidia Tatiana Timofeeva tinyNVTatyanaTimofeeva Follow nvidia Jagadeesh Balam jbalam-nv Follow nvidia Adi- margolin Amargolin Follow nvidia Maryam Motamedi maryameee Follow nvidia 
+Turn overlapping conversations into speaker-aware data with one open-weight, 100M-parameter model - ranked #1 in VoiceArena&#x27;s Diarization leaderboard with a 14.72% Diarization Error Rate (DER). 
+Why speaker diarization matters 
+How Nemotron 3 Diarization works 
+One model for offline and streaming conversations 
+From audio to speaker activity 
+Diarization and Speaker Attributed ASR (Multi-speaker ASR) are different tasks 
+Balance latency and accuracy 
+Benchmark results: Ranked #1 in VoiceArena&#x27;s initial Diarization-Bench 
+Measuring diarization accuracy 
+An average 40% relative DER reduction at 1.04-second latency 
+Improvements increase in higher-speaker-count conditions 
+Accuracy and throughput 
+See Nemotron 3 Diarization in action 
+Bring real-time, speaker-aware transcription on device 
+Get started with NVIDIA NeMo Speech 
+Install the dependencies 
+Implement streaming diarization with streaming ASR (multi-speaker ASR) in real-world scenarios 
+Run an offline diarization on a recording 
+Choose the latency-quality operating point 
+Combine diarization with Offline ASR 
+Deployment considerations 
+Resources and next steps 
+Turn overlapping conversations into speaker-aware data with one open-weight, 100M-parameter model - ranked #1 in VoiceArena&#x27;s Diarization leaderboard with a 14.72% Diarization Error Rate (DER). 
+Why speaker diarization matters 
+Every conversation carries two layers of information: what was said and who said it . Speech recognition captures and transcribes the words. Speaker diarization classifies who spoke when , helping applications connect what was said to the right participant. 
+Consider a transcript from a meeting, customer call, or podcast in which every sentence is correct but none is attributed to a speaker. You can read the words, but you cannot reliably tell who made a commitment, who raised an objection, or which participant interrupted. Search, summaries, action items, conversation analytics, and voice-agent memory all become less useful. 
+Speaker diarization identifies the time intervals during which each speaker is active, including intervals where people talk over one another. Those speaker timestamps can then be combined with automatic speech recognition (ASR) to create a speaker-attributed transcript. 
+NVIDIA Nemotron 3 Diarization is an open-weight, 100M-parameter model that ranks #1 on VoiceArena&#x27;s Diarization-Bench leaderboard with a 14.72% Diarization Error Rate (DER). Supporting up to eight speakers across live and recorded conversations, it handles overlapping speech, chunked processing for flexible recording lengths, and customizable streaming latency. 
+Figure 1. Nemotron 3 Diarization #1 on VoiceArena Diarization-Bench leaderboard. 
+Earlier models like NVIDIA Streaming Sortformer established this approach for four-speaker diarization, including the streaming diar_streaming_sortformer_4spk-v2.1 checkpoint used as the baseline below. Nemotron 3 Diarization expands support to eight speakers and improves the accuracy and throughput measured in the following evaluations. 
+How Nemotron 3 Diarization works 
+One model for offline and streaming conversations 
+Diarization systems must solve two related problems. First, they must detect speech and assign it to the correct speaker. Second, they must preserve that assignment throughout the conversation, even after silence, interruptions, or long gaps between a speaker&#x27;s turns. 
+Streaming makes the second problem harder. An offline model can inspect an entire recording at once. A streaming system receives only a small chunk of new audio and limited context. Without an effective memory mechanism, the speaker assigned to one output channel in the current chunk can be assigned to a different channel in the next. 
+Nemotron 3 Diarization follows the Sortformer approach of ordering output speakers by when they first appear. The first new voice becomes the first speaker channel, the next new voice becomes the second, and so on. This arrival-time ordering makes the model&#x27;s generic speaker labels stable and removes the need to solve a new speaker permutation for every chunk. 
+Nemotron 3 Diarization was trained using public and licensed speech data, including multispeaker-annotated, real-world conversations licensed from David AI. Additional licensed David AI audio provided source material for large-scale simulated English and multilingual mixtures spanning 21 languages. Adding David AI data to our training decreased compound diarization error rate (DER) by 0.77 absolute points, from 11.19% to 10.42%, at both the offline-style and ultra-low-latency operating points. 
+The model supports as many as eight speaker channels. These are anonymous labels, not real-world identities: the model can report that speaker_2 spoke from one timestamp to another, but it does not determine that speaker_2 is a particular person. Downstream applications can map these anonymous channel IDs to explicit speaker identities by pairing timestamps with meeting metadata, user profiles, or active speaker verification models. 
+From audio to speaker activity 
+The model accepts 16 kHz, single-channel audio and converts it into Mel-spectrogram features with a 10 ms frame step. It stacks those features by a factor of eight, producing 80 ms frames for a 31-layer Transformer encoder with rotary positional embeddings (RoPE). 
+
+Figure 2. Nemotron 3 Diarization converts audio into arrival-ordered speaker-activity probabilities. AOSC and FIFO context support streaming inference. 
+Above the Transformer, a Conv1D layer upsamples the predictions to the input-feature resolution. The default output is a [T, 8] floating-point tensor: T time steps by eight possible speaker channels. Each value is the probability that a speaker is active at that time. The default stride is 10 ms and can be configured to another multiple of 10 ms. 
+This representation handles overlap naturally. If two people speak at the same time, two channels can be active in the same frame. Postprocessing converts these probabilities into generic speaker labels with start and end timestamps. 
+During streaming inference, two forms of memory provide context: 
+The Arrival-Order Speaker Cache (AOSC) retains useful information about speakers observed in earlier chunks, organized according to their arrival-ordered channels. 
+A first-in, first-out (FIFO) queue supplies recent frame context before the current chunk. 
+The input buffer also includes right context, which is audio immediately after the current chunk. More right context can help the model interpret speaker transitions, while less right context reduces the time it must wait before producing a result. Together, the current chunk, right context, FIFO queue, and speaker cache enable one model to operate at several latency points. 
+Chunked inference removes a fixed model-imposed maximum audio duration. Performance can still degrade on unusually long recordings or audio with severe noise, reverberation, far-field capture, or domain shift. 
+Diarization and Speaker Attributed ASR (Multi-speaker ASR) are different tasks 
+Standalone diarization produces speaker activity and timestamps, not the words being spoken. ASR produces text but does not necessarily preserve speaker attribution. A speaker-attributed transcription pipeline combines both outputs: 
+
+Figure 3. End-to-end speaker-attributed transcription pipeline combining audio diarization timestamps with automatic speech recognition (ASR) to map spoken words to specific speakers. 
+That separation matters when designing a system. Diarization errors include missed speech, false speech detections, incorrect speaker assignments, and boundary errors. ASR errors affect the words. Applications should evaluate both components and the combined pipeline on their intended audio. 
+Balance latency and accuracy 
+The same model supports recommended input-buffer latencies of 30.4, 1.04, 0.64, and 0.32 seconds. Shorter buffers let the system respond sooner, while more context generally improves accuracy and throughput. These values measure the audio buffered before inference; computation, networking, ASR, and application processing add to end-to-end latency. Although the model can technically use an 80 ms input buffer, 0.32 seconds is the lowest recommended configuration. The configuration table in &quot;Get started&quot; shows how to select an operating point. 
+Benchmark results: Ranked #1 in VoiceArena&#x27;s initial Diarization-Bench 
+In VoiceArena&#x27;s initial Diarization-Bench results, NVIDIA Nemotron 3 Diarization ranked first among 12 systems and 17 total system configurations evaluated across 139 English-language conversations totaling approximately 22 hours. With overlapping speech scored, system-generated speech activity detection, and no boundary collar, Nemotron 3 Diarization achieved a 14.72% diarization error rate (DER), compared with 19.3% for the next-ranked system - a ~24% relative reduction. It also ranked first with 100 ms and 250 ms collars and across both in-person and online recordings. These initial results may change as Voice Arena completes its Version 1 evaluation and paired statistical analysis. 
+
+Figure 4. Voice Arena Diarization-Bench v1 results (English, 0 ms collar, DER lower is better), showing NVIDIA Nemotron 3 Diarization ranking #1 with 14.72% DER. 
+Measuring diarization accuracy 
+The primary metric used to evaluate the model is diarization error rate (DER). It combines three kinds of error: 
+Missed speech: a reference speaker was active, but the system detected no corresponding speech. 
+False alarm: the system marked a speaker as active when the reference contained no corresponding speech. 
+Speaker confusion: the system detected speech at the right time but assigned it to the wrong speaker. 
+
+Figure 5. DER adds missed speech, false alarms, and speaker confusion, then divides by total reference speaker time. Overlapping reference speakers each contribute to the denominator. 
+Benchmark settings can materially change DER, so the evaluation protocol is part of the result. The Nemotron 3 evaluation contains 901 condition-specific recordings spanning multilingual telephone speech, meetings, near-field and far-field microphones, multi-microphone capture, and difficult acoustic environments. Overlapping speech is scored in every evaluation. 
+DIHARD III, AliMeeting, AMI, and NOTSOFAR1 use a zero-second collar, meaning no boundary tolerance is excluded from scoring. CALLHOME-Part2 uses a 0.25-second collar. Results were generated with the NeMo e2e_diarize_speech.py evaluation script. 
+The comparison below uses diar_streaming_sortformer_4spk-v2.1, NVIDIA&#x27;s previous four-speaker streaming Sortformer, as the baseline. It uses the final Nemotron-3-Diarization values. 
+An average 40% relative DER reduction at 1.04-second latency 
+
+Figure 6. Full-set DER for the model and previous NVIDIA baseline at 1.04-second input-buffer latency. Lower is better. 
+At 1.04-second input-buffer latency, Nemotron 3 Diarization reduces DER on all eight listed evaluation conditions. The relative reductions range from 9.0% on CALLHOME-Part2 to 65.2% on NOTSOFAR1 MHM. 
+The unweighted mean of the eight per-dataset relative reductions is 41.0% . In other words, this is an average of relative improvements across evaluation conditions; it is not a pooled DER computed by combining every recording into one score. 
+The improvement is also consistent across operating points. At each latency shared by the two models (30.4, 1.04, and 0.32 seconds), the final model has lower full-set DER on every evaluated dataset. 
+
+Figure 7. Full-set DER across input-buffer latency settings. The previous baseline does not have a 0.64-second configuration. 
+Improvements increase in higher-speaker-count conditions 
+Support for eight speakers enables meetings and group conversations with more than four participants. The benchmark advantage also widens in the higher-speaker-count subsets of DIHARD III, CALLHOME-Part2, and NOTSOFAR1. 
+
+Figure 8. DER at 30.4-second input-buffer latency, broken out by speaker count. Shaded regions contain more than four speakers. 
+The figure also preserves an important nuance: on the two-speaker CALLHOME subset, the final model records 5.98% DER compared with 5.68% for the previous baseline. Across the full CALLHOME-Part2 evaluation, however, DER improves from 10.32% to 9.10%, with larger gains in the higher-speaker-count subsets. 
+DIHARD III groups recordings with five through nine speakers into one result. Nine speakers exceed Nemotron 3 Diarization&#x27;s supported maximum of eight, so that aggregate includes audio outside the specified speaker-count limit. 
+Accuracy and throughput 
+A deployable diarization system must balance accuracy and throughput. The model card reports real-time factor speedup (RTFx), calculated as total audio duration divided by total processing time. Higher RTFx means the system processes more audio per unit of compute time. 
+
+Figure 9. DIHARD III full-set DER versus batch-size-32 compiled throughput. Results use BF16 with the NeMo PyTorch backend on an NVIDIA RTX PRO 5000. 
+At the 30.4-second configuration, Nemotron 3 Diarization reaches 15,113× RTFx at batch size 32 with torch.compile(), compared with 2,619× for the previous baseline, while lowering DIHARD III DER from 19.09% to 12.73%. At the 1.04-second configuration, it reaches 865× compared with 136×, while lowering DER from 19.60% to 13.18%. 
+These results measure batched throughput on the disclosed test system. They should not be interpreted as single-stream, end-to-end application latency. Developers should benchmark the complete pipeline on their target hardware, including data movement, diarization, ASR, and downstream processing. 
+See Nemotron 3 Diarization in action 
+Explore the Nemotron Diarization live model demo to connect the model’s speaker timestamps with a conversation you can follow. The application offers synthetic conversations, an eight-speaker mode, live microphone input, and stress-test scenarios. We also added a live mic for a multlingual ASR models, so you can perform live streaming diarization with speakers of different languages. 
+Start in Conversation with a preloaded topic, then follow the speaker activity and live transcript as the conversation plays. Listen for interruptions and compare the timing of the voices with the displayed speaker activity. For your own conversation, use Live Mic or the Multilingual Live Mic . Finally you can upload an audio file you have prerecorded in the Audio File tab. 
+The following invented exchange illustrates the difference that speaker attribution makes; it is not a measured output from the demo: 
+Without speaker attribution With speaker attribution 
+&quot;I’ll send the report.&quot; &quot;Can you include the figures?&quot; &quot;Yes, by Friday.&quot; speaker_0: &quot;I’ll send the report.&quot; speaker_1: &quot;Can you include the figures?&quot; speaker_0: &quot;Yes, by Friday.&quot; 
+With speaker labels, an application can associate the commitment with the same participant who answers the follow-up. The timeline adds information that plain text cannot show: two speakers can be active at once. A downstream summarizer can use the attributed transcript to extract action items while retaining the source speaker and timestamps. 
+The prepared scenarios use synthetic audio. Some eight-speaker scenarios provide a short speaker-context primer before the audible conversation; they illustrate behavior with that context and are not an unprimed benchmark. Participant names and roles belong to the application’s scenario logic. Nemotron 3 Diarization supplies generic speaker channels and timestamps, not identity verification. 
+Bring real-time, speaker-aware transcription on device 
+Argmax has added support for NVIDIA Nemotron 3 Diarization in Argmax Pro SDK 3 , enabling real-time speaker attribution for conversations with up to eight speakers, and introduced a pre-diarized transcription API that separates speakers before speech recognition, designed to improve transcription in complex conversations with overlapping speech. 
+We benchmarked 6 speaker diarization systems across 11 datasets representing diverse and challenging real-world conditions using OpenBench.Nemotron 3 Diarization achieved the lowest error rate (DER) across all 6 systems.It also scored the lowest across 5 of the 11 datasets despite its maximum speaker constraint of 8.This represents a huge leap in accuracy compared to its predecessor Sortformer v2.1 whose error rate was 60% higher. Atila Orhon 
+Watch the demo to see Nemotron 3 Diarization running with Argmax Pro SDK 3. 
+
+Figure 10 . Argmax demo video of the Nemotron 3 Diarization model 
+Get started with NVIDIA NeMo Speech 
+Below we will show a few quick start guides on how to combine diarization with ASR models, streaming ASR, diarization only and offline ASR with the NVIDIA Nemo Speech library . 
+Install the dependencies 
+Install the system packages and NVIDIA NeMo speech dependencies after setting up Python 3.12 or later, Cython, and a recent PyTorch version. apt-get update &amp;&amp; apt-get install -y libsndfile1 ffmpeg
+uv pip install Cython packaging
+uv pip install &#x27;nemo-toolkit[asr]&#x27; 
+Implement streaming diarization with streaming ASR (multi-speaker ASR) in real-world scenarios 
+To evaluate ASR and diarization (multi-speaker ASR) performance, refer to the Quick start guide to Diarization with streaming ASR . 
+Run an offline diarization on a recording 
+Use a 16 kHz mono recording containing two or more speakers, and replace /path/to/conversation.wav with its path. The following example loads the checkpoint and uses the recommended 30.4-second offline-style configuration. from nemo.collections.asr.models import SortformerEncLabelModel
+
+diar_model = SortformerEncLabelModel.from_pretrained( &quot;nvidia/Nemotron-3-Diarization&quot; )
+diar_model. eval () # Configuration values are measured in 80 ms frames. diar_model.sortformer_modules.spkcache_len = 264 diar_model.sortformer_modules.fifo_len = 40 diar_model.sortformer_modules.chunk_len = 340 diar_model.sortformer_modules.chunk_right_context = 40 diar_model.sortformer_modules.spkcache_update_period = 300 diar_model._check_streaming_parameters()
+
+predicted_segments = diar_model.diarize(
+    audio=[ &quot;/path/to/conversation.wav&quot; ],
+    batch_size= 1 ,
+) for segment in predicted_segments[ 0 ]: print (segment) 
+The diarize() method returns speaker-marked segments as strings in the form start_seconds end_seconds speaker_id. For example, the output structure can look like this (illustrative timestamps, not a measured model result): 0.400 2.100 speaker_0
+1.800 3.250 speaker_1
+3.600 4.700 speaker_0 
+Here, both speakers are active between 1.800 and 2.100 seconds. A speaker can appear in multiple segments, and the intervals need not be mutually exclusive. To obtain the underlying speaker-activity tensors as well, set include_tensor_outputs=True. 
+The API accepts an audio path, a list of paths, NumPy arrays, or a line-delimited JSON manifest. When providing NumPy arrays, pass the correct integer sample_rate; the default file-audio sample rate is 16 kHz. Nemotron 3 Diarization supports 16 kHz, single-channel .wav, .flac, .opus, and .mp3 audio. It is designed for Linux systems with supported NVIDIA Ampere, Hopper, or Blackwell GPUs. 
+Choose the latency-quality operating point 
+Nemotron 3 Diarization exposes streaming parameters in units of 80 ms encoder frames. The recommended configurations cover offline-style processing through ultra-low-latency streaming. 
+Configuration Input-buffer latency Speaker cache FIFO Chunk Right context Cache update period 
+Offline style 30.4 s 264 40 340 40 300 
+Low latency 1.04 s 264 264 9 4 222 
+Very low latency 0.64 s 264 264 6 2 222 
+Ultra-low latency 0.32 s 264 264 3 1 222 
+The latency values in this table are input-buffer latency , calculated as:(CHUNK_LEN + RIGHT_CONTEXT) × 80 ms 
+They do not include model computation, network transport, ASR, or application processing. Although the model can technically use an input buffer as short as 80 ms, 0.32 seconds is the lowest recommended configuration. Lowering latency generally reduces both accuracy and throughput, so developers should select the operating point against end-to-end product requirements rather than buffer duration alone. 
+Use all five parameter values from the same row in the inference example, then call _check_streaming_parameters() before running diarization. The speaker cache retains earlier speaker context; FIFO controls the recent history; chunk and right context set the input-buffer latency; the cache update period controls how much FIFO context is used for a cache update. 
+Combine diarization with Offline ASR 
+Run ASR and diarization on the same recording and time base. For example, You can use Nemotron ASR 3.5 or Parakeet TDT 0.6B v3 that can return word timestamps. The following minimal offline example reuses predicted_segments from above and associates each word with the speaker active at its midpoint: from nemo.collections.asr.models import ASRModel
+
+asr_model = ASRModel.from_pretrained(
+    model_name= &quot;nvidia/parakeet-tdt-0.6b-v3&quot; )
+words = asr_model.transcribe(
+    [ &quot;/path/to/conversation.wav&quot; ], timestamps= True )[ 0 ].timestamp[ &quot;word&quot; ]
+
+turns = [] for segment in predicted_segments[ 0 ]:
+    start, end, speaker = segment.split()
+    turns.append(( float (start), float (end), speaker)) def speaker_at ( midpoint ):
+    active = sorted ({
+        speaker for start, end, speaker in turns if start &lt;= midpoint &lt; end
+    }) if len (active) == 1 : return active[ 0 ] return &quot;overlap/ambiguous&quot; if active else &quot;unassigned&quot; for word in words:
+    midpoint = (word[ &quot;start&quot; ] + word[ &quot;end&quot; ]) / 2 label = speaker_at(midpoint) print ( f&quot; {word[ &#x27;start&#x27; ]: .2 f} - {word[ &#x27;end&#x27; ]: .2 f} {label} : {word[ &#x27;word&#x27; ]} &quot; ) 
+This midpoint rule is a simple alignment heuristic. It marks simultaneous speaker activity as ambiguous and leaves words outside detected speech unassigned. It does not separate overlapping voices or determine which active speaker produced an ASR word. For a production transcript, evaluate word-boundary alignment, overlap handling, and both models’ errors on representative audio before combining adjacent words into speaker turns. 
+Deployment considerations 
+The model supports a maximum of eight speakers. If a recording contains more, speech can be missed or assigned to the wrong channel. Noise, severe reverberation, far-field recording, domain shift, and long conversations can also increase missed speech, false alarms, boundary errors, or speaker confusion. 
+Downstream applications should preserve useful uncertainty instead of treating every speaker assignment as infallible. Evaluate the complete system on audio representative of the intended environment, especially before using speaker attribution in regulated, safety-relevant, or consequential workflows. 
+Use of the model is governed by the OpenMDW License Agreement, version 1.1 . 
+Resources and next steps 
+Nemotron 3 Diarization on Hugging Face 
+VoiceArena leaderboard 
+Argmax Pro SDK 3 Announcement 
+Argmaxinc Openbench 
+NVIDIA NeMo Speech 
+NeMo end-to-end diarization evaluation script 
+Sortformer paper 
+Streaming Sortformer paper 
+Quick start guide to Diarization with ASR 
+Interactive demo and sample application 
+Parakeet ASR model and timestamp examples 
+Build with NVIDIA ecosystem partners 
+Deploy Nemotron 3 Diarization for production inference with Baseten 
+Run Nemotron 3 Diarization at scale with Digital Ocean 
+Build mobile and on-device speaker-attributed transcription with Nemotron 3 Diarization support in Argmax Pro SDK 3 
+Models mentioned in this article 4 nvidia/Nemotron-3-Diarization Voice Activity Detection • 99.2M • Updated about 2 hours ago • 193k • 829 nvidia/diar_streaming_sortformer_4spk-v2.1 Automatic Speech Recognition • Updated Sep 23 • 16.3k • 121 nvidia/nemotron-3.5-asr-streaming-0.6b Automatic Speech Recognition • 0.6B • Updated Sep 10 • 550k • 1.27k nvidia/parakeet-tdt-0.6b-v3 Automatic Speech Recognition • 0.6B • Updated Aug 5 • 531k • 1.27k 
+Spaces mentioned in this article 1 Running 117 Live Speaker Diarization 🎙 117 
+Detect speakers and transcribe audio in real time 
+More from this author 
+*Evaluating Privacy Protection and Practical AI Applications with 100,000 Synthetic Business Documents Across Eight Domains* 
+
+4 November 9, 2026 
+Nemotron-Personas-Finance-Japan: A Synthetic Dataset Capturing Japan&#x27;s Demographics and Financial Context 
+
+16 November 9, 2026 
+Community m-aliabbas1 Sep 24 
+Great work! Kudos to NVIDIA. Many real scenarios, like press conferences or earnings calls, usually have more than 8 speakers. I&#x27;m looking forward to updates that handle streaming diarization for a higher number of speakers. See translation ❤️ 1 1 + Reply Edit Preview Upload images, audio, and videos by dragging in the text input, pasting, or clicking here . Tap or paste here to upload images Comment 
+· Sign up or log in to comment Upvote 73 
+
+
+
+
+
+
+
+
+
+
+
+
++61 
+Models mentioned in this article 4 nvidia/Nemotron-3-Diarization Voice Activity Detection • 99.2M • Updated about 2 hours ago • 193k • 829 nvidia/diar_streaming_sortformer_4spk-v2.1 Automatic Speech Recognition • Updated Sep 23 • 16.3k • 121 nvidia/nemotron-3.5-asr-streaming-0.6b Automatic Speech Recognition • 0.6B • Updated Sep 10 • 550k • 1.27k nvidia/parakeet-tdt-0.6b-v3 Automatic Speech Recognition • 0.6B • Updated Aug 5 • 531k • 1.27k 
+Spaces mentioned in this article 1 Running 117 Live Speaker Diarization 🎙 117 
+Detect speakers and transcribe audio in real time System theme Company TOS Privacy About Careers Website Models Datasets Spaces Pricing Docs</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

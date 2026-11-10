@@ -20,6 +20,9 @@ updated: 2026-11-10
 > [!warning] 日期与实验披露仍有边界
 > Preview首发9月25日；技术博客显示11月1日并称正式发布，API日志为11月2日正式上线，两者分别保存。HF权重首次公开日未取得明确公告，不能用仓库createdAt/lastModified代替。技术细节虽显著增加，仍缺数据规模、训练超参数、统计区间与Preview→正式版的同条件成对评测；不宣称已完成完整报告复现。
 
+> [!warning] 2026-11-10 晚：HLE 评测范围尚未核实
+> 两张官方 HF 卡的脚注由 Text-only subset 改为 **Full set**，但同一时刻官方中文技术博客仍写“仅文本子集”。分数63.1未变化。不能据此宣称完成新的全量评测，也不能把不同范围的结果直接比较；这里保留来源分歧，待官方说明。旧/新模型卡、当晚博客源码与冲突记录均在src中。
+
 ## 发布、家族与证据地图
 
 > [!tldr]
@@ -145,7 +148,7 @@ PD分离后，QCP/KVP避免MLA的TP冗余；HiCache释放没有读引用的主�
 | DeepSWE1.1 | mini-swe-agent，1M，temp1/top_p.95，3次均值 |
 | SWE Atlas QnA/Test | CC2.1.116；Opus4.5 judge三次多数，3次运行均值 |
 | BrowseComp | 自研Verify/Discard-All，阈值256K，最多1024轮；search/browse_with_goal |
-| HLE工具 | 仅文本，CC2.1.116，最大生成256K |
+| HLE工具 | **范围存在官方冲突**：11/10晚 HF基础卡与W4A4卡改为Full set，中文技术博客仍为仅文本子集；CC2.1.116、最大生成256K一致。63.1保留为厂商披露，不视为范围已核实 |
 | MCP Atlas | effort max，temp.7/top_p.95，256K |
 | AutomationBench1.0.6 | 全部600题、官方代码 |
 | JobBench Main65 | CC2.1.280；Gemini3.6Flash链式rubric judge |
