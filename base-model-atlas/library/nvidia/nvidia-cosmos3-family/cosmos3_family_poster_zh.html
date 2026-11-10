@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head>
+<html lang="zh-CN" data-theme="dark"><head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Cosmos3 · Edge / Nano / Super — 中文研读海报</title>
@@ -223,7 +223,7 @@ html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-containe
 </div>
 </div>
 <!-- MAIN 3-COLUMN GRID -->
-<nav class="family-tabs" role="tablist" aria-label="Cosmos3研读板块"><button type="button" id="cosmos-tab-0" role="tab" aria-controls="cosmos-panel-0" aria-selected="true">问题与定位</button><button type="button" id="cosmos-tab-1" role="tab" aria-controls="cosmos-panel-1" aria-selected="false">方法与复现</button><button type="button" id="cosmos-tab-2" role="tab" aria-controls="cosmos-panel-2" aria-selected="false">评估与边界</button><button type="button" id="cosmos-tab-3" role="tab" aria-controls="cosmos-panel-3" aria-selected="false">Edge 4B历史补充</button></nav><div><section role="tabpanel" id="cosmos-panel-0" class="cosmos-panel" aria-labelledby="cosmos-tab-0"><div class="col">
+<nav class="family-tabs" role="tablist" aria-label="Cosmos3研读板块"><button type="button" id="cosmos-tab-0" role="tab" aria-controls="cosmos-panel-0" aria-selected="true">问题与定位</button><button type="button" id="cosmos-tab-1" role="tab" aria-controls="cosmos-panel-1" aria-selected="false">方法与复现</button><button type="button" id="cosmos-tab-2" role="tab" aria-controls="cosmos-panel-2" aria-selected="false">评估与边界</button><button type="button" id="cosmos-tab-3" role="tab" aria-controls="cosmos-panel-3" aria-selected="false">Edge 4B历史补充</button><button type="button" id="cosmos-tab-4" role="tab" aria-controls="cosmos-panel-4" aria-selected="false">FP8部署变体与取舍</button></nav><div><section role="tabpanel" id="cosmos-panel-0" class="cosmos-panel" aria-labelledby="cosmos-tab-0"><div class="col">
 <div class="sec-head c-amber"><div class="nc">1</div><h2>问题与模型定位</h2></div>
 <p class="body">MoT双塔连接自回归文本与扩散式图像、视频、音频和动作。Nano16B、Super64B同一正代family，不按参数尺寸拆代。5月31日原卡明确首发，属于历史补收，不伪装成本月新模型。</p>
 <div class="gap-boxes">
@@ -247,7 +247,7 @@ html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-containe
 </div>
 <div class="stage-item">
 <div class="stitle">同代双尺寸</div>
-<p>16B与64B统一family；BF16是官方已测精度，不把服务框架支持等同于FP4/FP8验证。</p>
+<p>基础BF16卡与11月9日官方FP8卡分开。FP8已有专项质量与性能表，但不能据此宣称无回归。详见FP8部署变体Tab。</p>
 </div>
 </div>
 <div class="fig-box">
@@ -269,7 +269,7 @@ html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-containe
 </div>
 <div class="trick-box">
 <div class="trick-title">不要跨接口移植能力</div>
-<p>vLLM Reasoner、vLLM-Omni、Diffusers和SGLang支持范围不同；SGLang当前不支持视频到视频、带声视频和动作生成。</p>
+<p>后端与版本分别核对：原基础卡曾标SGLang不支持三类模态；Nano/Super FP8卡改为SGLang0.5.23支持视频到视频、带声视频和动作生成。未实测，不覆盖旧版本。</p>
 </div>
 <div class="formula-box"><div class="flabel">双生成机制的研读概括，非原报告训练损失</div>$$p_\theta(y_{text}\mid x),\quad p_\phi(z_{nontext}\mid x)$$<p style="font-size:.68rem;color:#78716c;margin-top:4px;">机制概括或算术说明，不冒充未披露的论文公式。</p></div>
 <div class="stage-list">
@@ -310,7 +310,7 @@ html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-containe
 <div class="adesc">生成器不是最终验证器</div>
 </div>
 </div>
-</div></section><section role="tabpanel" id="cosmos-panel-3" class="cosmos-panel" hidden="" aria-labelledby="cosmos-tab-3"><h2>Edge 4B：同一家族，单独核对边界</h2><p>官方卡首发2026-07-20；生成器更新2026-08-25。是历史补充，不是11月新模型；原family保留5月31日首发日。</p><div class="table-wrap"><table><thead><tr><th>尺寸分支</th><th>参数</th><th>首发</th></tr></thead><tbody><tr><td>Edge</td><td>4B</td><td>7月20日</td></tr><tr><td>Nano</td><td>16B</td><td>5月31日</td></tr><tr><td>Super</td><td>64B</td><td>5月31日</td></tr></tbody></table></div><figure><img src="src/assets/edge-image2video.png" alt="Edge官方图生视频评估表"><figcaption>Edge官方图生视频评估表 · 官方原图/动画，未裁剪</figcaption></figure><p>单H100 eager、480p/24fps协议下，Edge吞吐6.71frames/s，Nano2.66；但PAIBench Overall为81.1对82.4、PhysicsIQ为34.1对41.2。速度收益伴随质量取舍。</p><figure><img src="src/assets/edge-overall.png" alt="Edge官方整体评估表"><figcaption>Edge官方整体评估表 · 官方原图/动画，未裁剪</figcaption></figure><p>机器人Policy星号是DROID后训练变体；不能当作未适配4B基础模型的开箱成功率。Generator与Reasoner接口、并发和后端分开记录。</p><p>H100 SXM80GB、batch1、480p/189帧PBR：vLLM-Omni图生视频27.64秒，PyTorch23.92秒。生成延迟不等于视频播放帧率；服务示例131072也不覆盖卡片声明的所有256K运行配置。</p><p><a href="https://huggingface.co/nvidia/Cosmos3-Edge">🤗 Edge HF Model Card</a> · <a href="https://huggingface.co/nvidia/Cosmos3-Edge/discussions/62">官方8月25日更新说明</a></p></section></div><!-- /main-grid -->
+</div></section><section role="tabpanel" id="cosmos-panel-3" class="cosmos-panel" hidden="" aria-labelledby="cosmos-tab-3"><h2>Edge 4B：同一家族，单独核对边界</h2><p>官方卡首发2026-07-20；生成器更新2026-08-25。是历史补充，不是11月新模型；原family保留5月31日首发日。</p><div class="table-wrap"><table><thead><tr><th>尺寸分支</th><th>参数</th><th>首发</th></tr></thead><tbody><tr><td>Edge</td><td>4B</td><td>7月20日</td></tr><tr><td>Nano</td><td>16B</td><td>5月31日</td></tr><tr><td>Super</td><td>64B</td><td>5月31日</td></tr></tbody></table></div><figure><img src="src/assets/edge-image2video.png" alt="Edge官方图生视频评估表"><figcaption>Edge官方图生视频评估表 · 官方原图/动画，未裁剪</figcaption></figure><p>单H100 eager、480p/24fps协议下，Edge吞吐6.71frames/s，Nano2.66；但PAIBench Overall为81.1对82.4、PhysicsIQ为34.1对41.2。速度收益伴随质量取舍。</p><figure><img src="src/assets/edge-overall.png" alt="Edge官方整体评估表"><figcaption>Edge官方整体评估表 · 官方原图/动画，未裁剪</figcaption></figure><p>机器人Policy星号是DROID后训练变体；不能当作未适配4B基础模型的开箱成功率。Generator与Reasoner接口、并发和后端分开记录。</p><p>H100 SXM80GB、batch1、480p/189帧PBR：vLLM-Omni图生视频27.64秒，PyTorch23.92秒。生成延迟不等于视频播放帧率；服务示例131072也不覆盖卡片声明的所有256K运行配置。</p><p><a href="https://huggingface.co/nvidia/Cosmos3-Edge">🤗 Edge HF Model Card</a> · <a href="https://huggingface.co/nvidia/Cosmos3-Edge/discussions/62">官方8月25日更新说明</a></p></section><section id="cosmos-panel-4" class="cosmos-panel" hidden="" role="tabpanel" aria-labelledby="cosmos-tab-4"><div class="col"><div class="sec-head c-amber"><div class="nc">5</div><h2>11月9日FP8部署变体：不新增家族</h2></div><p>TL;DR：三张卡明确11/9发布的是既有Edge/Nano/Super的FP8变体，保留原家族5/31首发和稳定链接；不加模型叶或近30天发布行。全部质量/性能表与协议在渲染笔记，以下保留关键对照。</p><div class="fig-box"><img src="src/assets/cosmos3_edge_fp8.png" alt="Edge与FP8变体官方关系图"><div class="fig-cap">Edge与FP8变体 · 官方完整原图</div></div><div class="gap-box g1"><div class="title">接口、状态与精度</div><p>FP8 Edge的Reasoner卡片上限131072，Nano/Super为256K。量化只覆盖选定组件；ModelOpt状态需随checkpoint恢复。Orin虽加载FP8 checkpoint，实际是W8A16计算，不能称原生FP8。</p></div><div class="fig-box"><img src="src/assets/cosmos3_nano_fp8.png" alt="Nano与FP8变体官方关系图"><div class="fig-cap">Nano与FP8变体 · 官方完整原图</div></div><table class="rtable"><thead><tr><th>质量指标</th><th>BF16</th><th>FP8</th><th>结论</th></tr></thead><tbody><tr><td>Super SoundBench↑</td><td>7.31</td><td>6.64</td><td>下降</td></tr><tr><td>Super RBench↑</td><td>0.58</td><td>0.55</td><td>下降</td></tr><tr><td>Nano Depth si-RMSE↓</td><td>0.62</td><td>0.64</td><td>变差</td></tr><tr><td>Nano SoundBench↑</td><td>7.34</td><td>7.09</td><td>下降</td></tr><tr><td>Edge Robotics↑</td><td>49.17</td><td>48.68</td><td>下降</td></tr><tr><td>Edge PAIBench I2V↑</td><td>81.10</td><td>80.75</td><td>下降</td></tr><tr><td>Nano UVA WAM PSNR↑</td><td>12.01</td><td>19.25</td><td>改善，非全域无损</td></tr></tbody></table><div class="gap-box g1"><div class="title">质量对照并非纯量化消融</div><p>BF16用PyTorch，FP8用vLLM-Omni；精度和后端同时变化。域分数为各自18/10/8/3个benchmark的无权均值，缺置信区间，不把接近数值直接判为无回归。</p></div><div class="fig-box"><img src="src/assets/cosmos3_super_fp8.png" alt="Super与FP8变体官方关系图"><div class="fig-cap">Super与FP8变体 · 官方完整原图</div></div><table class="rtable"><thead><tr><th>硬件/模型</th><th>生成480p frames/s</th><th>TTFT ms</th><th>输出tokens/s</th><th>Policy actions/s</th></tr></thead><tbody><tr><td>H100 Edge单卡</td><td>13.04</td><td>108.1</td><td>312.64</td><td>20.50</td></tr><tr><td>H100 Nano单卡</td><td>3.20</td><td>129.5</td><td>173.01</td><td>38.29</td></tr><tr><td>H100×8 Super</td><td>4.69</td><td>267.748</td><td>59.758</td><td>15.65（Policy单卡）</td></tr></tbody></table><div class="gap-box g1"><div class="title">上述三行不能直接比较加速倍数</div><p>Edge为121帧/35去噪步，Nano/Super189帧；Policy又有32动作/30步及不同后端。Super行标签8卡只用于Generator/Reasoner，Policy除H20外单卡。视频播放FPS不是推理frames/s，actions/s也不是完整闭环控制频率。</p></div><div class="gap-box g1"><div class="title">真实测量与估计分开</div><p>T3000由T5000 devkit配置模拟；Nano GB300的37.47*、Super GB300的27.02由B300代理，尚非GB300实测。DGX部分任务缺结果和完整Reasoner负载，保留横杠，不补造。</p></div><div class="gap-box g1"><div class="title">研究判断与来源缺口</div><p>同后端、同任务、同预算再比较量化；同时记录质量失败、端到端成本和rollout奖励分布。完整技术报告仍只留链接未读，不下载PDF/权重、不运行模型。</p></div><p><a href="https://huggingface.co/nvidia/Cosmos3-Edge-FP8">🤗 Edge-FP8</a> · <a href="https://huggingface.co/nvidia/Cosmos3-Nano-FP8">🤗 Nano-FP8</a> · <a href="https://huggingface.co/nvidia/Cosmos3-Super-FP8">🤗 Super-FP8</a></p></div></section></div><!-- /main-grid -->
 <!-- BOTTOM STRIP -->
 <div class="bottom-strip">
 <div class="bstrip">
@@ -323,7 +323,7 @@ html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-containe
 </div>
 <div class="bstrip">
 <div class="bhead">边界</div>
-<p>没有显式物理求解；256K只属于Reasoner。</p>
+<p>没有显式物理求解；FP8有质量取舍，Edge上下文与硬件精度单独核对。</p>
 </div>
 <div class="bstrip">
 <div class="bhead">研究</div>

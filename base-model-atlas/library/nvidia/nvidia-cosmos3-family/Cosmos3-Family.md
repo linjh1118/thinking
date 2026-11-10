@@ -8,7 +8,7 @@ url: "https://huggingface.co/nvidia/Cosmos3-Nano"
 tags: [model-note, world-model, physical-ai, agent-training]
 status: read
 created: 2026-10-21
-updated: 2026-11-09
+updated: 2026-11-10
 ---
 
 # Cosmos3：把世界理解与多模态生成放进一个家族
@@ -111,9 +111,170 @@ updated: 2026-11-09
 
 🤗 [Edge HF Model Card](https://huggingface.co/nvidia/Cosmos3-Edge) · [[src/Cosmos3-Edge|原始MD]] · [官方8月25日更新声明](https://huggingface.co/nvidia/Cosmos3-Edge/discussions/62)
 
+## 11月9日FP8部署变体：质量与接口变化
+
+> [!tldr]
+> 11月10日巡检发现官方Edge/Nano/Super-FP8模型卡，三卡Release Date明确写2026-11-09。它们是现有架构的量化变体，补入原Cosmos3 family；不增加叶子，也不把量化、尺寸SKU写进近30天新模型表。三个原始MD和三张官方结构图已归档。
+
+| 项目 | Edge-FP8 | Nano-FP8 | Super-FP8 |
+| --- | --- | --- | --- |
+| 参数量 | 4B | 16B | 64B |
+| 定位 | 原Edge的FP8变体 | 原Nano的FP8变体 | 原Super的FP8变体 |
+| Reasoner卡片上限 | 131,072 tokens | 256K | 256K |
+| 精度边界 | 部分组件量化；排除组件保留原精度 | 同左，含ModelOpt状态 | Generator/Reasoner性能分别测FP8 |
+| 官方部署示例快照 | vLLM0.33.0 | vLLM0.31.0；SGLang0.5.23 | vLLM0.31.0；SGLang0.5.23 |
+
+这些版本是本次卡片的可追溯快照，未安装或实跑。Nano/Super的Diffusers示例先启用ModelOpt checkpoint恢复，并显式获取`transformer/modelopt_state.pth`，因为它不在Diffusers默认下载白名单；这解释了普通from_pretrained为何可能漏掉量化状态，不是本站已下载该二进制。SGLang示例还要求CUDA toolkit以编译FP8内核，不能把包安装成功当成内核已跑通。
+
+![Edge与FP8变体的官方关系图](src/assets/cosmos3_edge_fp8.png)
+
+![Nano与FP8变体的官方关系图](src/assets/cosmos3_nano_fp8.png)
+
+![Super与FP8变体的官方关系图](src/assets/cosmos3_super_fp8.png)
+
+### 质量表不能被概括成“FP8无损”
+
+以下逐项保留官方BF16/FP8质量表。Reasoner四个域分别对18/10/8/3个benchmark取无权均值，不是每个域难度、题数和分布相同的总成功率。Generator中BF16使用PyTorch，FP8使用vLLM-Omni，因此这是**精度与后端一起变化的对照**，不能单独归因为FP8量化。
+
+最关键的负向结果：Super SoundBench **7.31→6.64**、RBench **0.58→0.55**、Driving **76.83→76.27**；Nano SoundBench **7.34→7.09**、Depth si-RMSE **0.62→0.64**（越低越好，因此变差）；Edge Robotics **49.17→48.68**、PAIBench-G I2V **81.10→80.75**。同时存在UVA PSNR等正向值，不应只挑其中一边。没有置信区间和多种子统计，接近数值也不能直接判定无退化。
+
+### Edge：全部质量结果
+
+| Domain | BF16 | FP8 |
+| --- | --- | --- |
+| General ↑ | 56.56 | 58.10 |
+| Robotics ↑ | 49.17 | 48.68 |
+| Smart Infrastructure ↑ | 52.00 | 51.95 |
+| Driving ↑ | 62.50 | 62.38 |
+
+| Benchmark | BF16 | FP8 |
+| --- | --- | --- |
+| PAIBench-G I2V ↑ | 81.10 | 80.75 |
+| PAIBench-G T2V ↑ | 76.90 | 76.58 |
+| RBench ↑ | 0.55 | 0.57 |
+| PhysicsIQ I2V ↑ | 31.28 | 31.37 |
+
+### Nano：全部质量结果
+
+| Domain | BF16 | FP8 |
+| --- | --- | --- |
+| General ↑ | 68.16 | 68.25 |
+| Robotics ↑ | 52.07 | 52.54 |
+| Smart Infrastructure ↑ | 63.24 | 62.70 |
+| Driving ↑ | 71.57 | 72.50 |
+
+| Benchmark | BF16 | FP8 |
+| --- | --- | --- |
+| PAIBench-G I2V ↑ | 82.70 | 82.60 |
+| PAIBench-G T2V ↑ | 79.40 | 79.40 |
+| RBench ↑ | 0.58 | 0.57 |
+| SoundBench ↑ | 7.34 | 7.09 |
+| PhysicsIQ V2V ↑ | 50.20 | 52.01 |
+| PAIBench-C Edge F1 ↑ | 0.49 | 0.48 |
+| PAIBench-C Blur SSIM ↑ | 0.91 | 0.91 |
+| PAIBench-C Depth si-RMSE ↓ | 0.62 | 0.64 |
+| PAIBench-C Seg. mIoU ↑ | 0.72 | 0.72 |
+| UVA FDM PSNR ↑ | 21.05 | 21.89 |
+| UVA WAM PSNR ↑ | 12.01 | 19.25 |
+
+### Super：全部质量结果
+
+| Domain | BF16 | FP8 |
+| --- | --- | --- |
+| General ↑ | 72.31 | 72.69 |
+| Robotics ↑ | 53.47 | 54.10 |
+| Smart Infrastructure ↑ | 64.03 | 64.50 |
+| Driving ↑ | 76.83 | 76.27 |
+
+| Benchmark | BF16 | FP8 |
+| --- | --- | --- |
+| PAIBench-G I2V ↑ | 82.80 | 82.60 |
+| PAIBench-G T2V ↑ | 80.00 | 79.80 |
+| RBench ↑ | 0.58 | 0.55 |
+| SoundBench ↑ | 7.31 | 6.64 |
+| PhysicsIQ V2V ↑ | 59.70 | 59.01 |
+| PAIBench-C Edge F1 ↑ | 0.50 | 0.50 |
+| PAIBench-C Blur SSIM ↑ | 0.91 | 0.91 |
+| PAIBench-C Depth si-RMSE ↓ | 0.58 | 0.58 |
+| PAIBench-C Seg. mIoU ↑ | 0.71 | 0.72 |
+| UVA FDM PSNR ↑ | 21.05 | 21.79 |
+| UVA WAM PSNR ↑ | 12.01 | 19.34 |
+
+FP8卡共同写生成训练Action为7M，而此前Nano/Super基础卡为8M，Edge基础卡本来为7M；这里只记录卡片口径差异，不能据此推断又预训练了一代模型，也不覆盖基础卡的历史数据字段。
+
+## FP8吞吐：工作负载、真实测量与估计分开
+
+> [!tldr]
+> Generator的frames/s是生成整段视频的推理吞吐，不是播放帧率；Policy actions/s按32-action chunk计算，不直接等于闭环控制频率。单卡、八卡、代理估计和模拟硬件不能混成无条件排行榜。
+
+### Edge：全部硬件结果
+
+| Hardware | Generator — 480p (frames/s) | Reasoner — time to first token (ms) | Reasoner — output token throughput (tokens/s) | Action Policy — 480p (actions/s, 32-action chunks) |
+| --- | ---: | ---: | ---: | ---: |
+| H100 | 13.04 | 108.1 | 312.64 | 20.50 |
+| H200 | 12.96 | 103.0 | 341.18 | 21.11 |
+| H20 | 3.30 | 163.6 | 262.42 | 6.81 |
+| DGX Station | 30.63 | 65.4 | 425.65 | 30.48 |
+| DGX Spark | 1.65 | 213.2 | 69.46 | 4.03 |
+| RTX PRO 6000 | 7.52 | 121.0 | 245.38 | 10.77 |
+| RTX PRO 5000 | 4.51 | 99.7 | 243.16 | 9.58 |
+| Jetson Thor T5000 | 1.92 | 205.7 | 76.69 | 3.79 |
+| Jetson T3000 | 0.88 | 384.3 | 62.16 | 1.81 |
+| Jetson AGX Orin | - | 817.8 | 41.46 | - |
+
+### Nano：全部硬件结果
+
+| GPU (1 GPU) | Generator — 480p (frames/s) ↑ | Generator — 720p (frames/s) ↑ | Reasoner — time to first token (ms) ↓ | Reasoner — output token throughput (tokens/s) ↑ | Action Policy — 480p (actions/s, 32-action chunks) ↑ |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GB300 | 10.06 | 2.80 | 91.8 | 241.65 | 37.47* |
+| B300 | 8.69 | 2.38 | 108.5 | 240.16 | 37.47 |
+| B200 | 8.11 | 2.24 | 137.8 | 221.72 | 52.36 |
+| H100 | 3.20 | 1.01 | 129.5 | 173.01 | 38.29 |
+| H200 | 3.34 | 1.00 | 128.3 | 202.05 | 38.97 |
+| H20 | 0.91 | 0.24 | 242.0 | 148.21 | 11.17 |
+| DGX Spark | — | — | 336.1 | 22.62 | — |
+| DGX Station | — | — | 85.4 | 255.99 | — |
+| RTX PRO 6000 Blackwell Server Edition | 2.34 | 0.61 | 150.2 | 112.90 | 24.90 |
+
+### Super：全部硬件结果
+
+| GPU configuration | Generator 480p (frames/s) | Generator 720p (frames/s) | Reasoner time to first token (ms) | Reasoner output token throughput (tokens/s) | Action Policy (Hz, 32-action chunks)* |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GB300 | 2.88 | 0.78 | 136.667 | 104.886 | 27.02 |
+| B300 | 2.45 | 0.67 | 146.213 | 106.473 | 27.02 |
+| B200 | 2.34 | 0.63 | 167.483 | 102.833 | 26.43 |
+| H100 × 8 | 4.69 | 1.69 | 267.748 | 59.758 | 15.65 |
+| H200 × 8 | 4.80 | 1.85 | 257.864 | 74.618 | 15.99 |
+| H20 × 8 | 1.57 | 0.46 | 741.806 | 47.566 | 5.47 |
+
+### Nano / Super：卡数、分母与代理估计
+
+- Nano所有行均单GPU。Generator为vLLM-Omni、I2V、189帧，frames/s=189除以平均整段生成耗时；Reasoner为vLLM、并发1、50输入token、100输出token、视频采样FPS1、50请求；Policy用PyTorch、DROID、480p、32-action chunks。
+- Nano的GB300 Policy **37.47***由B300代理，尚未在GB300实测。DGX Spark/Station的Generator和Policy没有结果，保留横杠；不能按Reasoner能力补值。
+- Super的Generator/Reasoner在GB300、B300、B200为单卡，在H100/H200/H20为8卡；**Policy除H20用8卡外，其他都是单卡**，不能把H100×8行的15.65Hz写成8卡Policy。
+- Super GB300 Policy **27.02Hz**也是B300代理：单卡B300 1.184213秒生成32动作。卡片表已混入该估计，必须明确标注，不写成全部实测。
+- Super性能表189帧，但“单H200约14分钟、B200约11分钟”的720p服务说明是另一单卡配置；官方因此上调同步请求超时。它不与H200×8表行构成矛盾，不应跨卡数计算量化加速倍数。
+
+### Edge：后端、帧数与嵌入式设备限定
+
+- Generator：vLLM-Omni FP8 I2V，832×480、**121帧、35去噪步**、并发1、1次warmup，吞吐=121/端到端服务推理时间；不同GPU取所测最快后端，H100/H200用FLASH_ATTN，其余所列平台用CUDNN_ATTN。因此不能与Nano/Super的189帧表直接等比比较。
+- 标准Reasoner负载：50文本token加30秒374×374、1fps视频（30帧），输出100token，并发1。DGX Station、Spark、RTX PRO5000仅给OSL100/FPS1/并发1，未完整公开输入长度、分辨率、视频时长和attention后端；它们的425.65等值不构成完全同负载比较。
+- Policy：vLLM-Omni、DROID、32-action chunks、30去噪步、并发1、warmup1；嵌入式输出736×544属480p模型tier，另含1条件帧。按32/端到端推理时间算actions/s，未包括感知、网络、执行器响应与chunk重规划的全部闭环时间。
+- **T3000是T5000 devkit配置模拟**（12SM、8CPU、32GB），不是实际T3000开发板实测。Thor/T3000原生FP8；**Orin使用FP8 checkpoint但weight-only W8A16计算**，不能称Orin原生FP8。Orin Generator/Policy来自另一BF16 checkpoint，不列入FP8表；横杠不是零分。
+- H100为SXM80GB、H200为SXM141GB、H20为SXM96GB；RTX PRO6000为Blackwell Server Edition，5000 Generator为72GB版。嵌入式为MAXN且锁频，不能忽略设备与功耗模式。
+
+### 对Agent Training与部署选择的判断
+
+> [!insight]
+> 先用同任务、同后端、同采样预算评估量化质量，再测相同硬件的端到端时延与功耗；训练rollout还需记录吞吐变化是否改变有效样本、失败修复和奖励分布。不能把少显存或token更快直接解释为策略更强，也不能让有偏的世界生成替代独立真实状态verifier。
+
+这些卡片给出质量取舍和部署可行性证据，没有证明全部精度无损，也没有给出同后端BF16→FP8的完整速度消融。原有完整技术报告未读、长程物理可靠性与统计协议缺口继续保留；本轮未下载PDF/权重，未运行容器/模型或控制硬件。
+
+官方卡：[Edge-FP8](https://huggingface.co/nvidia/Cosmos3-Edge-FP8)、[Nano-FP8](https://huggingface.co/nvidia/Cosmos3-Nano-FP8)、[Super-FP8](https://huggingface.co/nvidia/Cosmos3-Super-FP8)。原始MD、完整示例代码和benchmark列表在同级src，不能把归档的示例当作已执行轨迹。
+
 ## 工程与能力边界
 
-vLLM 的 Reasoner、vLLM-Omni、Diffusers、SGLang 不能混为同一后端。原卡明确 SGLang 当前不支持 video-to-video、带声音视频及动作生成；支持服务 API 不等于该模态已经通过实测。仅 BF16 精度被官方测试，不能根据通用框架支持 FP8 就宣布该模型 FP8 无回归。
+vLLM 的 Reasoner、vLLM-Omni、Diffusers、SGLang 不能混为同一后端。原基础卡当时写SGLang不支持video-to-video、带声音视频及动作生成；新增Nano/Super FP8卡改为SGLang0.5.23支持这些接口，属于特定版本的能力声明。保留这项来源/版本差异，支持服务API不等于本站已逐模态实测。此前基础卡仅标注BF16已测；11月9日新增的独立FP8卡现已给出质量与性能数据，详见下方部署变体板块。FP8卡所测版本、后端、上下文与基础BF16卡分开，不将“有FP8权重”推成无精度回归。
 
 模型明确没有显式物理求解器：接触、碰撞、对象恒常性、长程状态可能出错；Reasoner 也可能误判因果、时序、几何或意图。安全关键部署需外部约束与系统级验证。本轮仅归档和研读，没有加载权重、执行容器、运行推理或设备控制。
 
