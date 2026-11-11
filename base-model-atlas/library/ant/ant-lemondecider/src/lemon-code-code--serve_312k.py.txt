@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""Native joint-readout HTTP bridge with recursive question-list bisection.
+Only overlength requests are split. Every chunk retains the full state and every
+question/option verbatim, in order. An oversized singleton rejects the entire
+request before inference. No reread, truncation, option filtering or prompt tuning.
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import binascii
+import hmac
+import io
+import json
+import math
+import os
+import sys
+import threading
+import time
+from pathlib import Path
+from typing import Any
+
+import uvicorn
+from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.responses import JSONResponse
+from PIL import Image
+from starlette.concurrency import run_in_threadpool
+
+CAPACITY_MESSAGE = "Input exceeds maximum context length of 8192 tokens; no input was truncated."
+BATCH_SIZE = max(1, int(os.environ.get("AIS_SERVER_BATCH_SIZE", "1")))
+
+
+class LemonDeciderHFService:
+    def __init__(self, checkpoint: Path, device: str, transformers_path: str | None) -> None:
+        self.checkpoint = checkpoint.resolve()
+        self.device = device
+        self.transformers_path = transformers_path
+        if transformers_path:
+            sys.path.insert(0, transformers_path)
+        if not (self.checkpoint / "modeling_lemondecider.py").is_file():
+            raise ValueError(f"{self.checkpoint} is not a self-contained LemonDecider HF checkpoint")
+        try:
+            from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5Model  # noqa: F401
+        except ImportError as exc:
+            raise RuntimeError(
+                "Transformers must support Qwen3_5Model. Select the training-compatible "
+                "runtime with DI_PYTHON or --transformers-path; do not replace vendor torch."
+            ) from exc
+
+        import torch
+        from transformers import AutoModel, AutoProcessor
+
+        sys.path.insert(0, str(self.checkpoint))
+        import decision_utils
+
+        torch.set_num_threads(int(os.environ.get("AIS_SERVER_CPU_THREADS", "8")))
+        if torch.cuda.is_available():
+            torch.backends.cuda.enable_cudnn_sdp(False)
+
+        self.model = AutoModel.from_pretrained(
+            str(self.checkpoint), trust_remote_code=True, local_files_only=True,
+            dtype=torch.bfloat16, device_map=self.device, attn_implementation="sdpa",
+        ).eval()
+        self.processor = AutoProcessor.from_pretrained(
+            str(self.checkpoint), trust_remote_code=True, local_files_only=True,
+        )
+        self.processor.tokenizer.padding_side = "left"
+        codes, token_ids = decision_utils.answer_codes(self.processor.tokenizer, self.model.config.max_options, getattr(self.model.config, 'code_scheme', 'letters-v1'))
+        if codes != self.model.config.codes or token_ids != self.model.config.token_ids:
+            raise ValueError("Checkpoint answer vocabulary differs from its tokenizer")
+        import joint_readout
+        if not joint_readout.is_joint_config(self.model.config):
+            raise ValueError('Expected exact joint-readout protocol')
+        self.joint = joint_readout
+        self.predict_joint = joint_readout.predict_joint
+        self.decision_utils = decision_utils
+        self.name = getattr(self.model.config, "model_id", "lemondecider-v3")
+        self.lock = threading.Lock()
+
+    def _images(self, values: list[str]) -> list[Image.Image]:
+        images = []
+        for value in values:
+            if not value.startswith("data:image/") or "," not in value:
+                raise ValueError("images must be base64 PNG, JPEG, or WebP data URLs")
+            header, encoded = value.split(",", 1)
+            try:
+                content = base64.b64decode(encoded, validate=True)
+                if len(content) > 8_000_000:
+                    raise ValueError("Each image must be at most 8 MB")
+                with Image.open(io.BytesIO(content)) as image:
+                    if image.format not in {"PNG", "JPEG", "WEBP"}:
+                        raise ValueError("Unsupported image format")
+                    images.append(image.convert("RGB"))
+            except (OSError, ValueError, binascii.Error) as exc:
+                raise ValueError("Invalid image data") from exc
+        return images
+
+    def plan(self, rows: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
+        """Author-equivalent bisection; full state and question dictionaries retained."""
+        if not rows:
+            raise ValueError("A request needs at least one question")
+        length = self.joint.unit_lengths(self.processor, self.model.config, [rows])[0]
+        limit = self.model.config.max_input_length
+        if length <= limit:
+            return [rows]
+        if len(rows) == 1:
+            raise ValueError(f"Question branch exceeds {limit} tokens; no input was truncated")
+        middle = len(rows) // 2
+        return self.plan(rows[:middle]) + self.plan(rows[middle:])
+
+    def predict(self, body: dict[str, Any]) -> dict[str, Any]:
+        questions: dict[str, dict[str, Any]] = body.get("questions") or {}
+        identifiers = list(questions)
+        if not identifiers:
+            raise ValueError("A request needs at least one question")
+        if body.get('images'):
+            raise ValueError('This published model is text-only; image requests unsupported')
+        rows = [{"state": body.get("state"), "question": question, "images": []}
+                for question in questions.values()]
+        # Finish the entire plan before any model forward: no partial answer on failure.
+        chunks = self.plan(rows)
+        answers = {}
+        input_tokens = 0
+        offset = 0
+        for chunk in chunks:
+            result = self.predict_joint(self.model, self.processor, chunk)
+            answers.update(dict(zip(identifiers[offset:offset + len(chunk)],
+                                    result['answers'], strict=True)))
+            input_tokens += int(result['input_tokens'])
+            offset += len(chunk)
+        assert offset == len(identifiers) and list(answers) == identifiers
+        if len(chunks) > 1 and os.environ.get('JOINT_SERVER_TRACE'):
+            # No prompts or answers in trace; private audit of actual multi-forward use.
+            with open(os.environ['JOINT_SERVER_TRACE'], 'a') as f:
+                f.write(json.dumps({'questions':len(rows),
+                                    'joint_chunks':[len(c) for c in chunks],
+                                    'input_tokens':input_tokens}) + '\n')
+        return {'model': self.name, 'answers': answers,
+                'usage': {'input_tokens': input_tokens, 'output_tokens': 0}}
+
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--checkpoint", required=True)
+    parser.add_argument("--host", default=os.environ.get("LEMONDECIDER_HOST", "127.0.0.1"))
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")))
+    parser.add_argument("--device", default=os.environ.get("AIS_SERVER_DEVICE", "cuda:0"))
+    parser.add_argument("--transformers-path", default=os.environ.get("AIS_TRANSFORMERS_PATH") or None)
+    args = parser.parse_args()
+
+    service = LemonDeciderHFService(Path(args.checkpoint), args.device, args.transformers_path)
+    app = FastAPI(title="LemonDecider HF bridge", version="0.4.0-chunked")
+    started = time.perf_counter()
+
+    @app.get("/health")
+    def health() -> dict[str, Any]:
+        return {
+            "status": "ready", "model": service.name, "checkpoint": str(service.checkpoint),
+            "authentication": bool(os.getenv("LEMONDECIDER_API_KEY")), "modalities": ["text"],
+            "chunking": "recursive-question-bisection-v1",
+            "max_input_length": service.model.config.max_input_length,
+            "loaded_seconds": round(time.perf_counter() - started, 2),
+        }
+
+    @app.get("/v1/models")
+    def models(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+        _check_key(authorization)
+        names = sorted({"lemondecider", "lemondecider-latest", "lemondecider-preview", service.name})
+        return {"models": [{"name": name, "Release": "local LemonDecider HF checkpoint"} for name in names]}
+
+    @app.post("/v1/systemone")
+    async def systemone(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        _check_key(authorization)
+        body = await request.json()
+        if not service.lock.acquire(blocking=False):
+            raise HTTPException(529, "The model is busy. Retry shortly.", headers={"Retry-After": "1"})
+        try:
+            return JSONResponse(await run_in_threadpool(service.predict, body))
+        except ValueError as exc:
+            detail = CAPACITY_MESSAGE if "exceeds" in str(exc) and "truncated" in str(exc) else str(exc)
+            return JSONResponse(status_code=422, content={"detail": detail})
+        finally:
+            service.lock.release()
+
+    uvicorn.run(app, host=args.host, port=args.port)
+
+
+def _check_key(authorization: str | None) -> None:
+    key = os.getenv("LEMONDECIDER_API_KEY")
+    if key and not hmac.compare_digest((authorization or "").encode(), f"Bearer {key}".encode()):
+        raise HTTPException(401, "Missing or invalid API key.", headers={"WWW-Authenticate": "Bearer"})
+
+
+if __name__ == "__main__":
+    main()

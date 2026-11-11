@@ -1,0 +1,53 @@
+import unittest,copy,sys,types
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'code'))
+from serve_312k import LemonDeciderHFService
+
+class FakeJoint:
+    def unit_lengths(self,processor,config,units):
+        return [len(unit[0]['state'])+sum(r['question']['cost'] for r in unit) for unit in units]
+
+class Tests(unittest.TestCase):
+    def service(self,limit=12):
+        s=object.__new__(LemonDeciderHFService)
+        s.model=types.SimpleNamespace(config=types.SimpleNamespace(max_input_length=limit))
+        s.processor=None;s.joint=FakeJoint();s.name='test';s.calls=[]
+        def predict(model,processor,rows):
+            s.calls.append(rows)
+            return {'answers':[{'type':'choice','choice':r['question']['label'],'probabilities':r['question']['criteria']} for r in rows],
+                    'input_tokens':s.joint.unit_lengths(processor,model.config,[rows])[0]}
+        s.predict_joint=predict
+        return s
+    def body(self,n=5):
+        return {'state':'state','questions':{str(i):{'type':'choice','label':str(i),'cost':3,'criteria':{'a':0.4,'b':0.6}} for i in range(n)}}
+    def test_unchanged_short(self):
+        s=self.service();b=self.body(2);r=s.predict(b)
+        self.assertEqual(len(s.calls),1);self.assertEqual(list(r['answers']),list(b['questions']))
+    def test_recursive_split_preserves_everything(self):
+        s=self.service();b=self.body();before=copy.deepcopy(b);r=s.predict(b)
+        self.assertEqual([len(c) for c in s.calls],[2,1,2])
+        self.assertEqual(b,before)
+        flat=[row for c in s.calls for row in c]
+        self.assertEqual([x['question'] for x in flat],list(b['questions'].values()))
+        self.assertTrue(all(x['state']==b['state'] for x in flat))
+        self.assertEqual(list(r['answers']),list(b['questions']))
+        self.assertEqual(r['usage']['input_tokens'],sum(5+3*len(c) for c in s.calls))
+    def test_singleton_rejection_before_any_forward(self):
+        s=self.service();b=self.body();b['questions']['4']['cost']=100
+        with self.assertRaisesRegex(ValueError,'no input was truncated'):s.predict(b)
+        self.assertEqual(s.calls,[])
+    def test_exact_limit_not_split(self):
+        s=self.service(11);s.predict(self.body(2));self.assertEqual(len(s.calls),1)
+    def test_empty_rejected(self):
+        s=self.service()
+        with self.assertRaisesRegex(ValueError,'at least one'):s.predict(self.body(0))
+        self.assertEqual(s.calls,[])
+    def test_images_rejected(self):
+        s=self.service();b=self.body();b['images']=['anything']
+        with self.assertRaisesRegex(ValueError,'text-only'):s.predict(b)
+        self.assertEqual(s.calls,[])
+    def test_wrong_answer_count_fails_closed(self):
+        s=self.service();s.predict_joint=lambda *a: {'answers':[],'input_tokens':1}
+        with self.assertRaises(ValueError):s.predict(self.body(1))
+
+if __name__=='__main__':unittest.main(verbosity=2)

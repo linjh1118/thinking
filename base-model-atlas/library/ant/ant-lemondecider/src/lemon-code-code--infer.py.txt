@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Native multi-question CLI using the same bridge as the evaluated HTTP service."""
+import argparse,json,os
+from pathlib import Path
+from serve_312k import LemonDeciderHFService
+p=argparse.ArgumentParser()
+p.add_argument('--checkpoint',type=Path,default=Path(__file__).resolve().parents[1])
+p.add_argument('--device',default='cuda:0')
+p.add_argument('--input',type=Path,required=True,help='One state/questions HTTP-format JSON request')
+a=p.parse_args()
+os.environ.setdefault('AIS_SERVER_CPU_THREADS','4')
+s=LemonDeciderHFService(a.checkpoint,a.device,None)
+print(json.dumps(s.predict(json.loads(a.input.read_text())),ensure_ascii=False,indent=2))
