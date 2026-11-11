@@ -1,0 +1,104 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MiniMax H3-Image — 原生16MP与提示扩写的分工 · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>MiniMax H3-Image — 原生16MP与提示扩写的分工</h2><div class="meta">model-note · <br>model-note, base-model, h3image</div><nav><a class="toc-l2" href="#section-1">定位、日期与开放边界</a><a class="toc-l2" href="#section-2">方法、接口与训练判断</a><a class="toc-l2" href="#section-3">结果、反例与研究启发</a></nav></aside><main class="note"><aside class="callout tldr"><div class="callout-title">TLDR</div><div>H3-Image把H3的音画主干改造成图像生成/编辑专项：去掉音频支路，保留单流DiT与H3文本编码器，蒸馏成6步、无需CFG的原生约16MP生成。最容易混淆的是：生成器、27B提示扩写器PE与托管Context-IR是三个组件，公开编辑PE目前只有提示模板，不能宣传整条理解链已开放。</div></aside><aside class="callout warning"><div class="callout-title">发布与资料深度</div><div>官方博客明确2026-11-11“今天发布”，采用该声明日，不使用HF创建/更新时间。已读基础/PE两卡、官方博客和图；没有完整训练报告或独立实测，数据/RL/蒸馏损失及消融不足，未达到完整GLM/Kimi报告精读深度。H3-Image与7/31音视频H3分列专项；PE是本图像family组件，不另拆正代。</div></aside><style id="note-tabs-style">[data-note-panel][hidden]{display:none!important}.note-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:24px 0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.note-tabs button{font:inherit;font-family:Inter,sans-serif;font-size:13px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 13px;cursor:pointer}.note-tabs button[aria-selected="true"]{background:#223d66;color:#eaf2ff;border-color:#6689ba}.note-tabs button:focus-visible{outline:3px solid #70d9ff}.note [data-note-panel]>h2:first-child{margin-top:20px}html[data-theme="light"] .note-tabs button[aria-selected="true"]{background:#dceaff;color:#15375e;border-color:#7ca1ce}</style><nav class="note-tabs" role="tablist" aria-label="研读板块"><button type="button" role="tab" id="note-tab-0" aria-controls="note-panel-0" aria-selected="true" tabindex="0" data-note-tab="0">定位、日期与开放边界</button><button type="button" role="tab" id="note-tab-1" aria-controls="note-panel-1" aria-selected="false" tabindex="-1" data-note-tab="1">方法、接口与训练判断</button><button type="button" role="tab" id="note-tab-2" aria-controls="note-panel-2" aria-selected="false" tabindex="-1" data-note-tab="2">结果、反例与研究启发</button></nav><section role="tabpanel" id="note-panel-0" aria-labelledby="note-tab-0" data-note-panel="0"><h2 id="section-1">定位、日期与开放边界</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>这是11/11公开的图像专项；约16MP原生生成与高分辨率展示可以核实，但“十秒”和领先幅度需带硬件/模式/负载，不能用它们替代统一复测。</div></aside><p><img src="src/assets/showcase_hero.jpg" alt="官方图像示例合集"></p><div class="table-wrap"><table><thead><tr><th>组件</th><th>规模 / 精度</th><th>职责与边界</th></tr></thead><tbody><tr><td>H3-Image DiT</td><td>33.1B；主要BF16，embedding/timestep/output为FP32</td><td>文生图、参考生成、多图编辑；50层，hidden5376，56头，FFN14336</td></tr><tr><td>H3文本编码器</td><td>继承Qwen3-VL完整encoder，第50层hidden</td><td>与H3共用，另从H3仓库加载约66.7GB；不是本repo已包括</td></tr><tr><td>H3-Image-PE</td><td>Qwen3.8-27B微调，NVFP4</td><td>本地文生图提示扩写，输出caption与宽高比</td></tr><tr><td>H3-Image-Context-IR</td><td>托管接口</td><td>把简短多语言请求转为完整英文画面描述；不等同PE权重</td></tr><tr><td>编辑PE</td><td>仅task prompt与message assembly</td><td>尚在开发，需要用户自选VLM；不能称已开源编辑扩写专用模型</td></tr></tbody></table></div><p>主仓库约68.65GB是文件体积，不是峰值显存，也未包含约66.7GB外部文本编码器。PE的17.9GB也不是DiT量化版。许可为H3-Image Community License，PE同许可；不误标MIT/Apache。</p></section><section role="tabpanel" id="note-panel-1" aria-labelledby="note-tab-1" data-note-panel="1" hidden><h2 id="section-2">方法、接口与训练判断</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>图像VAE与单流DiT负责原生生成；PE负责意图描述。复现要冻结两级prompt、参考图顺序和实际内部画布，不能只保存最终一句提示。</div></aside><p>图像VAE为CNN encoder与24层2D ViT decoder，空间16倍下采样、24latent通道；DiT再做2×2patch，每个token对应32×32像素。文本和参考图经H3文本编码器，参考图另经VAE，所有token拼为单流序列，预测目标latent后再VAE解码。官方卡的架构图仍是TODO，不把旧H3含音频架构图冒充本模型新结构图。</p><p>checkpoint固定6 NFEs、guidance_scale=1；接口对其他步数/引导系数报400，negative_prompt也不支持。工作范围约4–20MP、官方建议约16MP；生成器直接输出该分辨率，不需另一个放大器。但服务端对小于min_generation_area的请求会先放大内部画布再LANCZOS缩回，不能把所有小尺寸请求解释为直接在返回尺寸上推理。</p><div class="table-wrap"><table><thead><tr><th>比例</th><th>官方约16MP尺寸</th></tr></thead><tbody><tr><td>1:1</td><td>4096×4096</td></tr><tr><td>4:3 / 3:4</td><td>4736×3552 / 3552×4736</td></tr><tr><td>3:2 / 2:3</td><td>5024×3360 / 3360×5024</td></tr><tr><td>16:9 / 9:16</td><td>5472×3072 / 3072×5472</td></tr><tr><td>21:9</td><td>6272×2688</td></tr></tbody></table></div><p>原prompt按原样使用，截到4096tokens。编辑参考图按上传顺序变成Picture1、Picture2等，支持最多16参考图；重排会改变语义。CPU generator同seed只控制初始噪声，不证明不同GPU、后端、版本的最终结果逐像素一致。</p><p>PE文生图输出expanded_caption/aspect_ratio；用户显式选比例时优先用户值。编辑模板的target_aspect_ratio允许adaptive，但它由另选VLM推断。PE默认temperature1、top_p0.95、top_k20、4096tokens含thinking、effort xhigh；schema约束只保证结构，不保证语义忠实。官方本地生成与托管API对照用的是Context-IR增强后的prompt，不能当作不带扩写的裸DiT同质量证据。</p><p><img src="src/assets/workflow_t2i.jpg" alt="官方：本地生成与托管参考"></p><aside class="callout warning"><div class="callout-title">宣传文字与图中口径</div><div>博客写4K低于10秒，但P50图4K/16MP文生图Standard16.0s、Highspeed10.3s，单图编辑18.2/12.5s、三图编辑21.4/14.4s。图下注明H3第二轮P50、其他模型沿用原数据；不能当完整同场复测。</div></aside></section><section role="tabpanel" id="note-panel-2" aria-labelledby="note-tab-2" data-note-panel="2" hidden><h2 id="section-3">结果、反例与研究启发</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>有定量速度图和丰富选择样例，缺统一质量分数、置信区间、完整训练配方。十秒、5倍、标准/高速模式应分别记录，不能拼成任意GPU都成立的SLA。</div></aside><p><img src="src/assets/official-latency.png" alt="官方延迟比较，完整图"></p><p>博客称4K低于10秒、最高5倍，另称Standard1.5–2倍、Highspeed3–4倍；需保留图示硬件/模型/模式，不能跨模式套用最高倍数。HF卡主要给出原生尺寸、依赖与gallery，没有完整公开同预算质量benchmark数表。价格50–70%与首周4K五折是发布期宣传，不能当永久标价；本轮未调用收费API或测显存/延迟。</p><p><img src="src/assets/showcase/edit_multi.jpg" alt="官方：十张参考组合"></p><p>十参考家具拼图说明官方展示了多图编辑，但精选图不是16参考全部任务的成功率；文字推理画板也不是自动求解基准。原图全部留在src/assets，图卡细节不得靠缩略图推定准确率。</p><aside class="callout insight"><div class="callout-title">INSIGHT</div><div>对Agent生成任务，应把用户原意、PE扩写、生成输入、参考图顺序与最终图一并留痕。固定seed/后端/步数/内部画布，比较原prompt、PE、托管IR三组；同时验收要求遵循、非编辑区保持与额外生成内容，记录PE引入的错误意图和总成本。不能把提示扩写器做完的推理隐瞒成生成模型自身能力。</div></aside><ul><li><a href="https://huggingface.co/MiniMaxAI/MiniMax-H3-Image" target="_blank" rel="noopener">官方基础卡</a></li><li><a href="https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE" target="_blank" rel="noopener">官方PE卡</a></li><li><a href="https://www.minimax.io/blog/minimax-h3-image" target="_blank" rel="noopener">11/11发布博客</a></li><li>关联：<a class="wikilink" href="../minimax-minimax-h3/MiniMax-H3.html">H3音视频系统</a>。</li></ul><blockquote>📊 相关可视化: <a class="wikilink" href="minimax_h3_image_poster_zh.html">中文Poster</a></blockquote></section><script id="note-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-note-tab]')];
+function select(index) {
+    tabs.forEach(tab => {
+        const active = tab.dataset.noteTab === String(index);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+}
+function reveal() {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) { select(panel.dataset.notePanel); requestAnimationFrame(() => target.scrollIntoView({block:'start'})); }
+}
+tabs.forEach((tab,index) => {
+    tab.onclick = () => select(tab.dataset.noteTab);
+    tab.onkeydown = event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    };
+});
+document.addEventListener('click',event => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) select(panel.dataset.notePanel);
+});
+window.addEventListener('hashchange',reveal); reveal();
+})();</script></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

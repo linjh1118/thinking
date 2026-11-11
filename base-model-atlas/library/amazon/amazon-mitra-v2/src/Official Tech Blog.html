@@ -1,0 +1,387 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://www.amazon.science/blog/mitra-v2-scaling-synthetic-pretraining-for-tabular-foundation-models">打开官方原文 ↗</a> · <a href="Official%20Tech%20Blog.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Mitra-v2: Scaling synthetic pretraining for tabular foundation models - Amazon Science Close Close 
+Research 
+Research 
+Research areas 
+Automated reasoning 
+Cloud and systems 
+Computer vision 
+Conversational AI 
+Economics 
+Information and knowledge management 
+Machine learning 
+Operations research and optimization 
+Quantum technologies 
+Robotics 
+Search and information retrieval 
+Security, privacy, and abuse prevention 
+Sustainability 
+Our scientific contributions 
+Publications Research from our scientists and collaborators. 
+Conferences Our experts present and discuss cutting-edge research at scientific meetings globally. 
+Research areas 
+Automated reasoning 
+Cloud and systems 
+Computer vision 
+Conversational AI 
+Economics 
+Information and knowledge management 
+Machine learning 
+Operations research and optimization 
+Quantum technologies 
+Robotics 
+Search and information retrieval 
+Security, privacy, and abuse prevention 
+Sustainability 
+Our scientific contributions 
+Publications Research from our scientists and collaborators. 
+Conferences Our experts present and discuss cutting-edge research at scientific meetings globally. 
+News &amp; blog 
+News &amp; blog 
+The latest from Amazon researchers 
+Amazon Science Blog Technical deep-dives and perspectives from our scientists. 
+News Research milestones and recent achievements. 
+The latest from Amazon researchers 
+Amazon Science Blog Technical deep-dives and perspectives from our scientists. 
+News Research milestones and recent achievements. 
+Collaborations 
+Collaborations 
+Amazon Research Awards 
+Overview 
+Call for proposals 
+Latest news 
+Research stories 
+Recipients 
+Amazon Nova AI Challenge 
+Overview 
+Rules 
+FAQs 
+Teams 
+Research collaborations 
+Overview 
+Carnegie Mellon University 
+Columbia University 
+Hampton University 
+Howard University 
+IIT Bombay 
+Johns Hopkins University 
+Max Planck Society 
+MIT 
+Tennessee State University 
+University of California, Los Angeles 
+University of Illinois Urbana-Champaign 
+University of Southern California 
+University of Texas at Austin 
+Virginia Tech 
+University of Washington 
+Amazon Research Awards 
+Overview 
+Call for proposals 
+Latest news 
+Research stories 
+Recipients 
+Amazon Nova AI Challenge 
+Overview 
+Rules 
+FAQs 
+Teams 
+Research collaborations 
+Overview 
+Carnegie Mellon University 
+Columbia University 
+Hampton University 
+Howard University 
+IIT Bombay 
+Johns Hopkins University 
+Max Planck Society 
+MIT 
+Tennessee State University 
+University of California, Los Angeles 
+University of Illinois Urbana-Champaign 
+University of Southern California 
+University of Texas at Austin 
+Virginia Tech 
+University of Washington 
+Resources 
+Resources 
+
+Code and datasets 
+Amazon Nova Try Amazon’s frontier foundation models. 
+
+Code and datasets 
+Amazon Nova Try Amazon’s frontier foundation models. 
+Careers 
+Careers 
+
+Careers Explore our open roles. 
+Amazon Scholars Faculty research opportunities on industry-scale technical challenges. 
+Postdoctoral Science Program Early-career research opportunities alongside experienced industry scientists. 
+
+Careers Explore our open roles. 
+Amazon Scholars Faculty research opportunities on industry-scale technical challenges. 
+Postdoctoral Science Program Early-career research opportunities alongside experienced industry scientists. Social 
+bluesky 
+threads 
+twitter 
+instagram 
+youtube 
+facebook 
+linkedin 
+github 
+rss Menu 
+Research 
+Research areas 
+Automated reasoning 
+Cloud and systems 
+Computer vision 
+Conversational AI 
+Economics 
+Information and knowledge management 
+Machine learning 
+Operations research and optimization 
+Quantum technologies 
+Robotics 
+Search and information retrieval 
+Security, privacy, and abuse prevention 
+Sustainability 
+Our scientific contributions 
+Publications Research from our scientists and collaborators. 
+Conferences Our experts present and discuss cutting-edge research at scientific meetings globally. 
+Research areas 
+Automated reasoning 
+Cloud and systems 
+Computer vision 
+Conversational AI 
+Economics 
+Information and knowledge management 
+Machine learning 
+Operations research and optimization 
+Quantum technologies 
+Robotics 
+Search and information retrieval 
+Security, privacy, and abuse prevention 
+Sustainability 
+Our scientific contributions 
+Publications Research from our scientists and collaborators. 
+Conferences Our experts present and discuss cutting-edge research at scientific meetings globally. 
+News &amp; blog 
+The latest from Amazon researchers 
+Amazon Science Blog Technical deep-dives and perspectives from our scientists. 
+News Research milestones and recent achievements. 
+The latest from Amazon researchers 
+Amazon Science Blog Technical deep-dives and perspectives from our scientists. 
+News Research milestones and recent achievements. 
+Collaborations 
+Amazon Research Awards 
+Overview 
+Call for proposals 
+Latest news 
+Research stories 
+Recipients 
+Amazon Nova AI Challenge 
+Overview 
+Rules 
+FAQs 
+Teams 
+Research collaborations 
+Overview 
+Carnegie Mellon University 
+Columbia University 
+Hampton University 
+Howard University 
+IIT Bombay 
+Johns Hopkins University 
+Max Planck Society 
+MIT 
+Tennessee State University 
+University of California, Los Angeles 
+University of Illinois Urbana-Champaign 
+University of Southern California 
+University of Texas at Austin 
+Virginia Tech 
+University of Washington 
+Amazon Research Awards 
+Overview 
+Call for proposals 
+Latest news 
+Research stories 
+Recipients 
+Amazon Nova AI Challenge 
+Overview 
+Rules 
+FAQs 
+Teams 
+Research collaborations 
+Overview 
+Carnegie Mellon University 
+Columbia University 
+Hampton University 
+Howard University 
+IIT Bombay 
+Johns Hopkins University 
+Max Planck Society 
+MIT 
+Tennessee State University 
+University of California, Los Angeles 
+University of Illinois Urbana-Champaign 
+University of Southern California 
+University of Texas at Austin 
+Virginia Tech 
+University of Washington 
+Resources 
+
+Code and datasets 
+Amazon Nova Try Amazon’s frontier foundation models. 
+
+Code and datasets 
+Amazon Nova Try Amazon’s frontier foundation models. 
+Careers 
+
+Careers Explore our open roles. 
+Amazon Scholars Faculty research opportunities on industry-scale technical challenges. 
+Postdoctoral Science Program Early-career research opportunities alongside experienced industry scientists. 
+
+Careers Explore our open roles. 
+Amazon Scholars Faculty research opportunities on industry-scale technical challenges. 
+Postdoctoral Science Program Early-career research opportunities alongside experienced industry scientists. Search Submit Search Machine learning 
+Mitra-v2: Scaling synthetic pretraining for tabular foundation models 
+Expanding the mix of synthetic data used to train a tabular foundation model enables it to adapt to new tables without new models and lead the single-model field on the TabArena benchmark. By Chris (Luyang) Kong November 10, 2026 5 min read Share Share 
+Copy link 
+Email 
+X 
+LinkedIn 
+Facebook 
+Line 
+Reddit 
+QZone 
+Sina Weibo 
+WeChat 
+WhatsApp 分享到微信 x 
+Much of the data that businesses run on lives in tables: the rows might represent customers, transactions, or interactions, and their “attributes” are listed in the columns. Predicting missing attributes — such as likelihood of customer retention or how much demand to expect next week — is one of the most common machine learning tasks in industry. 
+The standard tools for this job, such as gradient-boosted decision trees, produce models tailored to specific tables. Every new table means choosing an algorithm, engineering features, tuning hyperparameters, and setting up a processing pipeline. Tabular foundation models promise to end that cycle: one pretrained model reads the labeled rows of a previously unseen table and predicts the rest, with no training run in-between. 
+Last year we introduced Mitra , a tabular foundation model pretrained entirely on synthetic tables. It worked well on small and mid-sized tables but ran out of room on large ones, wide ones, and problems with many classes. 
+Today we&#x27;re introducing Mitra-v2, the second generation of the model, for both classification and regression. We describe it in a technical report , and we&#x27;ve released versions fine-tuned for both classification and regression, along with the inference and fine-tuning code, under the Apache-2.0 license on Hugging Face. Amazon Connect Customer , which provides agentic-AI systems for core business functions, led the effort. Amazon Connect Customer is adopting Mitra-v2 for prediction on structured business and customer-experience data, such as estimating how likely a business-relevant event is to occur given a customer&#x27;s interaction history and operational context. 
+On TabArena , a public benchmark of 51 real-world datasets, Mitra-v2 leads the single-model field. It produces a better result than Mitra-v1 on 32 of the 33 datasets where both models run natively, and it completes all 51 datasets within the benchmark&#x27;s one-hour budget, which Mitra-v1 failed to do on more than a third of them. On ScoringBench , a public benchmark for regression models that predict a range of likely outcomes rather than a single number, fine-tuned Mitra-v2 ranks first. 
+
+Synthetic pretraining 
+A large language model is pretrained on huge volumes of data, so when you give it a few examples in a prompt, it can generalize from them with no additional training. Tabular foundation models work the same way. We pretrain Mitra-v2 on millions of synthetic prediction problems, and at deployment time the labeled rows of a real table serve as the examples. The model reads them and predicts the unlabeled rows, a technique called in-context learning. 
+Every pretraining table is synthetic: we use no real data, and in particular, no customer data. The model learns general principles about how columns relate to one another rather than the contents of any real dataset. The lesson of the original Mitra was that the quality and diversity of those synthetic tables are central to how well the model generalizes. 
+Mitra-v2 takes that lesson further. The architecture is unchanged: a Transformer that attends both across the rows of a table and across its columns . What has changed is the size of the examples the model sees during pretraining. Mitra-v2 is pretrained on tables with 10 times as many rows and roughly three times as many columns as those used to train Mitra-v1, so it has seen tables the size of the ones businesses actually use. 
+We also added a new family of synthetic tables. To train the original Mitra, we generated tables from structural causal models (SCMs), which are graphs of cause-and-effect relationships between columns, and from tree-based models like the ones data scientists fit in practice. Mitra-v2&#x27;s new hybrid SCM prior builds a single causal graph in which each relationship can be a small neural network, a decision tree, a smooth function drawn from a Gaussian process, or a time-dependent autoregressive process, so one synthetic table can carry the mix of relationships found in real tables. A new hybrid optimizer keeps training stable across this wider range. Overview of Mitra-v2. Top: the mixture of synthetic pretraining priors, with the classical structural causal model (SCM), gradient boosting, and forest generators alongside the new hybrid SCM prior, which composes neural, tree, Gaussian-process, and autoregressive mechanisms inside a single causal graph. Bottom: the scaled-up pretraining envelope, the two-dimensional attention backbone carried over from Mitra-v1, and the hybrid optimizer. 
+At deployment time, two lightweight wrappers extend the model beyond its pretraining limits. For very wide tables, we use singular-value decomposition to produce a new table that fits in the allotted space, populated with synthetic values that capture most of the variance in the original data. Mitra-v2’s output layer has only 10 nodes, corresponding to 10 classes, so for tasks with more classes than that, we send each node’s output toa a hierarchical tree, which further refines the classification. 
+By default, Mitra-v2 is briefly, automatically fine-tuned on each new table it sees, producing eight copies whose predictions are averaged, a standard technique called bagging. So it isn&#x27;t quite a zero-shot model. The adaptation adds some computational overhead, but in return, it delivers higher accuracy and gives customers additional options. 
+
+Results 
+We evaluated Mitra-v2 on TabArena, a living benchmark maintained by an independent academic team. TabArena ranks methods by Elo, the rating system used in chess, here computed from head-to-head wins across datasets under a fixed one-hour budget. Mitra-v2 leads the single-model field, as shown below, with large gains over Mitra-v1 on both classification and regression. It also ranks among the leading methods on the independent TALENT benchmark of roughly 300 datasets, where it&#x27;s strongest on classification tasks with more than 10 classes. Full results, including per-dataset comparisons, are in the technical report. Elo ratings of Mitra-v2 and the leading tabular foundation models on the TabArena boards (top) and the TALENT boards (bottom), September 2026. 
+For regression, Mitra-v2 predicts a full range of likely values for each row rather than a single number, so users get prediction intervals along with the point estimate. That’s the approach that ScoringBench evaluates, rewarding forecasts that are both accurate and well calibrated. On the ScoringBench leaderboard, fine-tuned Mitra-v2 again ranks first. 
+Mitra-v2 shows that a tabular foundation model can make substantial gains by widening the diversity and range of its synthetic pretraining, without a deeper network. We expect richer synthetic priors and adaptive mixtures to push this further. The fine-tuned classification and regression models and code are open on Hugging Face and ready to use, and we invite researchers and practitioners to try Mitra-v2 on their own tables. 
+
+Learn more 
+
+Mitra-v2 classifier 
+Mitra-v2 regressor 
+Inference and fine-tuning code 
+Mitra-v2 technical report 
+Acknowledgments 
+Yefan Tao, Raja Ghanta, Xiyuan Zhang, Xinyi Liu, Boran Han, Danielle Maddix Robinson, Haoyang Fang, Zhen Han, Jiading Gai, Xuanqing Liu, Michael Bohlke-Schneider, Bernie Wang, Gerald Friedland, Kevan Mah, Chris Lee Research areas 
+Machine learning Tags 
+Synthetic data generation 
+Tabular data About the Author Chris (Luyang) Kong Chris Kong is a senior applied science manager with Amazon Web Services. He works on agent post-training and LLM personalization. 
+Related content 
+Advancing AI for biology: Teaching models to design and characterize antibodies Melih Yilmaz , Luca Giancardo , Yue Zhao , Edward Lee , Chuanyui Teh , Fangda Xu , Gordon Trang September 21, 2026 Three new papers from Amazon Bio Discovery address bottlenecks in AI-driven antibody engineering, from benchmarking binding predictors to experimentally validating de novo design. Machine learning 
+Why don’t machine learning research agents overfit? Martin Bertran Lopez , Aaron Roth September 10, 2026 New research indicates that AI agents learn compressible models of data, which don’t have enough space to enable memorization. Machine learning 
+34 Amazon Research Awards Build on Trainium recipients announced Amazon Research Awards team August 5, 2026 Amazon announces 34 recipients of the Build on Trainium program, a $110 million credit initiative supporting AI research at 30 universities including Stanford, UC Berkeley, UIUC, UCLA, CMU, and MIT, with a focus on Responsible AI. 
+Work with us See more jobs See more jobs Sr. Applied Scientist, APM Video Science US, NY, New York Twitch is looking for an Applied Scientist to lead computer vision and video manipulation work within Amazon Publisher Monetization (APM). You will apply large language models (LLMs), vision-language models (VLMs), and traditional computer vision techniques to build products that directly improve how millions of Twitch creators produce content and how viewers engage with it. This is a high-visibility project backed by senior leadership, and you will have the autonomy to evaluate both first-party and third-party solutions to deliver the highest quality results quickly. If you thrive in a fast-paced, startup-like environment where your scientific decisions shape the product roadmap, we want to hear from you. Key job responsibilities Design and deploy computer vision and video manipulation models using LLMs, VLMs, and traditional techniques, taking solutions from research prototype to production. Partner with senior Product and Twitch leadership to translate customer needs into well-defined scientific problems and deliver end-to-end solutions. Evaluate and integrate generative AI capabilities across Amazon Bedrock and third-party platforms, selecting the approach that maximizes product quality. Drive the team&#x27;s scientific agenda by proposing new initiatives, authoring technical documents, and contributing to external publications. Mentor fellow scientists and engineers through code reviews, design guidance, and technical assessments that raise the overall quality bar. A day in the life You will split your time roughly evenly between independent research and collaborative sessions. Mornings often start with focused solo work — benchmarking a new VLM, writing model code, or analyzing experiment results. Midday you join working sessions with Product and Twitch leadership to align on requirements or review progress. Afternoons shift between pairing with engineers on production integration and mentoring teammates on evaluation methodology. Weekly science reviews and bi-weekly roadmap syncs keep the team aligned without over-scheduling your calendar. About the team The APM science team supports all of Amazon&#x27;s Publisher Monetization efforts, building the models and systems behind Twitch&#x27;s creator tools and ad experiences. The team includes applied scientists, software engineers, and product managers who collaborate daily to move ideas from whiteboard to production. We operate with a startup mentality — moving fast, wearing multiple hats, and iterating closely with Twitch and Product partners. We are accelerating investment in computer vision and generative AI, and this role will be central to that expansion. Data Scientist I, NEST US, WA, Bellevue Are you curious about turning complex data into actionable insights that shape how millions of customers experience Amazon? Do you enjoy building analytical models, testing hypotheses, and seeing your work drive real business decisions? We are looking for a Data Scientist to join our team at Amazon. In this role, you will apply statistical techniques, machine learning, and data analysis to solve well-defined business problems and deliver measurable improvements. You will work with large-scale datasets from multiple sources, build and validate models, and create metrics that quantify impact. This is an opportunity for a self-starter who is comfortable with ambiguity in data, thrives on collaboration with science and engineering partners, and is eager to grow their craft in a fast-paced environment. Key job responsibilities - Use statistical methods, machine learning algorithms, and data analysis techniques to translate well-defined business problems into data science solutions that improve processes and systems. - Gather, clean, and integrate large datasets from multiple sources to build and validate models, ensuring data integrity and adherence to best practices throughout the pipeline. - Design and deliver metrics, visualizations, and reports that compare results against benchmarks and original project goals, enabling clear and informed decision-making for stakeholders. - Collaborate with business, science, and engineering teams to understand customer needs, identify opportunities, and develop scalable analytical solutions using tools such as Python, R, or SQL. - Evaluate opportunities to integrate generative artificial intelligence tools into workflows, refining outputs and applying responsible practices to augment productivity and solution quality. About the team Our team is focused on using data science to help Amazon make smarter, faster decisions that benefit customers. We build analytical models and machine learning solutions that operate at scale, and we value rigorous methodology paired with clear communication. You will join a collaborative group of scientists and engineers who are passionate about learning from one another and pushing the boundaries of what data can do. If you are excited about growing your career in an inclusive, supportive environment where your contributions have tangible impact, we would love to hear from you. Robotics - Applied Scientist II Intern / Co-op - 2027 (Robotics, Perception, Manipulation, Locomotion, Planning, HRI and more), Amazon Development Center Taiwan TW, TPE, Hsinchu City Are you passionate about robotics and research? Do you want to solve real customer problems through innovative technology? Do you enjoy working on scalable research and projects in a collaborative team environment? Do you want to see your science solutions directly impact millions of customers worldwide? At Amazon, we hire the best minds in technology to innovate and build on behalf of our customers. Customer obsession is part of our company DNA, which has made us one of the world&#x27;s most beloved brands. We’re looking for current PhD or Master students with a passion for robotic research and applications to join us as Robotics Applied Scientist II Intern/Co-ops in 2027 to shape the future of robotics and automation at an unprecedented scale across. For these positions, our Robotics teams at Amazon are looking for students with a specialization in one or more of the research areas in robotics such as: robotics, robotics manipulation (e.g., robot arm, grasping, dexterous manipulation, end of arm tools/end effector), autonomous mobile robots, mobile manipulation, movement, autonomous navigation, locomotion, motion/path planning, controls, perception, sensing, robot learning, artificial intelligence, machine learning, computer vision, large language models, human-robot interaction, robotics simulation, optimization, and more! We&#x27;re looking for curious minds who think big and want to define tomorrow&#x27;s technology. At Amazon, you&#x27;ll grow into the high-impact engineer you know you can be, supported by a culture of learning and mentorship. Every day brings exciting new challenges and opportunities for personal growth. By applying to this role, you will be considered for Robotics Applied Scientist II Intern/Co-op (2027) opportunities across various Robotics teams at Amazon with different robotics research focus, with internship positions available for multiple locations, durations (3 to 6+ months), and year-round start dates (winter, spring, summer, fall). Amazon intern and co-op roles follow the same internship structure. &quot;Intern/Internship&quot; wording refers to both interns and co-ops. Amazon internships across all seasons are full-time positions during vacation, and interns should expect to work in office, Monday-Friday, up to 40 hours per week typically between 9am-6pm. Specific team norms around working hours will be communicated by your manager. Interns should not have other employment during the Amazon work-day. Applicants should have a minimum of one quarter/semester/trimester remaining in their studies after their internship concludes. The robotics internship join dates, length, location, and prospective team will be finalized at the time of any applicable job offers. In your application, you will be able to provide your preference of research interests, start dates, internship duration, and location. While your preference will be taken into consideration, we cannot guarantee that we can meet your selection based on several factors including but not limited to the internship availability and business needs of this role. Navigation Science Manager, Prime Air, Drone Delivery US, WA, Seattle Amazon Prime Air is seeking an Applied Scientist Manager to lead the team developing our next-generation drone navigation system. You will lead a team of 8–12 Applied Scientists, Research Scientists and Software Development Engineers who invent, model, develop, test, and deploy the state estimation algorithms. Your team will own the full algorithm lifecycle: early prototypes and modeling, simulation and hardware-in-the-loop testing, then flight test and deployment across a rapidly growing delivery network. You will also manage the feedback loop that brings real-world operational data back into the team to inform next generation of algorithm improvements. Because our navigation software is safety-critical, you will work closely with the Controls, Perception, Safety, Simulation and Flight Test teams to deliver robust, fully verified algorithms. This role combines deep technical leadership with people leadership. You will hire and develop science-focused engineers, run a fast-paced agile development team and help shape the technical roadmap for autonomous navigation at Prime Air. Key job responsibilities - Lead a team of 8–12 Applied Scientists, Research Scientists and Software Development Engineers developing novel navigation and state estimation algorithms, including Kalman filtering (EKF/UKF, error-state), tightly and loosely coupled GNSS/INS integration, multi-sensor fusion and observability analysis, integrity monitoring (RAIM, fault detection and exclusion), and visual navigation (VIO/VSLAM). - Drive day-to-day execution across the full development lifecycle: prototyping, modeling, simulation testing, hardware-in-the-loop testing, flight test and deployment to the production fleet. - Lead the team in a scrum-style agile process: set sprint priorities, manage dependencies and deliver against program milestones. - Build mechanisms that capture operational learnings from our delivery network, such as flight data, anomalies and performance trends, and feed them into the requirements and design of each new generation of algorithms. - Set technical direction and raise the bar on scientific rigor. - Partner with Flight controls, Perception, Hardware, Safety, Simulation and Flight Operations teams to define interfaces, requirements and verification evidence. - Hire, mentor and develop Applied Scientists, Research Scientists and SDEs, building a diverse, high-performing team with a strong safety culture. - Communicate technical strategy, trade-offs, risks and results clearly in writing and in reviews with senior leadership. Data Scientist, Phased Array Antenna System Validation US, WA, Redmond Amazon LEO is an initiative to increase global broadband access through a constellation of 3,236 satellites in low Earth orbit (LEO). Its mission is to bring fast, affordable broadband to unserved and underserved communities around the world. Amazon Leo will help close the digital divide by delivering fast, affordable broadband to a wide range of customers, including consumers, businesses, government agencies, and other organizations operating in places without reliable connectivity. About this role We&#x27;re looking for a Data Scientist to turn data from our satellite fleet into engineering decisions. Every satellite in orbit sends back a steady stream of telemetry. Every unit was also tested heavily on the ground before launch, and the ground segment watches the satellite every day while it operates. Your job is to connect these sources. You&#x27;ll find out which in-orbit behaviors trace back to what we measured in the factory, which events repeat across the fleet, and which patterns point to weaknesses in the hardware design. Your findings will directly shape how we design, build, test, and operate the next generation of satellites. A typical problem starts small: a handful of satellites show a drifting temperature, an occasional link dropout, or a counter that creeps up faster than expected. You&#x27;ll work out whether it&#x27;s a real effect or noise, whether it&#x27;s spreading, and what the affected units have in common. They might share a manufacturing lot, a configuration, an orbital environment, or a signature in their factory test history. From there you&#x27;ll form a hypothesis about the physical cause and argue it in front of hardware, firmware, and reliability engineers who will push back hard. You&#x27;ll also have to say plainly when the data rules your own idea out. Telemetry alone rarely settles the question, so your first stop is the ground test data we already have. Every unit in orbit has a detailed record from manufacturing and environmental testing, and the fleet as a whole is backed by an even larger population of units still on the ground. You&#x27;ll dig through that history for the same behavior: did the affected units show early signs on the ground, did they sit near a test limit, does the effect appear across many units under certain conditions? Often the answer is already in data no one has looked at in this light. When it isn&#x27;t, you&#x27;ll design the ground experiments that can provide it. That means deciding which units to test and under what conditions, how many runs you need before the result means anything, and what outcome would confirm or refute the theory. You&#x27;ll work with the engineers who run those tests, analyze the results, and close the question with a clear answer and a recommended action. Beyond individual investigations, you&#x27;ll build the fleet-level view: baselines for healthy behavior, early warning indicators that catch emerging issues before they cause outages, and reliability estimates that tell us how the population is aging. You&#x27;ll decide which recurring analyses should become automated monitoring and work with software engineers to make that happen. You&#x27;ll be the person the team turns to when someone asks &quot;is this normal?&quot; about the fleet. The ideal candidate is curious about how hardware fails and comfortable with messy data from many sources. They can turn &quot;we&#x27;re seeing something odd on a few satellites&quot; into a rigorous analysis and a clear recommendation. What you&#x27;ll bring: - Master&#x27;s degree or above in a quantitative field such as statistics, mathematics, data science, physics, electrical or aerospace engineering, or computer science, or PhD - 3/5+ years of hands-on experience in an applied or industry setting using Python and SQL to analyze large datasets such as time series, telemetry, sensor, or test data - Experience applying statistical methods (hypothesis testing, regression, time-series analysis, anomaly detection) to noisy, incomplete real-world data - Experience building visualizations and dashboards that communicate findings to engineers and decision makers - Experience framing and solving loosely defined problems, from the first question to a recommendation people act on - Ability to work with hardware and software engineers and turn their questions into analyses you can actually run Nice to have: - Experience analyzing telemetry from satellites, spacecraft, aircraft, vehicles, or other fleets of deployed hardware - Experience with reliability and failure analysis methods such as survival analysis, Weibull modeling, failure-mode analysis, and root-cause investigation - Familiarity with electronics or RF hardware, manufacturing test, environmental stress screening (thermal cycling, burn-in, HASS/HALT), or yield analysis - Experience with pattern-discovery techniques such as clustering, change-point detection, and unsupervised anomaly detection - Experience with large-scale data tools (Spark, Athena/Presto, Redshift) and AWS - Experience with visualization tools such as QuickSight, Tableau, Grafana, or Plotly/Dash - Experience working with software engineers on data pipelines: data requirements, schema design, data quality checks, and automating recurring analyses - Experience using AI-assisted tools to speed up analysis and automate repetitive work - A track record of changing engineering design or test decisions with data Export Control Requirement Due to applicable export control laws and regulations, candidates must be a U.S. citizen or national, U.S. permanent resident (i.e., current Green Card holder), or lawfully admitted into the U.S. as a refugee or granted asylum. Key job responsibilities As a Data Scientist, you will… - Analyze in-orbit telemetry to measure the health and performance of satellite subsystems, and detect anomalies and slow degradation early - Correlate in-orbit behavior with pre-launch data, including manufacturing, production test, and environmental test results, to find which ground measurements predict on-orbit performance. Feed those insights back into test limits and screening strategy - Correlate in-orbit data with what the ground segment sees (gateways, customer terminals) and with failure analysis of lab and returned units - Connect events across the fleet by build lot, component, configuration, firmware version, orbit, and operating conditions, so we can tell systemic issues apart from one-off events - Find patterns that point to hardware design weaknesses, measure their impact on the fleet, and present the evidence to hardware engineering teams with clear recommendations - Build visualizations and dashboards that support decisions in fleet health reviews, anomaly investigations, and design reviews - Work with software engineers to improve the data pipeline: define data requirements, improve data quality, link ground and in-orbit datasets, and automate recurring analyses - Own ambiguous investigations end to end, from forming the hypothesis to reporting the outcome to senior engineering leaders About the team Phased Array Antenna System Validation is the team that decides whether a satellite&#x27;s phased array antennas (PAAs) are ready to fly. These are the electronically steered transmit and receive panels that form the link between the satellite and the ground. We&#x27;re part of Amazon Leo, Amazon&#x27;s low Earth orbit satellite constellation, and we own the test strategy, the automation, and the data pipeline that every PAA goes through on its way to orbit. That path runs from early component-level screening through full-panel functional testing and extended environmental stress testing across temperature, vacuum, and vibration. Our responsibility doesn&#x27;t end at launch. We also own the analysis of telemetry from PAAs in orbit, and we use what the constellation tells us to improve how we test on the ground. We are a hardware-facing software and test team, and we sit where several disciplines meet. Our test automation directs firmware provisioning, self-tests, and environmental profiles on test stations at manufacturing sites. Over a single run it exercises thousands of measurement points: high-speed serial links, clocking, digital beamformer firmware, RF chains, power, and thermal behavior. Every result is tied to a specific serial-numbered part. That builds a detailed, part-level history of how each panel and component behaved under stress, from the factory floor to launch. A large part of our work is investigation. When something fails, we work out whether the cause is the hardware, the firmware, the test equipment, or our own automation, and we decide what should happen next. Over time we have built a growing catalog of failure signatures and their root causes, internal tools for analyzing long-duration tests, and AI-assisted agents that help turn raw logs into conclusions. We care about evidence over assumption. A label on a result isn&#x27;t the result itself, and a search that finds nothing doesn&#x27;t prove the problem has no history. Theories get tested against the data before they&#x27;re accepted. We support multiple hardware generations at once, so the architecture, the questions, and the tooling keep changing. You&#x27;ll work closely with antenna hardware, firmware, manufacturing, and reliability engineers who are glad to dig into a hard problem with you. Because we own both ends, from the first ground test to behavior in orbit, the loop is closed within the team. What we learn from the constellation goes straight back into our screens, thresholds, and test sequences, so that the next panel we validate is more likely to keep working in orbit. Senior Data Scientist, AWS Analytics Engineering CA, BC, Vancouver Do you want to build science solutions that shape how millions of customers experience AWS products? Do you want to influence AWS investment in Cloud and AI technology, and see your recommendations inform AWS leadership decisions and drive the growth of the AWS business? Do you want to push the boundaries of data science (e.g., statistical modeling, causal inference, econometrics, product growth analytics, and forecasting models) and help democratize how AWS senior leaders access analytics insights using an agentic analytics system? The AWS Analytics Engineering team is at the forefront of leveraging AI/ML technology and infrastructure to redefine how AWS product leaders and teams interact with and derive insights from their product and customer data. Our vision is to use data science methods to enable AWS product teams and business leaders to drive product and revenue growth and create personalized, optimized, and simplified product experiences to delight our customers. We are looking for a customer-focused Senior Data Scientist to develop and deliver science solutions for AWS services. In this role, you will build ML-driven product analytics for AWS Compute (EC2), GenAI &amp; Agents, Database &amp; Analytics, and Storage (S3). You will partner with product managers, business leaders, and senior stakeholders to translate complex business problems into scientific solutions that influence AWS&#x27;s top line and bottom line. You will analyze product growth insights, understand product growth drivers, and identify business risks that need to be surfaced to leadership. As a Senior Data Scientist, you will analyze business trends and customer insights hands-on, own analyses end to end from problem definition through recommendation, and help raise the bar for scientific rigor on the team. You will mentor junior data scientists through code and methodology reviews and share best practices across the team. You will operate effectively in ambiguous environments, use sound business judgment, show high ownership and a deep understanding of the AWS business, and apply new data science methods at AWS scale. Key job responsibilities Set the technical direction for ML-driven product analytics across AWS Compute (EC2), GenAI &amp; Agents, Database &amp; Analytics, and Storage (S3) Deliver at scale ML-Driven, proactive product analytics for ALL AWS services - initiating and driving GM/VP level conversations Define, own and deliver Knowledge organization best practices for agentic data analytics across AWS Services Build agentic knowledge coverage mechanisms to ensure any service GM/VP/Finance/PM leaders in AWS are able to derive accurate and well covered agentic insights Drive the delivery of cross-service AWS insights, and influence GMs and VPs on product and process changes based on insights delivered. Partner with other science organizations like AWS Central Econ and science (ACES) and IDEAS Science &amp; Economics to drive AWS wide agentic analytics boundaries across organizations and governance mechanisms Work across the AAE Science, Engineering, Core data engineering and service analytics organization to scale science and analytics to all AWS services Applied Scientist , Fauna US, NY, New York We are seeking an Applied Scientist to develop and optimize Visual Inertial Odometry (VIO) and sensor fusion systems for our intelligent robots. In this role, you will design, implement, and deploy state estimation and tracking algorithms that enable robots to understand their position and motion in real time, even in challenging and dynamic environments. You will own the full pipeline from algorithm development through embedded deployment, ensuring that perception systems run efficiently on resource-constrained robotic hardware. You will also leverage modern machine learning approaches to push the boundaries of classical perception methods, combining learned representations with geometric techniques to achieve robust, real-time performance. This is a deeply hands-on role. You will work directly with sensors, hardware, and real-world data, while prototyping, testing, and iterating in physical environments. The ideal candidate has strong foundations in VIO and sensor fusion, practical experience optimizing algorithms for embedded platforms, and familiarity with how modern deep learning is transforming perception. Key job responsibilities - Design and implement Visual Inertial Odometry algorithms for robust real-time state estimation on robotic platforms like Sprout - Develop multi-sensor fusion pipelines integrating cameras, IMUs, and other sensing modalities for accurate pose tracking - Optimize perception and tracking algorithms for deployment on embedded hardware (e.g., ARM, GPU-accelerated edge devices) under strict latency and power constraints - Apply modern ML-based perception techniques (learned features, depth estimation, neural odometry) to complement and improve classical geometric approaches - Build and maintain calibration, evaluation, and benchmarking infrastructure for perception systems - Collaborate with hardware, controls, and navigation teams to integrate perception outputs into the robot’s autonomy stack - Lead technical projects from research prototyping through production deployment Research Scientist II, Grocery ECO IN, KA, Bengaluru We are looking for a talented Research Scientist to join our team. In this role, you will design, develop, and deploy machine learning and computer vision models that solve real-world problems at scale in the Amazon grocery domain. You will work closely with engineering, product, and business teams to turn complex technical challenges into production-ready solutions, and own the model development lifecycle from experimentation through deployment. You will bring scientific rigor to every stage — from data analysis and model design to evaluation and iteration. This is a high-impact role where your models will directly improve the shopping experience for millions of customers in Amazon grocery stores. Key job responsibilities Design, train, and evaluate computer vision and machine learning models for complex grocery-domain problems including product identification, shelf perception, and in-store scene understanding — iterating rapidly from prototype to production-quality solutions Conduct rigorous exploratory data analysis to characterize domain-specific challenges (image variability, catalog gaps, label noise) and translate findings into actionable modeling decisions Design and execute offline and online evaluation frameworks — defining metrics that capture both model performance and downstream business impact, and diagnosing failure modes to prioritize improvements Build and improve data pipelines and annotation workflows that feed model training, including active learning strategies to maximize label efficiency Communicate technical results, trade-offs, and recommendations clearly to engineering, product, and business stakeholders — connecting model behavior to customer experience outcomes Stay current with state-of-the-art research in computer vision, multimodal learning, and representation learning — evaluating and adapting promising techniques to team-specific problems Contribute to a culture of scientific rigor through reproducible experimentation, thorough documentation, peer code and design reviews, and raising the quality bar for the team A day in the life As a Research Scientist on the GRAISE team, you&#x27;ll spend your days analyzing model performance from overnight experiments, and prototyping new approaches using multimodal learning with store video and sensor data. You&#x27;ll present findings to product and business stakeholders, translating technical results into actionable recommendations. Throughout the day, you&#x27;ll balance rigorous scientific thinking with practical engineering constraints, knowing your work directly improves the shopping experience for millions of customers in Amazon grocery stores. About the team The GRAISE team (Grocery, Retail &amp; In-Store Experience) within World Wide Grocery Store Tech (WWGST) builds foundational AI and machine learning systems that power Amazon&#x27;s in-store grocery technologies. We develop domain-specific models that solve uniquely complex challenges in grocery — from smart shopping carts and inventory intelligence to personalization and store operations. Our mission is to create technology which makes grocery shopping more convenient, economical, personalized, and enjoyable for customers while empowering retailers with operational efficiency. Applied Scientist, Ads Measurement Science US, NY, New York The Ads Measurement Science team in the Measurement, Ad Tech, and Data Science (MADS) team of Amazon Ads serves a centralized role developing solutions for a multitude of performance measurement products. We create solutions which measure the comprehensive impact of advertiser&#x27;s ad spend, including sales impacts both online and offline and across timescales, and provide actionable insights that enable our advertisers to optimize their media portfolios. We also own the science solutions for AI tools that unlock new insights and automate high-effort customer workflows, such as custom query and report generation based on natural language user requests. We leverage a host of scientific technologies to accomplish this mission, including Generative AI, classical ML, Causal Inference, Natural Language Processing, and Computer Vision. As an Applied Scientist on the team, you will lead measurement solutions end-to-end from inception to production. You will propose, design, analyze, and productionize models to provide novel measurement insights to our customers. Key job responsibilities Leverage deep expertise in one or more scientific disciplines to invent solutions to ambiguous ads measurement problems Disambiguate problems to propose clear evaluation frameworks and success criteria Work autonomously and write high quality technical documents Implement a significant portion of critical-path code, and partner with engineers to directly carry solutions into production Partner closely with other scientists to deliver large, multi-faceted technical projects Share and publish works with the broader scientific community through meetings and conferences Communicate clearly to both technical and non-technical audiences Contribute new ideas that shape the direction of the team&#x27;s work Mentor more junior scientists and participate in the hiring process About the team We are a team of scientists across Applied, Research, Data Science and Economist disciplines. You will work with colleagues with deep expertise in ML, NLP, CV, Gen AI, and Causal Inference with a diverse range of backgrounds. We partner closely with top-notch engineers, product managers, sales leaders, and other scientists with expertise in the ads industry and on building scalable modeling and software solutions. Applied Scientist, Fauna Robotics US, CA, Sunnyvale Robots are about to step out of the movies and into our homes. If you&#x27;re excited about this robotics revolution, come join Amazon&#x27;s Fauna Robotics. As an Applied Scientist in this org, you&#x27;ll push the state-of-the-art techniques in Robotics. You&#x27;ll drive technical excellence in areas such as perception, manipulation, sim2real transfer, reinforcement learning and multi-task learning, designing novel algorithms that bridge the gap between research and real-world deployment. In this role, you will integrate hands-on technical expertise with scientific leadership, ensuring your team delivers robust solutions for dynamic real-world environments. While staying updated with the latest advancements in robotics research, you will leverage your experience and expertise to guide the team towards the most promising direction. Collaborating with a talented group of software engineers and scientists, you will bring your ideas to fruition. Deploying robots in home environments requires you to anticipate challenges not encountered in structured settings like warehouses. Additionally, consumer-grade sensors and actuators necessitate working around their limitations, requiring out-of-the-box innovative ideas. As such, you are someone who truly enjoys thinking about problems using first principles at a holistic and systems level to address the aforementioned challenges. Key job responsibilities - Lead technical initiatives in areas such as robotics foundation models, reinforcement learning and manipulation - - Design experiments to identify the limitations of current state-of-the-art models and developing new models or techniques that can surpass these models - Design and implement novel deep learning architectures that push the boundaries of what robots can understand and accomplish - Mentor fellow scientists while maintaining strong individual technical contributions - Collaborate with engineering teams to optimize and scale models for real-world applications - Influence technical decisions and implementation strategies within your area of focus - Experienced in communicating complex technical work to a non-technical audience - The ability to work with minimal guidance, be proactive and to handle ambiguity and the challenge of quickly evolving goals About the team Fauna Robotics, an Amazon company, is building capable, safe, and genuinely delightful robots for everyday life. Our goal is simple: make robots people actually want to live and interact with in everyday human spaces. We believe that future won’t arrive until building for robotics becomes far more accessible. Today, too much effort is spent reinventing the fundamentals. We’re changing that by developing tightly integrated hardware and software systems that make it faster, safer, and more intuitive to create real-world robotic products. Our work spans the full stack: mechanical design, control systems, dynamic modeling, and intelligent software. The focus is not just functionality, but experience. We’re building robots that feel responsive, expressive, and genuinely useful. At Fauna, you’ll work at the frontier of this space, helping define how robots move, manipulate, and interact with people in natural environments. It’s an opportunity to solve hard problems across hardware and software with a team focused on making robotics accessible and joyful to build. If you care about making robotics real for everyone and building systems that are as delightful as they are capable, we’re interested in hearing from you. See more jobs 
+About 
+Research areas 
+Blog 
+Publications 
+Conferences 
+Code and datasets 
+Academia 
+Amazon News 
+Amazon Developer 
+Amazon Web Services 
+Awards and recognitions 
+Newsletter 
+Careers 
+FAQs Get more from Amazon Science Subscribe to our newsletter 
+Amazon.com | Conditions of Use | Privacy | © 1996-2026 Amazon.com, Inc. or its affiliates Social 
+bluesky 
+threads 
+twitter 
+instagram 
+youtube 
+facebook 
+linkedin 
+github 
+rss</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

@@ -1,6 +1,7 @@
 ---
-title: "Gemini 4 Argon — 长时程推理与可监控的 Agent"
+title: "Gemini 4 — Argon / Carbon家族研读"
 type: model-note
+html_tabs: true
 organization: "Google DeepMind"
 release: "2026-10-01"
 release_utc: "2026-09-30T20:00:00Z"
@@ -11,7 +12,7 @@ tags: [model-note, base-model, gemini, agent-training, long-context, safety]
 topic: "13_base_model"
 status: read
 created: 2026-10-14
-updated: 2026-10-14
+updated: 2026-11-11
 ---
 
 # Gemini 4 Argon
@@ -21,7 +22,12 @@ updated: 2026-10-14
 
 ![官方：Argon 评测总表](src/assets/figure_02.gif)
 
-## 先把时间和“新模型”说清楚
+## Argon：首发、能力与原始评测
+
+> [!tldr]
+> 保留Argon10/1首发与10/14全面开放的原始资料；1M统一输入输出不等于同成本全面提升。以下Argon表/价格为10月快照，不能自动当成Carbon参数。
+
+### 先把时间和“新模型”说清楚
 
 | 阶段 | 北京时间 | 官方原始标记 | Atlas 处理 |
 |---|---|---|---|
@@ -31,7 +37,7 @@ updated: 2026-10-14
 
 这也是为什么只看 model-card 索引会漏掉两周前的受邀首发。近 30 天表采用北京时间首发日 10 月 1 日；“这次变化”保留 10 月 14 日全面开放。
 
-## 模型边界：真正公开的是什么
+### 模型边界：真正公开的是什么
 
 | 项目 | 官方披露与限制 |
 |---|---|
@@ -50,7 +56,7 @@ updated: 2026-10-14
 > [!warning] 技术深度与验收边界
 > 已完整阅读并归档首发博客、全面开放博客、网页 Model Card、模型展示页及安全博客，下载 10 张官方图，核对评测方法说明；PDF 只保留官方链接，未保存 PDF 文件。**原始公开资料仍不足以达到 GLM-5.3-Flash 的架构/训练配方精读深度**：参数量、激活参数、专家路由、预训练 token 数、RL 算法与 reward 配比没有公开，完整安全报告全文本轮未精读。下面只分析可核验披露，不补猜测。
 
-## 从“更长输出”到“更可靠工程”之间还缺什么
+### 从“更长输出”到“更可靠工程”之间还缺什么
 
 输出上限从 64K 提到 1M，是更长测试时计算的空间，不是自动提高成功率的证明。长轨迹可能包含有效检查，也可能只是重复尝试、低价值搜索和更昂贵的失败。
 
@@ -62,7 +68,7 @@ updated: 2026-10-14
 
 首发博客给出的工程例子包括 Rust 视频解码器优化和大规模代码迁移；全面开放阶段又给出 ADK 会话准备时间下降 40%、冷导入快 21%，以及 Gemma 4 E2B 在 A100/vLLM 上 2.85× 吞吐提升。这些都是**特定仓库、硬件和验收条件的官方案例**，不是任意项目的平均收益。
 
-## 评测形状：专业工作强，不是所有任务都赢
+### 评测形状：专业工作强，不是所有任务都赢
 
 下面完整列出网页卡的能力表。均为官方发布时成绩，**没有在本机运行或复现**；不同来源、harness 和预算不构成严格版本消融。
 
@@ -107,7 +113,12 @@ updated: 2026-10-14
 
 因此“1M 长上下文表现更强”有具体任务支持，而“相同成本下全面更强”没有由此得到证明。
 
-## 安全不是一个总分：训练信号与运行时防护要分开
+## Argon：监控、经济性与训练启发
+
+> [!tldr]
+> 动作违规与思维线索要分别验证；惩罚可见思维不保证更少违规。保留原案例、研究判断和历史价格，不将其转用为Carbon的安全/计费事实。
+
+### 安全不是一个总分：训练信号与运行时防护要分开
 
 ![官方：间接提示注入评测图](src/assets/figure_10.webp)
 
@@ -132,7 +143,7 @@ updated: 2026-10-14
 
 Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL 均写“不能排除达到”，并依赖部署防护降低剩余风险。没有把“安全阈值尚不能排除”解释成“已证明全面安全”。
 
-## 经济性：名义便宜不代表长任务便宜
+### 经济性：名义便宜不代表长任务便宜
 
 全面开放博客的入门价为输入 $2/M、输出 $10/M，cache 输入 95% 折扣即 $0.10/M；入门期在 2026-11-30 结束，随后公开访问版输入 $4/M、输出 $20/M。Fairwind 受邀防御者版本与公众服务有不同 guardrails，不把两者成绩和权限混用。
 
@@ -140,7 +151,7 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 
 对长任务，应报告每个成功任务的成本、p95 时间、有效工具调用、失败重试和停止原因。更多测试时计算的收益需要用相同预算曲线证明，而不是只比较一个最高 effort 分数。
 
-## 对 Agent Training 的可执行启发
+### 对 Agent Training 的可执行启发
 
 > [!insight]
 > Argon 提醒我们，Agent 训练的目标不仅是“完成任务”，还要保持错误可见、权限可控与诊断信号真实。成功奖励、轨迹监控和环境加固应分别验证；不要用一条总奖励把三件事混起来。
@@ -153,7 +164,7 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 
 以上是阅读后的研究建议，未执行训练、模型推理或基准复现。
 
-## 一手资料与导航
+### 一手资料与导航
 
 - [S1] [Tech Blog · 首次发布](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/)，页面 Sep 30；精确 UTC 与北京时间见上。
 - [S2] [官方网页 Model Card](https://deepmind.google/models/model-cards/gemini-4-argon/)。[Model Card PDF](https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-4-Argon-Model-Card.pdf) 仅链接。
@@ -167,3 +178,38 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 - [[gemini_4_argon_poster_zh.html|中文 Poster]]
 
 > 📊 相关可视化: [[gemini_4_argon_poster_zh.html|Gemini 4 Argon 中文 Poster]]
+
+## Carbon：官方卡公开、家族定位与证据边界
+
+> [!tldr]
+> Carbon明确基于Argon，作为Gemini4同族深入推理版本合读，保持既有Overview/笔记/Poster地址。官方卡Published11/10证明资料公开日，不自动证明模型最早可用日；11/9已有他家对比提及，精确首发继续待核，以11月归档线索列入日期待核实区，不伪造一个11/10新正代。
+
+> [!warning] 方法与安全报告未读
+> 已读完整HTML模型卡，保存全部能力/安全表。评测方法URL实际返回PDF，误存响应已立即移除且未读，只留链接；安全报告亦仅链接。参数、训练数据/算法等沿用“based on Argon”依赖声明，不推定与Argon完全相同。本文未进行服务实测，不能称完整技术报告精读。
+
+| 字段 | Carbon官方披露 |
+|---|---|
+|谱系|based on Gemini4Argon；不是已证实的独立新基座|
+|输入/输出|文本/图像/音频/视频→文本；统一输入+输出最多1M|
+|推理|更长思考与验证循环，可配置thinking levels；不是无条件更快|
+|分发|App/API/AIStudio/企业/Antigravity/AIMode，按渠道/订阅不同；Fairwind仅验证防御者|
+|截止知识|March2026，某些域更早|
+|未核|确切首次可用日、Carbon API ID/计费/训练超参；不从Argon照搬|
+
+以下结果为官方卡所称截至2026年10月的结果，11/10是资料发布时间。能力提升来源可能含预算/harness变化，方法PDF未读，不能断言严格等算力消融。网络专项为Fairwind访问条件下成绩，不能混为所有普通API用户默认权限。
+
+
+<table><thead><tr><th class=table--category scope=col><span class=sr-only>Category</span></th><th class=table--benchmark scope=col>Benchmark</th><th class=table--notes scope=col><span class=sr-only>Notes</span></th><th class=table--highlight scope=col>Gemini 4<br>Carbon</th><th class=table--highlight scope=col>Gemini 4 Argon</th><th scope=col>GPT-6 Astra</th><th scope=col>Claude Opus 5.5</th><th scope=col>Claude Fable 5.1</th></tr></thead><tbody><tr><th class=table--category rowspan=2 scope=row><small class=text-small>General capabilities</small></th><td class=table--benchmark>AA Index v5.0</td><td class=table--notes></td><td class=table--highlight><strong>59</strong></td><td class=table--highlight>50</td><td>57</td><td>58</td><td>49</td></tr><tr><td class=table--benchmark>Vals Index v2.2</td><td class=table--notes></td><td class=table--highlight><strong>70.4%</strong></td><td class=table--highlight>69.2%</td><td>65.0%</td><td>70.2%</td><td>—</td></tr><tr><th class=table--category rowspan=3 scope=row><small class=text-small>Agentic coding</small></th><td class=table--benchmark>SWE-sweep</td><td class=table--notes></td><td class=table--highlight><strong>9.6%</strong></td><td class=table--highlight>4.3%</td><td>9.5%</td><td>3.6%</td><td>2.9%</td></tr><tr><td class=table--benchmark>FrontierSWE 2</td><td class=table--notes></td><td class=table--highlight>61.2%</td><td class=table--highlight>55.0%</td><td><strong>65.5%</strong></td><td>62.3%</td><td>56.3%</td></tr><tr><td class=table--benchmark>Terminal-Bench 4.0 (AA)</td><td class=table--notes></td><td class=table--highlight><strong>65.2%</strong></td><td class=table--highlight>57.1%</td><td>59.1%</td><td>59.6%</td><td>52.0%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Computer use</small></th><td class=table--benchmark>Agents' Last Exam v1.1</td><td class=table--notes><small class=text-small>Score</small></td><td class=table--highlight><strong>77.4%</strong></td><td class=table--highlight>69.0%</td><td>73.1%</td><td>71.6%</td><td>—</td></tr><tr><td class=table--benchmark>OSWorld-2.1</td><td class=table--notes><small class=text-small>Offline subset</small></td><td class=table--highlight>81.5%</td><td class=table--highlight>74.7%</td><td>80.9%</td><td><strong>87.2%</strong></td><td>76.8%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Knowledge work</small></th><td class=table--benchmark>AutomationBench</td><td class=table--notes><small class=text-small>Zapier</small></td><td class=table--highlight><strong>53.9%</strong></td><td class=table--highlight>51.3%</td><td>41.4%</td><td>42.5%</td><td>31.4%</td></tr><tr><td class=table--benchmark>Vending-Bench 2</td><td class=table--notes><small class=text-small>Bank balance ($)</small></td><td class=table--highlight><strong>$16,484</strong></td><td class=table--highlight>$13,718</td><td>$15,515</td><td>$9,235</td><td>$5,422</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Multimodal understanding</small></th><td class=table--benchmark>Chartography</td><td class=table--notes></td><td class=table--highlight><strong>72.5%</strong></td><td class=table--highlight>71.6%</td><td>71.0%</td><td>66.3%</td><td>46.2%</td></tr><tr><td class=table--benchmark>Blueprint-Bench 2</td><td class=table--notes><small class=text-small>Similarity score</small></td><td class=table--highlight><strong>58.6%</strong></td><td class=table--highlight>54.4%</td><td>49.7%</td><td>51.2%</td><td>41.9%</td></tr><tr><th class=table--category scope=row><small class=text-small>Long context</small></th><td class=table--benchmark>GraphWalks</td><td class=table--notes><small class=text-small>256k to 1M, BFS (F1)</small></td><td class=table--highlight><strong>96.2%</strong></td><td class=table--highlight>84.2%</td><td>71.8%</td><td>66.8%</td><td>65.0%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Science and math</small></th><td class=table--benchmark>RiemannBench</td><td class=table--notes></td><td class=table--highlight><strong>80.0%</strong></td><td class=table--highlight>76.0%</td><td>72.0%</td><td>69.6%</td><td>65.6%</td></tr><tr><td class=table--benchmark>Terminal-Bench-Science 0.1 (AA)</td><td class=table--notes></td><td class=table--highlight><strong>64.8%</strong></td><td class=table--highlight>52.9%</td><td>63.3%</td><td>59.0%</td><td>43.3%</td></tr><tr><th class=table--category rowspan=3 scope=row><small class=text-small>Cybersecurity</small></th><td class=table--benchmark>CWE-bench</td><td class=table--notes></td><td class=table--highlight><strong>71.0%</strong></td><td class=table--highlight>68.0%</td><td>68.0%</td><td>67.0%</td><td>58.0%</td></tr><tr><td class=table--benchmark>ExploitGym</td><td class=table--notes></td><td class=table--highlight><strong>54.8%</strong></td><td class=table--highlight>42.0%</td><td>42.4%</td><td>34.5%</td><td>—</td></tr><tr><td class=table--benchmark>SEC-bench Pro</td><td class=table--notes></td><td class=table--highlight><strong>88.2%</strong></td><td class=table--highlight>83.4%</td><td>85.4%</td><td>—</td><td>—</td></tr></tbody></table>
+
+保留反例：FrontierSWE2 61.2低于Astra65.5与Opus62.3；OSWorld2.1 offline81.5低于Opus87.2。Carbon表的Argon值与旧卡某些任务已换版本/口径，例如TB4(AA)、OSWorld2.1、ALEv1.1，不能拿旧卡TB4/OSWorld2.0/旧ALE的分数直接算受控增益。没有Carbon单独价格证据，Argon入门价不外推。
+
+<table><thead><tr><th scope=col width=160>Evaluation</th><th scope=col>Description</th><th scope=col>Gemini 4 Carbon<br> <small class=text-small>Gemini 4 Argon (percentage point increase/decrease)</small></th></tr></thead><tbody><tr><th scope=row>Text to Text Safety</th><td>Automated content safety evaluation measuring safety policies</td><td><b>+3.50pp</b></td></tr><tr><th scope=row>Multilingual Safety</th><td>Automated safety policy evaluation across multiple languages</td><td><b>+3.55pp</b></td></tr><tr><th scope=row>Image to Text Safety</th><td>Automated content safety evaluation measuring safety policies</td><td>-1.00pp</td></tr><tr><th scope=row>Tone</th><td>Automated evaluation measuring objective tone of model refusal</td><td>+1.10pp</td></tr><tr><th scope=row>Unjustified-refusals</th><td>Automated evaluation measuring model’s ability to respond to borderline prompts while remaining safe</td><td>+1.10pp</td></tr></tbody></table>
+
+安全表中Image-to-Text为−1.00pp，其他3.50/3.55/1.10/1.10pp须与指标方向/评估版本一起解释。即使正文总体称更好，也不能删去该退化项。自动安全评估不是人类红队；本卡说明更新过评估，不能与旧卡直接比较。人工红队“无严重concern”及达到launch threshold不等于所有工具情境零风险，完整报告仍未读。
+
+> [!insight]
+> 同族更深推理的比较应固定任务、输入、权限、harness与总计算，画成功率—成本—时延曲线；分别记录能力增长、停止/超时和合规动作。不能用更大token预算所得最高分训练一个“多想就正确”的奖励。
+
+- [Carbon官方HTML模型卡](https://deepmind.google/models/model-cards/gemini-4-carbon/)，Published11/10；不是自行认定首次可用日。
+- [评测方法PDF链接，未读](https://deepmind.google/models/evals-methodology/gemini-4-carbon)
+- [Safety & Security报告链接，未读](https://storage.googleapis.com/deepmind-media/gemini/gemini_4_carbon_safety_report.pdf)
