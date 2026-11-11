@@ -1,19 +1,24 @@
 ---
-title: "ERNIE 5.5 Flash Base｜为进一步训练准备的稀疏主干"
+title: "ERNIE 5.5 Flash｜Base与Preview家族研读"
 type: model-note
 organization: Baidu ERNIE
 release: 2026-11-05
 created: 2026-11-05
-updated: 2026-11-05
+updated: 2026-11-11
 url: "https://ernie.baidu.com/release/ernie-5-5-flash-base/"
 tags: [model-note, base-model, baidu, moe, pretraining, agent-training]
 status: read
 html_tabs: true
 ---
 
-# ERNIE 5.5 Flash Base
+# ERNIE 5.5 Flash · Base / Preview
 
-## 发布与规格
+## Base：预训练与架构
+
+> [!tldr]
+> 保留11/5 Base的全部架构与原始资料。下列参数/组件实验不自动变为Preview后训练消融。
+
+### 发布与规格
 
 > [!tldr]
 > 11 月 5 日发布的是 **预训练终点的 280B / A14B 文本 Base 模型**。它把历史读取、专家选择、未来预测与训练系统一起优化，为后续领域适配、SFT 和 RL 提供公共起点。FP8 与 BF16 属于一个家族。
@@ -32,7 +37,7 @@ html_tabs: true
 
 官方首发页、两份 HF 原卡、配置、许可证与两张原图已经归档。模型的完整独立 Tech Report 尚未找到；三个组件论文是机制来源，全文 HTML 已保存，但其中的实验范围需要与本次 280B 运行分开阅读。
 
-## 注意力与残差流
+### 注意力与残差流
 
 > [!tldr]
 > HCA 让多数层以较小缓存看历史概要，少数 MLA 层保留 token 级候选，再由 DSA 挑选访问位置。缓存压缩比例与完整系统加速比是不同指标。
@@ -50,7 +55,7 @@ MLA 层进一步使用 **DSA**，轻量 indexer 给历史位置评分，核心 a
 > [!warning] 配置与正文的对应关系
 > 原卡写 43 层主干、37 HCA + 6 MLA-DSA。发布的 `config.json` 中 `num_hidden_layers=43`，但 `compress_ratios` 有 44 项，其中 37 个 128 和 7 个 -2。额外项与 ECHO 复用路径如何对应，需要运行时实现继续核对。这里保留两个原始口径，不据这个列表直接改写主干层数。
 
-## 专家选择与未来预测
+### 专家选择与未来预测
 
 > [!tldr]
 > Multi-Router 改进的是谁来处理 token，Latent MoE 缩小的是专家计算和传输宽度。ECHO 则把预测更远位置的学习信号接回主干末层。
@@ -65,7 +70,12 @@ MLA 层进一步使用 **DSA**，轻量 indexer 给历史位置评分，核心 a
 
 **MultiMax** 给词表 logits 使用可学习的分段温度，兼顾合理候选与不合理长尾，在 chunked、Triton fused cross-entropy 内实现。R2L tokenizer 将数字从右向左按最多三位分组，有助位值对齐，精确算术能力仍需独立评测。
 
-## 数据与训练系统
+## Base：数据、系统与评测
+
+> [!tldr]
+> 旧Base成绩与训练系统说明完整保留，与下方11/11 Preview聊天/Agent成绩分开。
+
+### 数据与训练系统
 
 > [!tldr]
 > 本次披露的价值在于把后续训练需要的基础能力前置到预训练语料，同时让优化器通信和内存分片适配大规模 MoE。尚缺完整比例、去污染清单和全程成本。
@@ -84,7 +94,7 @@ MLA 层进一步使用 **DSA**，轻量 indexer 给历史位置评分，核心 a
 > [!warning] 资料深度
 > 这次已取得比产品公告更详细的架构、数据与系统说明，但仍缺 280B 完整训练超参数、数据混合比例、逐项消融、去污染与独立复现。**原始资料尚不足以达到 GLM-5.3-Flash / Kimi-K3 那种完整报告级的逐项审计深度**。组件论文的完整实验不填作本次模型的缺失结果。
 
-## 评测与反例
+### 评测与反例
 
 > [!tldr]
 > 四个 Base checkpoint 使用同一 harness、prompt、shots 和自由问答 judge。优势集中在知识、代码和多项长上下文任务，仍有推理、重排和中文知识的反例。
@@ -104,7 +114,7 @@ MLA 层进一步使用 **DSA**，轻量 indexer 给历史位置评分，核心 a
 
 这是有代表性的优势和短板摘录。原卡的完整评测表保留在一手阅读包。judge 指标、EM 和 Pass@1 采用不同分母，不能直接合并成“平均准确率”。这里缺少置信区间和逐题原始输出，对 0.3 或 0.8 等小差异应保留不确定性。
 
-## 部署与后训练研究
+### 部署与后训练研究
 
 > [!tldr]
 > 先用同一 Base、同一数据切分与同一运行时建立基线，再比较 SFT 或 RL 的增益。部署示例和支持上限分别记录。
@@ -118,3 +128,53 @@ MLA 层进一步使用 **DSA**，轻量 indexer 给历史位置评分，核心 a
 - [Tech Blog](https://ernie.baidu.com/release/ernie-5-5-flash-base/)
 - [组件论文 · VHA](https://arxiv.org/abs/2610.17959)、[Multi-View Latent MoE](https://arxiv.org/abs/2610.40577)、[ECHO](https://arxiv.org/abs/2610.24766)
 - [[ernie_5_5_flash_poster_zh.html|中文 Poster]]
+
+
+## Preview：后训练发布、案例与完整评测
+
+> [!tldr]
+> 11/11发布的是基于11/5 Base的首个后训练Preview；保持同一5.5 Flash家族和原入口。280B/A14B、1M，API已开放，权重Apache2.0是soon承诺，不能写成当前已经开源或覆盖Base原许可证。
+
+> [!warning] 资料充分度与模态
+> Preview是仍在后训练中的中间checkpoint。本文已读官方发布全文、两张完整评测原图和20条协议脚注；未取得Preview独立完整Tech Report、训练loss/reward、原始run和权重。不把Base组件报告当作Preview训练报告。正文明确模型text-only，视觉理解可由外部工具承担，生成图像/视频案例也含外部模型与资产，不代表本体原生生成这些模态。
+
+![官方八项代表性对比图](src/assets/benchmark-results-final.png)
+
+训练材料披露：游戏引擎专业数据/专用评测，知识工作约30万workspace、1000万参考文件、40余格式，个人10–100文件到千文件企业知识库；内容创作15万余环境、1000余skills、约5300分钟成片。这些是训练环境/材料规模，不是独立测试样本数或任务通过率。
+
+UE5.8武侠案例为11小时C++工程，整合不同代资产，模型看不到屏幕，playtest反馈转代码可测条件；不是无人类反馈的端到端视觉Agent。Blender机场/飞机用两个Agent、地图数据、下载及预先生成资产，最终GPU渲染/FFmpeg；CAD楼宇用了视觉MCP。约100个小游戏和24个展示是精选案例，不能当成功率。视频案例使用Seedance2.5、图生工具、外部配乐等；研究报告/财富工作簿是模型产物，本轮未下载PPT/XLSX/PDF或验证业务结论。
+
+![官方完整20行结果和全部20条脚注](src/assets/benchmark-table-final.png)
+
+| 指标 |Preview结果|必要限定 / 反例|
+|---|---:|---|
+|TerminalBench4|46.5|Claude Code2.1.246；Sol56.1是AA榜引用|
+|DeepSWEv1.1|71.2|mini-swe2.4.6、8CPU/16GB；DeepSeek77.0更高|
+|ProgramBench AlmostSolved|29.5|不是完整Solved；Opus65.0更高|
+|NL2Repo|64.8|ClaudeCode2.1.226；规则+LLM反作弊|
+|TBScience0.1|21.0|Sol57.0/Opus63.3更高|
+|CookieBench|88.2|1000 React查询、13工具/80步；judge Qwen3.8Max|
+|BlenderWorld text-only|79.0|78任务，24h，Blender4.2.10；视觉由Opus工具提供|
+|AutomationBench|61.9|开源v1.0.6子集，非所有版本同分母|
+|APEXAgents1.1|64.2|100步/10800s；文本模型多模态工具结果换占位文字|
+|DRACO|84.9|4h/1000turn；Hy4 90.7更高|
+|SpreadsheetBenchV2|36.4|搜索/抓取禁用，视觉judge Qwen3.8Max|
+|OfficeQAProV2|67.9|websearch禁、fetch仅源站/*.gov/*.edu白名单|
+|ALE CLI|29.0|CLI子集、5h；DeepSeek35.2更高|
+|SkillsBench1.1 text-only|73.5|78任务，排9多模态；6h，提供curated skills|
+|ToolathlonVerified|75.0|200步/7200s；禁本机/GitHub搜答案、禁逃逸容器|
+|MCPAtlas|84.6|4月公开500任务，原harness|
+|BrowseComp|87.4|4h/1000turn；Hy4 91.8更高|
+|HLE无工具|46.4†|†只文本子集；Gemini3.1FlashLite judge|
+|AAOmniscience|25.2|600公开例，Gemini3.1FlashLite judge|
+|AALCRv1.1|79.0|DeepSeekV4Flash judge；并非全对照领先|
+
+图表中未标注值来自模型报告或榜单，星号为百度自测，†为HLE纯文本；斜杠并列官方引用与自测，不能挑高值重组统一榜单。各模型最高可用reasoning设置，仍非等成本。APEX的DeepSeek官方100步43.9，放宽500步71.7，而表中引用69.8也不是这个自测71.7，原表和原脚注都保留，不能互相覆盖。基础图/后训练图分别保存，不跨harness计算提升百分比。
+
+20条脚注均在完整原图；关键运行时包括：DRACO/BrowseComp的GPT用Codex0.162.1、其余ClaudeCode2.1.296；Spreadsheet/OfficeQA的DeepSeek用DSH0.2.1-rc.2、其余ClaudeCode2.1.138；ALE其余模型2.1.170。judge、步数和权限差异都是分数的一部分。解码很快的描述未给本版完整延迟/并发表，不填推测速度。
+
+> [!insight]
+> Preview把代码、可执行环境、参考材料和终态产物联系起来。值得对齐的是可回放workspace、真实文件、环境权限、图像工具可见性和验证反馈；比较时冻结同一harness、预算和judge，再分离SFT/RL与外部工具带来的收益。精选产物只能提出待测假设，不能替代未见任务上的成功率。
+
+- [官方Preview发布页](https://ernie.baidu.com/release/ernie-5-5-flash-preview/)
+- [[ernie_5_5_flash_poster_zh.html|更新后的家族Poster]]

@@ -1,0 +1,183 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="">打开官方原文 ↗</a> · <a href="qwen-tokenplan.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Token Plan 概览-大模型服务平台百炼(Model Studio)-阿里云帮助中心 大模型 产品 解决方案 权益 定价 AI 应用市场 伙伴 服务 了解阿里云 查看 &quot;&quot; 全部搜索结果 AI 助理 文档 备案 控制台 官方文档 
+Token Plan 
+模型 
+Agent 
+模型 API 
+Agent API 
+CLI 
+产品动态 首页 大模型服务平台百炼 Token Plan 开始使用 Token Plan 概览 
+Token Plan 概览 更新时间： 复制 MD 格式 产品详情 我的收藏 
+Token Plan 是阿里云百炼的 AI 模型订阅服务，以 Credits 统一计量，支持在兼容的 AI 工具中交互式使用。 
+快速接入 1. 购买套餐 个人版 
+选择套餐档位， 订阅个人版 ，支持包月、包季、包年订阅。 团队版 
+选择座席档位和数量， 订阅团队版 ，支持包月、包季、包年订阅。 2. 获取 API Key 个人版 
+生成 套餐专属 API Key ，请复制并保存，之后 无法再次查看 。 团队版 
+分配座席并生成 套餐专属 API Key ，请复制并保存，之后 无法再次查看 。 3. 快速接入 AI 工具 
+复制下面的内容，发送给可用的 AI 工具，让它安装阿里云百炼 CLI 并完成配置。 请阅读 https://bailian.aliyun.com/cli/install.md 并按照说明为我安装阿里云百炼 CLI，然后运行 bl auth login --config token-plan --api-key 登录我的 Token Plan API Key，再运行 bl config show --config token-plan 获取配置，帮我把 Token Plan 接入当前 AI 工具。 没有可用的 AI 工具？请 手动接入 。 
+接入 AI 工具 
+选择你使用的工具，按接入指南中的 Token Plan 个人版或团队版配置操作。 Qoder 面向真实软件开发的 Agentic 编码平台 Claude Code AI 终端编码助手，支持自然语言编程 Codex OpenAI 推出的命令行编程工具 Qwen Code 开源命令行 AI 编码工具 OpenClaw 开源、自托管个人 AI 助手 Hermes Agent 开源 AI 代理框架，内置自学习循环 OpenCode 开源 AI 编程代理工具 千问办公 绑定 Token Plan，在千问办公中使用 Credits Trae 自定义模型接入，无需安装插件 DeepSeek Harness 开源插件化 Agent 框架，Web UI 与命令行双模式 WorkBuddy 桌面 AI Agent 工作台 通用接入指南 其他编程工具 
+接入其他模型 
+AI 工具原生只处理文本协议，图像、视频、语音等能力需要通过扩展机制接入，详见 接入概览 。 接入决策模型 按置信度自动放行、隐藏或转人工。 接入图像生成模型 根据文字描述生成图片。 接入视频生成模型 提交异步任务并下载视频。 接入语音合成模型 将文本转为音频。 接入语音识别模型 将音频转为转写文本。 接入实时语音对话模型 创建并运行实时语音客户端。 
+接入 Harness 
+个人版 Standard 与 Pro 套餐附赠 Harness 权益，可调用 AgentStudio 工具，不占用 Credits。复制下方提示词并发送给本地 AI 工具，即可让它完成配置。 
+Harness 服务本地配置指南 ## Harness 服务本地配置指南
+
+请按照以下步骤配置 Harness 服务给本地 AI 工具使用。
+
+### 前置依赖安装与检查
+1. 检查是否安装百炼 CLI，如没有安装请参照如下文档进行安装：https://bailian.aliyun.com/cli/install.md
+2. 使用百炼 CLI 完成登录：bl auth login --console
+3. 执行如下命令：bl config show，拿到 config_file 文件路径，并读取文件内部api_key。
+
+### 需要配置的服务 — 自研工具
+将以下 MCP 服务器配置写入本地全局配置（请识别准确目录），直接通过 MCP 协议调用，不经 bailian-cli 中转。所有服务的公共信息：
+- 类型：HTTP Streamable
+- 请求头：Authorization: Bearer ${DASHSCOPE_API_KEY}
+
+需要配置的服务清单：
+
+| 服务名 | URL |
+|---|---|
+| 图像生成 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/TextGenerateImage/mcp` |
+| 视频生成 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/VideoGenerate/mcp` |
+| 代码解释器 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/CodeInterpreter/mcp` |
+| 联网搜索增强版 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/EnhancedSearch/mcp` |
+| 网页解析 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/WebFetch/mcp` |
+| 垂类搜索 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/VerticalSearch/mcp` |
+| 语音合成 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/TextGenerateSpeech/mcp` |
+| 语音识别 MCP | `https://dashscope.aliyuncs.com/api/v1/mcps/SpeechGenerateText/mcp` |
+
+### 需要配置的服务 — 基础设施
+以下服务登录后先询问用户需求，根据需求走不同路径：
+
+- **体验**：通过 bailian-cli 对应命令直接调用，针对不同场景操作。
+- **写代码接入**：使用前置步骤中获取的 `api_key`，帮助用户书写代码调用相关 API。
+
+具体服务：
+
+| 服务名 | CLI 命令 | API 文档 |
+|---|---|---|
+| RAG-知识库服务 | bl knowledge 系列 | https://docs.agent.bailian.aliyun.com/zh/api/rag/overview |
+| Memory-记忆库服务 | bl memory 系列 | https://docs.agent.bailian.aliyun.com/zh/api/memory/overview |
+| Managed Agent-托管智能体 | bl managed-agent 系列 | https://docs.agent.bailian.aliyun.com/zh/api/managed-agents/introduction | 查看配置指南 ## Harness 服务本地配置指南
+
+请按照以下步骤配置 Harness 服务给本地 AI 工具使用。
+
+### 前置依赖安装与检查
+1. 检查是否安装百炼 CLI，如没有安装请参照如下文档进行安装： https://bailian.aliyun.com/cli/install.md 2. 使用百炼 CLI 完成登录：bl auth login --console
+3. 执行如下命令：bl config show，拿到 config_file 文件路径，并读取文件内部api_key。
+
+### 需要配置的服务 — 自研工具
+将以下 MCP 服务器配置写入本地全局配置（请识别准确目录），直接通过 MCP 协议调用，不经 bailian-cli 中转。所有服务的公共信息：
+- 类型：HTTP Streamable
+- 请求头：Authorization: Bearer ${DASHSCOPE_API_KEY}
+
+需要配置的服务清单：
+
+| 服务名 | URL |
+|---|---|
+| 图像生成 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/TextGenerateImage/mcp` |
+| 视频生成 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/VideoGenerate/mcp` |
+| 代码解释器 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/CodeInterpreter/mcp` |
+| 联网搜索增强版 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/EnhancedSearch/mcp` |
+| 网页解析 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/WebFetch/mcp` |
+| 垂类搜索 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/VerticalSearch/mcp` |
+| 语音合成 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/TextGenerateSpeech/mcp` |
+| 语音识别 MCP | ` https://dashscope.aliyuncs.com/api/v1/mcps/SpeechGenerateText/mcp` |
+
+### 需要配置的服务 — 基础设施
+以下服务登录后先询问用户需求，根据需求走不同路径：
+
+- **体验**：通过 bailian-cli 对应命令直接调用，针对不同场景操作。
+- **写代码接入**：使用前置步骤中获取的 `api_key`，帮助用户书写代码调用相关 API。
+
+具体服务：
+
+| 服务名 | CLI 命令 | API 文档 |
+|---|---|---|
+| RAG-知识库服务 | bl knowledge 系列 | https://docs.agent.bailian.aliyun.com/zh/api/rag/overview |
+| Memory-记忆库服务 | bl memory 系列 | https://docs.agent.bailian.aliyun.com/zh/api/memory/overview |
+| Managed Agent-托管智能体 | bl managed-agent 系列 | https://docs.agent.bailian.aliyun.com/zh/api/managed-agents/introduction | 
+场景 Playbook AI Coding / 开发 给现有系统加功能、搭建个人小工具或评审代码。 自媒体 / 内容创作 制作封面与文案、故事配音或商品展示视频。 资料与数据处理 分析表格、提取网页字段或阅读长文并问答。 生活娱乐 修复老照片、规划周末出游或排查居家隐患。 求职职场 按岗位要求改写简历、练习面试或制作解题讲解网页。 上一篇：开始使用 下一篇：个人版 该文章对您有帮助吗？ 反馈 
+为什么选择阿里云 什么是云计算 全球基础设施 技术领先 稳定可靠 安全合规 分析师报告 
+大模型 大模型服务平台 千问大模型 模型市场 
+产品和定价 全部产品 免费试用 产品动态 产品定价 配置报价器 云上成本管理 
+技术内容 技术解决方案 帮助文档 开发者社区 天池大赛 阿里云认证 
+权益 免费试用 解决方案免费试用 高校计划 推荐返现计划 
+服务 基础服务 企业增值服务 迁云服务 官网公告 健康看板 信任中心 
+关注阿里云 
+关注阿里云公众号或下载阿里云APP，关注云资讯，随时随地运维管控云服务 
+联系我们：4008013260 法律声明 Cookies 政策 廉正举报 安全举报 联系我们 加入我们 
+友情链接 阿里巴巴集团 淘宝网 千问AI平台 千问办公 天猫 全球速卖通 阿里巴巴国际交易市场 1688 阿里妈妈 飞猪 阿里云计算 万网 高德 UC 友盟 优酷 钉钉 支付宝 达摩院 淘宝海外 阿里云盘 
+© 2009-现在 Aliyun.com 版权所有 增值电信业务经营许可证： 浙B2-20080101 域名注册服务机构许可： 浙D3-20210002 
+浙公网安备 33010602009975号</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

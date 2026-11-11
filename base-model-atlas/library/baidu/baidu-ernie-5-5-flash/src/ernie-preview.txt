@@ -1,0 +1,139 @@
+Introducing ERNIE 5.5 Flash Preview · ERNIE
+Models
+Large Language Models
+ERNIE 5.5 Flash Preview
+ERNIE 5.5 Flash Base
+ERNIE 5.1
+ERNIE 5.0
+ERNIE 4.5
+Research
+API
+English
+简体中文
+Product updates
+/
+November 11, 2026
+0:00 / 0:00
+Download audio
+Playback speed
+0.5×
+0.75×
+1×
+1.25×
+1.5×
+2×
+ERNIE
+5.5
+Flash
+Preview
+Still driven by the same dream.
+Access API
+Game Development
+3D Modeling and Design
+Knowledge Work
+Video Creation
+Appendix: Benchmarks
+Table of Contents
+Game Development
+3D Modeling and Design
+Knowledge Work
+Video Creation
+Appendix: Benchmarks
+Today we are releasing
+ERNIE 5.5 Flash Preview
+, the first post-trained model built on the
+ERNIE 5.5 Flash Base
+we released earlier. It has 280B total parameters with 14B active and a 1M-token context, and it is strong at coding, 3D modeling, knowledge work and content creation.
+It balances capability with inference efficiency, scoring competitively across major benchmarks while keeping decoding fast. The API is now available on the
+Qianfan platform
+, and the weights will be open-sourced under Apache 2.0 soon.
+Here is work ERNIE 5.5 Flash Preview produced on real tasks in game development, 3D modeling and design, knowledge work and video creation. The model completed every piece end to end inside an agent harness. External assets and tools are credited alongside each piece.
+Game Development
+ERNIE 5.5 Flash Preview supports a broad range of coding tasks, from fixing and iterating on real-world codebases to building complex applications and complete projects. It is particularly capable of long-horizon tasks, with strong planning, execution, and iterative refinement capabilities. We have further improved its game development capabilities through domain-specific training data and a dedicated evaluation framework, focusing on game mechanics implementation, gameplay logic orchestration, runtime state management, and asset pipelines. We have also strengthened its support for major game engines, including Unreal Engine, Unity, and Godot, enabling it to work effectively with each engine’s development paradigms, tools, and workflows. This allows the model to handle practical tasks across the game development process, from game design and gameplay implementation to scene creation.
+Creating a Wuxia Game with Unreal Engine:
+Yunxiu Xing
+: A third-person game made in Unreal Engine 5.8, set among the misty sandstone peaks of Zhangjiajie and a temple on a clifftop. In a single 11-hour coding task, the model merged assets made for several generations of Unreal Engine into one UE 5.8 project and wrote the entire game in C++. Because it is a text-only model and can't see the screen, it turned problems spotted in playtesting, such as a character hovering above the ground, an inconsistent running direction and a misplaced camera, into measurable tests in code. A growing test suite and playtest feedback drove each iteration until every development goal was met. External assets: a Zhangjiajie mountain environment and a wuxia heroine character pack. ·
+View / download video
+From Design Doc to Playable Game
+(Built with Cocos, Unity, LayaAir, PixiJS and Canvas 2D): Working from complete game design documents, the model built nearly 100 mobile mini-games, each complete with gameplay, content, art and sound. They span bullet-hell shooters, roguelikes, tower defense, racing, card RPGs, city builders, physics puzzles and interactive fiction, and the video shows 24 of them. Most of them separate game rules from presentation and run the rules as a deterministic simulation, so bot playthroughs, state-space search and level replays can check automatically that every level can be cleared and the game is well balanced. Boss dialogue, story branches, and character and level names all match each game's theme. External assets: art generated with Z-Image, Animagine XL, FLUX.2 and Stable Diffusion XL; asset packs from Quaternius, Kenney (CC0) and CraftPix; fonts under the SIL OFL. Sound effects and music were synthesized in code. ·
+View / download video
+3D Modeling and Design
+Through specialized training in professional tools such as Blender and CAD, we have significantly enhanced ERNIE 5.5 Flash Preview’s capabilities in 3D modeling and design. ERNIE excels at parametric modeling and spatial reasoning. Leveraging tools, it can accurately interpret text descriptions to infer the shapes, proportions, and spatial relationships, and use these insights to create usable 3D models through procedural modeling. It can also flexibly integrate and reuse existing assets, seamlessly incorporating external resources into established workflows to create large-scale, richly detailed 3D scenes.
+Building an Airport and an Airliner in Blender
+: Two agents running ERNIE 5.5 Flash Preview used the Blender Python API, one to build the airport and the other the aircraft. For the airport, the model found layout vector data on a mapping platform by itself, downloaded supporting assets such as vegetation, vehicles and ground support equipment as needed, and built the terminal and airfield with parametric modeling. For the aircraft, it lofted the fuselage and wings from cross-sections and assembled them in modules, then fitted out the cockpit, both passenger decks and the cargo hold with generated assets provided in advance. The model then matched scale, placement and cameras across the two projects, choreographed the showcase animation, rendered it frame by frame on GPU with Cycles and OptiX, and put the video together with FFmpeg. As on a real production, the job was broken into subtasks that progressed separately but stayed coordinated. External assets: vector map data from OpenStreetMap and its contributors (ODbL); vegetation, road and apron PBR textures from Poly Haven (CC0); vehicles and ground support equipment from Sketchfab (CC BY 4.0 or Sketchfab Free Standard); seat, cargo container and vegetation models generated with Tripo AI (accessed through its API, with license). ·
+View / download video
+Building Hōryū-ji in Blender
+: ERNIE 5.5 Flash Preview researched Hōryū-ji's site plan and building structure on its own, then used the Blender Python API to build the temple complex step by step, refining the tapering stories, the post-and-beam supports and the layered roof tiles. It also found and downloaded openly licensed Buddha statue scans and plant assets, and designed a lotus pond, arched bridges and gardens to fit the scene. External PBR textures and procedural node materials add surface detail. The model finished with frame-by-frame GPU rendering in Cycles and OptiX and an FFmpeg edit. External assets: vegetation, moss, garden stone and fallen-leaf textures from Poly Haven (CC0); the red maple
+Momiji 4m Fall 4 Demo
+by plants_3dlibary and
+Water Lily
+by Valery.Li on Sketchfab (CC BY 4.0); the Cleveland Museum of Art's
+1973.85 Seated Buddha
+scan with its PBR textures (CC0 1.0). ·
+View / download video
+Blockout Previs for AI Filmmaking
+ERNIE 5.5 Flash Preview procedurally created a sci-fi disaster sequence. Using Python and bpy, it built four blockout scenes in Blender, about 2,100 objects and 1.82 million triangles in total, and handled the layout, camera moves and animation for five shots. The blockout video then guided Seedance 2.5 on framing and spatial layout as it generated the final footage. Tools: Blender 5.2, Python, the Workbench renderer, NumPy, FFmpeg and Seedance 2.5. Shot pacing is modeled on sequences from the film
+Independence Day: Resurgence
+. All 3D scenes and blockout animation were built procedurally, with no footage or audio from the film and no other external assets. This piece is a capability demo only and is not affiliated with the film or its rights holders. ·
+View / download video
+Designing an Engine in CAD
+: Working from the layout of a W16 engine, ERNIE 5.5 Flash Preview wrote Python scripts in FreeCAD to build an editable engine model, including the cylinder block, crankshaft, pistons and connecting rods. The animation shows how, as the crankshaft turns, the connecting rods drive the pistons up and down in all four cylinder banks. ·
+View / download video
+Designing Baidu International Building (Shenzhen) in CAD
+: Working from architectural references for the building, with an MCP tool for visual understanding, ERNIE 5.5 Flash Preview wrote Python scripts in FreeCAD to model the east and west towers in editable 3D, and added interior layouts, furniture, equipment and mechanical, electrical and plumbing runs in representative areas. ·
+View / download video
+Designing a Lunar Rover Concept in CAD
+: Taking cues from the look of China's Yutu-2 rover, ERNIE 5.5 Flash Preview wrote Python scripts in FreeCAD to design a concept rover for rough lunar terrain. The editable assembly shows how each wheel shifts as the rocker-bogie suspension pivots, and how the two solar wings swing on their hinges. ·
+View / download video
+Knowledge Work
+Hand ERNIE 5.5 Flash Preview a pile of scattered material and it works through the steps a request calls for, then delivers professional-quality spreadsheets, documents or slide decks. For domains such as finance and law, we built 300,000 workspaces holding 10 million reference files in more than 40 file types. The training environments range from personal workspaces of 10 to 100 files to enterprise knowledge bases of a thousand files or more.
+PPT
+Excel
+PDF
+WAV
+Creating a Research Report on AI Data Center Electricity Costs
+ERNIE 5.5 Flash Preview independently produced a 20-page research report, The AI Power Bill, examining the surge in electricity demand driven by the expansion of AI data centers in the United States and the resulting debate over how electricity costs should be allocated—specifically, whether technology companies or ordinary households ultimately bear the burden. The report synthesizes publicly available research and regulatory materials from institutions including LBNL, EPRI, PJM, ERCOT, E3, and JLARC. It establishes a multidimensional analytical framework covering electricity demand forecasts, grid expansion, capacity market pricing, residential electricity bills, and local fiscal benefits. Through policy scenario modeling, it evaluates the potential impacts of different cost-allocation mechanisms. The final deliverable is a comprehensive 20-page research report featuring key findings, data visualizations, policy analysis, key indicators to monitor in 2027, and a calculation methodology appendix. It demonstrates the model's end-to-end capabilities in multi-source information synthesis, specialized industry analysis, quantitative modeling, and professional report production.
+Download PPT
+Building a Personal Wealth Planning and Financial Freedom Simulator
+Independently designed and built by ERNIE 5.5 Flash Preview, LIFEWEALTH is an interactive personal wealth planning workbook that transforms complex household financial planning into a dynamic decision-making system with real-time adjustments and long-term projections. The model integrates key financial variables, including income, expenses, asset allocation, investment returns, liabilities, and retirement planning, into a long-term financial forecasting framework. Users can customize assumptions such as income growth, savings rate, investment returns, inflation, and retirement age to assess how different scenarios affect wealth accumulation and the timing of achieving financial freedom. The tool also combines scenario analysis with Monte Carlo simulation, using 1,000 randomized market paths to evaluate the probability of retirement plan success and the risk of running out of funds. Users can further model major life events—including home purchases, childbirth, children's education, career breaks, and lifestyle changes—to quantify their long-term impact on retirement assets and overall wealth.
+Download Excel
+Researching Autonomous Driving Industry Trends and Technology Approaches
+ERNIE 5.5 Flash Preview independently produced a 24-page professional research report, Driverless, by the Numbers, examining developments in the autonomous driving industry in 2026. The report provides a systematic comparison of Waymo's fully driverless Robotaxi and Tesla's supervised FSD, focusing on differences in safety performance, commercialization progress, and data transparency. It integrates crash reports from the U.S. National Highway Traffic Safety Administration (NHTSA), Waymo safety data, official Tesla disclosures, independent IIHS research, and insurance industry sources to build an analytical framework covering 4,169 federal crash reports. Through data cleaning, incident deduplication, trend analysis, and multidimensional cross-source analysis, the model identifies key differences between the two autonomous driving approaches in safety performance and data disclosure practices, demonstrating its capabilities in multi-source information synthesis, complex data analysis, and professional research report production.
+Download PDF
+Orchestral piece · 6 min 34 s
+Compose an original full-scale symphony
+ERNIE 5.5 Flash Preview independently composed an original orchestral piece titled Beyond the Event Horizon, approximately 6 minutes and 34 seconds in length, inspired by the theme of "crossing the event horizon and exploring the unknown frontiers of the universe." Set against the backdrop of cosmic exploration, the composition combines sweeping strings, deep melodic motifs, orchestral textures, and harmonic variations to create an ethereal, mysterious, and richly layered soundscape. Through the transitions and arrangement of different musical sections, it traces an emotional progression from the stillness of deep space to a gradual rise in intensity. Throughout the creative process, the model developed melodies, selected instruments, arranged musical parts, and planned the overall structure around the central theme, bringing atmospheric storytelling together with orchestral expression to create an extended original composition with a cinematic soundtrack aesthetic. The complete piece was delivered in WAV format, demonstrating the model's end-to-end creative capabilities, from thematic conception and original melody composition to orchestral arrangement and audio generation.
+Download WAV
+Video Creation
+For content creators, ERNIE 5.5 Flash Preview can gather, generate and arrange material, set the visuals and pacing, and deliver a finished video. We built more than 150,000 creation environments for popular-science explainers, motion comics, creative edits and takes on trending topics. They cover the full pipeline from concept, script and storyboard to visual assets and voice-over, support more than a thousand creation skills, and have produced about 5,300 minutes of finished video so far.
+The Pelican Test
+: ERNIE 5.5 Flash Preview wrote a 116-second 2D animated short from scratch in Python. A white pelican rides a bicycle from Saharan rock art of 4000 BCE to a code editor in the age of large language models, passing through 20 art styles before arriving at the "Pelican #21 Launch Event." More than 10,000 lines of code drive the film. Each frame is vector-drawn with Pycairo and post-processed with NumPy and Pillow. Across 20 scenes, the same parameterized pelican becomes a Han dynasty stone-relief rubbing, a Javanese shadow puppet, an oscilloscope trace and 8-bit pixel art. At each scene change the picture slides across like film being pulled through a projector, and the pelican rides smoothly over the seam between frames. In the
+Starry Night
+scene, the swirling sky of Van Gogh's original painting twists in time with the pedaling. The soundtrack uses 22 selected recordings, from djembe, guqin and gamelan to the Super Mario theme, cut to each scene change by an editing script the model wrote. For three scenes, in the styles of Tang dynasty line drawing,
+Along the River During the Qingming Festival
+and Mughal miniature painting, ERNIE 5.5 Flash Preview called an image generation tool for the static backgrounds, then animated figures, falling petals and rippling water over them in code. Concept design by Bilibili creator @近步抱告_. ·
+View / download video
+From a Single Prompt to a Finished Video
+: This video follows ERNIE 5.5 Flash Preview through the entire video production process. It begins with a question: “If Earth had a ring, what would we see when we looked up?” The model first researches the topic, reviewing scientific concepts such as the Roche limit. It then writes a script and develops a storyboard, breaking the idea down into individual shots. Visual asset options include code-generated content, user-provided materials, model-generated videos, and re-rendered images. From research to final compositing, ERNIE 5.5 Flash Preview turns an idea into a finished video, demonstrating its ability to coordinate multiple tools and independently complete complex creative tasks. ·
+View / download video
+Flying Roadster: The Physics Behind It
+: From a single prompt, ERNIE 5.5 Flash Preview made a 75-second science explainer on the engineering behind the "flying" Tesla Roadster. It handled the whole production itself, from the script, voice-over and subtitles to shot generation, on-screen force diagrams and the final edit, turning abstract physics into clear animated demonstrations. Its five chapters follow the car through the jump, liftoff, changes in attitude, hovering and landing. A ramp jump illustrates momentum and gravity. A comparison of thrust and weight shows what it would take to lift off without a ramp. An off-center thrust demo shows why torque tilts the car. A hover sequence shows how the car relies on sensor feedback to keep correcting itself. Finally, the car makes a controlled landing in a marked zone. Through continuous shots and force diagrams, the film untangles four ideas that are easily confused: a jump, a powered maneuver, a stable hover and sustained flight, each with its own engineering requirements. The opening was inspired by Tesla's Roadster demonstration near Waco, Texas, as reported by TechCrunch (October 15, 2026). Some of the footage was generated with Seedance 2.5. The car shown is an illustrative digital model, and the force visualizations are for illustration only. They do not represent the real vehicle's performance or the actual forces acting on it. The use of Tesla-related elements does not imply authorization, approval or endorsement of this film by Tesla. ·
+View / download video
+ERNIE 5.5 Flash Preview is an intermediate checkpoint from post-training. It is already competitive with models of its size, but because training is not finished, some capabilities may still fall short. Post-training is ongoing and ERNIE 5.5 Flash is improving quickly. We will keep a close eye on how the Preview performs in real-world use and on user feedback, and make improvements in the official release.
+Appendix: Benchmarks
+© 2026 Baidu. All rights reserved.
+Baidu_ERNIE@baidu.com
+Models
+ERNIE 5.5 Flash Preview
+ERNIE 5.5 Flash Base
+ERNIE 5.1
+ERNIE 5.0
+ERNIE 4.5
+Research
+Technical Blog
+Careers
+Graduate Jobs
+Experienced Hires
+Company
+Privacy Policy
+© Beijing Baidu Netcom Science and Technology Co., Ltd.

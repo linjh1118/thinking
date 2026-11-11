@@ -1,0 +1,4694 @@
+PathFM: Fast Generative Forecasting ofMultivariate Trajectories
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+arXiv is now an independent nonprofit!
+Learn more
+×
+Back to arXiv
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Abstract
+1
+Introduction
+2
+Problem setup and preliminaries
+Forecast object and downstream query.
+Existing benchmarks and their scope.
+3
+Fast and Calibrated Trajectory Forecasting
+3.1
+Pretraining by flow matching
+3.2
+Efficient backbone for joint generation
+Packing and caching.
+3.3
+Post-training: distillation with calibration
+Distillation.
+Calibration.
+3.4
+Inference: ensemble sampling
+4
+Evaluating Trajectory Forecasts
+Six complementary path scores.
+Quantile-model completions.
+5
+Forecasting accuracy and efficiency
+5.1
+Experimental setup
+5.2
+Results
+Path-dependent scores.
+Ablation studies.
+5.3
+Accuracy, model size, and inference cost
+Ensemble size and distillation.
+Scaling to 300M parameters.
+6
+Forecasting chaotic dynamics
+6.1
+Forecast accuracy and dynamical fidelity
+6.2
+What sampling preserves
+7
+Discussion and conclusion
+References
+A
+Related Work
+Marginal forecasting.
+Generative trajectory forecasting.
+Distillation and direct score optimization.
+Forecast evaluation.
+A.1
+Concurrent Work
+B
+Model and training
+B.1
+Backbone and input
+Backbone configuration.
+Input representation.
+Flow-time sampling.
+B.2
+Training recipe
+Optimization and stage transitions.
+Data and task sampling.
+Post-training objectives.
+B.3
+Distillation and evaluation budget
+B.4
+Architecture and training ablations
+B.5
+Scaling and additional benchmarks
+B.5.1
+Model size and forecast accuracy
+B.5.2
+Accuracy and inference cost
+C
+Sampling and computational efficiency
+C.1
+Finite-ensemble approximation
+C.1.1
+Forecast quantities and model error
+C.1.2
+Ensemble construction and stratification
+C.2
+Marginal coverage and ensemble size
+C.3
+Inference latency
+C.3.1
+Inference speedup breakdown
+D
+Evaluation metrics
+D.1
+Score construction
+D.1.1
+Empirical forecast scores
+D.1.2
+Temporal path scores
+Variogram.
+First passage.
+D.1.3
+Cross-variable variogram score
+D.2
+Aggregation rules
+Marginal benchmarks.
+fps-bench.
+E
+Forecast accuracy and dependence
+E.1
+Temporal forecast accuracy
+E.2
+Cross-variable variogram scores
+Task-specific adaptation.
+E.3
+Fitted Gaussian temporal copulas
+Gaussian copula fitting.
+F
+Chaotic systems
+F.1
+Setup and forecasting protocols
+Dataset.
+Models and training.
+Training-progress evaluation.
+Point forecasts.
+Long continuations.
+F.2
+Model size and sampler choice
+F.3
+Full continuations
+F.4
+Metric definitions
+Point error.
+Wasserstein-1 distance (
+W
+1
+W_{1}
+).
+Spectral distance.
+Correlation dimension.
+Segment analog.
+License: arXiv.org perpetual non-exclusive license
+arXiv:2610.22358v1 [cs.LG] 15 Oct 2026
+PathFM: Fast Generative Forecasting of
+Multivariate Trajectories
+Jiachen Yao
+†
+†
+thanks:
+Work done during an internship at Amazon.
+Affiliation:
+California Institute of Technology
+Xiyuan Zhang
+†
+†
+thanks:
+Correspondence to: Xiyuan Zhang <
+xiyuanz@amazon.com
+>.
+Affiliation:
+Amazon
+Annan Yu
+Affiliation:
+Amazon
+Boran Han
+Affiliation:
+Amazon
+Abdul Fatir Ansari
+Affiliation:
+Amazon
+Shuai Zhang
+Affiliation:
+Amazon
+Michael Bohlke-Schneider
+Affiliation:
+Amazon
+Bernie Wang
+Affiliation:
+Amazon
+Abstract
+Time series foundation models are becoming increasingly popular for general-purpose forecasting.
+However, most leading models predict marginal quantiles, leaving the dependence structure of future trajectories unspecified.
+This distinction matters for trajectory-dependent quantities such as cumulative demand, peak load, and event timing, yet point and marginal scores do not reveal it.
+To model this dependence, we introduce PathFM, a trajectory-based forecasting model that uses flow matching to generate complete future paths.
+We further distill the model to one or two steps and share history attention cache across draws.
+Together, these enable PathFM to generate multiple paths for a single series in roughly the time needed for one query to a quantile model.
+The distilled sampler also makes it practical to optimize a calibration loss directly.
+PathFM achieves competitive marginal accuracy on the established forecasting benchmarks fev-bench and TIME.
+To complement these evaluations, we introduce Forecast Path Score Bench (fps-bench), which augments fev-bench tasks with energy and variogram scores and downstream metrics.
+PathFM achieves a higher aggregate path score on fps-bench than all evaluated external baselines.
+Experiments on chaotic systems further show that our flow model sustains long-run variability, while strong baselines rapidly collapse.
+PathFM makes generative time series forecasting both competitive and practical, enabling diverse downstream applications.
+1
+Introduction
+Time series foundation models (TSFMs) are a hot topic
+(
+Ansari et al., 2024
+;
+Das et al., 2023
+;
+Ansari et al., 2025
+;
+Jain & Sen, 2026
+;
+Cohen et al., 2025
+)
+.
+The field is growing fast:
+Every year, new models are released that refresh the leaderboard.
+The models are commonly evaluated through point accuracy (e.g., MASE) and marginal probabilistic scores (e.g., CRPS, scaled quantile loss)
+(
+Aksu et al., 2024
+;
+Shchur et al., 2025
+)
+.
+Consequently, most of the recent TSFMs are designed and trained to produce quantile levels, which are optimized for these benchmarks.
+Point accuracy and marginal probabilistic scores are widely adopted for good reason: they provide an interpretable, per-step summary of forecast quality that directly supports common operational decisions such as inventory planning, resource allocation, and risk management.
+However, they do not capture all aspects of forecast quality.
+Other properties, particularly
+trajectory-dependent
+ones, are important but overlooked by these metrics.
+Among many, we illustrate two important aspects:
+•
+Learning distributions with multiple modes:
+Quantiles are defined through the inverse of the cumulative distribution function (CDF) of the target distribution.
+These CDFs, however, are not always nice and smooth, for instance, when the target distribution has multiple modes or sharp peaks.
+With a few or a few dozens of quantiles, the resulting approximation of the CDF can be quite rough and suffer from a regression-to-the-mean issue
+(
+Yu et al., 2026
+)
+.
+See the Lorenz oscillator example in
+Figure
+1
+.
+•
+Learning autocorrelation:
+Many quantile regression models predict marginal quantiles at individual time steps across a forecast window.
+These marginal outputs do not specify temporal dependence among future values within that window.
+For instance, many forecasting problems also require learning trajectory-dependent quantities, such as cumulative demand, peak load, and threshold-crossing times
+(
+Perez-Diaz et al., 2025
+;
+Cai et al., 2026
+)
+.
+See the solar-output example in
+Figure
+1
+.
+A marginal quantile loss does not identify these joint properties.
+Figure 1:
+Two advantages of trajectory generation.
+Left: a sampled Lorenz rollout sustains variability and a two-lobe structure, while the fine-tuned Chronos-2 trace contracts.
+Both use the dynamical models in
+Section
+6
+.
+Gray Lorenz curves show the observed continuation.
+Right: solar-output paths from PathFM and independent (ind.) and comonotone (com.) completions of the Chronos-2 (C2) quantiles.
+Horizontal dashed lines marks each solar path’s daily maximum; black denotes the observed future.
+In (g), boxes show medians and interquartile ranges across 32 paths, whiskers show the 10–90% range, and the dashed line marks the observed maximum.
+Ad hoc methods have been proposed to mitigate these weaknesses, such as completing marginal quantiles under independence or comonotone assumptions
+(
+Perez-Diaz et al., 2025
+)
+, or learning copula structures on top of marginal forecasts
+(
+Drouin et al., 2022
+;
+Ashok et al., 2024
+)
+.
+On the other hand, diffusion- or flow-matching-based generative time-series models are naturally well-suited for capturing joint trajectory distributions even without these ad hoc methods, as they can generate complete future paths while maintaining temporal and cross-variable dependencies.
+Unfortunately, existing generative models
+(
+Kollovieh et al., 2025
+;
+Liu et al., 2025
+)
+achieve neither high marginal accuracy nor efficient sampling, limiting their practical utility in real-world forecasting scenarios.
+This leads us to ask:
+Can we construct a generative time-series model that achieves both high marginal accuracy and efficient sampling while also preserving trajectory dependence?
+We introduce PathFM to combine joint and multi-mode trajectory modeling with accurate marginal forecasting and efficient sampling.
+The model learns temporal and cross-variable dependence through conditional flow matching
+(
+Lipman et al., 2022
+)
+, generating complete future paths conditioned on history and known future covariates.
+Parallel decoding distillation
+(
+Shaul et al., 2026
+)
+and history attention caching enable faster sampling with one or two model evaluations.
+To narrow the marginal accuracy gap, we add a calibration loss that directly optimizes fair CRPS on generated forecasts.
+The distilled sampler makes this optimization practical by allowing calibration gradients to pass through its short rollout and refine the forecast distribution.
+With these components, PathFM-300M ranks
+second
+on the widely used fev-bench for marginal scores (
+Section
+5
+).
+1
+1
+1
+Cutoff date for the rankings throughout this paper: Sept. 26, 2026; see
+Section
+A.1
+for concurrent work.
+On Forecast Path Score Bench (fps-bench), which we curate to evaluate trajectory quality, PathFM ranks
+first
+for path scores (
+Section
+5
+).
+In a separate evaluation on chaotic systems, our sampling approach improves point forecast accuracy upon the state-of-the-art PANDA model, captures useful temporal dependence, and preserves long-run variability more faithfully than baselines (
+Section
+6
+).
+These results demonstrate that PathFM generates high-fidelity trajectory forecasts without sacrificing marginal accuracy, making it a strong candidate for forecasting applications.
+Our contributions are as follows:
+•
+Fast and calibrated trajectory generation.
+We introduce PathFM, a joint flow foundation model for fast, calibrated trajectory generation with accurate small-ensemble marginals (
+Figure
+2
+).
+Distillation enables one- or two-step generation, marginal-CRPS refinement improves empirical coverage, and stratified sampling reduces finite-ensemble marginal error.
+•
+A benchmark for trajectory distributions.
+We introduce fps-bench, to our knowledge the first dedicated benchmark for evaluating path distributions from time series foundation models on real-world data.
+It reveals how strong marginal accuracy in existing models can mask errors in temporal dependence and uncertainty over trajectory-dependent quantities.
+•
+State-of-the-art performance.
+PathFM outperforms leading foundation models on downstream probabilistic forecasting tasks and stays among the top on marginal benchmarks.
+It also achieves the highest forecasting accuracy across strong baselines on chaotic systems.
+2
+Problem setup and preliminaries
+Forecast object and downstream query.
+Let
+H
+∈
+ℝ
+T
+×
+C
+H\in\mathbb{R}^{T\times C}
+be the observed history and
+Y
+∈
+ℝ
+L
+×
+C
+Y\in\mathbb{R}^{L\times C}
+the future.
+The available information
+ℐ
+\mathcal{I}
+includes
+H
+H
+, observation masks, and known future covariates.
+A predictive law
+P
+θ
+​
+(
+Y
+∣
+ℐ
+)
+P_{\theta}(Y\mid\mathcal{I})
+supports queries about individual coordinates or a trajectory functional
+g
+⁡
+(
+Y
+)
+g(Y)
+, such as cumulative sum or autocorrelation.
+A trajectory generator represents this law through
+X
+=
+G
+θ
+​
+(
+ℐ
+,
+Z
+)
+X=G_{\theta}(\mathcal{I},Z)
+, where each noise draw
+Z
+Z
+produces one complete future path.
+Perez-Diaz et al. (2025)
+distinguish point, quantile, parametric-distribution, and trajectory forecast products by the decisions they support.
+Coordinatewise quantiles
+Q
+τ
+​
+(
+Y
+ℓ
+,
+c
+∣
+ℐ
+)
+Q_{\tau}(Y_{\ell,c}\mid\mathcal{I})
+and marginal distribution parameters leave temporal and cross-variable dependence unspecified.
+Consequently, they do not determine predictive autocorrelation or distributions of sums, maxima, and path-dependent events without an additional dependence assumption.
+Joint trajectory samples support direct estimation of those quantities by applying
+g
+g
+to each generated path.
+Table
+1
+compares forecast objects, computational costs, and task compatibility;
+Appendix
+A
+discusses related work.
+Table 1:
+Forecast objects, inference cost, and task compatibility of representative models.
+Model
+Forecast object
+NFE
+Task compatibility
+Pretrained
+Marginal
+Path
+Cross-variable
+Quantile models
+Chronos-2
+(
+Ansari et al., 2025
+)
+Marginal quantiles
+1
+✓
+\checkmark
+✓
+\checkmark
+×
+\times
+×
+\times
+TimesFM-3
+(
+Jain & Sen, 2026
+)
+Marginal quantiles
+1
+✓
+\checkmark
+✓
+\checkmark
+×
+\times
+×
+\times
+Toto 2.0
+(
+Khwaja et al., 2026
+)
+Marginal quantiles
+1
+✓
+\checkmark
+✓
+\checkmark
+×
+\times
+×
+\times
+Flow models
+TSFlow
+(
+Kollovieh et al., 2025
+)
+Joint paths
+32
+×
+\times
+✓
+\checkmark
+✓
+\checkmark
+✓
+\checkmark
+†
+Sundial
+(
+Liu et al., 2025
+)
+Univariate paths
+50
+✓
+\checkmark
+✓
+\checkmark
+✓
+\checkmark
+‡
+×
+\times
+PathFM (Ours)
+Joint paths
+1–2
+✓
+\checkmark
+✓
+\checkmark
+✓
+\checkmark
+✓
+\checkmark
+Path
+and
+Cross-variable
+refer to native joint forecast laws.
+NFE counts evaluations per output block (per sampled path when applicable).
+†
+TSFlow’s multivariate extension adds attention across features.
+‡
+Temporal coupling here refers to the block generated by the conditional flow.
+Existing benchmarks and their scope.
+GIFT-Eval reports point-forecast metrics and approximates univariate CRPS with weighted quantile loss
+(
+Aksu et al., 2024
+)
+; fev-bench uses scaled quantile loss across heterogeneous forecasting tasks
+(
+Shchur et al., 2025
+)
+.
+TIME evaluates zero-shot forecasting on freshly curated datasets, reporting MASE and quantile-based CRPS
+(
+Qiao et al., 2026
+)
+.
+These summaries assess central predictions and marginal uncertainty, including on multivariate tasks, but cannot distinguish joint laws with identical coordinatewise marginals.
+We introduce fps-bench to address this gap by evaluating temporal dependence and trajectory-dependent quantities (
+Section
+4
+).
+Section
+C.1
+analyzes finite-ensemble approximation, and
+Sections
+D.1
+and
+F
+define the evaluation metrics for general-corpus and chaotic-system prediction, respectively.
+3
+Fast and Calibrated Trajectory Forecasting
+PathFM learns a flow over complete future trajectories, then distills it for fast sampling and refines its marginal scores.
+Figure
+2
+summarizes the training and sampling stages.
+Figure 2:
+Training, post-training, and sampling with PathFM.
+Flow matching learns a joint velocity field; distillation matches frozen-teacher velocities at student-proposed states.
+Calibration maps eight iid draws through one fused step of trainable
+G
+θ
+G_{\theta}
+to samples scored by fair CRPS, together with PDD supervision.
+Sampling uses stratified initial noise to improve coverage of the noise distribution with a small ensemble.
+Below: Flow enters after the flow-independent prefix, and history attention values are computed once and reused by separate packed future states.
+3.1
+Pretraining by flow matching
+Conditional flow matching
+(
+Lipman et al., 2022
+)
+learns a velocity field that transports source noise toward the conditional law
+P
+θ
+​
+(
+Y
+∣
+ℐ
+)
+P_{\theta}(Y\mid\mathcal{I})
+over complete
+L
+×
+C
+L\times C
+futures.
+Here
+ℐ
+\mathcal{I}
+contains the observed history, masks, and known future covariates.
+We transform targets to
+Y
+¯
+\bar{Y}
+using context-derived location and scale followed by the inverse hyperbolic sine
+(
+Ansari et al., 2025
+)
+.
+We draw
+Z
+Z
+independently of the future, with the same shape as
+Y
+¯
+\bar{Y}
+and independent coordinates
+Z
+ℓ
+​
+c
+∼
+𝒩
+⁡
+(
+0
+,
+σ
+2
+)
+Z_{\ell c}\sim\mathcal{N}(0,\sigma^{2})
+.
+The mask
+M
+M
+selects valid unknown coordinates,
+Π
+M
+\Pi_{M}
+restores known values and zeros invalid coordinates, and
+∥
+⋅
+∥
+M
+2
+\|\cdot\|_{M}^{2}
+averages squared error over transported coordinates.
+At flow time
+t
+∈
+[
+0
+,
+1
+]
+t\in[0,1]
+, we train
+v
+θ
+v_{\theta}
+on the straight path from noise to data:
+X
+t
+=
+Π
+M
+​
+(
+(
+1
+−
+t
+)
+​
+Z
++
+t
+​
+Y
+¯
+)
+,
+ℒ
+FM
+=
+𝔼
+⁡
+[
+‖
+v
+θ
+​
+(
+X
+t
+,
+t
+,
+ℐ
+)
+−
+(
+Y
+¯
+−
+Z
+)
+‖
+M
+2
+]
+.
+\displaystyle X_{t}=\Pi_{M}\!\left((1-t)Z+t\bar{Y}\right),\quad\mathcal{L}_{\mathrm{FM}}=\mathbb{E}\left[\left\|v_{\theta}(X_{t},t;\mathcal{I})-(\bar{Y}-Z)\right\|_{M}^{2}\right].
+(1)
+The expectation is over training pairs
+(
+ℐ
+,
+Y
+¯
+)
+(\mathcal{I},\bar{Y})
+, source noise, and flow time.
+Training uses one scalar flow time
+t
+t
+per row, shared across all channels and forecast steps (
+Section
+B.1
+).
+Inference integrates the ordinary differential equation, yielding
+X
+^
+1
+\widehat{X}_{1}
+, one complete trajectory:
+X
+^
+0
+=
+Π
+M
+​
+(
+Z
+)
+,
+d
+​
+X
+^
+t
+d
+​
+t
+=
+M
+⊙
+v
+θ
+​
+(
+X
+^
+t
+,
+t
+,
+ℐ
+)
+,
+t
+∈
+[
+0
+,
+1
+]
+.
+\widehat{X}_{0}=\Pi_{M}(Z),\qquad\frac{\mathrm{d}\widehat{X}_{t}}{\mathrm{d}t}=M\odot v_{\theta}(\widehat{X}_{t},t;\mathcal{I}),\quad t\in[0,1].
+(2)
+3.2
+Efficient backbone for joint generation
+The velocity field uses a transformer based on T5
+(
+Raffel et al., 2020
+)
+, with separate time and channel axes.
+Its inputs are patches of 16 values with masks and time indices, a register token, and future patches populated by available covariates.
+Each block combines temporal self-attention, attention across channels at aligned patches, and a pointwise feed-forward network.
+We condition flow time via adaptive RMS normalization
+(
+Chen et al., 2024
+)
+and apply QK normalization and weight decay.
+For reuse across paths,
+late entry
+separates conditioning from flow-dependent computation.
+The first
+e
+e
+blocks use unrestricted attention over history, the register, and future placeholders, without source noise or flow time.
+These representations incorporate the requested horizon and known future covariates.
+Restricting history attention before this stage would exclude that future information.
+Future positions then receive a gated difference between flow-state and placeholder tokens.
+In subsequent blocks,
+history-only self-attention
+keeps history independent of the sampled path: history tokens attend only to history, while future tokens attend to both history and future.
+Flow-time modulation acts only on register and future tokens.
+Section
+B.1
+specifies the configuration.
+Packing and caching.
+Packed execution stores history once, with a separate register/future block per draw and masks preventing communication between paths.
+Training averages four independent source/time draws per history, giving
+4
+×
+4\times
+flow-matching supervision at
+1.5
+×
+1.5\times
+the cost.
+This sharing across paths is distinct from reusing history states across successive flow evaluations.
+At inference, the first
+e
+e
+blocks run once per history and horizon; their outputs are reused across paths and flow evaluations.
+The flow model can reuse deeper history keys and values across evaluations.
+Section
+5.3
+compares accuracy and inference cost.
+3.3
+Post-training: distillation with calibration
+Sampling a vanilla flow requires tens of sequential velocity evaluations, each depending on the state produced by the preceding step.
+Distillation learns a shorter rollout, i.e., one or two evaluations.
+This makes both ensemble generation and differentiation through generated forecasts practical.
+Distillation.
+Parallel decoding distillation (PDD)
+(
+Shaul et al., 2026
+)
+groups consecutive flow-time intervals into blocks, predicting all interval velocities in a block from one backbone evaluation.
+We initialize the student from a flow teacher that remains frozen throughout post-training.
+We divide
+[
+0
+,
+1
+]
+[0,1]
+into
+J
+=
+20
+J=20
+intervals with knots
+τ
+j
+=
+j
+/
+J
+\tau_{j}=j/J
+and widths
+Δ
+j
+=
+τ
+j
++
+1
+−
+τ
+j
+\Delta_{j}=\tau_{j+1}-\tau_{j}
+.
+Each interval has an affine output head
+h
+θ
+,
+j
+=
+W
+j
+​
+ϕ
+θ
++
+b
+j
+h_{\theta,j}=W_{j}\phi_{\theta}+b_{j}
+.
+All heads share features
+ϕ
+θ
+\phi_{\theta}
+computed at the block’s starting state and time, including nonlinear outputs and residual inputs.
+For a block of
+b
+b
+intervals starting at
+s
+s
+, the mean velocity advances
+X
+X
+to
+X
++
+X^{+}
+:
+h
+¯
+θ
+,
+s
+,
+b
+=
+∑
+j
+=
+s
+s
++
+b
+−
+1
+Δ
+j
+τ
+s
++
+b
+−
+τ
+s
+​
+h
+θ
+,
+j
+,
+X
++
+=
+Π
+M
+​
+(
+X
++
+(
+τ
+s
++
+b
+−
+τ
+s
+)
+​
+h
+¯
+θ
+,
+s
+,
+b
+​
+(
+X
+)
+)
+.
+\displaystyle\bar{h}_{\theta,s,b}=\sum_{j=s}^{s+b-1}\frac{\Delta_{j}}{\tau_{s+b}-\tau_{s}}\,h_{\theta,j},\quad X^{+}=\Pi_{M}\!\left(X+(\tau_{s+b}-\tau_{s})\bar{h}_{\theta,s,b}(X)\right).
+(3)
+Because the heads are affine in shared features, their interval-weighted parameter sums give a single readout per block.
+One block of 20 intervals requires one evaluation; two blocks of 10 requires two.
+For a selected interval
+k
+k
+, summing preceding predicted displacements gives
+X
+~
+k
+\widetilde{X}_{k}
+, where the teacher supplies head
+k
+k
+’s target:
+X
+~
+k
+=
+Π
+M
+​
+(
+X
+τ
+s
++
+∑
+j
+=
+s
+k
+−
+1
+Δ
+j
+​
+sg
+⁡
+(
+h
+θ
+,
+j
+)
+)
+,
+ℒ
+PDD
+=
+𝔼
+⁡
+[
+‖
+h
+θ
+,
+k
+−
+sg
+⁡
+(
+v
+ψ
+​
+(
+X
+~
+k
+,
+τ
+k
+,
+ℐ
+)
+)
+‖
+M
+2
+]
+.
+\displaystyle\widetilde{X}_{k}=\Pi_{M}\!\left(X_{\tau_{s}}+\sum_{j=s}^{k-1}\Delta_{j}\operatorname{sg}(h_{\theta,j})\right),\quad\mathcal{L}_{\mathrm{PDD}}=\mathbb{E}\left[\left\|h_{\theta,k}-\operatorname{sg}(v_{\psi}(\widetilde{X}_{k},\tau_{k};\mathcal{I}))\right\|_{M}^{2}\right].
+(4)
+Here
+ψ
+\psi
+denotes the frozen teacher and
+sg
+\operatorname{sg}
+stops gradients.
+Gradients update the student through the selected head, with the proposed state and teacher target detached.
+Targets are Euler velocities at student-proposed states, supplied without a complete teacher rollout.
+Four packed draws each supervise one interval, with the flow-training coordinate normalization (
+Section
+B.1
+).
+Calibration.
+We refine the student’s marginals by backpropagating the continuous ranked probability score (CRPS) through one fused sampling step.
+Using few paths keeps this step affordable, but empirical CRPS has a bias that can favor underdispersion
+(
+Roberts, 2026
+)
+.
+Fair CRPS
+(
+Ferro, 2014
+)
+is unbiased for the marginal population score under iid sampling and finite first moments.
+Let
+G
+θ
+​
+(
+Z
+,
+ℐ
+)
+G_{\theta}(Z;\mathcal{I})
+denote the normalized endpoint of a fused block spanning
+[
+0
+,
+1
+]
+[0,1]
+.
+For
+m
+m
+iid source draws
+Z
+j
+∼
+𝒩
+⁡
+(
+0
+,
+σ
+2
+​
+I
+)
+Z^{j}\sim\mathcal{N}(0,\sigma^{2}I)
+, set
+X
+j
+=
+G
+θ
+​
+(
+Z
+j
+,
+ℐ
+)
+X^{j}=G_{\theta}(Z^{j};\mathcal{I})
+.
+At coordinate
+(
+ℓ
+,
+c
+)
+(\ell,c)
+, the fair estimator is
+C
+^
+ℓ
+​
+c
+=
+1
+m
+​
+∑
+j
+=
+1
+m
+|
+X
+ℓ
+​
+c
+j
+−
+Y
+¯
+ℓ
+​
+c
+|
+−
+1
+2
+​
+m
+​
+(
+m
+−
+1
+)
+​
+∑
+i
+,
+j
+=
+1
+i
+≠
+j
+m
+|
+X
+ℓ
+​
+c
+i
+−
+X
+ℓ
+​
+c
+j
+|
+.
+\widehat{C}_{\ell c}=\frac{1}{m}\sum_{j=1}^{m}\left|X^{j}_{\ell c}-\bar{Y}_{\ell c}\right|-\frac{1}{2m(m-1)}\sum_{\begin{subarray}{c}i,j=1\\
+i\neq j\end{subarray}}^{m}\left|X^{i}_{\ell c}-X^{j}_{\ell c}\right|.
+(5)
+Retaining PDD provides teacher supervision while the generated endpoints are optimized against observations.
+With
+C
+^
+M
+\widehat{C}_{M}
+the mean of
+C
+^
+ℓ
+​
+c
+\widehat{C}_{\ell c}
+over transported coordinates, the objective becomes
+ℒ
+cal
+=
+ℒ
+PDD
++
+𝔼
+⁡
+[
+C
+^
+M
+]
+\mathcal{L}_{\mathrm{cal}}=\mathcal{L}_{\mathrm{PDD}}+\mathbb{E}[\widehat{C}_{M}]
+.
+We evaluate trajectory quality using fps-bench (
+Section
+4
+) and report direct calibration diagnostics in
+Section
+C.2
+.
+3.4
+Inference: ensemble sampling
+At inference, PathFM generates
+m
+m
+complete future trajectories, from which we estimate quantiles and trajectory-dependent quantities.
+We stratify the initial Gaussian noise to improve coverage at a fixed ensemble size, then propagate each draw through the distilled sampler.
+Section
+C.1.2
+constructs the ensembles.
+4
+Evaluating Trajectory Forecasts
+Trajectory forecasts should capture temporal dependence and accurately quantify uncertainty.
+Marginal accuracy alone cannot establish this.
+We introduce Forecast Path Score Bench (fps-bench) to evaluate these properties alongside marginal scores.
+The benchmark combines established scoring rules into a common protocol for constructing and comparing finite trajectory ensembles.
+Six complementary path scores.
+Different downstream queries depend on different aspects of a path, motivating the complementary diagnostics in
+Table
+7
+.
+Following the aggregation-and-transformation framework of
+Pic et al. (2025)
+, we score both complete paths and transformations that expose these aspects.
+Energy score assesses the distribution of level paths, while differenced energy score emphasizes local changes by scoring the initial level and subsequent increments.
+Variogram score compares pairwise temporal contrasts to probe how values vary together across time
+(
+Scheuerer & Hamill, 2015
+)
+.
+We then apply scalar CRPS to the horizon total, maximum, and first-passage time to assess accumulated uncertainty, extremes, and event timing.
+Specifically, first-passage time records the first crossing of a history-derived threshold.
+fps-bench evaluates 94 fev-bench tasks
+(
+Shchur et al., 2025
+)
+, excluding those with NaN values that prevent computing some path scores.
+Quantile-model completions.
+Applying these scores requires complete paths, which marginal quantile forecasts do not specify.
+We retain native samples when available.
+To include quantile models, we construct paths from their marginal quantiles under two explicit dependence assumptions.
+Sorted quantiles define a piecewise-linear inverse CDF with constant extension beyond the outer quantiles.
+An independent completion draws a separate quantile rank at each forecast time and channel, whereas a comonotone completion shares one rank across an item’s times and channels.
+Both laws preserve the same underlying interpolated marginals, allowing us to examine how the dependence assumption affects trajectory scores.
+These two choices serve as baselines, as different dependence assumptions may yield different scores for the same marginal forecasts.
+Section
+D.1
+specifies the score definitions, estimators, and aggregation.
+5
+Forecasting accuracy and efficiency
+We evaluate forecasts through their marginal accuracy, the path quality scores, and the cost of generating an ensemble.
+The experiments establish where trajectory forecasts help, then examine how distillation and score refinement make those forecasts practical.
+Section
+6
+complements these experiments with a study of chaotic systems, with a particular focus on long-run dynamics.
+5.1
+Experimental setup
+Unless stated otherwise, PathFM refers to the 126M model; we use PathFM-126M and PathFM-300M when comparing sizes.
+We evaluate marginal accuracy on fev-bench
+(
+Shchur et al., 2025
+)
+and TIME
+(
+Qiao et al., 2026
+)
+.
+Baselines include TimesFM-3
+(
+Jain & Sen, 2026
+)
+, Chronos-2
+(
+Ansari et al., 2025
+)
+, Toto-1.0/2.0
+(
+Cohen et al., 2025
+;
+Khwaja et al., 2026
+)
+, and TiRex/TiRex-2
+(
+Auer et al., 2025
+;
+Podest et al., 2026
+)
+.
+Quantile models use explicit independent or comonotone completions, whereas Toto-1.0 and Sundial
+(
+Liu et al., 2025
+)
+retain their native sampled paths.
+GIFT-Eval results appear in
+Section
+B.5.1
+, and the full component comparisons in
+Section
+E.1
+.
+PathFM and all fps-bench forecasts use 32 paths per forecast.
+For PathFM, we use stratified Gaussian sources and one model evaluation per output block.
+For each quantile model, we evaluate independent and comonotone completions and report the higher aggregate skill.
+5.2
+Results
+Figure 3:
+Marginal accuracy and trajectory quality for PathFM-126M and PathFM-300M.
+Native samplers PathFM and Sundial are teal and black.
+FPS selects each quantile model’s better independent or comonotone completion.
+PathFM-300M and PathFM-126M achieve the two highest FPS scores among the compared models while remaining competitive on marginal accuracy (
+Figure
+3
+).
+The 300M model ranks second on fev-bench and third on TIME; both sizes have lower TIME CRPS than Chronos-2.
+On fps-bench, both outperform TimesFM-3 and Chronos-2 even when each quantile baseline uses its better independent or comonotone completion.
+Both also improve on Sundial’s native sampled forecasts across all three benchmarks.
+TimesFM-3 leads both marginal benchmarks, but its lower FPS ranking illustrates why marginal accuracy alone is insufficient to assess forecast paths.
+Path-dependent scores.
+Figure
+13
+compares the six FPS components for PathFM and the three strongest external baselines.
+The clearest gains over TimesFM-3 (the strongest baseline) occur in scores for temporal changes, horizon totals, and maxima.
+These gains highlight the value of complete paths for downstream tasks that depend on temporal structure beyond marginal forecasts.
+Ablation studies.
+We study the cumulative effects of architecture and learning choices in
+Section
+B.4
+.
+The teacher–student evaluation-budget comparison (
+Section
+B.3
+) and inference speedup breakdown (
+Figure
+12
+) examine how distillation and shared history computation reduce sampling cost.
+Section
+B.5
+provides additional results on GIFT-Eval.
+We also evaluate cross-variable dependence (
+Section
+E.2
+) and test fitted temporal copulas for quantile baselines (
+Section
+E.3
+).
+5.3
+Accuracy, model size, and inference cost
+PathFM combines the highest FPS skill among the compared models with a compact 126M-parameter network (
+Figure
+4
+).
+With one evaluation per output block, it generates 32 paths in 51.6 ms on an NVIDIA L4, placing it on the observed accuracy–latency frontier for path forecasts.
+We compare the number of function evaluations in
+Section
+B.3
+and sampling controls in
+Section
+C.3
+.
+Figure 4:
+Accuracy, latency, and model size across six forecasting models.
+Area denotes parameter count.
+Latency is the median time to return nine quantiles (a) or forecast paths (b) per query on an NVIDIA L4, with history and forecast lengths fixed across models.
+Quantile models use their better aggregate completion from
+Section
+4
+.
+Figure 5:
+Ensemble size and distillation on fev-bench tasks.
+(a) Calibrated 126M model with different sampling strategies at NFE=1 (
+Section
+C.1.2
+).
+(b) Its matched teacher and PDD student.
+Thin bars in (b) show pointwise 95% task-bootstrap intervals (
+Section
+B.3
+).
+Ensemble size and distillation.
+Figure
+5
+examines two ways to reduce the sampling budget in separate controlled studies.
+On all 100 fev-bench tasks, stratification improves marginal accuracy most at small ensemble sizes: 32-path stratified sampling achieves almost the same FEV skill as 256 iid paths.
+With one evaluation, the student approaches the ten-evaluation teacher; two evaluations slightly exceed its FEV skill.
+This shows the power of distillation for time series flow matching models, and the effectiveness of the parallel decoding distillation.
+Scaling to 300M parameters.
+We investigate scalability by comparing PathFM-126M with PathFM-300M.
+Figure
+6
+tracks flow pretraining; the larger model reaches lower training and corpus-evaluation losses at the same number of updates.
+The larger model improves both marginal accuracy and trajectory quality (
+Figures
+3
+and
+B.5
+).
+These gains come at roughly twice the inference latency for generating 32 paths on an NVIDIA L4 (
+Figure
+10
+).
+The scaling curves suggest that larger models may continue to improve accuracy.
+This shows the potential for larger flow models.
+Figure 6:
+Pretraining progress on general and chaotic time series.
+(a) Training velocity MSE; (b) EMA velocity MSE on fixed corpus windows for PathFM-126M and PathFM-300M;
+(c) EMA mean validation sMAPE for the 75M and 126M chaotic models at horizon 256, zoomed to 1M–2M updates.
+6
+Forecasting chaotic dynamics
+Chaotic systems pose a sharp test of forecasting: can a model preserve statistical structure after losing alignment with a particular future?
+We compare fine-tuned Chronos-2, PANDA
+(
+Lai et al., 2026
+)
+, and PathFM on point forecasting and long continuations of 135 DYSTS systems
+(
+Gilpin, 2021
+)
+.
+We evaluate PathFM with ten-step Euler sampling per 256-step block.
+Appendix
+F
+gives its training recipe, and evaluation details.
+6.1
+Forecast accuracy and dynamical fidelity
+Using sMAPE as in PANDA
+(
+Lai et al., 2026
+)
+, we evaluate forecasts at horizons 64, 128, 256, and 512.
+Four complementary diagnostics assess continued paths: Wasserstein-1 distance to an empirical approximation of the invariant distribution, correlation-dimension error, squared Hellinger distance between normalized power spectral densities (PSD), and segment analog score.
+Together, they assess state occupancy, geometric dimension, frequency content, and similarity of short multivariate segments to reference dynamics.
+Held-out truth provides a finite-trajectory reference.
+Table 2:
+Point accuracy and dynamical fidelity (lower is better; best in bold).
+sMAPE
+Dynamics
+Model
+H
+=
+64
+H=64
+H
+=
+128
+H=128
+H
+=
+256
+H=256
+H
+=
+512
+H=512
+W
+1
+W_{1}
+PSD
+H
+2
+H^{2}
+CD err.
+Seg. analog
+Chronos-1 FT
+24.80
+31.86
+39.69
+47.24
+0.411
+0.148
+0.750
+16.40
+Chronos-2 FT
+21.07
+26.78
+33.28
+40.07
+9.686
+0.269
+0.569
+11.12
+PANDA
+19.09
+24.42
+31.94
+41.22
+0.588
+0.195
+0.537
+10.03
+PathFM (Ours)
+16.45
+21.52
+27.43
+34.50
+0.251
+0.061
+0.273
+4.80
+Held-out truth
+—
+—
+—
+—
+0.047
+0.014
+0.055
+1.00
+It achieves substantially better dynamical fidelity over 4,096-step rollouts than all evaluated baselines (
+Table
+2
+).
+Relative to PANDA, it reduces the four long-term diagnostic scores by 49–69%.
+These gains accompany the lowest pointwise error at every reported horizon and persist when PathFM is scaled down to approximately PANDA’s 72M parameter count (
+Section
+F.2
+).
+Chronos-1
+(
+Ansari et al., 2024
+)
+, an autoregressive forecasting model, has been shown to mimic local chaotic dynamics
+(
+Yu et al., 2026
+)
+.
+Chronos-1 achieves lower
+W
+1
+W_{1}
+and PSD
+H
+2
+H^{2}
+than the quantile model Chronos-2, with higher pointwise, correlation-dimension, and segment analog errors.
+These results highlight the distinct strengths and weaknesses of traditional autoregressive and quantile forecasting models.
+PathFM improves across every reported metric, combining stronger point accuracy with greater dynamical fidelity.
+Distillation increases point-forecast error relative to the ten-step sampler.
+We hypothesize that sensitivity to perturbations amplifies small distillation errors during autoregressive forecasts.
+With one or two distilled steps, PathFM still outperforms PANDA on point accuracy and all four dynamical diagnostics.
+Section
+F.2
+examines this trade-off across model sizes and sampling budgets.
+6.2
+What sampling preserves
+Figure 7:
+Lorenz and Halvorsen continuations; PathFM uses one sampled path.
+Each column shows a full 4,096-step portrait above its first 512
+x
+x
+-coordinate steps.
+Gray curves show the observed continuation; open and filled circles mark the first and last forecast states.
+Figure
+7
+pairs long continuations with their early time traces for Lorenz and Halvorsen systems.
+The sampled Lorenz path retains a two-lobe portrait and sustained
+x
+x
+variability, whereas the plotted baselines collapse within 256 steps.
+For Halvorsen, PathFM’s sample retains the broad three-loop form, while PANDA follows a smaller recurrent orbit.
+Appendix
+F
+provides further diagnostics.
+7
+Discussion and conclusion
+PathFM combines flow matching, distillation, shared computation, and direct score refinement to generate complete future trajectories efficiently.
+Its strongest gains concern the quality of complete trajectories and the downstream predictions they support.
+The dynamical study shows a unique benefit: independently continued paths preserve variability that point forecasts can lose.
+Several limitations remain.
+PathFM does not yet support conditioning on modalities beyond time series, such as text.
+For chaotic systems, all four dynamical diagnostics remain well above the held-out-truth reference (
+Table
+2
+).
+Accurately recovering the invariant distribution remains an open challenge.
+A key direction for future work is to continue scaling the backbone and training data, pushing the frontier of generative time series forecasting.
+Acknowledgments
+We thank William Gilpin, Jeffrey Lai, and Anthony Bao for their insightful discussions and generous help.
+This work was conducted at Amazon AWS.
+AI use statement
+We used generative AI tools to support research execution, including clean and reformat dataset, implementation and analysis of experimental results.
+We also used these tools for literature retrieval and discovery, drafting sections of the paper, and polishing the writing for clarity and readability.
+We have reviewed all AI-assisted work, including code, experimental analyses, literature references, and manuscript text.
+We take responsibility for the final content of this work, including text, claims, and artifacts produced with the aid of generative AI.
+Reproducibility statement
+Section
+3
+describes the model and learning objectives, and
+Appendix
+B
+provides the architecture and training recipe.
+Sections
+4
+and
+D
+specify the trajectory benchmark, score estimators, and aggregation rules.
+Appendix
+F
+describes the chaotic-system experiments and their evaluation metrics.
+We will release the code and model weights to support reproducibility.
+References
+Aksu et al. (2024)
+Taha Aksu, Gerald Woo, Juncheng Liu, Xu Liu, Chenghao Liu, Silvio Savarese,
+Caiming Xiong, and Doyen Sahoo.
+GIFT-Eval: A benchmark for general time series forecasting model
+evaluation.
+arXiv preprint arXiv:2410.10393
+, 2024.
+URL
+https://arxiv.org/abs/2410.10393
+.
+Ansari et al. (2024)
+Abdul Fatir Ansari, Lorenzo Stella, Caner Turkmen, Xiyuan Zhang, Pedro Mercado,
+Huibin Shen, Oleksandr Shchur, Syama Sundar Rangapuram, Sebastian Pineda
+Arango, Shubham Kapoor, et al.
+Chronos: Learning the language of time series.
+arXiv preprint arXiv:2403.07815
+, 2024.
+Ansari et al. (2025)
+Abdul Fatir Ansari, Oleksandr Shchur, Jaris Küken, Andreas Auer, Boran Han,
+Pedro Mercado, Syama Sundar Rangapuram, Huibin Shen, Lorenzo Stella, Xiyuan
+Zhang, et al.
+Chronos-2: From univariate to universal forecasting.
+arXiv preprint arXiv:2510.15821
+, 2025.
+Ashok et al. (2024)
+Arjun Ashok, Étienne Marcotte, Valentina Zantedeschi, Nicolas Chapados, and
+Alexandre Drouin.
+Tactis-2: Better, faster, simpler attentional copulas for
+multivariate time series.
+In
+International conference on learning representations
+,
+volume 2024, pp.  22897–22924, 2024.
+Auer et al. (2025)
+Andreas Auer, Patrick Podest, Daniel Klotz, Sebastian Böck, Günter
+Klambauer, and Sepp Hochreiter.
+Tirex: Zero-shot forecasting across long and short horizons with
+enhanced in-context learning.
+In D. Belgrave, C. Zhang, H. Lin, R. Pascanu, P. Koniusz,
+M. Ghassemi, and N. Chen (eds.),
+Advances in Neural Information
+Processing Systems
+, volume 38, Main Conference, pp.  57529–57580. Curran
+Associates, Inc., 2025.
+doi:
+10.52202/085713-1929
+.
+URL
+https://proceedings.neurips.cc/paper_files/paper/2025/file/5356603f9c47399adfd372f77a677057-Paper-Conference.pdf
+.
+Boffi et al. (2026)
+Nicholas Boffi, Michael Albergo, and Eric Vanden-Eijnden.
+How to build a consistency model: Learning flow maps via
+self-distillation.
+Advances in Neural Information Processing Systems
+,
+38:33346–33382, 2026.
+Boffi et al. (2024)
+Nicholas M Boffi, Michael S Albergo, and Eric Vanden-Eijnden.
+Flow map matching with stochastic interpolants: A mathematical
+framework for consistency models.
+arXiv preprint arXiv:2406.07507
+, 2024.
+Cai et al. (2026)
+Rongyao Cai, Yuxi Wan, Kexin Zhang, Ming Jin, Zhiqiang Ge, Daoyi Dong, Hang Yu,
+Yong Liu, and Qingsong Wen.
+The procrustean bed of time series: The optimization bias in
+point-wise loss functions, 2026.
+URL
+https://arxiv.org/abs/2512.18610
+.
+Chen et al. (2024)
+Junsong Chen, Jincheng Yu, Chongjian Ge, Lewei Yao, Enze Xie, Yue Wu, Zhongdao
+Wang, James Kwok, Ping Luo, Huchuan Lu, and Zhenguo Li.
+PixArt-
+α
+\alpha
+: Fast training of diffusion transformer for
+photorealistic text-to-image synthesis.
+In
+International conference on learning representations
+,
+volume 2024, pp.  57611–57640, 2024.
+Cheng et al. (2026)
+Hanyin Cheng, Linfeng Wang, Zhengbo Qu, Yang Shu, Zhongwen Rao, Meng Wang,
+Yijie Li, Xin Jiang, Bin Yang, and Chenjuan Guo.
+Qiyao-m: Multimodal time series foundation model with role-aware
+modeling of endogenous and exogenous modalities.
+arXiv preprint arXiv:2609.34842
+, 2026.
+Clark et al. (2024)
+Kevin Clark, Paul Vicol, Kevin Swersky, and David Fleet.
+Directly fine-tuning diffusion models on differentiable rewards.
+In
+International Conference on Learning Representations
+,
+volume 2024, pp.  4793–4822, 2024.
+Cohen et al. (2025)
+Ben Cohen, Emaad Khwaja, Youssef Doubli, Salahidine Lemaachi, Chris Lettieri,
+Charles Masson, Hugo Miccinilli, Elise Ramé, Qiqi Ren, Afshin
+Rostamizadeh, Jean Ogier du Terrail, Anna-Monica Toon, Kan Wang, Stephan
+Xie, Zongzhe Xu, Viktoriya Zhukova, David Asker, Ameet Talwalkar, and Othmane
+Abou-Amal.
+This time is different: An observability perspective on time series
+foundation models.
+arXiv preprint arXiv:2505.14766
+, 2025.
+URL
+https://arxiv.org/abs/2505.14766
+.
+Das et al. (2023)
+Abhimanyu Das, Weihao Kong, Rajat Sen, and Yichen Zhou.
+A decoder-only foundation model for time-series forecasting.
+arXiv preprint arXiv:2310.10688
+, 2023.
+Drouin et al. (2022)
+Alexandre Drouin, Étienne Marcotte, and Nicolas Chapados.
+Tactis: Transformer-attentional copulas for time series.
+In
+International Conference on Machine Learning
+, pp. 5447–5493. PMLR, 2022.
+Ferro (2014)
+Christopher AT Ferro.
+Fair scores for ensemble forecasts.
+Quarterly Journal of the Royal Meteorological Society
+,
+140(683):1917–1923, 2014.
+Gilpin (2021)
+William Gilpin.
+Chaos as an interpretable benchmark for forecasting and data-driven
+modelling.
+In
+Thirty-fifth Conference on Neural Information Processing
+Systems Datasets and Benchmarks Track (Round 2)
+, 2021.
+URL
+https://openreview.net/forum?id=enYjtbjYJrf
+.
+Gneiting & Raftery (2007)
+Tilmann Gneiting and Adrian E Raftery.
+Strictly proper scoring rules, prediction, and estimation.
+Journal of the American Statistical Association
+, 102(477):359–378, 2007.
+Huang et al. (2026)
+Jiahe Huang, Sihan Xu, Sharvaree Vadgama, and Rose Yu.
+Recursive flow matching, 2026.
+URL
+https://arxiv.org/abs/2605.26535
+.
+Jacq et al. (2026)
+Alexis Jacq, Guillaume Couairon, Valentin De Bortoli, Quentin Berthet, Arnaud
+Doucet, and Romuald Elie.
+Diffusion fine-tuning with rewarded moment matching distillation.
+arXiv preprint arXiv:2606.30414
+, 2026.
+Jain & Sen (2026)
+Ayush Jain and Rajat Sen.
+TimesFM-3: A zero-shot foundation model for multivariate
+forecasting.
+Google Research Blog, August 2026.
+URL
+https://research.google/blog/timesfm-3-a-zero-shot-foundation-model-for-multivariate-forecasting/
+.
+Published August 31, 2026; accessed September 12, 2026.
+Khwaja et al. (2026)
+Emaad Khwaja, Chris Lettieri, Gerald Woo, Eden Belouadah, Marc Cenac, Guillaume
+Jarry, Enguerrand Paquin, Xunyi Zhao, Viktoriya Zhukova, Othmane Abou-Amal,
+Chenghao Liu, Ameet Talwalkar, and David Asker.
+Toto 2.0: Time series forecasting enters the scaling era.
+arXiv preprint arXiv:2605.20119
+, 2026.
+URL
+https://arxiv.org/abs/2605.20119
+.
+Kollovieh et al. (2025)
+Marcel Kollovieh, Marten Lienen, David Lüdke, Leo Schwinn, and Stephan
+Günnemann.
+Flow matching with gaussian process priors for probabilistic time
+series forecasting.
+In
+International Conference on Learning Representations
+,
+volume 2025, pp.  95435–95457, 2025.
+Lai et al. (2026)
+Jeffrey Lai, Anthony Bao, and William Gilpin.
+Panda: A pretrained forecast model for chaotic dynamics.
+In
+International Conference on Learning Representations
+,
+volume 2026, pp.  104651–104695, 2026.
+Lee et al. (2026)
+Seunghan Lee, Jaehoon Lee, Jun Seo, Tae Yoon Lim, Dongwan Kang, Hwanil Choi,
+Minjae Kim, Sungdong Yoo, Junhyeok Kang, Sangjun Han, et al.
+Exaone finance 1.0: An attention-free time series foundation model
+for financial time series.
+arXiv e-prints
+, pp.  arXiv–2609, 2026.
+Lipman et al. (2022)
+Yaron Lipman, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le.
+Flow matching for generative modeling.
+arXiv preprint arXiv:2210.02747
+, 2022.
+Liu et al. (2025)
+Yong Liu, Guo Qin, Zhiyuan Shi, Zhi Chen, Caiyin Yang, Xiangdong Huang, Jianmin
+Wang, and Mingsheng Long.
+Sundial: A family of highly capable time series foundation models.
+arXiv preprint arXiv:2502.00816
+, 2025.
+Meyer et al. (2026)
+Lucas Meyer, Claudio Sole, Huikan Xiang, Nicolas Li, Lucas Franceschino, Arnau
+Quera-Bofarull, Maarten P Scholl, Joachim Fainberg, and Geoffrey Négiar.
+t
+​
+_
+​
+0
+t\_0
+: A time-series foundation model for forecasting with
+context.
+arXiv preprint arXiv:2609.24559
+, 2026.
+Perez-Diaz et al. (2025)
+Alvaro Perez-Diaz, James C Loach, Danielle E Toutoungi, and Lee Middleton.
+Foundation model forecasts: Form and function.
+arXiv preprint arXiv:2510.19345
+, 2025.
+Pic et al. (2025)
+Romain Pic, Clément Dombry, Philippe Naveau, and Maxime Taillardat.
+Proper scoring rules for multivariate probabilistic forecasts based
+on aggregation and transformation.
+Advances in Statistical Climatology, Meteorology and
+Oceanography
+, 11(1):23–58, 2025.
+Podest et al. (2026)
+Patrick Podest, Marco Pichler, Elias Bürger, Levente Zólyomi, Bernhard
+Voggenberger, Wilhelm Berghammer, Daniel Klotz, Sebastian Böck,
+Günter Klambauer, and Sepp Hochreiter.
+TiRex-2: Generalizing TiRex to multivariate data and streaming,
+2026.
+URL
+https://arxiv.org/abs/2607.01204
+.
+Qiao et al. (2026)
+Zhongzheng Qiao, Sheng Pan, Anni Wang, Viktoriya Zhukova, Yong Liu, Xudong
+Jiang, Qingsong Wen, Mingsheng Long, Ming Jin, and Chenghao Liu.
+It’s TIME: Towards the next generation of time series forecasting
+benchmarks.
+In
+Proceedings of the 43rd International Conference on Machine
+Learning
+, 2026.
+URL
+https://arxiv.org/abs/2602.12147
+.
+Raffel et al. (2020)
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael
+Matena, Yanqi Zhou, Wei Li, and Peter J. Liu.
+Exploring the limits of transfer learning with a unified text-to-text
+transformer.
+Journal of Machine Learning Research
+, 21(140):1–67, 2020.
+URL
+https://jmlr.org/papers/v21/20-074.html
+.
+Rasul et al. (2021)
+Kashif Rasul, Calvin Seward, Ingmar Schuster, and Roland Vollgraf.
+Autoregressive denoising diffusion models for multivariate
+probabilistic time series forecasting.
+In
+International conference on machine learning
+, pp. 8857–8868. PMLR, 2021.
+Roberts (2026)
+Christopher David Roberts.
+Ensemble-size-dependence of deep-learning post-processing methods
+that minimize an (un)fair score: motivating examples and a proof-of-concept
+solution.
+arXiv preprint arXiv:2602.15830
+, 2026.
+Salinas et al. (2020)
+David Salinas, Valentin Flunkert, Jan Gasthaus, and Tim Januschowski.
+Deepar: Probabilistic forecasting with autoregressive recurrent
+networks.
+International journal of forecasting
+, 36(3):1181–1191, 2020.
+Scheuerer & Hamill (2015)
+Michael Scheuerer and Thomas M Hamill.
+Variogram-based proper scoring rules for probabilistic forecasts of
+multivariate quantities.
+Monthly Weather Review
+, 143(4):1321–1334,
+2015.
+Shaul et al. (2026)
+Neta Shaul, Chao Liu, Arash Vahdat, and Julius Berner.
+Parallel decoding distillation for fast image and video generation.
+arXiv preprint arXiv:2607.26004
+, 2026.
+Shchur et al. (2025)
+Oleksandr Shchur, Abdul Fatir Ansari, Caner Turkmen, Lorenzo Stella, Nick
+Erickson, Pablo Guerron, Michael Bohlke-Schneider, and Yuyang Wang.
+fev-bench: A realistic benchmark for time series forecasting.
+arXiv preprint arXiv:2509.26468
+, 2025.
+The Forecasting Company (2026)
+The Forecasting Company.
+t0-gamma: Model card.
+Hugging Face model card, 2026.
+URL
+https://huggingface.co/theforecastingcompany/t0-gamma
+.
+Yu et al. (2026)
+Annan Yu, Danielle Maddix, Boran Han, Xiyuan Zhang, Abdul Fatir Ansari,
+Oleksandr Shchur, Christos Faloutsos, Andrew Gordon Wilson, Michael W
+Mahoney, and Bernie Wang.
+Understanding the implicit biases of design choices for time series
+foundation models.
+In
+International Conference on Learning Representations
+,
+volume 2026, pp.  71998–72049, 2026.
+Appendix A
+Related Work
+Marginal forecasting.
+Chronos-2, TimesFM-3, and Toto 2.0 provide direct marginal quantiles while sharing information across variables
+(
+Ansari et al., 2025
+;
+Jain & Sen, 2026
+;
+Khwaja et al., 2026
+)
+.
+Toto 1.0 instead predicts marginal Student-
+t
+t
+mixtures and samples forecasts autoregressively across output patches
+(
+Cohen et al., 2025
+)
+.
+Perez-Diaz et al. (2025)
+distinguish forecast products by their operational uses and show that marginals do not identify path-dependent event probabilities.
+PathFM represents the joint forecast through complete multivariate paths, so the same samples support marginal summaries and distributions of trajectory-dependent quantities.
+Generative trajectory forecasting.
+DeepAR samples temporally dependent futures autoregressively
+(
+Salinas et al., 2020
+)
+, and TACTiS learns multivariate predictive distributions with attentional copulas
+(
+Drouin et al., 2022
+)
+.
+TimeGrad introduces autoregressive diffusion for multivariate forecasting
+(
+Rasul et al., 2021
+)
+.
+Flow matching learns generative vector fields through conditional probability paths
+(
+Lipman et al., 2022
+;
+Huang et al., 2026
+)
+; TSFlow incorporates Gaussian-process priors
+(
+Kollovieh et al., 2025
+)
+, and Sundial uses flow matching for foundation-model pretraining
+(
+Liu et al., 2025
+)
+.
+PathFM shares history computation across paths and uses distillation to support fast ensembles and direct forecast-score training.
+Distillation and direct score optimization.
+Flow map methods learn finite-time transport and support both teacher distillation and self-distillation
+(
+Boffi et al., 2024
+;
+Boffi et al., 2026
+)
+.
+Parallel Decoding Distillation (PDD) predicts multiple integration updates per network evaluation
+(
+Shaul et al., 2026
+)
+.
+DRaFT optimizes differentiable rewards by backpropagating through diffusion sampling
+(
+Clark et al., 2024
+)
+.
+Rewarded Moment Matching Distillation (RMMD) combines reward optimization with moment-matching supervision and applies unbiased sample CRPS to GenCast
+(
+Jacq et al., 2026
+)
+.
+Its reward gradient passes through a denoising step applied to a re-noised student sample.
+PathFM backpropagates fair CRPS through the complete source-to-forecast map of one distilled evaluation.
+The same optimization updates continue matching the frozen teacher’s joint velocity field while fitting the student’s marginals to observations.
+Distillation thus supplies both a short path for score gradients and continued supervision from a joint generative teacher.
+Sections
+3.3
+and
+4
+give the objective and post-training comparisons.
+Forecast evaluation.
+Proper scoring rules underpin forecast comparison
+(
+Gneiting & Raftery, 2007
+)
+.
+Fair scores address finite-ensemble effects
+(
+Ferro, 2014
+)
+; variogram and transformation-based scores expose complementary multivariate properties
+(
+Scheuerer & Hamill, 2015
+;
+Pic et al., 2025
+)
+.
+fps-bench combines these principles on fev-bench tasks
+(
+Shchur et al., 2025
+)
+to assess temporal dependence and trajectory-dependent quantities alongside marginal accuracy.
+DYSTS supplies interpretable chaotic systems
+(
+Gilpin, 2021
+)
+, while PANDA studies pretraining across chaotic dynamics
+(
+Lai et al., 2026
+)
+.
+Together, these evaluations test the value of complete forecast paths through downstream uncertainty, short-term tracking, and long-run dynamical fidelity.
+A.1
+Concurrent Work
+Time series foundation models are advancing rapidly.
+t0-gamma alternates temporal and variate attention to incorporate historical and known-future covariates
+(
+Meyer et al., 2026
+)
+.
+It averages weights from five fine-tuned checkpoints into one 256M-parameter model
+(
+The Forecasting Company, 2026
+)
+.
+QiYao-M fuses numerical patches with text and image embeddings
+(
+Cheng et al., 2026
+)
+, but treats each target channel independently.
+EXAONE 1.0 specializes at financial forecasting and mixes time with causal convolutions and variates with groupwise pooling MLPs
+(
+Lee et al., 2026
+)
+.
+All three models predict marginal quantiles, leaving dependence across future times and variables unspecified.
+PathFM retains its advantage in directly generating joint multivariate trajectories, combining learned temporal and cross-variable dependence with fast sampling and marginal calibration.
+Appendix B
+Model and training
+This section specifies the backbone and the training recipe for 126M and 300M models, then examines distillation, calibration, and the architecture controls that support the design.
+It closes with model-size comparisons of forecast accuracy and inference cost, including results on FEV, FPS, TIME, and GIFT-Eval.
+The flow model has 125.1M parameters, and its distilled version has 126.3M including the PDD heads.
+B.1
+Backbone and input
+Backbone configuration.
+The settings below describe the general-domain forecasting model;
+Appendix
+F
+gives the separate dynamical configuration.
+The backbone uses velocity prediction, ReLU activation, rotary temporal positions, and dynamic adaptive RMS normalization.
+The latter applies
+(
+1
++
+α
+)
+⊙
+RMSNorm
+⁡
+(
+h
+)
++
+β
+(1+\alpha)\odot\operatorname{RMSNorm}(h)+\beta
+, with scale and shift obtained from a shared time projection plus block-specific offsets.
+Modulation and velocity readouts start at zero; the learned state-entry gate starts at
+0.1
+0.1
+.
+Temporal and channel attention use query–key normalization.
+The Gaussian source scale is fixed at
+σ
+=
+0.75
+\sigma=0.75
+.
+Both model sizes use width 768, 12 attention heads, and feed-forward width 3,072.
+The 126M and 300M backbones have 12 and 30 blocks, with two and ten flow-free entry blocks, respectively.
+Input representation.
+Following the input representation of Chronos-2
+(
+Ansari et al., 2025
+)
+, each channel uses context-derived location
+μ
+c
+\mu_{c}
+and positive scale
+s
+c
+s_{c}
+:
+Y
+¯
+ℓ
+​
+c
+=
+asinh
+⁡
+(
+Y
+ℓ
+​
+c
+−
+μ
+c
+s
+c
+)
+,
+Y
+ℓ
+​
+c
+=
+μ
+c
++
+s
+c
+​
+sinh
+⁡
+(
+Y
+¯
+ℓ
+​
+c
+)
+.
+\bar{Y}_{\ell c}=\operatorname{asinh}\!\left(\frac{Y_{\ell c}-\mu_{c}}{s_{c}}\right),\qquad Y_{\ell c}=\mu_{c}+s_{c}\sinh(\bar{Y}_{\ell c}).
+(6)
+The scale is the context root-mean-square deviation, floored at
+10
+−
+4
+10^{-4}
+.
+Let binary masks
+V
+V
+and
+K
+K
+mark valid requested coordinates and known future coordinates, respectively, and let
+A
+A
+contain normalized known values, zero elsewhere.
+Only
+M
+=
+V
+⊙
+(
+1
+−
+K
+)
+M=V\odot(1-K)
+is transported.
+We write
+Π
+M
+​
+(
+X
+)
+=
+M
+⊙
+X
++
+K
+⊙
+A
+,
+‖
+B
+‖
+M
+2
+:=
+∑
+ℓ
+,
+c
+M
+ℓ
+​
+c
+​
+B
+ℓ
+​
+c
+2
+max
+⁡
+(
+1
+,
+∑
+ℓ
+,
+c
+M
+ℓ
+​
+c
+)
+,
+\Pi_{M}(X)=M\odot X+K\odot A,\qquad\|B\|_{M}^{2}:=\frac{\sum_{\ell,c}M_{\ell c}B_{\ell c}^{2}}{\max(1,\sum_{\ell,c}M_{\ell c})},
+(7)
+Here
+⊙
+\odot
+denotes elementwise multiplication; batch axes are included when present.
+The supervision mask excludes missing targets, known covariates, and final-patch padding.
+Flow-time sampling.
+Each training row uses one scalar flow time, shared across all channels and forecast steps.
+For each row and draw, we sample
+t
+=
+sigmoid
+⁡
+(
+−
+0.8
++
+0.8
+​
+ϵ
+)
+t=\operatorname{sigmoid}(-0.8+0.8\epsilon)
+,
+ϵ
+∼
+𝒩
+⁡
+(
+0
+,
+1
+)
+\epsilon\sim\mathcal{N}(0,1)
+.
+The interpolated state and velocity target follow
+Equation
+1
+, with this same
+t
+t
+applied to the entire future.
+Four independent source/time draws share each history, with their losses averaged and normalized by the batch’s transported-coordinate count.
+At inference, all channels advance at a common flow time.
+B.2
+Training recipe
+Both 126M and 300M models follow the four-stage schedule in
+Table
+3
+.
+Transformer weights are initialized afresh while retaining the released Chronos-2 input embeddings, which remain trainable.
+Table 3:
+General-corpus training schedule for both model sizes.
+Warmup is linear and included in the update budget.
+Flow matching and PDD use constant rates after warmup; WSD decays linearly to zero.
+The final stage decays linearly to zero for 126M and uses a constant rate for 300M.
+EMA starts at the end of warmup and is preserved across continuation stages.
+Each complete recipe contains 2.3M optimizer updates.
+Stage
+Updates
+Peak learning rate
+Warmup
+EMA decay
+Flow matching
+2,000,000
+5
+×
+10
+−
+5
+5\times 10^{-5}
+2,000
+0.9999
+Terminal decay (WSD)
+100,000
+5
+×
+10
+−
+5
+5\times 10^{-5}
+—
+0.9999
+PDD
+100,000
+3
+×
+10
+−
+5
+3\times 10^{-5}
+500
+0.999
+PDD + fair CRPS
+100,000
+10
+−
+5
+10^{-5}
+—
+0.999
+Optimization and stage transitions.
+The recipe uses AdamW with
+(
+β
+1
+,
+β
+2
+)
+=
+(
+0.9
+,
+0.99
+)
+(\beta_{1},\beta_{2})=(0.9,0.99)
+and global gradient-norm clipping at 1.
+Both models use weight decay 0.01 during flow matching and WSD.
+An optimizer update contains 1,024 channel rows.
+Terminal decay continues the flow model with its optimizer and EMA state.
+PDD initializes the student from the terminal teacher’s EMA weights, freezes that teacher, and starts a fresh optimizer.
+Calibration resumes the PDD student, optimizer, and EMA.
+Data and task sampling.
+Training uses a 83M-row dataset of real-world and synthetic time series, including both univariate and multivariate data.
+Training samples contexts up to 8,192 time steps and forecast horizons up to 480 time steps.
+During training, we randomly sample context and forecast lengths within these limits.
+Post-training objectives.
+PDD trains the backbone and twenty interval heads on a uniform time grid, using the block-size menu
+{
+1
+,
+2
+,
+5
+,
+10
+,
+20
+}
+\{1,2,5,10,20\}
+, on-policy states, Euler teacher labels, and tiled residual heads.
+Calibration retains path-wise PDD and adds fair CRPS with coefficient one on each loss, globally normalized over scored coordinates.
+The CRPS term uses eight iid paths, one parallel evaluation, and the same Gaussian source scale as flow training and inference.
+Main benchmark results use the final EMA checkpoint after all four stages.
+The architecture, distillation, and refinement controls below retain their stated training budgets.
+B.3
+Distillation and evaluation budget
+Figure
+8
+reports a teacher–student inference budget comparison in both model sizes.
+Each pair is evaluated at 1, 2, 4, and 10 sequential network evaluations (NFE).
+Figure 8:
+Teacher–student accuracy at different evaluation budgets.
+Rows show teacher–student pairs from the 126M and 295M families; columns show FEV and six-component FPS skill, with higher values preferred.
+NFE uses a logarithmic horizontal axis.
+Thin vertical bars show pointwise 95% task-bootstrap intervals from 2,000 resamples.
+At one evaluation, PDD avoids the teacher’s sharp loss of accuracy and has higher skill scores than the ten-evaluation teacher in both pairs.
+Additional evaluations give no consistent improvement.
+These results show that the student preserves the teacher’s forecasting accuracy at a much lower budget.
+B.4
+Architecture and training ablations
+Table
+4
+follows the cumulative design at the controlled development budget, from flow matching (R0–R5) through distillation, fair-CRPS refinement, and stratified sampling (R6–R8).
+The modulation, initialization, normalization, and regularization bundle in R2 improves both FEV and FPS.
+Restricting history attention in R3 enables shared history computation but reduces FEV skill; late entry and four training draws partially recover it.
+Distillation then improves both scores while reducing the number of evaluations from ten to one.
+R7 adds fair CRPS to the PDD objective, and R8 changes source sampling at the same weights.
+Stratification improves empirical FPS from 0.5248 to 0.5329, with a paired 95% task-bootstrap interval of
+[
+0.0042
+,
+0.0131
+]
+[0.0042,0.0131]
+for the skill gain.
+Table 4:
+Cumulative architecture and post-training study.
+Rows R0–R7 use iid sources.
+Cumulative change
+NFE
+FEV
+↑
+\uparrow
+FPS
+↑
+\uparrow
+R0
+Flow matching with clean target
+10
+0.4314
+0.4379
+R1
++ Velocity prediction
+10
+0.4311
+0.4216
+R2
++ Time modulation, zero-init head, QK norm, weight decay
+10
+0.4468
+0.4960
+R3
++ History-only attention
+10
+0.4356
+0.5008
+R4
++ Two flow-free entry blocks
+10
+0.4381
+0.5088
+R5
++ Four packed training draws
+10
+0.4402
+0.5076
+R6
++ Parallel Decoding Distillation
+1
+0.4471
+0.5221
+R7
++ PDD with fair CRPS
+1
+0.4488
+0.5248
+R8
++ Stratified sampling
+1
+0.4575
+0.5329
+B.5
+Scaling and additional benchmarks
+We compare the 126M and 300M models on FEV, FPS, GIFT-Eval, and TIME, as well as their cost.
+Their training curves are in
+Figure
+6
+.
+B.5.1
+Model size and forecast accuracy
+The 126M and 300M families contain 126.3M and 296.3M learned parameters, respectively, including their distillation heads.
+Their training recipes are given in
+Section
+B.2
+.
+Figure 9:
+Scaling PathFM from the 126M to the 300M family.
+Panels rank nine models on FEV SQL skill (100 tasks), TIME normalized CRPS (98 tasks), and FPS path skill (94 tasks).
+Native samplers PathFM and Sundial are teal and black.
+FPS selects each quantile model’s better independent or comonotone completion.
+The 300M PathFM variant has higher FEV and FPS skill and lower GIFT-Eval and TIME CRPS than the 126M model (
+Figures
+9
+and
+5
+).
+PathFM-300M ranks second on FEV, third on TIME, and first on FPS among the baselines.
+Table
+5
+adds GIFT-Eval
+(
+Aksu et al., 2024
+)
+to the benchmark suite.
+GIFT uses all 97 configurations without series or window caps and with cross-learning disabled.
+Against the external baselines, our 126M model ranks fourth on GIFT-Eval CRPS and the 300M model ranks third.
+Table 5:
+Forecasting accuracy across four benchmarks.
+Darker blue indicates better performance on a linear scale within each column; bold marks the best value.
+Dashes indicate unavailable results.
+FEV
+FPS
+GIFT-Eval
+TIME
+Model
+Skill
+↑
+\uparrow
+Skill
+↑
+\uparrow
+MASE
+↓
+\downarrow
+CRPS
+↓
+\downarrow
+MASE
+↓
+\downarrow
+CRPS
+↓
+\downarrow
+TimesFM-3
+0.4900
+0.4871
+—
+—
+0.6398
+0.5363
+Chronos-2
+0.4728
+0.4699
+0.6978
+0.4854
+0.6620
+0.5563
+TiRex-2
+0.4550
+0.4586
+0.6973
+0.4781
+—
+—
+Toto-2.0-2.5B
+0.4442
+0.4261
+0.6956
+0.4759
+0.6419
+0.5394
+TiRex
+0.4258
+0.4220
+0.7158
+0.4885
+0.6831
+0.5731
+TimesFM-2.5
+0.4220
+0.4632
+0.7050
+0.4903
+0.6686
+0.5674
+Sundial
+0.3342
+0.4014
+0.7502
+0.5590
+0.7576
+0.6634
+PathFM-126M
+0.4640
+0.5386
+0.7073
+0.4878
+0.6560
+0.5531
+PathFM-300M
+0.4735
+0.5458
+0.7008
+0.4818
+0.6538
+0.5523
+B.5.2
+Accuracy and inference cost
+Figure
+10
+adds the 300M model to the earlier 126M timing comparison in
+Figure
+4
+.
+Both variants lie on the observed accuracy–latency frontier for path forecasts.
+Section
+C.3
+specifies the matched timing protocol and its limitations.
+Figure 10:
+Accuracy, latency, and model size with the 300M PathFM variant.
+Circle area denotes parameter count.
+Latency is the median time to return nine quantiles (a) or forecast paths (b) for one query on an NVIDIA L4 at context 2,048 and horizon 288.
+Accuracy uses the native benchmark settings.
+Appendix C
+Sampling and computational efficiency
+Ensemble size determines the precision of forecast summaries, while the sampler and its execution determine their cost.
+We first describe sampling error and ensemble construction, then report controlled latency and memory comparisons.
+C.1
+Finite-ensemble approximation
+A finite ensemble approximates a model’s predictive distribution through sampled paths.
+Forecast summaries and scores can vary with the returned ensemble due to Monte Carlo approximation.
+We first separate approximation error from model error, then describe ensemble construction;
+Section
+D.1.1
+defines the scores of the empirical forecast.
+C.1.1
+Forecast quantities and model error
+Condition on the available forecasting information
+ℐ
+\mathcal{I}
+and on the fitted model.
+For
+m
+≥
+1
+m\geq 1
+iid paths from
+P
+θ
+(
+⋅
+∣
+ℐ
+)
+P_{\theta}(\cdot\mid\mathcal{I})
+and a fixed functional
+g
+g
+of finite variance, write
+μ
+θ
+=
+𝔼
+P
+θ
+​
+[
+g
+⁡
+(
+X
+)
+∣
+ℐ
+]
+\mu_{\theta}=\mathbb{E}_{P_{\theta}}[g(X)\mid\mathcal{I}]
+.
+The sample average is unbiased for
+μ
+θ
+\mu_{\theta}
+, and independence gives
+μ
+^
+g
+=
+1
+m
+​
+∑
+i
+=
+1
+m
+g
+⁡
+(
+X
+(
+i
+)
+)
+,
+𝔼
+Z
+​
+[
+(
+μ
+^
+g
+−
+μ
+θ
+)
+2
+∣
+ℐ
+]
+=
+Var
+P
+θ
+⁡
+(
+g
+⁡
+(
+X
+)
+∣
+ℐ
+)
+m
+.
+\widehat{\mu}_{g}=\frac{1}{m}\sum_{i=1}^{m}g(X^{(i)}),\qquad\mathbb{E}_{Z}[(\widehat{\mu}_{g}-\mu_{\theta})^{2}\mid\mathcal{I}]=\frac{\operatorname{Var}_{P_{\theta}}(g(X)\mid\mathcal{I})}{m}.
+(8)
+Thus ordinary iid Monte Carlo standard error scales as
+m
+−
+1
+/
+2
+m^{-1/2}
+.
+This error remains for nondegenerate queries even when
+P
+θ
+P_{\theta}
+is the true conditional law.
+Direct quantile outputs avoid estimating their reported quantiles from finitely many paths, but retain model error.
+Efficient ensemble generation therefore matters for both inference cost and the accuracy of downstream estimates.
+Let the finite value
+μ
+⋆
+\mu_{\star}
+be the corresponding expectation under the true conditional law.
+The sample average’s squared error relative to this target decomposes as
+𝔼
+Z
+​
+[
+(
+μ
+^
+g
+−
+μ
+⋆
+)
+2
+∣
+ℐ
+]
+=
+(
+μ
+θ
+−
+μ
+⋆
+)
+2
++
+Var
+P
+θ
+⁡
+(
+g
+⁡
+(
+X
+)
+∣
+ℐ
+)
+m
+.
+\mathbb{E}_{Z}[(\widehat{\mu}_{g}-\mu_{\star})^{2}\mid\mathcal{I}]=(\mu_{\theta}-\mu_{\star})^{2}+\frac{\operatorname{Var}_{P_{\theta}}(g(X)\mid\mathcal{I})}{m}.
+(9)
+The cross term vanishes because
+𝔼
+Z
+​
+[
+μ
+^
+g
+−
+μ
+θ
+∣
+ℐ
+]
+=
+0
+\mathbb{E}_{Z}[\widehat{\mu}_{g}-\mu_{\theta}\mid\mathcal{I}]=0
+.
+The first term is error in the model’s conditional functional expectation; the second is Monte Carlo approximation error.
+This expression concerns estimation of a conditional expectation, not prediction error against one random future outcome, which also contains outcome variability.
+For an event
+A
+A
+with model probability
+p
+θ
+=
+P
+θ
+​
+(
+A
+∣
+ℐ
+)
+p_{\theta}=P_{\theta}(A\mid\mathcal{I})
+, taking
+g
+(
+X
+)
+=
+𝟏
+{
+X
+∈
+A
+}
+g(X)=\mathbf{1}\{X\in A\}
+gives sampling variance
+p
+θ
+​
+(
+1
+−
+p
+θ
+)
+/
+m
+p_{\theta}(1-p_{\theta})/m
+.
+For
+0
+<
+p
+θ
+<
+1
+0<p_{\theta}<1
+, the relative standard error is
+(
+1
+−
+p
+θ
+)
+/
+(
+m
+​
+p
+θ
+)
+\sqrt{(1-p_{\theta})/(mp_{\theta})}
+, making rare-event probability estimates demanding at small ensemble sizes.
+Increasing
+m
+m
+reduces this sampling term but does not remove model error.
+Using conditional marginals or analytical integration, when available for a particular query, need not incur the same sampling error.
+Dependent or stratified draws require a different variance analysis.
+The
+m
+−
+1
+/
+2
+m^{-1/2}
+rate describes the approximation error of the iid sample average at a finite sample budget.
+C.1.2
+Ensemble construction and stratification
+At inference, we approximate the forecast distribution with an ensemble of
+m
+m
+complete future trajectories, from which we estimate quantiles and other forecast summaries.
+Ensemble size controls the number of paths, independently of the one- or two-evaluation budget per path.
+With few draws, these summaries can be sensitive to sampling variability.
+Section
+C.2
+measures the effect of sample count on marginal interval coverage across all 100 fev-bench test tasks.
+For more even source coverage at fixed
+m
+m
+, each coordinate uses the midpoints of
+m
+m
+equiprobable Gaussian bins, independently permuted across paths:
+u
+r
+=
+r
+−
+1
+2
+m
+,
+Z
+ℓ
+​
+c
+j
+=
+σ
+Φ
+−
+1
+(
+u
+π
+ℓ
+​
+c
+​
+(
+j
+)
+)
+,
+r
+,
+j
+∈
+{
+1
+,
+…
+,
+m
+}
+,
+u_{r}=\frac{r-\tfrac{1}{2}}{m},\qquad Z^{j}_{\ell c}=\sigma\Phi^{-1}(u_{\pi_{\ell c}(j)}),\quad r,j\in\{1,\ldots,m\},
+(10)
+Here
+Φ
+\Phi
+is the standard-normal CDF and each
+π
+ℓ
+​
+c
+\pi_{\ell c}
+is an independent permutation.
+This assigns every rank once per coordinate without tying a path’s ranks across times or channels.
+C.2
+Marginal coverage and ensemble size
+Larger ensembles improve marginal interval coverage at fixed model weights (
+Figure
+11
+).
+Across all 100 fev-bench tasks, increasing the ensemble from 32 to 1,024 iid samples raises 80% interval coverage by 4 percentage points.
+The gains diminish as ensemble size increases.
+Figure 11:
+Marginal 80% interval coverage versus the number of forecast samples on fev-bench.
+Both model sizes use iid sampling.
+Horizontal references use the native 10th and 90th percentile outputs of Chronos-2 and TimesFM-3.
+C.3
+Inference latency
+Table
+6
+compares complete serving calls on an NVIDIA L4 with context 2,048, horizon 288, and batches of one or sixteen histories.
+We measure end-to-end time, with CUDA synchronization around each call.
+We report medians over 35 measured calls in seven blocks, following warmup and with randomized execution order.
+Models retain their native behavior.
+The marginal interface returns nine quantiles.
+The path interface returns forecast trajectories, using independent completion for quantile outputs.
+Table 6:
+End-to-end latency on an NVIDIA L4 at context 2,048 and horizon 288.
+Nine quantiles (ms)
+Paths (ms)
+Model
+Params. (M)
+Batch 1
+Batch 16
+Batch 1
+Batch 16
+PathFM, one evaluation
+126.3
+51.7
+215.3
+51.6
+215.2
+PathFM, two evaluations
+126.3
+96.4
+403.2
+96.4
+403.3
+Chronos-2
+119.5
+21.8
+66.6
+22.5
+72.9
+TimesFM-3
+330.7
+160.0
+508.2
+160.6
+515.1
+Toto-2.0-2.5B
+2,454.3
+198.3
+1,482.6
+199.0
+1,489.5
+TiRex
+35.3
+170.4
+180.9
+170.9
+187.1
+TiRex-2
+82.5
+27.0
+44.0
+27.6
+50.5
+Sundial
+128.3
+71.2
+1,118.3
+69.6
+1,085.1
+PathFM returns an ensemble in 51.6 ms for one history and 215.2 ms for sixteen.
+Batching sixteen histories reduces the average time per history to 13.5 ms.
+At both batch sizes, PathFM with one evaluation is faster than Sundial and TimesFM-3.
+Chronos-2 and TiRex-2 offer lower latency, while PathFM achieves higher FPS skill (
+Figure
+4
+).
+C.3.1
+Inference speedup breakdown
+Figure
+12
+isolates execution choices in a separate study on A100.
+Packing paths reduces teacher latency from 2,663.8 to 827.1 ms per batch; the packed two-evaluation student takes 201.9 ms.
+Adding deeper history K/V caching changes teacher latency only to 801.4 ms and is disabled for the student.
+The combined student speedup therefore comes from packing and distillation.
+Packing also reduces peak PyTorch allocated memory from 3.22 to 1.58 GiB.
+Figure 12:
+Inference speedup breakdown on an A100 at batch 16, context 2,048, and horizon 480.
+The teacher uses ten Euler evaluations; the student uses two.
+All configurations use float32 weights with bfloat16 autocast.
+Appendix D
+Evaluation metrics
+We specify the empirical forecast scores and aggregation rules used in the forecasting results.
+The chaotic-system protocols and diagnostics are given separately in
+Appendix
+F
+.
+D.1
+Score construction
+D.1.1
+Empirical forecast scores
+For a fixed outcome
+y
+y
+and predictive law
+P
+P
+, CRPS and energy score have the common form
+S
+ρ
+​
+(
+P
+,
+y
+)
+=
+𝔼
+​
+ρ
+​
+(
+X
+,
+y
+)
+−
+1
+2
+​
+𝔼
+​
+ρ
+​
+(
+X
+,
+X
+′
+)
+,
+X
+,
+X
+′
+∼
+iid
+P
+,
+S_{\rho}(P,y)=\mathbb{E}\rho(X,y)-\tfrac{1}{2}\mathbb{E}\rho(X,X^{\prime}),\qquad X,X^{\prime}\stackrel{{\scriptstyle\mathrm{iid}}}{{\sim}}P,
+(11)
+using absolute and Euclidean distance, respectively
+(
+Gneiting & Raftery, 2007
+)
+.
+We evaluate the returned empirical forecast
+P
+^
+m
+=
+1
+m
+​
+∑
+i
+=
+1
+m
+δ
+x
+(
+i
+)
+\widehat{P}_{m}=\frac{1}{m}\sum_{i=1}^{m}\delta_{x^{(i)}}
+.
+Substituting this distribution gives
+S
+ρ
+​
+(
+P
+^
+m
+,
+y
+)
+=
+1
+m
+​
+∑
+i
+=
+1
+m
+ρ
+⁡
+(
+x
+(
+i
+)
+,
+y
+)
+−
+1
+2
+​
+m
+2
+​
+∑
+i
+,
+j
+=
+1
+m
+ρ
+⁡
+(
+x
+(
+i
+)
+,
+x
+(
+j
+)
+)
+.
+S_{\rho}(\widehat{P}_{m},y)=\frac{1}{m}\sum_{i=1}^{m}\rho(x^{(i)},y)-\frac{1}{2m^{2}}\sum_{i,j=1}^{m}\rho(x^{(i)},x^{(j)}).
+(12)
+This is the exact score of the finite forecast distribution and requires no independence assumption on its members.
+We use
+Equation
+12
+for every CRPS and energy component.
+The variogram component evaluates the moments of the same empirical forecast (
+Equation
+14
+).
+D.1.2
+Temporal path scores
+For item
+n
+n
+and channel
+c
+c
+, define the seasonal-error scale from history
+h
+h
+and seasonal period
+p
+p
+:
+a
+n
+​
+c
+=
+1
+|
+ℋ
+n
+​
+c
+|
+∑
+t
+∈
+ℋ
+n
+​
+c
+|
+h
+n
+​
+t
+​
+c
+−
+h
+n
+,
+t
+−
+p
+,
+c
+|
+,
+ℋ
+n
+​
+c
+=
+{
+t
+:
+h
+n
+​
+t
+​
+c
+,
+h
+n
+,
+t
+−
+p
+,
+c
+observed
+}
+.
+a_{nc}=\frac{1}{|\mathcal{H}_{nc}|}\sum_{t\in\mathcal{H}_{nc}}|h_{ntc}-h_{n,t-p,c}|,\qquad\mathcal{H}_{nc}=\{t:h_{ntc},h_{n,t-p,c}\text{ observed}\}.
+(13)
+Except for first passage, the temporal scores use paths divided by finite positive
+a
+n
+​
+c
+a_{nc}
+.
+Table
+7
+specifies their distances in
+Equation
+12
+; the variogram uses its separate formula below.
+Table 7:
+The definitions of the six temporal FPS components.
+Score
+Distance or transformation
+Energy (ES)
+ρ
+⁡
+(
+x
+,
+y
+)
+=
+‖
+x
+−
+y
+‖
+2
+\rho(x,y)=\|x-y\|_{2}
+Differenced ES (DES)
+ρ
+⁡
+(
+x
+,
+y
+)
+=
+‖
+D
+⁡
+(
+x
+)
+−
+D
+⁡
+(
+y
+)
+‖
+2
+\rho(x,y)=\|D(x)-D(y)\|_{2}
+, where
+D
+⁡
+(
+x
+)
+=
+(
+x
+1
+,
+x
+2
+−
+x
+1
+,
+…
+,
+x
+L
+−
+x
+L
+−
+1
+)
+D(x)=(x_{1},x_{2}-x_{1},\ldots,x_{L}-x_{L-1})
+Variogram (VS)
+Squared errors in expected temporal contrasts,
+Equation
+14
+Sum CRPS
+ρ
+⁡
+(
+x
+,
+y
+)
+=
+|
+∑
+t
+x
+t
+−
+∑
+t
+y
+t
+|
+\rho(x,y)=|\sum_{t}x_{t}-\sum_{t}y_{t}|
+Max CRPS
+ρ
+⁡
+(
+x
+,
+y
+)
+=
+|
+max
+t
+⁡
+x
+t
+−
+max
+t
+⁡
+y
+t
+|
+\rho(x,y)=|\max_{t}x_{t}-\max_{t}y_{t}|
+First-passage CRPS
+ρ
+⁡
+(
+u
+,
+v
+)
+=
+|
+T
+τ
+​
+(
+u
+)
+−
+T
+τ
+​
+(
+v
+)
+|
+\rho(u,v)=|T_{\tau}(u)-T_{\tau}(v)|
+in original units,
+Equation
+15
+Level, sum, and maximum scores use the same observed-coordinate mask for every forecast path.
+DES retains the initial value when observed and increments only when both adjacent observations are available.
+Variogram.
+For the nonempty set of observed time pairs
+𝒫
+=
+{
+(
+s
+,
+t
+)
+:
+s
+<
+t
+,
+y
+s
+,
+y
+t
+observed
+}
+\mathcal{P}=\{(s,t):s<t,\ y_{s},y_{t}\text{ observed}\}
+:
+VS
+^
+1
+/
+2
+=
+1
+|
+𝒫
+|
+​
+∑
+(
+s
+,
+t
+)
+∈
+𝒫
+(
+|
+y
+s
+−
+y
+t
+|
+1
+/
+2
+−
+1
+m
+​
+∑
+i
+=
+1
+m
+|
+x
+s
+(
+i
+)
+−
+x
+t
+(
+i
+)
+|
+1
+/
+2
+)
+2
+.
+\widehat{\mathrm{VS}}_{1/2}=\frac{1}{|\mathcal{P}|}\sum_{(s,t)\in\mathcal{P}}\left(|y_{s}-y_{t}|^{1/2}-\frac{1}{m}\sum_{i=1}^{m}|x_{s}^{(i)}-x_{t}^{(i)}|^{1/2}\right)^{2}.
+(14)
+All pairs receive equal weight
+(
+Scheuerer & Hamill, 2015
+)
+.
+First passage.
+The threshold
+τ
+\tau
+is the maximum of the last available context segment of length at most
+L
+L
+, in original units.
+For a path
+u
+u
+,
+T
+τ
+​
+(
+u
+)
+=
+min
+⁡
+(
+{
+t
+∈
+{
+1
+,
+…
+,
+L
+}
+:
+u
+t
+>
+τ
+}
+∪
+{
+L
++
+1
+}
+)
+.
+T_{\tau}(u)=\min\bigl(\{t\in\{1,\ldots,L\}:u_{t}>\tau\}\cup\{L+1\}\bigr).
+(15)
+This score requires a fully observed future and finite threshold, uses forecast steps as units, and treats no crossing as
+L
++
+1
+L+1
+.
+It therefore evaluates a censored event time.
+The sum, maximum, and first-passage scores identify their respective functional distributions rather than the full path law.
+D.1.3
+Cross-variable variogram score
+The cross-variable variogram compares channel pairs at the same forecast time.
+Channels are standardized by their mean and standard deviation over at most 8,192 context observations; insufficient history or negligible variance excludes a channel.
+Using shared observed-coordinate masks, the estimator in
+Equation
+14
+averages over valid times and channel pairs, items, origins, and finally tasks with an arithmetic mean.
+We report this absolute score.
+D.2
+Aggregation rules
+Marginal benchmarks.
+We retain the official within-task reductions for FEV, GIFT-Eval, and TIME
+(
+Shchur et al., 2025
+;
+Aksu et al., 2024
+;
+Qiao et al., 2026
+)
+.
+FEV uses nine quantiles at
+{
+0.1
+,
+0.2
+,
+…
+,
+0.9
+}
+\{0.1,0.2,\ldots,0.9\}
+.
+SQL scales errors by
+a
+n
+​
+c
+a_{nc}
+before averaging.
+GIFT-Eval and TIME report equally weighted geometric means of task or configuration losses relative to Seasonal Naive.
+fps-bench.
+FPS compares each model with Seasonal Naive across six path metrics on the same 94 tasks with valid scores for every model and metric.
+For each metric, we average valid items within each channel, then channels and forecast origins, to obtain one loss per task.
+Let
+r
+d
+,
+k
+r_{d,k}
+be the model’s loss divided by Seasonal Naive’s loss for task
+d
+d
+and metric
+k
+k
+, clipped to
+[
+0.01,100
+]
+[0.01,100]
+.
+The aggregate score is
+FPS
+=
+1
+−
+GM
+d
+,
+k
+⁡
+(
+r
+d
+,
+k
+)
+,
+\mathrm{FPS}=1-\operatorname{GM}_{d,k}(r_{d,k}),
+(16)
+where
+GM
+\operatorname{GM}
+denotes the geometric mean with equal weight for each task and metric.
+A score of zero matches Seasonal Naive; higher is better.
+Individual component skills use the same rule for one metric at a time.
+Appendix E
+Forecast accuracy and dependence
+These experiments examine which aspects of a forecast improve when the model generates complete paths.
+We report temporal component scores, evaluate cross-variable relationships, and test explicit dependence completions of quantile forecasts.
+Metric definitions and aggregation rules are collected in
+Appendix
+D
+.
+E.1
+Temporal forecast accuracy
+Figure
+13
+compares the six FPS components for PathFM and the three strongest baselines (selecting the best-performing completion for each).
+Table
+8
+reports the full comparison.
+For quantile models, independent completion usually gives better temporal scores than comonotone completion, but the latter can improve sum skill.
+PathFM achieves the highest skill scores on all six components, with a 10.6% average improvement against the strongest baseline, TimesFM-3.
+Figure 13:
+Component skills for PathFM and the three strongest baselines on fps-bench.
+Bars show skill relative to Seasonal Naive; higher is better.
+Table 8:
+Temporal-path skill on the 94 tasks in fps-bench; higher is better.
+Forecast
+Completion
+ES
+DES
+VS
+Sum
+Max
+FPT
+FPS skill
+TimesFM-3
+Independent
+0.4913
+0.3437
+0.5998
+0.5032
+0.3966
+0.5455
+0.4871
+TimesFM-3
+Comonotone
+0.4757
+0.3650
+0.4894
+0.5049
+0.3435
+0.5462
+0.4590
+Chronos-2
+Independent
+0.4783
+0.3255
+0.5901
+0.4797
+0.3805
+0.5224
+0.4699
+Chronos-2
+Comonotone
+0.4616
+0.3590
+0.4818
+0.4862
+0.3331
+0.5148
+0.4434
+TimesFM-2.5
+Independent
+0.4645
+0.3164
+0.5893
+0.4818
+0.3687
+0.5135
+0.4632
+TiRex-2
+Independent
+0.4608
+0.3201
+0.5790
+0.4663
+0.3678
+0.5165
+0.4586
+Toto-2.0-2.5B
+Independent
+0.4355
+0.2707
+0.5333
+0.4339
+0.3125
+0.5225
+0.4261
+TiRex
+Independent
+0.4322
+0.2783
+0.5419
+0.4323
+0.3236
+0.4828
+0.4220
+Sundial
+Native
+0.3769
+0.3615
+0.5072
+0.4280
+0.2999
+0.4141
+0.4014
+Toto-1.0
+Native
+0.2346
+-0.2072
+0.3583
+0.3985
+-0.1313
+0.4833
+0.2300
+PathFM
+Native
+0.4917
+0.4557
+0.6244
+0.5383
+0.5103
+0.5896
+0.5386
+E.2
+Cross-variable variogram scores
+Table
+9
+compares absolute cross-variable variogram scores on all 35 multi-target fev-bench tasks, retaining all 625 forecast origins.
+The score compares pairs of target variables at the same forecast time, using the standardization and reduction in
+Section
+D.1.3
+.
+The Gaussian copula uses shrinkage estimates of normal-score residual-rank correlation and a shared AR(1) temporal factor, fitted on four forecast windows ending before the first test origin.
+Six short-history tasks use shorter calibration horizons.
+The nine marginal quantiles are interpolated linearly, with constant tails outside probabilities 0.1–0.9.
+Task-specific adaptation.
+The fitted Gaussian copula estimates dependence parameters from historical forecast–outcome pairs on each benchmark task.
+The forecasting weights remain frozen, but the copula introduces task-specific parameter fitting.
+We report these adapted references in a separate table group from PathFM and the fixed independent and comonotone completions, which require no additional task-specific parameter fitting at evaluation time.
+Table 9:
+Contemporaneous cross-variable variogram scores on 35 multi-target tasks.
+Entries are arithmetic task means; lower is better, with the lowest value in each protocol group bold.
+Fitted Gaussian references use task-specific calibration.
+Forecast
+Copula
+VS
+↓
+\downarrow
+No task-specific fitting
+Chronos-2
+Independent
+0.1491
+Chronos-2
+Comonotonic
+0.1648
+TimesFM-3
+Independent
+0.1446
+TimesFM-3
+Comonotonic
+0.1609
+Toto-2.0-2.5B
+Independent
+0.1560
+Toto-2.0-2.5B
+Comonotonic
+0.1741
+PathFM
+Native
+0.1419
+Task-calibrated references
+Chronos-2
+Fitted Gaussian
+0.1469
+TimesFM-3
+Fitted Gaussian
+0.1420
+Toto-2.0-2.5B
+Fitted Gaussian
+0.1533
+E.3
+Fitted Gaussian temporal copulas
+We test whether fitting a Gaussian temporal copula to historical forecast errors improves the path forecasts of frozen quantile models.
+Building on the independent and comonotonic completions in
+Section
+E.1
+, we estimate temporal dependence from target-task history while retaining each baseline’s marginal quantile forecasts.
+Gaussian copula fitting.
+For each baseline and item, four forecast windows ending before the first test origin supply standardized residuals, which we rank-transform to normal scores.
+We estimate a lag-one coefficient within these windows, share it across target channels, clip it to
+[
+−
+0.95
+,
+0.95
+]
+[-0.95,0.95]
+, and fix it before testing.
+Items with insufficient information use a task-pooled estimate.
+All eligible items are retained; 27 tasks use shorter calibration horizons without changing their test windows.
+The fitted coefficient defines a stationary latent AR(1) process used to generate temporally dependent ranks for the baseline’s interpolated marginal quantiles, with constant tails outside probabilities 0.1–0.9.
+This parameterization restricts the fitted temporal dependence to AR(1).
+Table 10:
+Effect of fitting a Gaussian temporal copula on FPS over 94 common fev-bench tasks.
+Each baseline uses the same marginal forecasts across copula completions.
+Fitted Gaussian rows use task-specific calibration.
+Bold marks the best value within each protocol group.
+Forecast
+Copula
+FPS
+↑
+\uparrow
+No task-specific fitting
+Chronos-2
+Independent
+0.4699
+Chronos-2
+Comonotonic
+0.4434
+TimesFM-3
+Independent
+0.4871
+TimesFM-3
+Comonotonic
+0.4590
+Toto-2.0-2.5B
+Independent
+0.4261
+Toto-2.0-2.5B
+Comonotonic
+0.4147
+PathFM
+Native
+0.5386
+Task-calibrated references
+Chronos-2
+Fitted Gaussian AR(1)
+0.5077
+TimesFM-3
+Fitted Gaussian AR(1)
+0.5243
+Toto-2.0-2.5B
+Fitted Gaussian AR(1)
+0.4765
+Fitting the Gaussian copula improves FPS from 0.4699 to 0.5077 for Chronos-2, from 0.4871 to 0.5243 for TimesFM-3, and from 0.4261 to 0.4765 for Toto-2.0-2.5B, relative to independent completion.
+However, these completions impose a stationary Gaussian AR(1) dependence structure, and PathFM has a higher FPS score without task-specific copula fitting.
+Appendix F
+Chaotic systems
+We examine how model size, sampling, and fine-tuning affect point accuracy and long-run dynamics.
+F.1
+Setup and forecasting protocols
+Dataset.
+We train PathFM on the PANDA-72M reproduction corpus
+(
+Lai et al., 2026
+)
+,
+GilpinLab/dataset-panda72M-repro
+, containing 190,006 trajectories of 4,096 steps with 3–10 state coordinates from individual DYSTS systems and skew-product combinations.
+Reserving trajectories involving ten parent systems leaves 156,784 training trajectories and 33,222 validation trajectories.
+Point evaluation uses the separate
+base40
+and
+skew40
+test releases.
+Models and training.
+The quantitative comparisons use the 75M and 126M PathFM families with native 256-step horizons, trained for 2M flow-matching updates followed by 100k terminal-decay updates.
+We train the 75M variant to approximately match PANDA’s parameter count (74.2M versus 71.6M).
+The 126M backbone has 12 transformer blocks and feedforward width 3,072; the 75M model uses 11 blocks and width 768.
+Both initialize their backbones afresh while retaining trainable input-patch embeddings.
+The global batch budget is 384 channel rows, with four flow draws per window.
+The learning rate is
+10
+−
+4
+10^{-4}
+after 500 warmup updates, followed by the 100k linear terminal decay to zero; weight decay is zero and EMA decay is 0.999.
+Main results use ten-step Euler sampling, source standard deviation 0.86, and seed 42.
+Training-progress evaluation.
+Figure
+6
+c uses the same 2,048 fixed three-channel validation windows for both model sizes, selected randomly from the validation shard.
+Each window supplies 512 context steps and 256 forecast steps from a distinct held-out trajectory.
+We evaluate EMA weights with 16 stratified samples and ten Euler steps.
+Context-standardized sMAPE is averaged over channels and forecast steps, then across the 2,048 trajectories.
+Point forecasts.
+We evaluate six 512-context windows from each of 9,347 trajectories using sMAPE, as in PANDA
+(
+Lai et al., 2026
+)
+.
+We average sMAPE within each of the 480 source groups and then report the arithmetic mean across groups.
+PathFM feeds back the coordinatewise median of 16 stratified samples per 256-step block, averaging the middle two order statistics.
+Chronos-1 uses 16 samples and median feedback every 128 steps, chaining two native 64-step calls within each sample; Chronos-2 and PANDA continue point forecasts in 128-step blocks.
+Long continuations.
+For each of the 135 systems, we generate 4,096-step continuations from origins 512 and 4,096 on an unseen trajectory.
+PathFM and Chronos-1 independently continue 16 iid paths per origin; Chronos-2 and PANDA continue point forecasts.
+For each diagnostic, we take the arithmetic mean over all realizations in a system.
+Across the 135 systems, we use a geometric mean for segment analog and arithmetic means for the other diagnostics.
+Segment-analog ratios differ by orders of magnitude across systems because their calibration distances can have very different scales; geometric aggregation gives each system equal weight on a log scale.
+F.2
+Model size and sampler choice
+Table
+11
+compares PathFM with 72M-parameter PANDA.
+The smaller PathFM retains lower errors at all four forecasting horizons and on all four dynamical diagnostics, showing that the gains persist at similar model size.
+We obtain these gains with our general forecasting architecture and flow-matching objective, without adding architectural components or losses tailored to chaotic systems.
+PANDA uses specialized dynamics embeddings with random polynomial and Fourier features motivated by Koopman-operator approximations
+(
+Lai et al., 2026
+)
+.
+Table 11:
+Model size at ten Euler evaluations per block.
+Both PathFM sizes follow the protocol in
+Section
+F.1
+; lower is better, with the best value in bold.
+sMAPE
+Dynamics
+Model
+H
+=
+64
+H=64
+H
+=
+128
+H=128
+H
+=
+256
+H=256
+H
+=
+512
+H=512
+W
+1
+W_{1}
+PSD
+H
+2
+H^{2}
+CD err.
+Seg. analog
+PANDA
+19.09
+24.42
+31.94
+41.22
+0.588
+0.195
+0.537
+10.03
+PathFM-75M
+16.94
+22.16
+28.22
+35.37
+0.263
+0.063
+0.286
+5.07
+PathFM-126M
+16.45
+21.52
+27.43
+34.50
+0.251
+0.061
+0.273
+4.80
+Figure 14:
+Accuracy versus sampler budget for both model sizes.
+Point errors average all 480 source groups;
+W
+1
+W_{1}
+averages all 135 systems and uses 4,096-step sampled continuations.
+The dotted horizontal line marks PANDA; lower is better.
+The sampler comparison evaluates each teacher and its student after 100k PDD updates (
+Figures
+14
+and
+12
+).
+At one or two evaluations, PDD improves point accuracy over Euler; ten-step Euler remains best within each size at every horizon.
+For 126M long continuations, two-evaluation PDD reduces mean
+W
+1
+W_{1}
+from 0.522 to 0.316 relative to two-step Euler, approaching ten-step Euler’s 0.251.
+Table 12:
+Mean source-group sMAPE for the Euler teacher and its student after 100k PDD updates.
+NFE counts evaluations per 256-step block and sample; bold marks the lowest error within each size.
+Model
+Sampler
+NFE
+H
+=
+64
+H=64
+H
+=
+128
+H=128
+H
+=
+256
+H=256
+H
+=
+512
+H=512
+PathFM-75M
+Euler
+1
+20.99
+26.44
+32.97
+41.27
+Euler
+2
+17.81
+23.56
+30.23
+37.34
+Euler
+10
+16.94
+22.16
+28.22
+35.37
+PDD100k
+1
+17.62
+22.89
+29.02
+36.31
+PDD100k
+2
+17.17
+22.44
+28.55
+35.69
+PathFM-126M
+Euler
+1
+20.14
+25.43
+31.88
+40.14
+Euler
+2
+17.24
+22.76
+29.25
+36.31
+Euler
+10
+16.45
+21.52
+27.43
+34.50
+PDD100k
+1
+17.08
+22.24
+28.36
+35.74
+PDD100k
+2
+16.69
+21.83
+27.86
+34.97
+F.3
+Full continuations
+Figure
+15
+extends the qualitative comparison in
+Figure
+7
+to all 4,096 steps and adds Rössler.
+The displayed PathFM-126M paths use the same checkpoint and ten Euler evaluations per block as the quantitative comparison.
+PathFM sustains Lorenz’s two-lobe motion and Rössler’s varying oscillation amplitudes throughout the continuation.
+In comparison, Chronos-2 and PANDA both collapse to the center of the Lorenz example.
+In the Rössler example, Chronos-2’s amplitude decays and PANDA settles into more regular oscillations.
+Figure 15:
+Full 4,096-step Lorenz and Rössler continuations.
+All panels use the same initial conditions.
+Gray curves show the observed continuation; circles mark the first and last forecast states, and shading marks the first 512 steps.
+F.4
+Metric definitions
+Point error.
+With context channel mean
+μ
+c
+\mu_{c}
+and population standard deviation
+σ
+c
+\sigma_{c}
+, let
+x
+~
+t
+​
+c
+=
+(
+x
+t
+​
+c
+−
+μ
+c
+)
+/
+max
+⁡
+(
+σ
+c
+,
+10
+−
+10
+)
+\widetilde{x}_{tc}=(x_{tc}-\mu_{c})/\max(\sigma_{c},10^{-10})
+and define
+y
+~
+\widetilde{y}
+identically.
+We use PANDA’s factor-100 convention
+(
+Lai et al., 2026
+)
+:
+sMAPE
+h
+=
+100
+h
+​
+C
+​
+∑
+t
+=
+1
+h
+∑
+c
+=
+1
+C
+|
+x
+~
+t
+​
+c
+−
+y
+~
+t
+​
+c
+|
+|
+x
+~
+t
+​
+c
+|
++
+|
+y
+~
+t
+​
+c
+|
++
+10
+−
+10
+.
+\mathrm{sMAPE}_{h}=\frac{100}{hC}\sum_{t=1}^{h}\sum_{c=1}^{C}\frac{|\widetilde{x}_{tc}-\widetilde{y}_{tc}|}{|\widetilde{x}_{tc}|+|\widetilde{y}_{tc}|+10^{-10}}.
+(17)
+This scores the blockwise median forecast; individual sampled-path errors are not averaged into the point score.
+Wasserstein-1 distance (
+W
+1
+W_{1}
+).
+Let
+ℛ
+\mathcal{R}
+be the reference state cloud and
+𝒮
+\mathcal{S}
+the post-burn-in rollout states, standardized using reference channel means and standard deviations.
+For
+K
+=
+64
+K=64
+seeded unit directions,
+F
+^
+ℛ
+,
+k
+\widehat{F}_{\mathcal{R},k}
+and
+F
+^
+𝒮
+,
+k
+\widehat{F}_{\mathcal{S},k}
+are the empirical CDFs of the projected states:
+W
+^
+1
+​
+(
+ℛ
+,
+𝒮
+)
+=
+1
+K
+​
+∑
+k
+=
+1
+K
+∫
+0
+1
+|
+F
+^
+ℛ
+,
+k
+−
+1
+​
+(
+u
+)
+−
+F
+^
+𝒮
+,
+k
+−
+1
+​
+(
+u
+)
+|
+​
+𝑑
+u
+.
+\widehat{W}_{1}(\mathcal{R},\mathcal{S})=\frac{1}{K}\sum_{k=1}^{K}\int_{0}^{1}\left|\widehat{F}_{\mathcal{R},k}^{-1}(u)-\widehat{F}_{\mathcal{S},k}^{-1}(u)\right|\,du.
+(18)
+The reference cloud retains at most 20,000 states; this calculation subsamples each cloud to at most 10,000.
+It measures distance to an empirical state distribution, without an exact invariant measure.
+Spectral distance.
+Spectral and segment diagnostics standardize channels using trajectories 0–7.
+Welch spectra use 512-point periodic Hann windows, 50% overlap, unit sampling rate, and constant detrending.
+Each spectrum is normalized to unit mass;
+p
+x
+,
+c
+p_{x,c}
+is the forecast spectrum and
+q
+c
+q_{c}
+averages the six normalized reference spectra.
+The channel-mean squared Hellinger distance is
+H
+spec
+2
+=
+1
+2
+​
+C
+​
+∑
+c
+=
+1
+C
+∑
+f
+[
+p
+x
+,
+c
+​
+(
+f
+)
+−
+q
+c
+​
+(
+f
+)
+]
+2
+.
+H^{2}_{\mathrm{spec}}=\frac{1}{2C}\sum_{c=1}^{C}\sum_{f}\bigl[\sqrt{p_{x,c}(f)}-\sqrt{q_{c}(f)}\bigr]^{2}.
+(19)
+It lies in
+[
+0
+,
+1
+]
+[0,1]
+and compares spectral shape independently of total power.
+Correlation dimension.
+We estimate
+d
+^
+corr
+\widehat{d}_{\mathrm{corr}}
+from log–log slopes of empirical pair-distance probabilities, excluding pairs within a 30-step Theiler window.
+The estimator uses at most 4,096 states and 200,000 positive pair distances, taking the median slope over probability ranges
+[
+0.005
+,
+0.05
+]
+[0.005,0.05]
+,
+[
+0.01
+,
+0.10
+]
+[0.01,0.10]
+, and
+[
+0.02
+,
+0.20
+]
+[0.02,0.20]
+, with 20 geometrically spaced probabilities per range.
+Against the dataset’s stored pooled estimate
+d
+^
+pool
+\widehat{d}_{\mathrm{pool}}
+, we report
+E
+CD
+=
+|
+d
+^
+corr
+−
+d
+^
+pool
+|
+.
+E_{\mathrm{CD}}=\left|\widehat{d}_{\mathrm{corr}}-\widehat{d}_{\mathrm{pool}}\right|.
+(20)
+The pooled target uses all ten original trajectories, including the test trajectory, and its own standardization; it is a descriptive geometric reference rather than an independent held-out estimate.
+Segment analog.
+Flatten 64-step multivariate segments into vectors in the shared standardized coordinates, without recentering each segment.
+Let
+𝒰
+x
+\mathcal{U}_{x}
+,
+𝒰
+ref
+\mathcal{U}_{\mathrm{ref}}
+, and
+𝒰
+cal
+\mathcal{U}_{\mathrm{cal}}
+denote generated, reference, and calibration segments, and
+d
+⁡
+(
+u
+,
+𝒰
+)
+=
+min
+v
+∈
+𝒰
+⁡
+‖
+u
+−
+v
+‖
+2
+d(u,\mathcal{U})=\min_{v\in\mathcal{U}}\|u-v\|_{2}
+.
+The score compares their nearest-reference distances:
+A
+seg
+=
+median
+u
+∈
+𝒰
+x
+⁡
+d
+⁡
+(
+u
+,
+𝒰
+ref
+)
+max
+⁡
+{
+median
+u
+∈
+𝒰
+cal
+⁡
+d
+⁡
+(
+u
+,
+𝒰
+ref
+)
+,
+10
+−
+12
+}
+.
+A_{\mathrm{seg}}=\frac{\operatorname{median}_{u\in\mathcal{U}_{x}}d(u,\mathcal{U}_{\mathrm{ref}})}{\max\!\left\{\operatorname{median}_{u\in\mathcal{U}_{\mathrm{cal}}}d(u,\mathcal{U}_{\mathrm{ref}}),10^{-12}\right\}}.
+(21)
+Generated and calibration segments use stride 32; reference segments use stride eight, retaining at most 20,000.
+The calibration normalization gives a reference level of one; larger values indicate less similar local dynamics.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from
+        our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+(opens in new tab)
+Major funding support from
