@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<!-- index: PolyBench × Polymarket 深度调研 | 2026-11-13 | 预测市场 LLM 交易基准：论文与源码拆解、Polymarket 新手指南、黄金石油赚钱打法、AI 团队方案与发 Paper 选题 -->
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PolyBench × Polymarket 深度调研报告 | 2026-11-12</title>
+<style>
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#232127; --surface:#2d2a2e; --surface-2:#38343c; --surface-3:#403c46;
+  --fg:#f0ede4; --fg-2:#c9c4ba; --muted:#8e897f;
+  --border:rgba(255,255,255,.09); --border-2:rgba(255,255,255,.16);
+  --brand:#78dce8; --brand-dim:rgba(120,220,232,.14);
+  --ok:#a9dc76; --warn:#ffd866; --danger:#ff6188; --violet:#ab9df2;
+  --c1:#1f9fb8; --c2:#d55b2a; --c3:#7a6ae0;
+  --grid:rgba(255,255,255,.10); --axis:rgba(255,255,255,.22);
+  --shadow:0 6px 24px rgba(0,0,0,.35);
+  --code-bg:#1e1c20; --code-fg:#e8e4da;
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f0eee8; --surface:#faf9f7; --surface-2:#ffffff; --surface-3:#f1efe9;
+  --fg:#24221f; --fg-2:#55524c; --muted:#898781;
+  --border:rgba(0,0,0,.10); --border-2:rgba(0,0,0,.18);
+  --brand:#0b7d9e; --brand-dim:rgba(11,125,158,.10);
+  --ok:#006300; --warn:#8a6200; --danger:#b3223a; --violet:#5f4ec4;
+  --c1:#0b7d9e; --c2:#b8451c; --c3:#5f4ec4;
+  --grid:rgba(0,0,0,.08); --axis:rgba(0,0,0,.25);
+  --shadow:0 6px 20px rgba(0,0,0,.08);
+  --code-bg:#eceae4; --code-fg:#33312d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.65;font-size:15px}
+code,pre,.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:var(--fg)}
+em{color:var(--fg-2);font-style:normal;font-weight:600}
+
+/* ── 顶部标题条 ── */
+.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topbar h1{font-size:16px;font-weight:700;letter-spacing:.2px}
+.topbar .sub{font-size:12px;color:var(--muted)}
+.topbar .spacer{flex:1}
+.theme-btn{cursor:pointer;border:1px solid var(--border-2);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.theme-btn:hover{border-color:var(--brand);color:var(--brand)}
+
+/* ── Hero ── */
+.hero{max-width:1180px;margin:24px auto 0;padding:0 24px}
+.hero-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border:1px solid var(--border);border-radius:18px;padding:28px 32px;box-shadow:var(--shadow)}
+.hero-card h2{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:10px}
+.hero-card p.lead{color:var(--fg-2);font-size:15px;max-width:900px}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.stat-tile{background:var(--surface-3);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat-tile .v{font-size:24px;font-weight:800;color:var(--brand)}
+.stat-tile .v.neg{color:var(--c2)}
+.stat-tile .k{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── 吸顶 Tab ── */
+.tabnav{position:sticky;top:57px;z-index:40;background:var(--bg);border-bottom:1px solid var(--border)}
+.tabnav-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tabnav-inner::-webkit-scrollbar{display:none}
+.tab-btn{white-space:nowrap;padding:10px 16px;border:none;background:none;color:var(--fg-2);font-size:14px;cursor:pointer;border-bottom:2px solid transparent;font-weight:600;transition:all .15s}
+.tab-btn:hover{color:var(--fg)}
+.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand)}
+
+/* ── 主体 ── */
+main{max-width:1180px;margin:0 auto;padding:24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadein .25s}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--brand-dim);color:var(--brand)}
+.card h4{font-size:14.5px;font-weight:700;margin:16px 0 8px;color:var(--fg)}
+.tldr{background:var(--brand-dim);border:1px solid var(--border);border-left:3px solid var(--brand);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:14.5px}
+.tldr b{color:var(--brand)}
+p.desc{color:var(--fg-2);font-size:14px;margin-bottom:10px}
+ul.list{padding-left:0;list-style:none}
+ul.list li{padding:5px 0 5px 24px;position:relative;color:var(--fg-2);font-size:14px}
+ul.list li::before{content:"▸";position:absolute;left:6px;color:var(--brand);font-size:12px;top:7px}
+ul.list li b{color:var(--fg)}
+ol.steps{padding-left:22px;color:var(--fg-2);font-size:14px}
+ol.steps li{margin:6px 0}
+ol.steps li b{color:var(--fg)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+.mini{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.mini h5{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--fg);display:flex;align-items:center;gap:6px}
+.mini p{font-size:13px;color:var(--fg-2)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin-right:6px}
+.pill.good{background:rgba(169,220,118,.15);color:var(--ok)}
+.pill.bad{background:rgba(255,97,136,.15);color:var(--danger)}
+.pill.warn{background:rgba(255,216,102,.15);color:var(--warn)}
+.pill.info{background:var(--brand-dim);color:var(--brand)}
+.pill.vio{background:rgba(171,157,242,.15);color:var(--violet)}
+
+.callout{border-radius:12px;padding:14px 18px;font-size:13.5px;margin:12px 0;border:1px solid}
+.callout.ok{background:rgba(169,220,118,.08);border-color:rgba(169,220,118,.35)}
+.callout.warn{background:rgba(255,216,102,.08);border-color:rgba(255,216,102,.35)}
+.callout.danger{background:rgba(255,97,136,.08);border-color:rgba(255,97,136,.35)}
+.callout b{color:var(--fg)}
+
+pre{background:var(--code-bg);color:var(--code-fg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12.5px;line-height:1.6;overflow-x:auto;margin:10px 0}
+code.inline{background:var(--code-bg);padding:1px 6px;border-radius:6px;font-size:12.5px}
+
+/* 表格 */
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+table.tbl th{background:var(--surface-3);color:var(--fg);font-weight:700;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border-2);white-space:nowrap}
+table.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--fg-2);vertical-align:top}
+table.tbl tr:hover td{background:var(--surface-2)}
+table.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+table.tbl td b{color:var(--fg)}
+.pos{color:var(--ok);font-weight:700}
+.negv{color:var(--danger);font-weight:700}
+
+/* 图表 */
+.chart-wrap{margin:14px 0}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-note{font-size:12px;color:var(--muted);margin-top:6px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--fg-2);margin:4px 0 8px}
+.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.sw.c1{background:var(--c1)} .sw.c2{background:var(--c2)} .sw.c3{background:var(--c3)}
+.sw.okc{background:var(--ok)} .sw.badc{background:var(--danger)}
+svg text{font-family:system-ui,-apple-system,sans-serif}
+.svg-lab{fill:var(--fg-2);font-size:12px}
+.svg-val{fill:var(--fg);font-size:12px;font-weight:700}
+.svg-ax{fill:var(--muted);font-size:11px}
+.gridline{stroke:var(--grid);stroke-width:1}
+.axisline{stroke:var(--axis);stroke-width:1}
+.bar.c1{fill:var(--c1)} .bar.c2{fill:var(--c2)} .bar.c3{fill:var(--c3)}
+.bar.okc{fill:var(--c1)} .bar.badc{fill:var(--c2)}
+.dot.c1{fill:var(--c1);stroke:var(--surface);stroke-width:2}
+.dot.c2{fill:var(--c2);stroke:var(--surface);stroke-width:2}
+.hit{fill:transparent;cursor:pointer}
+.hit:hover{fill:var(--brand-dim)}
+.meter-row{display:flex;align-items:center;gap:12px;margin:10px 0;font-size:13px}
+.meter-row .name{width:180px;color:var(--fg-2);flex-shrink:0}
+.meter-row .track{flex:1;height:14px;background:var(--surface-3);border-radius:7px;overflow:hidden}
+.meter-row .fill{height:100%;background:var(--c1);border-radius:7px 4px 4px 7px}
+.meter-row .val{width:120px;text-align:right;color:var(--fg);font-variant-numeric:tabular-nums;flex-shrink:0}
+.tooltip{position:fixed;z-index:99;background:var(--surface-3);border:1px solid var(--border-2);color:var(--fg);border-radius:10px;padding:10px 13px;font-size:12.5px;pointer-events:none;opacity:0;transition:opacity .12s;max-width:320px;box-shadow:var(--shadow)}
+.tooltip.show{opacity:1}
+.tooltip .tt-title{font-weight:700;margin-bottom:4px}
+.tooltip .tt-row{color:var(--fg-2);display:flex;justify-content:space-between;gap:16px}
+.tooltip .tt-row b{color:var(--fg)}
+
+/* 架构图 */
+.arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0}
+.arch-node{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.arch-node .an-title{font-weight:700;font-size:13.5px;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.arch-node .an-path{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace;margin-bottom:6px}
+.arch-node .an-desc{font-size:12.5px;color:var(--fg-2)}
+.flow-arrow{text-align:center;color:var(--muted);font-size:18px;padding:2px 0}
+
+/* checklist */
+.check{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:14px;color:var(--fg-2)}
+.check:last-child{border-bottom:none}
+.check .box{width:16px;height:16px;border:1.5px solid var(--border-2);border-radius:4px;flex-shrink:0;margin-top:3px}
+.check b{color:var(--fg)}
+.check .when{margin-left:auto;flex-shrink:0;font-size:12px;color:var(--muted);padding-top:2px}
+
+footer{max-width:1180px;margin:10px auto 40px;padding:0 24px}
+.foot-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 26px;font-size:12.5px;color:var(--muted)}
+.foot-card a{color:var(--brand)}
+.src-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin-top:8px}
+@media(max-width:860px){.src-grid{grid-template-columns:1fr}}
+.src-grid a{display:block;padding:3px 0;font-size:12.5px}
+</style>
+</head>
+<body data-palette="c1,c2,c3">
+
+<!-- ═══ 顶部标题条 ═══ -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <h1>PolyBench × Polymarket 深度调研</h1>
+      <div class="sub">预测市场 · LLM 交易代理 · 2026-11-12</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">☀️</span><span id="themeText">浅色</span></button>
+  </div>
+</div>
+
+<!-- ═══ Hero ═══ -->
+<div class="hero">
+  <div class="hero-card">
+    <h2>一句话：Polymarket 是「真金白银的事件期货」，PolyBench 是目前唯一带订单簿+新闻+真实结算的 LLM 交易基准 —— 三个方向（赚钱 / AI 团队 / 发论文）共用同一套基础设施。</h2>
+    <p class="lead">本报告基于 PolyBench 论文全文（arXiv:2604.14199，2026-04-03）、官方仓库源码逐行研读、Polymarket 官方文档与实时市场数据快照。结论先行：<em>7 个 SOTA 模型只有 2 个赚钱</em>，说明这不是「调个 API 就躺赢」的市场，但也正因为多数模型亏损，<b>有真实领域认知（黄金/石油）+ 工程能力（AI 团队）的组合反而是稀缺的</b>。</p>
+    <div class="hero-stats">
+      <div class="stat-tile"><div class="v">38,666</div><div class="k">二元市场 / 4,997 事件</div></div>
+      <div class="stat-tile"><div class="v">2 / 7</div><div class="k">模型实现正收益 (CWR)</div></div>
+      <div class="stat-tile"><div class="v">+17.6%</div><div class="k">MiMo-V2-Flash CWR（最优）</div></div>
+      <div class="stat-tile"><div class="v neg">-25.2%</div><div class="k">MiniMax-M2.5 CWR（最差）</div></div>
+      <div class="stat-tile"><div class="v">$1.34–11.5</div><div class="k">单模型跑完 5,097 题成本</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Tab 导航 ═══ -->
+<div class="tabnav">
+  <div class="tabnav-inner" id="tabnav">
+    <button class="tab-btn active" data-tab="overview">📌 总览</button>
+    <button class="tab-btn" data-tab="bench">🔬 PolyBench 拆解</button>
+    <button class="tab-btn" data-tab="market101">📖 Polymarket 入门</button>
+    <button class="tab-btn" data-tab="alpha">💰 黄金石油机会</button>
+    <button class="tab-btn" data-tab="ai">🤖 AI 团队方案</button>
+    <button class="tab-btn" data-tab="paper">📄 发 Paper 方向</button>
+    <button class="tab-btn" data-tab="action">✅ 行动清单</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════ TAB 1: 总览 ══════════════════ -->
+<section class="tab-panel active" id="overview">
+  <div class="tldr"><b>TLDR：</b>PolyBench = Polymarket 实盘市场 + 订单簿快照 + 同步新闻 + 真实结算结果的评测数据集与代码管线。它同时服务三件事：① 大佬的方向性观点在预测市场上变现；② AI 团队搭数据管线、训练校准的预测模型；③ 师弟在「LLM 预测市场交易」这个热点赛道找差异化选题。三者共用同一个数据基础设施，一次投入三份产出。</div>
+
+  <div class="card">
+    <h3>三线并行的全局图</h3>
+    <div class="grid3">
+      <div class="mini">
+        <h5>💰 赚钱线（大佬）</h5>
+        <p><b>核心逻辑：</b>黄金/石油的方向性判断是 Polymarket 商品区最稀缺的能力——论文实证 LLM 在政治题强、在价格驱动题弱（Crypto 域全线亏损），<b>价格驱动题正是大佬的主场</b>。</p>
+        <p style="margin-top:8px"><b>变现载体：</b>500+ 商品市场（月度阈值、周度、日内 Up/Down），头部市场流动性 $1M–5M。</p>
+        <p style="margin-top:8px"><b>天花板：</b>单市场深度有限，滑点在 $100–1000 仓位量级开始吃掉理论优势 → 适合「高频小仓位 × 多市场」而非重仓单点。</p>
+      </div>
+      <div class="mini">
+        <h5>🤖 AI 团队线</h5>
+        <p><b>核心逻辑：</b>PolyBench 论文证明了「语言流利 ≠ 概率推理」，差距点（置信度校准、领域分化、SKIP 纪律）就是可做的产品与训练空间。</p>
+        <p style="margin-top:8px"><b>可做的三件事：</b>① 自建实时数据采集管线（在 PolyBench 基础上加商品价格序列）；② 校准训练（SFT/RL 用真实结算结果当奖励）；③ 面向商品交易员的信号产品。</p>
+        <p style="margin-top:8px"><b>成本：</b>跑完一个模型 5,097 题只要 $1.34–11.5，实验极其便宜。</p>
+      </div>
+      <div class="mini">
+        <h5>📄 论文线（师弟）</h5>
+        <p><b>核心逻辑：</b>赛道热（Halawi NeurIPS'24、Prophet Arena、LiveTradeBench、FutureX、PolyBench 全是近两年工作），但全部停在「单快照一锤子买卖」，留了一整层没做：</p>
+        <p style="margin-top:8px"><b>5 个可行选题：</b>序列化持仓管理、商品日内市场+量化特征混合代理、置信度校准与弃权策略、maker 挂单策略（论文只测了 taker）、多模型集成（用已发布的 36,165 条预测，零 API 成本）。</p>
+      </div>
+    </div>
+    <div class="callout ok" style="margin-top:14px"><b>协同飞轮：</b>AI 团队搭的数据管线 → 师弟拿数据做实验发论文 → 论文方法论反哺信号产品 → 产品输出给大佬在实盘验证 → 实盘 P&L 回流成训练数据。一套基础设施，三条线的产出互相喂。</div>
+  </div>
+
+  <div class="card">
+    <h3>先看懂这张图：LLM 在 Polymarket 上的真实成绩单</h3>
+    <p class="desc">7 个 SOTA 模型，在完全相同的时间锁定快照上交易（数据窗口 2026-02-06 ~ 02-12，至 02-21 全部结算）。CWR = 按模型自报置信度加权的真实收益率（在历史订单簿上模拟成交）。<b>精度最高的 Gemini（75%）反而不是最赚钱的</b>——MiMo 精度只有 62.1% 但 CWR 是 Gemini 的近 3 倍。</p>
+    <div class="chart-wrap" id="chartCWR"></div>
+    <div class="legend"><span><span class="sw okc"></span>正收益</span><span><span class="sw badc"></span>负收益</span></div>
+    <p class="chart-note">数据来源：PolyBench 论文 Table 5（base lot size $10）。APY 因市场持有期短而数值巨大（年化外推），横向比较意义有限，重点看 CWR 与方向。</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="mini">
+        <h5>为什么多数模型亏钱？</h5>
+        <p>① 置信度虚高：所有模型平均自报置信度 0.81–0.87，但在 Crypto 等域全面亏损，<b>过度自信 + 置信度加权仓位 = 放大亏损</b>。</p>
+        <p>② 把新闻当价格：LLM 用「文本语感」预测价格驱动市场，而价格路径包含文本中没有的信息。</p>
+        <p>③ 不会弃权：虽然 SKIP 不罚分，但模型普遍几乎每题都出手（value_bet 占比 94–99%），没有选择性地只在优势区间下注。</p>
+      </div>
+      <div class="mini">
+        <h5>对我们的三个直接启示</h5>
+        <p>① <b>别裸调 API 上实盘</b>：5/7 模型亏损说明通用 LLM 直接交易是负期望，必须加校准层+领域过滤。</p>
+        <p>② <b>大佬的领域知识是真护城河</b>：模型在文本密集域（政治）赚钱、价格密集域（商品/crypto）亏钱——反过来证明后者需要真实领域模型。</p>
+        <p>③ <b>小仓位纪律</b>：论文实测仓位到 $1000 时滑点吃掉全部 alpha，实盘仓位控制是生死线。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>阅读指南</h3>
+    <ul class="list">
+      <li><b>完全不了解 Polymarket？</b>先读 <a href="#market101" onclick="switchTab('market101')">📖 Polymarket 入门</a>——机制、入金出金、手续费、合规现状一篇讲清。</li>
+      <li><b>想看 Bench 怎么跑、论文怎么评？</b>读 <a href="#bench" onclick="switchTab('bench')">🔬 PolyBench 拆解</a>——含源码架构图、指标公式、完整结果表、上手步骤。</li>
+      <li><b>关心赚钱？</b>直接看 <a href="#alpha" onclick="switchTab('alpha')">💰 黄金石油机会</a>——市场版图、四个打法、仓位纪律与风险。</li>
+      <li><b>AI 团队要立项？</b>看 <a href="#ai" onclick="switchTab('ai')">🤖 AI 团队方案</a>；<b>师弟要选题？</b>看 <a href="#paper" onclick="switchTab('paper')">📄 发 Paper 方向</a>。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 2: PolyBench 拆解 ══════════════════ -->
+<section class="tab-panel" id="bench">
+  <div class="tldr"><b>TLDR：</b>PolyBench（arXiv:2604.14199，四川大学三人团队，2026-04-03 提交）把 Polymarket 的 38,666 个二元市场在 2026-02-06~12 打成「时间锁定的多模态快照」（结算规则 + CLOB 订单簿 + 同步新闻），让 7 个模型盲测，按真实结算算钱。核心贡献是 CWR 指标和「防污染」设计；仓库是完整可跑的 CLI 管线（采集→分析→回测→评估），我们自己搭管线可以直接在它基础上改。</div>
+
+  <div class="card">
+    <h3>论文速览 <span class="tag">arXiv:2604.14199</span></h3>
+    <table class="tbl">
+      <tr><th style="width:130px">条目</th><th>内容</th></tr>
+      <tr><td><b>标题</b></td><td>PolyBench: Benchmarking LLM Forecasting and Trading Capabilities on Live Prediction Market Data</td></tr>
+      <tr><td><b>作者/机构</b></td><td>Pu Cheng, Juncheng Liu（四川大学电气工程学院）, Yunshen Long（四川大学经济学院）</td></tr>
+      <tr><td><b>发表</b></td><td>arXiv q-fin.CP，2026-04-03 提交，16 页 4 图 6 表（未标注会议接收信息）</td></tr>
+      <tr><td><b>数据窗口</b></td><td>快照采集 2026-02-06 ~ 02-12；最晚结算 2026-02-21</td></tr>
+      <tr><td><b>代码/数据</b></td><td><a href="https://github.com/NostalgiaJohn/PolyBench" target="_blank">github.com/NostalgiaJohn/PolyBench</a>（论文页写 PolyBench/PolyBench，用户给的 NostalgiaJohn 链接可正常克隆）；全量 SQLite 数据库经 OneDrive 链接下载（README 内）</td></tr>
+      <tr><td><b>定位差异</b></td><td>对比 Autocast（6,707 题，纯文本）、Prophet Arena（1,367 市场，无订单簿）、Halawi et al.（48,754 市场，无订单簿、无 CWR）、LiveTradeBench（仅 10 市场）——<b>PolyBench 是唯一同时具备「Polymarket + 订单簿 + 新闻 + 收益率评估」且规模上万的</b></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>数据集与管线：四步流水线</h3>
+    <div class="arch">
+      <div class="arch-node"><div class="an-title">① 市场采集</div><div class="an-path">Gamma API /events</div><div class="an-desc">拉取活跃事件：标题、结算规则（description）、token ID、成交量；按成交量过滤排序</div></div>
+      <div class="arch-node"><div class="an-title">② 多模态快照</div><div class="an-path">CLOB /book + Google News</div><div class="an-desc">同一时刻抓 5 档订单簿（买/卖价、深度、价差）+ 用事件标题搜新闻并抓正文（剔除预测市场站点内容防泄漏）</div></div>
+      <div class="arch-node"><div class="an-title">③ LLM 批量推理</div><div class="an-path">OpenRouter 统一接口</div><div class="an-desc">相同快照发给 7 个模型；系统提示词 11 条交易纪律；输出严格 JSON；置信度 &lt;0.6 的决策直接丢弃</div></div>
+      <div class="arch-node"><div class="an-title">④ 结算对齐</div><div class="an-path">Resolve Check</div><div class="an-desc">定期轮询市场结算结果，把预测与真实 outcome 连接，算 Accuracy / CWR / APY / Sharpe</div></div>
+    </div>
+    <h4>数据集统计（论文 Table 3）</h4>
+    <table class="tbl">
+      <tr><th>组件</th><th class="num">数量</th><th>说明</th></tr>
+      <tr><td>Events</td><td class="num">4,997</td><td>活跃 2,904 / 已结算 2,093</td></tr>
+      <tr><td>Markets</td><td class="num">38,666</td><td>活跃 26,784 / 失效 11,882</td></tr>
+      <tr><td>快照</td><td class="num">38,666</td><td>带新闻 35,436（91.6%）；带订单簿 19,012（49.2%）</td></tr>
+      <tr><td>可预测子集</td><td class="num">5,097</td><td>已结算 + 有订单簿 + 有新闻（评测主力集）</td></tr>
+      <tr><td>LLM 预测</td><td class="num">36,165</td><td>7 模型 × 约 5,100 题</td></tr>
+    </table>
+    <div class="chart-wrap" id="chartCoverage"></div>
+    <p class="chart-note">快照覆盖率：只有约一半市场留有订单簿、13.2% 组成「可预测子集」——复现论文数字时要注意分母。</p>
+    <div class="callout warn"><b>防污染（contamination-proof）设计：</b>① 预测对象是「尚未发生」的事件，预训练语料里不存在答案；② 新闻抓取时显式剔除 polymarket/kalshi 等预测市场站点内容，防止模型从其他市场的赔率里抄答案；③ 提示词把快照时间戳作为「Current Date」锁定，回测时禁止模型使用未来信息。这是它区别于静态基准的核心卖点。</div>
+  </div>
+
+  <div class="card">
+    <h3>评估指标：怎么算「赚不赚钱」</h3>
+    <div class="grid2">
+      <div class="mini">
+        <h5>CWR（置信度加权收益）— 核心指标</h5>
+        <p>每笔 BUY 的预算 B = 置信度 c × 基础注额 L（论文 L=$10）。预算打到历史订单簿上，从最优卖价开始逐档吃单（模拟真实滑点），得到实际投入 I 和股数 S。</p>
+        <pre>预测正确: π = S × $1.00 − I   (每股结算 $1)
+预测错误: π = −I              (每股结算 $0)
+
+CWR = Σπ / ΣI   （全部 BUY 的净利 ÷ 总投入）</pre>
+        <p style="margin-top:8px"><b>直觉：</b>重仓打在错题上会被重罚，轻仓打在错题上损失有限——同时考察「方向对不对」和「敢不敢该重的时候重」。</p>
+      </div>
+      <div class="mini">
+        <h5>辅助指标与纪律约束</h5>
+        <ul class="list">
+          <li><b>Accuracy：</b>只在非 SKIP 的主动交易上算方向正确率</li>
+          <li><b>APY = r × 365/持有天数：</b>年化外推（持有期短导致数值夸张，看方向即可）</li>
+          <li><b>Sharpe = μ/σ：</b>逐笔收益的均值/标准差，惩罚大起大落</li>
+          <li><b>时间误差：</b>模型自估结算日 vs 真实结算日的平均天数差</li>
+          <li><b>弃权免责：</b>SKIP 完全不计入指标——模拟真实交易员的纪律性</li>
+          <li><b>硬门槛：</b>置信度 &lt; 0.6 的决策在管线层直接丢弃，不进结算</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>完整结果（论文 Table 5 + Table 4）</h3>
+    <p class="desc">按 CWR 降序。注意「Acc 最高 ≠ 赚最多」：Gemini 75.0% 准确率只赚 6.2%，MiMo 62.1% 准确率赚 17.6%——<b>赚钱的是「下注时机 × 仓位 × 弃权纪律」的组合，不是做题正确率</b>。</p>
+    <table class="tbl">
+      <tr><th>模型</th><th class="num">Accuracy</th><th class="num">Avg Conf</th><th class="num">Non-CWR</th><th class="num">CWR</th><th class="num">APY</th><th class="num">Sharpe</th><th class="num">成本/5097题</th></tr>
+      <tr><td><b>MiMo-V2-Flash</b>（小米，开源 FP8）</td><td class="num">62.1%</td><td class="num">0.859</td><td class="num pos">+11.1%</td><td class="num pos">+17.6%</td><td class="num">4067.3%</td><td class="num">0.02</td><td class="num">$1.72</td></tr>
+      <tr><td><b>Gemini-3-Flash-Preview</b>（Google）</td><td class="num">75.0%</td><td class="num">0.855</td><td class="num pos">+4.1%</td><td class="num pos">+6.2%</td><td class="num">1486.5%</td><td class="num">0.01</td><td class="num">$11.50</td></tr>
+      <tr><td>DeepSeek-V3.2（开源 FP8）</td><td class="num">53.5%</td><td class="num">0.838</td><td class="num negv">−15.3%</td><td class="num negv">−11.4%</td><td class="num negv">−5571.8%</td><td class="num">−0.03</td><td class="num">$3.32</td></tr>
+      <tr><td>Trinity-Large-Preview（Arcee，免费）</td><td class="num">42.7%</td><td class="num">0.871</td><td class="num negv">−12.4%</td><td class="num negv">−9.2%</td><td class="num negv">−4527.8%</td><td class="num">−0.02</td><td class="num">Free</td></tr>
+      <tr><td>Grok-4.1-Fast（xAI）</td><td class="num">59.1%</td><td class="num">0.862</td><td class="num negv">−15.9%</td><td class="num negv">−12.1%</td><td class="num negv">−5820.4%</td><td class="num">−0.17</td><td class="num">$6.85</td></tr>
+      <tr><td>GPT-OSS-120B（OpenAI，开源 FP4）</td><td class="num">58.0%</td><td class="num">0.836</td><td class="num negv">−19.4%</td><td class="num negv">−17.8%</td><td class="num negv">−7075.8%</td><td class="num">−0.22</td><td class="num">$1.34</td></tr>
+      <tr><td>MiniMax-M2.5</td><td class="num">42.6%</td><td class="num">0.808</td><td class="num negv">−26.1%</td><td class="num negv">−25.2%</td><td class="num negv">−9537.2%</td><td class="num">−0.22</td><td class="num">$8.43</td></tr>
+    </table>
+    <div class="grid2">
+      <div class="chart-wrap" id="chartScatter"></div>
+      <div>
+        <div class="chart-wrap" id="chartCost"></div>
+        <p class="chart-note">成本为论文 Table 4 报告的「跑完 5,097 个可预测市场」的 API 费用。<b>做实验极其便宜：全量跑一个模型不超过一杯奶茶钱。</b></p>
+      </div>
+    </div>
+    <h4>策略维度（论文 Table 6 摘要）</h4>
+    <table class="tbl">
+      <tr><th>模型</th><th>value_bet（占比 → CWR）</th><th>news_catalyst</th><th>arbitrage</th><th>stable_yield</th><th>格式违规</th></tr>
+      <tr><td><b>MiMo-V2-Flash</b></td><td><b>94.8% → +19.2%</b></td><td><b>46.7% → +50.0%</b></td><td>5.7% → −31.1%</td><td>0.7% → +0.4%</td><td class="pos">0（零违规）</td></tr>
+      <tr><td><b>Gemini-3-Flash</b></td><td>80.2% → +7.2%</td><td>40.0% → +20.7%</td><td>0.8% → +8.1%</td><td>28.5% → −0.1%</td><td>8</td></tr>
+      <tr><td>Grok-4.1-Fast</td><td>99.3% → −11.7%</td><td>37.1% → +6.7%</td><td>3.5% → −10.8%</td><td>0.2% → −49.9%</td><td class="pos">0</td></tr>
+      <tr><td>GPT-OSS-120B</td><td>99.9% → −17.8%</td><td>39.4% → −19.3%</td><td>1.1% → −2.7%</td><td>2.5% → −0.2%</td><td class="pos">0</td></tr>
+      <tr><td>DeepSeek-V3.2</td><td>98.4% → −10.9%</td><td>34.0% → +19.0%</td><td>15.3% → −35.4%</td><td>20.7% → −22.6%</td><td class="pos">0</td></tr>
+      <tr><td>Trinity-Large</td><td>98.2% → −9.7%</td><td>38.1% → +16.6%</td><td>5.4% → −10.3%</td><td>0.6% → −38.5%</td><td class="negv">103</td></tr>
+      <tr><td>MiniMax-M2.5</td><td>98.0% → −25.0%</td><td>19.3% → −19.8%</td><td>5.2% → −22.7%</td><td>0.2% → −40.0%</td><td>2</td></tr>
+    </table>
+    <p class="chart-note">单元格格式：使用占比 → 该策略下的 CWR。通用 LLM 挂「套利」标签的交易几乎全线亏损（−2.7% ~ −35.4%）——它们识别不了真套利，只是给投机贴了个安全标签。</p>
+    <h4>论文五条关键发现</h4>
+    <ul class="list">
+      <li><b>① 隐性元认知存在但不够用：</b>所有模型 CWR 都高于 Non-CWR（给对题的置信度更高），说明「自知之明」有信号，但幅度不足以扭转亏损。</li>
+      <li><b>② 领域能力严重不均：</b>政治域（文本可解析）赚钱，Crypto 域（价格驱动）在高置信度下深度亏损——<b>这条对大佬路线是利好证据</b>。</li>
+      <li><b>③ 指令遵循是必要非充分：</b>GPT-OSS/Grok 零格式违规照样亏钱；MiMo 唯一同时做到「零违规 + 会赚钱」。</li>
+      <li><b>④ 滑点封顶 alpha：</b>仓位 $10→$100 alpha 基本保住；$500 起衰减、$1000 时两家头部模型利润被订单簿深度吃光——<b>实盘仓位天花板实锤</b>。</li>
+      <li><b>⑤ 高置信 ≠ 高收益：</b>平均自报置信度全体 0.81–0.87，但 5/7 亏损——通用 LLM 的置信度不可直接当仓位信号用。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>源码架构逐层拆解（已克隆到 <code class="inline">assets/input/repos/PolyBench</code>）</h3>
+    <div class="arch">
+      <div class="arch-node"><div class="an-title">config.py</div><div class="an-path">81 行</div><div class="an-desc">OpenRouter key 启动校验、Polygon 私钥、Polymarket API 三元组、单笔上限 MAX_TRADE_AMOUNT_USDC=$10</div></div>
+      <div class="arch-node"><div class="an-title">database/peewee_models.py</div><div class="an-path">SQLite + WAL</div><div class="an-desc">6 张表：Event / Market / Prediction / Trade / MarketSnapshot / Resolution。每条 Prediction 存完整 prompt、原始回复、订单簿和新闻快照——可复现实验</div></div>
+      <div class="arch-node"><div class="an-title">core/market_data.py</div><div class="an-path">462 行</div><div class="an-desc">Gamma API 拉事件 + CLOB /book 拉订单簿（保留 top5 档）；YES/NO 两侧订单簿合并视图（NO 卖单翻转成 YES 买单）；给 AI 的订单簿文本格式化</div></div>
+      <div class="arch-node"><div class="an-title">core/news_fetcher.py</div><div class="an-path">282 行</div><div class="an-desc">Google News RSS → 异步解码真实 URL → 抓正文（单篇截 4000 字）；剔除 6 个预测市场站点关键词；单事件取 5 条取 top3</div></div>
+      <div class="arch-node"><div class="an-title">core/analysis.py</div><div class="an-path">604 行</div><div class="an-desc">11 条系统纪律（结算规则至上、50-50 条款、日期感知、订单簿解读）+ 严格 JSON 输出（decision/outcome/strategy/est_resolution_date/confidence/reasoning）；置信度 &lt;0.6 过滤</div></div>
+      <div class="arch-node"><div class="an-title">core/trading_engine.py</div><div class="an-path">80 行</div><div class="an-desc">py_clob_client + Polygon 主网(137) 真实下单封装——实盘交易入口（本 Bench 默认只模拟）</div></div>
+      <div class="arch-node"><div class="an-title">batch/unified_batch.py</div><div class="an-path">913 行</div><div class="an-desc">自动管线（拉事件→快照→推理）+ 结算检查 + 7 类故障完整性检查/自愈（A 空快照 ~ G 回测报错）——工程成熟度高</div></div>
+      <div class="arch-node"><div class="an-title">evaluation/evaluate_mimo.py</div><div class="an-path">379 行</div><div class="an-desc">订单簿吃单模拟（$10 注额逐档扫卖单算 VWAP）、CWR/APY/Sharpe/ECE/F1 全套计算，输出 Markdown 报告</div></div>
+    </div>
+    <h4>上手运行（本机 macOS）</h4>
+    <ol class="steps">
+      <li>克隆仓库（已完成，见上）；本机无 conda，按全局规范改用 uv：<code class="inline">uv venv --python 3.10 .venv && source .venv/bin/activate && uv pip install -r requirements.txt</code></li>
+      <li>准备 <code class="inline">.env</code>：至少 <code class="inline">PRIMARY_PROVIDER=OPENROUTER</code>、<code class="inline">OPENROUTER_API_KEY</code>、<code class="inline">OPENROUTER_MODEL</code>、<code class="inline">OPENROUTER_PROVIDER_ORDER</code>（启动时会真实验证 key）。实盘才需要 Polygon 私钥与 Polymarket API 三元组。</li>
+      <li>数据二选一：① README 的 OneDrive 链接直接下 <code class="inline">polymarket.db</code>（含 38,666 快照，推荐）；② 跑 <code class="inline">python main.py</code> 选 Unified Batch Mode 自己采新快照（趋势事件数量可自定义）。</li>
+      <li>评估：主菜单 Option 4 算全套指标；<code class="inline">python evaluation/evaluate_mimo.py --lot-size 10</code> 可自定义注额复现滑点实验；<code class="inline">python scripts/plot_portfolio.py</code> 出组合曲线。</li>
+    </ol>
+    <div class="callout warn"><b>复现注意（源码里读到的坑）：</b>① 仓库不含 .db，必须下载或自采；② JSON 解析用正则 <code class="inline">\{.*\}</code> 粗暴截取，推理模型的思考标签偶尔导致解析失败（进 ERROR 后走恢复流程）；③ 评估里 SELL 判定为「预测 outcome 不结算」且全部计为 wrong_sells，SELL 语义实盘要重新设计；④ 订单簿只存 top5 档，注额超过深度后模拟会失真（论文也只敢到 $1000）。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 3: Polymarket 入门 ══════════════════ -->
+<section class="tab-panel" id="market101">
+  <div class="tldr"><b>TLDR：</b>Polymarket 是全球最大的去中心化预测市场：所有问题都是「Yes/No 二元合约」，价格 0–1 直接读作概率，结算时正确一方每股兑 $1、错误方归零。资金是 Polygon 链上的 USDC，交易走链下撮合+链上结算的 CLOB。2025 年末起被 CFTC 重新放行进入美国（polymarket.us，受监管），手续费模式已从全免改为「taker 收费、maker 返佣」。<b>中国大陆用户在访问与出入金两端都有真实合规风险，参与前必须自行确认。</b></div>
+
+  <div class="card">
+    <h3>它到底是什么（用一个例子讲完）</h3>
+    <p class="desc">想象一个「能花钱投票、按对错分钱」的市场。以一个真实市场为例：</p>
+    <div class="mini">
+      <h5>例：「What will Gold (GC) hit by end of December?」——黄金 12 月底前触及 $4,500？</h5>
+      <ul class="list">
+        <li><b>1. 买股份：</b>你判断会触及，以 0.99 的现价买入 100 股 "Yes" 股份，花费 $99。</li>
+        <li><b>2. 等结算：</b>12 月底到了，官方数据源（COMEX 黄金期货价）确认最高价触及过 $4,500 → Yes 胜。</li>
+        <li><b>3. 兑付：</b>每股 Yes 兑 $1，你拿回 $100，净赚 $1（约 1%）。若没触及，$99 全部归零。</li>
+        <li><b>反过来读价格：</b>Yes 现价 0.99 ≈ 市场认为「概率 99%」。股价 = 实时概率，这是预测市场最迷人的性质。</li>
+      </ul>
+    </div>
+    <ul class="list" style="margin-top:10px">
+      <li><b>不对称收益结构：</b>买便宜的「小概率 Yes」（如 0.10）赢了赚 9 倍、输了归零——天然的高赔率彩票；买贵的「大概率的 Yes/No」接近固定收益。论文里顶级模型的大额单笔收益正是来自低价小概率事件的正确判断。</li>
+      <li><b>二元对称：</b>Yes + No 价格恒等于 $1（结算互补），所以「买 No」=「做空 Yes」。任何观点都能双向表达。</li>
+      <li><b>Event 与 Market：</b>一个 Event（如「黄金 12 月底前触及哪一档？」）下挂多个互斥 Market（$4,000 / $4,100 / $4,200…各一个），只有一个是 Yes——这带来「负风险（Negative Risk）」套利结构，见下文。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>交易机制：CLOB（中央限价订单簿）</h3>
+    <div class="grid2">
+      <div>
+        <ul class="list">
+          <li><b>挂单（maker）：</b>限价单挂在订单簿上等成交，<b>永不收费</b>，还每天参与 Maker Rebates 返佣池分钱——费用模式的受益方。</li>
+          <li><b>吃单（taker）：</b>市价单吃掉对手盘，按类别付小额手续费（见下）。</li>
+          <li><b>链下撮合 + 链上结算：</b>订单签名后提交到 Polymarket 的 CLOB 服务撮合，成交才上 Polygon 链结算——体验像中心化交易所，资产自托管。</li>
+          <li><b>智能钱包：</b>平台代管签名授权，充值后无需每笔手动签链上交易；需要少量 POL 作 gas。</li>
+          <li><b>订单簿深度：</b>盘口只有 5 档可见深度可抓（PolyBench 就存 top5）——<b>这就是大仓位滑点的来源</b>。</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>三个新手必懂的机制</h5>
+        <ul class="list">
+          <li><b>Merge（合并）：</b>同一市场同时持有 1 Yes + 1 No → 可合并赎回 $1。当 Yes+No 报价之和 &lt; $1 时，两边都买入再 Merge = <b>无风险套利</b>（机器人抢得最凶的生意）。</li>
+          <li><b>Redeem（赎回）：</b>市场结算后，持有胜方股份在这里一键兑回 USDC。</li>
+          <li><b>Negative Risk（负风险）：</b>多选项 Event 中「只有一个是 Yes」，可以卖出整套输家 No 合约锁定收益——多选项事件的资本效率工具，也是组合套利的基础。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>资金进出（入金 / 出金）</h3>
+    <ol class="steps">
+      <li><b>准备 USDC：</b>在任意交易所（Binance/OKX/Coinbase 等）购买 USDC。</li>
+      <li><b>充值：</b>Polymarket 内「Deposit」复制充值地址，<b>务必选 Polygon 网络</b>转 USDC（选错链 = 资产丢失）。平台不收充值费（通道方可能收）。</li>
+      <li><b>交易：</b>选市场 → 买 Yes/No → 签名下单。也可用信用卡/银行卡通过第三方通道直接买（通道方收费更高）。</li>
+      <li><b>结算后赎回：</b>Winning shares → Redeem → USDC 回到余额。</li>
+      <li><b>提现：</b>资产页 Withdraw，USDC 转回交易所或自托管钱包，再场内卖出变现。</li>
+    </ol>
+    <div class="callout danger"><b>中国大陆用户的合规现实（必须正面面对）：</b>① 大陆对加密货币交易与兑换的监管持续从严，交易所出入金通道本身受限；② USDC 入金/出金涉及外汇额度与用途申报问题；③ Polymarket 服务条款排除受限司法辖区，大陆是否属于受限范围需自行阅读最新 ToS 确认；④ 美国用户已被强制分流到受 CFTC 监管的 polymarket.us（KYC），说明平台对合规问题是认真的。结论：<b>这条线作为研究/小额实验可控，作为「赚钱主业」之前必须先解决合规与资金通道问题</b>。</div>
+  </div>
+
+  <div class="card">
+    <h3>手续费（2026 现行规则，直接影响策略账本）</h3>
+    <div class="grid2">
+      <div class="mini">
+        <h5>规则要点（官方 Help Center）</h5>
+        <ul class="list">
+          <li><b>只对 taker 收费，maker 永远免费</b>且参与每日返佣池</li>
+          <li>费用在撮合时由协议自动计算，下单不含费用字段</li>
+          <li>费用与价格对称：30¢ 和 70¢ 成交的<b>美元费用相同</b>，公式对称于 50¢</li>
+          <li><b>地缘政治/世界事件类市场全免费</b>；充值提现平台不收费</li>
+          <li>最小计费 $0.00001，精度 5 位小数</li>
+          <li>Taker 还有分级返佣（按 30 天吃单量）——高频主动交易能返一部分</li>
+        </ul>
+        <pre>费用 = baseRate(类别) × min(p, 1−p) × 股数 C
+
+→ 极端价格（0.02 / 0.98）费用趋近 0
+→ 50¢ 平价处费用最高</pre>
+      </div>
+      <div class="mini">
+        <h5>量级感受（US 站公开费率）</h5>
+        <p>各类别不同，约 <b>$0.75–1.75 / 每 100 股</b>（50¢ 平价处）。换算：</p>
+        <ul class="list">
+          <li>50¢ 处吃单：约 0.75%–1.75% 名义金额</li>
+          <li>10¢ / 90¢ 处吃单：费用只有平价处的 1/5 左右</li>
+          <li>地缘政治域：0（全免）</li>
+        </ul>
+        <p style="margin-top:8px"><b>策略含义：</b>① 大额单子优先挂 maker 单（免费+返佣）；② 交易极端价格市场几乎无摩擦；③ 商品域费率按 docs.polymarket.us/fees 实时核对，别用旧认知算账。平台 2026-04 改费制后日收入已破 $1M——费用是这个市场成熟期的常态，回测必须计入。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>结算规则：钱怎么定「对错」</h3>
+    <ul class="list">
+      <li><b>规则字面主义：</b>每个市场页都有「Rules」区块，写死结算数据源（如 COMEX 期货价、官方通讯社）、截止时点、边界定义。<b>是数据源说了算，不是「常识」说了算</b>——PolyBench 提示词第 8 条专门强调这一点，模型栽过跟头。</li>
+      <li><b>50-50 条款：</b>部分市场规则写明「若截止日前条件未达成则 50/50 结算」——这类市场有价格下限/上限（0.50），是特殊的定价结构，论文提示词第 9 条专门要求模型识别。</li>
+      <li><b>争议裁决：</b>结果争议走 UMA 预言机的 Optimistic Oracle + 争议投票机制，极少数市场会因规则解读分歧重新结算——尾部风险之一。</li>
+      <li><b>结算时间不可精确预测：</b>官方确认流程可能延迟数小时到数天，资金占用期的机会成本要算（这就是论文 APY 指标存在的原因）。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>合规时间线与现状</h3>
+    <table class="tbl">
+      <tr><th style="width:150px">时间</th><th>事件</th></tr>
+      <tr><td>2022</td><td>Polymarket 与 CFTC 和解，向美国用户关闭（未注册提供掉期交易）</td></tr>
+      <tr><td>2024 末</td><td>美国大选预测一战成名，单市场交易量数十亿美元级，验证了预测市场的信息价值</td></tr>
+      <tr><td>2025</td><td>收购 QCX LLC / QCEX（$112M）获得受监管牌照主体；9 月 Reuters 报道 CFTC 放行信号</td></tr>
+      <tr><td>2025-11-25</td><td>CFTC 批准修订指定令（Amended Order of Designation）：QCX LLC d/b/a Polymarket US 成为受监管 DCM，<b>允许经纪商中介的美国市场准入</b></td></tr>
+      <tr><td>2026</td><td>polymarket.com 对美国 IP 强制提示转向 polymarket.us；引入 taker 费用体系；NYSE 与 Polymarket 达成合作；2026-04-28 完成交易所升级</td></tr>
+      <tr><td>现状</td><td>双轨：polymarket.com（国际，非 CFTC 监管）+ polymarket.us（美国，CFTC 监管 DCM，KYC）。<b>商品/金融域市场两边都有；地缘政治域（免费）主要在国际站</b></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>术语速查表</h3>
+    <table class="tbl">
+      <tr><th style="width:170px">术语</th><th>含义</th></tr>
+      <tr><td><b>Share / Contract</b></td><td>二元合约的一「股」，结算时每股兑 $1 或 $0</td></tr>
+      <tr><td><b>CLOB</b></td><td>Central Limit Order Book，中央限价订单簿撮合系统</td></tr>
+      <tr><td><b>Gamma API</b></td><td>Polymarket 公开数据 API（事件、市场、价格、元数据）</td></tr>
+      <tr><td><b>CLOB API</b></td><td>订单簿与交易 API（/book 拉盘口，签名下单）</td></tr>
+      <tr><td><b>pUSD / USDC</b></td><td>平台抵押结算代币（Polygon 上的美元稳定币体系）</td></tr>
+      <tr><td><b>Merge</b></td><td>1 Yes + 1 No → $1，套利的基础操作</td></tr>
+      <tr><td><b>Redeem</b></td><td>结算后把胜方股份兑回 USDC</td></tr>
+      <tr><td><b>Negative Risk</b></td><td>多选项事件「仅一个 Yes」的结构性关系，可打包卖空输家集合</td></tr>
+      <tr><td><b>Maker / Taker</b></td><td>挂单方（免费+返佣）/ 吃单方（付费）</td></tr>
+      <tr><td><b>DCM</b></td><td>Designated Contract Market，CFTC 指定的受监管合约市场</td></tr>
+      <tr><td><b>UMA Oracle</b></td><td>乐观预言机，市场结算事实的最终裁决机制</td></tr>
+      <tr><td><b>Mid Price</b></td><td>买卖价中点，盘口口径的「隐含概率」</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 4: 黄金石油机会 ══════════════════ -->
+<section class="tab-panel" id="alpha">
+  <div class="tldr"><b>TLDR：</b>商品区有 500+ 活跃市场，四层结构：月度阈值（流动性最好，单市场 $1M–5M）→ 周度 → 日内收盘阈值 → 日内 Up/Down（流动性最小但更新最快）。大佬的黄金/石油判断能力正好落在 LLM 实证最弱、人工专家最强的区间。打法上：<b>观点周期配市场周期、maker 挂单省费、单市场仓位以订单簿深度为天花板</b>。先小额跑通全流程，再谈规模。</div>
+
+  <div class="card">
+    <h3>市场版图：黄金/石油在 Polymarket 上长什么样 <span class="tag">2026-10 页面快照</span></h3>
+    <p class="desc">以下为 polymarket.com 商品区实时页面快照（2026-10-07 抓取，量级会漂移，下单前以实时盘口为准）。四层市场结构：</p>
+    <div class="chart-wrap" id="chartLiq"></div>
+    <p class="chart-note">头部市场（月度/长期）流动性 $1M–5M 量级；日内市场单只仅 $4K–9K，但每天滚动开新盘、全品类加总后日内总容量可观。</p>
+    <div class="grid2">
+      <div class="mini">
+        <h5>🏛 月度 / 长期阈值市场（容量最大）</h5>
+        <ul class="list">
+          <li><b>形态：</b>「GC 12 月底前触及 $4,500？」「WTI 10 月触及 $85？」——对标的未来区间做离散分档，每档一个市场</li>
+          <li><b>适合：</b>大佬的中期方向观点（数周到数月），对应期货/宏观研究的自然持仓周期</li>
+          <li><b>特点：</b>价格路径不敏感（「触及过」即可），对波动率有隐含敞口；临近到期分档价格重排剧烈</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>⏱ 周度 → 日内收盘 → Up/Down（容量递减、频率递增）</h5>
+        <ul class="list">
+          <li><b>周度：</b>「XAUUSD 本周触及 $4,100？」</li>
+          <li><b>日内收盘阈值：</b>「WTI 今日收于 $82 上方？」——对当日收盘价下注，数据发布日（CPI/FOMC/EIA）波动最大</li>
+          <li><b>Up/Down：</b>「黄金今日涨还是跌？」纯方向二元，最快结算（当日），适合事件驱动型短线</li>
+          <li><b>特点：</b>单个盘浅（$4K–44K），要容量就得横扫多个交易日盘口或做组合</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout ok"><b>还有一类跨资产市场值得注意：</b>「Bitcoin vs. Gold vs. S&P 500 in 2026」($940K vol)——比相对收益的多选项市场，正好是大佬「黄金 vs 风险资产」配置观点的直译载体。</div>
+  </div>
+
+  <div class="card">
+    <h3>大佬优势 → 四个具体打法</h3>
+    <div class="grid2">
+      <div class="mini">
+        <h5>打法 ①：中期观点的「离散化期权」变现（主力打法）</h5>
+        <p><b>逻辑：</b>把期货/宏观观点拆成阈值市场的组合。例如判断「金价 3 个月内冲 $4,500 概率被低估」：买 $4,500 档 Yes；同时若认为「跌破 $3,800 概率被高估」，买 $3,800 档的 No。多档组合逼近自定义收益曲线——<b>比场内期权便宜（无时间衰减结构差异、无 IV 定价黑箱），盈亏封顶清晰</b>。</p>
+        <p style="margin-top:6px"><b>为什么是优势：</b>定价这些档位需要真实的供需/宏观/持仓结构判断，恰恰是通用 LLM（论文实证）和散户都不擅长的。</p>
+      </div>
+      <div class="mini">
+        <h5>打法 ②：数据日事件交易（节奏最快）</h5>
+        <p><b>逻辑：</b>CPI、FOMC、EIA 原油库存、NFP 等发布日的日内收盘阈值 + Up/Down 市场，盘口在发布前对「意外方向」定价不稳。有数据解读和反应速度优势的团队，可以在发布窗口内修正仓位。</p>
+        <p style="margin-top:6px"><b>注意：</b>这是和全球低延迟机器人的贴身肉搏，只适合有数据源/速度优势的打法，且单盘容量小——快进快出，别恋战。</p>
+      </div>
+      <div class="mini">
+        <h5>打法 ③：尾部定价修正（赔率最高）</h5>
+        <p><b>逻辑：</b>头部市场常有极端定价，如「Crude Oil 创历史新高」曾报 10% Yes。若大佬的供给冲击模型认为尾部概率显著高于市价（地缘升级、OPEC+ 变盘），这就是便宜的多倍赔率彩票。<b>论文里 MiMo 的最大单笔收益全部来自低价小概率事件的正确判断</b>——尾部是预测市场超额收益的主要来源。</p>
+        <p style="margin-top:6px"><b>纪律：</b>这类仓位必须是「输光不心疼」的小额组合，靠覆盖数量取胜。</p>
+      </div>
+      <div class="mini">
+        <h5>打法 ④：Maker 挂单收返佣（最稳健的辅助线）</h5>
+        <p><b>逻辑：</b>在流动性最好的黄金/原油月度盘上双向挂单做市：赚价差 + 每日 Maker Rebates（费用池全部分给 maker），方向观点弱化、只赚流动性服务费。</p>
+        <p style="margin-top:6px"><b>风险：</b>逆向选择——数据日会被趋势单扫损。适合盘口宽、波动平稳的时段，配合大佬对「什么时候该撤单」的判断。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>仓位纪律：论文用真金白银验证过的三条红线</h3>
+    <div class="grid3">
+      <div class="mini">
+        <h5>红线 ①：单市场仓位 ≤ 盘口深度 5%–10%</h5>
+        <p>头部市场流动性 $40K–840K，理论合理单笔约 $2K–50K。论文实测：仓位过 $500 滑点开始显著吃掉优势，$1000 时头部模型利润被深度抹平。<b>Polymarket 不是期货，没有无限深度</b>——大资金必须拆市场、拆时段。</p>
+      </div>
+      <div class="mini">
+        <h5>红线 ②：吃单前先算费</h5>
+        <p>taker 费率平价处约 0.75%–1.75%，且 symmetric 结构下极端价格几乎免费。<b>小概率尾部票（打法③）费用可忽略；50¢ 附近的高频进出（打法②）费用是真成本</b>——优先挂 maker，或把进出安排在极端价格带。</p>
+      </div>
+      <div class="mini">
+        <h5>红线 ③：结算规则逐字读</h5>
+        <p>商品市场的结算源（COMEX/现货/平台指定源）、时区、截止时点、「触及」的定义（盘中最高 vs 结算价）每家不同。<b>期货大佬的常识在预测市场里可能差一个小数点</b>——下单前把 Rules 读一遍是强制动作。50-50 条款市场另有定价地板，别按纯二元思维报价。</p>
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><b>对手盘清醒剂：</b>Arbitrage bots 已在这个市场赚取数百万美元级利润（Yahoo Finance 2026-01 报道），Merge/跨市场纯套利空间基本被机器人吃干；LLM 分析 8600 万笔交易的研究显示 62% 的表面套利机会实际不赚钱。<b>大佬的可持续优势只在「需要真实商品认知的定价偏差」上，不要和机器人抢速度生意。</b></div>
+  </div>
+
+  <div class="card">
+    <h3>落地路线（建议节奏）</h3>
+    <ol class="steps">
+      <li><b>第 1 周 · 只读模式：</b>注册后不充值，把商品区四类市场各挑 3–5 个加自选，每天记录盘口变化 vs 自己的判断——免费验证「大佬直觉 vs 市场定价」的胜率。同时用 Gamma API 拉历史价格数据做复盘。</li>
+      <li><b>第 2–3 周 · 小额实盘：</b>解决合规与资金通道后，$500–1000 级别小资金跑打法①/③（月度阈值 + 尾部票），全程 maker 挂单练习，完整记录每笔的决策依据、费后收益、结算细节。</li>
+      <li><b>第 4 周+ · 系统化：</b>把有效判断模式写成 checklist 交给 AI 团队产品化（信号提醒 + 仓位计算器），逐步扩展到周度/日内市场。</li>
+    </ol>
+    <div class="callout danger"><b>重申前置条件：</b>大陆合规（出入金 + ToS 辖区）问题不解决前，只做只读研究模式。这一步无法绕过，也不应该绕过。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 5: AI 团队方案 ══════════════════ -->
+<section class="tab-panel" id="ai">
+  <div class="tldr"><b>TLDR：</b>AI 团队不该「调个通用 API 就下场交易」（5/7 模型亏损已证明此路不通），而应该做三件有积累价值的事：① <b>数据基础设施</b>——在 PolyBench 管线基础上加商品价格序列对齐，建成自有数据资产；② <b>校准训练</b>——用真实结算结果做 SFT/RL，专治「置信度虚高」这个全体模型的通病；③ <b>信号产品</b>——把模型输出包装成给大佬用的监控提醒。实验成本低到离谱（$2–12/模型/全量），可以高频迭代。</div>
+
+  <div class="card">
+    <h3>路线 ①：数据基础设施（两周可见成果，一切的地基）</h3>
+    <div class="grid2">
+      <div>
+        <h4>在 PolyBench 基础上扩展什么</h4>
+        <ul class="list">
+          <li><b>补它没有的：</b>PolyBench 快照只有订单簿+新闻，<b>没有价格序列</b>——对商品市场这是致命缺失（价格驱动题 LLM 全线亏损的根源之一）。扩展：对齐 GC/WTI/XAU 的分钟级 OHLCV、期货曲线、CFTC 持仓、库存数据（EIA）与市场快照。</li>
+          <li><b>补它没有的域：</b>专门盯商品区四层市场（月度/周度/日内阈值/UpDown），每天定时快照，形成自有时间序列数据库。</li>
+          <li><b>工程上直接复用：</b>它的 unified_batch 已解决采集/自愈/结算轮询全套脏活（7 类故障自动恢复），SQLite 单文件够用到百万行级。</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>为什么值得投入</h5>
+        <ul class="list">
+          <li><b>数据资产私有性：</b>「商品市场 × 价格序列 × 结算结果」的对齐数据集市面上没有现成品——既是论文素材又是产品壁垒</li>
+          <li><b>一次建成三线受益：</b>大佬复盘用、师弟实验用、模型训练用</li>
+          <li><b>成本极低：</b>公开 API（Gamma/CLOB 免费抓）+ 新闻抓取 + 交易所行情，无 GPU 需求，一台 Mac 即可起步</li>
+        </ul>
+        <p style="margin-top:8px;font-size:12.5px;color:var(--muted)">建议位置：work/ 下新建实验目录，step1 采集 / step2 对齐 / step3 入库，遵循项目 step 命名约定。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>路线 ②：校准与训练（差异化核心）</h3>
+    <p class="desc">论文实证的三大缺陷，每一个都对应一个可训练的修复点：</p>
+    <table class="tbl">
+      <tr><th>论文实证的缺陷</th><th>训练/工程修复方案</th><th>验证方式</th></tr>
+      <tr><td><b>置信度虚高</b>：全体模型自报 0.81–0.87，亏损域照样高信心</td><td>用 PolyBench 36,165 条已结算预测做 <b>置信度校准</b>：温度缩放/分位数映射做 baseline，再做 SFT（让模型学会输出「校准后的置信度」）</td><td>ECE（仓库 evaluate_mimo.py 已实现现成计算）、分桶可靠性图</td></tr>
+      <tr><td><b>不会弃权</b>：value_bet 占比 94–99%，什么都想做</td><td>训练 <b>Skip 策略头</b>：以「该题自己的历史胜率 × 盘口价差 × 领域」为特征学「何时不下注」；或直接调 confidence 门槛做敏感度曲线</td><td>同精度下 CWR 提升幅度；SKIP 率 vs 收益曲线</td></tr>
+      <tr><td><b>文本语感代替价格推理</b>：价格驱动域全面亏损</td><td><b>混合特征管线</b>：LLM 负责新闻/规则理解，量化特征（动量/波动率/距阈值距离/持仓变化）走独立分支，输出融合。领域路由器把政治题和商品题分流</td><td>商品子集上 混合 vs 纯 LLM 的 CWR 对比（这正是给大佬线的直接价值）</td></tr>
+      <tr><td>（进阶）策略标签乱贴</td><td>RL（如 GRPO）以<b>费后 CWR 为奖励</b>微调决策策略——「策略标签」从装饰变成真实优化目标</td><td>与 SFT-only 的对比消融</td></tr>
+    </table>
+    <div class="callout ok"><b>成本账：</b>推理侧全量评测一个模型 $1.34–11.5；训练侧，SFT 校准只需几万条样本 + LoRA 级算力（devcloud 现有资源足够起步）。实验迭代可以按「天」为周期。</div>
+  </div>
+
+  <div class="card">
+    <h3>路线 ③：信号产品（给大佬的直接交付物）</h3>
+    <div class="grid3">
+      <div class="mini">
+        <h5>📊 商品 × 预测市场监控台</h5>
+        <p>实时对比「大佬的自估价」vs「Polymarket 盘口隐含概率」，价差超阈值（如 15 个百分点）自动推送（飞书/邮件）。本质是把大佬的判断和市场的判断做成持续对账。</p>
+      </div>
+      <div class="mini">
+        <h5>🧮 仓位与费用计算器</h5>
+        <p>输入目标仓位 → 基于实时订单簿模拟吃单滑点（复用 evaluate_mimo.py 的 fill 模拟器）+ 计入 taker/maker 费率 → 输出建议拆单方案。论文滑点结论工程化。</p>
+      </div>
+      <div class="mini">
+        <h5>🔁 结算哨兵</h5>
+        <p>轮询持仓市场的结算状态 + 规则变更提醒 + 接近触发线预警（如金价距 $4,500 档还差 0.8%）。结算延迟和规则细节是最容易踩的坑，交给程序盯。</p>
+      </div>
+    </div>
+    <p class="desc" style="margin-top:10px">三个模块共享路线①的数据管线，前端按项目规范做成单文件深色 HTML 即可快速出原型。先服务大佬的真实决策流程打磨，再考虑对外。</p>
+  </div>
+
+  <div class="card">
+    <h3>30 天启动排期（AI 团队视角）</h3>
+    <div class="check"><div class="box"></div><div><b>Week 1：</b>复跑 PolyBench（下载数据库 + 任选 2 模型），跑通 evaluate_mimo.py 全流程，本地复现论文 Table 5 数字 → 确认理解无偏差</div><span class="when">D1–7</span></div>
+    <div class="check"><div class="box"></div><div><b>Week 1 并行：</b>启动自有快照采集器（商品区定向），Gamma API 免费抓，先攒两周时间序列</div><span class="when">D1–7</span></div>
+    <div class="check"><div class="box"></div><div><b>Week 2：</b>置信度校准 baseline（温度缩放/分位映射，用已发布预测数据，零推理成本）；ECE 改善量化</div><span class="when">D8–14</span></div>
+    <div class="check"><div class="box"></div><div><b>Week 3：</b>商品子集混合特征管线 v1（动量+距阈值+波动率 3 个特征起步），对比纯 LLM 的 CWR 差异</div><span class="when">D15–21</span></div>
+    <div class="check"><div class="box"></div><div><b>Week 4：</b>监控台 v1 交付大佬试用；校准/混合管线的实验数据同步给师弟论文线</div><span class="when">D22–30</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 6: 发 Paper 方向 ══════════════════ -->
+<section class="tab-panel" id="paper">
+  <div class="tldr"><b>TLDR：</b>「LLM × 预测市场」赛道正热：Halawi et al.（NeurIPS'24）、Prophet Arena、LiveTradeBench、FutureX、PolyBench 全是近两年工作，但<b>所有工作都停在「单快照、一锤子买卖、taker 吃单」的范式</b>。师弟的差异化空间在范式之外：序列化持仓、商品价格混合代理、校准与弃权、maker 做市、多模型集成。其中选题 B（商品混合代理）与本组大佬资源绑定最深，是最有辨识度的方向；选题 E（集成研究）零成本可先行，适合快速出第一篇。</div>
+
+  <div class="card">
+    <h3>研究版图：谁做了什么，缺口在哪</h3>
+    <table class="tbl">
+      <tr><th>工作</th><th>规模</th><th>订单簿</th><th>新闻</th><th>收益评估</th><th>范式局限（= 我们的缺口）</th></tr>
+      <tr><td><a href="https://arxiv.org/abs/2604.14199" target="_blank">PolyBench (2026-04)</a></td><td>38,666 市场</td><td>✓</td><td>✓</td><td>✓ CWR</td><td>单快照一次决策；只模拟 taker 吃单；置信度未校准</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2412.14211" target="_blank">Halawi et al. (NeurIPS'24)</a></td><td>48,754 市场</td><td>✗</td><td>✓</td><td>✗</td><td>纯文本概率估计，无交易执行层</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2510.17638" target="_blank">Prophet Arena</a></td><td>1,367 市场</td><td>✗</td><td>✓</td><td>部分</td><td>只评预测瓶颈，无订单簿微观结构</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2511.03628" target="_blank">LiveTradeBench</a></td><td>10 市场</td><td>✓</td><td>✓</td><td>✗</td><td>规模太小，统计功效不足</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2508.11987" target="_blank">FutureX</a></td><td>live</td><td>✗</td><td>✓</td><td>✗</td><td>面向未来预测的 live 评测，无财务执行</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2409.19839" target="_blank">ForecastBench</a></td><td>动态</td><td>✗</td><td>✓</td><td>✗</td><td>动态题库 but 无市场机制</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2508.xxxxx" target="_blank">Saguillo et al. (套利)</a></td><td>理论+实证</td><td>—</td><td>—</td><td>—</td><td>预测市场套利结构的经济学分析（可引用的机制素材）</td></tr>
+    </table>
+    <p class="chart-note">清晰的结构洞：<b>「时间维度」（序列决策）、「价格维度」（量化特征融合）、「执行维度」（maker/taker 与费用）、「集体维度」（多模型协作）四个轴上都有人只做了 0 或 1 格。</b></p>
+  </div>
+
+  <div class="card">
+    <h3>五个可执行选题（按与本组资源契合度排序）</h3>
+
+    <div class="mini" style="margin-bottom:14px;border-left:3px solid var(--brand)">
+      <h5>选题 A：From One-Shot to Sequential——预测市场 LLM 代理的序列化持仓管理 <span class="pill info">推荐 · 范式级创新</span></h5>
+      <p><b>动机：</b>现有全部 benchmark 让模型在单一快照上做一次决策。真实交易是「建仓 → 加减仓 → 止损 → 移仓」的序列过程，中间还有新信息到达。这个范式空缺是领域级缺口。</p>
+      <p><b>做法：</b>扩展 PolyBench 采集器为「逐日/逐小时重复快照同一批市场」，构造 (t₁, t₂, …, tₖ) 决策轨迹；让模型看到自己此前的持仓与浮盈，评测：动态加减仓 vs 一次性的收益差、止损纪律的价值、信息到达后的 belief revision 质量。</p>
+      <p><b>数据：</b>自建采集器（与 AI 团队路线①共用）；PolyBench 现有 26,784 个活跃市场是现成标的池。</p>
+      <p><b>投稿定位：</b>NeurIPS Datasets & Benchmarks / ICML。故事完整性高，工程量中等。</p>
+    </div>
+
+    <div class="mini" style="margin-bottom:14px;border-left:3px solid var(--brand)">
+      <h5>选题 B：Commodity Copilot——价格序列 + LLM 混合代理在商品预测市场 <span class="pill good">本组独家优势</span></h5>
+      <p><b>动机：</b>PolyBench 实证 LLM 在价格驱动域（Crypto）全面亏损——因为快照里根本没有价格序列，模型只能靠文本语感猜。商品市场（黄金/石油）同理且更极端：定价阈值市场需要波动率、动量、距阈值距离这些量化特征，任何纯文本方法都不可能做好。</p>
+      <p><b>做法：</b>构建「商品预测市场子基准」（月度/周度/日内阈值 + UpDown 四层市场 × 对齐的 OHLCV/期货曲线/库存数据）；系统消融：纯 LLM / 纯量化特征 / 混合融合 / 领域路由器，四个 arm 在 CWR 上对比。<b>大佬的领域知识可以直接变成特征工程与 case study</b>（为什么这个档位被错定价——真人专家解读，审稿人最买账的部分）。</p>
+      <p><b>独占性：</b>「黄金/石油专家 + 数据管线 + LLM 实验」三要素齐备的组极少，这是本组能在简介里写「unique resources」的选题。</p>
+      <p><b>投稿定位：</b>ACL/EMNLP（推理+金融交叉）或 ICAIF（AI 金融会议，气质完全对口）。</p>
+    </div>
+
+    <div class="mini" style="margin-bottom:14px">
+      <h5>选题 C：Know When to Hold——置信度校准与弃权策略的交易价值 <span class="pill vio">低成本快startup</span></h5>
+      <p><b>动机：</b>论文发现「全体模型置信度 0.81–0.87 但 5/7 亏损」「CWR &gt; Non-CWR 说明置信度有信号但没用好」——校准这个被所有预测市场 benchmark 忽视的轴，直接连着钱。</p>
+      <p><b>做法：</b>在 PolyBench 36,165 条已结算预测上（公开可下载，零 API 成本）：① 后验校准方法横评（温度缩放/Isotonic/分位数回归）；② 校准前后 CWR 差异量化「校准的交易价值」；③ 学习型 Skip 策略（何时不下注）与固定阈值的对比；④ 分域校准（政治 vs 价格域应不同对待）。</p>
+      <p><b>优势：</b>纯公开数据 + 分析型论文，2–3 个月可完稿，适合作为师弟的第一篇练手 + 摸清赛道。</p>
+    </div>
+
+    <div class="mini" style="margin-bottom:14px">
+      <h5>选题 D：The Maker's Edge——预测市场 CLOB 上的做市策略 <span class="pill warn">执行维度创新</span></h5>
+      <p><b>动机：</b>Polymarket 费制改革后「maker 免费 + 每日返佣、taker 付费」的不对称结构，而 PolyBench 只模拟了 taker 吃单。做市在预测市场的学术研究几乎空白（现有做市文献都在股票/加密现货）。</p>
+      <p><b>做法：</b>基于 PolyBench 留存的订单簿快照做模拟报价：不同报价宽度/库存控制策略的收益（价差 + 返佣 − 逆向选择损失）；「数据日」（结算临近、高波动时段）的撤单纪律。若能配合小额实盘验证更佳。</p>
+      <p><b>风险：</b>快照只有 top5 档且非全历史，做市模拟保真度受限——需要在论文里诚实处理 limitation，或用自建高频快照补强。</p>
+    </div>
+
+    <div class="mini">
+      <h5>选题 E：Wisdom of the Models——多模型集成与分歧信号 <span class="pill info">零成本 · 可立即启动</span></h5>
+      <p><b>动机：</b>PolyBench 发布了 7 个模型对同一批 5,097 题的预测（36,165 条）——一份现成的「多模型×同题×有结算」平行语料。没人系统研究过：集成能否跑赢最优单模型？模型间分歧度能否当不确定性信号用（分歧大 → 弃权）？</p>
+      <p><b>做法：</b>多数投票 / 置信度加权集成 / Stacking 三种集成 vs 最优单模型（MiMo 17.6%）；分歧度-正确率关系曲线；「分歧门控」对 CWR 的提升。加一个「领域分化」分析（政治域集成有效、价格域无效的机理）。</p>
+      <p><b>优势：</b>零 API 成本、数据现成、工作量最小；缺点是创新深度有限——适合与选题 C 合并成一篇，或作为选题 B 的前置章节。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>给师弟的执行建议</h3>
+    <div class="grid2">
+      <div>
+        <ul class="list">
+          <li><b>节奏建议（以一年为期）：</b>前 3 个月做选题 C+E（公开数据、分析型、快速产出第一篇 workshop/短文，摸清审稿口味）→ 同期 AI 团队数据管线成熟后启动选题 B（主攻，目标 ICAIF/ACL 主会）→ 选题 A 作为下一篇的 benchmark 贡献延续。</li>
+          <li><b>复现先行：</b>所有选题第一步都是复跑 PolyBench（下载数据库 + 复现 Table 5），既确认数据理解，也天然成为论文的 baseline 部分。</li>
+          <li><b>引用纪律：</b>赛道新且热，Related Work 每月都有新 arXiv——写作前重新扫一遍 arXiv cs.AI/q-fin 确认选题未被抢发（尤其 Prophet Arena 团队迭代很快）。</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h5>三条红线（从 PolyBench 本身学到的）</h5>
+        <ul class="list">
+          <li><b>别只报 Accuracy：</b>这个赛道的审稿人最关心「赚不赚钱」——CWR/费后收益是必备指标，accuracy-only 会被打回。</li>
+          <li><b>滑点必须模拟：</b>任何收益结论都要在订单簿上成交验证，mid-price 假设成交会被质疑（论文 Figure 3 就是审稿人最爱问的问题的答案）。</li>
+          <li><b>时间锁定声明：</b>所有实验数据注明快照时间窗与知识截止日期关系，防污染是这类论文的合法性来源，也是审稿人必查项。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 7: 行动清单 ══════════════════ -->
+<section class="tab-panel" id="action">
+  <div class="tldr"><b>TLDR：</b>三线并行但共享地基：第 1 周所有人共用的动作是「复跑 PolyBench + 建自有商品快照采集器」。合规调研（大佬线前置）与数据管线（AI/论文线地基）互不阻塞，可以同周启动。</div>
+
+  <div class="card">
+    <h3>三线 30 天行动清单</h3>
+    <h4>💰 大佬线（黄金/石油）</h4>
+    <div class="check"><div class="box"></div><div><b>合规调研先行：</b>确认出入金通道与 ToS 辖区问题（只读模式不受影响，可立即开始观察市场）</div><span class="when">D1–7</span></div>
+    <div class="check"><div class="box"></div><div><b>只读观察期：</b>商品区四类市场各选 3–5 个每日记录盘口 vs 自身判断，积累「直觉 vs 定价」胜率底表</div><span class="when">D1–14</span></div>
+    <div class="check"><div class="box"></div><div><b>小额实盘：</b>合规打通后 $500–1000 跑月度阈值 + 尾部票，全程 maker 挂单，逐笔记录费后收益</div><span class="when">D15–30</span></div>
+    <div class="check"><div class="box"></div><div><b>输出给 AI 线：</b>把判断逻辑口述成文档（什么信号 → 什么方向 → 多大把握），供特征工程使用</div><span class="when">D15–30</span></div>
+    <h4 style="margin-top:16px">🤖 AI 团队线</h4>
+    <div class="check"><div class="box"></div><div><b>复跑 PolyBench：</b>uv 环境 + 下载数据库 + 2 个模型复现 Table 5（本地校验 pipeline 理解）</div><span class="when">D1–7</span></div>
+    <div class="check"><div class="box"></div><div><b>启动自有采集器：</b>商品区定向快照（含 OHLCV 对齐），work/ 新实验目录按 step1/2/3 组织</div><span class="when">D1–7 并行</span></div>
+    <div class="check"><div class="box"></div><div><b>校准 baseline：</b>温度缩放/分位映射在 36,165 条公开预测上跑通，量化 ECE 与 CWR 关系</div><span class="when">D8–14</span></div>
+    <div class="check"><div class="box"></div><div><b>混合特征 v1：</b>商品子集上动量+距阈值+波动率三特征融合实验，对比纯 LLM</div><span class="when">D15–21</span></div>
+    <div class="check"><div class="box"></div><div><b>监控台 v1：</b>价差提醒 + 仓位计算器交付大佬试用</div><span class="when">D22–30</span></div>
+    <h4 style="margin-top:16px">📄 论文线（师弟）</h4>
+    <div class="check"><div class="box"></div><div><b>精读 + 复现：</b>PolyBench 论文精读，跑通评估管线（复现数字 = 论文 baseline 素材）</div><span class="when">D1–7</span></div>
+    <div class="check"><div class="box"></div><div><b>选题 C+E 启动：</b>校准与集成分析（公开数据零成本），产出第一版实验报告</div><span class="when">D8–21</span></div>
+    <div class="check"><div class="box"></div><div><b>arXiv 扫雷：</b>确认 C+E 组合方向未被抢发；建立赛道论文追踪（每周扫 cs.AI/q-fin）</div><span class="when">D8 起</span></div>
+    <div class="check"><div class="box"></div><div><b>选题 B 立项书：</b>商品子基准 + 混合代理的实验设计文档，对接 AI 团队数据管线排期</div><span class="when">D22–30</span></div>
+  </div>
+
+  <div class="card">
+    <h3>本周就能做的三件小事（今天开始）</h3>
+    <ol class="steps">
+      <li><b>下载 PolyBench 数据库</b>（README 的 OneDrive 链接，约 2GB 内），本地用 <code class="inline">scripts/db_cli.py</code> 逛一逛真实数据长什么样——所有后续工作的质感都来自对数据的熟悉。</li>
+      <li><b>注册 Polymarket 只读账号</b>，把商品区加进自选，每天花 10 分钟看盘口——免费积累市场感觉。</li>
+      <li><b>约一次三方对齐会</b>：大佬讲一遍「黄金定价的关键变量」，AI 团队翻译成特征清单，师弟确认实验设计——这个会开完，三条线的接口就定下来了。</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ 页脚 ═══ -->
+<footer>
+  <div class="foot-card">
+    <b style="color:var(--fg)">数据与来源（全部真实可溯）</b>
+    <div class="src-grid">
+      <div>
+        <a href="https://arxiv.org/abs/2604.14199" target="_blank">PolyBench 论文 · arXiv:2604.14199（2026-04-03）</a>
+        <a href="https://github.com/NostalgiaJohn/PolyBench" target="_blank">PolyBench 官方仓库（本报告已克隆至 assets/input/repos/）</a>
+        <a href="https://docs.polymarket.com/cn/polymarket-101" target="_blank">Polymarket 官方文档 · Polymarket 101（中文）</a>
+        <a href="https://help.polymarket.com/en/articles/13364478-trading-fees" target="_blank">Polymarket Help Center · Trading Fees（费率公式）</a>
+        <a href="https://docs.polymarket.com/concepts/negative-risk" target="_blank">Polymarket Docs · Negative Risk 机制</a>
+      </div>
+      <div>
+        <a href="https://polymarket.com/predictions/commodities" target="_blank">Polymarket 商品区实时页面（本报告 2026-10-07 快照数据源）</a>
+        <a href="https://docs.polymarket.us/fees" target="_blank">Polymarket US 费率表（CFTC 监管站点）</a>
+        <a href="https://www.prnewswire.com/news-releases/polymarket-receives-cftc-approval-of-amended-order-of-designation-enabling-intermediated-us-market-access-302625833.html" target="_blank">CFTC 批准修订指定令（2025-11-25）</a>
+        <a href="https://www.theguardian.com/business/2026/apr/02/energy-traders-polymarket-prediction-datafeeds-global-oil-market" target="_blank">The Guardian · 能源交易员将 Polymarket 用于石油交易（2026-04）</a>
+        <a href="https://finance.yahoo.com/news/arbitrage-bots-dominate-polymarket-millions-100000888.html" target="_blank">Yahoo Finance · 套利机器人主导 Polymarket（2026-01）</a>
+      </div>
+    </div>
+    <p style="margin-top:12px">制作说明：论文全文、源码（2,741 行核心代码逐文件研读）、官方文档、实时市场快照四路交叉验证；图表数据全部来自论文 Table 3/4/5/6 与页面快照，无任何虚构数值。商品市场量级数据为快照时点值，实盘前请以实时盘口为准。本报告不构成投资建议；涉及中国大陆用户的合规风险提示见「Polymarket 入门」Tab。</p>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ═══════════ 主题切换 ═══════════
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('pm-theme',t);
+  document.getElementById('themeIcon').textContent = t==='dark' ? '☀️' : '🌙';
+  document.getElementById('themeText').textContent = t==='dark' ? '浅色' : '深色';
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  applyTheme(cur==='dark'?'light':'dark');
+}
+applyTheme(localStorage.getItem('pm-theme')||'dark');
+
+// ═══════════ Tab 切换（支持 #id 深链）═══════════
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById(id);
+  if(panel){panel.classList.add('active');}
+  const btn=document.querySelector(`.tab-btn[data-tab="${id}"]`);
+  if(btn){btn.classList.add('active');}
+  if(location.hash!=='#'+id){history.replaceState(null,'','#'+id);}
+}
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>switchTab(b.dataset.tab));
+});
+const initialHash=location.hash.replace('#','');
+if(initialHash && document.getElementById(initialHash)){switchTab(initialHash);}
+
+// ═══════════ Tooltip ═══════════
+const tip=document.getElementById('tooltip');
+function showTip(html,ev){
+  tip.innerHTML=html;tip.classList.add('show');
+  moveTip(ev);
+}
+function moveTip(ev){
+  const pad=14;
+  let x=ev.clientX+pad,y=ev.clientY+pad;
+  const r=tip.getBoundingClientRect();
+  if(x+r.width>window.innerWidth-8)x=ev.clientX-r.width-pad;
+  if(y+r.height>window.innerHeight-8)y=ev.clientY-r.height-pad;
+  tip.style.left=x+'px';tip.style.top=y+'px';
+}
+function hideTip(){tip.classList.remove('show');}
+
+// ═══════════ 通用水平条形图（支持正负零轴）═══════════
+// rows: [{label, value, cls, tip}]
+function renderHBars(elId,rows,opts){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const o=Object.assign({width:760,rowH:34,labelW:150,rightPad:96,fmt:v=>v,zeroLine:false,unit:''},opts||{});
+  const n=rows.length;
+  const H=n*o.rowH+16,W=o.width;
+  const plotL=o.labelW, plotR=W-o.rightPad;
+  let vmin=Math.min(0,...rows.map(r=>r.value));
+  let vmax=Math.max(0,...rows.map(r=>r.value));
+  if(!o.zeroLine){vmin=Math.min(vmin,...rows.map(r=>r.value));vmax=Math.max(vmax,...rows.map(r=>r.value));}
+  const span=vmax-vmin||1;
+  const padSpan=span*0.12;
+  vmin-=padSpan;vmax+=padSpan;
+  const X=v=>plotL+(v-vmin)/(vmax-vmin)*(plotR-plotL);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  // 网格与刻度
+  const ticks=niceTicks(vmin,vmax,5);
+  for(const t of ticks){
+    const x=X(t);
+    s+=`<line class="gridline" x1="${x}" y1="4" x2="${x}" y2="${H-8}"/>`;
+    s+=`<text class="svg-ax" x="${x}" y="${H-1}" text-anchor="middle">${fmtTick(t)}</text>`;
+  }
+  // 零轴
+  const x0=X(Math.max(vmin,Math.min(vmax,0)));
+  s+=`<line class="axisline" x1="${x0}" y1="4" x2="${x0}" y2="${H-14}" stroke-width="1.5"/>`;
+  rows.forEach((r,i)=>{
+    const y=8+i*o.rowH;
+    const cy=y+o.rowH/2-6;
+    s+=`<text class="svg-lab" x="${plotL-10}" y="${cy+4}" text-anchor="end">${r.label}</text>`;
+    const xv=X(r.value);
+    const bx=Math.min(x0,xv),bw=Math.max(Math.abs(xv-x0),2);
+    s+=`<rect class="bar ${r.cls||'c1'}" x="${bx}" y="${cy}" width="${bw}" height="16" rx="4"/>`;
+    // 数值标签（柱外侧）
+    const isPos=r.value>=0;
+    const lx=isPos?xv+6:xv-6;
+    s+=`<text class="svg-val" x="${lx}" y="${cy+12}" text-anchor="${isPos?'start':'end'}">${o.fmt(r.value)}</text>`;
+    // 命中区
+    s+=`<rect class="hit" data-tip="${encodeURIComponent(r.tip||'')}" x="0" y="${y}" width="${W}" height="${o.rowH}"/>`;
+  });
+  s+='</svg>';
+  el.innerHTML=s;
+  el.querySelectorAll('.hit').forEach(h=>{
+    h.addEventListener('mouseenter',ev=>showTip(decodeURIComponent(h.dataset.tip),ev));
+    h.addEventListener('mousemove',moveTip);
+    h.addEventListener('mouseleave',hideTip);
+  });
+}
+function niceTicks(min,max,n){
+  const raw=(max-min)/n;
+  const mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  const norm=raw/mag;
+  const step=(norm<1.5?1:norm<3?2:norm<7?5:10)*mag;
+  const t=[];let v=Math.ceil(min/step)*step;
+  while(v<=max){t.push(v);v+=step;}
+  return t;
+}
+function fmtTick(v){return (Math.round(v*100)/100).toString().replace('-','−');}
+
+// ═══════════ 图表数据（论文 Table 5）═══════════
+const models=[
+  {name:'MiMo-V2-Flash',acc:62.1,conf:0.859,nonCwr:11.1,cwr:17.6,apy:'4067.3%',sharpe:'0.02',cost:'$1.72'},
+  {name:'Gemini-3-Flash',acc:75.0,conf:0.855,nonCwr:4.1,cwr:6.2,apy:'1486.5%',sharpe:'0.01',cost:'$11.50'},
+  {name:'Trinity-Large',acc:42.7,conf:0.871,nonCwr:-12.4,cwr:-9.2,apy:'−4527.8%',sharpe:'−0.02',cost:'Free'},
+  {name:'DeepSeek-V3.2',acc:53.5,conf:0.838,nonCwr:-15.3,cwr:-11.4,apy:'−5571.8%',sharpe:'−0.03',cost:'$3.32'},
+  {name:'Grok-4.1-Fast',acc:59.1,conf:0.862,nonCwr:-15.9,cwr:-12.1,apy:'−5820.4%',sharpe:'−0.17',cost:'$6.85'},
+  {name:'GPT-OSS-120B',acc:58.0,conf:0.836,nonCwr:-19.4,cwr:-17.8,apy:'−7075.8%',sharpe:'−0.22',cost:'$1.34'},
+  {name:'MiniMax-M2.5',acc:42.6,conf:0.808,nonCwr:-26.1,cwr:-25.2,apy:'−9537.2%',sharpe:'−0.22',cost:'$8.43'},
+];
+const tipFor=m=>`<div class="tt-title">${m.name}</div>
+<div class="tt-row"><span>Accuracy</span><b>${m.acc}%</b></div>
+<div class="tt-row"><span>Avg Confidence</span><b>${m.conf}</b></div>
+<div class="tt-row"><span>Non-CWR</span><b>${m.nonCwr>0?'+':''}${m.nonCwr}%</b></div>
+<div class="tt-row"><span>CWR</span><b>${m.cwr>0?'+':''}${m.cwr}%</b></div>
+<div class="tt-row"><span>APY</span><b>${m.apy}</b></div>
+<div class="tt-row"><span>Sharpe</span><b>${m.sharpe}</b></div>`;
+
+renderHBars('chartCWR',models.map(m=>({
+  label:m.name,value:m.cwr,cls:m.cwr>=0?'okc':'badc',tip:tipFor(m)
+})),{fmt:v=>(v>0?'+':'−')+Math.abs(v)+'%',zeroLine:true,width:780});
+
+// ═══════════ 散点图：Accuracy vs CWR ═══════════
+function renderScatter(elId,pts,opts){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const o=Object.assign({width:460,height:360,padL:56,padR:60,padT:24,padB:40},opts||{});
+  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+  let xmin=Math.min(...xs)-6,xmax=Math.max(...xs)+6;
+  let ymin=Math.min(...ys)-6,ymax=Math.max(...ys)+6;
+  const X=v=>o.padL+(v-xmin)/(xmax-xmin)*(o.width-o.padL-o.padR);
+  const Y=v=>o.height-o.padB-(v-ymin)/(ymax-ymin)*(o.height-o.padB-o.padT);
+  let s=`<svg viewBox="0 0 ${o.width} ${o.height}" role="img">`;
+  for(const t of niceTicks(ymin,ymax,5)){
+    s+=`<line class="gridline" x1="${o.padL}" y1="${Y(t)}" x2="${o.width-o.padR}" y2="${Y(t)}"/>`;
+    s+=`<text class="svg-ax" x="${o.padL-6}" y="${Y(t)+4}" text-anchor="end">${fmtTick(t)}%</text>`;
+  }
+  for(const t of niceTicks(xmin,xmax,5)){
+    s+=`<text class="svg-ax" x="${X(t)}" y="${o.height-o.padB+16}" text-anchor="middle">${fmtTick(t)}%</text>`;
+  }
+  // 轴
+  s+=`<line class="axisline" x1="${o.padL}" y1="${Y(0)}" x2="${o.width-o.padR}" y2="${Y(0)}" stroke-width="1.5"/>`;
+  s+=`<line class="axisline" x1="${X(50)}" y1="${o.padT}" x2="${X(50)}" y2="${o.height-o.padB}" stroke-dasharray="4 4" opacity="0.5"/>`;
+  s+=`<text class="svg-ax" x="${X(50)+4}" y="${o.padT+10}">Acc 50%</text>`;
+  s+=`<text class="svg-ax" x="${(o.padL+o.width-o.padR)/2}" y="${o.height-6}" text-anchor="middle">Accuracy（方向正确率）</text>`;
+  s+=`<text class="svg-ax" x="10" y="${o.padT+4}">CWR</text>`;
+  pts.forEach(p=>{
+    s+=`<circle class="dot ${p.cls}" cx="${X(p.x)}" cy="${Y(p.y)}" r="6"/>`;
+    // 标签防重叠：右侧点标签放左，左侧点标签放右；近距点用自定义偏移错开
+    const left=p.x>xmax-14;
+    const dx=p.ldx!==undefined?p.ldx:(left?-9:9);
+    const dy=p.ldy!==undefined?p.ldy:-8;
+    s+=`<text class="svg-lab" x="${X(p.x)+dx}" y="${Y(p.y)+dy}" text-anchor="${p.la||(left?'end':'start')}">${p.name}</text>`;
+    s+=`<rect class="hit" data-tip="${encodeURIComponent(p.tip)}" x="${X(p.x)-14}" y="${Y(p.y)-14}" width="28" height="28"/>`;
+  });
+  s+='</svg>';
+  el.innerHTML=s;
+  el.querySelectorAll('.hit').forEach(h=>{
+    h.addEventListener('mouseenter',ev=>showTip(decodeURIComponent(h.dataset.tip),ev));
+    h.addEventListener('mousemove',moveTip);
+    h.addEventListener('mouseleave',hideTip);
+  });
+}
+renderScatter('chartScatter',models.map(m=>({
+  x:m.acc,y:m.cwr,name:m.name,cls:m.cwr>=0?'c1':'c2',tip:tipFor(m),
+  // 近距点手动错位：DeepSeek(53.5,-11.4) 与 Grok(59.1,-12.1) 标签上下错开
+  ldx:m.name==='DeepSeek-V3.2'?9:(m.name==='Grok-4.1-Fast'?9:undefined),
+  ldy:m.name==='DeepSeek-V3.2'?18:(m.name==='Grok-4.1-Fast'?-10:undefined)
+})));
+// 散点图例
+document.getElementById('chartScatter').insertAdjacentHTML('beforebegin',
+  '<div class="legend"><span><span class="sw c1"></span>正收益模型</span><span><span class="sw c2"></span>负收益模型</span></div>');
+
+// ═══════════ 成本条形图 ═══════════
+renderHBars('chartCost',models.map(m=>({
+  label:m.name,value:m.cost==='Free'?0.01:parseFloat(m.cost.replace('$','')),
+  cls:'c3',tip:`<div class="tt-title">${m.name}</div><div class="tt-row"><span>成本 / 5,097 题</span><b>${m.cost}</b></div>`
+})).sort((a,b)=>a.value-b.value),{fmt:v=>v<0.05?'Free':'$'+v.toFixed(2),width:440,labelW:130,rightPad:64});
+
+// ═══════════ 快照覆盖 meter ═══════════
+(function(){
+  const el=document.getElementById('chartCoverage');
+  if(!el)return;
+  const items=[
+    {name:'带新闻上下文',num:'35,436 / 38,666',pct:91.6},
+    {name:'带订单簿快照',num:'19,012 / 38,666',pct:49.2},
+    {name:'可预测子集（评测用）',num:'5,097 / 38,666',pct:13.2},
+  ];
+  el.innerHTML=items.map(it=>`
+    <div class="meter-row">
+      <div class="name">${it.name}</div>
+      <div class="track"><div class="fill" style="width:${it.pct}%"></div></div>
+      <div class="val">${it.pct}% · ${it.num}</div>
+    </div>`).join('');
+})();
+
+// ═══════════ 商品市场流动性条形图（2026-10-07 页面快照）═══════════
+(function(){
+  const el=document.getElementById('chartLiq');
+  if(!el)return;
+  const groups=[
+    {title:'🏛 月度 / 长期市场（成交额 USD）',rows:[
+      {label:'Crude Oil 历史新高?',v:5000000,note:'Yes 仅 10% · 流动性 $164K'},
+      {label:'GC 黄金 12月底触$4500',v:2000000,note:'Yes 99% · 流动性 $497K'},
+      {label:'WTI 原油10月触$85',v:1000000,note:'「↓$85」65% · 流动性 $840K'},
+      {label:'BTC vs 黄金 vs SPX',v:940000,note:'S&P 500 64% · 流动性 $40K'},
+      {label:'XAU 黄金10月触$4100',v:125000,note:'流动性 $218K'},
+      {label:'XAG 白银10月触$58',v:85200,note:'「↓$58」77% · 流动性 $176K'},
+    ]},
+    {title:'⏱ 周度 / 日内市场（成交额 USD）',rows:[
+      {label:'WTI 本周触$95',v:12100,note:'24% · 流动性 $44.3K'},
+      {label:'WTI 今日收于$82上方',v:8800,note:'100% · 流动性 $41.4K'},
+      {label:'WTI 今日涨跌',v:5200,note:'Up 75% · 流动性 $18.2K'},
+      {label:'黄金今日涨跌',v:4200,note:'Up 3% · 流动性 $11.5K'},
+      {label:'白银今日涨跌',v:4200,note:'Up 3% · 流动性 $11.4K'},
+      {label:'天然气今日涨跌',v:371,note:'Up 77% · 流动性 $39'},
+    ]},
+  ];
+  let html='';
+  groups.forEach(g=>{
+    html+=`<h4>${g.title}</h4>`;
+    const maxV=Math.max(...g.rows.map(r=>r.v));
+    g.rows.forEach(r=>{
+      const pct=Math.max(r.v/maxV*100,1.2);
+      const vStr=r.v>=1000000?'$'+(r.v/1000000).toFixed(1)+'M':r.v>=1000?'$'+(r.v/1000).toFixed(1)+'K':'$'+r.v;
+      html+=`
+      <div class="meter-row">
+        <div class="name" style="width:210px">${r.label}</div>
+        <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+        <div class="val" style="width:220px">${vStr} · ${r.note}</div>
+      </div>`;
+    });
+  });
+  html+='<p class="chart-note">快照时间 2026-10-07（polymarket.com 商品区页面），成交额与流动性为快照时点值。同日内多个 Up/Down 盘滚动开设，全品类加总的日内容量远大于单盘。</p>';
+  el.innerHTML=html;
+})();
+</script>
+</body>
+</html>
