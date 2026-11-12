@@ -9,7 +9,7 @@ topic: "13_base_model"
 status: reading
 html_tabs: true
 created: 2026-11-10
-updated: 2026-11-10
+updated: 2026-11-12
 ---
 
 # Claude Fable 5.2 / Mythos 5.2：同一底座，两种访问与安全策略
@@ -85,7 +85,14 @@ updated: 2026-11-10
 > [!tldr]
 > 千Agent案例是大规模harness实验，不能当成单次模型调用。能力与约束应分开测量：任务完成、工具副作用、成本和安全回退都要留轨迹。
 
+> [!warning] 11月11日官方实验输入更正（11月12日复核）
+> 11月11日官方更正补充：输入包含60条陈述、经典路线的一句概述、相关定义、此前形式化的47条已证引理，并预设1名lead与999名helper。不能据旧文概括为无数学参考、零先验或完全自主证明。
+
 **Fermat形式化案例。** 官方运行1000个Agent约30小时，Fable完成既有Fermat证明的Lean形式化；Opus完成度18小时0.26、30小时0.27。每模型只有一次run，18小时checkpoint续跑12小时。它展示长程协作与形式验证潜力，不代表发现新的Fermat定理，也不是单会话、单模型token成本已知的比较。
+
+配套官方工程博客[S3]将完成时间写为28.7小时，发布页以约30小时概述；两者不是不同模型发布。实验提供独立沙箱、Lean/Mathlib、Git与共享SQL，lead收到19次自动时间提醒。1000个Agent也不是单机并发：单机约100个Agent时已有资源耗尽，最终采用独立轻量虚拟机。应把初始化知识、任务分解、工具与总算力纳入比较条件。
+
+还需区分当次配置与后续监控改进：本次run仅用action-based实时监控，lead被拦会停全队，helper被拦仅移除该helper；并行CoT监控是之后增加的。54/60陈述完成不表示其余六条都是失败，五条替代路线不再需要，另有一条被放弃。没有读取原始完整轨迹或独立复测，不能用单次演示推断可重复成功率。
 
 ![官方Lean完成度曲线](src/assets/fermat-s-last-theorem-proof-formalization-completion-over-time.png)
 
@@ -112,6 +119,7 @@ Fable对被拦的网络请求可回退Opus4.8，生物请求可回退Opus5。博
 ### 一手来源与关联
 
 - [S1 Tech Blog：Claude Fable / Mythos5.2](https://www.anthropic.com/claude-fable-and-mythos-5-2)，原始HTML、可读原文、表格和五张官方PNG在 `src/`。
+- [S3 官方工程博客：千Agent协作与输入条件](https://claude.dev/blog/safely-scaling-multi-agent-teams-with-fable-5-2/)，原始HTML文本与可读原文在 `src/`。
 - [S2 System Card（PDF，仅保留链接，未读）](https://www.anthropic.com/document/claude-fable-5-2-mythos-5-2-system-card)。本轮未保存PDF。
 - 相关：[[Topics/13_base_model/Anthropic/260922_Claude_Opus_5_5/Claude-Opus-5.5]]；[[Topics/13_base_model/Meituan_LongCat/260925_LongCat_2_5_Preview/LongCat-2.5-Preview]]。
 - 中文Poster：[[claude_fable_mythos_5_2_poster_zh.html]]。

@@ -1,6 +1,8 @@
 ---
 title: "Kimi K3.1 Pro — 多域联合 RL、长程交付与事实可靠性"
 type: model-note
+html_tabs: true
+updated: 2026-11-12
 authors: ["Moonshot AI / Kimi Team"]
 year: 2026
 venue: "Kimi Tech Blog"
@@ -24,6 +26,9 @@ related: ["[[Kimi-K3]]", "[[Kimi-K2.6]]"]
 
 ## 发布、模型与服务：三个概念分开
 
+> [!tldr]
+> 10月24日是服务首发，Pro与Highspeed属于同一family；服务速度、开放权重与训练方法分别核验。
+
 | 项目 | 本轮确认 | 不应误读为 |
 |---|---|---|
 | 首次服务发布 | 官方 Research 索引明确 2026-10-24；正文写当日上线 | 图片 URL 中的 20261023 不是首发日 |
@@ -36,6 +41,9 @@ API 模型名为 `kimi-k3.1-pro` / `kimi-k3.1-pro-highspeed`。企业管理员�
 
 ## 一、能力从哪里来：联合 RL 的系统边界
 
+> [!tldr]
+> 已知沿用K3扩展多域联合RL，环境质量控制与失败诊断是关键；完整训练配方尚未公开。
+
 博客明确说 K3.1 Pro 在 K3 上增加后训练算力，联合优化数百个下游领域。为维持可预测的算力收益，改进横跨 RL 框架、长上下文推理、训练效率、沙箱、rollout 调度与统一环境质量检查平台。
 
 **我的判断：环境吞吐和环境可信度已经是模型训练方案的一部分。** 长任务的训练成本不是生成多少 token 就结束：工具调用、沙箱恢复、错误反馈和最终验收都会改变训练信号。没有公开配比、reward 实现和训练曲线，不能由一句“联合 RL”反推出具体用 GRPO、PPO、哪种 teacher 或多少条样本。
@@ -43,6 +51,9 @@ API 模型名为 `kimi-k3.1-pro` / `kimi-k3.1-pro-highspeed`。企业管理员�
 当前能确认“延续 K3 的能力基础”，不能确认 K3.1 修改了多少 KDA/MLA 层、专家数、视觉编码器或上下文并行策略。旧版结构见 [[Kimi-K3]]；两者证据边界分开记录。
 
 ## 二、长程编码：从完成单题到诊断整个系统
+
+> [!tldr]
+> 长程编码成绩受harness、硬件与judge设置影响，应单列系统诊断和任务完成证据。
 
 ![官方编码、科研与知识工作评测总图；完整保留，不裁掉不利指标](src/assets/benchmark-overview.webp)
 
@@ -60,6 +71,9 @@ API 模型名为 `kimi-k3.1-pro` / `kimi-k3.1-pro-highspeed`。企业管理员�
 
 ## 三、CAD：工具收益和模型单次生成能力拆开
 
+> [!tldr]
+> CAD的有工具与无工具评测分别解释，不能把外部工具收益归入单次生成能力。
+
 ![官方 BenchCAD：同一图中保留有工具与无工具](src/assets/benchcad.webp)
 
 BenchCAD 是从多视角渲染重建 CAD 代码，指标为 Voxel IoU；Kimi 对开放模型使用从 17,900 个案例中随机抽取的 1,000-case 子集、最高 effort。带工具使用 Claude Code，无工具则用官方 prompt/scoring 单次生成。闭源对照部分引用其 system card，不保证完全同一采样子集与执行预算。
@@ -76,6 +90,9 @@ Kimi 的有/无工具差为 **19.9 个百分点**，是这个评测条件下的�
 
 ## 四、金融：可审计交付比“看起来专业”更重要
 
+> [!tldr]
+> 金融任务关注文件、引用和计算过程可核验，内部评测不等于独立真实业务验证。
+
 ![官方金融外部评测](src/assets/finance.webp)
 
 OfficeQA Pro v2 为 64.4，Frontier Finance 为 58.6。后者 Fable 5.1 为 60.8，仍高于 Kimi；不能把一项第一推广成金融全面第一。OfficeQA 的文档输入刻意仅提供渲染后的页图、没有机器可读文本；部分外部模型上网取得参考答案的轨迹被计零。这既影响分数，也说明“工具是否按要求使用”是评测契约。
@@ -90,6 +107,9 @@ OfficeQA Pro v2 为 64.4，Frontier Finance 为 58.6。后者 Fable 5.1 为 60.8
 
 ## 五、事实性：claim-level 与 response-level 不能混写
 
+> [!tldr]
+> 事实性按声明与回答分别计量；子集、工具和判定规则需要随结果保留。
+
 ![官方事实性图：普通无工具与 Hard 有工具是不同设置](src/assets/hallucination.webp)
 
 内部 Hallu Bench Hard 的 claim-level 错误率从 K3 的 23.4% 降至 8.3%；绝对下降 15.1 个百分点、相对下降约 64.5%。而“含至少一处事实错误的回答占比”变成旧版的 42.4%，是**另一个 response-level 指标**，不是错误率等于 42.4%。
@@ -100,6 +120,9 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 
 ## 六、安全评估：同时改中训练数据与 RL 环境
 
+> [!tldr]
+> 风险过滤同时影响中训练与RL环境；pass@3、单次成功率及高token开销不能混用。
+
 ![官方 xdev-bench-hard 结果；harness 与 token 消耗同时保留](src/assets/cyber.webp)
 
 官方在一般 mid-training 语料与 RL 环境混合里发现 cyber 能力相关来源，对两阶段分别过滤，并保留通用编码任务。在内部 xdev-bench-hard，未做风险削减的 checkpoint 为 90.5% pass@3，最终版为 81.0%；K3 为 33.3%。过滤降低了该条件下的能力，但并未消除通用编码向安全研究的迁移。
@@ -107,6 +130,9 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 这个集合不是普遍安全认证：不同模型使用 Kimi Code、Claude Code 或 Codex；pass@3 与单次平均成功率不同，且没有硬时限和输出 token 上限。最终版单次平均成功率为 64.5%，不能用 81.0 代替；每成功轨迹约 159.8M input / 546K output tokens 也反映昂贵的上下文重复处理，不是上下文窗口大小。我们只记录防御与风险评估结论，不复现攻击过程。
 
 ## 七、博客脚注里最值得保留的评测条件
+
+> [!tldr]
+> 每项benchmark固定effort、工具、judge、硬件与预算，不能笼统称所有对比完全同条件。
 
 默认 K3.1 用 max effort、temperature 1.0、top-p 0.95；BrowseComp 是例外，top-p 1.0，200K 触发压缩、最多 500 步。不同 benchmark 的 harness、judge 和预算不能被统一概括为“完全公平”。
 
@@ -123,6 +149,9 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 
 ## 八、对 Agent Training 的启发与下一步
 
+> [!tldr]
+> 优先复现环境质量与终态验证机制，固定六类条件后再判断训练收益。
+
 > [!insight]
 > **我对这次升级的判断：最值得借鉴的是“环境质量平台 + 多域 RL + 终态交付”这条闭环，不是照搬宣传榜单。** 应把模型权重、harness、工具、judge、预算和任务合规性作为六个独立字段保存。先固定它们，再比较训练是否让长程失败恢复、事实引用和产物可用性更好。
 
@@ -136,6 +165,9 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 
 ## 来源与关联
 
+> [!tldr]
+> 优先阅读官方博客及脚注；历史模型关联只作对照，不替代本代独立证据。
+
 - [S1 · 官方 Tech Blog 与全部 Footnotes](https://www.kimi.com/en/blog/kimi-k3-1-pro)；离线原文 `src/tech_blog.html`，八张图统一保存在 `src/assets/`。
 - [S2 · 官方 Research 索引](https://www.kimi.com/en/blog/)；本轮证据 `src/release_watch_evidence/2026-10-24/0934/blog-kimi.html` 明确日期。
 - [[Kimi-K3]]：上一代架构、长上下文与后训练基线；不替代 K3.1 专属资料。
@@ -145,6 +177,37 @@ $$\mathrm{relative\ reduction}=1-\frac{8.3}{23.4}\approx64.5\%.$$
 
 ## 11 月 5 日核见官方权重仓库
 
+> [!tldr]
+> 官方权重补足架构、配置与许可；首次公开精确时点和完整训练超参数仍待核。
+
 [Moonshot 官方 HF 模型卡](https://huggingface.co/moonshotai/Kimi-K3.1-Pro)列出 2.8T 总参数、104B 激活参数、93 层、1,048,576 token 上下文、MoonViT-V2 视觉编码器，以及 QAT 的 MXFP4 权重和 MXFP8 激活。69 层 KDA 搭配 24 层 Gated DSA；后者替换 K3 的全注意力 Gated MLA，索引 Top-K 为 2,048。稀疏索引选择的是注意力候选，上下文窗口是可接受的输入范围，两者不是同一限制。
 
 这一披露补足了博客中缺失的架构和权重信息。保留 10 月 24 日服务首发日期。官方仓库的 [提交历史](https://huggingface.co/moonshotai/Kimi-K3.1-Pro/commits/main)记录 11 月 2 日初始提交；本轮只核验文件清单，未下载权重。发布使用专用 [Kimi K3.1 Pro License](https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/main/LICENSE)。后训练样本比例、具体 RL 超参数和长上下文延迟仍无完整证据。
+
+## 11月12日核见NVIDIA NVFP4量化分发（不新增代际）
+
+> [!tldr]
+> NVIDIA NVFP4属于已有K3.1的量化分发，保留完整对照及配置边界，不重复计为新发布。
+
+[NVIDIA官方模型卡](https://huggingface.co/nvidia/Kimi-K3.1-Pro-NVFP4)明确称其为Moonshot K3.1 Pro的量化版本，并标注分发日11/10/2026。保留10月24日家族服务首发，不用新观察到仓库的时间替代首发，也不在30天表重复计数。模型卡同时要求NVIDIA Open Model Agreement和底座专用许可；不能由“commercial use”一句话推断无附加义务。
+
+ModelOpt v0.48.0将路由专家由MXFP4转为NVFP4，input scales设1.0；共享专家与KDA使用MXFP8、动态学习激活scale，MLA保持BF16。主KV/indexer cache FP8、SSM state FP32。卡称vLLM、Blackwell GB300，示例TP8；这些是声明配置，不是本站吞吐、显存或端到端成本实测。
+
+| 卡内对照 | MXFP4 | NVFP4 |
+| --- | ---: | ---: |
+| GPQA Diamond | 93.97 | 93.84 |
+| AA-LCR | 81.69 | 82.06 |
+| IFBench | 73.40 | 73.40 |
+| MMMU Pro | 81.68 | 81.79 |
+| SciCode | 59.52 | 59.47 |
+| Terminal-Bench 2.1 | 88.20 | 87.78 |
+
+| KVV卡内对照 | Moonshot | NVIDIA NVFP4 |
+| --- | ---: | ---: |
+| OCRBench | 87.20 | 86.70 |
+| MMMU-Pro | 84.10 | 84.10 |
+| ToolCall | 97.20 | 97.40 |
+| BEAM 1M | 39.20 | 38.70 |
+| DeepSWE | 75.50 | 77.40 |
+
+第一张表标temperature1.0、top-p0.95；KVV卡称沿用官方thinking/repeats/harness设置，但本轮未独立审计KVV全套配置或运行。表中的MMMU-Pro 81.79与84.10来自不同评测设置，不能相互覆盖。数值含正负变化，不能概括为量化后全项提升或无损；未下载权重、执行示例命令或实际复测。

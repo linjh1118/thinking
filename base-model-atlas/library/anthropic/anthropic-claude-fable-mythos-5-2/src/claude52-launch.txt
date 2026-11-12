@@ -127,11 +127,11 @@ Protein design
 De novo binder design (24 hr)
 Protein design
 De novo binder design (24 hr)
-85.1%
+85.1
 Mythos 5.2
-79.1%
+79.1
 Mythos 5.1
-82.6%
+82.6
 without safeguards
 —
 —
@@ -541,7 +541,7 @@ Mathematical formalization.
 Formalization is the process of translating a mathematical proof into a language that a computer can check step by step. It can help human mathematicians gain confidence in results without having to check them by hand (this matters even more when AI models generate results that are hard for humans to verify). Because formalization is such a laborious process, if AI could assist with it, mathematicians could spend more time exploring novel ideas.
 Our first
 formalization of Fermat’s Last Theorem
-, performed by an unreleased research version of Claude, took 11 days. It relied on a purpose-built harness along with guidance from a human researcher. By contrast, a team of 1,000 Fable 5.2 agents fully formalized the theorem in just 30 hours, with minimal human intervention. Fable 5.2 started from minimal prompts, built its own ways to coordinate, and used no mathematical references, only a list of intermediate theorem statements to score progress. It needed one-third as many action tokens as our first formalization and produced a proof seven times shorter. As can be seen in the figure below, Opus 5.5 (with the same 1,000-agent setup) completed only 26% of the formalization in 18 hours, and barely made any more progress after 30.
+, performed by an unreleased research version of Claude, took 11 days. It relied on a purpose-built harness along with guidance from a human researcher. By contrast, a team of 1,000 Fable 5.2 agents fully formalized the theorem in just 30 hours, with minimal human intervention. Fable 5.2 started from minimal prompts, and built its own ways to coordinate.⁴ It needed one-third as many action tokens as our first formalization and produced a proof seven times shorter. As can be seen in the figure below, Opus 5.5 (with the same 1,000-agent setup) completed only 26% of the formalization in 18 hours, and barely made any more progress after 30.
 Read more about the formalization
 here
 .
@@ -694,10 +694,10 @@ Frontier Design
 METR
 . See the
 Claude Fable 5.2 and Mythos 5.2 System Card
-for a summary of their reports⁴ and for a full description of our own safety and capabilities testing.
+for a summary of their reports⁵ and for a full description of our own safety and capabilities testing.
 Alignment testing
 We ran a suite of evaluations for how well-aligned Claude Fable 5.2 and Claude Mythos 5.2 are in behavioral terms, testing how often they behave in unintended and potentially unsafe ways. Weighing everything we’ve seen across a range of evaluations, we’ve assessed the risk of these models behaving in unsafe ways in high-stakes situations to be low (as with our other recent models).
-We tested Claude Mythos 5.2 (the same underlying model as Fable 5.2 without certain cybersecurity or biology safeguards), on our automated behavioral audit, which tests how a model behaves across approximately 1,900 scenarios. Claude Mythos 5.2 performed as well as, or better than, Opus 5.5, Sonnet 5.5, and Claude Mythos 5.1 on most measures. For example, it scored better than all three on most measures that involve misleading users. Hallucinating inputs, falsely claiming to have completed a task, omitting important information, and failing to disclose bad or lazy work were all lower in Claude Mythos 5.2.⁵
+We tested Claude Mythos 5.2 (the same underlying model as Fable 5.2 without certain cybersecurity or biology safeguards), on our automated behavioral audit, which tests how a model behaves across approximately 1,900 scenarios. Claude Mythos 5.2 performed as well as, or better than, Opus 5.5, Sonnet 5.5, and Claude Mythos 5.1 on most measures. For example, it scored better than all three on most measures that involve misleading users. Hallucinating inputs, falsely claiming to have completed a task, omitting important information, and failing to disclose bad or lazy work were all lower in Claude Mythos 5.2.⁶
 Automated behavioral audit
 Overall misaligned behavior score
 Mythos 5.1
@@ -776,6 +776,7 @@ for access through the
 Life Sciences Verification Program
 .
 Fast mode for Claude Fable 5.2 and Claude Mythos 5.2 is available on Claude Code, the Claude Platform, Claude Models on Google Cloud (Anthropic managed and Google managed), and Microsoft Foundry (Anthropic hosted). Note that access to Claude Mythos fast mode is available only to organizations who are part of our Verification Programs.
+Edit 11 November: Amended a sentence and added a footnote to the “Mathematical formalization” subsection to more accurately describe the information we provided to the model.
 Footnotes
 1
 CVE refers to
@@ -814,8 +815,12 @@ on AAV2 (
 PDB:1LP3
 ). A capsid counts as accurately modeled if either model came within 3 Å. For AAV2, Claude’s method required about 58 minutes of inference on one NVIDIA H200 GPU for OpenFold3-preview2 and about seven minutes for ESMFold2.
 4
-None of the external organizations reviewed the contents of this blog post or the contents of the System Card. Those organizations do not necessarily agree with any of the claims made in either publication.
+As described in our
+accompanying post
+, we “gave the agents a list of 60 statements, a one-sentence sketch of the classical route, the definitions those statements use, and 47 proved lemmas from our earlier formalization, and assigned lead and helper roles. We offered no other guidance on how to prove the theorem or organize themselves.”
 5
+None of the external organizations reviewed the contents of this blog post or the contents of the System Card. Those organizations do not necessarily agree with any of the claims made in either publication.
+6
 We ran these tests on Claude Mythos 5.2 because testing the model with reduced safeguards provides the most comprehensive look at model behavior. We expect Fable 5.2 to behave similarly; in some cases, more potential pathways for misuse should be blocked given its stronger safeguards.
 Research
 Policy
