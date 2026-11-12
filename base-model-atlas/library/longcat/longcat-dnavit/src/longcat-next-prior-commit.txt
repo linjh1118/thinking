@@ -1,0 +1,1155 @@
+Add dNaViT · meituan-longcat/LongCat-Next at 5677818
+Hugging Face
+Search models, datasets, users...
+Ctrl K
+Models
+Datasets
+Spaces
+Buckets
+Docs
+Enterprise
+Pricing
+Website
+Tasks
+HuggingChat
+Collections
+Languages
+Organizations
+Community
+Blog
+Posts
+Daily Papers
+Hardware
+Learn
+Discord
+Forum
+GitHub
+Solutions
+Team & Enterprise
+Hugging Face PRO
+Enterprise Support
+Inference Providers
+Inference Endpoints
+Storage Buckets
+Log In
+Sign Up
+meituan-longcat
+/
+LongCat-Next
+Like
+220
+Follow
+LongCat
+5.48k
+Any-to-Any
+Safetensors
+Transformers
+LongCat-Next
+longcat_next
+text-generation
+multimodal
+custom_code
+arxiv:
+2603.27538
+License:
+mit
+Model card
+Files
+Files and versions
+xet
+Community
+5
+Deploy
+Copy to bucket
+Use this model
+Instructions to use meituan-longcat/LongCat-Next with libraries, inference providers, notebooks, and local apps. Follow these links to get started.
+Libraries
+Transformers
+How to use meituan-longcat/LongCat-Next with Transformers:
+# pip install -U transformers accelerate
+# Load model directly
+from transformers import AutoModelForCausalLM
+model = AutoModelForCausalLM.from_pretrained("meituan-longcat/LongCat-Next", trust_remote_code=True, device_map="auto")
+Notebooks
+Google Colab
+Kaggle
+Doctor-James
+commited on
+2 days ago
+Commit
+5677818
+·
+verified
+·
+1
+								Parent(s):
+0cf0631
+Add dNaViT
+Browse files
+Files changed (17)
+hide
+show
+.gitattributes
++5
+-0
+dNaViT/README.md
++305
+-0
+dNaViT/assets/figures/figure-1-teaser.pdf
++3
+-0
+dNaViT/assets/figures/figure-1-teaser.png
++3
+-0
+dNaViT/assets/figures/figure-2-showcase.pdf
++3
+-0
+dNaViT/assets/figures/figure-2-showcase.png
++3
+-0
+dNaViT/assets/figures/figure-3-architecture.pdf
++3
+-0
+dNaViT/assets/figures/figure-3-architecture.png
++3
+-0
+dNaViT/assets/figures/figure-4-tokenization.pdf
++3
+-0
+dNaViT/assets/figures/figure-4-tokenization.png
++3
+-0
+dNaViT/assets/figures/figure-6-refiner.pdf
++3
+-0
+dNaViT/assets/figures/figure-6-refiner.png
++3
+-0
+dNaViT/assets/longcat_logo.svg
++1
+-0
+dNaViT/dNaViT-G16/.gitkeep
++0
+-0
+dNaViT/dNaViT-G16R1/.gitkeep
++0
+-0
+dNaViT/dNaViT-G16R52/.gitkeep
++0
+-0
+dNaViT/dNaViT-G64/.gitkeep
++0
+-0
+.gitattributes
+CHANGED
+Viewed
+@@ -37,3 +37,8 @@ saved_model/**/* filter=lfs diff=lfs merge=lfs -text
+37
+*.zip filter=lfs diff=lfs merge=lfs -text
+38
+*.zst filter=lfs diff=lfs merge=lfs -text
+39
+*tfevents* filter=lfs diff=lfs merge=lfs -text
+37
+*.zip filter=lfs diff=lfs merge=lfs -text
+38
+*.zst filter=lfs diff=lfs merge=lfs -text
+39
+*tfevents* filter=lfs diff=lfs merge=lfs -text
+40
++
+dNaViT/assets/figures/figure-1-teaser.pdf filter=lfs diff=lfs merge=lfs -text
+41
++
+dNaViT/assets/figures/figure-2-showcase.pdf filter=lfs diff=lfs merge=lfs -text
+42
++
+dNaViT/assets/figures/figure-3-architecture.pdf filter=lfs diff=lfs merge=lfs -text
+43
++
+dNaViT/assets/figures/figure-4-tokenization.pdf filter=lfs diff=lfs merge=lfs -text
+44
++
+dNaViT/assets/figures/figure-6-refiner.pdf filter=lfs diff=lfs merge=lfs -text
+dNaViT/README.md
+ADDED
+Viewed
+@@ -0,0 +1,305 @@
+1
++
+<div align="center">
+2
++
+<img src="assets/longcat_logo.svg" width="280" alt="LongCat Logo" />
+3
++
+<h1>dNaViT</h1>
+4
++
+<p><strong>Meituan LongCat Team</strong></p>
+5
++
+<p>
+6
++
+<a href="https://lixiaotong97.github.io/dNaViT/">Project Page</a> ·
+7
++
+<a href="https://github.com/meituan-longcat/LongCat-Next">Code &amp; Training</a>
+8
++
+</p>
+9
++
+</div>
+10
++
+11
++
+**dNaViT** is a family of native-resolution visual tokenizers with spatial
+12
++
+stride **32**. Each model encodes images into discrete codes; the G16 and G64
+13
++
+models reconstruct them with a **ViT pixel decoder** at the aligned input
+14
++
+resolution, and the G16R1 and G16R52 models decode G16 codes with a
+15
++
+**code-conditioned Refiner** at 2× the aligned input height and width.
+16
++
+17
++
+[![dNaViT overview: a shared discrete visual vocabulary](assets/figures/figure-1-teaser.png)](assets/figures/figure-1-teaser.pdf)
+18
++
+19
++
+**A shared visual vocabulary.** dNaViT connects reconstruction, understanding, generation, and editing through discrete visual codes. The overview includes downstream systems beyond this tokenizer release.
+20
++
+21
++
+[**dNaViT: Discrete Codes are General-Purpose Visual Representations**](https://lixiaotong97.github.io/dNaViT/)
+22
++
+turns native-resolution images into discrete visual primitives analogous to
+23
++
+language tokens. Building on [LongCat-Next](https://github.com/meituan-longcat/LongCat-Next),
+24
++
+it provides a shared discrete interface for reconstruction, classification,
+25
++
+multimodal understanding, generation, and editing.
+26
++
+27
++
+A frozen Qwen3-VL vision encoder supplies semantic features. A lightweight
+28
++
+**Residual Modulator (ResMod)** adds reconstruction-aware detail, and **grouped
+29
++
+product quantization** maps the features to discrete codes. Progressive training
+30
++
+uses semantic and pixel reconstruction objectives to balance the representation.
+31
++
+The decoder can reconstruct pixels directly or use a code-conditioned Refiner
+32
++
+to improve perceptual quality.
+33
++
+34
++
+<details>
+35
++
+<summary><strong>More examples: understanding, generation, and editing</strong></summary>
+36
++
+37
++
+[![Qualitative downstream examples using the dNaViT discrete representation](assets/figures/figure-2-showcase.png)](assets/figures/figure-2-showcase.pdf)
+38
++
+39
++
+**Downstream showcases.** These examples illustrate the full dNaViT research system. They require separately trained downstream models and are not outputs of the tokenizer release alone.
+40
++
+41
++
+</details>
+42
++
+43
++
+## Model Family
+44
++
+45
++
+| Model | Quantization groups | Image decoder | Output size |
+46
++
+| :--- | ---: | :--- | :--- |
+47
++
+| [dNaViT-G16](dNaViT-G16) | 16 | ViT pixel decoder | Aligned input size |
+48
++
+| [dNaViT-G16R1](dNaViT-G16R1) | 16 | One-step Refiner | 2× aligned input size |
+49
++
+| [dNaViT-G16R52](dNaViT-G16R52) | 16 | 52-step Refiner | 2× aligned input size |
+50
++
+| [dNaViT-G64](dNaViT-G64) | 64 | ViT pixel decoder | Aligned input size |
+51
++
+52
++
+Each subdirectory contains one model. R1 and R52 identify the Refiner's
+53
++
+sampling budget; both use a G16 token layout. The paper refers to the refined
+54
++
+G16 variant as **dNaViT-G16-R**.
+55
++
+56
++
+## Model Details
+57
++
+58
++
+[![dNaViT architecture with ResMod and semantic and pixel reconstruction branches](assets/figures/figure-3-architecture.png)](assets/figures/figure-3-architecture.pdf)
+59
++
+60
++
+**Tokenizer architecture.** A frozen vision encoder and ResMod supply reconstruction-aware semantic features; grouped quantization and dual reconstruction objectives learn a shared discrete representation.
+61
++
+62
++
+[![Grouped product quantization and discrete visual interfaces](assets/figures/figure-4-tokenization.png)](assets/figures/figure-4-tokenization.pdf)
+63
++
+64
++
+**Discrete-code interface.** Each spatial position contains one index per quantization group. The downstream language-model interfaces shown in the figure require additional components.
+65
++
+66
++
+Components shared by all models:
+67
++
+68
++
+| Component | Specification |
+69
++
+| :--- | :--- |
+70
++
+| Vision encoder | Qwen3-VL vision tower, 27 layers, hidden size 1,152 |
+71
++
+| ResMod | Intermediate-layer residual feature modulation |
+72
++
+| Spatial stride | 32, from 16-pixel patches and 2 × 2 merging |
+73
++
+| Codebook embedding dimension | 4,096 total |
+74
++
+| ViT pixel decoder | 24 layers, hidden size 1,152, patch size 16 |
+75
++
+76
++
+Per-model differences:
+77
++
+78
++
+| | G16 | G64 | G16R1 | G16R52 |
+79
++
+| :--- | :--- | :--- | :--- | :--- |
+80
++
+| Quantization | 16 groups, 16,384 entries per group | 64 groups, 4,096 entries per group | Same as G16 | Same as G16 |
+81
++
+| Codebook embedding per group | 256 | 64 | 256 | 256 |
+82
++
+| Discrete code payload per spatial position¹ | 224 bits | 768 bits | 224 bits | 224 bits |
+83
++
+| Refiner | — | — | 34-layer DiT, hidden size 4,608, 18 attention heads | 34-layer DiT, hidden size 4,608, 18 attention heads |
+84
++
+| VAE decoder | — | — | 32 latent channels | 32 latent channels |
+85
++
+| Refiner evaluations | — | — | 1 per image | 52 per image |
+86
++
+| Output dimensions | Aligned input height and width | Aligned input height and width | 2 × aligned input height and width | 2 × aligned input height and width |
+87
++
+88
++
+¹ Excluding storage overhead.
+89
++
+90
++
+For an aligned image of height `H` and width `W`, the code grid is
+91
++
+`H/32 × W/32`. Each grid position contains one code index per quantization
+92
++
+group. Increasing the group count increases the code payload while keeping
+93
++
+the number of spatial positions unchanged.
+94
++
+95
++
+### Code-Conditioned Refiner (G16R1, G16R52)
+96
++
+97
++
+The Refiner conditions directly on **discrete codebook embeddings** through
+98
++
+global context tokens and time-conditioned spatial residuals. It requires no
+99
++
+text prompt. For example, a 512 × 512 input produces a 1024 × 1024
+100
++
+reconstruction.
+101
++
+102
++
+- **G16R52** uses the default native flow-matching sampler, which performs 52
+103
++
+Euler updates in sigma space.
+104
++
+- **G16R1** is a one-step student distilled from a multi-step teacher with
+105
++
+adversarial supervision. Its default sampler performs one Refiner velocity
+106
++
+evaluation; the 52-step schedule stored in its configuration defines the
+107
++
+distillation schedule, not 52 inference evaluations. Tokenization and VAE
+108
++
+decoding also contribute to end-to-end latency.
+109
++
+110
++
+## Reconstruction Examples
+111
++
+112
++
+[![Code-conditioned Refiner and G16, G64, R52 and R1 reconstruction examples](assets/figures/figure-6-refiner.png)](assets/figures/figure-6-refiner.pdf)
+113
++
+114
++
+**Refiner and reconstruction comparison.** The paper figure illustrates code-conditioned flow decoding and compares G16 and G64 pixel-decoder reconstructions with the 52-step Refiner and the one-step Refiner.
+115
++
+116
++
+## Quick Start
+117
++
+118
++
+Use Python 3.10 or newer with a CUDA-compatible PyTorch installation.
+119
++
+The project documents PyTorch 2.6.0 and Transformers 4.57.0 as its tested
+120
++
+versions. With PyTorch and torchvision installed, install the inference
+121
++
+dependencies:
+122
++
+123
++
+```bash
+124
++
+pip install "transformers==4.57.0" timm einops pillow numpy safetensors
+125
++
+```
+126
++
+127
++
+FlashAttention 2/3 is optional for these HF inference exports: the vision
+128
++
+tower uses SDPA, and packed decoder attention falls back to PyTorch SDPA
+129
++
+when FlashAttention is unavailable.
+130
++
+131
++
+### Reconstruct an image
+132
++
+133
++
+```python
+134
++
+import torch
+135
++
+from PIL import Image
+136
++
+from huggingface_hub import snapshot_download
+137
++
+from transformers import AutoImageProcessor, AutoModel
+138
++
+139
++
+variant = "dNaViT-G16"  # dNaViT-G16, dNaViT-G16R1, dNaViT-G16R52, or dNaViT-G64
+140
++
+local_dir = snapshot_download(
+141
++
+"meituan-longcat/LongCat-Next", allow_patterns=f"dNaViT/{variant}/*",
+142
++
+)
+143
++
+model_id = f"{local_dir}/dNaViT/{variant}"
+144
++
+145
++
+# Refiner models (G16R1, G16R52) load in BF16; G16 and G64 use the default dtype.
+146
++
+is_refiner = variant in ("dNaViT-G16R1", "dNaViT-G16R52")
+147
++
+load_kwargs = {"torch_dtype": torch.bfloat16} if is_refiner else {}
+148
++
+149
++
+processor = AutoImageProcessor.from_pretrained(model_id, trust_remote_code=True)
+150
++
+model = AutoModel.from_pretrained(
+151
++
+model_id, trust_remote_code=True, **load_kwargs,
+152
++
+).to("cuda").eval()
+153
++
+154
++
+image = Image.open("input.png").convert("RGB")
+155
++
+inputs = processor(images=image)
+156
++
+157
++
+with torch.inference_mode():
+158
++
+reconstructions = model(**inputs)
+159
++
+160
++
+reconstructions[0].save("reconstruction.png")
+161
++
+```
+162
++
+163
++
+`model_id` can be any local directory containing one model's files. Each
+164
++
+model directory includes its tokenizer weights and implementation; a separate
+165
++
+Qwen3-VL checkpoint is not needed for this inference example.
+166
++
+167
++
+The processor returns a **list** of normalized image tensors and an
+168
++
+`image_grid_thw` tensor. The model's `forward` handles device transfer and
+169
++
+resizes each image's height and width up to a multiple of 32. It returns a
+170
++
+list of RGB `PIL.Image` objects.
+171
++
+172
++
+The output dimensions are `ceil(H/32) * 32` by `ceil(W/32) * 32` in height
+173
++
+and width for G16 and G64, and `2 * ceil(H/32) * 32` by `2 * ceil(W/32) * 32`
+174
++
+for G16R1 and G16R52. With the pixel decoder, images already aligned to 32
+175
++
+pixels retain their dimensions. The Refiner uses a fixed noise seed of
+176
++
+`decode_seed=0` by default. To select a different seed, pass `decode_seed=42`,
+177
++
+for example, when calling `AutoModel.from_pretrained`.
+178
++
+179
++
+### Encode and decode discrete codes
+180
++
+181
++
+The lower-level `encode` API expects image dimensions aligned to 32 pixels
+182
++
+and normalized tensors already on the model's device. This single-image
+183
++
+example explicitly aligns the image before preprocessing:
+184
++
+185
++
+```python
+186
++
+width, height = image.size
+187
++
+aligned_image = image.resize(
+188
++
+((width + 31) // 32 * 32, (height + 31) // 32 * 32),
+189
++
+resample=Image.Resampling.BICUBIC,
+190
++
+)
+191
++
+token_inputs = processor(images=aligned_image)
+192
++
+pixels = [
+193
++
+tensor.to(device=model.device, dtype=torch.bfloat16)
+194
++
+for tensor in token_inputs["pixel_values"]
+195
++
+]
+196
++
+197
++
+with torch.inference_mode():
+198
++
+encoded = model.encode(pixels, token_inputs["image_grid_thw"])
+199
++
+indices = encoded.indices
+200
++
+grid_h, grid_w = (int(v) for v in encoded.out_grid_thw[0, 1:])
+201
++
+reconstruction = model.decode(indices, grid_h, grid_w)[0]
+202
++
+203
++
+print(indices.shape)
+204
++
+reconstruction.save("decoded.png")
+205
++
+```
+206
++
+207
++
+- `encoded.indices`: integer code IDs of shape `(N, G)` and
+208
++
+`N = grid_h * grid_w` for one image. `G = 16` with values in `[0, 16383]`
+209
++
+for G16, G16R1, and G16R52; `G = 64` with values in `[0, 4095]` for G64.
+210
++
+- `encoded.out_grid_thw`: `(B, 3)` token-grid dimensions `[1, grid_h, grid_w]`.
+211
++
+- `encoded.codebook_quant`: codebook-space features of shape `(N, 4096)`.
+212
++
+- `encoded.quants`: decoder-projected features of shape `(N, 1152)`.
+213
++
+214
++
+For G16 and G64, `decode` returns ViT pixel-decoder reconstructions at
+215
++
+`(grid_h * 32, grid_w * 32)` in height and width. For G16R1 and G16R52,
+216
++
+`decode` reconstructs the codebook embeddings from the IDs, runs the Refiner,
+217
++
+and returns images at `(2 * grid_h * 32, 2 * grid_w * 32)`.
+218
++
+219
++
+For multiple images, `encode` packs their token sequences together. Split the
+220
++
+IDs using each image's `grid_h * grid_w` before decoding images with different
+221
++
+grid sizes; `forward` already handles this unpacking.
+222
++
+223
++
+### Precision and memory
+224
++
+225
++
+**G16 and G64.** The export contains BF16 linear/convolution weights and FP32
+226
++
+codebook, normalization, and embedding tensors. CUDA inference uses internal
+227
++
+BF16 autocast. Use the default loading dtype; explicitly requesting
+228
++
+`torch_dtype=torch.bfloat16` also casts FP32 tensors, including codebooks, and
+229
++
+can change discrete token assignments through rounding.
+230
++
+231
++
+**G16R1 and G16R52.** Load these Refiner exports with
+232
++
+`torch_dtype=torch.bfloat16` as shown above. The weights include both BF16 and
+233
++
+FP32 tensors; this loading option also casts the FP32 tensors. GPU memory
+234
++
+requirements grow with image resolution, and the 2× output increases the
+235
++
+Refiner's spatial workload. Start with one image and a moderate input size.
+236
++
+237
++
+## Reported Reconstruction Results
+238
++
+239
++
+The following results are reported in the dNaViT manuscript and the project's
+240
++
+README. They use the **G16/G64 ViT pixel decoders without Refiner
+241
++
+enhancement**, with spatial stride 32. They are not Refiner benchmark results
+242
++
+and should not be attributed to G16R1 or G16R52; Refiner decoding changes both
+243
++
+the image decoder and the output resolution. See the
+244
++
+[project page](https://lixiaotong97.github.io/dNaViT/) for qualitative Refiner
+245
++
+examples and the method description.
+246
++
+247
++
+### ImageNet validation
+248
++
+249
++
+Evaluation uses all **50,000 ImageNet validation images**. Higher is better
+250
++
+for PSNR and SSIM.
+251
++
+252
++
+| Model | Resolution | Spatial positions | PSNR (dB) ↑ | SSIM ↑ |
+253
++
+| :--- | :--- | ---: | ---: | ---: |
+254
++
+| G16 | 256 × 256 | 64 | 22.82 | 0.64 |
+255
++
+| G16 | 512 × 512 | 256 | 25.47 | 0.71 |
+256
++
+| G16 | 1024 × 1024 | 1,024 | 28.93 | 0.81 |
+257
++
+| G64 | 256 × 256 | 64 | 25.41 | 0.76 |
+258
++
+| G64 | 512 × 512 | 256 | 28.12 | 0.81 |
+259
++
+| G64 | 1024 × 1024 | 1,024 | 32.90 | 0.91 |
+260
++
+261
++
+Spatial positions exclude the quantization-group dimension. G16 and G64 differ
+262
++
+in training configuration and duration, so their comparison is not a controlled
+263
++
+ablation of group count.
+264
++
+265
++
+### TokBench
+266
++
+267
++
+Scores are macro-averages over the three official instance-scale buckets.
+268
++
+T-ACC and T-NED are percentages; F-Sim is cosine similarity. Higher is better
+269
++
+for all three metrics.
+270
++
+271
++
+| Model | Resolution | T-ACC (%) ↑ | T-NED (%) ↑ | F-Sim ↑ |
+272
++
+| :--- | :--- | ---: | ---: | ---: |
+273
++
+| G16 | 512 × 512 | 33.58 | 52.43 | 0.34 |
+274
++
+| G16 | 1024 × 1024 | 45.05 | 62.75 | 0.41 |
+275
++
+| G64 | 512 × 512 | 51.69 | 68.72 | 0.54 |
+276
++
+| G64 | 1024 × 1024 | 63.08 | 78.27 | 0.67 |
+277
++
+278
++
+## Intended Use and Scope
+279
++
+280
++
+This release supports visual tokenization, image reconstruction, and research
+281
++
+on discrete visual representations. The codes can serve as an interface for
+282
++
+downstream models, but this release does not include a language model or a
+283
++
+text-to-image or image-editing application. The paper's dNaViT-8B understanding,
+284
++
+generation, and editing results require additional model components and training.
+285
++
+286
++
+Quantization and pixel decoding are lossy, and the generative Refiner can
+287
++
+introduce plausible detail; fine text, faces, and small structures in a
+288
++
+reconstruction may differ from the source image.
+289
++
+290
++
+## Citation
+291
++
+292
++
+```bibtex
+293
++
+@misc{li2026dnavitdiscretecodesgeneralpurposevisual,
+294
++
+title={dNaViT: Discrete Codes are General-Purpose Visual Representations},
+295
++
+author={Xiaotong Li and Zhengrong Yue and Xu Huang and Jialv Zou and
+296
++
+Minhao Jing and Wenhao Yan and Haodong Li and Hai Huang and
+297
++
+Bo Zhao and Yan Feng and Peng Pei and Xunliang Cai},
+298
++
+year={2026},
+299
++
+}
+300
++
+```
+301
++
+302
++
+## License
+303
++
+304
++
+The project's license is **Apache-2.0**. Third-party components and externally
+305
++
+downloaded model weights remain subject to their respective licenses.
+dNaViT/assets/figures/figure-1-teaser.pdf
+ADDED
+Viewed
+@@ -0,0 +1,3 @@
+1
++
+version https://git-lfs.github.com/spec/v1
+2
++
+oid sha256:26b77a7047d65b4a8be9178ab8aa3fabaaf5aaa7dc4d5f4a125bb31ee2bdd98a
+3
++
+size 1184641
+dNaViT/assets/figures/figure-1-teaser.png
+ADDED
+Viewed
+Git LFS Details
+SHA256:
+84d811193ed0d2520e5c09a90122581f6fd8b0e6bcb1a7944d465ab25e524e4f
+Pointer size:
+132 Bytes
+Size of remote file:
+1.67 MB
+dNaViT/assets/figures/figure-2-showcase.pdf
+ADDED
+Viewed
+@@ -0,0 +1,3 @@
+1
++
+version https://git-lfs.github.com/spec/v1
+2
++
+oid sha256:f27b2512cc8198abc589d53401397078fd6fc305b55af35c08052138c9c62ba0
+3
++
+size 4485652
+dNaViT/assets/figures/figure-2-showcase.png
+ADDED
+Viewed
+Git LFS Details
+SHA256:
+1d4a55f2bdb6cb0fc11650891522fa4dad44ab9b1041a81380b5fa5bf911d5f6
+Pointer size:
+132 Bytes
+Size of remote file:
+4.01 MB
+dNaViT/assets/figures/figure-3-architecture.pdf
+ADDED
+Viewed
+@@ -0,0 +1,3 @@
+1
++
+version https://git-lfs.github.com/spec/v1
+2
++
+oid sha256:c4336abcb4c3a3b039e18948081fdea5fa6243fa2f7c6152062472ea1b77edb1
+3
++
+size 653257
+dNaViT/assets/figures/figure-3-architecture.png
+ADDED
+Viewed
+Git LFS Details
+SHA256:
+43f3b8d27b9d9d6f2e365ba2272a2caf4adf7007305e25a731a844a6d37af464
+Pointer size:
+131 Bytes
+Size of remote file:
+681 kB
+dNaViT/assets/figures/figure-4-tokenization.pdf
+ADDED
+Viewed
+@@ -0,0 +1,3 @@
+1
++
+version https://git-lfs.github.com/spec/v1
+2
++
+oid sha256:59bfae32ce87c8171c94c652f11f0a79f71510cce8d5be9cd4cff4b577a2e0b2
+3
++
+size 316866
+dNaViT/assets/figures/figure-4-tokenization.png
+ADDED
+Viewed
+Git LFS Details
+SHA256:
+5dd00b5e301080bac96f23226ee627acd36afd10ca5a450c23e7c597232d8ab9
+Pointer size:
+131 Bytes
+Size of remote file:
+438 kB
+dNaViT/assets/figures/figure-6-refiner.pdf
+ADDED
+Viewed
+@@ -0,0 +1,3 @@
+1
++
+version https://git-lfs.github.com/spec/v1
+2
++
+oid sha256:8c622c6d5abbee93b900e4f43535e7c8c089a497e71c46be789e408878c2cd9f
+3
++
+size 2478769
+dNaViT/assets/figures/figure-6-refiner.png
+ADDED
+Viewed
+Git LFS Details
+SHA256:
+df03fd64611a98b80725a27c6ab8e4ee20a4ab2ac7a2a83be1e45957b7b24fca
+Pointer size:
+132 Bytes
+Size of remote file:
+1.63 MB
+dNaViT/assets/longcat_logo.svg
+ADDED
+Viewed
+dNaViT/dNaViT-G16/.gitkeep
+ADDED
+Viewed
+File without changes
+dNaViT/dNaViT-G16R1/.gitkeep
+ADDED
+Viewed
+File without changes
+dNaViT/dNaViT-G16R52/.gitkeep
+ADDED
+Viewed
+File without changes
+dNaViT/dNaViT-G64/.gitkeep
+ADDED
+Viewed
+File without changes

@@ -1,0 +1,374 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dNaViT — 中文研究海报</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="src/assets/mathjax-tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="poster-tabs-adapter">.main-grid{display:block}.main-grid>.col{border-right:0}.main-grid>.col[hidden]{display:none!important}.poster-tabs{display:flex;gap:10px;padding:16px 20px;flex-wrap:wrap}.poster-tabs button{font:inherit;padding:10px 18px;border:1px solid #8b5c2e;border-radius:10px;background:#29211b;color:#f4dfc1;cursor:pointer}.poster-tabs button[aria-selected=true]{background:#744411;color:#fff2cb}html[data-theme=light] .poster-tabs button{background:#f5e7d1;color:#4b3015}html[data-theme=light] .poster-tabs button[aria-selected=true]{background:#efc974}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body>
+
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>源文档：</span><a href="obsidian://open?vault=BrainHao&amp;file=Topics%2F13_base_model%2FMeituan_LongCat%2FVariants%2F2611_dNaViT%2FdNaViT">dNaViT详细研读</a> · <a href="dNaViT.html">渲染笔记</a> · <a href="https://arxiv.org/html/2611.12426v1">Tech Report HTML</a></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">美团 LongCat · 视觉 tokenizer 专项 | 首次公告日待核</span>
+    <div class="zh-title">dNaViT：离散码服务理解与重建，开放边界须分清</div>
+    <h1>Discrete Codes are <span>General-Purpose Visual Representations</span></h1>
+    <div class="authors">Xiaotong Li 等 · 官方报告/代码/模型卡；未独立复测</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">32×</div><div class="sub">空间下采样<br>非固定比特率</div></div>
+    <div class="score-box"><div class="num">28.12</div><div class="sub">G64 ImageNet512²<br>无Refiner PSNR</div></div>
+    <div class="score-box"><div class="num">885</div><div class="sub">下游8B OCRBench<br>非tokenizer独立得分</div></div>
+    <div class="score-box"><div class="num">11/12</div><div class="sub">四款实现/权重补齐<br>非已证最早公告日</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<nav class="poster-tabs" role="tablist"><button type="button" id="poster-tab-0" role="tab" aria-controls="poster-panel-0" aria-selected="true">定位与开放</button><button type="button" id="poster-tab-1" role="tab" aria-controls="poster-panel-1" aria-selected="false">方法与训练</button><button type="button" id="poster-tab-2" role="tab" aria-controls="poster-panel-2" aria-selected="false">结果与边界</button></nav><div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col" id="poster-panel-0" role="tabpanel" aria-labelledby="poster-tab-0">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>定位、开放与视觉词表</h2></div>
+  <p class="body">TL;DR：独立专项延续LongCat-Next路线，四款归一个family。公开tokenizer/重建器，不含下游8B聊天、文生图、编辑模型。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">不是旧版8级RVQ的重命名</div>
+      <p>冻结Qwen3-VL视觉塔，ResMod补入像素细节，分组PQ扩大每位置码容量，双重建目标与三阶段训练控制语义/像素冲突。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">日期与许可缺口显著保留</div>
+      <p>11/9是arXiv投稿日；11/10 HF新增README/占位目录，11/12北京17:13新增24个实现/权重文件。首个公告时刻未核。dNaViT为Apache-2.0，不能继承外层MIT。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">G16 / G64</div>
+      <p>16×16384与64×4096词表；每位置224/768 bits，空间网格同为H/32×W/32。空间位置少不等于比特率相同。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">G16R1 / G16R52</div>
+      <p>同一G16码，1/52次Refiner评估，高宽各2倍；R1配置中的52是蒸馏schedule，非推理52步。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">公开能做什么</div>
+      <p>HF forward返回重建图；encode/decode操作离散码。下游8B理解/生成/编辑需额外LM与训练，不在四款导出中。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/figure-1-teaser.png" alt="官方总览，含未随tokenizer导出的下游系统">
+    <div class="fig-cap">官方完整原图：下游示例不是tokenizer单独输出</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col" id="poster-panel-1" role="tabpanel" aria-labelledby="poster-tab-1" hidden="">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>方法与分阶段训练</h2></div>
+  <p class="body">TL;DR：先学细节、再建语义码、最后开放联合梯度；码本容量和解码先验分别控制，避免混为一个能力增益。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/figure-3-architecture.png" alt="官方架构：冻结视觉塔与双重建">
+    <div class="fig-cap">原图完整保留：ResMod / Grouped PQ / 双重建</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">残差调制与码本</div>
+      <p>零初始化scale/shift令Z=S起步；再按通道分组最近邻量化。语义decoder用cosine+MSE避免窄锥低损失假象；像素decoder用L1/MSE/LPIPS/ConvNeXt/Gram。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">三阶段梯度控制</div>
+    <p><b>A</b>：绕过量化，学ResMod与像素重建。<br><b>B</b>：冻结ResMod，像素输入detach，先稳住语义码。<br><b>C</b>：student ResMod与码本联合训练，冻结B阶段teacher作target，解除像素detach。</p>
+  </div>
+
+  <div class="formula-box"><div class="flabel">同一离散瓶颈，两种重建约束</div>$$\mathcal L_{dual}=\lambda_{sem}\mathcal L_{sem}+\lambda_{pix}\mathcal L_{pix}$$<p style="font-size:.68rem;color:#78716c;margin-top:4px">数百B图像tokens；内部混比/原始run未披露。公开配置上限不等于真实checkpoint训练步数。</p></div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">tokenizer与下游训练分开</div>
+      <p>冻结ViT约400M+ResMod约100M只描述编码器；8B理解另需Qwen3-8B和约70/150/60/30B四阶段tokens。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">Refiner不是像素真值恢复保证</div>
+      <p>码直接经全局context与时变空间残差条件化flow模型；多步teacher蒸馏一步student。可能生成合理但不真实的细字/人脸。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col" id="poster-panel-2" role="tabpanel" aria-labelledby="poster-tab-2" hidden="">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>结果、反例与可执行判断</h2></div>
+  <p class="body">TL;DR：主表跨模型协议不统一；重建表无Refiner，生成使用G16-R。详细笔记保留论文九张完整原表，以下是带边界的精选对照。</p>
+
+  <table class="rtable"><tbody><tr><th class="left">量尺</th><th>dNaViT</th><th>对照/边界</th></tr><tr><td class="left">IN512² PSNR</td><td>G64 28.12</td><td>无Refiner</td></tr><tr><td class="left">Tok1024 T-ACC</td><td>G64 63.08</td><td>FLUX 93.09</td></tr><tr><td class="left">512²小字T-ACC</td><td>12.18</td><td>小目标仍弱</td></tr><tr><td class="left">IN1K probe</td><td>79.47</td><td>连续80.40</td></tr><tr><td class="left">MMMU-Pro</td><td>44.5</td><td>Qwen3-VL55.9</td></tr><tr><td class="left">OCRBench</td><td>885</td><td>Qwen3-VL896</td></tr><tr><td class="left">CharXiv DQ/RQ</td><td>86.5/51.0</td><td>Qwen83/46.4</td></tr><tr><td class="left">GenEval2</td><td>49.5</td><td>报告基线异协议</td></tr><tr><td class="left">SpatialGenEval</td><td>0.68</td><td>SenseNova0.72</td></tr><tr><td class="left">GEdit overall</td><td>7.30</td><td>QwenEdit7.56</td></tr></tbody></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">不能从G64更强推断分组数的因果收益</div>
+      <p>G16/G64训练配置与时长不同；固定空间位置也没有固定比特预算。G16R1/R52改变解码器和输出尺度，重建分数不能照搬。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">同一1.7B理解设置：OCRBench除10后计算8项平均</p>
+  <table class="ood-table"><tbody><tr><th>表示</th><th>ResMod</th><th>Avg.</th></tr><tr><td>连续</td><td>无</td><td>66.31</td></tr><tr><td>连续</td><td>插入不重训</td><td>66.48</td></tr><tr><td>连续</td><td>有</td><td>66.96</td></tr><tr><td>离散</td><td>有</td><td>65.05</td></tr></tbody></table>
+
+  <div class="trick-box">
+    <div class="trick-title">归因边界比单项第一更重要</div>
+    <p>离散受控消融仍落后连续；更锐利不是原图真值。下游8B最好成绩不代表当前HF可直接复现的能力。尚未独立跑测或审计完整训练仓库。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">部署的精度边界</div>
+      <div class="adelta">保留FP32码本</div>
+      <div class="adesc">G16/G64全转BF16可能改变离散分配；R1/R52按卡加载BF16。权重文件大小不等于显存。</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">对Agent Training的验证</div>
+      <div class="adelta">固定预算</div>
+      <div class="adesc">固定LM/数据/码载荷比较OCR与工具任务；固定码再换解码器，检查幻觉与成本。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">一个专项family</div>
+    <p>四款合并；不是LongCat新正代，旧版RVQ与新版Grouped PQ分开。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">真实日期阶段</div>
+    <p>11/12实现/权重补齐可核；最早公告日待核，11/9仅投稿。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">开放能力分层</div>
+    <p>tokenizer重建已开放；8B理解/生成/编辑不随此包发布。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">研究可检验</div>
+    <p>比较应固定LM、数据、码比特预算和decoder，保留小字失败与协议差异。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+
+<script>document.querySelectorAll('.poster-tabs [role=tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.poster-tabs [role=tab]').forEach(t=>t.setAttribute('aria-selected',String(t===b)));document.querySelectorAll('.main-grid>[role=tabpanel]').forEach(p=>p.hidden=p.id!==b.getAttribute('aria-controls'));}));</script><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

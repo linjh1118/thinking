@@ -1,0 +1,265 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="">打开官方原文 ↗</a> · <a href="paper_tables.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>dNaViT official table evidence 
+S4.T1 
+Method Configuration ImageNet 
+Resolution f Spatial
+positions PSNR (dB) \uparrow SSIM \uparrow 
+Continuous representations 
+SD-VAE 1.x / 2.x (Rombach et al., 2022) 256^{2} 8 1024 23.54 0.68 
+OmniTokenizer (Wang et al., 2024a) 256^{2} 8 1024 26.74 0.82 
+SD-VAE XL (Podell et al., 2023) 256^{2} 8 1024 27.37 0.78 
+Qwen-Image (Wu et al., 2025a) 256^{2} 8 1024 32.18 0.90 
+SD-VAE 3 (Esser et al., 2024) 256^{2} 8 1024 31.29 0.87 
+Wan2.1 (Team Wan et al., 2025) 256^{2} 8 1024 31.34 0.89 
+FLUX-VAE (Black Forest Labs, 2024) 256^{2} 8 1024 32.74 0.92 
+Cosmos-CI (NVIDIA et al., 2025) 256^{2} 16 256 25.07 0.70 
+VA-VAE (Yao and Wang, 2025) 256^{2} 16 256 27.96 0.79 
+Wan2.2 (Team Wan, 2025) 256^{2} 16 256 31.25 0.88 
+PAE-DINOv2‡ (Yue et al., 2026) 256^{2} 16 256 27.28 – 
+DC-SAE (Huang et al., 2026) 256^{2} 32 64 23.13 – 
+UniLiP (Tang et al., 2025a) 256^{2} 32 64 22.99 0.75 
+UniLiP (Tang et al., 2025a) 448^{2} 32 196 24.62 0.79 
+Discrete representations 
+ARM (Wang et al., 2026) 256^{2} 16 256 19.60 – 
+Cosmos-DI (NVIDIA et al., 2025) 256^{2} 16 256 19.98 0.54 
+LlamaGen (Sun et al., 2024) 256^{2} 16 256 20.65 0.54 
+Open-MAGVIT2 (Luo et al., 2024) 256^{2} 16 256 22.70 0.64 
+BSQ-ViT (Zhao et al., 2024) 256^{2} 16 256 28.14 0.81 
+BitDance (Ai et al., 2026) 256^{2} 16 256 24.90 0.72 
+BitDance (Ai et al., 2026) 256^{2} 32 64 25.30 0.74 
+Emu3.5 (Cui et al., 2025) 512^{2} 16 1024 23.80 – 
+dNaViT-G16 256^{2} 32 64 22.82 0.64 
+dNaViT-G64 256^{2} 32 64 25.41 0.76 
+dNaViT-G16 512^{2} 32 256 25.47 0.71 
+dNaViT-G64 512^{2} 32 256 28.12 0.81 
+dNaViT-G16 1024^{2} 32 1024 28.93 0.81 
+dNaViT-G64 1024^{2} 32 1024 32.90 0.91 
+S4.T2 
+Method f Resolution@512\times 512 Resolution@1024\times 1024 
+T-ACC\uparrow T-NED\uparrow F-Sim\uparrow T-ACC\uparrow T-NED\uparrow F-Sim\uparrow 
+Continuous Autoencoders 
+DC-AE (Chen et al., 2024a) 32 38.25 56.22 0.39 52.14 68.02 0.50 
+VA-VAE (Yao and Wang, 2025) 16 53.30 69.65 0.57 62.84 77.21 0.69 
+SD-XL (Podell et al., 2023) 8 56.86 72.55 0.55 67.84 81.15 0.70 
+SD-3.5 (Stability AI, 2024) 8 81.84 90.30 0.81 89.71 95.05 0.93 
+FLUX.1-dev (Black Forest Labs, 2024) 8 87.64 93.86 0.86 93.09 96.96 0.96 
+Discrete Tokenizers 
+VQGAN (Esser et al., 2021) 16 6.12 17.32 0.19 15.00 28.80 0.25 
+Chameleon (Chameleon Team, 2024) 16 11.55 26.80 0.28 23.52 40.39 0.36 
+LlamaGen (Sun et al., 2024) 16 15.01 30.44 0.25 27.19 43.58 0.33 
+VAR (Tian et al., 2024) 16 29.31 50.00 0.32 38.36 59.25 0.40 
+TokenFlow (Qu et al., 2025) 16 17.40 35.49 0.24 29.30 48.09 0.31 
+O-MAGVIT2 (Luo et al., 2024) 16 21.65 39.63 0.31 34.74 52.03 0.40 
+O-MAGVIT2 (pretrain) (Luo et al., 2024) 16 27.33 47.28 0.31 39.40 58.95 0.40 
+UniTok (Ma et al., 2025) 16 50.10 71.08 0.44 49.70 71.59 0.53 
+OmniTokenizer (Wang et al., 2024a) 8 42.48 60.70 0.50 53.48 70.02 0.61 
+LlamaGen (Sun et al., 2024) 8 52.56 68.99 0.53 63.89 78.24 0.67 
+O-MAGVIT2 (Luo et al., 2024) 8 60.56 76.00 0.61 69.68 83.12 0.74 
+dNaViT-G16 32 33.58 52.43 0.34 45.05 62.75 0.41 
+dNaViT-G64 32 51.69 68.72 0.54 63.08 78.27 0.67 
+S4.T3 
+Method Resolution T-ACC\uparrow T-NED\uparrow F-Sim\uparrow 
+S M L S M L S M L 
+dNaViT-G16 512^{2} 3.52 24.56 72.66 17.60 52.52 87.19 0.14 0.25 0.61 
+dNaViT-G64 512^{2} 12.18 54.94 87.95 34.73 76.67 94.76 0.29 0.49 0.84 
+dNaViT-G16 1024^{2} 10.89 38.81 85.44 28.93 65.58 93.74 0.22 0.35 0.64 
+dNaViT-G64 1024^{2} 26.79 68.50 93.95 51.93 85.29 97.58 0.49 0.65 0.86 
+S4.T4 
+Method MMMU MMMU-Pro MathVista MathVision RealWorldQA MMStar 
+Continuous 
+LLaVA-OV-1.5-8B (An et al., 2025) 55.4 31.3 69.6 25.6 68.1 67.7 
+LLaVA-OV-2-8B (An et al., 2026b) – – – – 69.7 64.8 
+InternVL3-8B (Zhu et al., 2025) 62.7 – 71.6 29.3 70.8 68.2 
+InternVL3.5-8B (Wang et al., 2025b) 73.4 – 78.4 56.8 67.5 69.3 
+Kimi-VL-A3B (Kimi Team, 2025) 57.0 36.0 68.7 21.4 68.1 61.3 
+MiMo-VL-7B-2508 (Xiaomi, 2025) 63.1 – – – – – 
+BAGEL-7B (Deng et al., 2025) 55.3 – 73.1 – – – 
+Show-o2-7B (Xie et al., 2025b) 48.9 – – – – 56.6 
+Molmo2-8B (Clark et al., 2026) 53.0 – 58.9 – 77.6 – 
+Nemotron-VL-12B (NVIDIA, 2025) 55.3 – 69.0 31.5 76.2 65.9 
+Eagle2.5-8B (Chen et al., 2025a) 55.8 – 67.8 – 76.7 66.2 
+Phi-4-multimodal (Microsoft, 2025) 55.1 38.5 62.4 – – – 
+PLM-8B (Cho et al., 2025) 46.1 – – – 75.0 – 
+Qwen2.5-VL-7B (Bai et al., 2025b) 58.6 38.3 68.2 25.1 – 63.9 
+Qwen3-VL-8B (Bai et al., 2025a) 69.6 55.9 77.2 53.9 71.5 70.9 
+Discrete 
+Emu3-Chat-8B (Wang et al., 2024b) 31.6 – 47.6* 15.6* 57.4 46.5* 
+Tar-7B (Han et al., 2026) 39.0 – – – – – 
+ViQ-7B (Yu et al., 2026) 49.1 – – – – 54.2 
+UniAR-8B (Peng et al., 2026) 44.3 22.7* 50.8* – 68.5 56.7* 
+Kelix-8B (Ding et al., 2026) 54.1 – 76.5 – 72.1 – 
+LLaDA2.0-Uni (Bie et al., 2026) 50.1 34.0 68.1 26.7 66.7 64.1 
+dNaViT-8B 70.7 44.5 79.0 56.5 72.3 66.7 
+S4.T5 
+Method f Latent Shape IN-1K IN-A IN-R IN-V2 IN-Sketch ObjectNet 
+Continuous 
+QwenViT (Bai et al., 2025a) 32 16\times 16 80.45 60.13 65.00 70.18 46.57 56.48 
+InternViT (Wang et al., 2025b) 28 16\times 16 76.19 30.23 59.98 65.68 35.77 46.36 
+MoonViT (Kimi Team, 2025) 28 16\times 16 75.40 23.96 49.24 63.34 34.88 45.46 
+dNaViT-G16† 32 16\times 16 80.40 60.25 65.19 70.18 46.56 56.48 
+Discrete 
+UniAR (Peng et al., 2026) 32 16\times 16 66.54 14.52 36.13 54.11 15.40 29.16 
+UniTok (Ma et al., 2025) 16 16\times 16 78.56 47.81 71.10 68.18 51.03 60.53 
+TokenFlow (Qu et al., 2025) 16 16\times 16 48.32 6.88 24.81 37.93 15.35 15.89 
+Emu3.5 (Cui et al., 2025) 16 16\times 16 8.39 1.16 3.08 5.87 0.77 2.71 
+dNaViT-G16 32 16\times 16 79.47 56.35 68.09 69.81 45.02 59.79 
+S4.T6 
+Method OCRBench OCRBench V2
+
+(en/zh) CharXiv
+
+(DQ/RQ) DocVQA InfoVQA OmniDocBench
+
+(en/zh)\downarrow 
+Continuous 
+LLaVA-OV-1.5-8B (An et al., 2025) 829 – 70.9/– 95.0 78.4 – 
+LLaVA-OV-2-8B (An et al., 2026b) 782 – – 95.2 74.4 – 
+InternVL3-8B (Zhu et al., 2025) 880 – 73.6/37.6 92.7 76.8 – 
+InternVL3.5-8B (Wang et al., 2025b) 832 – 72.2/44.4 92.3 76.2 – 
+Kimi-VL-A3B (Kimi Team, 2025) 867 – – – 83.2 – 
+MiMo-VL-7B-2508 (Xiaomi, 2025) 881 – – – – – 
+Molmo2-8B (Clark et al., 2026) – – – 93.2 80.1 – 
+Nemotron-VL-12B (NVIDIA, 2025) 856 62.0/44.2 76.5/41.7 94.7 79.4 – 
+Eagle2.5-8B (Chen et al., 2025a) 869 – – 94.1 80.4 – 
+Phi-4-multimodal (Microsoft, 2025) 844 – – 93.2 72.7 – 
+PLM-8B (Cho et al., 2025) 870 – – 94.6 80.9 – 
+Qwen2.5-VL-7B (Bai et al., 2025b) 864 56.3/57.2 73.9/42.5 95.7 82.6 0.31/0.40 
+Qwen3-VL-8B (Bai et al., 2025a) 896 65.4/61.2 83.0/46.4 96.1 83.1 0.17/0.26 
+Discrete 
+Emu3-Chat-8B (Wang et al., 2024b) 687 – 36.8*/14.1* 76.3 42.7* – 
+X-Omni-7B (Geng et al., 2025) 704 – – 88.6 – – 
+ViQ-7B (Yu et al., 2026) 711 – – 88.9 55.3 – 
+UniAR-8B (Peng et al., 2026) 833 43.0*/48.6* 63.3*/26.8* 91.4 68.9* 0.48*/0.43* 
+Kelix-8B (Ding et al., 2026) 867 – – – – – 
+LLaDA2.0-Uni (Bie et al., 2026) 757 – 68.4/– 89.5 70.1 – 
+dNaViT-8B 885 57.6/60.1 86.5/51.0 96.2 79.2 0.17/0.22 
+S4.T7 
+Model Comp. Params. GenEval2
+
+GM QwenImage
+
+Bench Spatial
+
+GenEval LongText
+
+EN LongText
+
+CN 
+Proprietary Models 
+GPT Image 1 (OpenAI, 2025) – – – 54.07 0.61 0.96 0.62 
+Seedream 4.0 (ByteDance Seed, 2025) – – – 56.21 0.63 0.92 0.93 
+Seedream 4.5 (ByteDance Seed, 2026) – – – 56.78 – 0.99 0.99 
+GPT Image 2 (OpenAI, 2026) – – – 64.69 – 0.96 0.98 
+Nano Banana (Google, 2025b) – – 44.6 – 0.62 0.87 0.33 
+Nano Banana 2.0 (Google Cloud, 2026) – – – 59.82 – 0.98 0.95 
+Nano Banana Pro (Google, 2025a) – – – 59.45 – 0.98 0.95 
+Diffusion Models 
+HiDream-I1-Full (Cai et al., 2025) 16\times 17B – 43.08 – 0.54 0.02 
+FLUX.1 [dev] (Black Forest Labs, 2024) 16\times 12B 18.3 21.58 0.57 0.61 0.01 
+BAGEL (Deng et al., 2025) 16\times 14B 23.1 42.04 0.57 0.37 0.31 
+Z-Image (Z-Image Team, 2025) 16\times 6B 31.8 49.10 – 0.94 0.94 
+Z-Image-Turbo (Z-Image Team, 2025) – 6B 31.0 – 0.59 0.92 0.93 
+Qwen-Image (Wu et al., 2025a) 16\times 20B 33.8 49.23 0.61 0.94 0.95 
+Qwen-Image-2512 (Qwen Team, 2025a) – 20B 29.0 52.06 0.60 0.96 0.97 
+OmniGen2 (Wu et al., 2025b) 16\times 4B 18.7 40.70 0.56 0.56 0.06 
+SANA-1.5 (Xie et al., 2025a) 32\times 4.8B 17.5 35.14 0.54 0.05 – 
+SenseNova-U1-8B (Diao et al., 2026) – 8B 40.5 49.02 0.72 0.95 0.82 
+Autoregressive Models 
+Janus-Pro-7B (Chen et al., 2025b) 16\times 7B 4.6 23.53 0.51 0.02 0.01 
+GLM-Image (Z.ai, 2026) 16\times 16B 22.2 48.19 0.58 0.95 0.98 
+Emu3.5 (Cui et al., 2025) 16\times 34.1B 25.4 49.89 0.57 0.98 0.93 
+dNaViT-8B 32\times 8B 49.5 52.17 0.68 0.94 0.94 
+S4.T8 
+Model Comp. Params. SC \uparrow PQ \uparrow Overall \uparrow 
+Proprietary Models 
+Gemini 2.0 (Kampf and Brichtova, 2025) – – 6.73 6.61 6.32 
+Gemini 2.5 Flash Image (Fortin et al., 2025) – – 7.41 7.96 7.10 
+GPT-Image-1 [High] (OpenAI, 2025) – – 7.85 7.62 7.53 
+Open Models 
+AnyEdit (Yu et al., 2024a) 8\times 0.9B 3.18 5.82 3.21 
+Instruct-Pix2Pix (Brooks et al., 2023) 8\times 0.9B 3.58 5.49 3.68 
+MagicBrush (Zhang et al., 2023) 8\times 0.9B 4.68 5.66 4.52 
+UniWorld-v1 (Lin et al., 2025) 16\times 12B 4.93 7.43 4.85 
+OmniGen (Xiao et al., 2024) 16\times 3.8B 5.96 5.89 5.06 
+FLUX.1 Kontext [Dev] (Black Forest Labs et al., 2025) 16\times 12B 6.52 7.38 6.00 
+OmniGen2 (Wu et al., 2025b) 16\times 4B 7.16 6.77 6.41 
+BAGEL (Deng et al., 2025) 16\times 14B 7.36 6.83 6.52 
+Step1X-Edit (Liu et al., 2025) 16\times 12B 7.66 7.35 6.97 
+Qwen-Image-Edit (Qwen Team, 2025b) 16\times 20B 8.00 7.86 7.56 
+Emu3.5 (Cui et al., 2025) 16\times 34.1B 8.11 7.70 7.59 
+dNaViT-8B 32\times 8B 7.41 7.20 7.30 
+S5.T9 
+Exp ID Type ResMod MMMU RealWorldQA MMStar OCRBench TextVQA AI2D ChartQA DocVQA Avg. \uparrow 
+1 Continuous ✗ 39.44 60.26 44.60 695 74.84 81.87 73.64 86.29 66.31 
+2 ✓ 40.56 60.92 45.33 695 74.89 81.51 73.16 86.01 66.48 
+3 ✓ 40.00 62.61 46.60 713 75.05 81.31 72.80 86.01 66.96 
+4 Discrete ✓ 38.33 59.08 45.73 682 73.49 80.60 71.00 83.98 65.05</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

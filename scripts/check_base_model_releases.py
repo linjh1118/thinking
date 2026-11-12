@@ -58,6 +58,8 @@ OFFICIAL_PAGES = {
 # and excludes provider onboarding, API changes, and repeated family SKUs.
 ADDITIONAL_PAGES = {
     # Closed-source rollout announcements can precede the model-card index.
+    'longcat-research-code': ('longcat', 'https://raw.githubusercontent.com/meituan-longcat/LongCat-Next/main/README.md'),
+    'longcat-dnavit-card': ('longcat', 'https://huggingface.co/meituan-longcat/LongCat-Next/raw/main/dNaViT/README.md'),
     'google-gemini': ('google', 'https://deepmind.google/models/gemini/'),
     'google-model-news': ('google', 'https://blog.google/innovation-and-ai/models-and-research/gemini-models/'),
     'ibm-github': ('ibm', 'https://github.com/ibm-granite'),
