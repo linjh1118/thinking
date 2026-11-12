@@ -57,6 +57,9 @@ OFFICIAL_PAGES = {
 # additional first-party directories; a human still verifies first-release dates
 # and excludes provider onboarding, API changes, and repeated family SKUs.
 ADDITIONAL_PAGES = {
+    # Closed-source rollout announcements can precede the model-card index.
+    'google-gemini': ('google', 'https://deepmind.google/models/gemini/'),
+    'google-model-news': ('google', 'https://blog.google/innovation-and-ai/models-and-research/gemini-models/'),
     'ibm-github': ('ibm', 'https://github.com/ibm-granite'),
     'openai-safety-hub': ('openai', 'https://deploymentsafety.openai.com/'),
     'openai-api-changelog': ('openai', 'https://developers.openai.com/api/docs/changelog.md'),

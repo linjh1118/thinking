@@ -211,3 +211,5 @@ ModelOpt v0.48.0将路由专家由MXFP4转为NVFP4，input scales设1.0；共享
 | DeepSWE | 75.50 | 77.40 |
 
 第一张表标temperature1.0、top-p0.95；KVV卡称沿用官方thinking/repeats/harness设置，但本轮未独立审计KVV全套配置或运行。表中的MMMU-Pro 81.79与84.10来自不同评测设置，不能相互覆盖。数值含正负变化，不能概括为量化后全项提升或无损；未下载权重、执行示例命令或实际复测。
+
+11月12日午间官方NVFP4卡新增SGLang nightly示例（TP8），量化配置、对照数值和11/10分发声明未变。只记录部署文档变化，未运行镜像或命令。

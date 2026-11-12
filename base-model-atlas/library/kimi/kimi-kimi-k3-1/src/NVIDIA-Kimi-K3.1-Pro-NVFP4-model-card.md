@@ -64,6 +64,7 @@ Our AI models are designed and/or optimized to run on NVIDIA GPU-accelerated sys
 ## Software Integration:
 **Runtime Engine(s):** <br>
 * **vLLM** <br>
+* **SGLang** <br>
 
 **Supported Hardware Microarchitecture Compatibility:** <br>
 * NVIDIA Blackwell <br>
@@ -100,17 +101,23 @@ The model version is NVFP4 1.0 version and is quantized with nvidia-modelopt **v
 **Properties:** We evaluated the model on text-based reasoning and multimodal benchmarks: GPQA Diamond contains 448 graduate-level multiple-choice questions written by domain experts in biology, physics, and chemistry;  MMMU Pro is the more challenging version of the Massive Multi-discipline Multimodal Understanding benchmark, measuring college-level multimodal reasoning across diverse disciplines with expanded answer choices and a vision-only input setting. <br>
 
 ## Inference:
-**Acceleration Engine:** **vLLM** <br>
+**Acceleration Engine:** **vLLM**, **SGLang** <br>
 **Test Hardware:** **NVIDIA Blackwell GB300** <br>
 
 ## Post Training Quantization
-This model was obtained by quantizing the weights and activations of Kimi-K3.1-Pro to NVFP4 data type, ready for inference with **vLLM**. The source checkpoint stores MXFP4 weights. The routed MoE expert weights are converted from MXFP4 to NVFP4 and the input_scales are set to 1.0. The shared experts and the KDA attention are quantized to MXFP8 and the activation scales are learnt on the fly. The MLA layers are kept in BF16 for the best accuracy recovery.
+This model was obtained by quantizing the weights and activations of Kimi-K3.1-Pro to NVFP4 data type, ready for inference with **vLLM** and **SGLang**. The source checkpoint stores MXFP4 weights. The routed MoE expert weights are converted from MXFP4 to NVFP4 and the input_scales are set to 1.0. The shared experts and the KDA attention are quantized to MXFP8 and the activation scales are learnt on the fly. The MLA layers are kept in BF16 for the best accuracy recovery.
 ## Usage
 
-To serve this checkpoint with [vLLM](https://github.com/vllm-project/vllm), you can start the docker `vllm/vllm-openai:kimi-k31-cu134` and run the sample command below:
+* **vLLM**: To serve this checkpoint with [vLLM](https://github.com/vllm-project/vllm), you can start the docker `vllm/vllm-openai:kimi-k31-cu134` and run the sample command below:
 
 ```sh
 vllm serve nvidia/Kimi-K3.1-Pro-NVFP4 --port 8000 --tensor-parallel-size 8 --max-model-len 1048576 --max-num-seqs 256 --load-format fastsafetensors --trust-remote-code --reasoning-parser kimi_k3 --enable-auto-tool-choice --tool-call-parser kimi_k3
+```
+
+* **SGLang**: To serve this checkpoint with [SGLang](https://github.com/sgl-project/sglang), you can start the latest nightly docker `lmsysorg/sglang:dev-cu13` and run the sample command below:
+
+```sh
+sglang serve --model-path nvidia/Kimi-K3.1-Pro-NVFP4 --tp 8 --trust-remote-code --max-running-requests 256 --reasoning-parser kimi_k3 --tool-call-parser kimi_k3
 ```
 
 ## Evaluation

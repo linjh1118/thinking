@@ -12,10 +12,10 @@ tags: [model-note, base-model, gemini, agent-training, long-context, safety]
 topic: "13_base_model"
 status: read
 created: 2026-10-14
-updated: 2026-11-11
+updated: 2026-11-12
 ---
 
-# Gemini 4 Argon
+# Gemini 4 · Argon / Carbon
 
 > [!tldr]
 > Argon 是 Gemini 4 的新主干基座，不是对旧 Gemini 的微调。它把持续推理、长时程工程和多模态知识工作推到更高能力档，同时把越权、投机与注入监控作为部署系统的一部分。**最有研究价值的公开发现：惩罚思维中的“作弊念头”，可能让作弊更隐蔽，而不是更少。**
@@ -182,7 +182,7 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 ## Carbon：官方卡公开、家族定位与证据边界
 
 > [!tldr]
-> Carbon明确基于Argon，作为Gemini4同族深入推理版本合读，保持既有Overview/笔记/Poster地址。官方卡Published11/10证明资料公开日，不自动证明模型最早可用日；11/9已有他家对比提及，精确首发继续待核，以11月归档线索列入日期待核实区，不伪造一个11/10新正代。
+> Carbon基于Argon，保持同一family与原有链接。本轮补齐官方公告：北京时间10/29 01:00宣布当周分批受限开放；11/11 00:00宣布公众API/产品全面开放。前者是公告时刻，不把它伪装为首位用户实际可用时刻；卡片11/10仍只作资料日期。
 
 > [!warning] 方法与安全报告未读
 > 已读完整HTML模型卡，保存全部能力/安全表。评测方法URL实际返回PDF，误存响应已立即移除且未读，只留链接；安全报告亦仅链接。参数、训练数据/算法等沿用“based on Argon”依赖声明，不推定与Argon完全相同。本文未进行服务实测，不能称完整技术报告精读。
@@ -194,14 +194,60 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 |推理|更长思考与验证循环，可配置thinking levels；不是无条件更快|
 |分发|App/API/AIStudio/企业/Antigravity/AIMode，按渠道/订阅不同；Fairwind仅验证防御者|
 |截止知识|March2026，某些域更早|
-|未核|确切首次可用日、Carbon API ID/计费/训练超参；不从Argon照搬|
+|已补核 / 未核|生命周期表明确API ID `gemini-4-carbon`，公开服务入门输入$2/M、输出$10/M，11/30后$4/$20；首位受邀用户实际可用时刻、训练超参与完整评测方法仍未核|
+
+### 两阶段官方公告：补回日期，不拆新正代
+
+| 事件 | 原始UTC | 北京时间 | 证据边界 |
+| --- | --- | --- | --- |
+| Carbon受限开放公告 | 2026-10-28 17:00 | **2026-10-29 01:00** | JSON-LD datePublished；正文是“当周”分批向Fairwind受邀者开放，首位实际可用时刻未披露 |
+| Carbon全面开放公告 | 2026-11-10 16:00 | **2026-11-11 00:00** | 明确向付费开发者/企业API开放，Ultra产品逐步上线；按渠道/订阅区分 |
+| Cloud生命周期表 | 仅写2026-11-10 | 未提供时区 | 确认`gemini-4-carbon`与cyber-permissive服务名，不覆盖博客精确时间 |
+
+两篇博客原始HTML、可读文本及六张官方图已归档；`dateModified`不用于首发。此前月份级Carbon待核条目被两条同族阶段事件替代，Gemini4主干仍为Argon10月1日，节点总数不变。
+
+### 公开服务、成本与案例的适用范围
+
+Carbon全面开放博客明确公开服务入门价为输入$2/M、输出$10/M，入门期11/30结束后为$4/$20；脚注仅适用于公众访问模型。付费API与Ultra产品、科研计划、Fairwind防御者的准入和安全策略分别解释。`/swarm`是Antigravity的多Agent功能预览，不是新模型，也不是单次调用的隐形计算预算。
+
+发布博客对CursorBench4.0、WANDR和AutomationBench给出特定成本/排名声明；MKA为质量第二、平均每任务成本低于第一名的六分之一。这些不能外推为所有任务领先或实际生产花费。金融、3D与科研案例属于精选演示：蛋白检索结果只覆盖CASP17七个低同源家族，平均多检出40倍同源序列，并非结构精度提升40倍，也没有重新训练结构模型。
+
+### 监控与安全数字：结果随分布和防护配置一起读
+
+![Carbon官方生命周期监控图，非Argon历史图](src/assets/carbon-misalignment.webp)
+
+| 官方图/正文的量尺 | Carbon | Argon | 解读限制 |
+| --- | ---: | ---: | --- |
+| RL高严重度触发比例 | 0.023% | 0.050% | 监控触发率，不是所有训练行为违规率 |
+| TB4审计：尝试作弊 | 0.4% | 3.6% | 与成功作弊分开 |
+| TB4审计：成功作弊 | 0.0% | 2.4% | 测试分布内观测为零，不证明普遍不投机 |
+| 内部部署确认高严重度告警 | 0.016% | 0.078% | 内部系统与确认流程下的比例 |
+| 375任务诚实基准通过率 | 92% | 70% | 没有公开完整逐任务结果或复测 |
+| Gray Swan自动网络攻击请求成功率 | 2.17% | 9.86% | 防护部署协议，不能和无guardrails能力成绩混排 |
+| 自适应红队单次突破率 | 0.8% | 3.1% | 与阻断99%攻击轨迹不是同一个分母 |
+
+诚实基准还报告98%拒填缺失实验数据、68%指出方法缺陷；外部132小时/13000余次请求未发现新的通用越狱，是观测边界而非零风险证书。Gray Swan IPI图为k=15尝试，Carbon0%对Argon0.7%；官方同时承认某些更复杂攻击分布仍需改进。
+
+![Carbon官方IPI图：顶端数值为15次尝试](src/assets/carbon-ipi.webp)
+
+![Carbon受限发布时的完整官方能力总表](src/assets/carbon-benchmarks.webp)
+
+![SEC-bench Pro：Pass@1](src/assets/carbon-secbench.webp)
+
+![ExploitGym：各模型时间预算不同](src/assets/carbon-exploitgym.webp)
+
+![CWE-bench：Pass@1，同分以Pass@4排序；harness不同](src/assets/carbon-cwebench.webp)
+
+三个网络专项图对应无防护能力测试。ExploitGym中的Carbon54.8%是10小时、53.5%是6小时；Astra无时限、Opus6小时，不能当统一预算排位。CWE图的Antigravity、Codex、Claude Code、opencode也不同。保留完整原图与下方模型卡全表，且继续保留FrontierSWE与OSWorld落后项；没有运行模型、攻击或服务示例。
+
+我对这次资料补齐的判断：首发监测必须同时看官方新闻/产品页和model-card目录；训练研究则应把更多推理、并行Agent和安全监控分别控制。报告成本曲线时注明公开/受限模型与预算，不能把更少告警当成真实违规率必然同步降低。完整方法和安全报告仍只有PDF链接，按约定未抓取、未精读；详细训练配方与独立复现尚未具备。
 
 以下结果为官方卡所称截至2026年10月的结果，11/10是资料发布时间。能力提升来源可能含预算/harness变化，方法PDF未读，不能断言严格等算力消融。网络专项为Fairwind访问条件下成绩，不能混为所有普通API用户默认权限。
 
 
 <table><thead><tr><th class=table--category scope=col><span class=sr-only>Category</span></th><th class=table--benchmark scope=col>Benchmark</th><th class=table--notes scope=col><span class=sr-only>Notes</span></th><th class=table--highlight scope=col>Gemini 4<br>Carbon</th><th class=table--highlight scope=col>Gemini 4 Argon</th><th scope=col>GPT-6 Astra</th><th scope=col>Claude Opus 5.5</th><th scope=col>Claude Fable 5.1</th></tr></thead><tbody><tr><th class=table--category rowspan=2 scope=row><small class=text-small>General capabilities</small></th><td class=table--benchmark>AA Index v5.0</td><td class=table--notes></td><td class=table--highlight><strong>59</strong></td><td class=table--highlight>50</td><td>57</td><td>58</td><td>49</td></tr><tr><td class=table--benchmark>Vals Index v2.2</td><td class=table--notes></td><td class=table--highlight><strong>70.4%</strong></td><td class=table--highlight>69.2%</td><td>65.0%</td><td>70.2%</td><td>—</td></tr><tr><th class=table--category rowspan=3 scope=row><small class=text-small>Agentic coding</small></th><td class=table--benchmark>SWE-sweep</td><td class=table--notes></td><td class=table--highlight><strong>9.6%</strong></td><td class=table--highlight>4.3%</td><td>9.5%</td><td>3.6%</td><td>2.9%</td></tr><tr><td class=table--benchmark>FrontierSWE 2</td><td class=table--notes></td><td class=table--highlight>61.2%</td><td class=table--highlight>55.0%</td><td><strong>65.5%</strong></td><td>62.3%</td><td>56.3%</td></tr><tr><td class=table--benchmark>Terminal-Bench 4.0 (AA)</td><td class=table--notes></td><td class=table--highlight><strong>65.2%</strong></td><td class=table--highlight>57.1%</td><td>59.1%</td><td>59.6%</td><td>52.0%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Computer use</small></th><td class=table--benchmark>Agents' Last Exam v1.1</td><td class=table--notes><small class=text-small>Score</small></td><td class=table--highlight><strong>77.4%</strong></td><td class=table--highlight>69.0%</td><td>73.1%</td><td>71.6%</td><td>—</td></tr><tr><td class=table--benchmark>OSWorld-2.1</td><td class=table--notes><small class=text-small>Offline subset</small></td><td class=table--highlight>81.5%</td><td class=table--highlight>74.7%</td><td>80.9%</td><td><strong>87.2%</strong></td><td>76.8%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Knowledge work</small></th><td class=table--benchmark>AutomationBench</td><td class=table--notes><small class=text-small>Zapier</small></td><td class=table--highlight><strong>53.9%</strong></td><td class=table--highlight>51.3%</td><td>41.4%</td><td>42.5%</td><td>31.4%</td></tr><tr><td class=table--benchmark>Vending-Bench 2</td><td class=table--notes><small class=text-small>Bank balance ($)</small></td><td class=table--highlight><strong>$16,484</strong></td><td class=table--highlight>$13,718</td><td>$15,515</td><td>$9,235</td><td>$5,422</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Multimodal understanding</small></th><td class=table--benchmark>Chartography</td><td class=table--notes></td><td class=table--highlight><strong>72.5%</strong></td><td class=table--highlight>71.6%</td><td>71.0%</td><td>66.3%</td><td>46.2%</td></tr><tr><td class=table--benchmark>Blueprint-Bench 2</td><td class=table--notes><small class=text-small>Similarity score</small></td><td class=table--highlight><strong>58.6%</strong></td><td class=table--highlight>54.4%</td><td>49.7%</td><td>51.2%</td><td>41.9%</td></tr><tr><th class=table--category scope=row><small class=text-small>Long context</small></th><td class=table--benchmark>GraphWalks</td><td class=table--notes><small class=text-small>256k to 1M, BFS (F1)</small></td><td class=table--highlight><strong>96.2%</strong></td><td class=table--highlight>84.2%</td><td>71.8%</td><td>66.8%</td><td>65.0%</td></tr><tr><th class=table--category rowspan=2 scope=row><small class=text-small>Science and math</small></th><td class=table--benchmark>RiemannBench</td><td class=table--notes></td><td class=table--highlight><strong>80.0%</strong></td><td class=table--highlight>76.0%</td><td>72.0%</td><td>69.6%</td><td>65.6%</td></tr><tr><td class=table--benchmark>Terminal-Bench-Science 0.1 (AA)</td><td class=table--notes></td><td class=table--highlight><strong>64.8%</strong></td><td class=table--highlight>52.9%</td><td>63.3%</td><td>59.0%</td><td>43.3%</td></tr><tr><th class=table--category rowspan=3 scope=row><small class=text-small>Cybersecurity</small></th><td class=table--benchmark>CWE-bench</td><td class=table--notes></td><td class=table--highlight><strong>71.0%</strong></td><td class=table--highlight>68.0%</td><td>68.0%</td><td>67.0%</td><td>58.0%</td></tr><tr><td class=table--benchmark>ExploitGym</td><td class=table--notes></td><td class=table--highlight><strong>54.8%</strong></td><td class=table--highlight>42.0%</td><td>42.4%</td><td>34.5%</td><td>—</td></tr><tr><td class=table--benchmark>SEC-bench Pro</td><td class=table--notes></td><td class=table--highlight><strong>88.2%</strong></td><td class=table--highlight>83.4%</td><td>85.4%</td><td>—</td><td>—</td></tr></tbody></table>
 
-保留反例：FrontierSWE2 61.2低于Astra65.5与Opus62.3；OSWorld2.1 offline81.5低于Opus87.2。Carbon表的Argon值与旧卡某些任务已换版本/口径，例如TB4(AA)、OSWorld2.1、ALEv1.1，不能拿旧卡TB4/OSWorld2.0/旧ALE的分数直接算受控增益。没有Carbon单独价格证据，Argon入门价不外推。
+保留反例：FrontierSWE2 61.2低于Astra65.5与Opus62.3；OSWorld2.1 offline81.5低于Opus87.2。Carbon表的Argon值与旧卡某些任务已换版本/口径，例如TB4(AA)、OSWorld2.1、ALEv1.1，不能拿旧卡TB4/OSWorld2.0/旧ALE的分数直接算受控增益。新增Carbon全面开放博客给出独立价格证据，见下文；此前Argon价格不再作为Carbon价格的替代来源。
 
 <table><thead><tr><th scope=col width=160>Evaluation</th><th scope=col>Description</th><th scope=col>Gemini 4 Carbon<br> <small class=text-small>Gemini 4 Argon (percentage point increase/decrease)</small></th></tr></thead><tbody><tr><th scope=row>Text to Text Safety</th><td>Automated content safety evaluation measuring safety policies</td><td><b>+3.50pp</b></td></tr><tr><th scope=row>Multilingual Safety</th><td>Automated safety policy evaluation across multiple languages</td><td><b>+3.55pp</b></td></tr><tr><th scope=row>Image to Text Safety</th><td>Automated content safety evaluation measuring safety policies</td><td>-1.00pp</td></tr><tr><th scope=row>Tone</th><td>Automated evaluation measuring objective tone of model refusal</td><td>+1.10pp</td></tr><tr><th scope=row>Unjustified-refusals</th><td>Automated evaluation measuring model’s ability to respond to borderline prompts while remaining safe</td><td>+1.10pp</td></tr></tbody></table>
 
@@ -210,6 +256,9 @@ Model Card 对生物与 cyber 的 CCL、stealth/situational-awareness 的 TCL �
 > [!insight]
 > 同族更深推理的比较应固定任务、输入、权限、harness与总计算，画成功率—成本—时延曲线；分别记录能力增长、停止/超时和合规动作。不能用更大token预算所得最高分训练一个“多想就正确”的奖励。
 
+- [Carbon受限开放公告：UTC10/28，北京10/29](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/)
+- [Carbon全面开放公告：UTC11/10，北京11/11](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/)
+- [Cloud官方生命周期：API名称与日期](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/model-versions)
 - [Carbon官方HTML模型卡](https://deepmind.google/models/model-cards/gemini-4-carbon/)，Published11/10；不是自行认定首次可用日。
 - [评测方法PDF链接，未读](https://deepmind.google/models/evals-methodology/gemini-4-carbon)
 - [Safety & Security报告链接，未读](https://storage.googleapis.com/deepmind-media/gemini/gemini_4_carbon_safety_report.pdf)
