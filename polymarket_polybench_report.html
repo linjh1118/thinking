@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- index: PolyBench × Polymarket 深度调研 | 2026-11-13 | 预测市场 LLM 交易基准：论文与源码拆解、Polymarket 新手指南、黄金石油赚钱打法、AI 团队方案与发 Paper 选题 -->
+<!-- index: PolyBench × Polymarket 深度调研 | 2026-11-13 | 预测市场 LLM 交易基准：论文与源码拆解、Polymarket 新手指南、黄金石油赚钱打法、真题×解法、AI 团队方案与发 Paper 选题 -->
 <html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -210,6 +210,7 @@ footer{max-width:1180px;margin:10px auto 40px;padding:0 24px}
     <button class="tab-btn" data-tab="bench">🔬 PolyBench 拆解</button>
     <button class="tab-btn" data-tab="market101">📖 Polymarket 入门</button>
     <button class="tab-btn" data-tab="alpha">💰 黄金石油机会</button>
+    <button class="tab-btn" data-tab="samples">🎯 真题×解法</button>
     <button class="tab-btn" data-tab="ai">🤖 AI 团队方案</button>
     <button class="tab-btn" data-tab="paper">📄 发 Paper 方向</button>
     <button class="tab-btn" data-tab="action">✅ 行动清单</button>
@@ -625,6 +626,178 @@ CWR = Σπ / ΣI   （全部 BUY 的净利 ÷ 总投入）</pre>
       <li><b>第 4 周+ · 系统化：</b>把有效判断模式写成 checklist 交给 AI 团队产品化（信号提醒 + 仓位计算器），逐步扩展到周度/日内市场。</li>
     </ol>
     <div class="callout danger"><b>重申前置条件：</b>大陆合规（出入金 + ToS 辖区）问题不解决前，只做只读研究模式。这一步无法绕过，也不应该绕过。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 4.5: 真题×解法 ══════════════════ -->
+<section class="tab-panel" id="samples">
+  <div class="tldr"><b>TLDR：</b>两部分真题，每类 2 道，每道配完整解决方案。第一部分：<b>商品区 8 个题型</b>（大佬的主场），每题型 2 道真实在售题 + 定价公式 / 数据输入 / 下单方式 / 仓位与费用账；第二部分：<b>PolyBench 同源真题</b>——论文数据集就是从 Polymarket 采样，这里采政治域、Crypto 域各 2 道（论文点名的两个域），每道给 LLM 视角（模型为何输/赢）+ 人工视角 + benchmark 研究价值。所有报价为页面快照值（标注日期），<b>示例演算中的现价/波动率为演示假设</b>；「报价未采集」= 题目真实但快照未含该盘口赔率。</div>
+
+  <div class="card">
+    <h3>题型总览：商品区的 8 类题</h3>
+    <table class="tbl">
+      <tr><th>题型</th><th>题目形态</th><th>本质</th><th>结算特征</th><th>流动性（快照）</th></tr>
+      <tr><td><b>① 日内方向题</b></td><td>"XAUUSD Up or Down on Oct 7?"</td><td>当日涨跌二元</td><td>当日，最快</td><td class="num">$4K–18K vol</td></tr>
+      <tr><td><b>② 日内收盘阈值</b></td><td>"WTI closes above $82 on Oct 7?"</td><td>收盘价数字期权阶梯</td><td>当日收盘</td><td class="num">$8.8K vol / $41K liq</td></tr>
+      <tr><td><b>③ 周度触及题</b></td><td>"Silver hit $58 Week of Oct 5?"</td><td>一周 barrier（touch）期权</td><td>周内任意时点触及即结算</td><td class="num">$12–33K vol</td></tr>
+      <tr><td><b>④ 月度/季度触及题</b></td><td>"GC hit $4,500 by end of Dec?"</td><td>多档 touch 期权（只看路径高点）</td><td>月末，档位多</td><td class="num">$1–5M vol（最厚）</td></tr>
+      <tr><td><b>⑤ 月末结算价区间</b></td><td>"GC settle at in February?"</td><td>终点分布分桶（不看路径）</td><td>月末收盘价落档</td><td class="num">随月滚动</td></tr>
+      <tr><td><b>⑥ 月末阈值二元</b></td><td>"GC above $4,500 end of June?"</td><td>单一 digital（数字期权）</td><td>月末收盘价单点阈值</td><td class="num">随月滚动</td></tr>
+      <tr><td><b>⑦ 极端事件题</b></td><td>"Crude Oil all time high by...?"</td><td>深尾部 touch（多截止日档）</td><td>触发或到期</td><td class="num">$5M vol / 41 个截止档</td></tr>
+      <tr><td><b>⑧ 跨资产相对题</b></td><td>"Bitcoin vs. Gold vs. S&P 500?"</td><td>相对收益多选项（互斥，负风险）</td><td>期末</td><td class="num">$940K vol</td></tr>
+    </table>
+    <p class="chart-note">题目与报价为 polymarket.com 页面快照（商品区 2026-10-07；黄金区 2026-02-26 缓存）。题型随月滚动重现（如 "GC hit by end of February" → "by end of December"），模板长期有效。</p>
+  </div>
+
+  <div class="card">
+    <h3>题型 ①：日内方向题（Up/Down）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：Gold (XAUUSD) Up or Down on October 7? <span class="pill info">Up 报 3%</span> <span class="pill vio">$4.2K vol · $11.5K liq</span></h5>
+      <p><b>解法（Up=3% 时该做什么）：</b>3% 意味着当日已明显下跌且临近结算、剩余时间波动不足以翻盘——这已经是「确定性票据」。唯一可做的：挂 <b>maker 限价 0.95–0.97 买 Down</b> 收尾巴（97→100 赚 3%，p=0.03 处 taker 费按 min(p,1-p) 对称公式趋近于零，但必须 maker 不 taker）。资金占用半天，年化漂亮但绝对额小。</p>
+      <p style="margin-top:6px"><b>真实风险：</b>① 结算源时点差——平台规则里的「当日收盘」用的是哪个数据源、哪个时点（部分日内盘按特定窗口均价结算），跟你看的行情软件可能差几分钟；② 尾盘行情突变，3% 的票翻盘虽罕见但非零。翻盘即全损，所以这种票只值得用「输光不心疼」的小额参与。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：WTI Crude Oil (WTI) Up or Down on October 7? <span class="pill info">Up 报 75%</span> <span class="pill warn">距结算约 8 小时</span></h5>
+      <p><b>解法（先算再动，无 edge 就 SKIP）：</b>剩余 8 小时 ≈ 交易日 1/3，油价日内已实现波动年化 25–35% → 剩余时段 σ ≈ 30%/√(3×252) ≈ 1.1%。若当日已涨 +0.8%（演示假设），收盘转跌概率 ≈ Φ(−0.8%/1.1%) ≈ 23% → 市场报 No=25% 与模型几乎重合 → <b>无 edge，正确动作是 SKIP</b>。PolyBench 论文的教训就是模型什么都想做；真人的优势是知道何时不做。</p>
+      <p style="margin-top:6px"><b>edge 什么时候出现：</b>① 数据日（EIA 原油库存周三 10:30 ET、OPEC+ 会议）——有库存预测模型的团队在发布前对比盘口隐含方向；② 盘口报价与实时期价的偏离瞬时放大时（机器人延迟窗口）。日常方向题不值得碰。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ②：日内收盘阈值题（closes above ___ on date）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：WTI closes above ___ on October 7? — $82 档 <span class="pill info">Yes 报 100%</span> <span class="pill vio">$8.8K vol · $41.4K liq</span></h5>
+      <p><b>解法（100% 的盘怎么处理）：</b>现价已远离 $82 且临近收盘 → 该档已是收息票。可做：maker 挂 0.97–0.99 买 Yes，赚最后 1–3%（风险同上：结算源时点）。不可做：taker 按 100% 买——费后为零。这道题的真正价值是复盘问题：<b>为什么没人在它还是 60–70% 的时候买？</b>那需要盘中持续监控「现价距离每个档位的 touch/close 概率」，正是 AI 团队「结算哨兵 + 阈值概率引擎」要自动化的东西（见 AI 团队 Tab 路线③）。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：同事件的相邻档位（$80 / $81 / $83…） <span class="pill warn">题目真实存在，快照未逐一采集报价</span></h5>
+      <p><b>解法（阶梯定价 = 把一个事件变成一张隐含分布图）：</b>同一 "closes above ___" 事件的全部档位 Yes 价，就是市场对「今日收盘价」的隐含 CDF。三步：① 把所有档 Yes 价格列出来，相邻档价差 = 隐含密度；② 与自己的日内模型（现价 + 剩余时间 σ + 期现基差）算出的分布对比；③ 哪档偏离最大买哪档。</p>
+      <p style="margin-top:6px"><b>套利校验：</b>全部档 Yes 之和必须 ≈ 1（收盘价必落一档）。Σ&gt;1 → 全部卖空（负风险机制）；Σ&lt;1 → 全部买入后 merge 无风险套利。<b>论文里 LLM 挂 arbitrage 标签的交易全线亏损，因为它们不做这道算术——这道算术是纯算术，程序做是稳的。</b></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ③：周度触及题（hit ___ Week of ___）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：What will Silver (XAGUSD) hit Week of Oct 5? — ↓$58 档 <span class="pill info">No 报 77%（Yes=23%）</span> <span class="pill vio">$32.9K vol · $106K liq</span></h5>
+      <p><b>解法（touch 概率公式，技术面的直接变现）：</b>"触及"= barrier option，定价用反射原理近似：剩余 T 天内触及距离 d 的轨道概率 ≈ <b>2·Φ(−d/(σ·√T))</b>（drift≈0 时）。白银周波动 σ≈4–5%（演示假设），快照时周还剩 2 天（T≈0.63 周）。</p>
+      <pre>示例演算：现价 $61（假设）→ d = 3/61 ≈ 4.9%
+d/(σ√T) = 4.9% / (4.5%·0.63) ≈ 1.73
+P(触及 $58) ≈ 2·Φ(−1.73) ≈ 8.4% → Yes 公允 ≈ 0.08
+市场报 Yes 0.23 → 严重高估 → 买 No（0.77→1.0，+30% 空间）
+（若实时现价距 $58 更近，结论反转——一切以实时 spot 代入为准）</pre>
+      <p style="margin-top:6px"><b>修正项：</b>① drift 显著时用 drift-adjusted barrier 公式（技术面判断的就是这个 drift）；② 周内有 FOMC/CPI 时 σ 上浮 20–40%；③ 必读规则确认结算源（XAG 现货定盘价 vs 平台指定源）和「触及」的时点定义。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：What will WTI Crude Oil (WTI) hit Week of Oct 5? — ↑$95 档 <span class="pill info">Yes 报 24%</span> <span class="pill vio">$12.1K vol · $44.3K liq</span></h5>
+      <p><b>解法（同一公式，反向样本）：</b>快照时 WTI 在 $85–86 区间（10 月初，演示取 $86），距 $95 达 10.5%，周内剩余 3 天，油价周 σ≈5–6% → d/(σ√T) ≈ 10.5%/(5.5%·0.77) ≈ 2.48 → P(触及) ≈ 2·Φ(−2.48) ≈ 1.3%。市场报 24% ≫ 模型 1.3%。</p>
+      <p style="margin-top:6px"><b>两种解释，动作完全不同：</b>① 若规则是「周内任意时点触及」且本周初油价曾冲高接近 $95，24% 可能是残留定价未清理 → 买 No 是捡钱（但要确认本周确实未触及过，触及则已结算 100%）；② 若市场知道某个供给冲击催化剂（你不知道），24% 是对的 → 这正是「读新闻 vs 读盘口」的分歧检验点，先查消息面再下手。这个案例完美示范：公式给出怀疑，人做最后判断。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ④：月度/季度触及题（多档 hit，主力打法①的载体）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：What will WTI Crude Oil (WTI) hit in October? — ↓$85 档 <span class="pill info">「↓$85」报 65%</span> <span class="pill good">$1M vol · $840K liq（商品区最厚盘口）</span></h5>
+      <p><b>解法（容量最大的主战场）：</b>月内触及概率 = 2·Φ(−d/(σ·√T))，T=剩余天数/30，油价月 σ≈8–10%。流动性 $840K 意味着单档可容纳 <b>$40K 级仓位</b>（仍守 ≤5% 盘口深度的红线）。</p>
+      <p style="margin-top:6px"><b>多档组合打法（离散化期权实例）：</b>把 10 月全部档位（$80/$82/$84/…）的 Yes 列成隐含的「月内高低价分布」。若判断「跌破 $85 概率高但跌破 $80 概率低」→ 买 $85 档 Yes + 买 $80 档 No = 合成自定义区间收益，比场内期权便宜（无 IV 黑箱、无时间价值结构差异）。临近月末未触发的档会快速归零/归一，时间价值衰减是可见的——这也是它与真正期权的差异（二元结构下衰减不连续）。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：What will Gold (GC) hit __ by end of December? — ↑$4,500 档 <span class="pill info">Yes 报 99%</span> <span class="pill vio">$2M vol · $497K liq（COMEX 期货口径）</span></h5>
+      <p><b>解法（99% 的档旁边才有肉）：</b>$4,500 档 99% 说明市场认为「12 月底前金价到过 $4,500」几乎确定（快照时金价已在 $4,300+）。真正的题在 <b>$4,600 / $4,700 档</b>和下行档：示例演算——金价 $4,320、剩 80 天、黄金月 σ≈5% → σ√T ≈ 6.4%，P(触及 $4,600) ≈ 2·Φ(−(280/4320)/6.4%) = 2·Φ(−1.01) ≈ 31%；P(触及 $4,700) ≈ 2·Φ(−1.37) ≈ 17%。若这些档市场报价显著低于你的演算 → 买。</p>
+      <p style="margin-top:6px"><b>区间票据组合：</b>买 $4,500 Yes + 买 $4,700 No =「12 月底前金价到过 $4,500 但到不了 $4,700」的精准表达。02 月缓存快照里同型盘 "GC hit ↑$5,300 end of Feb" 报 99%——同一模板每月滚动，<b>打法可复用，只需每月重算参数</b>。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ⑤：月末结算价区间题（settle at in ___）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：What will Gold (GC) settle at in February? <span class="pill warn">真实题目，快照未含报价</span></h5>
+      <p><b>解法（settle 与 hit 的建模差异——通用模型必错的地方）：</b>settle 只看月末收盘落点，与路径无关：P(落档) 直接由终点分布给出 ln(S_T/S_0) ~ N((r−q−σ²/2)T, σ²T)，各档概率 = 正态 CDF 区间差。<b>关键：用对应月份的期货合约价算距离</b>——GC 远月对现货有年化 2–4% 升水（contango），拿现价算 2 月档距离会系统性偏移。这是期货大佬的常识、纯文本模型的盲区。</p>
+      <p style="margin-top:6px"><b>交叉校验（确定性相对价值）：</b>数学上恒有 P(月内触及 $x) ≥ P(月末结算 ≥ $x)（路径包含终点）。若同一 $x 的 hit-Yes 明显低于 above-Yes → 市场定价违反不等式，买 hit 卖 above（负风险对锁）稳赚收敛。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：What will Gold (GC) settle at in June? <span class="pill warn">真实题目，快照未含报价</span></h5>
+      <p><b>解法（长周期的三个增量）：</b>① 期限更长 → 分布更宽，中间档概率密度下降、两端尾档价值上升；② 6 月合约的升贴水要用 GC6（6 月期货）曲线定价；③ 跨季度的宏观变量（美联储路径、央行购金节奏）进入 drift——这正是大佬宏观模型的输入位。<b>执行纪律不变：</b>全档 ΣYes≈1 校验 → 单档 ≤5% liq → maker 优先。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ⑥：月末阈值二元题（above ___ end of ___）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：Gold (GC) above ___ end of February? <span class="pill warn">真实题目，快照未含报价</span></h5>
+      <p><b>解法（单一 digital 的三方对账）：</b>above-Yes 的公允值 = P(S_T &gt; K) = Φ(d2)（Black-Scholes 数字期权）。定价后与两个参照对账：① 同事件的 settle 分档盘（⑤ 的 CDF 直接读出 P(S_T&gt;K)）；② <b>COMEX 期权市场的 digital 复制价</b>（看涨期权价差法：P(S_T&gt;K) ≈ ∂C/∂K）。Polymarket 报价若显著低于两参照 → 买；显著高于 → 卖或绕行。<b>跨市场对账是大佬独有优势：机构有 COMEX 期权链数据，散户没有。</b></p>
+    </div>
+    <div class="mini">
+      <h5>题 2：Gold (GC) above ___ end of June? <span class="pill warn">真实题目，快照未含报价</span></h5>
+      <p><b>解法（尾档彩票的仓位纪律）：</b>深 OTM 的 above 档（如现价 $4,320 时 above $5,000）是数字彩票。规则：<b>全部尾档合计仓位 ≤ 资金 10%</b>，单靠赔率取胜——如公价 8%、市场报 4% 时买入，赢了 24 倍。卖点在于概率估计是「你的模型 vs 市场尾巴」的直接对决，胜负全在模型质量，所以只在自己最有认知的资产上做（黄金/原油），不碰没模型的标的。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ⑦：极端事件题（历史新高 / 供给冲击）</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：Crude Oil all time high by...? <span class="pill info">Yes 报 10%</span> <span class="pill good">$5M vol · 41 个截止日档位（全站最大原油盘）</span></h5>
+      <p><b>解法（人工认知优势最纯粹的题型）：</b>WTI 历史最高 $147.27（2008，期货口径以规则为准），距快照现价 ~70%。对数正态外推（σ 年化 30–35%）：15 个月内 touch ATH 的概率量级仅 1–3%。市场报 10% = 给「恶性供给冲击」（OPEC+ 解体、重大地缘战争升级）留了显著权重。</p>
+      <p style="margin-top:6px"><b>决策树：</b>你的地缘/供给模型说真实概率 ≤5% → 买 No（0.90→1.0，极端 p 处费用趋零，+11% 低风险空间）；模型说 ≥15%（认为冲突升级概率被低估）→ Yes 是 9 倍赔率彩票，小仓买入。<b>这道题没有公式答案——答案就是大佬的供给冲击模型本身</b>，也是论文实证「人工专家强于 LLM」的题型。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：同事件的其他截止档位（by end of 2026 / by Jun 2027…，共 41 档） <span class="pill warn">题目真实存在，快照未逐一采集报价</span></h5>
+      <p><b>解法（尾部期限结构套利）：</b>同一 ATH 事件的不同截止日 = 同一尾部风险的不同期限彩票。逻辑约束：P(by 长期) ≥ P(by 短期) 恒成立；且一旦冲击发生两个同中。若两档价差过窄（长期没比短期贵多少）→ 买长期卖短期（价差交易，冲击不发生时长期时间价值损耗更慢）。<b>41 个档位的完整期限结构 = 一张市场对「供给冲击时点分布」的定价图</b>——这本身就是给期货头寸的免费情报：就算不下注 Polymarket，这张图也该进大佬的晨会材料。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>题型 ⑧：跨资产相对表现题</h3>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：Bitcoin vs. Gold vs. S&P 500 in 2026 <span class="pill info">S&P 500 档报 64%</span> <span class="pill vio">$940K vol · 互斥三选项（负风险结构）</span></h5>
+      <p><b>解法（大佬宏观观点的直译载体）：</b>P(某资产年度表现最佳) 用三资产对数收益的相关矩阵做蒙特卡洛（万条路径足够）：σ_btc≈40–60%、σ_gold≈15%、σ_spx≈15–18%，相关性rbtc,spx≈0.3–0.5、rgold,·≈0–0.2（演示参数）。快照时金价年内已大涨，Gold 档仅 ~36% 以下——若判断滞胀/避险行情延续（央行购金+降息+地缘），Gold 档就是被低估的宏观表达。</p>
+      <p style="margin-top:6px"><b>负风险结构降低成本：</b>互斥多选项下，买入两档 Yes 的成本应 ≈ 1 − 第三档 Yes 价；若合计明显低于 1 − 第三档，直接双买锁定价差。这个结构比在两个独立市场对冲便宜，是 Polymarket 特有的执行优势。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：What will Bitcoin outperform in February? <span class="pill warn">真实题目，快照未含报价</span></h5>
+      <p><b>解法（月度相对题）：</b>同题 1 方法，参数换月度：σ_btc·月 ≈ 12–17% vs σ_gold·月 ≈ 4.5%，相对波动主导 → BTC 不跑输是大概率（所以要找的是「BTC 跑输」档的价值，即市场是否高估 BTC 相对强势）。<b>读规则确认 payout 形态</b>：这类题有的是单选（只有表现最好那档兑付）、有的是多选（跑赢 BTC 的资产各兑付）——两种结构下同一报价的含义完全不同，这是多选项题最常见的踩坑点。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PolyBench 同源真题：政治域（论文点名的 LLM alpha 域）</h3>
+    <p class="desc">PolyBench 的 38,666 道题就是 Polymarket 真实市场的时点快照，数据窗口 2026-02-06~12。以下为同站点实时采样（快照 2026-07-18 缓存，同源同题型）。<b>说明：论文数据库的逐题快照版真题需下载 OneDrive 数据库核对（本机网络 503 暂不可达，数据库 ~2GB）；下方为站点同源题，题型分布与数据集一致。</b>论文另有原文示例：Event「Who will win the 2026 World Cup?」/ Market「France will win the 2026 World Cup.」（arXiv §3）。</p>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：Next Prime Minister of Ethiopia? — Abiy Ahmed 档 <span class="pill info">98%</span> <span class="pill vio">$210M vol · $193K liq · 41 个候选人档</span></h5>
+      <p><b>LLM 视角（为什么这是模型的舒适区）：</b>政治人物博弈可从新闻文本直接推理——论文实证 Politics 是 LLM 唯一稳定赚钱的域（文本可解析、舆情数据密集）。但这道题的 alpha 不在方向：现任者 98% 几乎无分歧可赚。模型会怎么错：直接输出「Abiy Ahmed」得 98% 的正确率，却没有产生任何交易价值——<b>PolyBench 的 SKIP 纪律正是考这个：知道答案 ≠ 有 edge</b>。</p>
+      <p style="margin-top:6px"><b>人工解法：</b>41 档 ΣYes≈1 的算术校验 + 卖深度不足的小候选人档（流动性差的一侧是做市的利润）；或直接跳过。<b>Benchmark 研究价值：</b>这是「校准 vs 正确」分离度最好的题——75% 准确率的 Gemini 与 62% 的 MiMo 在这类题上的差异，本质是弃权纪律的差异（见拆解 Tab 策略表）。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：Iran leader end of 2026? — Mojtaba Khamenei 档 <span class="pill info">77%</span> <span class="pill danger">145 个选项档 · $32M vol · $2M liq</span></h5>
+      <p><b>LLM 视角：</b>145 个候选的多分类是「指令遵循」酷刑——模型容易输出规则外的候选名（Trinity-Large 103 个格式违规的下场：−9.2% CWR 全场垫底区）。且「健康/继任」类 compound event 的分支结算（继任悬而未决时 50-50 条款）是提示词第 9 条专门防的坑。</p>
+      <p style="margin-top:6px"><b>人工解法：</b>地缘健康事件的信息优势在情报面不在文本；27% 的「变故」概率含死亡/辞职/流亡多分支，<b>必须逐分支读规则怎么结算</b>（不同分支结算给不同候选人还是 50-50 分摊）。<b>研究价值：</b>145 档 compound event 是师弟选题 C/E（校准与弃权）的绝佳分析样本——这类题模型的置信度虚高最严重。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PolyBench 同源真题：Crypto 域（论文实证的 LLM 亏损域）</h3>
+    <p class="desc">快照 2026-08-23 缓存。论文结论：全体模型在 Crypto 域「高置信度 + 深度亏损」——文本语感猜价格的典型灾区。注意这些题的流动性远超商品区（BTC 年度盘 $58M vol / $4M liq）。</p>
+    <div class="mini" style="margin-bottom:12px">
+      <h5>题 1：What price will Bitcoin hit in 2026? — ↑$80,000 档 <span class="pill info">89%</span> <span class="pill good">$58M vol · $4M liq（全站最大价格盘）</span></h5>
+      <p><b>LLM 视角（灾区样本）：</b>与黄金 hit 档完全同构（touch barrier），但模型的错误率高得多——因为训练语料里 BTC 叙事噪音极大，「数字黄金」「减半周期」等文本信号与价格路径几乎无关。论文 Fig 4：模型在 Crypto 平均置信度 ≥0.8 同时深度亏损。<b>方法本身可迁移：barrier 公式 + 已实现波动照算</b>（σ_btc 年化 40–60%，且肥尾要修正——正态近似会低估 touch 概率，实务用期权隐含分布替代），问题是你有没有 BTC 的认知优势——没有就是别人的流动性。</p>
+      <p style="margin-top:6px"><b>大佬的正确姿势：</b>不交易，但把它当宏观情绪温度计——$58M vol 的 BTC touch 分布是散户风险偏好的实时读数，与黄金档（同窗口的 GC hit 档）对照读，就是「risk-on/off 轮动」的免费高频信号。<b>研究价值：</b>同公式跨域迁移后表现骤降 = 选题 B「领域特征不可省」的最强证据。</p>
+    </div>
+    <div class="mini">
+      <h5>题 2：Bitcoin Up or Down — June 21, 2:55AM-3:00AM ET <span class="pill info">5 分钟窗口 · 100% Up</span> <span class="pill vio">$96.5K vol · $696K liq</span></h5>
+      <p><b>这是什么：</b>5 分钟粒度的方向盘——Polymarket 日内盘的最细粒度，平台上有海量此类滚动小盘（vol 单盘近 $100K）。</p>
+      <p style="margin-top:6px"><b>人工解法：不碰。</b>5 分钟方向是纯延迟/做市游戏，人工和 LLM 都无优势，是低延迟机器人的地盘（跨平台价差套利 bot 的核心猎场）。<b>LLM 视角：</b>PolyBench 快照为小时级采集，未覆盖 5 分钟盘——这是它作为 benchmark 的粒度边界，也是师弟写 Related Work 时可以指出的数据盲区（LiveTradeBench 的 10 个市场同样没测到这个粒度）。<b>100% Up 的含义：</b>窗口已过大半、方向已定——与商品区日内题一样是「确定性票据」，同样是 maker 收尾的教科书场景。</p>
+    </div>
+    <div class="callout ok"><b>顺带两个宏观题的信号价值：</b>① "Fed Decision in July?"（No change 95%，$71M vol）——利率路径的实时定价，黄金模型的直接输入变量；② "Strait of Hormuz traffic returns to normal by July 15?"（Yes 0%，$12M vol，地缘域<b>免手续费</b>）——原油供给风险的免费哨兵：0% 与 Crude ATH 10% 之间的张力本身就是供给冲击定价的内部矛盾。这两个题不下单也该进晨会。</div>
+  </div>
+
+  <div class="card">
+    <h3>通用执行清单（每道题下单前过一遍）</h3>
+    <div class="check"><div class="box"></div><div><b>规则逐字读：</b>结算数据源（COMEX 期货 / 现货定盘 / 平台指定）、时区时点、「触及」定义、有无 50-50 条款</div></div>
+    <div class="check"><div class="box"></div><div><b>定价先行：</b>touch 题用 barrier 公式、settle 题用终点分布、阈值题用 digital——先算公允，再看盘口偏离 ≥ 5 分钱才动手</div></div>
+    <div class="check"><div class="box"></div><div><b>多档校验：</b>同事件全档 ΣYes ≈ 1；hit ≥ above 的不等式校验——违反即有稳钱交易</div></div>
+    <div class="check"><div class="box"></div><div><b>仓位红线：</b>单档 ≤ 盘口流动性 5%；全部尾档彩票 ≤ 资金 10%； maker 优先、极端价格带 taker 费趋零</div></div>
+    <div class="check"><div class="box"></div><div><b>示例演算免责：</b>本 Tab 所有现价/波动率均为演示假设，用于展示方法；实盘前用实时数据代入，结论可能反转</div></div>
   </div>
 </section>
 
