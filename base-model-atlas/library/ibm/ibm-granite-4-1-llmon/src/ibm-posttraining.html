@@ -1,0 +1,417 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2610.38120v1">打开官方原文 ↗</a> · <a href="ibm-posttraining.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Post-Training Large Language Models with LLMON Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+Abstract 
+1 Introduction 
+2 Related Work 
+Instruction tuning and alignment. 
+Prompt injection and adversarial robustness. 
+Tool use and function calling. 
+Structured generation and constrained decoding. 
+3 Using LLMON (LLM Object Notation) 
+3.1 Notation Overview 
+Typed segments. 
+Execution binding. 
+The privilege invariant. 
+3.2 Data Construction Pipeline 
+General instruction data. 
+RAG and document-grounded data. 
+Tool-calling data. 
+3.3 Distractor Augmentation 
+4 Experiments 
+4.1 Training Data 
+4.2 Models and Training 
+Supervised fine-tuning. 
+Reinforcement learning. 
+4.3 Evaluation 
+4.3.1 Standard Benchmarks 
+4.3.2 Indirect Prompt-Injection Benchmarks 
+4.3.3 Adversarial Red-Teaming 
+4.3.4 Attention-Based Interpretability Metrics 
+5 Results and Discussion 
+5.1 General Capabilities 
+5.2 Indirect Prompt Injection 
+5.3 Adversarial Red-Teaming 
+5.4 Attention Interpretability Analysis 
+Where the binding lives. 
+Layer-wise Instruction Focus Ratio. 
+Layer-wise Distractor Leakage. 
+Attention span distribution. 
+Layer-wise Data Attention Score. 
+Token-level attention flow. 
+6 Conclusion 
+References 
+A LLMON Examples 
+A.1 Multi-instruction and Multi-data Distractors License: CC BY 4.0 arXiv:2610.38120v1 [cs.AI] 28 Oct 2026 
+Post-Training Large Language Models with LLMON Basel Shbita Affiliation: IBM Research, San Jose, CA, USA Michael Hind Affiliation: IBM Research, Yorktown Heights, NY, USA Chad DeLuca Affiliation: IBM Research, San Jose, CA, USA Nathan Fulton Affiliation: IBM Research, Cambridge, MA, USA Shubhi Asthana Affiliation: IBM Research, San Jose, CA, USA Farhan Ahmed Affiliation: IBM Research, San Jose, CA, USA Anisa Halimi Affiliation: IBM Research, Dublin, Ireland basel@ibm.com , {hindm, delucac}@us.ibm.com , nathan@ibm.com , sasthan@us.ibm.com , {farhan.ahmed, anisa.halimi}@ibm.com , {yzhu, mmartino}@us.ibm.com , david.d.cox@ibm.com , dgutfre@us.ibm.com Yada Zhu Affiliation: IBM Research, Yorktown Heights, NY, USA Mauro Martino Affiliation: IBM Research, Cambridge, MA, USA David Cox Affiliation: IBM Research, Cambridge, MA, USA Dan Gutfreund Affiliation: IBM Research, Cambridge, MA, USA Abstract 
+Large Language Models (LLMs) treat all context tokens uniformly, lacking explicit separation between executable instructions and passive data.
+This leads to prompt injection vulnerabilities, ambiguous instruction binding, and unreliable execution control.
+We present a post-training methodology using LLMON (LLM Object Notation), a framework that enables separating instructions from data and requires explicit identifier-based execution.
+We construct a large-scale structured training corpus of 4.6B tokens spanning general, RAG (Retrieval-Augmented Generation), and tool-calling data, augmented with distractor-infused variants in which competing instructions and irrelevant data segments are present in context but not referenced.
+Post-training two Granite-4.1 base models (3B and 8B) through supervised fine-tuning followed by reinforcement learning, we show that LLMON-structured supervision reduces attack success rates on indirect prompt-injection benchmarks from 53-100% to 0.02-5.6% while preserving general capabilities.
+We further introduce attention-based interpretability metrics that diagnose failure modes at individual transformer layers for structured inputs, revealing how our approach reshapes internal attention patterns.
+Our results demonstrate that explicit execution semantics can be taught through standard post-training without architectural modification. 
+
+1 Introduction 
+Large Language Models (LLMs) process all tokens in a context window through the same attention mechanism, without any built-in distinction between executable instructions, passive data, and auxiliary context ( Vaswani et al., 2017 ; Kaddour et al., 2023 ) .
+This architectural uniformity means that any token can equally influence model behavior, whether it originates from a user instruction, a retrieved document, or an injected adversarial payload.
+The practical consequences are well-documented: prompt injection attacks that hijack model execution ( Greshake et al., 2023 ; Perez and Ribeiro, 2022 ) , ambiguous referential binding when multiple instructions coexist in context (e.g., “execute the second task”), and degraded reliability in compositional scenarios involving retrieval-augmented generation (RAG) and tool calling ( Yao et al., 2022 ; Schick et al., 2023 ) .
+These failure modes stem from a single root cause: the model has no mechanism to distinguish executable instructions from passive data at the token level.
+Current instruction-tuning approaches ( Ouyang et al., 2022 ; Wei et al., 2022 ) train models to follow instructions implicitly, based on position, formatting conventions (e.g., “chat templates”), and statistical patterns, thus lack the mechanism to distinguish which instruction to execute when multiple candidates exist in a given prompt. 
+In this paper, we present a structured post-training methodology built on LLMON ( Hind et al., 2026 ; LLMON Team, 2026 ) (LLM Object Notation), a hierarchical tagging framework that introduces explicit instruction-data separation and identifier-based execution binding into the LLM interface.
+Under LLMON, each instruction and data segment is wrapped in typed, uniquely identified blocks, and execution occurs only through explicit execution calls that reference specific instruction and data identifiers.
+This design steers the model toward a clear semantic principle where only explicitly invoked instructions are executed.
+Our contributions are: 
+1. 
+We describe a scalable data pipeline that transforms instruction-tuning corpora (general, RAG, and tool-calling) into LLMON-structured training data, including distractor-augmented variants with up to three competing instructions and irrelevant data segments. 
+2. 
+We conduct a post-training evaluation on two base models ( Granite-4.1-3B-Base and Granite-4.1-8B-Base ) under full fine-tuning with 4.6B tokens, followed by reinforcement learning. 
+3. 
+We introduce attention-based interpretability metrics: Instruction Focus Ratio (IFR), Data Attention Score (DAS), and Leakage (LEAK), to provide mechanistic insight into how structured training reshapes model attention. 
+2 Related Work Instruction tuning and alignment. 
+Instruction tuning ( Wei et al., 2022 ; Ouyang et al., 2022 ) and preference-based alignment ( Rafailov et al., 2023 ; Christiano et al., 2017 ) have become the standard post-training pipeline for modern LLMs.
+These methods train models to follow natural-language instructions but rely on implicit positional cues and chat templates ( Hugging Face, 2025 ) -based formatting conventions, rather than explicit structural semantics.
+When multiple instructions appear in context, models lack a principled mechanism for disambiguation.
+Our work is complementary: LLMON-structured supervision can be applied on top of any instruction-tuning corpus to add explicit execution binding behavior. Prompt injection and adversarial robustness. 
+Prompt injection exploits the absence of privilege separation between instructions and data ( Greshake et al., 2023 ; Perez and Ribeiro, 2022 ) .
+Spotlighting ( Hines et al., 2024 ) marks untrusted spans with in-band text delimiters at the prompt level, while StruQ ( Chen et al., 2025a ) and SecAlign ( Chen et al., 2025b ) make the boundary a training objective, fine-tuning on structured prompts and preference pairs in which injected instructions are present but must not be followed.
+We differ in two respects.
+First, the boundary is carried by reserved single tokens from a disjoint region of the vocabulary rather than by in-band delimiters or role names, so it cannot be formed by subword composition of ordinary content.
+Second, privilege attaches to an explicit binding rather than to a role: every span is individually addressable and authority follows from which pointer references it, so several same-role instructions can coexist with only one bound for execution. Tool use and function calling. 
+Modern LLM systems integrate external tools through structured generation ( Schick et al., 2023 ; Patil et al., 2024 ; Yao et al., 2022 ) .
+These approaches define tool schemas and train models to emit structured calls, but the instruction-data boundary within the prompt remains implicit.
+LLMON’s execution semantics are orthogonal and compatible with tool-calling pipelines: tool definitions, retrieved documents, and user instructions each occupy typed segments with distinct identifiers. Structured generation and constrained decoding. 
+Constrained decoding approaches ( Willard and Louf, 2023 ; Zheng et al., 2024 ; Beurer-Kellner et al., 2023 ) enforce output structure at inference time through grammar-based token masking.
+Prompting frameworks ( Khattab et al., 2023 ; Liu et al., 2026 ; POML, 2025 ) and programming-language abstractions ( Dantanarayana et al., 2025 ) orchestrate LLM calls, and markup-based prompt languages impose document structure on the prompt, but none of these modifies the model’s internal representation of instruction-data boundaries.
+Unlike these inference-time or application-layer approaches, LLMON operates at the training data level, teaching models to internalize structural distinctions through supervised learning. 
+3 Using LLMON (LLM Object Notation) 
+This section describes how we leverage LLMON ( Hind et al., 2026 ) to construct structured post-training data that teaches models explicit execution control.
+LLMON is a hierarchical tagging framework that introduces instruction-data separation and identifier-based execution binding at the token level, operating within standard autoregressive language modeling without architectural modification.
+We briefly summarize the notation relevant to our training methodology, then describe the data construction pipeline. 
+3.1 Notation Overview 
+LLMON defines six special delimiter tokens (“ &lt;|open|&gt; ”, “ &lt;|close|&gt; ”, “ &lt;|open_end|&gt; ”, “ &lt;|self_close|&gt; ”, “ &lt;|:|&gt; ”, “ &lt;|.|&gt; ”) that form a typed tagging system.
+The key structural elements relevant to training are: Typed segments. 
+All content is wrapped in identified and tagged blocks. Instructions carry role qualifiers (“ instr&lt;|:|&gt;ID ”), data segments hold passive content (“ data&lt;|:|&gt;ID ”), requirements hold output constraints (“ req&lt;|:|&gt;ID ”), and documents use nested paths (“ doc&lt;|.|&gt;title ”, “ doc&lt;|.|&gt;text ”). Tool definitions are flattened so that every leaf of the JSON schema becomes its own addressable sub-field (“ tool&lt;|.|&gt;name ”, “ tool&lt;|.|&gt;parameters&lt;|.|&gt; arg &lt;|.|&gt;type ”), and a tool result returns as a “ data ” block like any other input.
+A system block (“ system&lt;|:|&gt;ID ”) carries authoritative policy and persists across turns. Execution binding. 
+An execution block explicitly references which instruction to execute, which data to use as input, and where the output should be placed via identifier references as shown in Figure 1 .
+This design enforces a clear semantic paradigm where multiple instructions can coexist in context without interference, as execution requires referencing a specific identifier regardless of position. The privilege invariant. 
+Execution binding yields the invariant our training targets: content reached through “ exec&lt;|.|&gt;instruction ” or “ exec&lt;|.|&gt;system ” is authoritative , whereas everything reached through “ exec&lt;|.|&gt;input ” (data, documents, tool schemas, and tool results) is material to be read, not a command to be followed, however it is phrased.
+Blocks that no pointer references are rendered into the context but bound to nothing.
+Privilege is therefore a property of the binding rather than of a block’s position or role name, and the delimiters that express it are reserved tokens occupying a disjoint region of the vocabulary, so the structure cannot be formed by subword composition of ordinary content. 
+⬇ &lt;|open|&gt; exec &lt;|:|&gt; EXEC_ID &lt;|close|&gt; &lt;|open|&gt; exec &lt;|.|&gt; instruction &lt;|close|&gt; instr &lt;|:|&gt; INSTR_ID &lt;|open_end|&gt; &lt;|open|&gt; exec &lt;|.|&gt; input &lt;|close|&gt; data &lt;|:|&gt; DATA_ID &lt;|open_end|&gt; &lt;|open|&gt; exec &lt;|.|&gt; output &lt;|close|&gt; assistant &lt;|:|&gt; OUT_ID &lt;|open_end|&gt; &lt;|open_end|&gt; Figure 1: Example of an execution block in LLMON syntax. All special tokens are highlighted in light-pink. 
+3.2 Data Construction Pipeline 
+We develop an automated pipeline that transforms diverse instruction-tuning data into LLMON-structured training examples.
+The pipeline handles three distinct data modalities: General instruction data. 
+Single-turn and multi-turn conversations are serialized with per-turn instruction blocks, “ exec ” bindings, and assistant data blocks.
+Each turn receives unique identifiers, and multi-turn examples chain consecutive “ exec ” cycles. RAG and document-grounded data. 
+Retrieved documents are serialized as typed “ doc ” segments with nested “ doc&lt;|.|&gt;title ” and “ doc&lt;|.|&gt;text ” sub-fields.
+The “ exec ” block’s input field references both the user’s data and the relevant document identifiers, teaching the model to ground its response in explicitly referenced context. Tool-calling data. 
+Tool definitions are serialized using flattened path-based notation (e.g., “ tool&lt;|.|&gt;function&lt;|.|&gt;name ”, “ tool&lt;|.|&gt;function&lt;|.|&gt;description ”).
+Tool invocations produce a first “ exec ” cycle (user instruction → \rightarrow assistant tool call), followed by a tool-result data block and a second “ exec ” cycle (tool result → \rightarrow final assistant response). 
+3.3 Distractor Augmentation 
+The central innovation in our training data is distractor augmentation : systematically injecting competing instructions and irrelevant data into the context while keeping the “ exec ” block pointed at only the target.
+This directly trains the model to resolve referential bindings under interference. 
+For each base example we generate variants with d ∈ { 1 , 2 , 3 } d\in\{1,2,3\} distractor instructions (sampled from the instruction pool, excluding the target) and m ∈ { 0 , 1 , 2 , 3 } m\in\{0,1,2,3\} irrelevant data segments (sampled from other examples).
+The distractor instructions and data occupy their own identified blocks in the context, but the “ exec ” block references only the original target instruction and data, and the target output is identical across all variants of an example.
+Variants are sampled per base example, yielding 8 categories parameterized by whether target data is present and by the distractor and irrelevant-data counts.
+A model that keys on the “ exec ” block is unaffected by the decoys; one that keys on surface cues such as position or imperative phrasing is penalized by the loss. 
+We illustrate one such example with a multi-instruction and multi-data distractors execution in Appendix A.1 . 
+4 Experiments 
+4.1 Training Data 
+Following the pipeline of Section 3.2 , we assemble the LLMON-structured corpus from the sources below, totaling 4.4M examples and 4.6B tokens. 
+• 
+General SFT data : 3.25M single-turn (2.79B tokens) and 59k multi-turn (120M tokens) examples drawn from the Granite-4.1 post-training SFT corpora. 
+• 
+RAG data : 27k single-turn (45.5M tokens) and 8k multi-turn (17.8M tokens) retrieval-augmented examples from the same corpora. 
+• 
+Tool-calling data : 451k single-turn (707M tokens) and 251k multi-turn (562M tokens) function-calling examples from the same corpora. 
+• 
+Alpaca : 52k clean examples ( Taori et al., 2023 ) (17.2M tokens) plus 103k distractor-augmented variants (39.4M tokens). 
+• 
+Dolly : 15k clean examples ( Conover et al., 2023 ) (3.3M tokens) plus 30k distractor-augmented variants (16.3M tokens). 
+• 
+Prompt-injection data : 130k examples (211M tokens) in which an adversarial instruction is planted inside a payload the model is meant to read rather than execute, spanning general (40k), RAG (11k), and tool-calling (80k) modalities. 
+The general, RAG, and tool-calling examples teach the structural format across single-turn instruction following, multi-turn conversation, document-grounded QA, and tool invocation, and account for 93.6% of all tokens, which is what keeps capability close to the conventionally-tuned baseline.
+The Alpaca and Dolly expansions supply the distractor-augmented variants of Section 3.3 , expanding 67k base examples into 133k variants.
+The prompt-injection examples are the training-time counterpart of the evaluation in Section 4.3.2 : the injected instruction is rendered as a block that no execution pointer references, and the target output is the one that ignores it. 
+For the reinforcement-learning stages we use two further sources: approximately 169k prompts across five sequential policy-optimization stages spanning multi-domain reasoning, RLHF, knowledge calibration, and two mathematics boosters; and approximately 1k on-policy preference pairs for the final preference-optimization stage, constructed from each model’s own responses at agentic decision points where a tool result carries an injected instruction. 
+4.2 Models and Training 
+We post-train two base models from the same family and generation at different scales: Granite-4.1-3B-Base and Granite-4.1-8B-Base ( IBM Granite Team, 2026 ; Granite Team, 2024 ) .
+Both are base (pre-trained) checkpoints without prior instruction tuning, so the LLMON behavior is learned during post-training rather than layered on top of an existing chat format. Supervised fine-tuning. 
+We first install the six LLMON delimiters in the tokenizer as reserved single tokens by remapping unused vocabulary slots, which avoids growing the vocabulary or resizing the embedding matrix.
+We then run full fine-tuning, updating all parameters on the LLMON-serialized corpus: three epochs over 4.4M examples and 4.6B tokens at a sequence length of 4096 tokens, sharded across 8 × \times H100 GPUs with FSDP.
+We report the final-epoch checkpoint. Reinforcement learning. 
+Starting from the supervised checkpoint, we run five sequential Group Relative Policy Optimization (GRPO) stages against a reward model over the ≈ \approx 169k prompts described above, which optimize end behavior directly rather than the token-level target.
+A final Direct Preference Optimization ( Rafailov et al., 2023 ) (DPO) stage then trains on the ≈ \approx 1k on-policy injection preference pairs ( β = 0.1 \beta=0.1 , one epoch, learning rate 5 × 10 − 7 5\times 10^{-7} , effective batch size 32).
+This stage is placed last so that the general-capability stages, which carry no injection objective, cannot erode the boundary behavior installed earlier.
+Unless noted otherwise, results reported as “LLMON” refer to this final SFT → \rightarrow GRPO → \rightarrow DPO checkpoint. 
+4.3 Evaluation 4.3.1 Standard Benchmarks 
+To verify that LLMON post-training preserves general capabilities, we evaluate across seven categories, reporting the unweighted mean over the benchmarks in each: General (MMLU ( Hendrycks et al., 2021 ) , MMLU-Pro Wang et al. (2024) , BBH Suzgun et al. (2023) , AGI-Eval Zhong et al. (2024) , GPQA Rein et al. (2023) ); Alignment (IFEval ( Zhou et al., 2023 ) ); Math (GSM8K ( Cobbe et al., 2021 ) , GSM-Symbolic Mirzadeh et al. (2025) , Minerva Math Lewkowycz et al. (2022) , DeepMind Math Saxton et al. (2019) ); Code (HumanEval Chen et al. (2021) , HumanEval+ Liu et al. (2023) , MBPP Austin et al. (2021) , MBPP+ Liu et al. (2024a) , MultiPL-E Cassano et al. (2023) , CRUXEval-O Gu et al. (2024) ); Tool-Calling (BFCL v3 Patil et al. (2025) ); Multilingual (Global-MMLU Singh et al. (2025) , MGSM Shi et al. (2022) , INCLUDE Romanou et al. (2025) );
+and Safety (6-task safety aggregate metric from Tulu3 Zhao et al. (2026) , AttaQ Kour et al. (2023) , SALAD-Bench Li et al. (2024) ).
+Each LLMON model is compared against the instruct counterpart at the same scale, trained on the matched chat-template corpus of Section 4.1 . 4.3.2 Indirect Prompt-Injection Benchmarks 
+Indirect prompt injection is the failure mode the privilege invariant is designed to prevent: a malicious instruction is planted in a data payload, such as a retrieved document or a tool response, rather than supplied by the user.
+We evaluate on two published benchmarks that place the injection on different surfaces. OPI Liu et al. (2024b) injects into the data of classic NLP tasks and defines the five-attack taxonomy used throughout this evaluation (naive, escape, ignore, fake-completion, and combine), together with the attack-success metric. ASB Zhang et al. (2025) moves the attack into an agent’s tool observations, which is the surface that matters for tool-using deployments; we report its observation-injection arm. 
+We report attack success rate (ASR), the fraction of adversarial prompts in which the injected instruction is followed; lower is better.
+For the LLMON models the injected payload arrives inside a “ data ” block reached through “ exec&lt;|.|&gt;input ”, so following it would require acting on a span the model was trained to read rather than execute; the instruct baselines receive the same payloads under conventional chat formatting. 4.3.3 Adversarial Red-Teaming 
+The two benchmarks above measure known, published attacks.
+Separately from them, and going beyond what a fixed benchmark can surface, our security team red-teamed both models with ARES ( Nedoshivina et al., 2025 ) , a robustness-evaluation harness that expands 808 seed prompts from five datasets (Purple ( Bhatt et al., 2023 ) , Gandalf ( Pfister et al., 2025 ) , and TensorTrust ( Toyer et al., 2024 ) for direct attacks; Alpaca and a safety-policy set for indirect ones) into approximately 15k attack prompts by mutating each seed through eight attack strategies organized by attacker sophistication, from basic (asking directly) through intermediate (append, ignore, escape-separation, completion-real, append-and-prepend) to advanced.
+The advanced arm is a multi-turn variant of Crescendo ( Russinovich et al., 2025 ) , in which an attacker model generates each next turn and a judge decides whether the adversarial objective was met; we use DeepSeek-V3.2 ( DeepSeek-AI et al., 2025 ) as the attacker, GPT-OSS ( OpenAI et al., 2025 ) (120B) as the judge, and a budget of 20 turns.
+Results are reported as robustness ( 1 − ASR 1-\text{ASR} ), so that higher is better, which is the convention of the harness; note that this is the opposite direction to Table 2 . 4.3.4 Attention-Based Interpretability Metrics 
+Beyond output-level evaluation, we introduce three per-layer attention metrics designed to provide mechanistic insight into model behavior.
+These metrics quantify how attention from the final generated token is distributed across target and distractor spans.
+Let A ⁡ ( S ) A(S) denote the total attention mass assigned to a span set S S .
+We define ℐ t \mathcal{I}_{t} and ℐ d \mathcal{I}_{d} as the target and distractor instruction spans, respectively, and 𝒟 t \mathcal{D}_{t} and 𝒟 d \mathcal{D}_{d} as the corresponding target and distractor data spans. 
+The Instruction Focus Ratio (IFR) measures the proportion of attention allocated to the target instruction relative to all instruction spans: 
+IFR = A ⁡ ( ℐ t ) A ⁡ ( ℐ t ) + A ⁡ ( ℐ d ) \text{IFR}=\frac{A(\mathcal{I}_{t})}{A(\mathcal{I}_{t})+A(\mathcal{I}_{d})} (1) 
+Similarly, the Data Attention Score (DAS) quantifies the proportion of attention assigned to the target data relative to all data spans: 
+DAS = A ⁡ ( 𝒟 t ) A ⁡ ( 𝒟 t ) + A ⁡ ( 𝒟 d ) \text{DAS}=\frac{A(\mathcal{D}_{t})}{A(\mathcal{D}_{t})+A(\mathcal{D}_{d})} (2) 
+Finally, Leakage (LEAK) is the share of all span attention that reaches distractor content, across both instruction and data spans.
+Writing 𝒮 \mathcal{S} for every labeled span in the prompt (the target and distractor instructions and data, together with the structural spans: the execution block, the delimiters, and the remaining prompt), LEAK is 
+LEAK = A ⁡ ( ℐ d ) + A ⁡ ( 𝒟 d ) A ⁡ ( 𝒮 ) \text{LEAK}=\frac{A(\mathcal{I}_{d})+A(\mathcal{D}_{d})}{A(\mathcal{S})} (3) 
+These metrics are computed per layer across all attention heads (averaged over attention heads within each KV group for grouped-query-attention models).
+This enables layer-wise failure diagnosis: higher IFR and DAS values indicate stronger focus on task-relevant content, whereas larger LEAK values suggest increased attention allocated to irrelevant or competing information. 
+5 Results and Discussion 
+5.1 General Capabilities 
+Table 1 compares LLMON-structured post-training against the Instruct chat-template baselines at both scales under matched full fine-tuning.
+The objective here is parity rather than improvement: LLMON training is meant to install an execution-binding behavior, not to make the model better at mathematics or code.
+Averaged over the six capability categories, the 3B model is unchanged (66.7 both ways) and the 8B model loses 1.4 points (74.2 to 72.8), with mathematics at 8B the largest single regression (84.1 to 79.6).
+LLMON improves on Code and Multilingual at 3B.
+Safety improves at both scales, by 8.8 points at 3B and 6.2 at 8B, which is where the structural supervision is expected to show. 
+Model Training General Alignment Math Code Tool-Calling Multilingual Safety 
+Granite-4.1-3B Instruct 57.91 82.30 75.19 64.19 60.80 59.89 80.89 
+LLMON 57.16 81.02 73.25 65.45 60.71 62.68 89.64 
+Granite-4.1-8B Instruct 64.95 87.06 84.09 72.38 68.27 68.68 84.19 
+LLMON 63.31 86.69 79.63 71.01 67.93 68.24 90.36 Table 1: LLMON-structured post-training vs. Instruct chat-template baselines under matched full fine-tuning. Each column is the unweighted mean over the benchmarks of that category (Section 4.3.1 ). Capability is broadly preserved (the six-category capability mean is unchanged at 3B and 1.4 points lower at 8B) while Safety improves at both scales. Best per model/category in bold . 
+5.2 Indirect Prompt Injection 
+Table 2 reports attack success rate on the two injection benchmarks of Section 4.3.2 .
+On text-level injection (OPI) the attack essentially stops working: ASR falls from 100.0 to 0.1 at 3B and from 96.3 to 0.02 at 8B.
+On agentic injection (ASB), where the payload arrives in a tool observation rather than in task data, ASR falls from 99.2 to 5.6 at 3B and from 52.8 to 3.1 at 8B.
+These are reductions of roughly 17 × 17\times on agentic injection and three orders of magnitude on text-level injection, and they hold at both scales despite the 8B Instruct baseline already being markedly more robust on ASB than the 3B one.
+The mechanism is structural rather than a learned refusal: the injected instruction occupies a “ data ” block that no execution pointer references, so acting on it would require the model to execute a span it was trained to read.
+Section 5.4 examines what this looks like inside the network. 
+Model Training OPI ↓ \downarrow ASB ↓ \downarrow 
+Granite-4.1-3B Instruct 100.0 99.2 
+LLMON 0.1 5.6 
+Granite-4.1-8B Instruct 96.3 52.8 
+LLMON 0.02 3.1 Table 2: LLMON-structured post-training vs. Instruct chat-template baselines, measured by attack success rate (ASR, %) on two published indirect prompt-injection benchmarks: OPI (text-level injection) and ASB (agentic tool-observation injection). Lower is better : ASR is the fraction of adversarial prompts that succeed, so a smaller value means a more robust model. Best (lowest ASR) per model/benchmark in bold . 
+5.3 Adversarial Red-Teaming 
+Independently of the published benchmarks of Section 5.2 , Table 3 reports the ARES red-teaming campaign of Section 4.3.3 , which uses its own seed datasets and attack strategies and separates results by where the adversarial instruction enters.
+Scores are robustness ( 1 − ASR 1-\text{ASR} ), so higher is better. 
+On indirect attacks the gain is large and is what the design predicts: robustness rises from 2.8% to 84.6% at 3B and from 0.7% to 79.8% at 8B, because the payload lands in a span that no execution block designates as an operable instruction. Direct and multi-turn attacks also improve, roughly doubling at both scales, but remain far weaker in absolute terms (32-37%).
+That asymmetry is expected rather than disappointing.
+When the adversarial instruction is the user’s own instruction there is no instruction-data boundary left to enforce, and an attacker who steers a conversation across twenty turns is not smuggling an instruction past the binding but building towards a request the model accepts on its own terms.
+The privilege invariant is therefore a defense against untrusted input , and should be composed with defenses of a different kind rather than relied upon alone. 
+Model Training Indirect Direct Multi-turn 
+Granite-4.1-3B Instruct 2.8 17.6 15.0 
+LLMON 84.6 37.1 28.0 
+Granite-4.1-8B Instruct 0.7 9.2 15.0 
+LLMON 79.8 32.7 37.0 Table 3: Adversarial red-teaming with ARES, reported as robustness ( 1 − ASR 1-\text{ASR} , %) , higher is better , the opposite direction to Table 2 . Indirect attacks use StruQ-style payloads planted in input, averaged over in-distribution and out-of-distribution splits (ID: 90.3/83.6, OOD: 79.0/75.9 for 3B/8B); direct attacks place the adversarial instruction in the user turn; multi-turn is a Crescendo variant with a 20-turn budget. Best per model/column in bold . 
+5.4 Attention Interpretability Analysis 
+Both the injection reductions and the capability picture are consistent across the two scales tested, so the remainder of this section drills into how that robustness arises.
+Using the per-layer attention metrics defined in Section 4.3.4 , we analyze the Granite-4.1-3B pair (the LLMON-trained model and its Instruct counterpart) on distractor prompts in which several instructions, and in most cases several data segments, coexist while the “ exec ” block binds only one pair.
+We first report the per-layer behavior on a representative example to expose the mechanism, then aggregate over all examples to verify that the trends are not driven by ordering. Where the binding lives. 
+Both models are measured at the same layers, and the separation is largest in the late-middle of the stack rather than at the output.
+Table 4 reports the mean of each metric over the distractor examples at five representative layers.
+The LLMON-trained model holds a mean IFR of 86-87% at layers 25 and 28 against 26-38% for the Instruct model, with mean leakage of 6-9% against 35-45%.
+At the final layer both models collapse towards chance (IFR 28.0% vs 17.2%), which is why we report the span distribution at layer 31 rather than at layer 39: the execution binding is a mid-to-late-stack computation, and reading it off the last layer alone would understate it for both models. 
+IFR ↑ \uparrow DAS ↑ \uparrow LEAK ↓ \downarrow 
+Layer LLMON Inst. LLMON Inst. LLMON Inst. 
+25 86.5 25.8 59.1 38.0 8.6 44.9 
+28 87.2 37.7 62.2 36.6 6.3 34.9 
+31 63.8 15.3 53.9 37.2 12.2 40.6 
+34 75.8 26.3 57.9 35.6 6.4 47.2 
+39 28.0 17.2 47.0 40.2 13.7 39.7 Table 4: Attention metrics (%) averaged over the distractor examples, at five representative layers, for Granite-4.1-3B LLMON-trained vs. Instruct . The LLMON model holds higher instruction focus and lower leakage at every layer measured; the gap is widest at layers 25-34 and narrows at the output. Layer-wise Instruction Focus Ratio. 
+Figure 2 shows the IFR computed at each transformer layer for both models on a representative distractor example, in which three instructions (“summarize”, “count the words”, “translate”) and two data segments coexist and the “ exec ” block binds only the word-counting instruction.
+The two models are indistinguishable through the first twenty layers, both fluctuating around 25-45%.
+They separate sharply from layer 22: the LLMON-trained model rises into a 55-89% band across layers 25-38, peaking at 89% at layer 28, whereas the Instruct model peaks at 62% and spends most of that range below 45%.
+The implication is that the binding is not a surface property of the prompt but a computation the network performs, and that LLMON training installs it in a specific region of the stack rather than shifting attention uniformly. Figure 2: Instruction Focus Ratio (IFR) per transformer layer for the LLMON-trained Granite-4.1-3B (teal) vs. its Instruct counterpart (pink) on a distractor example. The two are indistinguishable through layer 20 and separate sharply from layer 22, with the LLMON model sustaining 55-89% across layers 25-38. Both fall at the final layer. Layer-wise Distractor Leakage. 
+Figure 3 presents the complementary LEAK metric across layers.
+Both models leak heavily in the first six layers, peaking above 50%, which is consistent with early layers aggregating context indiscriminately.
+From layer 7 the LLMON-trained model drops to a 5-25% band and settles below 15% after layer 25, while the Instruct model stays in the 20-50% range throughout and rises again in the last ten layers.
+Distractor suppression is therefore not a property of the input encoding (where the two models behave alike) but something acquired in the same region of the stack where instruction focus is established. Figure 3: Distractor leakage (LEAK) per transformer layer. Both models leak heavily in the first six layers; from layer 7 the LLMON-trained model (teal) settles into a 5-25% band while the Instruct model (pink) remains between 20% and 50% and rises again in the late layers. Attention span distribution. 
+Figure 4 presents the per-span attention distribution and the three metrics at layer 31 for both models.
+The LLMON-trained model splits its span attention between the target instruction (I-T, 23.4%) and the target data it is bound to (D-T, 23.0%), with 35.6% on the prompt and execution structure and only 5.6% on the largest distractor instruction: IFR = 71.4%, DAS = 72.6%, LEAK = 9.9%.
+The Instruct model inverts this. Its single largest recipient is a distractor instruction (I-D1, 47.5%), with a second distractor taking 21.8% and the target instruction only 14.5%; target data attention is negligible.
+Its metrics record the failure directly: IFR = 17.3%, DAS = 22.1%, LEAK = 49.9%.
+The two models receive identical token sequences, so the difference is entirely in what the network does with them. Figure 4: Attention metrics and per-span attention distribution at layer 31 for the LLMON-trained Granite-4.1-3B (left) vs. its Instruct counterpart (right). The LLMON model divides its attention between the bound target instruction (I-T) and target data (D-T); the Instruct model’s largest single recipient is a distractor instruction (I-D1, 47.5%). Layer-wise Data Attention Score. 
+Figure 5 completes the picture with DAS.
+It follows the same shape as IFR: the two models track each other through the first twenty layers, then the LLMON-trained model rises into a 46-94% band across layers 23-38 while the Instruct model stays between 14% and 56%.
+All three metrics therefore separate in the same region of the stack, which is what one expects if a single mechanism of resolving the execution binding is responsible for all three. Figure 5: Data Attention Score (DAS) per transformer layer for the LLMON-trained Granite-4.1-3B (teal) vs. its Instruct counterpart (pink). DAS separates in the same region of the stack as IFR and LEAK, rising into a 46-94% band across layers 23-38 for the LLMON model. Token-level attention flow. 
+Figure 6 traces how attention is allocated during generation, showing the correlation between each generated token and the KV-cache spans for the LLMON-trained model at layer 31.
+The target data span (D-T) activates precisely while the model is quoting the sentence it was asked to count, and falls away once it moves on to report the count; the target instruction span (I-T) carries weight at the opening tokens and again as the answer is formed.
+The distractor spans (I-D1, I-D2, D-D1) stay near zero throughout decoding.
+This token-resolved view complements the per-layer metrics: the model does not merely arrive at the right binding by the end of the forward pass, it holds it step by step as it produces the answer. Figure 6: Attention correlation weights between each generated token (columns, in decoding order) and the KV-cache spans (rows) for the LLMON-trained Granite-4.1-3B at layer 31. Brighter cells indicate stronger attention. The target data span (D-T) activates while the model quotes the sentence it was asked to count, and the distractor spans (I-D1, I-D2, D-D1) remain near zero throughout decoding. 
+6 Conclusion 
+We presented a structured post-training methodology that uses LLMON’s explicit instruction-data separation and identifier-based execution binding to improve controlled execution in LLMs.
+Our evaluation on two Granite-4.1 base models demonstrates that:
+(i) LLMON-structured supervision reduces attack success rates on indirect prompt-injection benchmarks from 53-100% to 0.02-5.6%, without catastrophic degradation on standard capability measures;
+(ii) the effect holds at both 3B and 8B scale, and extends to adversarial red-teaming on indirect attacks, though direct and multi-turn attacks remain substantially harder;
+and (iii) attention-based interpretability metrics (IFR, DAS, LEAK) provide actionable per-layer failure diagnosis, revealing how structural training reshapes internal attention patterns.
+These findings suggest that explicit execution structure can be reliably taught to LLMs through standard post-training, offering a training-time complement to inference-time safety mechanisms. 
+Limitations 
+We discuss several important limitations of this work.
+First, our evaluation covers two model scales (3B and 8B) within a single model family and generation.
+While LLMON’s structural supervision is architecture-agnostic, it remains to be validated whether the same magnitude of improvement transfers to other pre-training corpora and architectures, and to larger scales where models may already exhibit stronger implicit instruction-following.
+Second, LLMON’s delimiter tokens increase context length by approximately 7-15% depending on the example complexity.
+We do not systematically quantify the impact on inference latency and throughput, though sequence packing at training time largely amortizes this cost.
+Third, the privilege invariant addresses indirect injection, where the adversarial instruction arrives as input.
+It offers far less protection when the adversarial instruction is the user’s instruction, since there is then no instruction-data boundary to enforce: red-teaming robustness reaches only 33-37% on direct attacks and 28-37% on multi-turn attacks, against 80-85% on indirect ones, and it is a learned behavior rather than an enforced guarantee: it substantially reduces, but does not eliminate, the chance that an instruction embedded in data is followed, and should be one layer of a defense rather than the only one.
+Fourth, while our capability evaluation includes multilingual benchmarks, the LLMON training corpus itself is predominantly English, and we have not characterized how tag overhead behaves on morphologically rich languages or on tasks with very long documents.
+Finally, our IFR/DAS/LEAK metrics provide correlation between attention patterns and output quality, but we do not establish a causal mechanism.
+Attention weights are an imperfect proxy for information flow in transformers, and the relationship between attention-level metrics and generation-level performance may not be monotonic. 
+References 
+Austin et al. (2021) J. Austin, A. Odena, M. Nye, M. Bosma, H. Michalewski, D. Dohan, E. Jiang, C. Cai, M. Terry, Q. Le, et al. Program synthesis with large language models . arXiv preprint arXiv:2108.07732 . Cited by: §4.3.1 . 
+Beurer-Kellner et al. (2023) L. Beurer-Kellner, M. Fischer, and M. Vechev Prompting is programming: a query language for large language models . Proc. ACM Program. Lang. 7 ( PLDI ). External Links: Link , Document Cited by: §2 . 
+Bhatt et al. (2023) M. Bhatt, S. Chennabasappa, C. Nikolaidis, S. Wan, I. Evtimov, D. Gabi, D. Song, F. Ahmad, C. Aschermann, L. Fontana, et al. Purple llama cyberseceval: a secure coding benchmark for language models . arXiv preprint arXiv:2312.04724 . Cited by: §4.3.3 . 
+Cassano et al. (2023) F. Cassano, J. Gouwar, D. Nguyen, S. Nguyen, L. Phipps-Costin, D. Pinckney, M. Yee, Y. Zi, C. J. Anderson, M. Q. Feldman, et al. Multipl-e: a scalable and polyglot approach to benchmarking neural code generation . IEEE Transactions on Software Engineering 49 ( 7 ), pp. 3675–3691 . Cited by: §4.3.1 . 
+Chen et al. (2021) M. Chen, J. Tworek, H. Jun, Q. Yuan, H. P. D. O. Pinto, J. Kaplan, H. Edwards, Y. Burda, N. Joseph, G. Brockman, et al. Evaluating large language models trained on code . arXiv preprint arXiv:2107.03374 . Cited by: §4.3.1 . 
+Chen et al. (2025a) S. Chen, J. Piet, C. Sitawarin, and D. Wagner { \{ struq } \} : Defending against prompt injection with structured queries . In 34th USENIX Security Symposium (USENIX Security 25) , pp. 2383–2400 . Cited by: §2 . 
+Chen et al. (2025b) S. Chen, A. Zharmagambetov, S. Mahloujifar, K. Chaudhuri, D. Wagner, and C. Guo Secalign: defending against prompt injection with preference optimization . In Proceedings of the 2025 ACM SIGSAC Conference on Computer and Communications Security , pp. 2833–2847 . Cited by: §2 . 
+Christiano et al. (2017) P. F. Christiano, J. Leike, T. B. Brown, M. Martic, S. Legg, and D. Amodei Deep reinforcement learning from human preferences . In Advances in Neural Information Processing Systems 30: Annual Conference
+on Neural Information Processing Systems 2017, December 4-9, 2017,
+Long Beach, CA, USA , External Links: Link Cited by: §2 . 
+Cobbe et al. (2021) K. Cobbe, V. Kosaraju, M. Bavarian, M. Chen, H. Jun, L. Kaiser, M. Plappert, J. Tworek, J. Hilton, R. Nakano, C. Hesse, and J. Schulman Training verifiers to solve math word problems . External Links: 2110.14168 , Link Cited by: §4.3.1 . 
+Conover et al. (2023) M. Conover, M. Hayes, A. Mathur, J. Xie, J. Wan, S. Shah, A. Ghodsi, P. Wendell, M. Zaharia, and R. Xin Free dolly: introducing the world’s first truly open instruction-tuned llm . Cited by: 5th item . 
+Dantanarayana et al. (2025) J. L. Dantanarayana, Y. Kang, K. Sivasothynathan, C. Clarke, B. Li, S. Kashmira, K. Flautner, L. Tang, and J. Mars MTP: a meaning-typed language abstraction for ai-integrated programming . Proc. ACM Program. Lang. 9 ( OOPSLA2 ). External Links: Link , Document Cited by: §2 . 
+DeepSeek-AI et al. (2025) DeepSeek-AI, A. Liu, B. Feng, B. Xue, B. Wang, B. Wu, C. Lu, C. Zhao, C. Deng, C. Zhang, et al. DeepSeek-v3 technical report . External Links: 2412.19437 , Link Cited by: §4.3.3 . 
+Granite Team (2024) I. Granite Team Granite 3.0 language models . URL: https://github.com/ibm-granite/granite-3.0-language-models . Cited by: §4.2 . 
+Greshake et al. (2023) K. Greshake, S. Abdelnabi, S. Mishra, C. Endres, T. Holz, and M. Fritz More than you’ve asked for: a comprehensive analysis of novel prompt injection threats to application-integrated large language models . CoRR abs/2302.12173 . External Links: Document , Link Cited by: §1 , §2 . 
+Gu et al. (2024) A. Gu, B. Rozière, H. Leather, A. Solar-Lezama, G. Synnaeve, and S. I. Wang Cruxeval: a benchmark for code reasoning, understanding and execution . arXiv preprint arXiv:2401.03065 . Cited by: §4.3.1 . 
+Hendrycks et al. (2021) D. Hendrycks, C. Burns, S. Kadavath, A. Arora, S. Basart, E. Tang, D. Song, and J. Steinhardt Measuring mathematical problem solving with the math dataset . External Links: 2103.03874 , Link Cited by: §4.3.1 . 
+Hind et al. (2026) M. Hind, B. Shbita, B. Wu, F. Ahmed, C. DeLuca, N. Fulton, D. Cox, and D. Gutfreund LLMON: an LLM-native markup language to leverage structure and semantics at the llm interface . arXiv preprint arXiv:2603.22519 . Cited by: §1 , §3 . 
+Hines et al. (2024) K. Hines, G. Lopez, M. Hall, F. Zarfati, Y. Zunger, and E. Kiciman Defending against indirect prompt injection attacks with spotlighting . arXiv preprint arXiv:2403.14720 . Cited by: §2 . 
+Hugging Face (2025) Hugging Face Templates for chat models . Note: https://huggingface.co/docs/transformers/en/chat_templating Accessed: 2026-03-17 Cited by: §2 . 
+IBM Granite Team (2026) IBM Granite Team Granite 4.1 LLMs: how they’re built . Note: Hugging Face BlogPublished April 29, 2026 External Links: Link Cited by: §4.2 . 
+Kaddour et al. (2023) J. Kaddour, J. Harris, M. Mozes, H. Bradley, R. Raileanu, and R. McHardy Challenges and applications of large language models . arXiv preprint arXiv:2307.10169 . Cited by: §1 . 
+Khattab et al. (2023) O. Khattab, A. Singhvi, P. Maheshwari, Z. Zhang, K. Santhanam, S. Vardhamanan, S. Haq, A. Sharma, T. T. Joshi, H. Moazam, H. Miller, M. Zaharia, and C. Potts DSPy: compiling declarative language model calls into self-improving pipelines . Cited by: §2 . 
+Kour et al. (2023) G. Kour, M. Zalmanovici, N. Zwerdling, E. Goldbraich, O. Fandina, A. A. Tavor, O. Raz, and E. Farchi Unveiling safety vulnerabilities of large language models . In Proceedings of the Third Workshop on Natural Language Generation, Evaluation, and Metrics (GEM) , pp. 111–127 . Cited by: §4.3.1 . 
+Lewkowycz et al. (2022) A. Lewkowycz, A. Andreassen, D. Dohan, E. Dyer, H. Michalewski, V. Ramasesh, A. Slone, C. Anil, I. Schlag, T. Gutman-Solo, et al. Solving quantitative reasoning problems with language models . Advances in neural information processing systems 35 , pp. 3843–3857 . Cited by: §4.3.1 . 
+Li et al. (2024) L. Li, B. Dong, R. Wang, X. Hu, W. Zuo, D. Lin, Y. Qiao, and J. Shao Salad-bench: a hierarchical and comprehensive safety benchmark for large language models . In Findings of the Association for Computational Linguistics: ACL 2024 , pp. 3923–3954 . Cited by: §4.3.1 . 
+Liu et al. (2023) J. Liu, C. S. Xia, Y. Wang, and L. Zhang Is your code generated by chatgpt really correct? rigorous evaluation of large language models for code generation . Advances in neural information processing systems 36 , pp. 21558–21572 . Cited by: §4.3.1 . 
+Liu et al. (2024a) J. Liu, S. Xie, J. Wang, Y. Wei, Y. Ding, and L. Zhang Evaluating language models for efficient code generation . arXiv preprint arXiv:2408.06450 . Cited by: §4.3.1 . 
+Liu et al. (2026) X. Liu, J. Wang, X. Yuan, J. Sun, G. Dong, P. Di, W. Wang, and D. Wang Prompting frameworks for large language models: a survey . ACM Comput. Surv. . External Links: ISSN 0360-0300 , Link , Document Cited by: §2 . 
+Liu et al. (2024b) Y. Liu, Y. Jia, R. Geng, J. Jia, and N. Z. Gong Formalizing and benchmarking prompt injection attacks and defenses . In 33rd USENIX Security Symposium (USENIX Security 24) , pp. 1831–1847 . Cited by: §4.3.2 . 
+LLMON Team (2026) I. LLMON Team LLMON . URL: https://github.com/generative-computing/llmon . Cited by: §1 . 
+Mirzadeh et al. (2025) I. Mirzadeh, K. Alizadeh-Vahid, H. Shahrokhi, O. Tuzel, S. Bengio, and M. Farajtabar Gsm-symbolic: understanding the limitations of mathematical reasoning in large language models . In International Conference on Learning Representations , Vol. 2025 , pp. 94743–94765 . Cited by: §4.3.1 . 
+Nedoshivina et al. (2025) ARES: ai robustness evaluation system IBM Research . External Links: Link Cited by: §4.3.3 . 
+OpenAI et al. (2025) OpenAI, :, S. Agarwal, L. Ahmad, J. Ai, S. Altman, A. Applebaum, E. Arbus, R. K. Arora, Y. Bai, B. Baker, H. Bao, B. Barak, et al. Gpt-oss-120b &amp; gpt-oss-20b model card . External Links: 2508.10925 , Link Cited by: §4.3.3 . 
+Ouyang et al. (2022) L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wainwright, P. Mishkin, C. Zhang, S. Agarwal, K. Slama, A. Ray, J. Schulman, J. Hilton, F. Kelton, L. Miller, M. Simens, A. Askell, P. Welinder, P. F. Christiano, J. Leike, and R. Lowe Training language models to follow instructions with human feedback . In Advances in Neural Information Processing Systems 35: Annual Conference
+on Neural Information Processing Systems 2022, NeurIPS 2022, New Orleans,
+LA, USA, November 28 - December 9, 2022 , External Links: Link Cited by: §1 , §2 . 
+Patil et al. (2025) S. G. Patil, H. Mao, F. Yan, C. C. Ji, V. Suresh, I. Stoica, and J. E. Gonzalez The berkeley function calling leaderboard (bfcl): from tool use to agentic evaluation of large language models . In Forty-second International Conference on Machine Learning , Cited by: §4.3.1 . 
+Patil et al. (2024) S. G. Patil, T. Zhang, X. Wang, and J. E. Gonzalez Gorilla: large language model connected with massive apis . Advances in Neural Information Processing Systems 37 , pp. 126544–126565 . Cited by: §2 . 
+Perez and Ribeiro (2022) F. Perez and I. Ribeiro Ignore previous prompt: attack techniques for language models . arXiv preprint arXiv:2211.09527 . Cited by: §1 , §2 . 
+Pfister et al. (2025) N. Pfister, V. Volhejn, M. Knott, S. Arias, J. Bazińska, M. Bichurin, A. Commike, J. Darling, P. Dienes, M. Fiedler, et al. Gandalf the red: adaptive security for llms . arXiv preprint arXiv:2501.07927 . Cited by: §4.3.3 . 
+POML (2025) Note: Accessed: 2026-03-17 External Links: Link Cited by: §2 . 
+Rafailov et al. (2023) R. Rafailov, A. Sharma, E. Mitchell, C. D. Manning, S. Ermon, and C. Finn Direct preference optimization: your language model is secretly a reward model . In Advances in Neural Information Processing Systems 36: Annual Conference
+on Neural Information Processing Systems 2023, NeurIPS 2023, New Orleans,
+LA, USA, December 10 - 16, 2023 , External Links: Link Cited by: §2 , §4.2 . 
+Rein et al. (2023) D. Rein, B. L. Hou, A. C. Stickland, J. Petty, R. Y. Pang, J. Dirani, J. Michael, and S. R. Bowman Gpqa: a graduate-level google-proof q&amp;a benchmark . arXiv preprint arXiv:2311.12022 . Cited by: §4.3.1 . 
+Romanou et al. (2025) A. Romanou, N. Foroutan, A. Sotnikova, S. H. Nelaturu, S. Singh, R. Maheshwary, M. Altomare, Z. Chen, M. Haggag, A. Amayuelas, et al. Include: evaluating multilingual language understanding with regional knowledge . In International Conference on Learning Representations , Vol. 2025 , pp. 83291–83322 . Cited by: §4.3.1 . 
+Russinovich et al. (2025) M. Russinovich, A. Salem, and R. Eldan Great, now write an article about that: the crescendo { \{ multi-turn } \} { \{ llm } \} jailbreak attack . In 34th USENIX Security Symposium (USENIX Security 25) , pp. 2421–2440 . Cited by: §4.3.3 . 
+Saxton et al. (2019) D. Saxton, E. Grefenstette, F. Hill, and P. Kohli Analysing mathematical reasoning abilities of neural models . arXiv preprint arXiv:1904.01557 . Cited by: §4.3.1 . 
+Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom Toolformer: language models can teach themselves to use tools . Advances in neural information processing systems 36 , pp. 68539–68551 . Cited by: §1 , §2 . 
+Shi et al. (2022) F. Shi, M. Suzgun, M. Freitag, X. Wang, S. Srivats, S. Vosoughi, H. W. Chung, Y. Tay, S. Ruder, D. Zhou, et al. Language models are multilingual chain-of-thought reasoners . arXiv preprint arXiv:2210.03057 . Cited by: §4.3.1 . 
+Singh et al. (2025) S. Singh, A. Romanou, C. Fourrier, D. I. Adelani, J. G. Ngui, D. Vila-Suero, P. Limkonchotiwat, K. Marchisio, W. Q. Leong, Y. Susanto, et al. Global mmlu: understanding and addressing cultural and linguistic biases in multilingual evaluation . In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pp. 18761–18799 . Cited by: §4.3.1 . 
+Suzgun et al. (2023) M. Suzgun, N. Scales, N. Schärli, S. Gehrmann, Y. Tay, H. W. Chung, A. Chowdhery, Q. Le, E. H. Chi, D. Zhou, et al. Challenging big-bench tasks and whether chain-of-thought can solve them . In Findings of the Association for Computational Linguistics: ACL 2023 , pp. 13003–13051 . Cited by: §4.3.1 . 
+Taori et al. (2023) R. Taori, I. Gulrajani, T. Zhang, Y. Dubois, X. Li, C. Guestrin, P. Liang, and T. B. Hashimoto Stanford alpaca: an instruction-following llama model . Stanford, CA, USA . Cited by: 4th item . 
+Toyer et al. (2024) S. Toyer, O. Watkins, E. Mendes, J. Svegliato, L. Bailey, T. Wang, I. Ong, K. Elmaaroufi, P. Abbeel, A. Ritter, et al. Tensor trust: interpretable prompt injection attacks from an online game . In International Conference on Learning Representations , Vol. 2024 , pp. 18714–18746 . Cited by: §4.3.3 . 
+Vaswani et al. (2017) A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, and I. Polosukhin Attention is all you need . In Advances in Neural Information Processing Systems 30: Annual Conference
+on Neural Information Processing Systems 2017, December 4-9, 2017,
+Long Beach, CA, USA , External Links: Link Cited by: §1 . 
+Wang et al. (2024) Y. Wang, X. Ma, G. Zhang, Y. Ni, A. Chandra, S. Guo, W. Ren, A. Arulraj, X. He, Z. Jiang, et al. Mmlu-pro: a more robust and challenging multi-task language understanding benchmark . Advances in Neural Information Processing Systems 37 , pp. 95266–95290 . Cited by: §4.3.1 . 
+Wei et al. (2022) J. Wei, M. Bosma, V. Y. Zhao, K. Guu, A. W. Yu, B. Lester, N. Du, A. M. Dai, and Q. V. Le Finetuned language models are zero-shot learners . In The Tenth International Conference on Learning Representations, ICLR 2022,
+Virtual Event, April 25-29, 2022 , External Links: Link Cited by: §1 , §2 . 
+Willard and Louf (2023) B. T. Willard and R. Louf Efficient guided generation for large language models . arXiv preprint arXiv:2307.09702 . Cited by: §2 . 
+Yao et al. (2022) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao React: synergizing reasoning and acting in language models . arXiv preprint arXiv:2210.03629 . Cited by: §1 , §2 . 
+Zhang et al. (2025) H. Zhang, J. Huang, K. Mei, Y. Yao, Z. Wang, C. Zhan, H. Wang, and Y. Zhang Agent security bench (asb): formalizing and benchmarking attacks and defenses in llm-based agents . In International Conference on Learning Representations , Vol. 2025 , pp. 35331–35366 . Cited by: §4.3.2 . 
+Zhao et al. (2026) Z. Zhao, L. Jiang, Y. Choi, and C. Xiao Safety mid-training: internalizing LLM safety as a foundational capability . arXiv preprint arXiv:2610.26809 . Cited by: §4.3.1 . 
+Zheng et al. (2024) L. Zheng, L. Yin, Z. Xie, C. Sun, J. Huang, C. H. Yu, S. Cao, C. Kozyrakis, I. Stoica, J. E. Gonzalez, et al. Sglang: efficient execution of structured language model programs . Advances in neural information processing systems 37 , pp. 62557–62583 . Cited by: §2 . 
+Zhong et al. (2024) W. Zhong, R. Cui, Y. Guo, Y. Liang, S. Lu, Y. Wang, A. Saied, W. Chen, and N. Duan Agieval: a human-centric benchmark for evaluating foundation models, 2023 . URL https://arxiv. org/abs/2304.06364 . Cited by: §4.3.1 . 
+Zhou et al. (2023) J. Zhou, T. Lu, S. Mishra, S. Brahma, S. Basu, Y. Luan, D. Zhou, and L. Hou Instruction-following evaluation for large language models . External Links: 2311.07911 , Link Cited by: §4.3.1 . 
+Appendix A LLMON Examples 
+A.1 Multi-instruction and Multi-data Distractors 
+Figure 7 illustrates a distractor example: three instructions and two data segments coexist, but the “ exec ” block unambiguously binds only one instruction-data pair.
+The model must learn to attend selectively to the referenced segments and ignore all others. 
+⬇ &lt;|open|&gt; instr&lt;|:|&gt;êí &lt;|close|&gt; Summarize the text in one short sentence &lt;|open_end|&gt; &lt;|open|&gt; data&lt;|:|&gt;¡¿ &lt;|close|&gt; The smart rabbit escaped the field &lt;|open_end|&gt; &lt;|open|&gt; data&lt;|:|&gt;Äî &lt;|close|&gt; The quick brown fox jumps over the lazy dog &lt;|open_end|&gt; &lt;|open|&gt; instr&lt;|:|&gt;íä &lt;|close|&gt; Count the number of words in the given sentence &lt;|open_end|&gt; &lt;|open|&gt; instr&lt;|:|&gt;Úê &lt;|close|&gt; Translate the text into French &lt;|open_end|&gt; &lt;|open|&gt; exec&lt;|:|&gt;áÂ &lt;|close|&gt; &lt;|open|&gt; exec&lt;|.|&gt;instruction &lt;|close|&gt; instr&lt;|:|&gt;íä &lt;|open_end|&gt; &lt;|open|&gt; exec&lt;|.|&gt;input &lt;|close|&gt; data&lt;|:|&gt;Äî &lt;|open_end|&gt; &lt;|open|&gt; exec&lt;|.|&gt;output &lt;|close|&gt; assistant&lt;|:|&gt;ðã &lt;|open_end|&gt; &lt;|open_end|&gt; &lt;|open|&gt; assistant&lt;|:|&gt;ðã &lt;|close|&gt; The sentence &quot; The quick brown fox jumps over the lazy dog &quot; consists of 9 words . &lt;|open_end|&gt; &lt;|end_of_text|&gt; Figure 7: Multi-instruction distractor example. Three instructions and two data segments coexist; the bound target instruction and data are shown in green and yellow, the distractors in lime and light-yellow. The exec block (orange) references only “ instr&lt;|:|&gt;íä ” with input “ data&lt;|:|&gt;Äî ”. The model must execute only the word-counting instruction, ignoring the summarization and translation distractors. Other special tokens are highlighted in light-pink. Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

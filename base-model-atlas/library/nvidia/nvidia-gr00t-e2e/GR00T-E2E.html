@@ -1,0 +1,104 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GR00T N1.7 E2E：G1与H2仿真任务策略 · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>GR00T N1.7 E2E：G1与H2仿真任务策略</h2><div class="meta">model-note · 2026<br>model-note, base-model, agent-training</div><nav><a class="toc-l1" href="#gr00t-e2e-n1-8">GR00T E2E：两个机器人任务策略，不是N1.8</a><a class="toc-l2" href="#section-2">开放、日期与数据接口</a><a class="toc-l2" href="#section-3">训练与闭环评估</a><a class="toc-l2" href="#section-4">可复现边界与研究启发</a></nav></aside><main class="note"><h1 id="gr00t-e2e-n1-8">GR00T E2E：两个机器人任务策略，不是N1.8</h1><aside class="callout tldr"><div class="callout-title">TLDR</div><div>G1导航取苹果放盘、H2双手交接放盘，是N1.7-3B的任务微调checkpoint，合为E2E专项，不拆两个正代。公开报告的98.42%与73.8%来自不同任务、不同episode数和控制接口，不能据此比较机器人或模型优劣。</div></aside><style id="note-tabs-style">[data-note-panel][hidden]{display:none!important}.note-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:24px 0;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.note-tabs button{font:inherit;font-family:Inter,sans-serif;font-size:13px;color:var(--muted);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 13px;cursor:pointer}.note-tabs button[aria-selected="true"]{background:#223d66;color:#eaf2ff;border-color:#6689ba}.note-tabs button:focus-visible{outline:3px solid #70d9ff}.note [data-note-panel]>h2:first-child{margin-top:20px}html[data-theme="light"] .note-tabs button[aria-selected="true"]{background:#dceaff;color:#15375e;border-color:#7ca1ce}</style><nav class="note-tabs" role="tablist" aria-label="研读板块"><button type="button" role="tab" id="note-tab-0" aria-controls="note-panel-0" aria-selected="true" tabindex="0" data-note-tab="0">开放、日期与数据接口</button><button type="button" role="tab" id="note-tab-1" aria-controls="note-panel-1" aria-selected="false" tabindex="-1" data-note-tab="1">训练与闭环评估</button><button type="button" role="tab" id="note-tab-2" aria-controls="note-panel-2" aria-selected="false" tabindex="-1" data-note-tab="2">可复现边界与研究启发</button></nav><section role="tabpanel" id="note-panel-0" aria-labelledby="note-tab-0" data-note-panel="0"><h2 id="section-2">开放、日期与数据接口</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>两卡声明10/1发布，但本轮11/13才在官方公开inventory观察到；createdAt分别9/3和9/13也不是公开证明。历史首公告尚未核，暂记2026-10月份待核，不往近30天伪造一条11/13首发。卡内release/v0.2工作流链接与raw链接404，保留缺口。</div></aside><p><img src="src/assets/nvidia-architecture.png" alt="官方GR00T通用架构，非H2专属示意"></p><div class="table-wrap"><table><thead><tr><th>接口</th><th>G1</th><th>H2 Plus / Sharpa手</th></tr></thead><tbody><tr><td>输入state</td><td>31维，不含腿</td><td>75维关节state</td></tr><tr><td>动作</td><td>35维：31关节+1base-height+3导航</td><td>61维：14臂+44手+3导航</td></tr><tr><td>chunk horizon</td><td>40</td><td>40</td></tr><tr><td>数据原始action</td><td>43维</td><td>75关节目标，不能等同61维policy</td></tr><tr><td>视觉</td><td>640×480 egocentric；目标256/crop230</td><td>头部RGB；目标256/crop230</td></tr><tr><td>checkpoint</td><td>55,000step</td><td>10,000step</td></tr><tr><td>训练恢复文件</td><td>含optimizer/scheduler/RNG等</td><td>仅推理，故意不含恢复状态</td></tr></tbody></table></div><p>G1保存的eval transform为letterbox、最短边256、.95中心crop再resize；不能只按配置230解释全流程。最大padding action132维不等同选取35维动作。G1分组ABSOLUTE/NON_EEF与另一use_relative_action=true并存，实际运行语义待代码核验。</p></section><section role="tabpanel" id="note-panel-1" aria-labelledby="note-tab-1" data-note-panel="1" hidden><h2 id="section-3">训练与闭环评估</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>都是仿真遥操作种子经AutoData扩展，种子不能再加到生成episode数上；均无独立held-out demonstration split，闭环评估另算。</div></aside><p>架构是Cosmos-Reason2-2B（Qwen3-VL）视觉语言底座+flow-matching DiT动作头，embodiment条件化MLP处理状态/动作，AdaLN处理扩散步。图为官方通用架构，不能把图中历史组件代号替代本卡明确的N1.7配置。</p><p>G1：25个XR种子→2500生成演示，330175条时序记录；55kstep、global batch10、gradacc1、LR1e-4/cosine、单GPU、BF16、DeepSpeed2。LLM冻结，vision/projector/VLLN/diffusion训练，loss1.2822→.0107。</p><p>H2：10种子→1000演示，1178888记录；10kstep、batch32、gradacc1、LR1e-4，单RTX5880Ada48GB；visual和LLM冻结，projector/diffusion训练，最终loss.0138。两任务loss/步数不在同一统计条件，不能作收敛速度对比。</p><div class="table-wrap"><table><thead><tr><th>评估</th><th>G1</th><th>H2</th></tr></thead><tbody><tr><td>成功/总episode</td><td>9842/10000</td><td>369/500</td></tr><tr><td>成功率</td><td>98.42%</td><td>73.8%</td></tr><tr><td>失败</td><td>158</td><td>131</td></tr><tr><td>H2批次</td><td>不适用</td><td>77/73/76/73/70%，各100</td></tr><tr><td>运行错误</td><td>未列</td><td>0</td></tr><tr><td>共同扰动</td><td>苹果XY±.02m、盘固定</td><td>苹果XY±.02m、盘固定</td></tr></tbody></table></div><p>G1成功需稳定放盘且接触确认；H2需最终稳定放盘并双手离开，30秒仿真预算、100Hz控制、seed5301–5305。抓住/交接中间里程碑不算成功。单一英文指令和小幅位置扰动不覆盖语言泛化、物体泛化、真实机器人安全。</p></section><section role="tabpanel" id="note-panel-2" aria-labelledby="note-tab-2" data-note-panel="2" hidden><h2 id="section-4">可复现边界与研究启发</h2><aside class="callout tldr"><div class="callout-title">TLDR</div><div>NVIDIA Open Model License与Apache不同；checkpoint、processor、normalization、action mapping、底座revision必须一起固定。本轮没有下载模型、数据或运行机器人代码。</div></aside><p>H2卡指定Isaac-GR00T revision 4b1dca9d88d2a0b9ea5a65aa61c82ff89f5c4f0e，底座pinned revision在training_provenance.json；本轮未获取该文件与machine-readable evaluation/summary.json，不宣称逐字段复核。上层VLA给导航命令，腿部由独立whole-body controller实现，不能把策略成功全归因VLA。</p><aside class="callout insight"><div class="callout-title">INSIGHT</div><div>Agent训练可借鉴种子→合成轨迹→小范围闭环验收，但应把训练演示独立划分和reset分布外测试分开。下一步应固定任务、控制器和预算，比较生成演示规模与闭环RL；当前两卡不构成这种因果对照。</div></aside><p>来源：两份src/官方完整模型卡；<a href="https://huggingface.co/nvidia/GR00T-E2E-Reference-Workflow-SIM-G1-N1.7-AppletoPlate-Model" target="_blank" rel="noopener">G1</a>、<a href="https://huggingface.co/nvidia/GR00T-E2E-Reference-Workflow-SIM-H2-N1.7-AppleHandoverPlate-Model" target="_blank" rel="noopener">H2</a>。<a href="https://arxiv.org/abs/2503.14734" target="_blank" rel="noopener">旧N1报告链接</a>不是本次任务训练报告，未抓PDF。</p><blockquote>📊 中文Poster：<a class="wikilink" href="gr00t-e2e_poster_zh.html">gr00t-e2e_poster_zh.html</a></blockquote></section><script id="note-tabs-script">(() => {
+const tabs = [...document.querySelectorAll('[data-note-tab]')];
+function select(index) {
+    tabs.forEach(tab => {
+        const active = tab.dataset.noteTab === String(index);
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+}
+function reveal() {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) { select(panel.dataset.notePanel); requestAnimationFrame(() => target.scrollIntoView({block:'start'})); }
+}
+tabs.forEach((tab,index) => {
+    tab.onclick = () => select(tab.dataset.noteTab);
+    tab.onkeydown = event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key==='Home' ? 0 : event.key==='End' ? tabs.length-1 : (index+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+        tabs[next].click(); tabs[next].focus();
+    };
+});
+document.addEventListener('click',event => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    const panel = target?.closest('[data-note-panel]');
+    if (panel) select(panel.dataset.notePanel);
+});
+window.addEventListener('hashchange',reveal); reveal();
+})();</script></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

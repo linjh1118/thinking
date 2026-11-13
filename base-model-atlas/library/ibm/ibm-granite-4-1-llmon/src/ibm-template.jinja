@@ -1,0 +1,267 @@
+{#- LLMON chat template.
+
+    Renders a conversation into LLMON (LLM Object Notation): every prompt component becomes
+    an individually addressable block, and each turn carries an `exec` block naming which
+    instruction to run, which inputs it operates on, and where the output goes.
+
+    Privilege: `exec<|.|>instruction` and `exec<|.|>system` are authoritative. Everything
+    reached through `exec<|.|>input` -- data, documents, tool schemas, tool results -- is
+    material to read, not a command to follow.
+
+    Message fields, all optional, on a user message:
+      content      str  -- shorthand for a single executed instruction
+      instruction  list of {value, exec}
+      data         list of {value, exec}
+      requirement  list of {value, exec}
+      documents    list of {text, title?, exec}
+      tools        list of OpenAI tool dicts + {exec}
+    `documents` and `tools` may also be passed as top-level arguments, in which case they are
+    emitted once before the conversation and referenced by every turn.
+
+    An item with `exec: false` is rendered as a block but given no `exec` pointer: present in
+    context, bound to nothing.
+
+    Block ids are 2 characters, each a single token, drawn at random per block.
+
+    No newlines are emitted between blocks. -#}
+{%- macro close_tag(tag) -%}
+    {{- "<|open_end|>" -}}
+{%- endmacro -%}
+{#- A tool schema is flattened to one block per JSON leaf: the `function` and `properties`
+    wrappers are dropped from the path, as is the redundant `type` of the schema root and of
+    `parameters`. So {"function": {"name": "f", "parameters": {"properties": {"x": {"type":
+    "string"}}}}} becomes tool<|.|>name and tool<|.|>parameters<|.|>x<|.|>type. -#}
+{%- macro flatten_tool(prefix, value, pkey="") -%}
+    {%- if value is mapping -%}
+        {%- for k, v in value.items() -%}
+            {%- if not (k == "type" and (pkey == "" or pkey == "parameters")) -%}
+                {%- if k == "function" or k == "properties" -%}
+                    {{- flatten_tool(prefix, v, k) -}}
+                {%- else -%}
+                    {{- flatten_tool(prefix + "<|.|>" + k, v, k) -}}
+                {%- endif -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- elif (value is iterable) and (value is not string) -%}
+        {%- for item in value -%}
+            {%- if item is mapping -%}
+                {{- flatten_tool(prefix, item, pkey) -}}
+            {%- else -%}
+                {{- "<|open|>" + prefix + "<|close|>" + (item|string) -}}{{- close_tag(prefix) -}}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- else -%}
+        {{- "<|open|>" + prefix + "<|close|>" + (value|string) -}}{{- close_tag(prefix) -}}
+    {%- endif -%}
+{%- endmacro -%}
+{%- macro doc_block(item, doc_id) -%}
+    {{- "<|open|>doc<|:|>" + doc_id + "<|close|>" -}}
+    {%- if item["title"] is defined and item["title"] -%}
+        {{- "<|open|>doc<|.|>title<|close|>" + item["title"] -}}{{- close_tag("doc<|.|>title") -}}
+    {%- else -%}
+        {{- "<|open|>doc<|.|>title<|self_close|>" -}}
+    {%- endif -%}
+    {{- "<|open|>doc<|.|>text<|close|>" + item["text"] -}}{{- close_tag("doc<|.|>text") -}}
+    {{- close_tag("doc<|:|>" + doc_id) -}}
+{%- endmacro -%}
+{#- 75 characters, each exactly one token for this tokenizer. -#}
+{%- set id_chars = "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¹º»¼½¾¿ÀÁÂÃÄÇÉÍÎÐÑÓÖ×ÚÜßàáâãäåæçèéêëìíîïðñòóôõöøùúûüý" -%}
+{%- set ns = namespace(output_id="", system_id="", exec_body="", kwarg_doc_ids=[], kwarg_tool_ids=[], exec_instr_ids=[], exec_data_ids=[], exec_req_ids=[], exec_doc_ids=[], exec_tool_ids=[], conv_inputs=[]) -%}
+{%- if documents is defined and documents is not none -%}
+    {%- for item in documents -%}
+        {%- set doc_id = (id_chars | random) + (id_chars | random) -%}
+        {{- doc_block(item, doc_id) -}}
+        {%- set ns.kwarg_doc_ids = ns.kwarg_doc_ids + [doc_id] -%}
+    {%- endfor -%}
+{%- endif -%}
+{%- if tools is defined and tools is not none -%}
+    {%- for tool in tools -%}
+        {%- set tool_id = (id_chars | random) + (id_chars | random) -%}
+        {{- "<|open|>tool<|:|>" + tool_id + "<|close|>" -}}
+        {{- flatten_tool("tool", tool) -}}
+        {{- close_tag("tool<|:|>" + tool_id) -}}
+        {%- set ns.kwarg_tool_ids = ns.kwarg_tool_ids + [tool_id] -%}
+    {%- endfor -%}
+{%- endif -%}
+{%- for message in messages -%}
+    {%- if message["role"] == "system" -%}
+        {#- Sticky: referenced by every later turn until another system message replaces it. -#}
+        {%- set ns.system_id = (id_chars | random) + (id_chars | random) -%}
+        {{- "<|open|>system<|:|>" + ns.system_id + "<|close|>" -}}
+        {{- message["content"] -}}
+        {{- close_tag("system<|:|>" + ns.system_id) -}}
+    {%- elif message["role"] == "user" -%}
+        {%- set content_id = (id_chars | random) + (id_chars | random) -%}
+        {%- set exec_id = (id_chars | random) + (id_chars | random) -%}
+        {%- set ns.output_id = (id_chars | random) + (id_chars | random) -%}
+        {%- set ns.conv_inputs = [] -%}
+        {%- if message["content"] is defined -%}
+            {{- "<|open|>instr<|:|>" + content_id + "<|close|>" -}}
+            {{- message["content"] -}}
+            {{- close_tag("instr<|:|>" + content_id) -}}
+        {%- endif -%}
+        {%- if message["instruction"] is defined -%}
+            {%- set ns.exec_instr_ids = [] -%}
+            {%- for item in message["instruction"] -%}
+                {%- set instr_id = (id_chars | random) + (id_chars | random) -%}
+                {{- "<|open|>instr<|:|>" + instr_id + "<|close|>" -}}
+                {{- item["value"] -}}
+                {{- close_tag("instr<|:|>" + instr_id) -}}
+                {%- if item["exec"] -%}
+                    {%- set ns.exec_instr_ids = ns.exec_instr_ids + [instr_id] -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if message["data"] is defined -%}
+            {%- set ns.exec_data_ids = [] -%}
+            {%- for item in message["data"] -%}
+                {%- set data_id = (id_chars | random) + (id_chars | random) -%}
+                {{- "<|open|>data<|:|>" + data_id + "<|close|>" -}}
+                {{- item["value"] -}}
+                {{- close_tag("data<|:|>" + data_id) -}}
+                {%- if item["exec"] -%}
+                    {%- set ns.exec_data_ids = ns.exec_data_ids + [data_id] -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if message["requirement"] is defined -%}
+            {%- set ns.exec_req_ids = [] -%}
+            {%- for item in message["requirement"] -%}
+                {%- set req_id = (id_chars | random) + (id_chars | random) -%}
+                {{- "<|open|>req<|:|>" + req_id + "<|close|>" -}}
+                {{- item["value"] -}}
+                {{- close_tag("req<|:|>" + req_id) -}}
+                {%- if item["exec"] -%}
+                    {%- set ns.exec_req_ids = ns.exec_req_ids + [req_id] -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if message["documents"] is defined -%}
+            {%- set ns.exec_doc_ids = [] -%}
+            {%- for item in message["documents"] -%}
+                {%- set doc_id = (id_chars | random) + (id_chars | random) -%}
+                {{- doc_block(item, doc_id) -}}
+                {%- if item["exec"] -%}
+                    {%- set ns.exec_doc_ids = ns.exec_doc_ids + [doc_id] -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if message["tools"] is defined -%}
+            {%- set ns.exec_tool_ids = [] -%}
+            {%- for item in message["tools"] -%}
+                {%- set tool_id = (id_chars | random) + (id_chars | random) -%}
+                {{- "<|open|>tool<|:|>" + tool_id + "<|close|>" -}}
+                {%- for k, v in item.items() -%}
+                    {%- if k != "exec" -%}
+                        {{- flatten_tool("tool<|.|>" + k, v) -}}
+                    {%- endif -%}
+                {%- endfor -%}
+                {{- close_tag("tool<|:|>" + tool_id) -}}
+                {%- if item["exec"] -%}
+                    {%- set ns.exec_tool_ids = ns.exec_tool_ids + [tool_id] -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {#- Saved, not just emitted: a following tool turn reissues the same bindings with its
+            own tool results appended. -#}
+        {%- set ns.exec_body -%}
+            {%- if message["content"] is defined -%}
+                {{- "<|open|>exec<|.|>instruction<|close|>instr<|:|>" + content_id -}}{{- close_tag("exec<|.|>instruction") -}}
+            {%- endif -%}
+            {%- if message["instruction"] is defined -%}
+                {%- for instr_id in ns.exec_instr_ids -%}
+                    {{- "<|open|>exec<|.|>instruction<|close|>instr<|:|>" + instr_id -}}{{- close_tag("exec<|.|>instruction") -}}
+                {%- endfor -%}
+            {%- endif -%}
+            {%- if ns.system_id -%}
+                {{- "<|open|>exec<|.|>system<|close|>system<|:|>" + ns.system_id -}}{{- close_tag("exec<|.|>system") -}}
+            {%- endif -%}
+            {%- for doc_id in ns.kwarg_doc_ids -%}
+                {{- "<|open|>exec<|.|>input<|close|>doc<|:|>" + doc_id -}}{{- close_tag("exec<|.|>input") -}}
+            {%- endfor -%}
+            {%- if message["data"] is defined -%}
+                {%- for data_id in ns.exec_data_ids -%}
+                    {{- "<|open|>exec<|.|>input<|close|>data<|:|>" + data_id -}}{{- close_tag("exec<|.|>input") -}}
+                {%- endfor -%}
+            {%- endif -%}
+            {%- if message["requirement"] is defined -%}
+                {%- for req_id in ns.exec_req_ids -%}
+                    {{- "<|open|>exec<|.|>requirement<|close|>req<|:|>" + req_id -}}{{- close_tag("exec<|.|>requirement") -}}
+                {%- endfor -%}
+            {%- endif -%}
+            {%- if message["documents"] is defined -%}
+                {%- for doc_id in ns.exec_doc_ids -%}
+                    {{- "<|open|>exec<|.|>input<|close|>doc<|:|>" + doc_id -}}{{- close_tag("exec<|.|>input") -}}
+                {%- endfor -%}
+            {%- endif -%}
+            {%- for tool_id in ns.kwarg_tool_ids -%}
+                {{- "<|open|>exec<|.|>input<|close|>tool<|:|>" + tool_id -}}{{- close_tag("exec<|.|>input") -}}
+            {%- endfor -%}
+            {%- if message["tools"] is defined -%}
+                {%- for tool_id in ns.exec_tool_ids -%}
+                    {{- "<|open|>exec<|.|>input<|close|>tool<|:|>" + tool_id -}}{{- close_tag("exec<|.|>input") -}}
+                {%- endfor -%}
+            {%- endif -%}
+        {%- endset -%}
+        {{- "<|open|>exec<|:|>" + exec_id + "<|close|>" -}}
+        {{- ns.exec_body -}}
+        {{- "<|open|>exec<|.|>output<|close|>assistant<|:|>" + ns.output_id -}}{{- close_tag("exec<|.|>output") -}}
+        {{- close_tag("exec<|:|>" + exec_id) -}}
+        {%- if loop.last and add_generation_prompt -%}
+            {{- "<|open|>assistant<|:|>" + ns.output_id + "<|close|>" -}}
+        {%- endif -%}
+    {%- elif message["role"] == "assistant" -%}
+        {{- "<|open|>assistant<|:|>" + ns.output_id + "<|close|>" -}}
+        {%- if message["content"] is defined and message["content"] -%}
+            {{- message["content"] -}}
+        {%- endif -%}
+        {%- if message["tool_calls"] is defined and message["tool_calls"] -%}
+            {%- for tc in message["tool_calls"] -%}
+                {%- if tc["function"] is defined -%}
+                    {%- set fn = tc["function"] -%}
+                {%- else -%}
+                    {%- set fn = tc -%}
+                {%- endif -%}
+                {%- if (not loop.first) or (message["content"] is defined and message["content"]) -%}
+                    {{- "\n" -}}
+                {%- endif -%}
+                {{- '<tool_call>{"name": ' -}}{{- fn["name"] | tojson -}}{{- ', "arguments": ' -}}
+                {%- if fn["arguments"] is string -%}
+                    {{- fn["arguments"] -}}
+                {%- else -%}
+                    {{- fn["arguments"] | tojson -}}
+                {%- endif -%}
+                {{- "}</tool_call>" -}}
+            {%- endfor -%}
+        {%- endif -%}
+        {{- close_tag("assistant<|:|>" + ns.output_id) -}}
+        {%- if message["tool_calls"] is defined and message["tool_calls"] -%}
+            {%- set ns.conv_inputs = ns.conv_inputs + ["assistant<|:|>" + ns.output_id] -%}
+        {%- endif -%}
+        {#- eos after every assistant turn: `<|open_end|>` closes a block but is not an eos, so
+            without this generate() does not halt at a turn boundary. -#}
+        {{- eos_token -}}
+    {%- elif message["role"] == "tool" -%}
+        {#- A tool result is untrusted input, so it is wrapped as a `data` block. Consecutive
+            tool messages accumulate; the exec block is emitted after the last one. -#}
+        {%- set resp_id = (id_chars | random) + (id_chars | random) -%}
+        {{- "<|open|>data<|:|>" + resp_id + "<|close|>" -}}
+        {{- "<tool_response>" + message["content"] + "</tool_response>" -}}
+        {{- close_tag("data<|:|>" + resp_id) -}}
+        {%- set ns.conv_inputs = ns.conv_inputs + ["data<|:|>" + resp_id] -%}
+        {%- if loop.last or messages[loop.index0 + 1]["role"] != "tool" -%}
+            {%- set exec_id = (id_chars | random) + (id_chars | random) -%}
+            {%- set ns.output_id = (id_chars | random) + (id_chars | random) -%}
+            {{- "<|open|>exec<|:|>" + exec_id + "<|close|>" -}}
+            {{- ns.exec_body -}}
+            {%- for ref in ns.conv_inputs -%}
+                {{- "<|open|>exec<|.|>input<|close|>" + ref -}}{{- close_tag("exec<|.|>input") -}}
+            {%- endfor -%}
+            {{- "<|open|>exec<|.|>output<|close|>assistant<|:|>" + ns.output_id -}}{{- close_tag("exec<|.|>output") -}}
+            {{- close_tag("exec<|:|>" + exec_id) -}}
+            {%- if loop.last and add_generation_prompt -%}
+                {{- "<|open|>assistant<|:|>" + ns.output_id + "<|close|>" -}}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}

@@ -262,3 +262,38 @@ Carbon全面开放博客明确公开服务入门价为输入$2/M、输出$10/M�
 - [Carbon官方HTML模型卡](https://deepmind.google/models/model-cards/gemini-4-carbon/)，Published11/10；不是自行认定首次可用日。
 - [评测方法PDF链接，未读](https://deepmind.google/models/evals-methodology/gemini-4-carbon)
 - [Safety & Security报告链接，未读](https://storage.googleapis.com/deepmind-media/gemini/gemini_4_carbon_safety_report.pdf)
+
+
+## 2026-11-13 · Hydrogen：快速执行变体与开放边界
+
+> [!tldr]
+> 公告UTC11/12 18:00→北京11/13 02:00，Hydrogen由Carbon适配，并入Gemini4 family不新建正代。原Argon/Carbon历史保持。博客的“百万输出”需结合模型卡：1M为输入输出共享窗口，默认同步输出64K，百万输出仅后台长解码；并非1M输入再额外1M输出。
+
+API model id为gemini-4-hydrogen，覆盖AIStudio、API、Geminiforbusiness、App、Search、Sheets及付费Pro/Ultra的Antigravity；免费App自动选模型，不能保证每条prompt手选。发布博客原站11/12与北京时间跨日，生命周期表11/12也是原站日历，不回写家族10/1首发。
+
+四思考档low/medium/high默认/xhigh，AAIndex high51、xhigh54，Argon50；实际延迟/token需按档位和任务固定。公告当前全1M窗口每百万input$1.5/output$7.5，不把价格变成模型常数或可用性保证。Orchestrator动态切Carbon/Hydrogen在TB4.0称24%少quota、19%更快，是多模型系统对照，不是Hydrogen单体无损加速；对3.8Flash的2.5倍提速和5倍少fabrication也只在作者设置成立。
+
+![官方完整能力表](src/assets/hydrogen-benchmarks_table.gif)
+
+### 十项能力与安全原表
+
+模型卡SWE-sweep13.5、TB4.1作弊调整57、AgentsLastExam71.6、Automation76.1、Vending$14549、OSWorldoffline77.6、MKAClimbWSR53.4、Chartography66.6、TBScience51.4、HLE58.8。Sonnet5.5在TB4.1为63.9、OSWorld83.9、科学59.9均更高；不可概括全面胜出。下面保留模型卡完整能力、安全和阈值表。
+
+<table><thead><tr><th>Category</th><th>Benchmark</th><th>Notes</th><th>Gemini 4<br>Hydrogen</th><th>Claude Sonnet 5.5</th><th>GPT-6.1 Terra</th></tr></thead><tbody><tr><th rowspan="2">Agentic coding</th><td>SWE-sweep</td><td></td><td><strong>13.5%</strong></td><td>3.1%</td><td>5.8%</td></tr><tr><td>Terminal-Bench 4.1</td><td>Cheating-adjusted</td><td>57.0%</td><td><strong>63.9%</strong></td><td>—</td></tr><tr><th rowspan="3">Knowledge work</th><td>Agents&#x27; Last Exam v1.1</td><td>Score</td><td><strong>71.6%</strong></td><td>60.4%</td><td>69.8%</td></tr><tr><td>AutomationBench-AA</td><td></td><td><strong>76.1%</strong></td><td>71.8%</td><td>60.2%</td></tr><tr><td>Vending-Bench 2</td><td>Bank balance ($)</td><td><strong>$14,549</strong></td><td>$11,165</td><td>$9,107</td></tr><tr><th>Computer use</th><td>OSWorld-2.1</td><td>Offline subset</td><td>77.6%</td><td><strong>83.9%</strong></td><td>74.2%</td></tr><tr><th rowspan="2">Multimodal understanding</th><td>MKA</td><td>Climb WSR accuracy</td><td><strong>53.4%</strong></td><td>52.0%</td><td>43.8%</td></tr><tr><td>Chartography</td><td></td><td><strong>66.6%</strong></td><td>61.6%</td><td>63.2%</td></tr><tr><th>Science and math</th><td>Terminal-Bench-Science 0.1</td><td></td><td>51.4%</td><td><strong>59.9%</strong></td><td>58.3%</td></tr><tr><th>Reasoning</th><td>HLE-Diamond</td><td></td><td><strong>58.8%</strong></td><td>53.3%</td><td>47.3%</td></tr></tbody></table>
+
+<table><thead><tr><th>Evaluation</th><th>Description</th><th>Gemini 4 Hydrogen vs. Gemini 3.8 Flash<br>(percentage point increase/decrease)</th></tr></thead><tbody><tr><th>Text to Text Safety (higher is better)</th><td>Automated content safety evaluation measuring adherence to safety policies across text prompts</td><td>+0.80pp</td></tr><tr><th>Multilingual Safety (higher is better)</th><td>Automated safety policy evaluation across multiple languages</td><td><strong>+1.10pp</strong></td></tr><tr><th>Image to Text Safety (higher is better)</th><td>Automated content safety evaluation measuring adherence to safety policies with both images and text as inputs</td><td><strong>+7.00pp</strong></td></tr><tr><th>Tone (higher is better)</th><td>Automated evaluation measuring objective, neutral, and non-preachy tone of model refusals</td><td><strong>-0.65pp</strong></td></tr><tr><th>Unjustified-refusals (lower is better)</th><td>Automated evaluation measuring over-refusals on benign or borderline prompts that can be safely fulfilled</td><td><strong>+5.57pp</strong></td></tr></tbody></table>
+
+<table><thead><tr><th>Risk Domain and Threshold</th><th>T/CCL reached?</th></tr></thead><tbody><tr><th>CBRN - Uplift TCL (Chemical, Radiological &amp; Nuclear): Provides low to medium resourced actors uplift in reference scenarios, resulting in material risk of CBRN attacks that could result in significant but not severe harm.</th><td>TCL not reached (carried forward from Argon). We continue to deploy mitigations.</td></tr><tr><th>CBRN - Uplift CCL (Biological):  Provides low to medium resourced actors uplift in reference scenarios resulting in additional expected harm at a severe scale.</th><td>CCL not reached, following additional targeted testing. CCL alert threshold reached. We continue to deploy mitigations. </td></tr><tr><th>Cybersecurity - Uplift CCL:  Provides sufficient uplift with high impact cyber attacks for additional expected harm at severe scale. </th><td>CCL not reached, following additional targeted testing. CCL alert threshold reached. We continue to deploy mitigations. </td></tr><tr><th>Harmful Manipulation - Uplift CCL:  Possesses manipulative capabilities sufficient to enable it to systematically and substantially change beliefs and behavior in identified high stakes contexts over the course of interactions with the model, reasonably resulting in additional expected harm at severe scale. </th><td>CCL not reached (carried forward from Argon). We continue to deploy mitigations. </td></tr><tr><th>Loss of Control - Stealth and Situational Awareness TCL:  The instrumental reasoning abilities of the model enable enough situational awareness (ability to discover and use relevant details of its deployment setting) and stealth (ability to circumvent basic oversight mechanisms) such that, absent additional mitigations, we cannot rule out the model significantly undermining human control.</th><td>As Gemini 4 Hydrogen showed no MCC over Gemini 4 Argon, capability testing against the TCL was not required. We are nevertheless applying control, monitoring and model security mitigations as if the TCL had been reached, as a conservative assumption.</td></tr><tr><th>Loss of Control - ML R&amp;D acceleration CCL:  Has been used to accelerate AI development, resulting in AI progress substantially accelerating from historical rates.</th><td>CCL not reached (carried forward from Argon). Baseline AI control and model security mitigations apply. </td></tr><tr><th>Loss of Control - ML R&amp;D automation CCL: Can fully automate the work of any team of researchers at Google focused on improving AI capabilities, with approximately comparable all-inclusive costs.</th><td>CCL not reached (carried forward from Argon). Baseline AI control and model security mitigations apply. </td></tr></tbody></table>
+
+![官方速度与能力图](src/assets/hydrogen-aa-index_score-time_graph.gif)
+
+知识截止2026-03，部分领域更早。模型卡完整SafetyReport仍“coming soon”；训练架构/数据/硬件均指回Carbon，未公开Hydrogen专有参数量、蒸馏细节、RL配方与成本。methodology URL本轮初次失败，后续重试状态见证据，未完成时不称完整协议已核。
+
+自动安全相对3.8Flash：文本+.80pp、多语+1.10pp、图文+7pp，拒绝tone−.65pp，**无理由拒绝+5.57pp（更差）**。这是内部自动评估非人评/红队，题集修订使跨历史卡不可直接纵比。博客honesty96.7%、CoTlegibility99.9%等是各自内部协议，不是安全认证。
+
+MCC相对Argon未增通用能力，因此未重复整套critical评估；targeted生物/网络未达CCL但均达alert，不等于零风险。stealth/situational-awareness未要求能力测试，保守按到达TCL施加控制，不能写“实测未达”。
+
+> [!insight]
+> 对agent训练最有价值的实验是固定任务/工具/预算，比较单Hydrogen、单Carbon及Orchestrator的成功率—实际费用—时延，分开worker/verifier角色；博客系统quota节约不能直接映射本地token成本。安全改善须同时跟踪过度拒绝和真实工具任务完成率。
+
+新增[官方公告](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/)、[模型卡](https://deepmind.google/models/model-cards/gemini-4-hydrogen/)、[中文Poster](gemini_4_hydrogen_poster_zh.html)。官方图六张完整归档；本轮无PDF、权重或模型调用。

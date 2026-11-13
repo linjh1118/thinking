@@ -1,6 +1,7 @@
 ---
 title: "FrogNano"
 type: model-note
+html_tabs: true
 year: 2026
 release: "2026-09-22"
 url: "https://huggingface.co/microsoft/FrogNano-4B-2609"
@@ -48,7 +49,7 @@ Avg@3是三个seed平均单次成功率；Pass@3是三次至少一次成功，Ve
 
 约4.66B、32层GatedDeltaNet/gated-attention，继承视觉组件但没有进行多模态专项训练和评测，不能宣称可支持图片/视频。Leaf五工具在隔离仓库中读写、编辑、搜索和运行测试；输出无tool call才结束。模型产出候选patch，不直接部署生产。
 
-授权存在需要核对的矛盾：README frontmatter写MIT，正文许可栏写Apache2.0。本文不替官方消除矛盾，实际使用前需核验LICENSE与upstream通知。正文“1B–1T训练token”也是宽泛披露区间，不将其改成具体精确训练量。
+2026-11-13复核：官方README frontmatter由MIT改为Apache-2.0，与正文Apache2.0一致；此前矛盾作为历史记录，当前使用按新卡核验LICENSE与upstream通知。这是许可元数据修正，不是新模型发布。正文“1B–1T训练token”也是宽泛披露区间，不将其改成具体精确训练量。
 
 > [!warning] 阅读范围
 > 已读model card全部方法、评测与限制，保存报告入口但未完成technical report全文源码精读。测试通过不意味着安全，也没有独立泛化、多语言和完整内容安全验证。

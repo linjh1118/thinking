@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Granite 4.1 LLMON：把执行关系教进模型 — 中文Poster</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\x24', '\x24'], ['\\(', '\\)']],
+    displayMath: [['\x24\x24', '\x24\x24'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif; background: #0c0a09; display: flex; justify-content: center; align-items: flex-start; padding: 20px; min-height: 100vh }
+.poster { width: 1400px; background: #1c1917; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 60px rgba(0,0,0,.6) }
+
+/* HEADER — dark amber gradient */
+.header { background: linear-gradient(120deg, #451a03 0%, #78350f 40%, #b45309 100%); color: #fff; padding: 28px 48px 24px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 20px }
+.header-left h1 { font-size: 1.55rem; font-weight: 900; line-height: 1.3; margin-bottom: 10px; letter-spacing: -.01em }
+.header-left h1 span { color: #fde68a }
+.header-left .zh-title { font-size: 1.1rem; color: #fcd34d; font-weight: 700; margin-bottom: 8px }
+.header-left .authors { font-size: .82rem; color: #d6d3d1; margin-bottom: 8px }
+.venue-pill { display: inline-block; background: rgba(180,83,9,.4); border: 1px solid #f59e0b; color: #fde68a; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 700; letter-spacing: .08em }
+.header-right { display: flex; gap: 10px; align-items: end; flex-wrap: wrap }
+.score-box { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 110px }
+.score-box .num { font-size: 1.8rem; font-weight: 900; color: #fbbf24; line-height: 1 }
+.score-box .sub { font-size: .66rem; color: #a8a29e; margin-top: 3px; line-height: 1.3 }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; padding: 0 }
+.col { padding: 22px 20px; border-right: 1px solid rgba(168,162,158,.15) }
+.col:last-child { border-right: none }
+
+/* Section headers */
+.sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px }
+.sec-head .nc { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0 }
+.c-amber .nc { background: #d97706 }
+.c-orange .nc { background: #ea580c }
+.c-brown .nc { background: #78350f }
+.c-green .nc { background: #059669 }
+.sec-head h2 { font-size: 1.0rem; font-weight: 800; color: #fde68a }
+.c-amber h2 { color: #fcd34d }
+.c-orange h2 { color: #fdba74 }
+.c-brown h2 { color: #fde68a }
+.c-green h2 { color: #6ee7b7 }
+
+p.body { font-size: .8rem; color: #d6d3d1; line-height: 1.6; margin-bottom: 8px }
+
+/* GAP / HIGHLIGHT BOXES (dark) */
+.gap-boxes { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 }
+.gap-box { border-radius: 8px; padding: 10px 12px }
+.g1 { background: rgba(217,119,6,.08); border-left: 3px solid #d97706 }
+.g2 { background: rgba(245,158,11,.08); border-left: 3px solid #f59e0b }
+.g3 { background: rgba(234,88,12,.08); border-left: 3px solid #ea580c }
+.gap-box .title { font-size: .76rem; font-weight: 700; margin-bottom: 3px }
+.g1 .title { color: #fcd34d }
+.g2 .title { color: #fde68a }
+.g3 .title { color: #fdba74 }
+.gap-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* TRICK BOX (dark) */
+.trick-box { background: rgba(5,150,105,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 8px; padding: 10px 12px; margin: 8px 0 }
+.trick-box .trick-title { font-size: .72rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px }
+.trick-box p { font-size: .74rem; color: #d6d3d1; line-height: 1.5 }
+
+/* FIGURE (dark) */
+.fig-box { border-radius: 10px; overflow: hidden; background: rgba(217,119,6,.06); border: 1px solid rgba(168,162,158,.15); margin: 10px 0 }
+.fig-box img { width: 100%; display: block }
+.fig-cap { text-align: center; padding: 6px 10px; font-size: .68rem; color: #78716c; font-style: italic; background: rgba(28,25,23,.8) }
+
+/* FORMULA BOX (dark) */
+.formula-box { margin: 8px 0; padding: 10px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(253,230,138,.15); border-radius: 8px; overflow-x: auto }
+.formula-box .flabel { font-size: .68rem; font-weight: 700; color: #fcd34d; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px }
+
+/* RESULTS TABLE (dark) */
+.rtable { width: 100%; border-collapse: collapse; font-size: .72rem; margin: 8px 0 }
+.rtable th { background: #451a03; color: #fde68a; padding: 4px 5px; text-align: center; font-size: .66rem; font-weight: 700 }
+.rtable th.left { text-align: left }
+.rtable td { padding: 3px 5px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .7rem; color: #d6d3d1 }
+.rtable td.left { text-align: left; font-weight: 600; color: #e7e5e4 }
+.rtable .cat td { background: rgba(217,119,6,.1); font-weight: 700; font-size: .66rem; color: #fcd34d; text-align: left }
+.rtable .ours td { background: rgba(253,230,138,.06); font-weight: 800; color: #fde68a }
+.rtable .best td.dv { color: #fbbf24; font-size: .78rem }
+
+/* NUMBERED STAGE LIST (dark) */
+.stage-list { counter-reset: stage; margin: 8px 0 }
+.stage-item { counter-increment: stage; position: relative; padding: 8px 8px 8px 38px; margin-bottom: 6px; background: rgba(217,119,6,.06); border-radius: 8px; border: 1px solid rgba(253,230,138,.1) }
+.stage-item::before { content: counter(stage); position: absolute; left: 8px; top: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d97706; color: #fff; font-size: .72rem; font-weight: 800; display: flex; align-items: center; justify-content: center }
+.stage-item .stitle { font-size: .76rem; font-weight: 700; color: #fcd34d; margin-bottom: 2px }
+.stage-item p { font-size: .72rem; color: #d6d3d1; line-height: 1.5 }
+
+/* ABLATION CARDS (dark) */
+.abl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px }
+.abl-card { background: rgba(41,37,36,.6); border: 1px solid rgba(168,162,158,.15); border-radius: 8px; padding: 10px }
+.abl-card .aname { font-size: .7rem; font-weight: 700; color: #e7e5e4; margin-bottom: 2px }
+.abl-card .adelta { font-size: 1.1rem; font-weight: 800; color: #fbbf24 }
+.abl-card .adesc { font-size: .66rem; color: #a8a29e }
+
+/* BOTTOM STRIP (dark) */
+.bottom-strip { background: #1c1917; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border-top: 1px solid rgba(217,119,6,.3) }
+.bstrip { padding: 14px 18px; border-right: 1px solid rgba(168,162,158,.1) }
+.bstrip:last-child { border-right: none }
+.bstrip .bhead { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #78716c; margin-bottom: 5px }
+.bstrip p { font-size: .76rem; color: #a8a29e; line-height: 1.5 }
+.bstrip .hl { color: #fbbf24; font-weight: 700 }
+
+/* BACKLINKS (dark) */
+.backlinks { margin: 0 48px; padding: 8px 14px; background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); border-radius: 8px; font-size: .82rem }
+.backlinks a { color: #fbbf24 }
+
+/* LANG SWITCH */
+.lang-switch { position: fixed; top: 14px; right: 18px; z-index: 50; display: flex; gap: 8px }
+.lang-switch a { font: 700 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; color: #a8a29e; text-decoration: none; background: rgba(28,25,23,.9); border: 1px solid rgba(168,162,158,.3); border-radius: 999px; padding: 8px 11px; box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(10px) }
+.lang-switch a.active { color: #fbbf24; border-color: rgba(251,191,36,.55) }
+
+/* OOD TABLE (dark) */
+.ood-table { width: 100%; border-collapse: collapse; font-size: .7rem; margin: 8px 0 }
+.ood-table th { background: #451a03; color: #fde68a; padding: 4px 6px; text-align: center; font-size: .66rem }
+.ood-table td { padding: 3px 6px; border-bottom: 1px solid rgba(168,162,158,.12); text-align: center; font-size: .68rem; color: #d6d3d1 }
+.ood-table .pos { color: #6ee7b7; font-weight: 700; font-size: .6rem }
+.ood-table .neg { color: #fca5a5; font-weight: 700; font-size: .6rem }
+.ood-table .ours td { background: rgba(253,230,138,.06); font-weight: 700; color: #fde68a }
+
+/* MathJax poster fixes */
+.formula-box mjx-container[jax="SVG"][display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px 0 }
+.formula-box mjx-container svg { max-width: none }
+
+/* MathJax formula white color */
+mjx-container, mjx-container * {
+    color: #ffffff !important;
+}
+mjx-container svg, mjx-container svg * {
+    fill: #ffffff !important;
+}
+
+</style>
+<style id="poster-tabs-adapter">.main-grid{display:block}.main-grid>.col[hidden]{display:none!important}.poster-tabs{display:flex;gap:10px;padding:16px 20px;flex-wrap:wrap}.poster-tabs button{font:inherit;padding:10px 18px;border:1px solid #8b5c2e;border-radius:10px;background:#29211b;color:#f4dfc1;cursor:pointer}.poster-tabs button[aria-selected=true]{background:#744411;color:#fff2cb}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head>
+<body>
+
+<div class="poster">
+
+<!-- BACKLINKS -->
+<div style="padding: 0 48px; padding-top: 12px;">
+<div class="backlinks"><span>源文档：</span><a href="Granite-4.1-LLMON.html">渲染笔记</a> · <span>Topics/13_base_model/IBM_Granite/Variants/2611_Granite_4_1_LLMON</span></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <span class="venue-pill">官方一手材料 · 未独立复测</span>
+    <div class="zh-title">Granite 4.1 LLMON：把执行关系教进模型</div>
+    <h1>Granite 4.1 LLMON · 3B / 8B Preview</h1>
+    <div class="authors">资料缺口显著保留 · 详细笔记含完整表格与来源</div>
+  </div>
+  <div class="header-right">
+    <div class="score-box"><div class="num">3B / 8B</div><div class="sub">同一Preview family</div></div>
+    <div class="score-box"><div class="num">4.6B</div><div class="sub">SFT语料tokens / 3epoch</div></div>
+    <div class="score-box"><div class="num">0.02%</div><div class="sub">8B OPI攻击成功率</div></div>
+    <div class="score-box"><div class="num">37.0%</div><div class="sub">8B多轮robustness</div></div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN GRID -->
+<nav class="poster-tabs" role="tablist"><button type="button" role="tab" aria-controls="poster-panel-0" aria-selected="true">定位与接口</button><button type="button" role="tab" aria-controls="poster-panel-1" aria-selected="false">数据与训练</button><button type="button" role="tab" aria-controls="poster-panel-2" aria-selected="false">实验与边界</button></nav><div class="main-grid">
+
+<!-- COLUMN 1: 问题 + 环境构建 -->
+<div class="col" id="poster-panel-0" role="tabpanel">
+  <div class="sec-head c-amber"><div class="nc">1</div><h2>定位与接口</h2></div>
+  <p class="body">TL;DR：Base全参后训练，六个保留token与ID执行绑定，不是只套XML。北京11/13官方公告；模板、解析器与工具结果回写一起对齐。</p>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心判断</div>
+      <p>模型卡原站日期11/12；博客UTC19:07→北京03:07。10/1仓库创建不证明已公开。</p>
+    </div>
+    <div class="gap-box g2">
+      <div class="title">证据与限制</div>
+      <p>exec.instruction/system权威；exec.input为被读材料，未绑定块仍在上下文，非硬mask。</p>
+    </div>
+  </div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">开放与接口</div>
+      <p>模型卡原站日期11/12；博客UTC19:07→北京03:07。10/1仓库创建不证明已公开。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">训练与条件</div>
+      <p>exec.instruction/system权威；exec.input为被读材料，未绑定块仍在上下文，非硬mask。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">核验边界</div>
+      <p>Apache2实验Preview；3B/8B合一，不是4.3。</p>
+    </div>
+  </div>
+
+  <div class="fig-box">
+    <img src="src/assets/ibm-opi.png" alt="Granite 4.1 LLMON：把执行关系教进模型官方原图">
+    <div class="fig-cap">官方原图完整保留；详细协议与反例见笔记</div>
+  </div>
+</div>
+
+<!-- COLUMN 2: 方法流程 -->
+<div class="col" id="poster-panel-1" role="tabpanel" hidden="">
+  <div class="sec-head c-orange"><div class="nc">2</div><h2>数据与训练</h2></div>
+  <p class="body">TL;DR：同一目标加入干扰块，答案保持；最后的注入DPO防止通用RL冲淡边界。</p>
+
+  <div class="fig-box">
+    <img src="src/assets/ibm-attention.png" alt="Granite 4.1 LLMON：把执行关系教进模型官方原图">
+    <div class="fig-cap">官方原图完整保留；详细协议与反例见笔记</div>
+  </div>
+
+  <div class="gap-boxes">
+    <div class="gap-box g1">
+      <div class="title">核心判断</div>
+      <p>4.4M例/4.6B token，全参SFT3epoch、4096序列、8H100/FSDP。</p>
+    </div>
+  </div>
+
+  <div class="trick-box">
+    <div class="trick-title">读数不能越过证据</div>
+    <p>干扰指令1–3、无关data0–3；工具执行分调用/结果两周期。</p>
+  </div>
+
+  <div class="formula-box">训练与推理协议必须配套：169k prompts五阶段GRPO→约1k在策略偏好对DPO，β.1、LR5e-7、batch32。</div>
+
+  <div class="stage-list">
+    <div class="stage-item">
+      <div class="stitle">开放与接口</div>
+      <p>4.4M例/4.6B token，全参SFT3epoch、4096序列、8H100/FSDP。</p>
+    </div>
+    <div class="stage-item">
+      <div class="stitle">训练与条件</div>
+      <p>169k prompts五阶段GRPO→约1k在策略偏好对DPO，β.1、LR5e-7、batch32。</p>
+    </div>
+  </div>
+</div>
+
+<!-- COLUMN 3: 实验结果 -->
+<div class="col" id="poster-panel-2" role="tabpanel" hidden="">
+  <div class="sec-head c-green"><div class="nc">3</div><h2>实验与边界</h2></div>
+  <p class="body">TL;DR：静态注入下降不代表自适应多轮安全；注意力是相关性，非因果证明。</p>
+
+  <table class="rtable"><tbody><tr><th>量尺</th><th>数值</th><th>边界</th></tr><tr><td>OPI ASR 3B/8B</td><td>.1 / .02</td><td>越低越好</td></tr><tr><td>ASB ASR</td><td>5.6 / 3.1</td><td>非零残余</td></tr><tr><td>ARES间接</td><td>84.6 / 79.8</td><td>robustness</td></tr><tr><td>ARES直接</td><td>37.1 / 32.7</td><td>仍易攻破</td></tr><tr><td>ARES多轮</td><td>28 / 37</td><td>20轮预算</td></tr></tbody></table>
+
+  <div class="gap-boxes">
+    <div class="gap-box g3">
+      <div class="title">核心判断</div>
+      <p>8B OPI96.3→.02、ASB52.8→3.1 ASR%；ARES直接32.7、多轮37 robust%。</p>
+    </div>
+  </div>
+
+  <p class="body" style="font-size:.76rem;font-weight:700;color:#fcd34d;">TL;DR：静态注入下降不代表自适应多轮安全；注意力是相关性，非因果证明。</p>
+  <table class="ood-table"><tbody><tr><th>量尺</th><th>数值</th><th>边界</th></tr><tr><td>OPI ASR 3B/8B</td><td>.1 / .02</td><td>越低越好</td></tr><tr><td>ASB ASR</td><td>5.6 / 3.1</td><td>非零残余</td></tr><tr><td>ARES间接</td><td>84.6 / 79.8</td><td>robustness</td></tr><tr><td>ARES直接</td><td>37.1 / 32.7</td><td>仍易攻破</td></tr><tr><td>ARES多轮</td><td>28 / 37</td><td>20轮预算</td></tr></tbody></table>
+
+  <div class="trick-box">
+    <div class="trick-title">读数不能越过证据</div>
+    <p>博客/论文Code聚合不同，不静默拼分；详细笔记保留六张原表。</p>
+  </div>
+
+  <div class="abl-grid">
+    <div class="abl-card">
+      <div class="aname">局限</div>
+      <div class="adelta">未独立复测</div>
+      <div class="adesc">8B六能力平均74.2→72.8，数学84.09→79.63；开销7–15%，吞吐未系统测。</div>
+    </div>
+    <div class="abl-card">
+      <div class="aname">下一步验证</div>
+      <div class="adelta">固定预算</div>
+      <div class="adesc">博客/论文Code聚合不同，不静默拼分；详细笔记保留六张原表。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- BOTTOM STRIP -->
+<div class="bottom-strip">
+  <div class="bstrip">
+    <div class="bhead">结构可训练</div>
+    <p>模型卡原站日期11/12；博客UTC19:07→北京03:07。10/1仓库创建不证明已公开。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">非硬安全隔离</div>
+    <p>169k prompts五阶段GRPO→约1k在策略偏好对DPO，β.1、LR5e-7、batch32。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">保留能力退化</div>
+    <p>博客/论文Code聚合不同，不静默拼分；详细笔记保留六张原表。</p>
+  </div>
+  <div class="bstrip">
+    <div class="bhead">固定预算消融</div>
+    <p>模型卡原站日期11/12；博客UTC19:07→北京03:07。10/1仓库创建不证明已公开。</p>
+  </div>
+</div>
+
+</div><!-- /poster -->
+
+
+<script>document.querySelectorAll('.poster-tabs [role=tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.poster-tabs [role=tab]').forEach(t=>t.setAttribute('aria-selected',String(t===b)));document.querySelectorAll('.main-grid>[role=tabpanel]').forEach(p=>p.hidden=p.id!==b.getAttribute('aria-controls'));}));</script><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

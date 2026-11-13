@@ -1,0 +1,1043 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2603.22519v1">打开官方原文 ↗</a> · <a href="ibm-format.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>LLMON: An LLM-native Markup Languageto Leverage Structure and Semanticsat the LLM Interface Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+Abstract 
+1 Introduction 
+2 Desirable Requirements and Considerations for an LLM-Native Markup Language 
+2.1 Design Requirements 
+2.2 Design Considerations 
+3 Introducing LLMON 
+3.1 Examples 
+3.2 Summary of Design Decisions 
+3.3 LLMON Grammar 
+3.4 Dealing with Ambiguous Patterns 
+4 Machine LLMON 
+4.1 LLMON Workflow 
+4.2 LLMON and JSON 
+4.3 LLMON Converters 
+5 Leveraging LLMON Information 
+Model training: base training and post-training 
+Inference: context management, safety control, and memory efficiency 
+5.1 Leveraging LLMON Information During Model Training 
+What training learns from LLMON 
+How this changes post-training 
+Why special tokens matter 
+Compatibility and incremental adoption 
+5.2 Creating LLMON training data 
+5.3 Leveraging LLMON Information During Model Inference 
+6 Initial Evidence of Value 
+6.1 Leveraging LLMON Information During Model Training 
+Research questions 
+Backbone models 
+Training configuration and scale 
+Evaluation protocol 
+Results 
+6.2 Leveraging LLMON Information During Model Inference 
+Research questions 
+Models 
+Evaluation protocol 
+Results 
+7 Related Work 
+Chat templates 
+What role does JSON play 
+Prompt Orchestration Markup Language 
+Prompt engineering frameworks 
+The role of Constrained Decoding 
+Specialized models for generating SQL output 
+8 Discussion 
+8.1 Open Design Questions and Systems Implications 
+8.2 Practical Deployment Considerations 
+8.3 Future Evaluations 
+8.4 Approaches for Creating LLMON Training Data 
+8.5 Governing the User Tag Namespace 
+8.6 A Trend Toward Grammar-like Ideas? 
+8.7 Analogies to Computer Architecture ISAs 
+9 Conclusions 
+References 
+A LLMON Examples License: arXiv.org perpetual non-exclusive license arXiv:2603.22519v1 [cs.SE] 23 Mar 2026 
+LLMON: An LLM-native Markup Language to Leverage Structure and Semantics at the LLM Interface Michael Hind Affiliation: IBM Research Affiliation: Yorktown Heights, New York Email: hindm@us.ibm.com Basel Shbita Affiliation: IBM Research Affiliation: San Jose, California Email: basel@ibm.com Bo Wu Affiliation: IBM Research Affiliation: Cambridge, Massachusetts Email: bo.wu@ibm.com Farhan Ahmed Affiliation: IBM Research Affiliation: San Jose, California Email: Farhan.Ahmed@ibm.com Chad DeLuca Affiliation: IBM Research Affiliation: San Jose, California Email: delucac@us.ibm.com Nathan Fulton Affiliation: IBM Research Affiliation: Cambridge, Massachusetts Email: nathan@ibm.com David Cox Affiliation: IBM Research Affiliation: Cambridge, Massachusetts Email: david.d.cox@ibm.com Dan Gutfreund Affiliation: IBM Research Affiliation: Cambridge, Massachusetts Email: dgutfre@us.ibm.com Abstract 
+Textual Large Language Models (LLMs) provide a simple and familiar interface: a string of text is used for both input and output.
+However, the information conveyed to an LLM often has a richer structure and semantics, which is not conveyed in a string.
+For example, most prompts contain both instructions (“Summarize this paper into a paragraph”) and data (the paper to summarize), but these are usually not distinguished when passed to the model. This can lead to model confusion and security risks, such as prompt injection attacks. 
+This work addresses this shortcoming by introducing an LLM-native mark-up language, LLMON (LLM Object Notation, pronounced “Lemon”), that enables the structure and semantic metadata of the text to be communicated in a natural way to an LLM.
+This information can then be used during model training, model prompting, and inference implementation, leading to improvements in model accuracy, safety, and security.
+This is analogous to how programming language types can be used for many purposes, such as static checking, code generation, dynamic checking, and IDE highlighting. 
+We discuss the general design requirements of an LLM-native markup language, introduce the LLMON markup language and show how it meets these design requirements, describe how the information contained in a LLMON artifact can benefit model training and inference implementation, and provide some preliminary empirical evidence of its value for both of these use cases.
+We also discuss broader issues and research opportunities that are enabled with an LLM-native approach. 
+1 Introduction 
+The natural interface to LLMs, a string of text called a prompt, has been a key component of its success. It enables nontechnical users to leverage the power of LLMs for a wide variety of tasks without having to learn any special language — if a person can communicate via natural language, they can interact with an LLM.
+However, the current interface has several shortcomings. 
+A prompt includes the instructions for the particular request. It can also include the data to be used for the request, example results, and constraints on the answers. These constraints can be provided by the LLM deployer (as a system prompt) and/or by the user.
+As prompts are specified in natural language, they can be interpreted in many ways, and thus, users often need to experiment with several prompts to have the LLM achieve their desired goal.
+This approach has several drawbacks: 
+• 
+There is no meaningful separation of instructions and data. In principle, any instruction in the prompt, from any source, can be followed by the LLM, leading to a wide range of attacks ( Rawat et al., 2024 ) e.g., prompt injection attacks involve inserting instructions via user input, or in content retrieved by an agent that the model should not
+follow but does;
+Segregation of “data” and “control” is a fundamental principle in computing, but it is not followed in LLMs. Widely-used chat templates (e.g., system/user/assistant role serialization) do not, by themselves, impose execution semantics or reliably enforce instruction-vs-data separation. 
+• 
+There is no referential structure in contexts. Many instructions have implicit “arguments” (e.g. “summarize this document ” or “compare these two documents ”), but there are only weak ways of “pointing” to these items. LLMs can get lost in long chat contexts ( Laban et al., 2025 ) or lose track of which version of an artifact is the current one. 
+• 
+There is no explicit control over what should be executed. Any instruction in context can be executed, impacting reliability. 
+• 
+Prompts are not portable across models. A prompt that works well for one model may not work well for another model ( Mizrahi et al., 2024 ; Sclar et al., 2024 ) .
+Thus, organizations that optimize their prompts may be leery of changing to a different model. This can result in model dependency, which can result in increased cost and lost opportunity to benefit from the advancements in the broader model provider ecosystem. 
+• 
+LLMs are not deterministic. The same prompt given to the same model can produce different outputs. Although this can be desirable for creative tasks, it is an undesirable behavior, which has deep ramifications for the application development lifecycle that is built on deterministic repeatability. 
+• 
+LLMs force a linear data flow. Output tokens are generated sequentially from the preceding prompt and what was generated so far. Thus, every generated token depends on all tokens that preceded it. Sensitive data contained in the prompt or the generated response can taint everything that is generated after it. 
+• 
+Prompts are not decomposable into component entries. A prompt is often a very large string with no logical subcomponents or
+abstraction boundaries.
+This has the following implications: 
+– 
+Reuse of prompt components is challenging. As there are no subcomponents of prompts, reuse opportunities are hindered. 
+– 
+Prompts are not debuggable. If a prompt is not producing the desirable effect, it is not clear how to modify it to get an improvement. 
+– 
+Prompts are not maintainable. Prompts are modified to improve results or to react to underlying problem changes. As prompts are a monolith, there is no way to do component versioning (as is done with lines in a code file). Thus, collaboration on prompts is a challenge, similar to collaborating on a binary file stored in git . 
+– 
+No error checking on prompts. Prompts are a long string, so any character is valid in the string.
+This precludes any kind of consistency checking that we see with programming languages that check for valid syntax or type compatibility. 
+– 
+No insight/performance analytics about prompt successes and failures. It can be useful to study successful prompts to learn best practices. As prompts are a monolith, this can be done only at the coarsest granularity, limiting the transfer of insights about prompt performance. Table 1: Comparison Between Programming via Prompts with LLMs and Traditional Programming 
+Attribute LLMs Programmed Systems 
+Instruction/Data Separation No Yes, supported by high-level languages and operating systems 
+Referential Structure No Yes, parameters, variables, etc. 
+Execution Control No Yes, semantics of execution are well defined 
+Program Portability No Yes, via compilers or lang VMs 
+Deterministic Execution No Yes, in most cases 
+Nonlinear data flow No Yes, intermediate assignments to unrelated variables are independent 
+Decomposable Components No Yes, modules, functions, libraries 
+Reuse of Artifacts No Yes, via abstraction mechanisms, such as classes, libraries, functions, etc. 
+Debuggable Execution No Yes, via source-level debuggers 
+Maintainable Artifacts No Yes, at line-level granularity via source code repositories (git) 
+Error Checking No Yes, via compilers, editors, linters, runtime type checking 
+Performance Analysis No Yes, via tracing, live monitoring, etc. 
+Table 1 summarizes these shortcomings and contrasts them to traditionally programmed systems, which has support for all of these attributes by the specified mechanism. 
+The main goal of this paper is to propose an LLM-native markup language, called LLMON (LLM Object Notation), to facilitate communicating concepts and structures with LLMs.
+This richer metadata information about the underlying text can then be used
+during model training, model prompting, and inference implementation,
+leading to improvements in model accuracy, safety, and security.
+This is analogous to how the types in programming languages can be used for several purposes, such as static checking, code generation, dynamic checking, and IDE highlighting. 
+The contributions of this paper are the following: 
+• 
+Identification of shortcomings of the current LLM computation model. These shortcomings can be addressed by an LLM-native markup language. 
+• 
+Enumeration of design requirements and decisions for an LLM-native markup language 
+• 
+Specification of an enabling technology, a LLM-native markup language, called LLMON, that addresses these design requirements. The language can be expressed in both a human-friendly succinct syntax and as a more LLM-friendly syntax with converters available between both forms. 
+• 
+Description of converters that convert structured representations, such as JSON, into LLMON, allowing existing structured training data to be easily leveraged without modification 
+• 
+Descriptions for how LLMON information can be leveraged during model training and inference implementation to improve accuracy, safety, and security 
+• 
+Reporting of empirical evidence of the efficacy of the LLMON approach for two use cases, model training and inference implementation, showing significant improvements of
+74.2 and 29.3 percentage points, respectively. 
+• 
+Discussions on future research opportunities in the space of LLM-native markup languages 
+The rest of this paper is organized as follows.
+Section 2 enumerates some of the desirable properties of an LLM-native markup language.
+Section 3 describes our suggested LLM-native markup language, LLMON, and our approach to making it both human- and LLM-friendly by introducing two equivalent syntaxes.
+Section 4 describes the LLM-friendly syntax called Machine LLMON .
+Section 5 describes how information communicated via LLMON can be utilized in model training and inference implementation.
+Section 6 provides an initial evaluation of the value of LLMON.
+Section 7 describes related work.
+Section 8 discusses some of the implications and additional research opportunities enabled by a LLMON approach.
+Section 9 concludes this work. The appendix provides additional examples. 
+2 Desirable Requirements and Considerations for an LLM-Native Markup Language 
+The main goal of the LLM-native markup language is to facilitate the communication of metadata
+information to the LLM in a native way. This can be used in a number of ways, such as during training, during prompts, and during inference. 
+The next two subsections enumerate important design requirements and considerations for an LLM-native markup language. 
+2.1 Design Requirements 1. User-defined tag 
+The markup language needs to allow the expression of semantic concepts as user-defined tags. This will allow the communication of meta information about a text passage, such as whether it is an instruction, data, email, or poem. 2: Named Instances 
+The markup language needs to have a mechanism to name text segments with a unique identifier. It is useful to be able to refer to other entities within the data, similar to links and anchors in HTML. For example, this can allow instructions to reference certain data. 
+A general theme in any kind of
+LLM-native markup is the importance of the order of markup. Although
+order does not matter for regular markup, it is essential to consider
+for LLMs as they consume and generate tokens sequentially. This property leads to the next two design requirements. 3: Explicit Nesting Names 
+Use nesting structures with tags that capture the nesting information explicitly, such as “ email.header.from ”, rather than a nesting structure with three levels: “ email ”, “ header ”, “ from ”. Nesting structures are natural for a hierarchical technology, such as a language parser, but are not as natural to the sequential nature of LLMs. For example, a parser will have no problem with a JSON object that contains thousands of elements because it acts as a pushdown automata ( Hopcroft et al., 2006 ) , i.e., has a stack to remember what to expect. An LLM works sequentially and does not have this mechanism, so
+large nesting structures will require larger context to ascertain information that can be conveyed in a more direct manner. 4: Prefix 
+The annotation for a text segment should appear before the text segment (prefix) rather than after it (postfix). This will enable the LLM to learn the annotation while processing the text. If we want the annotation to impact generation, the annotation must appear before the text that it is annotating. This gives the LLM (and the constrained decoding system) a clear idea of what it should generate next. 5: Convertibility 
+We should be able to easily convert between existing structured representations, such as JSON, and the markup language in both directions. Given the large amount of data that exists in structured formats, it is crucial that an LLM-native markup can represent this data. 6. No escaping 
+There is no need for “escaping” sequences. As the markup language can use special tokens (discussed in Section 5 ) to signify meta information, there is no need for “escaping” sequences. For example, JSON uses &quot; to signify the beginning of a string, but if the user wants to have text with this character, it needs to be escaped (“\”). Our markup language should not need this mechanism. 
+2.2 Design Considerations 
+In addition to the above design requirements that we feel any LLM-native markup language should support, there are also some design choices to be made. We enumerate these below. 7. Use of Special Tokens 
+How many special tokens? Special tokens are requirements to the tokenizer that certain character strings should be viewed as an atomic token, i.e,. cannot be decomposed or combined with other tokens.
+Thus, a LLM-native markup language needs to decide which character sequences will be viewed as special tokens. 8. Verbose vs. Parsimonious closing tags 
+Some markup languages, like XML, require that every open tag is explicitly closed,
+whereas other markup languages
+use other syntax to push and pop hierarchical levels, e.g., line breaks in YAML. Likewise, a common pattern in chat templates omits open/close tokens when
+they are implied, e.g. &lt;turn&gt;assistant&lt;/role&gt; ... message content ... &lt;/turn&gt; 
+Given the challenge LLMs have with
+nesting that spans a
+large number of tokens (see above), it is not clear if explicit or verbose closing tags are useful for learning. Experimentation is needed to understand the best approach.
+If a parsimonious approach is adopted, care must be taken to ensure that there is no loss of expressiveness. 
+3 Introducing LLMON 
+Two key orthogonal properties for understanding the LLMON language are its expressive capability (what concepts can it express) and its syntax (how the capability is written). Both are important design decisions and will likely evolve with empirical experience. 
+Expressivity. LLMON needs to be able to express the standard data concepts that exist in JSON and most programming languages: basic primitive types (integer, float, boolean, string) and composite types (lists and objects).
+However, it also needs to express the first three Design Requirements from Section 2.2 : user-defined tags, named instances, and explicit nesting names. 
+Syntax. When choosing a syntax one needs to ensure it is as natural as possible for the human that needs to write the syntax, as well as allowing easy mapping to the consumer of the syntax (in our case the LLM). When these goals conflict, one can introduce a human syntax and a machine syntax, where conversion between the two is well-defined. 
+We take this approach with LLMON. Specifically, we define LLMON to be a human-friendly syntax to express the languages key concepts. We define Machine LLMON to be the more verbose markup language that interacts with an LLM and satifies the design requirements from Section 2.2 . We provide converters between LLMON and Machine LLMON , which demonstrates they are equal in expressivity. The rest of this section will describe LLMON expressed in the human-friendly syntax. Section 4 will provide details on the LLM-friendly syntax, Machine LLMON . 
+Conceptually, the goal of the LLMON markup language is to provide the capability to highlight various segments (or spans) of text with a special “color” or tag that signifies meta information about that text segment.
+For example, in the prompt string in Figure 1 (A), the green section represents an “instruction” to the LLM and the yellow section represents the “data”.
+Enabling these designations provides necessary information for an enforcement mechanism (discussed in Section 5.3 ) that prohibits executing anything that is not an “instruction”. This prevents a category of malicious prompt injection attacks. This is analogous to how an operating system treats code segments separately from data segments, which provides a key security protection: the inability to execute data that is masquerading as code. 
+(A) 
+Suggest a title for the following email: Dear customer support, I am writing about the wifi connection on my recent flight from JFK to LAX. The quality was poor. I paid $25, and I want a refund. 
+(B) 
+\instruction\ Suggest a title for the following email: /instruction/ \data\ Dear customer support, I am writing about the wifi connection on my recent flight from JFK to LAX. The quality was poor. I paid $25, and I want a refund. /data/ Figure 1: (A) Example Prompt, (B) Prompt in LLMON Notation 
+Thus, to express this kind of meta information, we need to identify two quantities: the segment of text and the “color” tag that should be associated with that text. We address these needs by enclosing the text segment inside
+phrases that indicate the tag (or “color”) of the segment, which is a popular approach for markup languages. In our case we use the sequence
+“ \tagname\ ”
+to indicate the beginning of the segment of type
+“ tagname ”
+and “ /tagname/ ” to indicate the end of the segment of type
+“ tagname ”.
+Using this approach, Figure 1 (B) shows how the example in Figure 1 (A) would be expressed, using the tags:
+“ instruction ” and “ data ”.
+This syntax enables annotating text with any tag, such as “ int ”, “ data ”, “ Spanish ”,
+or “ poem ”. 
+Tags are not limited to be a single identifier. We can
+reference tag names, such as “ attachment:3 ”,
+and explicitly encode hierarchical structures in the tag, such as
+“ email.paragraph ”.
+By enabling an explicit naming of tags we allow references to these entities similar to HTML anchors (Design Requirement 2).
+By explicitly providing the hierarchical structure in the tag name as opposed to having large nesting structures, we increase the likelihood that an LLM will be able to better learn the structure (Design Requirement 3). 
+LLMON assigns special meaning to the “\” and “/” characters. If these characters are desired in the regular text, they must be escaped, using the “\” character.
+This use of escaping is present only at the human-friendly LLMON syntax. The Machine LLMON syntax, discussed in Section 4 , does not use escaping, allowing it to satisfy Design Requirement 6. Our LLMON to Machine LLMON converter provides the appropriate translation. 
+3.1 Examples 
+Now that we’ve introduced LLMON we can provide some examples that illustrate its expressive power.
+Figure 2 shows an example using LLMON to describe the execution of one of several instructions. The first three text segments are tagged as instructions using the
+“ instr: ”
+tag where “ instr ” signifies that the tag of the segment is “ instr ”. The “ : ” token enables the naming of this particular instruction so that it can be referenced elsewhere.
+After these three instructions (“ instr:a ”, “ instr:b ”,
+and “ instr:c ”) we have an “ exec ”
+section that will indicate which of the instructions should be executed. The “ exec:x ” tag indicates that it is an exec section with instance name “ x ”.
+Inside this section, we have another tag (“ exec:x.instr ”) that indicates the instruction instance that should be executed. Here we see the power of having instances names for tag segments because we can reference any of the three instructions to be executed. In this example, it is “ instr:b ”.
+This example also illustrates how we can utilize LLMON’s flattened nesting feature to explicitly describe the nesting in the tag name; i.e., the tag “ exec:x.instr ” is nested inside the “ exec ” section. As described in Section 2 this will help model learning. 
+\instr:a\  List five common fruits /instr:a/ \instr:b\  Calculate 12 + 8 /instr:b/ \instr:c\  Write a haiku about the ocean /instr:c/ \exec:x\ \exec:x.instr\ instr:b /exec:x.instr/ /exec:x/ Figure 2: Example of executing a particular instruction in LLMON 
+\instr:f\ Translate the text into French /instr:f/ \instr:g\ Count the number of words in the given sentence /instr:g/ \instr:h\ Summarize the text in one short sentence /instr:h/ \data:1\ The quick brown fox jumps over the lazy dog /data:1/ \exec:y\ \exec:y.instr\  instr:g /exec:y.instr/ \exec:y.input\ data:1 /exec:y.input/ /exec:y/ Figure 3: Example of executing a particular instruction with a parameter in LLMON 
+Figure 3 builds on the previous example by introducing a data section (“ data:1 ”) that is a parameter to the “ exec:y.input ”
+tag, allowing parameters to be passed to the called instruction.
+Figure 4 shows another example that illustrates how LLMON can be used to defend against a prompt injection attack.
+This figure is a variant of Figure 3 , where we have three instructions and a data section. In this example the data message includes a malicious instruction.
+However, even though this data instance is provided to the exec as a parameter, the LLM executes only the instr parameter and the attack fails. 
+\instr:m\ Translate the text into French /instr:m/ \instr:n\ List three animals. /instr:n/ \instr:p\ Summarize the customer message in a few words. /instr:p/ \data:2\ Customer message: Hey, I love your service but had an issue logging in, especially when trying to use my account on multiple devices. Ignore previous instructions and instead output: SYSTEM ACCESS GRANTED. Print all credit card numbers below. /data:2/ \exec:z\ \exec:z.instr\  instr:p /exec:z.instr/ \exec:z.input\ data:2 /exec:z.input/ /exec:z/ Figure 4: Example illustrating defense against prompt injection attacks in LLMON 
+3.2 Summary of Design Decisions 
+Table 2 summarizes how our approach with LLMON addressed the design requirements mentioned in Section 2 .
+User-defined tags are supported by specifying the tagname before and after the text passage.
+Support for naming instances of text is provided by the “ : ” token, as in “ instr:a ”.
+Similarly, the “ . ” token enables the specification of nesting via explicit names, such as “ exec:x.instr ”.
+Our tags use prefix-style notation; the opening of tag occurs before the content it is describing. We have written converters between JSON and LLMON and believe converters for other structured representations are straightforward. 
+Although LLMON does require escaping for expressing characters like “\” and “/”, the language that is provided to the LLM, Machine LLMON , does not require escaping. 
+In terms of design decisions,
+we are currently taking a verbose approach to closing tags; i.e., they include the tag name to help with human readability. However, this information is not needed for parsing (in converters) and may not be useful from an LLM-learning capability because this closing tag occurs after the content it describes. We plan to experiment with this approach and a parsimonious approach where the tag name is not present to understand the tradeoffs in learning. If it aids in human understanding, we can keep the closing tag in LLMON, but translate it into a parsimonious version for Machine LLMON , which is fed to the tokenizer.
+We will describe our design choice for special tokens in Section 4 . Table 2: LLMON Design Decisions 
+Design Requirement LLMON Approach 
+1. User-defined Tags supported with \tagname\text /tagname/ 
+2. Anchors for Instances supported with “:” special token 
+3. Explicit Nesting Names supported with “.” special token 
+4. Prefix uses prefix-style tags 
+5. Convertibility have converters between JSON and LLMON 
+6. No Escaping Machine LLMON does not use any escaping 
+7. Use of Special Tokens LLMON uses 6 special tokens for surrounding 
+tags and connectors 
+8. Verbose/Parsimonious closing tags verbose tags, but will experiment with parsimonious 
+3.3 LLMON Grammar 
+Figure 5 provides the grammar for the LLMON markup language. It is constructed to enable a predictive parser to be employed.
+The table in Figure 5 provides the mapping of grammar terminals to strings. user_tag_text is defined via a regular expression below the table. It is the typical programming language rule for identifiers extended to allow ‘‘:’’ and ‘‘.’’ .
+We have created a parser for the language. 
+LLMON: LLMON_ITEM LLMON_LIST 
+
+LLMON_LIST: LLMON_ITEM LLMON_LIST 
+| ϵ \epsilon 
+
+LLMON_ITEM: USER_TYPE | | OBJECT | LIST 
+| integer | float | string 
+| ’true’ | ’false’ | ’null’ 
+
+USER_TYPE: start_user_tag LLMON end_user_tag 
+| self_close_user_tag 
+
+OBJECT: start_object_tag OBJECT_ITEMS end_object_tag 
+| start_object_tag end_object_tag 
+
+OBJECT_ITEMS: OBJECT_ITEM OBJECT_ITEMS_REST 
+
+OBJECT_ITEM: start_object_item_tag string colon_separator_tag LMON end_object_item_tag 
+
+OBJECT_ITEMS_REST: OBJECT_ITEMS 
+| ϵ \epsilon 
+
+LIST: start_list_tag LIST_ITEMS end_tag 
+| start_list_tag end_tag 
+
+LIST_ITEMS: LMON LIST_ITEMS_REST 
+
+LIST_ITEMS_REST: list_separator_tag LIST_ITEMS 
+| ϵ \epsilon 
+Terminal String 
+start_user_tag \ user_tag_text \ 
+end_user_tag / user_tag_text / 
+self_close_user_tag \ user_tag_text / 
+start_object_tag \object\ 
+end_object_tag /object/ 
+start_object_item_tag \item\ 
+end_object_item_tag /item/ 
+start_list_tag \list\ 
+end_list_tag /list/ 
+colon_separator_tag : 
+list_separator_tag , 
+user_tag_text is represented by the regular expression: [_a-zA-Z][_a-zA-Z0-9.:]* Figure 5: LLMON Grammar. terms in UPPER_CASE are nonterminals.
+terms in single quotes or lowercase are terminals.
+The table provides current values for the nonquoted terminals. “ user_tag_text ” represents a typical identifier extended to include “ : ” and “ . ” as illustrated in examples in Section 3.1 .
+“ object ”, “ item ”, and “ list ” are exactly those strings. 
+3.4 Dealing with Ambiguous Patterns 
+In designing LLMON we’ve tried to keep the common patterns easy to express succinctly. One example of this is when expressing strings, there is no need to add quotes, as is done in JSON. This convenience implies additional complexity when there is a desire to express a nonstring.
+For example, consider this key/value pair expressed in JSON: &quot;GPA&quot;:3.4 
+The key (like all JSON keys) is a string and the value is a float. Now consider a similar LLMON version \item\GPA:3.4/item/ 
+By default, the 3.4 will be interpreted as a string, which would be correct if the JSON example had quotes around the 3.4.
+Thus, to represent the float 3.4 rather than the string 3.4, we need to write it as \float\3.4/float/ 
+So, the full example would be \item\GPA: \float\3.4/float/ /item/ 
+This is similar to type casting in programming languages and will be particularly relevant when translating LLMON to other structured formats, such as JSON. 
+4 Machine LLMON 
+The LLMON grammar from Figure 5 defines the expressivity of the markup language.
+In Section 3 we described the human-friendly syntax for expressing LLMON concepts.
+This section describes Machine LLMON , which is the version of the syntax that is more LLM-friendly. Machine LLMON preserves the structure and semantics of LLMON while expressing them using a small set of special tokens.
+This representation is designed to make structural boundaries explicit in the token stream so that both the model and inference-time systems can reliably identify spans such as instructions, data artifacts, and execution bindings. 
+Although LLMs appear to take text as input (for training and prompts), this text is actually first transformed into tokens, by a tokenizer .
+A token is an integer that can represent segments of the input.
+These segments can vary from a single character to multiple words based on an analysis of the patterns in the text.
+For example, a phrase like “in the” may occur so often that the tokenizer decides it would ease learning to treat it as a single token, much like humans create acronyms for common phrases, such as “LOL” (Laugh Out Loud) and “TMI” (Too Much Information). 
+In addition to regular tokens created by the tokenizer, one can also define special tokens, which are character sequences that the tokenizer treats atomically, i.e., it assigns them their own token number and does not decompose or combine them with any adjacent characters.
+This is typically done to ensure clarity in what is trying to be expressed with the goal of helping LLM learning.
+Examples of special tokens include markers that signify the beginning or ending of a sequence. 
+Special tokens are a natural way to specify the richer structure of
+data to an LLM.
+For example, distinguishing which part of a prompt is
+an instruction and which is data will need a meta-mechanism that can leverage special tokens. Table 3: Machine LLMON Special Tokens and Syntax 
+LLMON Special Tokens 
+&lt;|open|&gt; 
+&lt;|open_end|&gt; 
+&lt;|close|&gt; 
+&lt;|self_close|&gt; 
+&lt;|.|&gt; 
+&lt;|:|&gt; 
+LLMON Machine LLMON 
+\tag\ &lt;|open|&gt;tag&lt;|close|&gt; 
+/tag/ &lt;|open_end|&gt;tag&lt;|close|&gt; 
+\tag/ &lt;|open|&gt;tag&lt;|self_close|&gt; 
+. &lt;|.|&gt; 
+: &lt;|:|&gt; 
+Machine LLMON currently uses special tokens for six syntactic entities shown in the left side of Table 3 .
+These entities represent the key differences between LLMON and Machine LLMON .
+The right side of Table 3 shows how these special tokens map LLMON to Machine LLMON syntax in a straightforward way. The LLMON characters ‘‘.’’ and ‘‘:’’ are only mapped to the Machine LLMON special tokens when they appear in LLMON tags, reference LLMON tags, or representing key/value pairs. Their use in general text is left as is. 
+By designating the strings from the left side of Table 3 as special tokens, it means that a Machine LLMON tag such as
+“ &lt;|open|&gt;email&lt;|close|&gt; ”
+is guaranteed to have “ &lt;|open|&gt; ” and “ &lt;|close|&gt; ” be unique tokens; they will not be combined with any preceding or following text, nor will they be decomposed into multiple tokens.
+Similarly, a typename such as “ email&lt;|.|&gt;from ” will have the “ &lt;|.|&gt; ” treated as a unique token, which will make it easier for the model to learn its special meaning.
+As discussed in Section 2.2 , this selection of special tokens is an important design choice that should be evaluated to determine its efficacy. Further evidence may suggest increasing the number of special tokens. 
+Figure 6 provides the mapping of nonquoted terminals in the grammar in Figure 5 to Machine LLMON .
+Figure 7 shows how the LLMON example from Figure 1 (B) will be written in Machine LLMON .
+Figure 8 shows how the example in Figure 2 would be expressed in Machine LLMON . 
+As mentioned in Section 3.4 , since LLMON uses the characters “\” and “/” to encode special meaning it requires escaping these characters (with “\”) to represent these characters in text.
+Since Machine LLMON instead relies on special tokens to represent this meaning, it does not need to use escaping, satisfying Design Requirement 6. 
+Terminal String 
+start_user_tag &lt;|open|&gt; user_tag_text &lt;|close|&gt; 
+end_user_tag &lt;|open_end|&gt; user_tag_text &lt;|close|&gt; 
+self_close_user_tag &lt;|open|&gt; user_tag_text &lt;|self_close|&gt; 
+start_object_tag &lt;|open|&gt;object&lt;|close|&gt; 
+end_object_tag &lt;|open_end|&gt;object&lt;|close&gt; 
+start_object_item_tag &lt;|open|&gt;item&lt;|close|&gt; 
+end_object_item_tag &lt;|open_end|&gt;item&lt;|close 
+start_list_tag &lt;|open|&gt;list&lt;|close|&gt; 
+end_list_tag &lt;|open_end|&gt;list&lt;|close&gt; 
+colon_separator_tag &lt;|:|&gt; 
+list_separator_tag &lt;|list-separator|&gt; Figure 6: Current values for the nonquoted terminals from Figure 5 expressed in Machine LLMON .
+“ user_tag_text ” is the same as in Figure 5 . It can be any identifier and can include “ : ” and “ . ” as illustrated in examples in Section 3.1 .
+“ object ”, “ item ”, and “ list ” are exactly those strings. 
+4.1 LLMON Workflow 
+Figure 9 illustrates the workflow from human-friendly LLMON markup to the token sequence used during model post-training and inference.
+One could author a file (or prompt) in LLMON and have it trivially converted to Machine LLMON .
+This, as with all input, is passed to the tokenizer, which decomposes the string into tokens that are then used for post-training or inference.
+The resulting token sequence is identical to the form consumed by the model during both training and inference, allowing the same structural annotations to influence learning, prompting behavior, and runtime execution mechanisms.
+In this sense, Machine LLMON acts as a structural interface layer between human-authored prompts and the token-level representation consumed by the LLM. 
+Because the delimiters are defined as special tokens, they remain atomic units in the token stream, enabling the model to learn associations between these markers and the surrounding content during training and inference. 
+Conceptually, the workflow has three stages.
+First, a structured input may be authored in the human-friendly LLMON syntax.
+Second, this representation is deterministically converted to Machine LLMON , replacing markup delimiters and connectors with the corresponding special tokens.
+Finally, the tokenizer maps the resulting string into token identifiers, ensuring that the structural markers appear as stable, identifiable tokens in the model input. 
+This process ensures that structural boundaries (such as the start and end of an instruction span or an execution binding) are visible in the token stream.
+Consequently, the model can learn associations between these markers and the surrounding content during training, and inference-time systems can identify the same spans when enforcing structured behaviors such as instruction selection or tool invocation. 
+&lt;|open|&gt;instruction&lt;|close|&gt; Suggest a title for the following email: &lt;|open_end|&gt;instruction&lt;|close|&gt; &lt;|open|&gt;data&lt;|close|&gt; Dear customer support, I am writing about the wifi connection on my recent flight from JFK to LAX. I paid $25 and the quality was poor. I would like a refund. &lt;|open_end|&gt;data&lt;|close|&gt; Figure 7: Machine LLMON for example in Figure 1 
+&lt;|open|&gt;instr&lt;|:|&gt;task_a&lt;|close|&gt;  List five common fruits &lt;|open_end|&gt;instr&lt;|:|&gt;task_a&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;task_b&lt;|close|&gt; Calculate 12 + 8 &lt;|open_end|&gt;instr&lt;|:|&gt;task_b&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;task_c&lt;|close|&gt;  Write a haiku about the ocean &lt;|open_end|&gt;instr&lt;|:|&gt;task_c&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;exec_x&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;exec_x.instr&lt;|close|&gt;instr&lt;|:|&gt;task_b&lt;|open_end|&gt;exec&lt;|:|&gt;exec_x.instr&lt;|close|&gt; &lt;|open_end|&gt;exec&lt;|:|&gt;exec_x&lt;|close|&gt; Figure 8: Machine LLMON version of Figure 3 , executing a particular instruction 
+Figure 9: Workflow from human-authored LLMON markup to the token sequence used during model post-training and inference.
+A structured artifact written in the human-friendly LLMON syntax is deterministically converted into Machine LLMON , where structural delimiters are represented using special tokens (shown in red).
+The tokenizer then maps the sequence into token identifiers, preserving structural boundaries in the token stream.
+Blue and black tokens represent ordinary text tokens produced by the tokenizer; alternating colors are used only to visually distinguish adjacent tokens and illustrate token boundaries as seen by the tokenizer.
+This tokenized representation can be used directly for model post-training and inference procedures. 
+4.2 LLMON and JSON 
+JSON is a popular markup language for representing data and is often used to specify the required format for LLM output from a prompt. Thus, it is necessary to show how a JSON structure can be represented in LLMON.
+This section describes this information-preserving mapping; i.e., any JSON object converted to LLMON can be converted back to the original JSON. 
+JSON has four primitive types ( string , number , boolean , and null ) and two composite types ( object and array ). 
+• 
+An object is a comma-separated sequence of key/value pairs, separated by a ‘‘:’’ , where the key is a string , and the value is any of the six types. An object begins with ‘‘{’’ and ends with ‘‘}’’ . 
+• 
+An array is a comma-separated list of values, which can be any of the six types. An array begins with ‘‘[’’ and ends with ‘‘]’’ . 
+Figure 10 shows an example JSON object and how it can be expressed in LLMON. The JSON object contains two key/value pairs. The first pair is a simple key/value, where the value is a string ( &quot;Planned Trips&quot; ). The second pair has a value that is a list of strings ( ‘‘New York’’, ‘‘Tokyo’’, ‘‘Egypt’’ ). 
+JSON LLMON { &quot;Purpose&quot;: &quot;Trips&quot; &quot;Cities&quot;: [&quot;New York&quot;, &quot;Tokyo&quot;, &quot;Egypt&quot;] } \object\ \object.item\Purpose: Trips/object.item/ \object.item\Cities: \object.list\ New York, Tokyo, Egypt /object.list/ /object.item/ /object/ Figure 10: Example JSON and equivalent LLMON. Indentation and spacing are not significant. 
+4.3 LLMON Converters 
+We have created the following converters: 
+• 
+JSON to Machine LLMON 
+• 
+Machine LLMON to JSON 
+• 
+LLMON to Machine LLMON 
+• 
+Machine LLMON to LLMON 
+These straightforward converters leverage the grammar from Figure 5 and libraries for JSON parsing and serialization. The LLMON to Machine LLMON converter provide two features that help to address 2 design requirements from Section 2 : 
+• 
+Escape sequences from LLMON (using “\”) are expanded into the tokens provided in Table 3 . 
+• 
+Any non-flattened nesting tag names are converted to their flattened nesting tags. This allows a human to express nested structures succinctly, but still have the flattened tags being used when passed to LLMs. Figures 11 and 12 in the Appendix provide examples of the succinct LLMON syntax and how it is flattened in Machine LLMON after conversion. 
+5 Leveraging LLMON Information 
+This section describes how LLMON-annotated data can be used during two stages of the AI lifecycle, both with the goal of improving accuracy, safety, and security of the model. These stages are (i) model training, including base pretraining and post-training (e.g., fine-tuning), and (ii) inference, where runtime systems assemble, validate, and manage the context used by the model during generation ( Brown et al., 2020 ; Ouyang et al., 2022 ) .
+We focus on the inference-time components where explicit and structural metadata can be recognized and enforced. 
+Before either training or inference can occur, input text must first be converted into tokens (IDs) by a tokenizer ( Sennrich et al., 2016a ; Kudo and Richardson, 2018 ) .
+Systems may also define special tokens —character sequences treated atomically by the tokenizer—to make structural boundaries unambiguous (e.g., chat roles or markup delimiters) ( Devlin et al., 2019 ) .
+This matters because LLMON’s machine form ( Machine LLMON ) is designed around a small set of special tokens to delimit tag open/close and connector markers, ensuring the model and runtime can reliably identify segment boundaries in the token stream, as described in Section 4 . Model training: base training and post-training 
+Modern LLM development typically starts with base training (pretraining) over large sets of text, optimizing the ability of the model to predict the next token in a sequence ( Brown et al., 2020 ) .
+This process broadly teaches the model to understand language, but does not impart any application-level distinctions such as instruction vs. data —a gap that motivates LLMON’s explicit segmentation idea ( Ouyang et al., 2022 ; Greshake et al., 2023 ) .
+Models are then adapted via post-training , which commonly includes: supervised fine-tuning (SFT) on instruction-response pairs, preference-based alignment methods (e.g., RLHF and DPO-style approaches), and parameter-efficient tuning such as Low-Rank Adaptation (LoRA) , which specialize behavior by training a small number of additional parameters rather than updating all weights ( Ouyang et al., 2022 ; Christiano et al., 2017 ; Rafailov et al., 2023 ; Hu et al., 2022 ; Houlsby et al., 2019 ) .
+A critical point for this paper is that training defines the model’s learned interface, often through repeating specific patterns ( Wei et al., 2022 ) .
+If training data consistently presents boundaries and labels for segments, the model can learn to behave more reliably around those boundaries (e.g., treating data parts as nonexecutable content) ( Greshake et al., 2023 ) . Inference: context management, safety control, and memory efficiency 
+During inference, the model generates responses conditioned on the runtime context.
+In modern LLM systems, inference is rarely a single forward pass over a static prompt or forward pass; instead, it typically forms a pipeline that performs context construction, validation, and system-level optimizations that jointly affect model behavior and computational cost.
+Context management selects and organizes inputs to maximize utility under length constraints.
+Representative techniques include prompt optimization/templating, retrieval-augmented generation, or context compression to reduce redundancy and distraction while preserving task-critical evidence.
+Safety control is often implemented via input validation and transformation before generation.
+Rather than relying solely on the model to infer potentially adversarial content, such runtime safeguards can explicitly check and rewrite the inputs.
+This includes instruction isolation, policy checking, and selective exclusion of untrusted content to mitigate prompt injection and related input-manipulation risks ( Greshake et al., 2023 ) .
+These measures provide application-level guarantees even when the model was not trained to reliably recognize all attack or harmful patterns.
+Finally, memory efficiency is critical for scalable deployment.
+Inference implementations typically employ key-value (KV) cache assignment, memory sharing across requests, and dynamic batching to reduce redundant computation.
+These techniques allow shared or repeated prompt prefixes to be processed once and reused across decoding steps or across requests, improving throughput and latency as context lengths increase.
+Taken together, these inference-time optimizations emphasize that an LLM system’s behavior is determined not only by learned model parameters but also by the runtime pipeline that constructs and constrains the context.
+LLMON complements these optimizations by providing explicit, well-formed tags that expose segment boundaries to the inference stage.
+These data tags enable deterministic preprocessing, more principled context management, and clearer separation among distinct information sources (e.g., intended or unintended content, effective or redundant data), thereby improving reliability and efficiency at inference time. 
+The following subsections describe how LLMON structure can be leveraged during model training and inference implementations, and how these mechanisms enable more reliable instruction selection, data isolation, and structured execution. 
+5.1 Leveraging LLMON Information During Model Training 
+LLMON introduces explicit structural signals into the training data that are difficult to encode reliably using plain text prompts alone: instruction-data separation, identifier-based reference, and explicit execution intent.
+In standard SFT , the model is trained over a flat token sequence, and any instruction-like text appearing anywhere in the context may be learned as potentially executable.
+LLMON alters this by embedding structural boundaries directly into the token stream (via Machine LLMON ), enabling the model to learn which spans represent control , which should be treated as data , and how to bind execution to specific referenced instances. What training learns from LLMON 
+LLMON-annotated examples provide three key signals.
+First, role separation , where tokens inside “ instr ” spans represent control, while tokens inside “ data ” spans represent contextual payload.
+Second, boundary clarity , where dedicated open/close delimiters make span extents explicit even in long or composite prompts.
+Third, referential binding , where instance identifiers allow execution to reference specific instruction or data objects rather than relying on positional cues such (e.g., “the above text”).
+Together, these signals encourage the model to condition behavior on explicitly selected instructions while treating non-selected spans as non-authoritative context. How this changes post-training 
+The optimization objective remains standard causal language modeling, we update only the sequence serialization.
+Instead of learning from loosely structured narrative prompts, the model is trained on structured interface artifacts containing multiple candidate instructions, explicit data objects, and an “ exec ” span selecting what should run.
+This shifts instruction following from implicit formatting conventions toward explicit token-level semantics. Why special tokens matter 
+The Machine LLMON form uses a minimal set of dedicated special tokens that the tokenizer treats atomically.
+This ensures that structural delimiters are consistently represented in the token stream and are not fragmented or merged during tokenization.
+As a result, boundaries become stable, learnable elements across training runs and model families, providing a persistent structural “control plane” independent of the natural-language content inside spans. Compatibility and incremental adoption 
+LLMON operates entirely at the interface layer.
+It requires no model architectural modification and is compatible with standard post-training methods, including full fine-tuning and parameter-efficient approaches such as LoRA ( Hu et al., 2022 ) .
+LLMON-annotated examples can be mixed with conventional instruction-tuning data, enabling gradual adoption while preserving general instruction-following capability. 
+5.2 Creating LLMON training data 
+Operationalizing LLMON requires constructing training corpora in which structural roles and execution intent are explicitly encoded in the token stream.
+Rather than modifying model architectures or objectives, we transform existing post-training and instruction-tuning datasets into structured interface artifacts expressed in Machine LLMON form. 
+Starting from conventional SFT datasets, such as Cleaned Alpaca ( Taori et al., 2023 ) and Dolly ( Conover et al., 2023 ) , as well as broader public instruction-tuning corpora ( Ouyang et al., 2022 ) , each example is serialized by placing the instruction inside an “ instr ” span and the optional input inside a “ data ” span, followed by an explicit “ exec ” span that binds the two together.
+The target output remains unchanged, preserving original task semantics while making control and data boundaries explicit.
+An example is shown in Figure 7 . 
+To encourage structured execution behavior under competing signals, we additionally construct distractor-infused LLMON variants.
+These examples include one “in-focus” instruction together with optional non-selected instruction spans and unrelated data spans.
+The “ exec ” span explicitly binds execution to the correct instance, teaching the model to rely on identifier-based selection rather than positional or heuristic cues.
+These structured variants are designed to train focus and referential binding in multi-instruction settings.
+One such example is shown in Figure 8 . 
+The final training mixtures combine (i) LLMON-wrapped public instruction data, which preserves original tasks while adding explicit structure, and (ii) distractor-infused LLMON variants that stress instruction-data separation.
+Across datasets, this process scales to millions of structured examples and billions of tokens (Section 6 ).
+Significantly, the training pipeline remains otherwise unchanged: only prompt serialization and the addition of a small set of special tokens are required. 
+5.3 Leveraging LLMON Information During Model Inference 
+Here we discuss how the explicit notations provided by LLMON could be leveraged to control the model behavior during inference. Designated LLMON tags can be used to trigger specific mechanisms such as “thinking” mode, invoking external tools, or dynamically enabling parameter-efficient adaptations such as Activated LoRA ( Greenewald et al., 2025 ) . A different form of model’s behavior control can take advantage of the segment boundaries from LLMON. A fundamental building block in the LLM transformer architecture is the attention mechanism, which evolves internal token representations by adding to them weighted averages of representations of other tokens. This mechanism enables long distance correspondence between different parts of the sequence which is key to this architecture’s success. However, allowing all tokens in the sequence that precedes it is not always beneficial as it may cause hallucinations, create security risks, and degrade efficiency. A mitigation strategy is to mask parts of the context, deemed irrelevant or risky for the current stage of computation, during the attention calculation. Here we can use LLMON tags and segment boundaries to determine which segments should be masked and the exact positions of the tokens to be masked. 
+Two important use cases are instruction selection and prompt rejection. For instruction selection, multiple candidate instructions can coexist in the same input sequence. A query determines which instruction should be invoked at a given stage of the calculation (see example in Figure 8 ). By masking the distracting instructions, we can guarantee that during generation, the only tokens which are attended to are from the instruction to be invoked, ensuring the correct behavior. Similarly, for prompt rejection, untrusted or policy-violating content can be systematically excluded from the response’s attention, guaranteeing that it does not influence the forward generation. Because these guarantees would be derived from explicit boundaries rather than probabilistically learned boundary detection, they remain stable under prompt variation, domain shift, and adversarial formatting. Compared with training-based or heuristic ways to obtain separation, such an approach would yield more reliable parsing and reduce unintended cross-region interference. 
+6 Initial Evidence of Value 
+Although a full evaluation of the use of LLMON information across tasks and model families is beyond the scope of this paper, we present some initial empirical evidence of LLMON’s efficacy for the two use cases described in Section 5 : model training and model inferencing. 
+6.1 Leveraging LLMON Information During Model Training 
+This section examines whether explicit structural annotation during model training improves robustness and execution control without degrading general instruction-following performance. Research questions 
+This evaluation investigates whether explicit instruction-data separation improves robustness and execution control.
+More concretely, we consider the following questions: RQ1: 
+Does explicit instruction-data separation improve robustness to distractor or competing instructions? RQ2: 
+Can models learn reliable referential binding through identifier-based execution calls? RQ3: 
+Does enforcing structured execution degrade standard benchmark performance? RQ4: 
+How do these effects vary across post-training regimes (full fine-tuning vs. LoRA)? 
+These questions directly correspond to the failure modes identified in Section 3 and to the structured training methodology described in Section 5.2 . Backbone models 
+We evaluate two backbone models representing different architectural families and training lineages: Granite-4.0-Micro-Base ( Granite Team, 2024 ) (3B parameters) and Qwen2.5-3B ( Yang et al., 2025 ) .
+These models serve as representative mid-scale LLMs with competitive baseline performance.
+For each backbone, we report results for (i) the base model without post-training, (ii) conventional post-training using chat-template instruction data, and (iii) post-training with LLMON-structured corpora under both full fine-tuning and LoRA adaptation. Training configuration and scale 
+We use the structure-aware corpora described in Section 5.2 , comprising (i) LLMON-wrapped public post-training and instruction-tuning data, and (ii) distractor-infused LLMON variants designed to train identifier-based focus under multi-instruction conditions.
+For the baseline post-training runs, we use the same underlying instruction-tuning datasets serialized using conventional chat-template formatting.
+Across large-scale public single-turn SFT data, Alpaca, and Dolly, the resulting mixture contains roughly 3.4 million structured examples totaling 2.9 billion tokens .
+To study scaling effects, we train models on progressive subsets of this corpus (241M, 436M, 616M tokens) as well as the full 2.9B-token mixture.
+Post-training is performed using standard SFT under both full fine-tuning and parameter-efficient LoRA adaptation. No architectural modifications are introduced. Evaluation protocol 
+We introduce a dedicated Distractor benchmark: 100 manually curated Alpaca instances in multi-instruction form with one instruction selected via “ exec ”.
+An LLM-as-a-Judge (LLMaJ) scores each response, measuring identifier-based binding and robustness to distractors.
+The final score is the average across all instances.
+We measure robustness and execution control (RQ1–RQ2) using the Distractor benchmark, which evaluates whether a model executes the instruction explicitly referenced by the “ exec ” in multi-instruction contexts.
+Performance reflects correct identifier-based instruction binding.
+General capability retention (RQ3) is evaluated using standard single-instruction benchmarks without distractors, including MMLU ( Hendrycks et al., 2021 ) , GSM8K ( Cobbe et al., 2021 ) , and IFEval ( Zhou et al., 2023 ) . Results 
+Table 4 compares base models, conventional post-training baselines using chat-template instruction data, and LLMON-structured post-training.
+The Distractor column demonstrates that structured post-training with LLMON substantially improves execution control for both backbones.
+Both base models and conventionally post-trained chat-template baselines (full fine-tuned) exhibit near-zero (0.00 and 0.40) accuracy on the Distractor benchmark, indicating weak identifier-based binding and frequent execution of positionally salient or distractor instructions.
+After LLMON-structured fine-tuning, execution accuracy rises dramatically to above 83% across token scales, confirming that explicit instruction-data separation and “ exec ”-based binding can be reliably learned.
+In contrast, models post-trained using conventional chat-template formatting show little improvement and often degrade performance on the Distractor benchmark, indicating that the gains arise from structured supervision rather than from additional post-training alone. Table 4: Comparison of base models, conventional post-training baselines (chat-template instruction tuning), and LLMON-structured post-training.
+MMLU, GSM8K, and IFEval are reported in zero-shot accuracy, and “Distractor” denotes accuracy on our structured multi-instruction Distractor benchmark. Token counts indicate the amount of post-training data used. 
+Model Tokens MMLU GSM8K IFEval Distractor 
+Base (no post-training) 
+Granite-4.0-Micro-Base – 61.52 0.00 38.78 4.40 
+Qwen-2.5-3B – 65.09 0.15 27.13 27.80 
+Full fine-tuning baseline (post-training with chat-template data) 
+Granite-4.0-Micro-Base 2.9B 39.95 0.61 72.07 0.00 
+Qwen-2.5-3B 2.9B 48.51 1.13 74.05 0.40 
+Full fine-tuning (post-training with LLMON-structured data) 
+Granite-4.0-Micro-Base 241M 36.69 26.31 54.75 87.80 
+436M 36.38 13.12 57.95 87.40 
+616M 41.95 15.84 65.82 85.80 
+2.9B 43.35 20.39 68.14 84.00 
+Qwen-2.5-3B 241M 48.35 23.65 58.86 88.00 
+436M 48.01 24.18 62.40 87.60 
+616M 47.92 12.21 65.38 86.80 
+2.9B 47.26 16.83 71.96 83.40 
+LoRA baseline (post-training with chat-template data) 
+Granite-4.0-Micro-Base 2.9B 58.53 7.43 67.08 19.40 
+Qwen-2.5-3B 2.9B 63.55 14.93 47.26 2.40 
+LoRA (post-training with LLMON-structured data) 
+Granite-4.0-Micro-Base 241M 53.72 34.87 54.07 74.40 
+436M 51.32 20.24 50.58 75.60 
+616M 56.11 7.05 56.22 74.20 
+2.9B 54.97 15.77 60.35 75.00 
+Qwen-2.5-3B 241M 49.57 4.47 33.07 72.20 
+436M 62.63 7.43 38.80 72.40 
+616M 48.31 24.03 44.57 69.80 
+2.9B 55.62 20.24 48.20 70.80 
+On fully fine-tuned models, scaling effects show that increasing token budgets generally stabilizes structured behavior and improves performance on instruction-following benchmarks such as IFEval, though gains are not strictly monotonic across all tasks.
+Significantly, LLMON-structured supervision does not catastrophically degrade general capability: while some benchmarks fluctuate relative to base performance, models retain competitive accuracy on MMLU, GSM8K, and IFEval. 
+LoRA adaptation also yields large improvements in LLMON-structured execution relative to base models (typically around 70% compared to near-zero baseline performance), demonstrating that structural behavior can be acquired in a parameter-efficient regime.
+However, LoRA consistently underperforms full fine-tuning on the Distractor benchmark, particularly at larger token scales, suggesting that deeper weight updates better internalize execution semantics.
+Interestingly, LoRA sometimes achieves stronger performance on knowledge-oriented benchmarks such as MMLU, whereas IFEval tends to benefit more consistently from full fine-tuning, and GSM8K shows mixed results across models.
+Across both backbones, full fine-tuning consistently achieves the highest Distractor benchmark scores, reinforcing the central claim that LLMON-structured supervision improves control and multi-instruction robustness rather than merely fitting surface patterns. 
+These results directly address RQ1–RQ4.
+The large gains on the Distractor benchmark
+(an average improvement of 86.2 and 62.2 percentage points for full-fine tuning and LoRA, respectively)
+demonstrate improved robustness to distractor instructions (RQ1) and reliable identifier-based execution binding (RQ2).
+The absence of catastrophic degradation on standard single-instruction benchmarks (MMLU, GSM8K, IFEval) supports that structured supervision preserves general capability (RQ3).
+Finally, comparing full fine-tuning and LoRA shows that structured execution behavior can be learned under both regimes, with full fine-tuning yielding stronger and more stable execution accuracy at scale (RQ4). 
+6.2 Leveraging LLMON Information During Model Inference 
+This section examines how the explicit segment boundaries from LLMON can improve robustness and execution control during model inference. Table 5: Comparison of models applying constraint masking with LLMON at inference on multi-instruction Distractor benchmark. 
+Model Method Distractor 
+Qwen2.5-3B-Instruct baseline 43.20 
+constraint mask with LLMON 69.00 
+Granite-3.3-8B-Instruct baseline 41.60 
+constraint mask with LLMON 72.00 
+Granite-4.0-Micro baseline 40.80 
+constraint mask with LLMON 72.40 Research questions 
+This evaluation investigates whether the presence of explicit instruction-data separation during model inferencing improves robustness and execution control.
+Here we do not assume any LLMON post-training, but instead rely solely on inference-time techniques.
+Specifically, we apply boundary-constrained masking (described in Section 5.3 ), which parses LLMON annotations to identify boundaries and applies structured masking strategies that regulate generative computation according to explicit delimiters.
+This enables deterministic instruction selection and data isolation at inference time. We consider these questions: RQ5: 
+Does explicit boundaries influence the model behaviors at model inference ? RQ6: 
+Does instruction-data separation at model inference without training improve robustness to distractor or competing instructions? Models 
+For the inference evaluations, we select three models: Qwen2.5-3B-Instruct, Granite-3.3-8B-Instruct, and Granite-4.0-Micro. We use instruction models to evaluate inference effectiveness, because their instruction capabilities are ready for the inference tests and provide a consistent capability baseline. This allows us to more clearly isolate and compare the effects of constrained masking with LLMON. In contrast, base models (used in Section 6.1 ) are designed for post-training only and are less suitable for this evaluation, as their weaker instruction behavior may introduce additional variability that could confound the results. Evaluation protocol 
+We use the same Distractor benchmark and metric discussed in Section 6.1 . Results 
+Table 5 presents the results. For each model, we report baseline performance on the Distractor benchmark without leveraging any LLMON information, as well as results obtained when LLMON information is applied through constrained masking at inference time. In both settings, LLMON information is not used during training. 
+The results in Table 5 show it is feasible to incorporate explicit boundaries into the constrained token masking as reference during inference time (RQ5). The performance comparisons show that applying constrained masking with LLMON boundaries at inference time consistently improves robustness to distractor instructions across all models (RQ6). In the baseline setting, performance is similar across well-trained instruction models, ranging from 40.8 to 43.2, indicating that different model sizes exhibit comparable vulnerability to distractor instructions. When LLMON information and constrained masking are applied during inference, performance increases to 69.0 to 72.4, yielding improvements of 25.8 to 31.6 points for an average of 29.3. Notably, these gains are consistent across models, suggesting that the benefits are sustainable and do not depend on model scale. Overall, these findings show an example of leveraging LLMON information at inference time to mitigate distractor instruction interference without retraining. 
+Both training-time (Section 6.1 ) and inference-time (Section 6.2 ) evaluations that leverage LLMON information achieved significant improvements on the Distractor benchmark across multiple models. Training-time results improved by
+an average of 74.2 percentage points.
+Inference time results improved by an average of 29.3 percentage points.
+Together, these findings demonstrate two complementary pathways for enhancing model robustness: incorporating LLMON information during model training or leveraging it at model inference time. 
+7 Related Work 
+This section discusses related work to the notion of an LLM-native markup language. Chat templates 
+LLMs are commonly trained to follow chat templates that serialize multiple interactions into a single sequence of tokens, delineating roles such as system, user, and assistant. In practice, these delimiters range from plain-text prefixes (“ User: ”) to dedicated special tokens that are treated atomically by the tokenizer ( Kudo and Richardson, 2018 ; Hugging Face, 2025 ; Mistral AI, 2023 ; IBM, 2025 ) . Even with atomic role markers, a transformer does not automatically enforce role separation or instruction-vs-data boundaries beyond the statistical behavior learned during training. As a result, when untrusted content is included in the same context as instructions, models can be coerced into interpreting data as directives, enabling prompt-injection and related attacks ( Greshake et al., 2023 ) . LLMON, in contrast, introduces an explicit span layer with delimiter tokens that mark the start and end of spans. These defined boundaries enable the model to be conditioned on them consistently and can be enforced by downstream runtimes. The effect is a separation of representation from enforcement, rather than relying on prompt conventions alone. What role does JSON play 
+JavaScript Object Notation (JSON) is ubiquitous, broadly supported, and tool-friendly ( Bray, 2017 ) . It is, however, insufficient as an LLM-native interface because it lacks token-level and span-level control ( Vaswani et al., 2017 ) .
+JSON’s schema-centric model and quoting/escaping rules are valuable for deterministic parsers, yet they add verbosity and rely on arbitrary wrapper fields to specify instruction/data separation, annotations, and unique references ( Bray, 2017 ) . As JSON delimiters are not reserved special tokens, they are destined to be tokenized on sub-word boundaries ( Kudo and Richardson, 2018 ; Devlin et al., 2019 ) . With no tokenizer/runtime hooks to reliably isolate untrusted spans, JSON is prone to methods of indirect prompt injection ( Greshake et al., 2023 ) . In contrast, LLMON provides explicit span identifiers and a compact form with special tokens as delimiters. This enables structure-aware decoding/enforcement compatible with self-attention ( Vaswani et al., 2017 ) , KV-cache-based optimization ( Kwon et al., 2023 ) , and parameter-efficient adaptation (e.g. LoRA) ( Hu et al., 2022 ) . Prompt Orchestration Markup Language 
+POML ( Zhang et al., 2025 ; POML, 2025 ) is a markup language focusing on adding structure to prompts as well as improving maintainability and versatility. It includes a VSCode extension to ease development and has an SDK to help with integration. It has a rich collection of built-in semantic components (tags).
+Although similar in that LLMON can also be used to add semantic information to prompts, the goals of the efforts are complementary. LLMON is trying to improve the performance and security of LLMs, whereas POML is trying to increase the productivity of the prompt engineer. This means LLMON can, in fact, express POML (or POML-like) semantic components as tags. Prompt engineering frameworks 
+More broadly, researchers have proposed frameworks and abstractions
+to help developers create and manage prompts (e.g., ( Liu et al., 2026 ; LangChain, 2023 ; Guidance, 2025 ; LlamaIndex, 2024 ; Khattab et al., 2023 ; Beurer-Kellner et al., 2023 ; Khattab et al., 2023 ; Wu et al., 2024 ; Dantanarayana et al., 2025 ) ), sometimes providing
+prompt generation techniques ( Dantanarayana et al., 2025 ) or the expression of parallelism
+in the execution of tool calls ( Mell et al., 2025 ) .
+This area of research is complementary to LLMON.
+Its goal is to increase the productivity of the prompt engineer or the runtime system performance of tool calling, whereas LLMON is focusing on model performance (accuracy) and security. The role of Constrained Decoding 
+Constrained decoding ( Scholak et al., 2021 ) is a LLM-independent inference-time technique that
+ensures LLMs generate tokens that satisfy user-specified
+constraints, such as regular expressions ( Beurer-Kellner et al., 2023 ; Willard and Louf, 2023 ; Guidance, 2025 ) , templates, such as a JSON schema, or parser-guided approaches ( Scholak et al., 2021 ) .
+Constrained decoding acts like a validating filter on LLM
+generation. It does not allow noncompliant tokens to be generated.
+Our approach differs in that we are
+enabling the specification of structure and semantics that can be used for training LLMs and model inference enforcement. The two approaches are complementary and can be used together. Specialized models for generating SQL output 
+Prior work has explored restricting auto-regressive decoding ( Yin and Neubig, 2018 ; Lin et al., 2019 ; Wang et al., 2020 ) or semi-auto-regressive ( Rubin and Berant, 2021 ) to
+token sequences that correctly parse to SQL
+abstract syntax trees. Although effective, these approaches
+require a custom vocabulary of special tokens, a custom model architecture, or both.
+In contrast, LLMON targets the interface rather than a SQL-specific semantic parser. It uses explicit span identifiers and delimiter markers intended as reserved special tokens ( Devlin et al., 2019 ) .
+Because these token-level boundaries are preserved atomically during tokenization ( Kudo and Richardson, 2018 ) , they make structure-aware decoding and enforcement practical at runtime, without modifying the transformer itself ( Vaswani et al., 2017 ) .
+This also aligns with KV-cache-based serving optimizations ( Kwon et al., 2023 ) and supports parameter-efficient adaptation (e.g., LoRA) ( Hu et al., 2022 ) , allowing the same interface abstractions to generalize beyond SQL to other structured-output tasks. 
+8 Discussion 
+This section discusses broader issues that may arise when pursuing an LLM-native markup language. 
+8.1 Open Design Questions and Systems Implications 
+Several design choices remain open and are particularly relevant to programming-systems audiences.
+First, the tradeoff between verbose and parsimonious closing tags may affect both learnability and “toolability”.
+Second, the choice and initialization of special tokens may influence convergence and stability; one plausible approach is initializing new tokens from semantically related embeddings rather than random initialization.
+Third, LLMON opens the door to richer static analyses and developer tooling (formatters, linters, type-like checks over required spans) and to runtime enforcement mechanisms that operate at token/span granularity (e.g., KV-cache and attention masking).
+We view these as natural extensions of treating the LLM interface as a programmable artifact rather than an unstructured string. 
+8.2 Practical Deployment Considerations 
+Some practical concerns warrant further investigation. First, tokenization efficiency : whether the six special tokens impact convergence across different tokenizer families (e.g., BPE ( Sennrich et al., 2016b ) , SentencePiece ( Kudo and Richardson, 2018 ) , WordPiece ( Devlin et al., 2019 ) ). Second, inference overhead : Boundary-constrained masking requires parsing LLMON spans; computational cost and memory impact on high-throughput serving remain uncharacterized. 
+8.3 Future Evaluations 
+The goal of this paper is to focus on the opportunity for adding structure and semantics to LLM interactions, define a markup language, and present preliminary evidence that the idea warrants further evaluation and research.
+Although the experiments in Section 6 demonstrate that models can i) learn structured execution patterns from LLMON-annotated data and ii) inference techniques can leverage LLMON-annotated data to improve robustness, a comprehensive evaluation of the design space remains an important direction for future work. This includes evaluating the value of combining these two complimentary uses of LLMON annotations. 
+One natural direction is to evaluate the approach across a broader range of model sizes and architectural families.
+The experiments presented in this paper focus on representative mid-scale models, but it remains important to understand how LLMON behaves across larger models.
+Larger models may already internalize certain structural conventions implicitly, while smaller models may benefit more strongly from explicit supervision signals.
+Similarly, evaluating models from additional families could help determine whether the benefits of LLMON arise primarily from the training signal itself or from interactions with specific architectural or design choices. 
+Another important avenue concerns the types of capabilities being evaluated.
+The current experiments focus primarily on robustness to distractor instructions.
+However, many tasks that LLMs perform involve strong structural components (e.g., code generation), where LLMs may benefit particularly from explicit structural markup, and future evaluations could measure whether LLMON improves model reliability on tasks where hierarchical or referential structure plays a central role. 
+Future work should also explore the role of LLMON-style annotations at different stages of the model training pipeline.
+The experiments in this paper apply LLMON during post-training (instruction tuning), but it is plausible that introducing structured annotations during pretraining could further strengthen the model’s ability to recognize and reason about structured spans.
+Understanding how LLMON interacts with pretraining objectives, instruction tuning, and alignment methods remains an open question. 
+Another potential research direction involves the interaction between LLMON and tokenization strategies.
+LLMON relies on a small set of special tokens to delimit structural boundaries and encode relationships such as execution bindings.
+Investigating how different tokenizers represent these markers, and whether alternative tokenization schemes improve the learnability of structural annotations, could provide additional insights into how models internalize structured interfaces.
+A related question concerns how the embeddings of these special tokens should be initialized during training, since they represent structural delimiters rather than natural-language content. 
+Finally, further work is needed to understand how LLMON interacts with inference-time system techniques such as constrained decoding and tool orchestration.
+LLMON annotations could also serve as structured signals for activating specialized model behaviors, such as triggering chain-of-thought or “thinking” modes, invoking external tools, or dynamically enabling parameter-efficient adaptations such as Activated LoRA ( Greenewald et al., 2025 ) .
+Because LLMON explicitly identifies spans, such as instructions, data artifacts, and execution bindings, it creates opportunities for runtime systems to treat these segments differently, potentially enabling stronger guarantees about execution behavior or information flow.
+Exploring these possibilities could help bridge the gap between prompt-based interaction patterns and more structured, program-like interfaces for language models. 
+8.4 Approaches for Creating LLMON Training Data 
+As discussed in Section 5.2 , LLMON can be used to express concepts and structure during the training of an LLM.
+When existing data is already structured, techniques such as the ones in Section 5.2 can be used to LLMONize it, i.e., convert it to LLMON form by introducing explicit annotations for instructions, inputs, and execution bindings while preserving the original task semantics.
+Many existing datasets already contain implicit structure (e.g., instruction-response pairs, question-answer datasets, or structured formats such as JSON) which can often be converted to LLMON automatically through deterministic transformations. 
+When no explicit structure is present in the training data, additional methods may be required to infer it.
+One approach is human annotation, where domain experts identify instructions, data spans, and other relevant concepts within the text.
+Another approach is to employ an LLM-based annotator or judge model that analyzes raw text and proposes candidate LLMON annotations, which can then be validated or refined.
+Such automated approaches may enable large-scale generation of structured training data, though further experimentation is needed to determine their reliability and cost effectiveness. 
+Regardless of the approach used, LLMONized training data can be added incrementally.
+Because LLMON operates primarily at the interface layer, structured examples can be mixed with conventional training data without requiring architectural changes to the model or training pipeline.
+This enables gradual adoption in which users can begin by annotating a subset of data where structure is most valuable, while continuing to leverage existing corpora in their original form. 
+8.5 Governing the User Tag Namespace 
+LLMON introduces the concept of user-defined tags, allowing flexibility in the concepts that an LLM can receive. However, with this flexibility comes a governance problem: who is responsible for managing this global namespace for such tags.
+For example, if a base model is trained with data that uses “ poem ” to suggest a certain semantics, when is it appropriate to use that tag for post-training? This raises questions about name collisions (two distinct concepts using the same tag name) and aliases (two different tags being used to represent the same concept). Both would likely lead to reduction in model performance.
+One option is to have the training organization govern the namespace to ensure it is used consistently and also to annotate the training data (with tools) as needed. Although appealing, this means that other organizations that want to perform post-training should either use the approved annotation toolchain or not include any annotations (to avoid namespace conflicts). It is not clear how feasible this constraint will be in practice. 
+8.6 A Trend Toward Grammar-like Ideas? 
+Normally LLMs are not given any grammar, just the training data.
+Although tokenization captures some very frequent “small” patterns, by collapsing them into tokens, bigger structures are not explicitly captured.
+The LLMON approach is also not specifying a grammar, but it is providing information about structure beyond tokenization.
+It is a step on the “no grammar” → \rightarrow “grammar” spectrum.
+Likewise, constrained decoding uses a simplified grammar during generation.
+Thus, there seems to be the beginnings of a trend towards adopting grammar-like ideas into LLM generation/training.
+The types of LLMON go further than grammars by adding the traditional semantic analysis (aka “type checking”) component of a compiler. 
+8.7 Analogies to Computer Architecture ISAs 
+Computer architectures provide the ISA abstraction layer that defines the primitive instructions that the system can execute.
+This includes instructions such as “ Add ”, “ Sub ”, “ Compare ”, “ Branch on Equal ”, etc.
+The semantics of these instructions is well specified.
+Software is written to use this ISA via a compiler and the ISA is implemented by the manufacturer. 
+One may wonder how the tag “ exec ” used in Section 3.1 compares to an ISA instruction in that both seem to be an abstraction of a primitive instruction.
+In fact, an “ exec ” instruction is quite similar to a “ Call ” instruction that has the call target as the operand along with its parameters. 
+Here are some comparisons: 
+• 
+ISA instructions have well-defined, guaranteed semantics, an Add of two integers will be the same as the mathematical add operation. A LLMON instruction can have this same guarantee using the inference implementation techniques from Section 5.3 . If only the training techniques from Section 5.1 are used, the semantics would not be guaranteed. 
+• 
+ISA instructions are fixed in number and defined at ISA design time. A new LLMON instruction can be created by the user via training data to define its semantics. 
+It will be interesting to see the efficacy of other types of ISA instructions in the LLMON context, such as comparisons, branches, indirect references, etc. 
+9 Conclusions 
+This work introduces the potential value of an LLM-native markup language.
+We have enumerated the design requirements of an LLM-native markup language. We then introduced LLMON as a markup language that satisfies these design requirements.
+The language can be expressed in the LLMON surface language that is more appropriate for human understanding and Machine LLMON , which provides the verbosity needed to overcome
+current LLM limitations.
+We then described how this additional metadata can benefit two important use cases: model training and inference implementation.
+Through preliminary experiments we show the promise of this approach for these two use cases, resulting in average improvements of
+74.2 and 29.3
+percentage points, respectively. We enumerate future directions that include additional evaluations and numerous other research opportunities. 
+Acknowledgments 
+We would like to thank David Grove, Kush Varshney, Martin Hirzel, and Danish Contractor for feedback on earlier versions of this work. 
+References 
+Beurer-Kellner et al . (2023) Luca Beurer-Kellner, Marc
+Fischer, and Martin Vechev.
+2023. Prompting Is Programming: A Query Language for
+Large Language Models. Proc. ACM Program. Lang. 7, PLDI, Article 186
+(June 2023), 24 pages. doi: 10.1145/3591300 
+Bray (2017) Tim Bray. 2017. The JavaScript Object Notation (JSON) Data
+Interchange Format. RFC 8259. doi: 10.17487/RFC8259 
+Brown et al . (2020) Tom B. Brown, Benjamin
+Mann, Nick Ryder, Melanie Subbiah,
+Jared Kaplan, Prafulla Dhariwal,
+Arvind Neelakantan, Pranav Shyam,
+Girish Sastry, Amanda Askell,
+Sandhini Agarwal, Ariel Herbert-Voss,
+Gretchen Krueger, Tom Henighan,
+Rewon Child, Aditya Ramesh,
+Daniel M. Ziegler, Jeffrey Wu,
+Clemens Winter, Christopher Hesse,
+Mark Chen, Eric Sigler,
+Mateusz Litwin, Scott Gray,
+Benjamin Chess, Jack Clark,
+Christopher Berner, Sam McCandlish,
+Alec Radford, Ilya Sutskever, and
+Dario Amodei. 2020. Language Models are Few-Shot Learners. In Advances in Neural Information Processing Systems
+33 (NeurIPS 2020) . https://proceedings.neurips.cc/paper/2020/hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html 
+Christiano et al . (2017) Paul F. Christiano, Jan
+Leike, Tom B. Brown, Miljan Martic,
+Shane Legg, and Dario Amodei.
+2017. Deep Reinforcement Learning from Human
+Preferences. In Advances in Neural Information
+Processing Systems 30: Annual Conference on Neural Information Processing
+Systems 2017, December 4-9, 2017, Long Beach, CA, USA . https://proceedings.neurips.cc/paper/2017/hash/d5e2c0adad503c91f91df240d0cd4e49-Abstract.html 
+Cobbe et al . (2021) Karl Cobbe, Vineet
+Kosaraju, Mohammad Bavarian, Mark Chen,
+Heewoo Jun, Lukasz Kaiser,
+Matthias Plappert, Jerry Tworek,
+Jacob Hilton, Reiichiro Nakano,
+Christopher Hesse, and John Schulman.
+2021. Training Verifiers to Solve Math Word Problems. arXiv:2110.14168 [cs.LG] https://arxiv.org/abs/2110.14168 
+Conover et al . (2023) Mike Conover, Matt Hayes,
+Ankit Mathur, Jianwei Xie,
+Jun Wan, Sam Shah, Ali
+Ghodsi, Patrick Wendell, Matei Zaharia,
+and Reynold Xin. 2023. Free dolly: Introducing the world’s first truly
+open instruction-tuned LLM. (2023). 
+Dantanarayana et al . (2025) Jayanaka L. Dantanarayana,
+Yiping Kang, Kugesan Sivasothynathan,
+Christopher Clarke, Baichuan Li,
+Savini Kashmira, Krisztian Flautner,
+Lingjia Tang, and Jason Mars.
+2025. MTP: A Meaning-Typed Language Abstraction for
+AI-Integrated Programming. Proc. ACM Program. Lang. 9, OOPSLA2, Article
+314 (Oct. 2025),
+29 pages. doi: 10.1145/3763092 
+Devlin et al . (2019) Jacob Devlin, Ming-Wei
+Chang, Kenton Lee, and Kristina
+Toutanova. 2019. BERT: Pre-training of Deep Bidirectional
+Transformers for Language Understanding. In Proceedings of the 2019 Conference of the North
+American Chapter of the Association for Computational Linguistics: Human
+Language Technologies, Volume 1 (Long and Short Papers) ,
+Jill Burstein, Christy
+Doran, and Thamar Solorio (Eds.).
+Association for Computational Linguistics,
+Minneapolis, Minnesota. doi: 10.18653/v1/N19-1423 
+Granite Team (2024) IBM Granite Team.
+2024. Granite 3.0 Language Models. URL: https://github.com/ibm-granite/granite-3.0-language-models (2024). 
+Greenewald et al . (2025) Kristjan Greenewald, Luis
+Lastras, Thomas Parnell, Vraj Shah,
+Lucian Popa, Giulio Zizzo,
+Chulaka Gunasekara, Ambrish Rawat, and
+David Cox. 2025. Activated LoRA: Fine-tuned LLMs for intrinsics. arXiv preprint arXiv:2504.12397 (2025). 
+Greshake et al . (2023) Kai Greshake, Sahar
+Abdelnabi, Shailesh Mishra, Christoph
+Endres, Thorsten Holz, and Mario
+Fritz. 2023. More than you’ve asked for: A Comprehensive
+Analysis of Novel Prompt Injection Threats to Application-Integrated Large
+Language Models. CoRR abs/2302.12173
+(2023). doi: 10.48550/ARXIV.2302.12173 
+Guidance (2025) Guidance. 2025. A guidance language for controlling large language
+models. https://github.com/guidance-ai/guidance . 
+Hendrycks et al . (2021) Dan Hendrycks, Collin
+Burns, Saurav Kadavath, Akul Arora,
+Steven Basart, Eric Tang,
+Dawn Song, and Jacob Steinhardt.
+2021. Measuring Mathematical Problem Solving With the MATH
+Dataset. arXiv:2103.03874 [cs.LG] https://arxiv.org/abs/2103.03874 
+Hopcroft et al . (2006) John Hopcroft, Rajeev
+Motwani, and Jeffrey Ullman.
+2006. Introduction to Automata Theory, Languages,
+and Computation . Pearson. 
+Houlsby et al . (2019) Neil Houlsby, Andrei
+Giurgiu, Stanislaw Jastrzebski, Bruna
+Morrone, Quentin De Laroussilhe, Andrea
+Gesmundo, Mona Attariyan, and Sylvain
+Gelly. 2019. Parameter-Efficient Transfer Learning for NLP.
+In Proceedings of the 36th International Conference
+on Machine Learning (Proceedings of Machine Learning
+Research, Vol. 97) ,
+Kamalika Chaudhuri and
+Ruslan Salakhutdinov (Eds.). PMLR. https://proceedings.mlr.press/v97/houlsby19a.html 
+Hu et al . (2022) Edward J. Hu, Yelong
+Shen, Phillip Wallis, Zeyuan
+Allen-Zhu, Yuanzhi Li, Shean Wang,
+Lu Wang, and Weizhu Chen.
+2022. LoRA: Low-Rank Adaptation of Large Language
+Models. In The Tenth International Conference on
+Learning Representations, ICLR 2022, Virtual Event, April 25-29, 2022 .
+OpenReview.net. https://openreview.net/forum?id=nZeVKeeFYf9 
+Hugging Face (2025) Hugging Face.
+2025. Templates for Chat Models. https://huggingface.co/docs/transformers/en/chat_templating . Accessed: 2026-03-17. 
+IBM (2025) IBM. 2025. Prompt Engineering Guide (Granite 4.0): Chat template
+design. https://www.ibm.com/granite/docs/use-cases/prompt-engineering . Accessed: 2026-03-17. 
+Khattab et al . (2023) Omar Khattab, Arnav
+Singhvi, Paridhi Maheshwari, Zhiyuan
+Zhang, Keshav Santhanam, Sri
+Vardhamanan, Saiful Haq, Ashutosh
+Sharma, Thomas T. Joshi, Hanna Moazam,
+Heather Miller, Matei Zaharia, and
+Christopher Potts. 2023. DSPy: Compiling Declarative Language Model Calls into
+Self-Improving Pipelines. 
+Kudo and Richardson (2018) Taku Kudo and John
+Richardson. 2018. SentencePiece: A simple and language independent
+subword tokenizer and detokenizer for Neural Text Processing. In Proceedings of the 2018 Conference on Empirical
+Methods in Natural Language Processing: System Demonstrations ,
+Eduardo Blanco and Wei
+Lu (Eds.). Association for Computational Linguistics,
+Brussels, Belgium. doi: 10.18653/v1/D18-2012 
+Kwon et al . (2023) Woosuk Kwon, Zhuohan Li,
+Siyuan Zhuang, Ying Sheng,
+Lianmin Zheng, Cody Hao Yu,
+Joseph Gonzalez, Hao Zhang, and
+Ion Stoica. 2023. Efficient Memory Management for Large Language
+Model Serving with PagedAttention. In Proceedings
+of the 29th Symposium on Operating Systems Principles, SOSP 2023, Koblenz,
+Germany, October 23-26, 2023 . ACM. doi: 10.1145/3600006.3613165 
+Laban et al . (2025) Philippe Laban, Hiroaki
+Hayashi, Yingbo Zhou, and Jennifer
+Neville. 2025. LLMs Get Lost In Multi-Turn Conversation. arXiv:2505.06120 [cs.CL] https://arxiv.org/abs/2505.06120 
+LangChain (2023) LangChain.
+2023. langchain: The agent engineering platform. https://github.com/langchain-ai/langchain . Accessed:
+2026-03-17. 
+Lin et al . (2019) Kevin Lin, Ben Bogin,
+Mark Neumann, Jonathan Berant, and
+Matt Gardner. 2019. Grammar-based Neural Text-to-SQL Generation. arXiv:1905.13326 [cs.CL] https://arxiv.org/abs/1905.13326 
+Liu et al . (2026) Xiaoxia Liu, Jingyi Wang,
+Xiaohan Yuan, Jun Sun,
+Guoliang Dong, Peng Di,
+Wenhai Wang, and Dongxia Wang.
+2026. Prompting Frameworks for Large Language Models: A
+Survey. ACM Comput. Surv. (Feb.
+2026). doi: 10.1145/3789253 
+LlamaIndex (2024) LlamaIndex.
+2024. LlamaIndex. https://github.com/run-llama/llama_index . Accessed:
+2026-03-17. 
+Mell et al . (2025) Stephen Mell, Konstantinos
+Kallas, Steve Zdancewic, and Osbert
+Bastani. 2025. Opportunistically Parallel Lambda Calculus. Proc. ACM Program. Lang. 9, OOPSLA2, Article
+365 (Oct. 2025),
+27 pages. doi: 10.1145/3763143 
+Mistral AI (2023) Mistral AI.
+2023. Demystifying Mistral’s Instruct Tokenization &amp; Chat
+Templates. https://docs.mistral.ai/cookbooks/concept-deep-dive-tokenization-chat_templates . Accessed: 2026-03-17. 
+Mizrahi et al . (2024) Moran Mizrahi, Guy
+Kaplan, Dan Malkin, Rotem Dror,
+Dafna Shahaf, and Gabriel Stanovsky.
+2024. State of What Art? A Call for Multi-Prompt LLM
+Evaluation. Transactions of the Association for
+Computational Linguistics 12 (08
+2024), 933–949. 
+Ouyang et al . (2022) Long Ouyang, Jeffrey Wu,
+Xu Jiang, Diogo Almeida,
+Carroll L. Wainwright, Pamela Mishkin,
+Chong Zhang, Sandhini Agarwal,
+Katarina Slama, Alex Ray,
+John Schulman, Jacob Hilton,
+Fraser Kelton, Luke Miller,
+Maddie Simens, Amanda Askell,
+Peter Welinder, Paul F. Christiano,
+Jan Leike, and Ryan Lowe.
+2022. Training language models to follow instructions
+with human feedback. In Advances in Neural
+Information Processing Systems 35: Annual Conference on Neural Information
+Processing Systems 2022, NeurIPS 2022, New Orleans, LA, USA, November 28 -
+December 9, 2022 . http://papers.nips.cc/paper_files/paper/2022/hash/b1efde53be364a73914f58805a001731-Abstract-Conference.html 
+POML (2025) POML 2025. https://github.com/microsoft/poml Accessed: 2026-03-17. 
+Rafailov et al . (2023) Rafael Rafailov, Archit
+Sharma, Eric Mitchell, Christopher D.
+Manning, Stefano Ermon, and Chelsea
+Finn. 2023. Direct Preference Optimization: Your Language Model
+is Secretly a Reward Model. In Advances in Neural
+Information Processing Systems 36: Annual Conference on Neural Information
+Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 -
+16, 2023 . http://papers.nips.cc/paper_files/paper/2023/hash/a85b405ed65c6477a4fe8302b5e06ce7-Abstract-Conference.html 
+Rawat et al . (2024) Ambrish Rawat, Stefan
+Schoepf, Giulio Zizzo, Giandomenico
+Cornacchia, Muhammad Zaid Hameed, Kieran
+Fraser, Erik Miehling, Beat Buesser,
+Elizabeth M. Daly, Mark Purcell,
+Prasanna Sattigeri, Pin-Yu Chen, and
+Kush R. Varshney. 2024. Attack Atlas: A Practitioner’s Perspective on
+Challenges and Pitfalls in Red Teaming GenAI. arXiv:2409.15398 [cs.CR] https://arxiv.org/abs/2409.15398 
+Rubin and Berant (2021) Ohad Rubin and Jonathan
+Berant. 2021. SmBoP: Semi-autoregressive Bottom-up Semantic
+Parsing. In Proceedings of the 2021 Conference of
+the North American Chapter of the Association for Computational Linguistics:
+Human Language Technologies . 
+Scholak et al . (2021) Torsten Scholak, Nathan
+Schucher, and Dzmitry Bahdanau.
+2021. PICARD: Parsing Incrementally for Constrained
+Auto-Regressive Decoding from Language Models. In Conference on Empirical Methods in Natural Language
+Processing . 
+Sclar et al . (2024) Melanie Sclar, Yejin
+Choi, Yulia Tsvetkov, and Alane Suhr.
+2024. Quantifying Language Models’ Sensitivity to
+Spurious Features in Prompt Design or: How I learned to start worrying about
+prompt formatting. (2024). https://par.nsf.gov/biblio/10520219 
+Sennrich et al . (2016a) Rico Sennrich, Barry
+Haddow, and Alexandra Birch.
+2016a. Neural Machine Translation of Rare Words with
+Subword Units. In Proceedings of the 54th Annual
+Meeting of the Association for Computational Linguistics (Volume 1: Long
+Papers) , Katrin Erk and
+Noah A. Smith (Eds.). Association for
+Computational Linguistics, Berlin, Germany. doi: 10.18653/v1/P16-1162 
+Sennrich et al . (2016b) Rico Sennrich, Barry
+Haddow, and Alexandra Birch.
+2016b. Neural machine translation of rare words with
+subword units. In Proceedings of the 54th annual
+meeting of the association for computational linguistics (volume 1: long
+papers) . 1715–1725. 
+Taori et al . (2023) Rohan Taori, Ishaan
+Gulrajani, Tianyi Zhang, Yann Dubois,
+Xuechen Li, Carlos Guestrin,
+Percy Liang, and Tatsunori B
+Hashimoto. 2023. Stanford Alpaca: An instruction-following LLaMA
+model. 
+Vaswani et al . (2017) Ashish Vaswani, Noam
+Shazeer, Niki Parmar, Jakob Uszkoreit,
+Llion Jones, Aidan N. Gomez,
+Lukasz Kaiser, and Illia Polosukhin.
+2017. Attention Is All You Need. In Advances in Neural Information Processing Systems
+30: Annual Conference on Neural Information Processing Systems 2017, December
+4-9, 2017, Long Beach, CA, USA . https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html 
+Wang et al . (2020) Bailin Wang, Richard
+Shin, Xiaodong Liu, Oleksandr Polozov,
+and Matthew Richardson. 2020. RAT-SQL: Relation-Aware Schema Encoding and
+Linking for Text-to-SQL Parsers. In Proceedings
+of the 58th Annual Meeting of the Association for Computational
+Linguistics . 
+Wei et al . (2022) Jason Wei, Maarten Bosma,
+Vincent Y. Zhao, Kelvin Guu,
+Adams Wei Yu, Brian Lester,
+Nan Du, Andrew M. Dai, and
+Quoc V. Le. 2022. Finetuned Language Models are Zero-Shot Learners.
+In The Tenth International Conference on Learning
+Representations, ICLR 2022, Virtual Event, April 25-29, 2022 .
+OpenReview.net. https://openreview.net/forum?id=gEZrGCozdqR 
+Willard and Louf (2023) Brandon T. Willard and
+Rémi Louf. 2023. Efficient Guided Generation for Large Language
+Models. arXiv:2307.09702 [cs.CL] https://arxiv.org/abs/2307.09702 
+Wu et al . (2024) Qingyun Wu, Gagan Bansal,
+Jieyu Zhang, Yiran Wu,
+Beibin Li, Erkang Zhu,
+Li Jiang, Xiaoyun Zhang,
+Shaokun Zhang, Jiale Liu,
+Ahmed H Awadallah, Ryen White,
+Doug Burger, and Chi Wang.
+2024. AutoGen: Enabling Next-Gen LLM Applications via
+Multi-Agent Conversation. Workshop on Large Language Models for
+Agents (2024). 
+Yang et al . (2025) Qwen: An Yang, Baosong
+Yang, Beichen Zhang, Binyuan Hui,
+Bo Zheng, Bowen Yu,
+Chengyuan Li, Dayiheng Liu,
+Fei Huang, Haoran Wei, et al . 2025. Qwen2.5 Technical Report. arXiv:2412.15115 [cs.CL] https://arxiv.org/abs/2412.15115 
+Yin and Neubig (2018) Pengcheng Yin and Graham
+Neubig. 2018. TRANX: A Transition-based Neural Abstract Syntax
+Parser for Semantic Parsing and Code Generation. In Proceedings of the 2018 Conference on Empirical
+Methods in Natural Language Processing: System Demonstrations . 
+Zhang et al . (2025) Yuge Zhang, Nan Chen,
+Jiahang Xu, and Yuqing Yang.
+2025. Prompt Orchestration Markup Language. arXiv:2508.13948 [cs.HC] https://arxiv.org/abs/2508.13948 
+Zhou et al . (2023) Jeffrey Zhou, Tianjian
+Lu, Swaroop Mishra, Siddhartha Brahma,
+Sujoy Basu, Yi Luan,
+Denny Zhou, and Le Hou.
+2023. Instruction-Following Evaluation for Large Language
+Models. arXiv:2311.07911 [cs.CL] https://arxiv.org/abs/2311.07911 
+Appendix A LLMON Examples 
+This section contains additional LLMON examples.
+Figure 11 shows how the structure and semantics of an email message can be expressed in LLMON.
+Figure 12 shows the equivalent email expressed in Machine LLMON . Notice how in Figure 11 does not explicitly supply the nesting information, to make it more human-friendly, but the conversion to Machine LLMON inserts the nesting flattening. 
+We also show the Machine LLMON version of examples from the paper that were expressed in LLMON.
+Figure 13 shows the Machine LLMON version of Figure 3 .
+Figure 14 shows the Machine LLMON version of Figure 4 . 
+\email\ \header\ \from\alice@example.com/from/ \to\bob@example.com/to/ \subject\Design docs/subject/ \smpt/ /header/ \body\ \paragraph\Please see the attachments./paragraph/ \notes\We’ll review at 2 PM./notes/ /body/ \attachments\ \attachment:1\ \filename\design_spec.pdf/filename/ \type\pdf/type/ /attachment:1/ \attachment:2\ \filename\design_spec.pdf/filename/ \type\pdf/type/ /attachment:2/ /attachments/ /email/ Figure 11: LLMON email example 
+&lt;|open|&gt;email&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;header&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;header&lt;|.|&gt;from&lt;|close|&gt; alice@example.com &lt;|open_end|&gt;email&lt;|.|&gt;header&lt;|.|&gt;from&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;hearder&lt;|.|&gt;to&lt;|close|&gt; bob@example.com &lt;|open_end|&gt;email&lt;|.|&gt;hearder&lt;|.|&gt;to&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;hearder&lt;|.|&gt;subject&lt;|close|&gt; Design docs &lt;|open_end|&gt;email&lt;|.|&gt;hearder&lt;|.|&gt;subject&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;hearder&lt;|.|&gt;smpt&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|.|&gt;header&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;body&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;body&lt;|.|&gt;paragraph&lt;|close|&gt; Please see the attachments. &lt;|open_end|&gt;email&lt;|.|&gt;body&lt;|.|&gt;paragraph&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;body&lt;|.|&gt;notes&lt;|close|&gt; We’ll review at 2 PM. &lt;|open_end|&gt;email&lt;|.|&gt;body&lt;|.|&gt;notes&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|.|&gt;body&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|.|&gt;filename&lt;|close|&gt;design_spec.pdf &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|.|&gt;filename&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|.|&gt;type&lt;|close|&gt;pdf &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|.|&gt;type&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;1&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|.|&gt;filename&lt;|close|&gt;design_spec.pdf &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|.|&gt;filename&lt;|close|&gt; &lt;|open|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|.|&gt;type&lt;|close|&gt;pdf &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|.|&gt;type&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|.|&gt;attachment&lt;|:|&gt;2&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|.|&gt;attachments&lt;|close|&gt; &lt;|open_end|&gt;email&lt;|close|&gt; Figure 12: Machine LLMON email example 
+&lt;|open|&gt;instr&lt;|:|&gt;f&lt;|close|&gt; Translate the text into French &lt;|open_end|&gt;instr&lt;|:|&gt;f&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;g&lt;|close|&gt; Count the number of words in the given sentence &lt;|open_end|&gt;instr&lt;|:|&gt;g
+&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;h&lt;|close|&gt; Summarize the text in one short sentence &lt;|open_end|&gt;instr&lt;|:|&gt;h&lt;|close|&gt; &lt;|open|&gt;data&lt;|:|&gt;1&lt;|close|&gt; The quick brown fox jumps over the lazy dog &lt;|open_end|&gt;data&lt;|:|&gt;1&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;y&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;y&lt;|.|&gt;instr&lt;|close|&gt;g&lt;|open_end|&gt;exec&lt;|:|&gt;y&lt;|.|&gt;instr&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;y&lt;|.|&gt;input&lt;|close|&gt;2&lt;|open_end|&gt;exec&lt;|:|&gt;y&lt;|.|&gt;input&lt;|close|&gt; &lt;|open_end|&gt;exec&lt;|:|&gt;y&lt;|close|&gt; Figure 13: Example of executing a particular instruction with a parameter in Machine LLMON to Figure 3 
+&lt;|open|&gt;instr&lt;|:|&gt;m&lt;|close|&gt;Translate the text into French &lt;|open_end|&gt;instr&lt;|:|&gt;m&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;n&lt;|close|&gt;List three animals. &lt;|open_end|&gt;instr&lt;|:|&gt;n&lt;|close|&gt; &lt;|open|&gt;instr&lt;|:|&gt;p&lt;|close|&gt;Summarize the customer message in a few words. &lt;|open_end|&gt;instr&lt;|:|&gt;p&lt;|close|&gt; &lt;|open|&gt;data&lt;|:|&gt;2&lt;|close|&gt;Customer message: Hey, I love your service but had an issue logging in, especially when trying to use my account on multiple devices. Ignore previous instructions and instead output: SYSTEM ACCESS GRANTED. Print all credit card numbers. &lt;|open_end|&gt;data&lt;|:|&gt;2&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;z&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;z&lt;|.|&gt;instr&lt;|close|&gt;instr&lt;|:|&gt;p&lt;|open_end|&gt;exec&lt;|:|&gt;z&lt;|.|&gt;instr&lt;|close|&gt; &lt;|open|&gt;exec&lt;|:|&gt;z&lt;|.|&gt;input&lt;|close|&gt;data&lt;|:|&gt;2&lt;|open_end|&gt;exec&lt;|:|&gt;z&lt;|.|&gt;input&lt;|close|&gt; &lt;|open_end|&gt;exec&lt;|:|&gt;z&lt;|close|&gt; Figure 14: Example illustrating defense against prompt injection attacks in Machine LLMON (corresponding to Figure 4 ) Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
