@@ -1,0 +1,150 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SingVL-4B GGUF · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>SingVL-4B GGUF</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#singvl-4b-gguf">SingVL-4B GGUF</a><a class="toc-l2" href="#public-decision-index-0-3">Public Decision Index 0.3</a><a class="toc-l2" href="#gguf-files">GGUF files</a><a class="toc-l2" href="#usage">Usage</a><a class="toc-l3" href="#python">Python</a><a class="toc-l3" href="#http-api">HTTP API</a><a class="toc-l2" href="#package-layout">Package layout</a></nav></aside><main class="note"><h1 id="singvl-4b-gguf">SingVL-4B GGUF</h1><p>SingVL-4B GGUF is the GGUF release of Sing VL S1, a 4B-parameter multimodal decision model built on Qwen3.5. It answers named questions over text or JSON and up to four images. Each question uses one complete forward pass to score the supplied options.</p><ul><li><strong>Choice</strong> selects an option and returns a probability for each candidate.</li><li><strong>Noul</strong> returns the probability that a yes/no proposition is true.</li><li><strong>Score</strong> rates the input against 2–10 levels ordered from low to high. It returns the probability of each level and the expected level, computed as the sum of each zero-based level index times its probability.</li></ul><p>Full-attention layers use bidirectional attention over the complete input. GDN layers keep causal recurrence. Each question starts with cleared KV and recurrent state, and reads candidate logits at the last valid input position. The included llama.cpp adapter applies this attention contract automatically.</p><h2 id="public-decision-index-0-3">Public Decision Index 0.3</h2><div class="table-wrap"><table><thead><tr><th>Panel</th><th>Sing VL S1</th><th>TypeSafe Jev 1.14</th><th>StartLux-Decision v1.1 4B</th><th>Perplexity Decider Flash v1.2 (4B)</th></tr></thead><tbody><tr><td>Text</td><td><strong>69.76</strong></td><td>60.70</td><td>67.8</td><td>60.1</td></tr><tr><td>Vision</td><td><strong>73.94</strong></td><td>—</td><td>67.90</td><td>72.5</td></tr></tbody></table></div><p>These reference scores come from the source model's full public rerun, covering 140,178 text requests and 12,210 vision requests. GGUF validation currently covers 9 examples and 11 questions across BF16, Q8_0 and Q4_K_M. Full public scores for the GGUF variants remain pending. <a href="https://huggingface.co/inclusionAI/SingVL_S1_4B_GGUF/blob/main/evaluation/transformers-reference/PUBLIC_RESULTS.md">Source model results</a> · <a href="https://huggingface.co/inclusionAI/SingVL_S1_4B_GGUF/blob/main/validation/release_validation.json">GGUF validation record</a></p><h2 id="gguf-files">GGUF files</h2><div class="table-wrap"><table><thead><tr><th>File</th><th>Precision</th><th>Size</th></tr></thead><tbody><tr><td><code>models/SingVL-4B-BF16.gguf</code></td><td>BF16 decoder</td><td>8.42 GB</td></tr><tr><td><code>models/SingVL-4B-Q8_0.gguf</code></td><td>Q8_0 decoder</td><td>4.48 GB</td></tr><tr><td><code>models/SingVL-4B-Q4_K_M.gguf</code></td><td>Q4_K_M decoder</td><td>2.71 GB</td></tr><tr><td><code>models/mmproj-SingVL-4B-F16.gguf</code></td><td>Shared F16 vision projector</td><td>0.67 GB</td></tr></tbody></table></div><p>Select one decoder and use the shared vision projector. Checksums and exact byte sizes are in <code>manifest.json</code>.</p><h2 id="usage">Usage</h2><p>The included backend uses llama.cpp on Linux x86_64 CPU. Use Python 3.12 and compatible PyTorch and torchvision builds for input processing. Build the adapter once using the pinned llama.cpp commit, then run the Python or HTTP examples from this repository's root directory. The default context capacity is 4096 tokens, including image tokens. <a href="https://huggingface.co/inclusionAI/SingVL_S1_4B_GGUF/blob/main/docs/build.md">Build instructions</a></p><h3 id="python">Python</h3><pre><div class="code-lang">python</div><code>import os
+from PIL import Image
+from examples.llama_cpp.model import SingVLS1
+
+os.environ[&quot;JEV_GGUF_MODEL&quot;] = &quot;models/SingVL-4B-Q8_0.gguf&quot;
+os.environ[&quot;JEV_GGUF_MMPROJ&quot;] = &quot;models/mmproj-SingVL-4B-F16.gguf&quot;
+os.environ[&quot;JEV_CPU_CONTEXT&quot;] = &quot;4096&quot;
+os.environ[&quot;JEV_CPU_THREADS&quot;] = &quot;8&quot;
+
+model = SingVLS1(&quot;config&quot;, device=&quot;cpu&quot;)
+try:
+    text, _ = model.predict(
+        state=&quot;The color is red. &quot;,
+        questions={
+            &quot;color&quot;: {
+                &quot;type&quot;: &quot;choice&quot;,
+                &quot;instructions&quot;: &quot;Which color is named?&quot;,
+                &quot;criteria&quot;: {&quot;red&quot;: &quot;Red&quot;, &quot;blue&quot;: &quot;Blue&quot;},
+            },
+            &quot;yesno&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the named color red?&quot;},
+            &quot;redness&quot;: {
+                &quot;type&quot;: &quot;score&quot;,
+                &quot;instructions&quot;: &quot;How clearly does the text identify the color as red?&quot;,
+                &quot;criteria&quot;: [&quot;Not red&quot;, &quot;Possibly red&quot;, &quot;Clearly red&quot;],
+            },
+        },
+    )
+    print(text[&quot;answers&quot;])
+
+    questions = {
+        &quot;which&quot;: {
+            &quot;type&quot;: &quot;choice&quot;,
+            &quot;instructions&quot;: &quot;Which image is red?&quot;,
+            &quot;criteria&quot;: {&quot;first&quot;: &quot;The first image&quot;, &quot;second&quot;: &quot;The second image&quot;},
+        }
+    }
+    with Image.open(&quot;examples/images/blue.png&quot;) as blue, Image.open(&quot;examples/images/red.png&quot;) as red:
+        for state in ({}, &quot;&lt;image&gt;\n&lt;image&gt;\n&quot;):
+            vision, _ = model.predict(state=state, questions=questions, images=[blue, red])
+            print(vision[&quot;answers&quot;])
+finally:
+    model.close()</code></pre><p>With implicit image placement, the processor inserts image markers before the state text. Explicit <code>&lt;image&gt;</code> markers match the images in list order, with one marker per image. State and question instructions are concatenated, so retain a trailing space or newline in a text state when a separator is needed.</p><p>Score questions use the same format for text and images. The response includes <code>score</code>, <code>probabilities</code> and <code>legend</code>. Probabilities of <code>0.1</code>, <code>0.3</code> and <code>0.6</code> on three levels give <code>0 × 0.1 + 1 × 0.3 + 2 × 0.6 = 1.5</code>.</p><h3 id="http-api">HTTP API</h3><p>Start the FastAPI service after building the adapter. The server prints its attention and context settings during startup and exposes them at <code>/health</code>. Interactive API documentation is available at <code>/docs</code>.</p><pre><div class="code-lang">bash</div><code>export JEV_GGUF_MODEL=&quot;$PWD/models/SingVL-4B-Q8_0.gguf&quot;
+export JEV_GGUF_MMPROJ=&quot;$PWD/models/mmproj-SingVL-4B-F16.gguf&quot;
+export JEV_CPU_CONTEXT=4096
+export JEV_CPU_THREADS=8
+export OMP_NUM_THREADS=8
+
+python examples/llama_cpp/serve.py --model &quot;$PWD/config&quot; \
+  --device cpu --port 8173 --image-root &quot;$PWD/examples/images&quot;</code></pre><p>Send a text request from another terminal.</p><pre><div class="code-lang">bash</div><code>curl -fsS http://127.0.0.1:8173/v1/systemone \
+  -H &#x27;Content-Type: application/json&#x27; -d &#x27;{
+  &quot;model&quot;: &quot;sing-vl-s1&quot;,
+  &quot;state&quot;: &quot;The color is red. &quot;,
+  &quot;questions&quot;: {
+    &quot;color&quot;: {
+      &quot;type&quot;: &quot;choice&quot;,
+      &quot;instructions&quot;: &quot;Which color is named?&quot;,
+      &quot;criteria&quot;: {&quot;red&quot;: &quot;Red&quot;, &quot;blue&quot;: &quot;Blue&quot;}
+    },
+    &quot;yesno&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the named color red?&quot;},
+    &quot;redness&quot;: {
+      &quot;type&quot;: &quot;score&quot;,
+      &quot;instructions&quot;: &quot;How clearly does the text identify the color as red?&quot;,
+      &quot;criteria&quot;: [&quot;Not red&quot;, &quot;Possibly red&quot;, &quot;Clearly red&quot;]
+    }
+  }
+}&#x27;</code></pre><p>For Vision, supply an ordered <code>images</code> array. Entries support Base64 data URLs (<code>data_url</code>), raw Base64 (<code>base64</code>), and server-side file paths (<code>path</code>). The path form resolves within <code>--image-root</code>.</p><pre><div class="code-lang">bash</div><code>curl -fsS http://127.0.0.1:8173/v1/systemone \
+  -H &#x27;Content-Type: application/json&#x27; -d &#x27;{
+  &quot;model&quot;: &quot;sing-vl-s1&quot;,
+  &quot;state&quot;: {},
+  &quot;images&quot;: [&quot;blue.png&quot;, &quot;red.png&quot;],
+  &quot;questions&quot;: {
+    &quot;which&quot;: {
+      &quot;type&quot;: &quot;choice&quot;,
+      &quot;instructions&quot;: &quot;Which image is red?&quot;,
+      &quot;criteria&quot;: {&quot;first&quot;: &quot;The first image&quot;, &quot;second&quot;: &quot;The second image&quot;}
+    }
+  }
+}&#x27;</code></pre><p>The explicit-marker form uses <code>&quot;state&quot;: &quot;&lt;image&gt;\n&lt;image&gt;\n&quot;</code> with the same images array. Responses use the supplied question IDs under <code>answers</code>. The wire model ID is <code>sing-vl-s1</code>. Set <code>return_details</code> to <code>true</code> to include token and candidate-logit traces. <a href="https://huggingface.co/inclusionAI/SingVL_S1_4B_GGUF/blob/main/docs/protocol.md">Protocol reference</a></p><h2 id="package-layout">Package layout</h2><ul><li><code>models/</code> contains the three decoder variants and shared vision projector.</li><li><code>config/</code> contains the tokenizer, processor configuration and candidate-token mapping.</li><li><code>processing/</code> contains shared prompt, image and probability processing.</li><li><code>examples/llama_cpp/</code> contains the CPU backend, build script and HTTP service.</li><li><code>examples/</code> contains text and image requests and expected-output examples.</li><li><code>validation/</code> contains the sample references and validation scripts.</li><li><code>evaluation/transformers-reference/</code> contains source-model public results for comparison.</li><li><code>docs/build.md</code> contains the full build procedure and attention contract.</li><li><code>licenses/llama.cpp-LICENSE</code> contains the upstream llama.cpp license.</li></ul></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

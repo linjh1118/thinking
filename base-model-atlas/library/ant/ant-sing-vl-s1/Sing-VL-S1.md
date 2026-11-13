@@ -4,7 +4,7 @@ type: model-note
 html_tabs: true
 status: reading
 created: 2026-11-11
-updated: 2026-11-11
+updated: 2026-11-13
 tags: [model-note, base-model, singvl]
 ---
 
@@ -45,6 +45,23 @@ tags: [model-note, base-model, singvl]
 图像特征在一次predict内先编码一次，各问题仍分别调用模型。`usage.input_tokens`累加每题完整输入，`output_tokens=0`只代表没有生成token，不能当作零成本。图像顺序匹配占位符；缺省自动前插，显式标记数量须等于图片数；保留控制token会被拒绝。Score等级按概率再归一化，Noul不另做概率校准。
 
 FastAPI默认127.0.0.1、单worker与推理锁，body/file上限64MiB；服务端文件需落在指定image-root，禁止越界。这个示例是本机服务接口，不承诺生产吞吐或安全配置。benchmark固定Vision12210条与Text140178条、语料hash和模型索引hash；按ID检查分片完整、保存error/unsupported，不能删除不支持项后只报成功集合。代码可复查不等于本轮已真实跑测。
+
+### 2026-11-13复核：GGUF分发与验证范围
+
+官方新增GGUF仓库和SingVL collection，将既有4B模型分发为BF16、Q8_0和Q4_K_M。它沿用Choice/Noul/Score、每问题一次完整前向与最多四图的接口；不另建模型family，也不把仓库创建、collection修改时间当成新的训练代际或首发日。原family仍为2026-11月份待核。
+
+| GGUF decoder | 卡中体积 | 共同依赖 |
+|---|---:|---|
+| BF16 | 8.42 GB | F16视觉projector，另0.67 GB |
+| Q8_0 | 4.48 GB | 同一F16视觉projector |
+| Q4_K_M | 2.71 GB | 同一F16视觉projector |
+
+这些是README给出的分发大小；decoder体积不含共享视觉projector，精确字节与校验值链接到官方manifest，本文未下载权重验证。CPU示例面向Linux x86_64，默认context 4096且包括图像token，与上文Transformers路径的65536/10000预算分别保留，不能据此宣称所有backend窗口一致。llama.cpp适配要求full-attention层对完整输入双向、GDN继续causal，每题清空KV/recurrent state，并在最后有效输入位置读取候选logits；未运行该适配。
+
+> [!warning] GGUF验证不能冒充完整评测
+> 官方仅报告BF16/Q8_0/Q4_K_M通过9个例子、11个问题的release validation；GGUF完整公共榜单仍待发布。Text69.76、Vision73.94和140178/12210条请求属于原Transformers参考模型，不能直接填成量化版成绩或据11题宣称等精度。README链接了验证JSON、构建/协议文档与manifest，本轮只归档并阅读README，不冒充逐字段核验旁页、真实构建或实测。许可仍须核对，不能仅凭GGUF格式推导授权。
+
+HTTP示例通过`/v1/systemone`提供决策，`/health`暴露attention/context设置，`return_details=true`可返回候选与token细节。用其产物做训练比较时应连同backend、量化类型、上下文预算及每题输入记录，避免把分发差异误归为训练收益。
 
 ## 完整成绩、反例与训练启发
 
@@ -132,4 +149,5 @@ FastAPI默认127.0.0.1、单worker与推理锁，body/file上限64MiB；服务�
 - [官方HF卡](https://huggingface.co/inclusionAI/SingVL_S1_4B)
 - [本轮固定版本推理源码](https://huggingface.co/inclusionAI/SingVL_S1_4B/tree/93f15cd61c1cf417d9cb2631f6be2df13510829e/inference)
 - [权重上传提交，仅用于版本时间线](https://huggingface.co/inclusionAI/SingVL_S1_4B/commit/6b8f50556d454a2f0720ad6682411d1b970d5ccf)
+- [官方GGUF模型卡 · 分发与有限验证](https://huggingface.co/inclusionAI/SingVL_S1_4B_GGUF)
 - [[sing_vl_s1_poster_zh.html|中文Poster]]
