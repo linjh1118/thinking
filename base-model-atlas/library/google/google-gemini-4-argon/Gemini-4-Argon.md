@@ -297,3 +297,9 @@ MCC相对Argon未增通用能力，因此未重复整套critical评估；targete
 > 对agent训练最有价值的实验是固定任务/工具/预算，比较单Hydrogen、单Carbon及Orchestrator的成功率—实际费用—时延，分开worker/verifier角色；博客系统quota节约不能直接映射本地token成本。安全改善须同时跟踪过度拒绝和真实工具任务完成率。
 
 新增[官方公告](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/)、[模型卡](https://deepmind.google/models/model-cards/gemini-4-hydrogen/)、[中文Poster](gemini_4_hydrogen_poster_zh.html)。官方图六张完整归档；本轮无PDF、权重或模型调用。
+
+
+### 2026-11-14复核：Hydrogen博客诚实率改数
+
+> [!warning]
+> 官方Hydrogen博客把内部agent honesty evaluation从96.7%改为94%；属于来源数字更正，不是新模型。此前记录的96.7%保留为历史口径，当前博客为94%，不能静默拼到其他评估表，也不能将这次页面修改作为发布日期。模型卡/完整安全报告是否同步及其逐例分母仍待核，本轮未独立复测。

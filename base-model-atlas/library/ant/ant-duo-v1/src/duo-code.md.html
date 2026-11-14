@@ -1,0 +1,154 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Duo: A Reciprocal World Model for Full-Duplex Interaction · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>Duo: A Reciprocal World Model for Full-Duplex Interaction</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#duo-a-reciprocal-world-model-for-full-duplex-interaction">Duo: A Reciprocal World Model for Full-Duplex Interaction</a><a class="toc-l2" href="#news">🔥 News</a><a class="toc-l2" href="#architecture">✨ Architecture</a><a class="toc-l2" href="#model-releases">📦 Model Releases</a><a class="toc-l2" href="#requirements">🛠️ Requirements</a><a class="toc-l2" href="#installation">🚀 Installation</a><a class="toc-l2" href="#download-checkpoints">🤗 Download Checkpoints</a><a class="toc-l2" href="#run-the-offline-demo">🎮 Run the Offline Demo</a><a class="toc-l2" href="#configuration">⚙️ Configuration</a><a class="toc-l2" href="#repository-layout">🗂️ Repository Layout</a><a class="toc-l2" href="#acknowledgements">🤗 Acknowledgements</a><a class="toc-l2" href="#citation">📝 Citation</a><a class="toc-l2" href="#license">📄 License</a></nav></aside><main class="note"><p><img src="./assets/duo-logo.svg" alt="Duo"></p><h1 id="duo-a-reciprocal-world-model-for-full-duplex-interaction">Duo: A Reciprocal World Model for Full-Duplex Interaction</h1><p><a href="https://duo-v1.github.io/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-Homepage-0A66C2?logo=googlechrome&amp;logoColor=white&amp;labelColor=555" alt="Homepage"></a> <a href="https://arxiv.org/abs/2611.15131" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/arXiv-2611.15131-B31B1B?logo=arxiv&amp;logoColor=white&amp;labelColor=555" alt="arXiv"></a> <a href="https://huggingface.co/collections/inclusionAI/duo-v1" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-Hugging%20Face-FFD21E?logo=huggingface&amp;logoColor=white&amp;labelColor=555" alt="Hugging Face"></a> <a href="https://github.com/inclusionAI/Duo" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-GitHub-181717?logo=github&amp;logoColor=white&amp;labelColor=555" alt="GitHub"></a> <a href="https://github.com/inclusionAI/Duo/blob/main/assets/Duo_Technical_Report.pdf" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/-TechReport-526A78?logo=readthedocs&amp;logoColor=white&amp;labelColor=555" alt="Technical Report"></a> <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/License-Apache%202.0-blue?logo=apache&amp;logoColor=white&amp;labelColor=555" alt="License"></a> <a href="https://www.python.org/downloads/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white&amp;labelColor=555" alt="Python"></a></p><p><a href="https://github.com/inclusionAI/Duo/tree/inference/vllm-omni-duo" target="_blank" rel="noopener">vLLM-Omni</a> · <a href="https://github.com/inclusionAI/Duo/tree/inference/sglang-omni-duo" target="_blank" rel="noopener">SGLang-Omni</a></p><p><strong>Duo v1</strong> is a Reciprocal World Model that treats intelligence and physical reality as equally fundamental to a world. It continuously perceives audiovisual inputs while responding in real time, enabling spontaneous conversations and interruptions. This <strong>preview release</strong> currently supports basic audiovisual conversation, with an updated version coming soon. The <code>main</code> branch provides an offline pipeline for research, while the <a href="https://github.com/inclusionAI/Duo/tree/inference/vllm-omni-duo" target="_blank" rel="noopener"><code>inference/vllm-omni-duo</code></a> and <a href="https://github.com/inclusionAI/Duo/tree/inference/sglang-omni-duo" target="_blank" rel="noopener"><code>inference/sglang-omni-duo</code></a> branches provide accelerated online real-time streaming pipelines.</p><h2 id="news">🔥 News</h2><ul><li><code>2026/11/13</code>: Publish the <a href="https://arxiv.org/abs/2611.15131" target="_blank" rel="noopener">Duo paper on arXiv</a>, introducing the Reciprocal World Model and our first implementation for full-duplex audiovisual interaction.</li><li><code>2026/11/13</code>: Release the <a href="https://github.com/inclusionAI/Duo/tree/inference/vllm-omni-duo" target="_blank" rel="noopener">vLLM-Omni</a> (Recommended) and <a href="https://github.com/inclusionAI/Duo/tree/inference/sglang-omni-duo" target="_blank" rel="noopener">SGLang-Omni</a> streaming pipelines for accelerated, online full-duplex deployment.</li><li><code>2026/11/13</code>: Release <strong>Duo v1</strong> with <a href="https://huggingface.co/inclusionAI/Duo-1.0-causal-base" target="_blank" rel="noopener">Duo-1.0 causal</a>, <a href="https://huggingface.co/inclusionAI/Duo-1.0-distill" target="_blank" rel="noopener">distilled</a>, <a href="https://huggingface.co/inclusionAI/Duo-1.0-distill-quant" target="_blank" rel="noopener">quantized</a>, and <a href="https://huggingface.co/inclusionAI/Duo-1.2-causal-base" target="_blank" rel="noopener">Duo-1.2 causal</a> model weights, plus <a href="https://github.com/inclusionAI/Duo/tree/main" target="_blank" rel="noopener">offline inference code</a> for research.</li></ul><h2 id="architecture">✨ Architecture</h2><p><img src="./assets/duo-architecture.png" alt="Duo v1 architecture with Intent and Realization modules"></p><p><strong>Duo introduces three key technical designs:</strong></p><ul><li>Leveraging autoregressive modeling for continuous interaction reasoning and participation decisions, rather than restricting it to instruction understanding for diffusion models. </li><li>Constructing chunk-specific conditions and synchronizing tokens across Intent and Realization on a unified timeline. Module-specific attention masks enforce causal dependencies both within and across chunks, preventing access to future inputs.</li><li>Mitigating distribution shift in both modules through dual rollout distillation, training on autoregressively generated Intent tokens and synthesized audiovisual histories from Realization.</li></ul><p>Duo v1 is a preview release for researchers. In the offline pipeline below, user video and ASR text pass through Intent, which guides Realization via intent states. Duo v2 is coming soon and will enable visual interaction by conditioning Realization directly on user audio and video.</p><pre><div class="code-lang">text</div><code>completed user recording
+    │
+    ├─ Qwen3-ASR + forced alignment ─ user video/text chunks
+    │                                      │
+    └──────────────────────────────────── Intent
+                                           │ intent states
+                                           ▼
+                                      Realization
+                                           │ assistant media latents
+                                           ▼
+                                  streaming media codecs
+                                           │
+                                           ▼
+                                  browser playback and API</code></pre><p>See <a href="https://github.com/inclusionAI/Duo/blob/main/docs/architecture.md">Architecture</a> for the causal visibility and clean commitment contract.</p><h2 id="model-releases">📦 Model Releases</h2><div class="table-wrap"><table><thead><tr><th>Version</th><th>Causal base</th><th>Distilled</th><th>Quantized</th><th>Features / Notes</th></tr></thead><tbody><tr><td>v1.0</td><td><a href="https://huggingface.co/inclusionAI/Duo-1.0-causal-base" target="_blank" rel="noopener">Duo-1.0-causal-base</a></td><td><a href="https://huggingface.co/inclusionAI/Duo-1.0-distill" target="_blank" rel="noopener">Duo-1.0-distill</a></td><td><a href="https://huggingface.co/inclusionAI/Duo-1.0-distill-quant" target="_blank" rel="noopener">Duo-1.0-distill-quant</a></td><td>Basic full-duplex realtime audio-visual conversation.</td></tr><tr><td>v1.2</td><td><a href="https://huggingface.co/inclusionAI/Duo-1.2-causal-base" target="_blank" rel="noopener">Duo-1.2-causal-base</a></td><td>Coming soon</td><td>Coming soon</td><td>Quality improvements.</td></tr><tr><td>v2.0</td><td>Coming soon</td><td>Coming soon</td><td>Coming soon</td><td>Visual interaction.</td></tr></tbody></table></div><h2 id="requirements">🛠️ Requirements</h2><ul><li>Linux and Python 3.10 or newer</li><li>FFmpeg and FFprobe on <code>PATH</code></li><li>CUDA GPUs x2. the default offline configuration assigns one to Intent/codecs and one to Realization</li><li>enough GPU memory for the selected released checkpoints</li><li>The reference offline deployment uses separate model and speech environments because <code>qwen-asr</code> pins its own compatible Transformers version.</li></ul><h2 id="installation">🚀 Installation</h2><p>Clone the repository and create the model environment:</p><pre><div class="code-lang">bash</div><code>git clone https://github.com/inclusionAI/Duo.git
+cd Duo
+python -m venv .venv-model
+source .venv-model/bin/activate
+pip install --upgrade pip
+# Install the PyTorch, TorchAudio, and TorchVision wheels matching your CUDA driver.
+pip install -e &#x27;.[realization]&#x27;
+deactivate</code></pre><p>Create the speech environment:</p><pre><div class="code-lang">bash</div><code>python -m venv .venv-speech
+source .venv-speech/bin/activate
+pip install --upgrade pip
+# Install the PyTorch wheel matching your CUDA driver.
+pip install -e &#x27;.[speech]&#x27;
+deactivate</code></pre><p>The CUDA build tag matters in addition to the package version. Install PyTorch from the index matching the host driver before the editable install. Pip will keep a compatible already-installed build. Optional optimized attention kernels can be installed for the target GPU. <code>sdpa</code> is the portable default.</p><h2 id="download-checkpoints">🤗 Download Checkpoints</h2><p>Download the complete <a href="https://huggingface.co/inclusionAI/Duo-1.2-causal-base" target="_blank" rel="noopener">Duo-1.2-causal-base</a> bundle. It already contains every model needed by offline inference, including speech recognition and forced alignment:</p><pre><div class="code-lang">bash</div><code>hf download inclusionAI/Duo-1.2-causal-base --local-dir weights</code></pre><p>To run the 1.0 distilled or quantized Realization, first download the 1.0 causal bundle and then overlay the selected Realization weights onto the same directory:</p><pre><div class="code-lang">bash</div><code>hf download inclusionAI/Duo-1.0-causal-base --local-dir weights
+hf download inclusionAI/Duo-1.0-distill --local-dir weights
+# Or: hf download inclusionAI/Duo-1.0-distill-quant --local-dir weights</code></pre><p>To store the bundle elsewhere, change <code>--local-dir</code> and update the model paths in <code>configs/inference.json</code>. The complete directory layout is:</p><pre><div class="code-lang">text</div><code>weights/
+├── realization/
+│   ├── complete.json
+│   ├── dcp/
+│   │   ├── .metadata
+│   │   └── *.distcp
+│   └── backbone/                 # when referenced by complete.json
+├── intent/                       # base Intent processor and model
+├── intent_adapter/               # Intent tokenizer and adapter
+│   └── protocol_manifest.json
+├── codec/
+│   ├── video_vae/model.safetensors
+│   └── audio_vae/diffusion_pytorch_model.safetensors
+└── speech/
+    ├── recognizer/
+    └── forced-aligner/</code></pre><p>The runtime reads every weight locally and does not download models at startup. Keep <code>realization_family</code> set to <code>auto</code>; the manifest selects <code>student</code> for causal checkpoints and <code>realization</code> for distilled checkpoints. Release manifests also select the validated sampler defaults: 50 Euler steps with flow shift 1.0 for causal-base, and 4 Euler steps with flow shift 5.0 for distilled models. The quantized release is dequantized by the portable offline runtime; optimized FP8 execution is provided by the dedicated serving branches.</p><h2 id="run-the-offline-demo">🎮 Run the Offline Demo</h2><p>Copy and edit the example configuration:</p><pre><div class="code-lang">bash</div><code>cp configs/inference.example.json configs/inference.json</code></pre><p>Set the three Python executables in <code>configs/inference.json</code>. A typical setup is:</p><pre><div class="code-lang">json</div><code>{
+  &quot;executables&quot;: {
+    &quot;realization_python&quot;: &quot;.venv-model/bin/python&quot;,
+    &quot;intent_python&quot;: &quot;.venv-model/bin/python&quot;,
+    &quot;speech_python&quot;: &quot;.venv-speech/bin/python&quot;,
+    &quot;ffmpeg&quot;: &quot;ffmpeg&quot;,
+    &quot;ffprobe&quot;: &quot;ffprobe&quot;
+  }
+}</code></pre><p>Set the local model directories in the same file. Absolute paths are accepted:</p><pre><div class="code-lang">json</div><code>{
+  &quot;weights&quot;: {
+    &quot;realization&quot;: &quot;/models/duo/realization&quot;,
+    &quot;realization_family&quot;: &quot;auto&quot;,
+    &quot;intent&quot;: &quot;/models/duo/intent&quot;,
+    &quot;intent_adapter&quot;: &quot;/models/duo/intent_adapter&quot;,
+    &quot;intent_protocol&quot;: &quot;/models/duo/intent_adapter/protocol_manifest.json&quot;,
+    &quot;codec&quot;: &quot;/models/duo/codec&quot;,
+    &quot;speech_recognizer&quot;: &quot;/models/speech/recognizer&quot;,
+    &quot;forced_aligner&quot;: &quot;/models/speech/forced-aligner&quot;
+  }
+}</code></pre><p>Launch the demo with your configuration:</p><pre><div class="code-lang">bash</div><code>.venv-model/bin/python run_demo.py --config configs/inference.json --port 4173</code></pre><p>Open &lt;http://127.0.0.1:4173/video/index.html&gt;, then record or upload an MP4/WebM video to generate and play Duo's audiovisual response. If you deploy behind a reverse proxy, set <code>DUO_PUBLIC_URL</code> to the public demo URL before launch. You can also explore the interface in <a href="https://github.com/inclusionAI/Duo/blob/main/docs/frontend.md">preview mode</a> without loading model weights.</p><p><img src="./assets/console.png" alt="Duo offline demo console showing video recording, playback, and inference progress"></p><h2 id="configuration">⚙️ Configuration</h2><p><code>configs/inference.example.json</code> controls executables, weight locations, GPU assignment, resolution, seed, sampler steps, and the Case catalog. Relative paths are resolved from the repository root. Runtime output is written to the configured runtime directory, which is ignored by Git.</p><h2 id="repository-layout">🗂️ Repository Layout</h2><pre><div class="code-lang">text</div><code>Duo/
+├── configs/               # offline runtime and Case configuration
+├── demo/                  # browser frontend
+├── docs/                  # architecture and frontend integration notes
+├── duo/
+│   ├── data/              # inference sequence materialization
+│   ├── inference_runtime/ # multi-GPU offline execution engine
+│   ├── models/            # Intent, Realization, and codecs
+│   ├── preprocessing/     # ASR, alignment, and user-video preparation
+│   ├── runtime/           # distributed inference/checkpoint utilities
+│   └── serving/           # HTTP API, sessions, media publication
+├── tests/                 # CPU regression and release-safety tests
+└── run_demo.py            # end-to-end offline launcher</code></pre><h2 id="acknowledgements">🤗 Acknowledgements</h2><p>We thank the <a href="https://github.com/MiniMax-AI/MiniMax-H3" target="_blank" rel="noopener">MiniMax H3</a> and <a href="https://github.com/QwenLM" target="_blank" rel="noopener">Qwen</a> teams for their models and research. We also thank the <a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a>, <a href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener">vLLM</a> (especially <a href="https://github.com/vllm-project/vllm-omni" target="_blank" rel="noopener">vLLM-Omni</a>), and <a href="https://github.com/sgl-project/sglang" target="_blank" rel="noopener">SGLang</a> (especially <a href="https://github.com/sgl-project/sglang-omni" target="_blank" rel="noopener">SGLang-Omni</a>) communities.</p><h2 id="citation">📝 Citation</h2><p>If you use Duo in your research, please cite:</p><pre><div class="code-lang">bibtex</div><code>@misc{cao2026duoreciprocalworldmodel,
+  title         = {Duo: A Reciprocal World Model for Full-Duplex Interaction},
+  author        = {Hengyuan Cao and Biao Gong and Guoshan Lu and Qiyuan Zhang and Lin Liu and Yiding Tian and Yilei Jiang and Yuxin Ma and Chengzhang Wu and Kun Chen and Yiqian Xie and Ting Liu and Xin Zheng and Xijun Gu and Tianren Ma and Jiancheng Pan and Chi Zhang and Xuzhe Zheng and Siyi Li and Zhenzhong Lan},
+  year          = {2026},
+  eprint        = {2611.15131},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2611.15131}
+}</code></pre><h2 id="license">📄 License</h2><p>This project is released under the <a href="https://github.com/inclusionAI/Duo/blob/main/LICENSE">Apache 2.0 License</a>. Third-party components retain their original notices and licenses beside their source.</p></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
