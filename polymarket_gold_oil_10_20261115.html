@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket 黄金×石油 10 题 · 因子全景（2026-11-15）</title>
+<style>
+:root{
+  --bg:#f5f3ee; --surface:#ffffff; --surface2:#f0ede6; --fg:#2d2a2e; --fg2:#6b6560; --line:#ddd8cf;
+  --brand:#1f7f96; --ok:#2e7d43; --warn:#b06a1a; --danger:#b0304a; --violet:#5a4fc0;
+  --chip-ok-bg:#e2f0e6; --chip-warn-bg:#f7ecd9; --chip-danger-bg:#f6e0e5; --chip-brand-bg:#dceef3; --chip-violet-bg:#e4e1f5;
+  --shadow:0 2px 10px rgba(45,42,46,.08);
+}
+html[data-theme="dark"]{
+  --bg:#2d2a2e; --surface:#383439; --surface2:#423d44; --fg:#fcfcfa; --fg2:#c1bdb9; --line:#544e57;
+  --brand:#78dce8; --ok:#a9dc76; --warn:#ffd866; --danger:#ff6188; --violet:#ab9df2;
+  --chip-ok-bg:rgba(169,220,118,.14); --chip-warn-bg:rgba(255,216,102,.14); --chip-danger-bg:rgba(255,97,136,.14);
+  --chip-brand-bg:rgba(120,220,232,.14); --chip-violet-bg:rgba(171,157,242,.16);
+  --shadow:0 2px 12px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65;font-size:15px}
+code,.mono,table td.num{font-family:"SF Mono",Consolas,monospace}
+.topbar{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topbar h1{font-size:19px;flex:1;min-width:260px}
+.theme-btn{border:1px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px}
+.tabs{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:6px;overflow-x:auto}
+.tabs a{color:var(--fg2);text-decoration:none;padding:9px 16px;border-radius:8px 8px 0 0;font-size:14px;white-space:nowrap;border-bottom:2px solid transparent}
+.tabs a.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h2{font-size:17px;margin-bottom:12px;color:var(--brand)}
+.card h3{font-size:15px;margin:16px 0 8px}
+.tldr{border-left:4px solid var(--brand);background:var(--chip-brand-bg);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:18px;font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:12px;color:var(--fg2)}
+.kpi .val{font-size:22px;font-weight:700;font-family:"SF Mono",Consolas,monospace;margin-top:2px}
+.kpi .sub{font-size:12px;color:var(--fg2);margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th{background:var(--surface2);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);font-size:12.5px}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:var(--surface2)}
+.chip{display:inline-block;border-radius:6px;padding:1px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+.c-ok{background:var(--chip-ok-bg);color:var(--ok)}
+.c-warn{background:var(--chip-warn-bg);color:var(--warn)}
+.c-danger{background:var(--chip-danger-bg);color:var(--danger)}
+.c-brand{background:var(--chip-brand-bg);color:var(--brand)}
+.c-violet{background:var(--chip-violet-bg);color:var(--violet)}
+.pbar{height:16px;border-radius:4px;background:var(--brand);min-width:2px;display:inline-block;vertical-align:middle}
+.qcard{border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0;background:var(--surface)}
+.qcard .qhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.qcard .qtitle{font-size:16px;font-weight:700}
+.qcard .meta{font-size:12.5px;color:var(--fg2)}
+.tagline{font-size:12.5px;color:var(--fg2);margin:6px 0 2px}
+.rulebox{background:var(--surface2);border-radius:10px;padding:12px 16px;margin:10px 0;font-size:13.5px}
+.rulebox b{color:var(--brand)}
+.factor-li{margin:5px 0 5px 0;padding-left:0;list-style:none}
+.factor-li li{padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.factor-li li:last-child{border-bottom:none}
+.small{font-size:12.5px;color:var(--fg2)}
+details{margin:8px 0;background:var(--surface2);border-radius:10px;padding:10px 14px}
+summary{cursor:pointer;font-weight:600;font-size:13.5px}
+.svgwrap{width:100%;overflow-x:auto}
+.footer{color:var(--fg2);font-size:12.5px;text-align:center;margin-top:30px}
+.hero-num{color:var(--brand);font-weight:700}
+a{color:var(--brand)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.brline{display:flex;align-items:center;gap:10px;margin:5px 0;font-size:13px}
+.brline .bname{width:150px;flex-shrink:0;font-family:monospace}
+.brline .bval{width:52px;text-align:right;font-family:monospace;font-weight:700}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--fg2);margin:6px 0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>Polymarket 黄金 × 石油 · 10 题因子全景</h1>
+    <span class="small mono">2026-11-15 · 数据实测</span>
+    <button class="theme-btn" id="themeBtn">☀ 浅色</button>
+  </div>
+  <nav class="tabs" id="tabs">
+    <a href="#overview" class="active">总览</a>
+    <a href="#gold">黄金 5 题</a>
+    <a href="#oil">石油 5 题</a>
+    <a href="#factors">因子地图</a>
+    <a href="#method">方法论</a>
+  </nav>
+</div>
+<div class="wrap">
+
+<!-- ================= TAB 1 总览 ================= -->
+<section id="overview">
+  <div class="tldr"><b>TLDR：</b>我们实测拉取了 Polymarket 上黄金 5 题 + 石油 5 题共 10 个头部市场（合计成交量 <span class="hero-num">$24M+</span>），把每道题的结算规则、当前概率分布、以及背后的宏观因子（美联储加息周期、10 月 CPI、央行购金、EIA 库存、OPEC+ 冻产、伊朗制裁、胡塞袭击、委内瑞拉协议）逐一调研到位。2026 年的大背景：黄金从 1 月 $5,600 历史顶回落 30%，石油因伊朗战争溢价后回落——<b>这 10 道题本质都是在问"地缘降温 + 紧缩加深"这条主线还能走多远</b>。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="lab">黄金现货 XAU/USD</div><div class="val">$3,888</div><div class="sub">11-14 实时 · 1 月顶 $5,600，年内 -30%</div></div>
+    <div class="kpi"><div class="lab">WTI 原油（FRED 日线）</div><div class="val">$89.6</div><div class="sub">11-11 · 10 月底曾 $107，回落 $17</div></div>
+    <div class="kpi"><div class="lab">Bitcoin</div><div class="val">$65,124</div><div class="sub">Coinbase 实时 · 加息周期压制风险资产</div></div>
+    <div class="kpi"><div class="lab">Fed 12/9 加息 25bp 概率</div><div class="val">~89%</div><div class="sub">Kalshi 定价 · 当前利率 3.75-4.0%</div></div>
+  </div>
+
+  <div class="card">
+    <h2>2026 年宏观大事时间线（理解 10 道题的钥匙）</h2>
+    <p class="small" style="margin-bottom:8px">这 10 道题全部嵌在 2026 年这一条主线里：<b>地缘危机推高商品 → 鹰派美联储压制 → 通胀反弹 → 年底僵持</b>。看懂时间线，每道题的定价逻辑就通了。</p>
+    <div class="svgwrap" id="timelineSvg"></div>
+    <div class="legend"><span><span class="dot" style="background:#1f9fb8"></span>黄金</span><span><span class="dot" style="background:#d55b2a"></span>石油/地缘</span><span><span class="dot" style="background:#7a6ae0"></span>宏观政策</span></div>
+    <ul class="factor-li">
+      <li><b>1 月 26-27 日</b> 🥇 黄金史上首破 $5,000，随后冲到 <b>$5,600 历史顶</b>（2025 年全年 +64% 后再加速）。驱动：伊朗危机升级的避险买盘 + 央行购金 + 通胀担忧。</li>
+      <li><b>2 月初</b> 📉 特朗普提名 <b>Kevin Warsh 出任美联储主席</b>——市场解读为鹰派转向；叠加交易所上调保证金，黄金见顶崩跌（GC 期货 1-2 月在 $4,700-5,300 之间巨幅震荡，正是已结算市场 G1 的生存环境）。</li>
+      <li><b>3 月</b> 黄金跌至 ~$4,350。ETF 9 个月流出后首次转正。</li>
+      <li><b>6 月 21 日</b> 🛢️ 美国财政部发放 <b>General License X</b>：60 天授权伊朗石油出口（缓和信号）。油价承压。</li>
+      <li><b>7 月 7 日</b> 💥 伊朗在霍尔木兹海峡袭击 3 艘油轮 → 美国当天<b>撤销 GL X</b>（换更窄的 GL X1），7 月中旬美军恢复打击伊朗。油价回升。</li>
+      <li><b>9 月 10-11 日</b> ⚔️ <b>2026 伊朗战争</b>全面升级：沙特东西管道（Petroline）遭来自伊拉克领土的无人机袭击，9/11-9/22 停运。</li>
+      <li><b>10 月底</b> 🛢️ WTI 冲 <b>$107</b>（FRED 日线实测）。EIA 短期能源展望转向：Q3 全球库存每日降 120 万桶。OPEC+ 暂停增产（实际产量仍比战前低 ~500 万桶/日）。</li>
+      <li><b>11 月 4 日</b> 🏦 FOMC 维持利率 3.75-4.0% 但偏鹰（"分裂的美联储选择耐心"）；黄金当日冲 $4,083 后暴跌 $213 至 13 个月低点。WTI 开始回落（战争溢价消退）。</li>
+      <li><b>11 月 9-13 日</b> ⚔️ 胡塞武装<b>再次袭击沙特东西管道与阿美设施</b>（Polymarket"管道遇袭 by 11/30"市场已按 Yes 结算）。WTI 回落至 $89.6。</li>
+      <li><b>11 月 10 日</b> 📊 10 月 CPI 发布：环比 <b>+0.4%</b>（连续第三个月偏热，能源驱动），同比 ~3.3%。市场把 12/9 FOMC 定价为 <b>89% 概率加息</b>。11 月 12 日黄金跌破 $4,000 至 $3,906。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>10 道题一览（按成交量排序，全部为头部市场）</h2>
+    <p class="small" style="margin-bottom:8px">选题标准：成交量 / 流动性在各自品类居前，避免长尾。黄色=当前可交易；蓝色=已结算，作复盘案例。</p>
+    <table id="overviewTable"></table>
+  </div>
+
+  <div class="card">
+    <h2>先补 6 个基础概念（金融小白版，后面反复用到）</h2>
+    <details><summary>① Polymarket 的"概率"是怎么来的？</summary>
+      <p style="margin-top:6px">Polymarket 是预测市场：每道 Yes/No 题里，你可以花 $0.xx 买一份"Yes 份额"，事件发生每份赔 $1，不发生赔 $0。因为任何人都能买卖，份额的市场成交价会自动逼近"全体交易者认为的事件概率"——价格 $0.265 ≈ 市场认为 26.5% 概率发生。<b>所以我们下面说的 p=0.265 既是市场价，也是市场隐含概率。</b>想赚差价，本质上是要证明"我的概率估计比市场准"。</p></details>
+    <details><summary>② 什么是 bracket（区间）市场？</summary>
+      <p style="margin-top:6px">"鸡蛋价格落在 $2.30-2.40？""WTI 11 月底前涨破 $90？"这类题把一个连续变量（价格）切成一段段区间，每段是一个子市场。全部区间的概率加起来应≈100%（现实中常有偏差，这个偏差本身就是套利线索）。看一道题时，先看<b>概率最高的区间在哪</b>——那就是市场的"主判断"。</p></details>
+    <details><summary>③ "hit"（触达）型结算：时间越长，概率越高</summary>
+      <p style="margin-top:6px">黄金 GC 12 月市场的规则是："从现在到 12 月最后一个交易日，<b>任意一天</b>结算价 ≥ 目标价即 Yes"。这叫 ever-touch（曾经触达）。关键推论：时间窗口越长，触达概率越高——哪怕现价离目标很远，只要还有 6 周，一次大反弹就可能触达。所以 G2 里"↑$5,000"还有 4.4% 不是说金价能涨 25%，而是说"6 周内某天冲一下"的概率。</p></details>
+    <details><summary>④ GC 期货 vs XAU 现货：差在哪？</summary>
+      <p style="margin-top:6px"><b>XAU/USD</b> 是伦敦现货金（立刻交割的价格），<b>GC</b> 是 CME 黄金期货（约定未来月份交割）。期货价 ≈ 现货 + 持有成本（利息-租借率），通常比现货高 1-2%。两套市场用不同基准结算：G2/G1 看 CME 期货结算价，G3 看现货。差价（基差）平时稳定，紧缩时期会波动，是精细分析时的额外变量。</p></details>
+    <details><summary>⑤ WTI 是什么？$147.27 这个数为什么神圣？</summary>
+      <p style="margin-top:6px"><b>WTI（West Texas Intermediate）</b>是美国基准原油，在 NYMEX/CME 交易，代码 CL。<b>$147.27 是 2008 年 7 月 11 日创下的历史盘中最高价</b>——17 年无人触及。O1 题问的就是"CL 期货日内高点何时再破 $147.27"。当前 $89.6，差 64%。历史上只有一次接近：2022 年 3 月俄乌开战冲到 $130。要破纪录，需要比 2022 年更极端的供给中断（霍尔木兹实质关闭级别）。</p></details>
+    <details><summary>⑥ CPI 为什么是所有题的总开关？</summary>
+      <p style="margin-top:6px">CPI（消费者价格指数）是美联储决策的核心输入：通胀热 → 加息 → 实际利率升 → 压黄金（无利息资产）和 BTC，也压原油需求预期。10 月 CPI 环比 +0.4% 偏热 → 12 月加息概率 89% → 这解释了为什么黄金题的下行区间（↓$3,500 p=20%）比上行区间（↑$5,000 p=4.4%）定价高。<b>12 月 9 日 FOMC 和 12 月 10 日 11 月 CPI 是剩余窗口里最大的两个宏观事件。</b></p></details>
+  </div>
+</section>
+
+<!-- ================= TAB 2 黄金 ================= -->
+<section id="gold" style="display:none">
+  <div class="tldr"><b>TLDR：</b>黄金 5 题覆盖三类结构：<b>阈值触达型</b>（G1 复盘、G2/G3 在售）、<b>资产对比型</b>（G4/G5）。当前宏观组合（12 月加息 89% + 央行购金托底 + ETF 回流）把金价锁在 $3,700-4,100 箱体里；市场的定价与这一致——<b>争议最大、潜在edge最大的题是 G2 的"年底前跌破 $3,500"（市场只给 20%）</b>，它押注的是"紧缩加深 + 避险彻底退潮"的尾部情景。</div>
+  <div id="goldCards"></div>
+  <div class="card">
+    <h2>黄金 5 题的因子侧重对照</h2>
+    <table>
+      <tr><th>题</th><th>主导因子</th><th>次要因子</th><th>数据源</th></tr>
+      <tr><td>G1 GC 2 月（复盘）</td><td>避险情绪拐点、Fed 主席人选</td><td>交易所保证金规则</td><td>历史新闻 + CME</td></tr>
+      <tr><td>G2 GC 12 月</td><td>12/9 FOMC、实际利率</td><td>央行购金、ETF 流</td><td>CME 结算价、CME FedWatch、WGC</td></tr>
+      <tr><td>G3 XAU 11 月</td><td>月内宏观数据节奏</td><td>美元指数（121.5 高位）</td><td>FRED DTWEXBGS、经济日历</td></tr>
+      <tr><td>G4 三资产对比</td><td>风险偏好（AI 财报季）</td><td>三者 YTD 差距已很大（SPX 领先）</td><td>Yahoo/Coinbase</td></tr>
+      <tr><td>G5 BTC vs 黄金</td><td>流动性敏感度（BTC β 更高）</td><td>crypto 特有资金流</td><td>Coinbase、Glassnode</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ================= TAB 3 石油 ================= -->
+<section id="oil" style="display:none">
+  <div class="tldr"><b>TLDR：</b>石油 5 题的宏观主线是"<b>战争溢价正在消退，但供给脆弱性还在</b>"：WTI 从 10 月底 $107 回落到 $89.6（跌 17%），OPEC+ 年内冻结增产、实际产量仍比战前低 500 万桶/日。市场认为：11 月 WTI 守住 $90 概率 78.5%、年底前原油破历史高点仅 4.5%、沙特管道 12 月底前再遭袭 72%、伊朗豁免恢复 20%、委内瑞拉年底冲 120 万桶/日 22%。<b>石油题的 edge 主要藏在"地缘节奏"里——胡塞袭击频率与停火新闻是日级信号。</b></div>
+  <div class="card">
+    <h2>WTI 近三周真实日线（FRED DCOILWTICO 实测数据）</h2>
+    <div class="svgwrap" id="wtiSvg"></div>
+    <p class="small">解读：10/27-10/30 在 $103-108 高位（战争溢价顶点）→ 11/4 单日暴跌 $14 至 $91.7（溢价快速出清）→ 现于 $89-94 磨底。这正是 O2 题的定价背景：↑$90 p=78.5%（现价就在线上）、↑$100 p=23%（需要地缘再升级）、↓$80 p=38%（需要缓和落地+库存累积）。</p>
+  </div>
+  <div id="oilCards"></div>
+</section>
+
+<!-- ================= TAB 4 因子地图 ================= -->
+<section id="factors" style="display:none">
+  <div class="tldr"><b>TLDR：</b>黄金和石油共享三个全局因子（美元、实际利率、地缘），又各有专属因子（黄金：央行购金/ETF；石油：库存/OPEC 配额/制裁）。这张表给每个因子标注：<b>当前读数 → 利多/利空方向 → 去哪看数据 → 多久更新</b>。做日级跟踪时按更新频率排日程：周三 EIA 库存、FOMC 日、CPI 日是三个固定"波动窗口"。</div>
+  <div class="card">
+    <h2>黄金因子板（7 因子）</h2>
+    <table>
+      <tr><th>因子</th><th>当前读数（11 月中）</th><th>对金价方向</th><th>传导逻辑（一句话）</th><th>数据源 · 频率</th></tr>
+      <tr><td><b>实际利率</b>（最重要）</td><td>Fed 3.75-4.0%，12 月加息概率 ~89%</td><td><span class="chip c-danger">利空</span></td><td>黄金无利息，实际利率（名义利率-通胀）越高，持金机会成本越大</td><td>CME FedWatch · 日</td></tr>
+      <tr><td><b>通胀 CPI</b></td><td>10 月环比 +0.4%，同比 ~3.3%，连续 3 个月偏热</td><td><span class="chip c-ok">利多</span>（抗通胀属性）<br><span class="chip c-danger">间接利空</span>（触发加息）</td><td>高通胀本身利多黄金，但若高到逼美联储加息，净效应转空——当前正处这个悖论里</td><td>BLS · 月（每月 10 日前后）</td></tr>
+      <tr><td><b>美元指数</b></td><td>DTWEXBGS ~121.5，强势区间</td><td><span class="chip c-danger">利空</span></td><td>黄金以美元计价，美元涨则非美买家成本上升</td><td>FRED DTWEXBGS · 日</td></tr>
+      <tr><td><b>央行购金</b></td><td>Q3 购 321 吨（同比+6%），9 月 61 吨创年内新高，高盛预计 ~60 吨/月</td><td><span class="chip c-ok">利多</span>（最坚实的底部支撑）</td><td>新兴市场央行去美元化配置，买盘对价格不敏感，托住每次暴跌</td><td>WGC Goldhub · 月</td></tr>
+      <tr><td><b>黄金 ETF 流</b></td><td>10 月持仓 +19 吨至 4,275 吨，但 AUM 因价格跌 6% 缩至 $5,420 亿</td><td><span class="chip c-warn">中性偏多</span></td><td>西方投资盘的代理变量：价格跌但吨数增，说明逢低买盘存在</td><td>WGC · 月</td></tr>
+      <tr><td><b>地缘避险</b></td><td>伊朗战争余温、胡塞持续袭扰沙特</td><td><span class="chip c-ok">利多</span>（但在降温）</td><td>战争升级→避险买盘；停火信号→溢价出清（11 月正在发生）</td><td>新闻流 · 日</td></tr>
+      <tr><td><b>矿产供给</b></td><td>2026 年矿产量预期 -8.4%</td><td><span class="chip c-ok">弱利多</span></td><td>供给收缩对价格影响慢，是背景变量而非驱动</td><td>行业报告 · 季</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>石油因子板（7 因子）</h2>
+    <table>
+      <tr><th>因子</th><th>当前读数（11 月中）</th><th>对油价方向</th><th>传导逻辑</th><th>数据源 · 频率</th></tr>
+      <tr><td><b>EIA 库存</b></td><td>Q3 全球去库 120 万桶/日；机构预警后期转向累库</td><td><span class="chip c-warn">两看</span></td><td>库存降=供不应求=利多；每周三 10:30 ET 发布，是日内波动最大源头</td><td>EIA 周报 · 周三</td></tr>
+      <tr><td><b>OPEC+ 配额</b></td><td>11 月、12 月冻结增产，年内不再加</td><td><span class="chip c-ok">利多</span></td><td>战前产能尚有 ~500 万桶/日未释放，冻结=人为收紧；若突然宣布增产则急跌</td><td>OPEC 公告 · 月会</td></tr>
+      <tr><td><b>伊朗制裁</b></td><td>GL X 已撤销（7/7），恢复豁免概率市场定价 20%</td><td><span class="chip c-danger">利空若恢复</span></td><td>伊朗 ~200 万桶/日出口能力；豁免恢复=供给回流=油价下行冲击</td><td>OFAC 公告 · 事件</td></tr>
+      <tr><td><b>霍尔木兹/胡塞</b></td><td>9 月沙特管道遭袭停运 11 天；11 月胡塞再袭</td><td><span class="chip c-ok">利多</span>（风险溢价 ~$15-18）</td><td>全球 ~20% 液体贸易经此海峡；每次袭击刷新风险溢价，每次缓和则出清</td><td>新闻流/Kpler · 日</td></tr>
+      <tr><td><b>委内瑞拉恢复</b></td><td>产量 ~1.0-1.15M bpd；美委 25 年能源协议瞄准 1.5M+</td><td><span class="chip c-danger">利空若加速</span></td><td>重油缺口补充者；协议落地节奏决定供给增量</td><td>OPEC MOMR · 月</td></tr>
+      <tr><td><b>美元</b></td><td>同黄金（~121.5 强势）</td><td><span class="chip c-danger">利空</span></td><td>原油全球以美元计价，强美元直接压油价</td><td>FRED · 日</td></tr>
+      <tr><td><b>需求季节性</b></td><td>冬季取暖季（12-2 月）为年内需求峰</td><td><span class="chip c-ok">温和利多</span></td><td>取暖油需求叠加，但 2026 年高价格本身在抑制需求</td><td>EIA STEO · 月</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>两个品类的因子重叠与差异</h2>
+    <div class="grid2">
+      <div>
+        <h3>共享的 3 个全局因子</h3>
+        <ul class="factor-li">
+          <li><b>美元</b>：黄金原油都与美元负相关，美元一涨双双承压（11 月正发生）</li>
+          <li><b>实际利率/美联储</b>：加息压一切非生息与远期商品</li>
+          <li><b>中东地缘</b>：黄金吃避险、石油吃供给中断，但事件同源（伊朗）</li>
+        </ul>
+        <p class="small">⇒ 实操含义：FOMC、CPI、停火新闻会同时打两类题，做组合时注意不要重复暴露。</p>
+      </div>
+      <div>
+        <h3>各自专属的驱动</h3>
+        <ul class="factor-li">
+          <li><b>黄金独有</b>：央行购金（最刚性买盘）、ETF 资金流、实际利率敏感度最高</li>
+          <li><b>石油独有</b>：EIA 周度库存（节奏因子）、OPEC+ 配额政治、制裁/豁免的行政事件、季节数据流。每题卡片的"怎么分析"小节给出具体的因子→判断路径。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TAB 5 方法论 ================= -->
+<section id="method" style="display:none">
+  <div class="tldr"><b>TLDR：</b>把因子变成钱的路径是四步：<b>基线概率 → 因子调整 → 对比市场价 → 只在下注 edge 足够大时出手</b>。本页给出完整推导框架，并对 10 题各给出我们的初始观点（标注置信度），下一步是把这套流程自动化成日级管线（因子抓取 → LLM 合成概率 → paper trade 验证校准）。</div>
+  <div class="card">
+    <h2>四步法：从因子到下单</h2>
+    <table>
+      <tr><th>步骤</th><th>做什么</th><th>本题库中的例子</th></tr>
+      <tr><td><b>1. 基线</b></td><td>用历史频率或纯统计（如波动率×时间）算一个"无观点"概率</td><td>WTI 月内 ever-touch ↑$100：按近月实现波动率（~3.5%/日），21 个交易日内最大反弹幅度中位数约 +12% → 基线 ~18%</td></tr>
+      <tr><td><b>2. 因子调整</b></td><td>把当前因子读数叠加到基线上（每个因子给一个方向偏移）</td><td>胡塞仍在袭击（+风险溢价）、OPEC 冻结（+底部支撑）→ 上调到 ~22%；若停火协议落地则下调到 ~10%</td></tr>
+      <tr><td><b>3. 对比市场</b></td><td>我们概率 - 市场概率 = edge（正=买 Yes 值得）</td><td>市场 ↑$100 p=23% vs 我们 22% → edge≈0，不下注</td></tr>
+      <tr><td><b>4. 出手纪律</b></td><td>只在 |edge| > 手续费+滑点+模型误差（约 5-8 个点）时交易，仓位与 edge 成比例</td><td>G2 ↓$3,500：市场 20% vs 我们模型 12-15% → 市场高估 5-8 点 → 可小仓买 No</td></tr>
+    </table>
+    <p class="small">⚠️ 校准是生命线：每笔判断都要记录"我当时给的概率"，结算后算 Brier 分数。概率估计不准的因子应降权。</p>
+  </div>
+  <div class="card">
+    <h2>10 题初始观点（2026-11-15 快照，非投资建议）</h2>
+    <p class="small" style="margin-bottom:8px">置信度：★★★ = 因子清晰可直接跟踪；★★ = 依赖事件流，需日级跟踪；★ = 纯尾部/套利空间有限。</p>
+    <table>
+      <tr><th>题</th><th>市场价</th><th>我们初始观点</th><th>置信度</th><th>一句话理由</th></tr>
+      <tr><td>G2 GC ↓$3,500（年底前）</td><td>20%</td><td>12-15%，<b>买 No 有弱 edge</b></td><td>★★</td><td>央行购金 60t/月托底 + 3500 需要"加息落地+避险退潮+技术破位"三重共振，6 周内完成概率不高</td></tr>
+      <tr><td>G2 GC ↑$5,000（年底前）</td><td>4.4%</td><td>3-5%，不下注</td><td>★</td><td>需要 12 月加息落空 + 地缘再升级双击，尾部情景定价基本合理</td></tr>
+      <tr><td>G3 XAU 11 月 ↓$3,800</td><td>74%</td><td>75-82%，<b>买 Yes 弱 edge</b></td><td>★★★</td><td>现价 $3,888 距 3800 仅 2.3%，剩 2 周窗口 + 11/26 假期流动性薄 + 加息预期发酵；月内 3,832 已在 11/12 触及附近水平</td></tr>
+      <tr><td>G4 SPX 赢 2026</td><td>91.5%</td><td>90%+，不下注</td><td>★</td><td>黄金 -30%、BTC -35% vs SPX +8~10%，剩 6 周翻盘需要极端行情，定价合理</td></tr>
+      <tr><td>G5 BTC 跑赢黄金</td><td>26.5%</td><td>30-40%，<b>市场可能低估 BTC</b></td><td>★★</td><td>剩余窗口若风险偏好回暖，BTC β>1 弹性大于黄金；但需 crypto 无新暴雷，edge 不厚</td></tr>
+      <tr><td>O1 ATH $147.27 by 12/31</td><td>4.5%</td><td>2-4%，<b>买 No</b></td><td>★★★</td><td>需油价 6 周内 +65%，史上无先例；除非霍尔木兹实质关闭</td></tr>
+      <tr><td>O2 WTI 11 月 ↑$90</td><td>78.5%</td><td>72-78%，不下注</td><td>★★★</td><td>现价 $89.6 就在线下，但缓和叙事（11 月溢价出清 $17）与 $80 下方库存累积风险对冲</td></tr>
+      <tr><td>O3 沙特管道再袭 by 12/31</td><td>72%</td><td>55-70%，<b>买 No 弱 edge</b></td><td>★★</td><td>9 月、11 月已两次遇袭说明威胁真实；但 12 月若战争降级谈判启动，袭击频率或降；72% 已隐含"必然再袭"，略满</td></tr>
+      <tr><td>O4 伊朗豁免恢复 by 12/31</td><td>20%</td><td>10-18%，<b>买 No 弱 edge</b></td><td>★★</td><td>恢复需要霍尔木兹安全 + 谈判突破，7 月袭击后信任崩塌，5.5 周内完成行政流程偏紧；但 Trump 交易风格不可预测，别重仓</td></tr>
+      <tr><td>O5 委内瑞拉 1.2M bpd</td><td>22%</td><td>25-35%，<b>买 Yes 弱 edge</b></td><td>★★</td><td>8 月已 1.145M，距 1.2M 仅 +5%；美委协议推进 + 西方公司回归是明确趋势；OPEC MOMR 口径的月度确认是唯一风险</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>下一步（自动化管线设计）</h2>
+    <ul class="factor-li">
+      <li><b>step1</b> 日级因子抓取：FRED（WTI/美元）、CME FedWatch（加息概率）、EIA 周三库存、WGC 月度、新闻流（胡塞/伊朗/OPEC 关键词）→ 全部落 JSON</li>
+      <li><b>step2</b> LLM 合成概率：把因子表 + 每题结算规则喂给模型，输出 10 题概率 + 理由，与市场价对比出 edge 表</li>
+      <li><b>step3</b> paper trade：只交易 |edge|>6 点的题，固定仓位规则（Kelly 1/4），逐日记录决策快照</li>
+      <li><b>step4</b> 结算回灌：市场结算后算 Brier/校准曲线，按因子归因，迭代权重</li>
+      <li><b>风险控制</b>：单一题最大仓位上限、事件题（O3/O4）只做小仓对冲不做主策略、流动性 <$50K 的 bracket 不碰</li>
+    </ul>
+    <p class="small">数据实测注记：gamma-api / FRED / Coinbase / gold-api 本机直连可达；clob 历史概率只留 1-2 周，需尽快抓快照；CME 结算价晚于现货收盘，结算日注意时区。</p>
+  </div>
+</section>
+
+<div class="footer">
+  数据实测时间 2026-11-15 · Polymarket Gamma API + FRED + Coinbase + gold-api + BLS/EIA/WGC/OFAC 公开报道<br>
+  本报告为研究用途，非投资建议 · 预测市场参与受当地法规约束
+</div>
+</div>
+
+<script>
+/* ================= 主题切换 ================= */
+const root=document.documentElement;
+const btn=document.getElementById('themeBtn');
+function applyTheme(t){root.setAttribute('data-theme',t);btn.textContent=t==='dark'?'☀ 浅色':'🌙 深色';localStorage.setItem('pm_gold_oil_theme',t);}
+applyTheme(localStorage.getItem('pm_gold_oil_theme')||'dark');
+btn.onclick=()=>applyTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
+
+/* ================= Tab 切换 + 深链 ================= */
+const secs=['overview','gold','oil','factors','method'];
+function showTab(id){
+  secs.forEach(s=>{document.getElementById(s).style.display=(s===id)?'block':'none';});
+  document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('#tabs a').forEach(a=>a.onclick=e=>{e.preventDefault();location.hash=a.getAttribute('href');});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(secs.includes(h))showTab(h);});
+if(location.hash&&secs.includes(location.hash.slice(1)))showTab(location.hash.slice(1));
+
+/* ================= 10 题数据（2026-11-15 Gamma API 实测） ================= */
+const vol_fmt=v=>v==null?'—':'$'+Math.round(v).toLocaleString();
+const EV=[
+{id:'O1',cat:'oil',title:'Crude Oil all time high by…？',slug:'crude-oil-all-time-high-by',vol:6082073,live:false,liveTxt:'在售',
+ q:'CME 原油期货（CL）日内高点何时突破 $147.27（2008 年历史纪录）？',
+ focus:'December 31 p=4.5%（主看档）/ March 31, 2027 p=14.5%',
+ focusP:[0.045,0.145],
+ brackets:[{n:'by 12/31',p:0.045,v:2856610},{n:'by 3/31/27',p:0.145,v:211775}],
+ rule:'CME CL 期货活跃月份合约的<b>官方日内最高价</b>在指定日期前任意一天 > $147.27 即 Yes。注意看的是 high 不是 settle——盘中尖峰也算。',
+ facts:['$147.27 = 2008/7/11 WTI 盘中历史顶，17 年未破；次高 2022/3 俄乌 $130','现价 $89.6，差 64%——6 周内需 +65%，史上无先例','路径依赖：只有霍尔木兹海峡实质关闭（全球 20% 贸易通道）才可能','by 2027/3 档 p=14.5% 隐含市场认为"未来 4.5 个月内发生"概率是年底前的 3 倍——市场把尾部押在战争再升级的春季窗口'],
+ path:'怎么分析：① 盯霍尔木兹通行量数据与停火谈判（唯一能触发档）；② 对比 by 3/2027 与 by 12/31 的概率差（10 个点）判断"战争再升级"的市场时间预期；③ 此题更适合做空尾部（买 No）收权利金，而非搏黑天鹅。',
+ verdict:{txt:'买 No（12/31 档）',cls:'c-ok'},conf:'★★★'},
+{id:'O2',cat:'oil',title:'WTI 11 月区间：What will WTI hit in November?',slug:'what-price-will-wti-hit-in-november-2026',vol:2421638,live:true,liveTxt:'在售',
+ q:'WTI 11 月内（ever-touch）触达哪个价格档？',
+ focus:'↑$90 p=78.5% / ↑$100 p=23% / ↓$80 p=38%',
+ focusP:[0.785,0.23,0.38],
+ brackets:[{n:'↑$120',p:0.033,v:159927},{n:'↑$115',p:0.037,v:81302},{n:'↑$110',p:0.06,v:105268},{n:'↑$105',p:0.15,v:95405},{n:'↑$100',p:0.23,v:100143},{n:'↑$95',p:0.395,v:46998},{n:'↑$90',p:0.785,v:27012},{n:'↓$80',p:0.38,v:89708},{n:'↓$75',p:0.105,v:70035},{n:'↓$70',p:0.054,v:48452},{n:'↓$65',p:0.035,v:33316},{n:'↓$60',p:0.025,v:43000}],
+ rule:'11 月内任意交易日 WTI 触达档位即 Yes（ever-touch）。上档=涨破，下档=跌破。',
+ facts:['FRED 实测：10/30 峰值 $107.56 → 11/4 暴跌至 $91.73（单日 -$14，溢价出清）→ 11/11 $89.62','现价就在 ↑$90 线下 0.4%——78.5% 的定价几乎=「月内还有一两天站上 90」','↑$100 需要地缘再升级（胡塞成功打击 / 霍尔木兹威胁重提）；↓$80 需要停火落地 + 周三 EIA 连续累库','OPEC+ 已宣布年内冻结增产 → 下方有政策底；但 $89 的绝对价位已在抑制需求'],
+ path:'怎么分析：① 周三 EIA 库存是节奏锚（累库>300 万桶=利空信号）；② 胡塞袭击新闻当日波动 2-4 美元；③ 11 月剩 2 周，↑$90 是"时间换概率"的题——现价贴近线，只要不连续阴跌大概率触达；④ 注意 ↑$90 与 ↓$80 可以同时 Yes（先涨破再跌破），不是互斥对冲。',
+ verdict:{txt:'不下注（↑$90 edge 不厚）',cls:'c-warn'},conf:'★★★'},
+{id:'O3',cat:'oil',title:'沙特东西管道（Petroline）再遭军事打击 by 12/31?',slug:'military-action-against-saudi-oil-pipeline-east-west-byptptpt',vol:631412,live:true,liveTxt:'在售',
+ q:'沙特东西向原油管道（East-West / Petroline）12 月 31 日前是否再遭"合格军事行动"（空袭或地地导弹命中）？',
+ focus:'by 12/31 p=72%（by 11/30 档已因 11 月 9-13 日袭击按 Yes 结算）',
+ focusP:[0.72],
+ brackets:[{n:'by 12/31',p:0.72,v:10},{n:'by 11/30',p:1.0,v:351922,done:true}],
+ rule:'Petroline（连接东部省-红海延布港，运能 ~500 万桶/日）被空袭或弹道导弹/无人机命中即 Yes。11 月 9-13 日胡塞宣称再次袭击管道泵站与阿美设施，11/30 档已触发。',
+ facts:['时间线：9/10-11 来自伊拉克领土的无人机命中管道（战争升级信号）→ 9/11-9/22 停运 11 天（Kpler 数据）→ 11/9-13 胡塞再袭 + 阿利安基地','72% 定价隐含"12 月大概率还有第三次"——市场把胡塞袭击视为常态背景噪音','关键变量：伊朗战争若进入停火谈判，胡塞袭击频率历史上会骤降（2022 年休战期 precedent）','沙特防空拦截率提升会降低"命中合格目标"的概率——规则要求实际命中，拦截不算'],
+ path:'怎么分析：① 跟踪胡塞官方声明频率（周度计数）；② 伊朗-美国谈判新闻是领先指标——每次谈判启动后 1-2 周袭击减少；③ 该题本质是"战争持续期"的代理变量，与 O1/O4 联动；④ 规则细节：泵站被击中=Yes，但无人机被拦截=No，跟踪沙特国防部通报的拦截/命中比。',
+ verdict:{txt:'买 No 弱 edge（我们 55-70%）',cls:'c-ok'},conf:'★★'},
+{id:'O4',cat:'oil',title:'美国重新发放伊朗石油制裁豁免 by 12/31?',slug:'us-reissues-iran-oil-sales-sanction-relief-byptptpt-20260708142359046',vol:580461,live:true,liveTxt:'在售',
+ q:'美国政府是否在 12 月 31 日前重新发放豁免/许可，解除对伊朗石油销售的制裁？',
+ focus:'by 12/31 p=20%',
+ focusP:[0.2],
+ brackets:[{n:'by 12/31',p:0.2,v:146306},{n:'by 11/30',p:0.085,v:10092}],
+ rule:'6/21 财政部发放 General License X（60 天授权伊朗石油销售）→ 7/7 伊朗袭击霍尔木兹 3 艘油轮后当天撤销（改发窄口径 GL X1）。本题为"重新发放宽口径豁免"。需联邦政府层面（OFAC 或国务院）的正式豁免文件。',
+ facts:['背景：伊朗出口能力 ~200 万桶/日，豁免恢复=该供给回流市场=油价重大利空','6/21→7/7 仅维持 16 天：缓和窗口极脆弱，一次袭击就终结','市场 20% 定价的隐含逻辑：Trump 需要油价降温（通胀压力）→ 有动机重回交易；但 7 月后信任崩塌，重启需要霍尔木兹安全 + 至少一轮谈判','12/31 前的行政路径：谈判(2-4 周)→协议框架→OFAC 起草→发放，最快 4-6 周，时间刚好够但不容错'],
+ path:'怎么分析：① 每周检查 OFAC 官网新闻页 + 国务院伊朗特使行程；② 油价本身就是谈判筹码——WTI 跌破 $75 会提升重启豁免的动机（通胀压力缓解反而降低急迫性，两面性）；③ 与 O3 反向相关：豁免谈判启动→胡塞袭击减少→O3 概率下降；④ 用"事件树"定概率：谈判启动(30%)×达成(60%)×月内走完流程(80%)≈15%。',
+ verdict:{txt:'买 No 弱 edge（我们 10-18%）',cls:'c-ok'},conf:'★★'},
+{id:'O5',cat:'oil',title:'委内瑞拉原油产量 2026 年内达 __ 桶/日?',slug:'will-venezuelan-crude-oil-production-reach-barrels-per-day-in-2026',vol:189695,live:true,liveTxt:'在售',
+ q:'委内瑞拉原油产量（OPEC 月报口径）2026 年任一月份达到指定桶数即 Yes',
+ focus:'1.2M p=22% / 1.3M p=13.5%',
+ focusP:[0.22,0.135],
+ brackets:[{n:'≥1.0M',p:1.0,v:39077,done:true},{n:'≥1.1M',p:1.0,v:20561,done:true},{n:'≥1.2M',p:0.22,v:11880},{n:'≥1.3M',p:0.135,v:8294},{n:'≥1.4M',p:0.048,v:20411},{n:'≥1.5M',p:0.016,v:11063},{n:'≥1.7M',p:0.017,v:61361},{n:'≥2.0M',p:0.013,v:17047}],
+ rule:'结算源是 OPEC Monthly Oil Market Report（每月发布上月产量）。2026 年任一月份产量 ≥ 档位即 Yes。已确认 ≥1.0M、≥1.1M 档触发（8 月产量 1.145M bpd，CEIC）。',
+ facts:['产量轨迹：2024 ~0.8M → 2026/5 重上 1.0M（7 年首次）→ 8 月 1.145M，稳定爬坡','关键催化：美委 25 年能源协议 + 西方石油公司（雪佛龙等）回归，美国能源部长 9 月公开表态"产量将在几年内翻倍以上"','距 1.2M 只差 +5%：按当前每月 ~1-2% 的爬坡速度，12 月报告（反映 11 月产量）就有机会','风险点：结算看 OPEC 月报的"官方口径"，与实际出口可能有出入；以及协议执行的政治反复'],
+ path:'怎么分析：① 每月跟踪 OPEC MOMR 委内瑞拉行 + secondary sources 口径差；② 跟踪雪佛龙/Repsol 等公司公告的增产投资；③ 11 月报告（12 月中发布）反映 10 月产量，是最后确认窗口；④ 注意 ever-touch 结构：只要 2026 年任一月达 1.2M 就 Yes，12 月单月冲刺即可。',
+ verdict:{txt:'买 Yes 弱 edge（我们 25-35%）',cls:'c-ok'},conf:'★★'},
+{id:'G1',cat:'gold',title:'【复盘案例】GC 期货 by end of February（已结算）',slug:'what-will-gold-gc-hit-by-end-of-february',vol:9624372,live:false,liveTxt:'已结算 · 复盘',
+ q:'2026 年 2 月底前 GC 期货触达各档位？（黄金品类最大盘市场 $9.6M）',
+ focus:'全部档位已结算：高至 (HIGH) $5,300 = Yes，(HIGH) $6,000 = No',
+ focusP:null,
+ brackets:[{n:'HIGH $5,300',p:1.0,v:64921,done:true},{n:'HIGH $5,200',p:1.0,v:20285,done:true},{n:'HIGH $5,100',p:1.0,v:34695,done:true},{n:'HIGH $5,000',p:1.0,v:33497,done:true},{n:'LOW $4,900',p:1.0,v:467009,done:true},{n:'LOW $4,700',p:1.0,v:708979,done:true},{n:'HIGH $5,500',p:0.0,v:1663009,done:true},{n:'HIGH $6,000',p:0.0,v:769537,done:true}],
+ rule:'CME GC 期货活跃月合约结算价在 2/28 前任意交易日触达档位。2026/1/26 创建、2026/2/28 结束，全部结算完毕。',
+ facts:['它见证顶部：(HIGH) $5,300 Yes 说明 1-2 月间 GC 曾结算价触达 $5,300+（对应现货顶 ~$5,600，1/27 创纪录）','同月 (LOW) $4,700 也 Yes：一个月内高低振幅 >$600（12%+），历史级巨震','崩盘三因子：① Trump 提名 Kevin Warsh 任 Fed 主席（鹰派信号）② CME 上调保证金（杠杆资金被迫减仓）③ 抛物线行情后的获利了结','成交结构：$1.66M 押"触达 5500"全部归零——尾部档吃掉了最大单笔押注'],
+ path:'复盘价值：① 顶部形成时"避险买盘+流动性宽松预期"的组合一旦遇上鹰派人事冲击，崩塌速度极快（2 周回吐 12%）；② 保证金调整是显性预警——CME 公告可跟踪；③ 给 G2 的教训：年内的极端档（↑$6,000 p=2.1%）不是免费彩票，1 月市场也曾给过类似尾部定价。',
+ verdict:{txt:'已结算 · 教训归档',cls:'c-brand'},conf:'—'},
+{id:'G2',cat:'gold',title:'GC 期货 by end of December：年底方向',slug:'what-will-gold-gc-hit-by-end-of-december',vol:2819386,live:true,liveTxt:'在售',
+ q:'12 月底前 GC 期货触达档位？',
+ focus:'↓$3,500 p=20% / ↓$3,000 p=13.6% / ↑$5,000 p=4.4% / ↑$6,000 p=2.1%',
+ focusP:[0.2,0.136,0.044,0.021],
+ brackets:[{n:'↓$2,500',p:0.011,v:3033},{n:'↓$3,000',p:0.136,v:41138},{n:'↓$3,500',p:0.2,v:118859},{n:'↑$5,000',p:0.044,v:429849},{n:'↑$6,000',p:0.021,v:1582440},{n:'↑$7,000',p:0.017,v:252559},{n:'↑$10,000',p:0.009,v:108553}],
+ rule:'CME GC 期货活跃月合约结算价 12 月最后交易日前任意一天触达档位。注意：年内已触达的档（如 ↑$4,500）不在表内——它们已结算 Yes，本表只列未决档。',
+ facts:['当前定价的隐含"箱体"：$3,500-5,000 之间为主体情景（各 80%/95% 不触达）','↓$3,500 p=20% 是全品类争议最大的档——它押注"紧缩加深+避险彻底退潮"：需要 12/9 加息落地 + 实际利率再升 + 央行购金放缓三重共振','多头面：央行购金 9 月 61 吨创年内新高、高盛预计 60 吨/月持续；ETF 10 月 +19 吨逢低买盘存在','空头面：12 月加息概率 ~89%、美元指数 121.5 强势、矿产供给 -8.4% 是慢变量救不了急跌'],
+ path:'怎么分析：① 12/9 FOMC 是分水岭——加息 25bp 落地且点阵图偏鹰 → ↓$3,500 概率上调；② 每月 WGC 月报（12 月初发布 11 月数据）验证央行购金是否维持 60 吨；③ 结构上 ↑$5,000 需要地缘黑天鹅，6 周窗口只有"霍尔木兹升级"一条路；④ 我们模型：↓$3,500 = 12-15%（低于市场 20%），倾向买 No。',
+ verdict:{txt:'买 ↓$3,500 的 No（弱 edge）',cls:'c-ok'},conf:'★★'},
+{id:'G3',cat:'gold',title:'XAU 现货 11 月区间：What will Gold hit in November?',slug:'what-price-will-xauusd-hit-in-november-2026',vol:156424,live:true,liveTxt:'在售',
+ q:'11 月内 XAU/USD 现货触达档位？',
+ focus:'↓$3,800 p=74% / ↑$4,100 p=25% / ↓$3,700 p=40%',
+ focusP:[0.74,0.25,0.4],
+ brackets:[{n:'↑$4,400',p:0.028,v:7740},{n:'↑$4,300',p:0.04,v:11137},{n:'↑$4,200',p:0.145,v:6919},{n:'↑$4,100',p:0.25,v:1141},{n:'↑$4,000',p:0.445,v:727},{n:'↓$3,500',p:0.093,v:18914},{n:'↓$3,600',p:0.175,v:10987},{n:'↓$3,700',p:0.4,v:12570},{n:'↓$3,800',p:0.74,v:13875}],
+ rule:'11 月内现货金触达档位。11 月剩 2 周窗口（至 11/30）。现价 $3,888（11/14）。',
+ facts:['11/12 曾跌破 $4,000 至 $3,906，11/14 现 $3,888——↓$3,800 仅差 2.3%','↑$4,000 p=44.5% 与 ↓$3,800 p=74% 同时高，说明市场预期"先下探再反弹"的双向波动','11 月剩余宏观事件：11/26 感恩节（流动性薄）、月末基金调仓、12/9 FOMC 前的持仓调整','美元 121.5 高位 + 加息预期 = 反弹天花板；央行购金 + ETF 回流 = 下行缓冲'],
+ path:'怎么分析：① ↓$3,800 是"贴地"档：2.3% 距离 × 2 周窗口 × 正常日波动 1.2% → 触达概率自然高，74% 定价合理偏保守；② 我们的边际观点：假期流动性薄 + 加息预期发酵 → 下探概率略高于市场（75-82%）；③ 注意该系列月度换月，12 月市场会是新价格轴；④ 盘子小（$156K），滑点敏感，实操下单限价。',
+ verdict:{txt:'买 ↓$3,800 的 Yes（弱 edge）',cls:'c-ok'},conf:'★★★'},
+{id:'G4',cat:'gold',title:'Bitcoin vs. Gold vs. S&P 500 in 2026',slug:'bitcoin-vs-gold-vs-sp-500-in-2026',vol:1000648,live:true,liveTxt:'在售',
+ q:'三者中谁是 2026 年表现最好（年内涨跌幅 % 排序第一）的资产？',
+ focus:'S&P 500 p=91.5% / Gold p=5.5% / Bitcoin p=3.2%',
+ focusP:[0.915,0.055,0.032],
+ brackets:[{n:'S&P 500',p:0.915,v:221706},{n:'Gold',p:0.055,v:313895},{n:'Bitcoin',p:0.032,v:465047}],
+ rule:'按 2026 年内价格涨跌幅（%）排第一者胜。BTC 用 Binance BTC/USDT 1 分钟 K 线 1/1 与 12/31 收盘对比；黄金用 XAU/USD；SPX 用官方收盘。',
+ facts:['年内表现快照（11 月中）：SPX ~7,550-7,620（年内 +8~10%）、黄金 -30%（5,600→3,888）、BTC $65,124（大幅负收益）','SPX 断层领先：黄金要翻盘需剩余 6 周 +47%（不可能），BTC 需 +50%（不可能）——此题实质已决','唯一技术性悬念：结算细则（12/31 收盘的口径与汇率），对结果无影响','$1M 成交里 46.5 万押 BTC——与 G5 的押注结构一致，crypto 系资金活跃'],
+ path:'怎么分析：① 已是"结算确认"题，无策略空间；② 有价值的是对照组信息：市场愿意给黄金 5.5% 而非 0%——说明有交易者对"SPX 年末崩盘 + 黄金避险反弹"的尾部仍留仓位；③ 与 G5 联动看：黄金 5.5% vs BTC 3.2% 的微小差距 = "避险资产 vs 高 β"的偏好刻度。',
+ verdict:{txt:'不下注（实质已决）',cls:'c-warn'},conf:'★'},
+{id:'G5',cat:'gold',title:'Will Bitcoin outperform Gold in 2026?',slug:'will-bitcoin-outperform-gold-in-2026',vol:489409,live:true,liveTxt:'在售',
+ q:'2026 年内 BTC/USDT 涨跌幅是否高于 XAU/USD？',
+ focus:'Yes p=26.5%（即市场认为黄金 73.5% 概率年内表现更好）',
+ focusP:[0.265],
+ brackets:[{n:'Yes（BTC 赢）',p:0.265,v:489409}],
+ rule:'TradingView 口径：BTC/USDT（Binance）与 XAU/USD 的 2026 年涨跌幅直接比较，BTC 高则 Yes。',
+ facts:['当前两者年内均为深负：黄金 -30%、BTC 约 -35%~-40%（$65k，远低于年初）','差距不大是本题仍有悬念的原因：黄金 $1,712 的年内跌幅 vs BTC 的绝对跌幅谁更大，随行情每日变动','宏观同向性：加息周期里两者都承压（负carry + 流动性收缩），分化点在"避险属性"——危机升级时黄金吸金、BTC 跟跌','历史规律：风险偏好回暖期 BTC β>1 弹性更大；2026 剩余窗口若停火+软着陆叙事走强，BTC 有补涨弹性'],
+ path:'怎么分析：① 把它读成"剩余 6 周风险偏好"的代理：若 12 月加息落地且无人事冲击 → 双双阴跌 → 黄金相对抗跌 → No；若停火 + 风险回暖 → BTC 反弹更猛 → Yes；② 触发器清单：FOMC、CPI、胡塞/伊朗新闻、crypto 监管新闻；③ 我们 30-40% vs 市场 26.5% → 市场可能轻微低估 BTC 的反弹期权价值，但 edge 不厚、不做主仓。',
+ verdict:{txt:'市场可能低估 BTC（不下注）',cls:'c-warn'},conf:'★★'}
+];
+
+/* ================= 总览表 ================= */
+const ovT=document.getElementById('overviewTable');
+ovT.innerHTML='<tr><th>#</th><th>品类</th><th>题</th><th>成交量</th><th>当前核心档位概率</th><th>状态</th></tr>'+
+EV.map((e,i)=>`<tr><td class="mono">${i+1}</td><td><span class="chip ${e.cat==='gold'?'c-warn':'c-brand'}">${e.cat==='gold'?'黄金':'石油'}</span></td>
+<td><b>${e.title.replace(/【复盘案例】/,'')}</b><div class="small mono">${e.slug}</div></td>
+<td class="num">${vol_fmt(e.vol)}</td><td class="small">${e.focus}</td>
+<td><span class="chip ${e.live?'c-ok':'c-violet'}">${e.liveTxt}</span></td></tr>`).join('');
+
+/* ================= 概率条渲染 ================= */
+function brBars(brs){
+  return brs.map(b=>{
+    const p=b.p==null?0:b.p, w=Math.max(1.5,p*100), col=p>=0.5?'#1f9fb8':(p>=0.15?'#d55b2a':'#7a6ae0');
+    return `<div class="brline"><span class="bname">${b.done?'✓ ':''}${b.n}</span>
+      <span style="flex:1;background:var(--surface2);border-radius:4px;height:16px;position:relative;overflow:hidden">
+      <span class="pbar" style="width:${w}%;background:${col};height:100%"></span></span>
+      <span class="bval">${(p*100).toFixed(1)}%</span>
+      <span class="small mono" style="width:80px;text-align:right">${vol_fmt(b.v)}</span></div>`;
+  }).join('');
+}
+
+/* ================= 题目卡片 ================= */
+function qCard(e){
+  const catName=e.cat==='gold'?'黄金':'石油';
+  return `<div class="qcard">
+   <div class="qhead"><span class="qtitle">${e.id} · ${e.title}</span>
+     <span><span class="chip ${e.cat==='gold'?'c-warn':'c-brand'}">${catName}</span> <span class="chip ${e.live?'c-ok':'c-violet'}">${e.liveTxt}</span></span></div>
+   <div class="tagline">${e.q}</div>
+   <div class="meta mono">成交量 ${vol_fmt(e.vol)} · slug: ${e.slug}</div>
+   <h3>结算规则（精讲）</h3><div class="rulebox">${e.rule}</div>
+   <h3>当前概率分布（2026-11-15 实测）</h3>${brBars(e.brackets)}
+   <h3>关键事实与因子</h3><ul class="factor-li">${e.facts.map(f=>`<li>${f}</li>`).join('')}</ul>
+   <h3>${e.live?'怎么分析 → 怎么下注':'复盘价值'}</h3><div class="rulebox">${e.path}</div>
+   <div style="margin-top:10px">初始观点：<span class="chip ${e.verdict.cls}">${e.verdict.txt}</span> <span class="small">置信度 ${e.conf}</span></div>
+  </div>`;
+}
+document.getElementById('goldCards').innerHTML='<div class="card"><h2>为什么按这个顺序讲？</h2><p class="small">G1 是已结算的历史最大盘市场，用它复盘"2026 顶部如何形成与破灭"；G2/G3 是在售的价格题，因子最密集；G4/G5 是资产对比题，读的是风险偏好。每张卡片固定五块：结算规则 → 概率分布 → 关键事实 → 分析路径 → 初始观点。</p></div>'+
+EV.filter(e=>e.cat==='gold').map(qCard).join('');
+document.getElementById('oilCards').innerHTML='<div class="card"><h2>为什么按这个顺序讲？</h2><p class="small">O1 是绝对价格尾部题（历史高点），O2 是月度区间题（节奏最密），O3/O4 是地缘行政事件题，O5 是供给恢复题——四类结构对应四种因子集。石油题的共同锚是每周三的 EIA 库存和伊朗新闻流。</p></div>'+
+EV.filter(e=>e.cat==='oil').map(qCard).join('');
+
+/* ================= 时间线 SVG ================= */
+(function(){
+  const W=1100,H=235,padL=30,padR=20,midY=118;
+  const events=[
+    {m:'1/26',t:'黄金破$5,000→顶$5,600',c:'#1f9fb8',lvl:-1,anch:'middle'},
+    {m:'2/初',t:'Warsh提名→崩盘开启',c:'#7a6ae0',lvl:1,anch:'middle'},
+    {m:'3月',t:'黄金跌至~$4,350',c:'#1f9fb8',lvl:-2,anch:'middle'},
+    {m:'6/21',t:'美发GL X伊朗石油豁免',c:'#d55b2a',lvl:1,anch:'middle'},
+    {m:'7/7',t:'伊朗袭油轮→豁免撤销',c:'#d55b2a',lvl:-1,anch:'middle'},
+    {m:'9/10',t:'伊朗战争升级·沙特管道遇袭',c:'#d55b2a',lvl:1,anch:'middle'},
+    {m:'10/底',t:'WTI峰$107.6',c:'#d55b2a',lvl:-2,anch:'end'},
+    {m:'11/4',t:'FOMC鹰派·金冲$4,083后暴跌',c:'#7a6ae0',lvl:2,anch:'end'},
+    {m:'11/10',t:'CPI偏热·加息预期89%·金破$4,000·胡塞再袭',c:'#7a6ae0',lvl:-1,anch:'end'}
+  ];
+  const DAY={'1':1,'2':32,'3':60,'6':152,'7':182,'9':253,'10':274,'11':305,'12':335};
+  const xs=m=>{const[mn,dd]=m.split('/');const day=(DAY[mn]||1)+(parseFloat(dd)||10);return padL+(day/345)*(W-padL-padR);};
+  const ty=lvl=>lvl<0?(lvl===-2?20:48):(lvl===2?midY+92:midY+52);
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px;width:100%;height:auto">`;
+  s+=`<line x1="${padL}" y1="${midY}" x2="${W-padR}" y2="${midY}" stroke="var(--line)" stroke-width="3"/>`;
+  s+=`<text x="${padL-8}" y="${midY+4}" font-size="11" fill="var(--fg2)" text-anchor="end">2026</text>`;
+  events.forEach(ev=>{
+    const x=xs(ev.m);
+    const tick=ev.lvl<0?midY-16:midY+16;
+    const ext=Math.abs(ev.lvl)===2?30:0;
+    s+=`<line x1="${x}" y1="${midY}" x2="${x}" y2="${ev.lvl<0?tick-ext:tick+ext}" stroke="${ev.c}" stroke-width="1.5"/>`;
+    s+=`<circle cx="${x}" cy="${midY}" r="5" fill="${ev.c}"/>`;
+    const tx=ev.anch==='end'?x-4:(ev.anch==='start'?x+4:x);
+    s+=`<text x="${tx}" y="${ty(ev.lvl)}" font-size="12" font-weight="700" fill="var(--fg)" text-anchor="${ev.anch}"><tspan fill="${ev.c}" font-size="12.5">${ev.m}</tspan>  ${ev.t}</text>`;
+  });
+  s+='</svg>';
+  document.getElementById('timelineSvg').innerHTML=s;
+})();
+
+/* ================= WTI 真实日线 SVG（FRED DCOILWTICO） ================= */
+(function(){
+  const data=[["10/27",103.37],["10/28",106.25],["10/29",105.51],["10/30",107.56],["11/02",100.06],["11/03",99.64],["11/04",91.73],["11/05",94.05],["11/06",94.37],["11/09",90.40],["11/10",89.62],["11/11",89.62]];
+  const W=1000,H=240,pad={l:52,r:16,t:18,b:30};
+  const min=85,max=110;
+  const X=i=>pad.l+(i/(data.length-1))*(W-pad.l-pad.r);
+  const Y=v=>pad.t+(1-(v-min)/(max-min))*(H-pad.t-pad.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px;width:100%;height:auto">`;
+  [85,90,95,100,105,110].forEach(g=>{
+    s+=`<line x1="${pad.l}" y1="${Y(g)}" x2="${W-pad.r}" y2="${Y(g)}" stroke="var(--line)" stroke-width="${g===90?1.5:0.75}" ${g===90?'stroke-dasharray="5,4"':''}/>`;
+    s+=`<text x="${pad.l-6}" y="${Y(g)+4}" font-size="11" fill="var(--fg2)" text-anchor="end">${g}</text>`;
+  });
+  let path='';
+  data.forEach((d,i)=>{path+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(d[1]).toFixed(1);});
+  s+=`<path d="${path}" fill="none" stroke="#d55b2a" stroke-width="2.5"/>`;
+  data.forEach((d,i)=>{
+    s+=`<circle cx="${X(i)}" cy="${Y(d[1])}" r="3.5" fill="#d55b2a"/>`;
+    if(i%2===0||i===data.length-1)s+=`<text x="${X(i)}" y="${H-8}" font-size="10.5" fill="var(--fg2)" text-anchor="middle">${d[0]}</text>`;
+  });
+  const peak=data[3],last=data[data.length-1];
+  s+=`<text x="${X(3)}" y="${Y(peak[1])-10}" font-size="12" font-weight="700" fill="var(--fg)" text-anchor="middle">峰 $${peak[1].toFixed(2)}</text>`;
+  s+=`<text x="${W-pad.r-2}" y="${Y(last[1])-8}" font-size="12" font-weight="700" fill="var(--fg)" text-anchor="end">现 $${last[1].toFixed(2)}</text>`;
+  s+='</svg>';
+  document.getElementById('wtiSvg').innerHTML=s;
+})();
+</script>
+</body>
+</html>
