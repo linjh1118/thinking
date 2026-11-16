@@ -430,9 +430,9 @@ const EV=[
 
 /* ================= 总览表 ================= */
 const ovT=document.getElementById('overviewTable');
-ovT.innerHTML='<tr><th>#</th><th>品类</th><th>题</th><th>成交量</th><th>当前核心档位概率</th><th>状态</th></tr>'+
+ovT.innerHTML='<tr><th>#</th><th>品类</th><th>题（点击标题直达 Polymarket 题目页 ↗）</th><th>成交量</th><th>当前核心档位概率</th><th>状态</th></tr>'+
 EV.map((e,i)=>`<tr><td class="mono">${i+1}</td><td><span class="chip ${e.cat==='gold'?'c-warn':'c-brand'}">${e.cat==='gold'?'黄金':'石油'}</span></td>
-<td><b>${e.title.replace(/【复盘案例】/,'')}</b><div class="small mono">${e.slug}</div></td>
+<td><b><a href="https://polymarket.com/event/${e.slug}" target="_blank" rel="noopener">${e.title.replace(/【复盘案例】/,'')}</a></b><div class="small mono">${e.slug}</div></td>
 <td class="num">${vol_fmt(e.vol)}</td><td class="small">${e.focus}</td>
 <td><span class="chip ${e.live?'c-ok':'c-violet'}">${e.liveTxt}</span></td></tr>`).join('');
 
@@ -453,9 +453,9 @@ function qCard(e){
   const catName=e.cat==='gold'?'黄金':'石油';
   return `<div class="qcard">
    <div class="qhead"><span class="qtitle">${e.id} · ${e.title}</span>
-     <span><span class="chip ${e.cat==='gold'?'c-warn':'c-brand'}">${catName}</span> <span class="chip ${e.live?'c-ok':'c-violet'}">${e.liveTxt}</span></span></div>
+     <span><span class="chip ${e.cat==='gold'?'c-warn':'c-brand'}">${catName}</span> <span class="chip ${e.live?'c-ok':'c-violet'}">${e.liveTxt}</span> <a class="chip c-brand" style="text-decoration:none" href="https://polymarket.com/event/${e.slug}" target="_blank" rel="noopener">↗ Polymarket 题目页</a></span></div>
    <div class="tagline">${e.q}</div>
-   <div class="meta mono">成交量 ${vol_fmt(e.vol)} · slug: ${e.slug}</div>
+   <div class="meta mono">成交量 ${vol_fmt(e.vol)} · slug: ${e.slug} · <a href="https://polymarket.com/event/${e.slug}" target="_blank" rel="noopener">polymarket.com/event/${e.slug}</a></div>
    <h3>📖 这题到底在问什么？（零基础导读）</h3><div class="rulebox" style="border-left:4px solid var(--violet);background:var(--chip-violet-bg)">${e.plain}</div>
    <h3>结算规则原文精讲</h3><div class="rulebox">${e.rule}</div>
    <h3>当前概率分布（2026-11-15 实测，读法见概念③④）</h3>${brBars(e.brackets)}
