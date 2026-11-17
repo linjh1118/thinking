@@ -303,3 +303,12 @@ MCC相对Argon未增通用能力，因此未重复整套critical评估；targete
 
 > [!warning]
 > 官方Hydrogen博客把内部agent honesty evaluation从96.7%改为94%；属于来源数字更正，不是新模型。此前记录的96.7%保留为历史口径，当前博客为94%，不能静默拼到其他评估表，也不能将这次页面修改作为发布日期。模型卡/完整安全报告是否同步及其逐例分母仍待核，本轮未独立复测。
+
+
+## 2026-11-17：Hydrogen安全报告入口补齐
+
+> [!tldr]
+> 本轮官方模型卡新增 Safety and Security Report 的实际PDF链接；这是资料补充，不能以页面更新时间11/16当作新模型训练或首发日。遵照不抓PDF，报告保留链接、未下载或阅读其内容。
+
+[Hydrogen Safety and Security Report · 官方PDF，仅链接未读](https://storage.googleapis.com/deepmind-media/gemini/gemini_4_hydrogen_safety_report.pdf)。
+此前“coming soon/未公开入口”的状态以本次快照更正为“已出现入口、正文未读”；不对未读报告的安全测量、方法或结论作补写。Hydrogen仍保留11/13官方模型发布事件，不新增正代与11/16发布行。
