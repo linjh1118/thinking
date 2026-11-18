@@ -9,7 +9,8 @@ tags: [model-note, base-model, qwen, qwen3.8, multimodal, agentic]
 topic: "13_base_model"
 status: read
 created: 2026-08-27
-updated: 2026-09-01
+updated: 2026-11-18
+html_tabs: true
 ---
 
 # Qwen3.8 Family — Max 级开放权重与长程 Agent
@@ -80,3 +81,13 @@ Qwen3.8 的关键不是再多几个 benchmark 第一，而是把 Agent 的三个
 - [[src/hf_model_card|本地旗舰 Hugging Face 模型卡 MD]]
 - [[src/00_Source_Index|Qwen3.8 官方资料索引]]
 - [[src/06_Qwen3.8-Flash-Next - Hugging Face|Flash-Next 本地模型卡]]
+
+
+## 2026-11-18资料补记：NVIDIA NVFP4-QAD量化变体
+
+![原Qwen3.8-Flash-Next官方架构图；量化资料沿用原family，不代表新架构](src/assets/qwen3.8-flash-next-architecture.png)
+
+> [!tldr]
+> 新观察到NVIDIA的Qwen3.8-Flash-Next-NVFP4-QAD，是原family的量化/短QAD研究变体，不建立Qwen新正代或日级模型发布。原卡保存在src/updates/2026-11-18。
+
+卡声明100次optimizer更新、最大长度16384、global batch512、64卡FSDP2；routed/shared experts为NVFP4，部分GDN/QSA/indexer为MXFP8，视觉与MTP冻结、全部表中评估关闭MTP。51,200是消费sequence数而非互异样本数，长度上限不是精确有效tokens。export28,924位置的logprob一致性，不是与BF16原模型准确率相同。六项分数有升有降，作者明确不支持总体提分结论；Terminal-Bench双方均612/712，差值task-cluster bootstrap区间[-2.95,+3.23]pp，历史timeout/retry/cap账本不全。这里只归档并记录声明，没有全审serving helpers、下载权重或复测。

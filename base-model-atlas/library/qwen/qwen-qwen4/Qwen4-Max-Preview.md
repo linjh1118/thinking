@@ -4,7 +4,7 @@ type: model-note
 html_tabs: true
 status: reading
 created: 2026-11-11
-updated: 2026-11-17
+updated: 2026-11-18
 tags: [model-note, base-model, qwen4]
 ---
 
@@ -36,7 +36,7 @@ tags: [model-note, base-model, qwen4]
 |max_completion_tokens默认|思考262144、非思考131072|
 |支持|流式、并行工具、搜索、前缀补全、JSON Object/Schema、显式/隐式缓存、思考摘要/密文|
 |接口|OpenAI Chat Completions/Responses、Anthropic Messages、DashScope|
-|当前不支持|批量推理、模型调优、自行模型部署|
+|当前不支持|模型调优、自行模型部署；Batch已在本轮文档列为支持|
 
 正式版页面在北京、新加坡、法兰克福、弗吉尼亚、东京、香港列出可用能力，服务部署范围分别有中国内地/国际/全球；这是供应商声明的路由范围，不能据此推断用户数据跨地域流动或所有地区同一权重。北京及除新加坡外所列标准价为输入¥10、输出¥30每百万tokens（思考+回答）；新加坡¥10.938/¥32.813。缓存另列计费链接，未在本文把缓存价猜成普通输入价。北京免费额度100万tokens及90日规则按页面条件，不宣称当前账号已获额度。本文未调用付费服务。
 
@@ -101,3 +101,11 @@ Token Plan使用套餐专用base URL与API Key；普通按量API的key/base URL�
 - [[qwen4_max_preview_poster_zh.html|中文Poster]]
 
 - [正式版官方模型页](https://help.aliyun.com/zh/model-studio/qwen4-max)
+
+
+## 2026-11-18复核：Batch接口资料更新
+
+> [!tldr]
+> 当前Max模型页将Batch从不支持改为支持，列Batch File输入/输出¥5/15每M、Batch Chat限时5折（原价10/30）。这是API能力/计费文档变化，不建立新模型或日级发布事件。
+
+原11/17快照与11/18快照分别保留；具体编辑时刻未证实。本轮未调用Batch服务，不把价格表当当前账号权限保证。其它地域、缓存与折扣适用条件仍以当前官方模型页为准。

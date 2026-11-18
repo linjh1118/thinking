@@ -1,20 +1,143 @@
 ---
-title: "LemonDecider — 联合类型化决策与step1241资料冲突"
+title: "LemonDecider — v3.1当前发布契约、独立读题与成绩归属"
 type: model-note
 html_tabs: true
 status: reading
 created: 2026-11-11
-updated: 2026-11-11
-tags: [model-note, base-model, typed-decision, source-conflict]
+updated: 2026-11-18
+tags: [model-note, typed-decision, calibration, source-conflict]
 ---
 
 > [!tldr]
-> LemonDecider将共享状态与多个命名问题放入一条序列，在各问题标记处读取候选概率；超容量时按问题列表递归二分，每块保留完整状态和选项。它是文本决策专项，不是通用生成模型；服务正确性依赖联合协议与容量规划，而不只是加载一份4B权重。
+> 本轮当前包已经改为逐问题独立前向、完整重复state、短输入按配置二读，再从标记位置的255选项读出计算choice/noul/score。不能继续把11/11的联合多问题+递归分块当成当前契约。新卡补了两阶段训练和43基准完整开发成绩，但当前融合发布包只做了较小的一致性样本，不代表已完整重跑或验证训练增益。
 
-> [!warning] 当前资料互相矛盾，不能拼成一个已复现结果
-> 固定HF revision `05ec18fa0994b7369cb25ac76c19ed0865c776fd`。11/11提交明确替换为step1241 pure package，manifest/config也标step1241、LoRA合并、temperature未重新拟合；README却保留旧SFT四检查点平均和其他Model ID。README称Decision Index0.4，manifest称full-0.3。61.67仅是两者声明的自评数，原始run/逐题结果未包含，不能认定哪个版次实际跑过。首发日缺独立声明，10月只是归档线索；11/11是可证的同族资料包更新日，11/4是声明的评测日期，不当首发日。没有下载权重或运行其远程代码。
+> [!warning] 版本日期与证据归属
+> 当前ID为lemondecider-4b-20261112-v3.1，config与README温度均0.835655，协议version1且read_twice=true、twice_max_tokens=3000。ID中的11/12、声明的11/16开发run都不是独立的公开发布日；本轮只更新同family文档快照，不增加日级首发/正代条目。已读当前README、config、model.py、decision_runtime、模型加载实现与QUICKSTART；保留旧卡/旧note历史。没有下载权重，未执行远程代码、verify或GPU推理；完整训练配方、原始逐题预测和温度拟合记录仍未获得。
 
-## 定位、版本与证据冲突
+## 当前发布包：独立问题、二读与完整容量
+
+> [!tldr]
+> “一次前向”现在以一个问题为单位。多问题请求会依次执行多次，不能从单个接口返回推断是一次联合决策。
+
+![LemonDecider当前独立读题与成绩归属，手绘研读示意](src/assets/lemon_v31_handdrawn.png)
+
+|项|当前可核对契约|
+|---|---|
+|底座/结构|Qwen3.5-4B hybrid，周期full attention非因果，线性递归层保留；255选项读出|
+|当前模型ID|lemondecider-4b-20261112-v3.1|
+|输入/输出|text/structured JSON；choice概率、noul肯定概率、score的零起点序数期望|
+|容量|每题渲染后最多8192tokens，最多255选项；请求1–256个命名问题|
+|短输入|第一次render不含外层模板的token计数<=3000时二读；最后仍按实际encoded长度验8192|
+|温度|logits转FP32，除0.835655再softmax；额外再调温会改变概率|
+|格式|使用发布包renderer，不再自行套chat template；marker必须单token且最终恰好一个|
+|运行|README称Python3.12、PyTorch2.9.0、Transformers5.17.0；本轮未装未测|
+
+`DecisionModel.predict`持锁后循环question，每题单独prepare和forward；state与全部选项均保留。structured state可加索引注释；超长时退回不带可选索引的同一JSON内容，仍超长抛CapacityError，绝不是截断。旧包按问题列表二分与全部前置规划的叙述已过期；当前若后续问题超限，之前问题可能已经计算，但接口整体422而不返回部分answers，不能说“必定所有题前置校验后才开始计算”。
+
+短输入二读复制的是同一任务文字，不是多次随机采样/投票；概率不是模型生成一串选项token的自回归概率。`noul`取肯定选项概率，`score`对0..K−1等级算期望，可为非整数。config仍含视觉张量/视频ID不构成公开图像API支持。锁内逐题运行也不等于已经验证高并发吞吐。
+
+## 两阶段训练与当前包的可追溯边界
+
+> [!tldr]
+> 新README补了约1.20M通用决策数据和35467增量数据；没有公开足够run材料把它们与旧step1241、四checkpoint平均和新融合权重串成完整可复现实验。
+
+阶段1建立choice/noul/score通用判断，覆盖服务动作、语言理解、知识推理、检索候选、偏好质量和概率/序数。增量原则是错误直接入候选，正确样本追加一问/一步或条件提高难度；共35467条。阶段2对难决策继续SFT，更新融合成自包含full weights并应用标量校准。它不是已核实的RL配方，也没有公开增量数据的独立来源/泄漏审计、LR/epoch/奖励或完整算力日志。
+
+新卡声明两片权重SHA为a88cb411…与dd8090bb…，724序列化tensor，index为68427B/SHA cdc57ae8…；本轮仅核对文本清单，没有读取9GB权重来计算hash。温度0.835655与旧1.002675不同；缺当前校准样本/拟合分割与温度前后指标，不能因为名字叫calibrated就宣称分布外校准良好。原11/11冲突作为历史保留在最后一Tab，不混作当前事实。
+
+当前源码要求local_files_only、从同目录加载runtime，readout shape与codes单token映射校验。HTTP默认localhost；设置key后所有端点验证bearer，非loopback必须有key，body上限8,000,000B，health不回传本机路径。`verify.py`是可读验证脚本，不是本轮已经执行或安全认证。
+
+## 开发完整跑测、发布包一致性与全表
+
+> [!tldr]
+> 63.78属于作者声明的11/16本地开发run；91请求/444问题的一致性核验，只支持当前包在那个样本上与相同融合权重参考实现一致。
+
+|当前卡声明|值/含义|
+|---|---|
+|Decision Index balanced skill / raw / breadth|63.78 /72.09 /62.87|
+|selected / scoreable / excluded|140620 /140178 /442|
+|ok / unsupported / errors|140099 /79 /0；unsupported仍在coverage|
+|记录的request wall time median/mean/p95|102.6 /342.5 /1121.6 ms，in-process开发run|
+|发布runtime一致性|91 requests /444 questions，覆盖43类和三输出类型，同融合权重参考实现|
+
+它不是官方榜单接受、生产HTTP延迟认证或当前BF16融合包的完整新跑测。旧61.67与当前63.78差2.11点，但权重、协议、温度和样本口径均发生变化；不能归因于增量训练的受控收益。API-Bank旧0.8478与当前0.5158的反向变化也须保留，不能只选涨分项。
+
+Headline scores use a 0–100 scale. Area and benchmark values below use 0–1.
+
+| Area | Raw | Skill | Coverage | Benchmarks |
+|---|---:|---:|---:|---:|
+| Knowledge & Reasoning | 0.5797 | 0.4639 | 0.9992 | 11 |
+| Language Understanding | 0.7866 | 0.7004 | 1.0000 | 9 |
+| Retrieval & Classification | 0.7883 | 0.7314 | 0.9926 | 6 |
+| Tools & Automation | 0.7516 | 0.7299 | 0.9926 | 5 |
+| Arts & Human Taste | 0.7253 | 0.5701 | 0.9967 | 6 |
+
+| # | Benchmark | Metric | Requests | Score | Skill | Cov. |
+|---:|---|---|---:|---:|---:|---:|
+| 1 | BFCL ★ | case exact accuracy | 1,694 | 0.9728 | 0.9633 | 1.0000 |
+| 2 | ToolRet ★ | nDCG@10 | 685 | 0.6678 | 0.5894 | 0.9650 |
+| 3 | API-Bank ★ | accuracy | 508 | 0.5158 | 0.5044 | 0.9961 |
+| 4 | BANKING77 ★ | macro-F1 | 3,080 | 0.9313 | 0.9304 | 1.0000 |
+| 5 | CLINC150+OOS ★ | macro-F1 | 5,500 | 0.9543 | 0.9540 | 1.0000 |
+| 6 | RouterBench | selected quality (quality objective) | 10,000 | 0.7995 | 0.5299 | 1.0000 |
+| 9 | Home appliance simulator ★ | case exact accuracy | 88 | 0.7500 | 0.7500 | 1.0000 |
+| 10 | SGD/SGD-X | macro-F1 | 2,500 | 0.5553 | 0.2601 | 1.0000 |
+| 11 | ContractNLI ★ | macro-F1 | 123 | 0.8618 | 0.8002 | 1.0000 |
+| 12 | ANLI ★ | macro-F1 | 3,200 | 0.7586 | 0.6384 | 1.0000 |
+| 20 | BPoMP ★ | accuracy | 5,000 | 0.9802 | 0.9600 | 1.0000 |
+| 21 | Humicroedit ★ | accuracy | 2,628 | 0.6130 | 0.2260 | 1.0000 |
+| 22 | POP909-CL ★ | accuracy | 2,000 | 0.7434 | 0.7181 | 0.9800 |
+| 23 | cfcolor ★ | accuracy | 5,000 | 0.7230 | 0.4535 | 1.0000 |
+| 24 | MMLU | accuracy | 14,033 | 0.8164 | 0.7552 | 1.0000 |
+| 25 | GPQA Diamond ★ | accuracy | 196 | 0.5153 | 0.3537 | 1.0000 |
+| 26 | ARC-Easy | accuracy | 2,376 | 0.9895 | 0.9860 | 1.0000 |
+| 27 | ARC-Challenge | accuracy | 1,172 | 0.9556 | 0.9408 | 1.0000 |
+| 28 | WinoGrande ★ | accuracy | 1,267 | 0.9092 | 0.8184 | 1.0000 |
+| 29 | HellaSwag ★ | accuracy | 10,042 | 0.9556 | 0.9408 | 1.0000 |
+| 30 | GSM8K ★ | accuracy | 2,638 | 0.6630 | 0.5963 | 1.0000 |
+| 31 | ChessBench ★ | accuracy | 5,000 | 0.2048 | 0.1339 | 1.0000 |
+| 32 | MuSR ★ | accuracy | 752 | 0.6436 | 0.4334 | 1.0000 |
+| 33 | SATA-Bench ★ | case exact accuracy | 1,650 | 0.3327 | 0.3238 | 1.0000 |
+| 34 | SimpleBench | accuracy | 10 | 0.2000 | 0.0400 | 1.0000 |
+| 36 | BRIGHT ★ | nDCG@10 | 220 | 0.4447 | 0.3512 | 0.9591 |
+| 37 | Amazon ESCI ★ | macro-F1 | 5,000 | 0.6131 | 0.5147 | 1.0000 |
+| 38 | ACOS ★ | per-review F1 | 1,565 | 0.4130 | 0.3942 | 1.0000 |
+| 39 | FinEntity ★ | macro-F1 | 979 | 0.9323 | 0.9004 | 1.0000 |
+| 40 | iSarcasmEval ★ | Sarcasm F1 (track A, English) | 4,600 | 0.6684 | 0.5734 | 1.0000 |
+| 41 | VAST ★ | macro-F1 | 3,006 | 0.8025 | 0.7038 | 1.0000 |
+| 42 | NLI4CT ★ | macro-F1 | 5,500 | 0.8221 | 0.6539 | 1.0000 |
+| 43 | CRUXEval ★ | accuracy | 570 | 0.6825 | 0.4962 | 1.0000 |
+| 44 | CLadder ★ | accuracy | 5,000 | 0.8076 | 0.6152 | 1.0000 |
+| 45 | HLE ★ | accuracy | 501 | 0.1549 | 0.0000 | 0.9920 |
+| 50 | Habermas Machine ★ | accuracy | 1,676 | 0.6187 | 0.4467 | 1.0000 |
+| 56 | PhishNChips phishing decisions ★ | accuracy | 2,000 | 0.9275 | 0.8550 | 1.0000 |
+| 57 | MMLU-Pro ★ | accuracy | 12,032 | 0.6541 | 0.6110 | 1.0000 |
+| 58 | BBH fixed-option tasks ★ | accuracy | 5,507 | 0.7863 | 0.6902 | 1.0000 |
+| 59 | RAGTruth response-level hallucination ★ | F1 on hallucinated class | 2,700 | 0.8373 | 0.6627 | 1.0000 |
+| 61 | HoVer claim verification ★ | accuracy | 4,000 | 0.8875 | 0.7750 | 1.0000 |
+| 62 | When2Call MCQ ★ | accuracy | 3,652 | 0.8806 | 0.8408 | 1.0000 |
+| 64 | New Yorker caption matching ★ | accuracy | 528 | 0.6932 | 0.6165 | 1.0000 |
+
+表中Score用各benchmark原生metric，Skill和Coverage来自指数聚合；iSarcasmEval当前是English track-A，不与旧混合子任务直接比。未附原始predictions、benchmark inputs和内部logs，因此无法自行复算63.78或核对完整错误账本。
+
+## 对 Agent Training 的判断与资料地图
+
+> [!insight]
+> 错题优先、对题加条件是有价值的数据构造方向，但要用固定harness和独立测试来检验。这个包更直接的教训是：数据改进、模型更新、校准、renderer和服务协议必须一起版本化，再通过受控消融分别验证。不能把小样本runtime一致性当训练提分或泛化证据。
+
+当前概率端点适合工具选择和结构化路由；应另外评估校准、拒识、超容量、state长度和多问题成本。比较旧联合与新独立路径时，固定完整state、同权重、温度及二读开关，保留失败分母。这里没有复现这些实验。
+
+- [官方当前模型卡](https://huggingface.co/inclusionAI/LemonDecider)
+- src/updates/2026-11-18保存当前卡/config/runtime/校验清单；旧原件与旧固定revision仍保留，不覆盖来源历史。
+- [[Topics/13_base_model/Ant_Ling/Variants/2611_Sing_VL_S1/Sing-VL-S1]]、[[Topics/13_base_model/Ant_Ling/Variants/261111_ZoomGain/ZoomGain-Family]]
+- 中文Poster：[[Topics/13_base_model/Ant_Ling/Variants/2610_LemonDecider/lemondecider_poster_zh.html]]
+
+## 历史快照：11/11联合协议与step1241冲突
+
+> [!warning] 以下为11/11已读资料与当时判断
+> 本节完整保留旧协议、旧数字与版本冲突，供追溯；其中“当前”“本包”等均指11/11的旧快照，不能作为11/18的实际加载/服务契约。最新契约以本笔记前四个Tab为准。
+
+### 定位、版本与证据冲突
 
 > [!tldr]
 > 先固定当前包和证据来源，再讨论训练及成绩。不得把旧README训练参数、当前manifest权重和不同版次分数合并为无冲突的实验。
@@ -36,7 +159,7 @@ manifest给出两个权重的声明SHA与README一致；未下载大权重，所
 
 许可声明README为LICENSE Apache2.0、LICENSE.code MIT，且Qwen3.5底座义务继续适用；没有由此推导训练/评测数据可任意再分发。原始卡、manifest、code/config和提交元数据均随src保存。
 
-## 联合读取、服务容量与训练来源
+### 联合读取、服务容量与训练来源
 
 > [!tldr]
 > 短请求一次联合前向，长请求多块前向；规划阶段发现单题超限就整体拒绝。8192是每块服务容量，262144是底座位置配置，不能互换。
@@ -57,7 +180,7 @@ manifest当前来源：B_mix_full，seed20261104、world_size16，固定final st
 
 option_loss.py的有效候选FP32 CE按每个decision算一个loss，支持硬/软target、严格校验概率质量和padding；温度仅后处理、不进入该CE。源码存在这个loss不等于已经核验step1241实际训练的完整调用与混合数据。
 
-## 自评结果、缺口与研究判断
+### 自评结果、缺口与研究判断
 
 > [!tldr]
 > 声明的public指数61.67、raw70.84、breadth60.28不应脱离0.3/0.4冲突和覆盖率。16个PPU worker的HTTP墙钟延迟，也不是单GPU准入或生产负载延迟。

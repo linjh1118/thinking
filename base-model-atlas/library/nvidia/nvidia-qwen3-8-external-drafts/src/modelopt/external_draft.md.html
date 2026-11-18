@@ -1,0 +1,213 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>External Draft — Training a Standalone Draft Model · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>External Draft — Training a Standalone Draft Model</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#external-draft-training-a-standalone-draft-model">External Draft — Training a Standalone Draft Model</a><a class="toc-l2" href="#architecture">Architecture</a><a class="toc-l2" href="#training">Training</a><a class="toc-l3" href="#quick-start">Quick Start</a><a class="toc-l3" href="#recipe">Recipe</a><a class="toc-l3" href="#objectives">Objectives</a><a class="toc-l3" href="#teacher-policy-data">Teacher policy data</a></nav></aside><main class="note"><h1 id="external-draft-training-a-standalone-draft-model">External Draft — Training a Standalone Draft Model</h1><p>An external draft is an ordinary pretrained causal LM trained to propose tokens for a target model. Unlike the head-based modes (EAGLE, Medusa, DFlash) nothing is grafted onto the target, and it has no dependence on target hidden states. Any serving engine that supports a separate draft model can load it without mode-specific support.</p><p>This document serves as a "quick start" guide to get users up and running with training drafts.</p><p>Recipe: <a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/modelopt_recipes/general/speculative_decoding/external_draft.yaml"><code>modelopt_recipes/general/speculative_decoding/external_draft.yaml</code></a> Swap implementation: <a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/modelopt/torch/speculative/external/vocab_swap.py"><code>vocab_swap.py</code></a></p><h2 id="architecture">Architecture</h2><pre><div class="code-lang">text</div><code>Target (frozen, never modified)
+  │
+  ├─ sparse path:  top-k deployment policy  ──► dumped to disk ──┐
+  │                                                              │
+  └─ dense path:   hidden states ──► target lm_head ──► logits ──┤
+                                                                 │
+                                                         TVD / soft_ce
+                                                                 │
+Draft (a complete causal LM, trained)  ──► its own lm_head ──► draft logits</code></pre><h2 id="training">Training</h2><p>We generally start draft training with an existing pre-trained small model. We then perform a "vocabulary" or "tokenizer swap" (see <a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/modelopt/torch/speculative/external/vocab_swap.py"><code>vocab_swap.py</code></a>) to transform the existing small model into the target's embedding space. This allows for the small draft to be (1) directly optimized via logit distillation, (2) used directly as a draft, without the need for any transformation between the draft and target token spaces during inference.</p><p>The tokenizer-swap does not completely preserve the small draft model's performance, and on top of this, we need to align the draft. As our intended deployment setting is always speculative decoding at non-zero temperatures with rejection sampling, we tend to opt for TVD loss, or TVD combined with cross entropy (<code>tvd_ce</code>). Under rejection sampling the probability that a proposed token is rejected equals the TVD between the draft and target distributions the server samples from. Only <code>tvd_deploy</code> computes that quantity, since it puts both sides through the serving top-k and top-p filter. <code>tvd</code> leaves the draft unfiltered and <code>tvd_ce</code> adds a cross-entropy term, so neither equals the deployed rejection probability.</p><p>Furthermore, in search for a good drafter we recommend sweeping other hyperparameters, primarily the training loss, batch size, and potentially even teacher deployment settings.</p><h3 id="quick-start">Quick Start</h3><pre><div class="code-lang">bash</div><code># Every command in this section reads $SEQ_LEN; change it here and they stay consistent.
+SEQ_LEN=4096
+
+torchrun --nproc_per_node 8 main.py \
+  --config ../../modelopt_recipes/general/speculative_decoding/external_draft.yaml \
+  model.model_name_or_path=$TARGET \
+  draft_model_name_or_path=$DRAFT \
+  data.sparse_data_path=$POLICY_DIR \
+  data.sparse_cache_dir=$CACHE_DIR \
+  training.training_seq_len=$SEQ_LEN \
+  training.output_dir=$OUTPUT_DIR</code></pre><h3 id="recipe">Recipe</h3><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>model.model_name_or_path</code></td><td>—</td><td>The <strong>target</strong>, used for its vocabulary and <code>lm_head</code></td></tr><tr><td><code>draft_model_name_or_path</code></td><td>—</td><td>The draft, the model actually trained</td></tr><tr><td><code>external.external_loss</code></td><td><code>tvd</code></td><td><code>soft_ce</code>, <code>tvd</code>, <code>tvd_deploy</code> or <code>tvd_ce</code> (see below)</td></tr><tr><td><code>external.external_top_k</code></td><td>20</td><td>Serving top-k; must match the dump</td></tr><tr><td><code>external.external_top_p</code></td><td>0.95</td><td>Serving top-p; must match the dump</td></tr><tr><td><code>external.external_tvd_alpha</code></td><td>0.9</td><td>Weight on the TVD term under <code>tvd_ce</code></td></tr><tr><td><code>external.external_ce_alpha</code></td><td>0.1</td><td>Weight on the CE term under <code>tvd_ce</code></td></tr><tr><td><code>external.external_vocab_swap</code></td><td>false</td><td>Re-index the draft onto the target's vocabulary</td></tr><tr><td><code>external.external_report_acc</code></td><td>true</td><td>Log top-1 agreement during training</td></tr><tr><td><code>data.sparse_data_path</code></td><td>—</td><td>Dumped top-k policy; selects <code>data.mode=sparse</code></td></tr><tr><td><code>data.sparse_cache_dir</code></td><td>—</td><td>Where the memmapped cache is built</td></tr><tr><td><code>data.offline_data_path</code></td><td>—</td><td>Dumped hidden states; the alternative to the above</td></tr><tr><td><code>model.use_fake_base_for_offline</code></td><td>true</td><td>Load only the target's <code>lm_head</code>, not its layers</td></tr></tbody></table></div><blockquote><strong>Note on <code>external_top_k</code> / <code>external_top_p</code>:</strong> the stored policy <em>is</em> the teacher<br>distribution, so a dump narrower than the objective expects charges the draft for mass on<br>tokens the teacher actually supported. A top-k mismatch draws a warning under<br><code>tvd_deploy</code>; the dump does not record its top-p, so a top-p mismatch goes undetected.</blockquote><h3 id="objectives">Objectives</h3><p>We currently support the following objectives for external draft training though we intend to add more in the future:</p><div class="table-wrap"><table><thead><tr><th><code>external_loss</code></th><th>Scores</th><th>Needs</th></tr></thead><tbody><tr><td><code>soft_ce</code></td><td>Cross-entropy against the target's soft distribution (the EAGLE offline objective)</td><td>hidden states</td></tr><tr><td><code>tvd</code></td><td>Total-variation distance between the two distributions</td><td>either format</td></tr><tr><td><code>tvd_deploy</code></td><td>The same, with both sides put through the serving filter first</td><td>either format</td></tr><tr><td><code>tvd_ce</code></td><td><code>tvd</code> plus a cross-entropy term on the target's argmax token</td><td>either format</td></tr></tbody></table></div><p>We generally recommend starting with <code>tvd_deploy</code>, as it matches the deployment conditions for a draft model. The reference configuration below uses <code>tvd_ce</code> because it gave the higher acceptance length in the sweep for that draft. TVD is bounded, so it ranks weakly among tokens inside the target's support, and the cross-entropy term's log penalty has no such ceiling. Include both in a sweep.</p><p>On the sparse path the target side is truncated by the dump whichever objective runs, since that is all the saved dataset holds. The <code>tvd</code> and <code>tvd_deploy</code> losses then differ only in whether the <em>draft</em> is put through the filter too. Only <code>tvd_deploy</code> applies the same nucleus to both sides. Pairing <code>soft_ce</code> with <code>data.sparse_data_path</code> is a hard error, not a quiet degradation.</p><p>Report which truncation you trained under. Different <code>top_k</code> and <code>top_p</code> settings give different targets, so a number quoted without them cannot be compared with anything.</p><h3 id="teacher-policy-data">Teacher policy data</h3><p>Standalone draft models are aligned via logit distillation against the target model. The required training data is a set of prompts with responses the <strong>target generated itself</strong>, not the responses that shipped with the prompts, plus the target's top-k logprobs at each response token. The draft is trained to match the target at the positions it will meet when serving, and those lie along the target's own samples. <a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/speculative_decoding/README.md#data-synthesis">Data Synthesis</a> covers generating them. Generate the responses at the sampling parameters the draft will be deployed with, usually the target model's recommended ones.</p><p>The saved policy and every loss use temperature-1 probabilities: the dump applies the top-k and top-p filter but no temperature. At a deployment temperature other than 1, the draft learns the temperature-1 distribution rather than the one the server samples from.</p><p>For a simple first attempt at draft training we tend to use 100-200k training samples taken from <code>nvidia/Nemotron-Post-Training-Dataset-v2</code>, we recommend initially trying an even split of datasets. If a user has a specific deployment use case then training data should be specialized toward that, however, we do still recommend maintaining a mix of subjects in the training data. Ideally some component of the training data should also match the context size that you intend to deploy the draft-target pair at.</p><p>The data format: <code>$CONVERSATIONS</code> is a <code>.jsonl</code> file, or a directory of them, with one conversation per line under a <code>messages</code> (or <code>conversations</code>) key holding the usual list of <code>{&quot;role&quot;, &quot;content&quot;}</code> turns. The dump below scores the assistant turns and writes gzipped JSONL shards of the target's truncated next-token distribution to <code>$POLICY_DIR</code>.</p><pre><div class="code-lang">bash</div><code>python collect_hidden_states/compute_sparse_policy_hf.py \
+  --model $TARGET --input-data $CONVERSATIONS --output-dir $POLICY_DIR \
+  --top-k 20 --top-p 0.95 --max-seq-len $SEQ_LEN \
+  --answer-only-loss --chat-template ./template.jinja</code></pre><p>Set <code>--max-seq-len</code> to the <code>training.training_seq_len</code> you will train at. The producer skips whole conversations longer than it, scored turns included, and prints how many it skipped. The collator pads every sample to <code>training_seq_len</code>, so over-sizing spends the difference on padding and under-sizing drops the long conversations from the dump.</p><p>On a large corpus the first run spends a long time building the memmapped cache beside the shards. Under <code>torchrun</code> only rank 0 builds it and the others wait, so build it once in a single process first and point every run at the same <code>data.sparse_cache_dir</code>:</p><pre><div class="code-lang">bash</div><code>python - &lt;` here, since the cache width is otherwise
+inferred from the first record and the recipe has no field to set it.
+
+&gt; **Note on `answer_only_loss` and chat templates:** when `--answer-only-loss` is set, the
+&gt; chat template must wrap assistant content in `{% generation %}` / `{% endgeneration %}`
+&gt; tags. Most published templates do not. Copy the model&#x27;s own template and add them:
+&gt;
+&gt; 1. Print `AutoTokenizer.from_pretrained(TARGET).chat_template` to a file
+&gt; 2. Wrap the assistant content each branch emits, including a reasoning branch if present
+&gt; 3. Pass it with `--chat-template` to **every** dump command for that target
+&gt;
+&gt; Verify by decoding, not by counting: `tokenizer.decode(record[&quot;gen_ids&quot;])` should read as
+&gt; the assistant&#x27;s reply alone. A misplaced wrap still cuts at the wrong boundary, so a
+&gt; length check passes while the span is wrong.
+
+The dense alternative dumps hidden states instead. Pass `--no-aux-hidden-states`: this mode
+never reads the aux planes and they dominate the dump size.
+</code></pre><p>python collect_hidden_states/compute_hidden_states_hf.py \ --model $TARGET --input-data $CONVERSATIONS --output-dir $HIDDEN_DIR \ --max-seq-len $SEQ_LEN --no-aux-hidden-states --answer-only-loss --chat-template ./template.jinja</p><pre><div class="code-lang">code</div><code>
+### Cross-tokenizer vocabulary swap (`external_vocab_swap`)
+
+In general, standalone draft models have to share the same vocabulary/embedding space as their
+target model. This allows for both the proposal of tokens in the target&#x27;s native vocabulary, and
+for direct alignment of the draft via logit distillation. However, a target does not always have a
+small model in its own family, and sometimes a standalone draft must be produced from another
+source. Instead of a costly process of training a standalone draft from scratch, we use a
+&quot;vocab-swap&quot;: taking an existing draft model candidate and transplanting the target model&#x27;s
+vocabulary and embeddings onto it, in a way that is not totally destructive. Set
+`external.external_vocab_swap=true` to enable it. On a high level the process is to:
+
+1. **Create new embedding tables** for the draft at the target&#x27;s vocabulary size, filled with
+   random rows drawn from the draft&#x27;s original embedding statistics.
+2. **Carry over every token that both tokenizers spell identically**, copying the draft&#x27;s trained
+   embedding row to the token&#x27;s position in the target&#x27;s vocabulary.
+3. **Leave the remaining rows at those random values.** Draft-target alignment then trains them.
+4. **Rebuild the output head the same way** when it is not tied to the embeddings.
+5. **Point the special tokens** (BOS, EOS, padding) at the target tokenizer&#x27;s ids.
+
+After the swap the new resulting draft model undergoes the same draft-target alignment process as
+an in-family draft would. The run reports what carried over, typically a minority of the table and
+nearly all of the most frequent ids, since the rare tail is where tokenizers disagree.
+
+&gt; **Note on judging a swap:** the match percentage describes the swap, not the draft.
+&gt; Overlap figures far apart have behaved similarly, so do not read the coverage number as a
+&gt; quality score. Prefer a vocabulary-matched draft where one exists: the replacement matrix
+&gt; is `base_vocab_size × hidden_size` parameters, a large fraction of a small draft, and a
+&gt; swapped draft stays behind a matched one of similar size.
+
+A swapped draft starts with a large untrained fraction and wants a higher learning rate than
+a matched draft of comparable size.
+
+### Checkpoint resume
+
+A resumed draft keeps the embeddings it was saved with. The swap reads
+`external_vocab_swap` out of the checkpoint&#x27;s own ModelOpt state, so re-running with the
+flag on does not rewrite rows that are already base-indexed.
+
+### Export
+
+Training writes an ordinary HuggingFace checkpoint, shipped with the **target&#x27;s** tokenizer
+when the vocabulary was swapped, since the draft&#x27;s rows are indexed by the target&#x27;s ids from
+that point on. Nothing in the saved artifact depends on ModelOpt at load time.
+
+**There is no export step for this mode.** `scripts/export_hf_checkpoint.py` restructures a
+grafted head into a servable checkpoint; an external draft has no head to restructure, so the
+script rejects it. The training output is the artifact.
+
+`training.output_dir` also holds training residue that `from_pretrained` ignores:
+`modelopt_state.pth`, `trainer_state.json`, `training_args.bin` and the `checkpoint-*`
+directories. Ship `config.json`, `generation_config.json`, the weights and the tokenizer
+files.
+
+## Reference Configuration (Llama-3.2-1B drafting for Qwen3.8-27B)
+
+A cross-tokenizer draft: Llama-3.2-1B-Instruct re-indexed onto Qwen3.8-27B&#x27;s
+248,320-token vocabulary. Trained on a sparse teacher policy dumped once from the target,
+8 GPUs, two epochs.
+
+### Teacher policy
+
+The [teacher policy data](#teacher-policy-data) dump, with `--max-seq-len 12288` to match
+`training.training_seq_len` below.
+
+### Training
+</code></pre><p>torchrun --nproc_per_node 8 main.py \ --config ../../modelopt_recipes/general/speculative_decoding/external_draft.yaml \ model.model_name_or_path=$TARGET \ draft_model_name_or_path=meta-llama/Llama-3.2-1B-Instruct \ external.external_vocab_swap=true \ external.external_loss=tvd_ce \ external.external_top_k=20 external.external_top_p=0.95 \ data.sparse_data_path=$POLICY_DIR \ data.sparse_cache_dir=$CACHE_DIR \ training.training_seq_len=12288 \ training.per_device_train_batch_size=1 \ training.gradient_accumulation_steps=2 \ training.learning_rate=5.0e-5 \ training.warmup_steps=250 \ training.max_grad_norm=1.0 \ training.num_train_epochs=2 \ training.seed=42 \ training.output_dir=$OUTPUT_DIR</p><pre><div class="code-lang">code</div><code>
+### Configuration
+
+| Parameter | Value |
+|-----------|-------|
+| Objective | `tvd_ce` |
+| Vocabulary swap | yes (Llama tokenizer onto Qwen&#x27;s) |
+| Sequence length | 12,288 |
+| Effective batch | 16 (1 per device × 2 accumulation × 8 GPUs) |
+| Learning rate | 5.0e-5 |
+| Warmup steps | 250 |
+| Epochs | 2 |
+| Serving policy | top-k 20, top-p 0.95, temperature 1.0 |
+
+&gt; **Note on the learning rate:** we recommend sweeping to find the best rate for your own
+&gt; draft and target. The hyperparameters chosen here came from a sweep over learning rate and
+&gt; loss, scored on acceptance length.
+
+## Open Items
+
+### Validated end-to-end
+
+- Sparse teacher-policy training with `tvd` and `tvd_ce`, from dump through training to a
+  loadable checkpoint.
+- The cross-tokenizer vocabulary swap, on a draft trained this way.
+
+### Covered by tests, not yet exercised in a full run
+
+- `soft_ce`, `tvd_deploy`, and the dense hidden-states data path.
+- Resume, with and without a swap.
+- Untied output heads, and heads carrying a bias.
+
+### Not yet validated
+
+- Streaming the teacher data from a live `vllm serve`. It is accepted for this mode but has
+  not been exercised. Online training is rejected outright, since it produces no cached
+  target outputs for the draft to be scored against.</code></pre></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
