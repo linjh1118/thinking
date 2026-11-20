@@ -1850,6 +1850,47 @@ def discover_branch_assets(team_dir: str, model_name: str, date: str) -> dict:
     return {"dir": model_dir, "note": notes[0] if notes else None, "posters": posters}
 
 
+def localize_archived_display_assets(source_file: Path, destination: Path, model_root: Path | None = None) -> None:
+    """Reuse provenance-tracked local images and MathJax in published readers.
+
+    Immutable cards keep their official URLs. Only their display copies are
+    rewritten, so an incremental rebuild cannot restore external dependencies.
+    """
+    if model_root is None:
+        model_root = next((parent for parent in source_file.parents if (parent / "src/assets").is_dir()), None)
+    if model_root is None or not source_file.is_relative_to(model_root):
+        return
+    relative = source_file.relative_to(model_root)
+    destination_root = destination.parents[len(relative.parts) - 1]
+    assets: dict[str, Path] = {}
+    for manifest in sorted((model_root / "src/assets").glob("external_*/retrieval_manifest.json")):
+        for item in json.loads(manifest.read_text()).get("sources", []):
+            candidate = (model_root / item["path"]).resolve()
+            if candidate.is_relative_to((model_root / "src/assets").resolve()) and candidate.is_file():
+                assets[item["url"]] = candidate
+    mathjax = model_root / "src/assets/mathjax-tex-svg.js"
+    if mathjax.is_file():
+        assets["https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"] = mathjax
+    if not assets:
+        return
+    def rewrite(match):
+        attr, quote_char, value = match.groups()
+        original = html.unescape(value)
+        asset = assets.get(original)
+        if asset is None:
+            return match.group(0)
+        target = destination_root / asset.relative_to(model_root.resolve())
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.resolve() != asset.resolve():
+            shutil.copy2(asset, target)
+        relative_url = quote(os.path.relpath(target, destination.parent).replace(os.sep, "/"), safe="/")
+        return attr + "=" + quote_char + html.escape(relative_url, quote=True) + quote_char
+    text = destination.read_text(encoding="utf-8")
+    rewritten = re.sub(r'(src)=(["\'])([^"\']*)\2', rewrite, text, flags=re.I)
+    if rewritten != text:
+        destination.write_text(rewritten, encoding="utf-8")
+
+
 def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source_file, destination)
@@ -1891,6 +1932,7 @@ def copy_file_with_refs(source_file: Path, destination: Path, model_root: Path) 
         destination.write_text(rewritten, encoding="utf-8")
     # copy2 can restore a source mtime older than a previously rewritten page.
     # HTTP If-Modified-Since would then keep the obsolete '#' link in browsers.
+    localize_archived_display_assets(source_file, destination, model_root)
     os.utime(destination, None)
 
 
@@ -2476,6 +2518,7 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
     images/files, otherwise point explicitly to the original official repo;
     never invent a local page for a file that was not archived.
     """
+    localize_archived_display_assets(source, published)
     parsed = urlsplit(source_url)
     if parsed.netloc == "huggingface.co" and "/resolve/" in parsed.path:
         repo_path, revision_path = parsed.path.split("/resolve/", 1)
@@ -2527,6 +2570,7 @@ def resolve_archived_card_links(source: Path, published: Path, source_url: str) 
         return attr + "=" + quotes + html.escape(target, quote=True) + quotes
     text = re.sub(r'(href|src)=(["\'])([^"\']*)\2', rewrite, published.read_text(), flags=re.I)
     published.write_text(text, encoding="utf-8")
+    localize_archived_display_assets(source, published)
 
 
 def sync_source_archive(
