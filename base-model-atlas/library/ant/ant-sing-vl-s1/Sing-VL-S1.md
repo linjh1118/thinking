@@ -4,9 +4,13 @@ type: model-note
 html_tabs: true
 status: reading
 created: 2026-11-11
-updated: 2026-11-13
+updated: 2026-11-20
 tags: [model-note, base-model, singvl]
 ---
+
+> [!important] 2026-11-20现状复核
+> 当前纯文本65K padded-token批处理，带图仍逐题；权重未变。Text69.75、Vision73.7495；下文73.94与禁止batch描述属于历史较大像素/serial协议，不作当前契约。 详见[[SingVL-Batch-20261120]]。
+
 
 > [!tldr]
 > Sing VL S1是在Qwen3.5上构建的多模态决策模型：对文本/JSON和至多四张图片中的每个命名问题分别做一次完整前向，再从候选token logits中读出Choice、Noul或Score。它省去的是自回归输出过程，不是输入处理成本，也不是一次前向回答任意多个问题。

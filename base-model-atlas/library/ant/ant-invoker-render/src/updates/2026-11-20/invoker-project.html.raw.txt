@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#06080b">
+    <meta name="description" content="Invoker-Render, from Code World Model 2.0: Towards Infinite Controllable Video Generation. Any-granularity proxy to video. A proxy video sets scene structure and camera, a reference first frame sets appearance, and the model generates the video. Every clip on the page is model output.">
+    <title>Invoker-Render · Code World Model 2.0: Towards Infinite Controllable Video Generation</title>
+    <link rel="preload" href="./media/fonts/figtree/Figtree[wght].ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="stylesheet" href="./style.css?rev=design-21">
+    <script type="module" src="./app.mjs?rev=design-18"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header-row page-width">
+        <a class="report-title" href="#top">Code World Model 2.0: Towards Infinite Controllable Video Generation</a>
+        <nav aria-label="Main navigation">
+          <a href="#chapters">Chapters</a>
+          <a href="#live">Play it live</a>
+          <a href="#infra">Infra</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="reel" id="top" aria-labelledby="project-title" data-reel>
+        <div class="reel-media" data-reel-media>
+          <img class="reel-poster" src="./media/showcase-v1/posters/hero-rocket-launch.jpg?v=3833f47d6e22" width="3780" height="1080" alt="Rocket launch. Model output, first frame.">
+          <canvas data-reel-canvas aria-hidden="true"></canvas>
+          <canvas data-reel-canvas aria-hidden="true"></canvas>
+          <div class="reel-split" data-reel-split hidden>
+            <span class="reel-label reel-label-proxy mono" data-reel-stream="proxy">Proxy</span>
+            <div class="reel-handle" role="slider" tabindex="0" aria-label="Proxy reveal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+            <span class="reel-label reel-label-output mono" data-reel-stream="sft">Output</span>
+          </div>
+        </div>
+        <div class="reel-footer page-width">
+          <div class="reel-copy">
+            <h1 id="project-title">Invoker-Render</h1>
+            <p class="project-subtitle"><strong>Any-granularity proxy to video.</strong> A proxy video sets the scene and the camera, a first frame sets the look, and the model generates the rest.</p>
+            <p class="project-links"><a class="project-link" href="https://github.com/inclusionAI/CodeWorldModel" target="_blank" rel="noopener"><svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a> <a class="project-link" href="https://huggingface.co/inclusionAI/invoker-render-1.0" target="_blank" rel="noopener"><svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.025 1.13c-5.77 0-10.449 4.647-10.449 10.378 0 1.112.178 2.181.503 3.185.064-.222.203-.444.416-.577a.96.96 0 0 1 .524-.15c.293 0 .584.124.84.284.278.173.48.408.71.694.226.282.458.611.684.951v-.014c.017-.324.106-.622.264-.874s.403-.487.762-.543c.3-.047.596.06.787.203s.31.313.4.467c.15.257.212.468.233.542.01.026.653 1.552 1.657 2.54.616.605 1.01 1.223 1.082 1.912.055.537-.096 1.059-.38 1.572.637.121 1.294.187 1.967.187.657 0 1.298-.063 1.921-.178-.287-.517-.44-1.041-.384-1.581.07-.69.465-1.307 1.081-1.913 1.004-.987 1.647-2.513 1.657-2.539.021-.074.083-.285.233-.542.09-.154.208-.323.4-.467a1.08 1.08 0 0 1 .787-.203c.359.056.604.29.762.543s.247.55.265.874v.015c.225-.34.457-.67.683-.952.23-.286.432-.52.71-.694.257-.16.547-.284.84-.285a.97.97 0 0 1 .524.151c.228.143.373.388.43.625l.006.04a10.3 10.3 0 0 0 .534-3.273c0-5.731-4.678-10.378-10.449-10.378M8.327 6.583a1.5 1.5 0 0 1 .713.174 1.487 1.487 0 0 1 .617 2.013c-.183.343-.762-.214-1.102-.094-.38.134-.532.914-.917.71a1.487 1.487 0 0 1 .69-2.803m7.486 0a1.487 1.487 0 0 1 .689 2.803c-.385.204-.536-.576-.916-.71-.34-.12-.92.437-1.103.094a1.487 1.487 0 0 1 .617-2.013 1.5 1.5 0 0 1 .713-.174m-10.68 1.55a.96.96 0 1 1 0 1.921.96.96 0 0 1 0-1.92m13.838 0a.96.96 0 1 1 0 1.92.96.96 0 0 1 0-1.92M8.489 11.458c.588.01 1.965 1.157 3.572 1.164 1.607-.007 2.984-1.155 3.572-1.164.196-.003.305.12.305.454 0 .886-.424 2.328-1.563 3.202-.22-.756-1.396-1.366-1.63-1.32q-.011.001-.02.006l-.044.026-.01.008-.03.024q-.018.017-.035.036l-.032.04a1 1 0 0 0-.058.09l-.014.025q-.049.088-.11.19a1 1 0 0 1-.083.116 1.2 1.2 0 0 1-.173.18q-.035.029-.075.058a1.3 1.3 0 0 1-.251-.243 1 1 0 0 1-.076-.107c-.124-.193-.177-.363-.337-.444-.034-.016-.104-.008-.2.022q-.094.03-.216.087-.06.028-.125.063l-.13.074q-.067.04-.136.086a3 3 0 0 0-.135.096 3 3 0 0 0-.26.219 2 2 0 0 0-.12.121 2 2 0 0 0-.106.128l-.002.002a2 2 0 0 0-.09.132l-.001.001a1.2 1.2 0 0 0-.105.212q-.013.036-.024.073c-1.139-.875-1.563-2.317-1.563-3.203 0-.334.109-.457.305-.454m.836 10.354c.824-1.19.766-2.082-.365-3.194-1.13-1.112-1.789-2.738-1.789-2.738s-.246-.945-.806-.858-.97 1.499.202 2.362c1.173.864-.233 1.45-.685.64-.45-.812-1.683-2.896-2.322-3.295s-1.089-.175-.938.647 2.822 2.813 2.562 3.244-1.176-.506-1.176-.506-2.866-2.567-3.49-1.898.473 1.23 2.037 2.16c1.564.932 1.686 1.178 1.464 1.53s-3.675-2.511-4-1.297c-.323 1.214 3.524 1.567 3.287 2.405-.238.839-2.71-1.587-3.216-.642-.506.946 3.49 2.056 3.522 2.064 1.29.33 4.568 1.028 5.713-.624m5.349 0c-.824-1.19-.766-2.082.365-3.194 1.13-1.112 1.789-2.738 1.789-2.738s.246-.945.806-.858.97 1.499-.202 2.362c-1.173.864.233 1.45.685.64.451-.812 1.683-2.896 2.322-3.295s1.089-.175.938.647-2.822 2.813-2.562 3.244 1.176-.506 1.176-.506 2.866-2.567 3.49-1.898-.473 1.23-2.037 2.16c-1.564.932-1.686 1.178-1.464 1.53s3.675-2.511 4-1.297c.323 1.214-3.524 1.567-3.287 2.405.238.839 2.71-1.587 3.216-.642.506.946-3.49 2.056-3.522 2.064-1.29.33-4.568 1.028-5.713-.624"/></svg>Hugging Face</a> <a class="project-link" href="https://arxiv.org/abs/2611.22925" target="_blank" rel="noopener"><svg class="project-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.8423 0a1.0037 1.0037 0 0 0-.922.6078c-.1536.3687-.0438.6275.2938 1.1113l6.9185 8.3597-1.0223 1.1058a1.0393 1.0393 0 0 0 .003 1.4229l1.2292 1.3135-5.4391 6.4444c-.2803.299-.4538.823-.2971 1.1986a1.0253 1.0253 0 0 0 .9585.635.9133.9133 0 0 0 .6891-.3405l5.783-6.126 7.4902 8.0051a.8527.8527 0 0 0 .6835.2597.9575.9575 0 0 0 .8777-.6138c.1577-.377-.017-.7502-.306-1.1407l-7.0518-8.3418 1.0632-1.13a.9626.9626 0 0 0 .0089-1.3165L4.6336.4639s-.3733-.4535-.768-.463zm0 .272h.0166c.2179.0052.4874.2715.5644.3639l.005.006.0052.0055 10.169 10.9905a.6915.6915 0 0 1-.0072.945l-1.0666 1.133-1.4982-1.7724-8.5994-10.39c-.3286-.472-.352-.6183-.2592-.841a.7307.7307 0 0 1 .6704-.4401Zm14.341 1.5701a.877.877 0 0 0-.6554.2418l-5.6962 6.1584 1.6944 1.8319 5.3089-6.5138c.3251-.4335.479-.6603.3247-1.0292a1.1205 1.1205 0 0 0-.9763-.689zm-7.6557 12.2823 1.3186 1.4135-5.7864 6.1295a.6494.6494 0 0 1-.4959.26.7516.7516 0 0 1-.706-.4669c-.1119-.2682.0359-.6864.2442-.9083l.0051-.0055.0047-.0055z"/></svg>arXiv</a></p>
+          </div>
+          <div class="reel-meta">
+            <span class="output-badge mono">Generated by Invoker-Render</span>
+            <div class="reel-controls"><div class="reel-ticks" data-reel-ticks role="group" aria-label="Choose a scene" hidden></div><button class="text-button" type="button" data-reel-toggle hidden>Pause reel</button></div>
+            <p class="reel-error" data-reel-error data-showcase-error role="status" hidden>Video is unavailable. A still frame is shown.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="overview page-width" id="overview" aria-labelledby="overview-title" tabindex="-1">
+        <h2 id="overview-title">Structure from the proxy, appearance from the first frame</h2>
+        <p>A proxy sequence carries the layout, object classes and motion of a scene, at any level of detail. A reference first frame supplies its appearance. Each chapter below changes one input and holds the others fixed. Every clip on this page is model output, shown with the proxy that drove it.</p>
+      </section>
+
+      <div class="chapters page-width" id="chapters">
+        <section class="chapter" id="camera" aria-labelledby="camera-title">
+          <div class="chapter-text">
+            <div>
+              <p class="chapter-index mono">01</p>
+              <h2 id="camera-title">Camera control</h2>
+            </div>
+            <div>
+              <p class="chapter-claim">Each pair opens on one first frame of one scene, then the proxy flies two different routes: a dive down a glass tower, a dolly zoom on a bridge, a chase out of a tunnel, a drone beside a rocket launch. The video takes whichever route its proxy flies.</p>
+              <p class="chapter-variables mono"><span>Fixed: first frame, scene</span> <span>Varies: camera route</span></p>
+            </div>
+          </div>
+          <figure class="chapter-player">
+            <div class="chapter-controls">
+              <div class="chapter-tabs" data-chapter-tabs role="group" aria-label="Choose a scene" hidden></div>
+              <span class="output-badge mono" data-chapter-badge hidden></span>
+            </div>
+            <div class="chapter-media">
+              <img class="chapter-poster" data-chapter-poster src="./media/showcase-v1/posters/promo-glass-tower-dive.jpg?v=d0ff908860f5" width="1600" height="914" loading="lazy" alt="Tower dive. Proxies for routes A and B above, model outputs for each route below, first frame.">
+              <div class="chapter-stage" data-chapter-stage hidden><span class="stage-note mono">Same first frame</span></div>
+            </div>
+            <figcaption><span class="mono" data-chapter-label>Tower dive</span> <span>Both routes open on one first frame, then split. Each proxy is inset at top left.</span> <button class="text-button" type="button" data-chapter-toggle hidden>Pause</button> <span class="chapter-error" data-chapter-error role="status" hidden>This clip did not load. Its first frame is shown.</span><span class="chapter-error" data-showcase-error role="status" hidden>Video is unavailable. The first frame is shown.</span></figcaption>
+          </figure>
+        </section>
+        <section class="chapter" id="dynamics" aria-labelledby="dynamics-title">
+          <div class="chapter-text">
+            <div>
+              <p class="chapter-index mono">02</p>
+              <h2 id="dynamics-title">World dynamics</h2>
+            </div>
+            <div>
+              <p class="chapter-claim">The camera holds its path and the proxy changes what happens in the world. At an intersection, the cross traffic moves on one signal plan and the pedestrians cross on the other. At a bascule bridge, the two leaves lift and a cargo ship passes through, or the bridge stays shut and the traffic keeps flowing. The video follows each version of the proxy.</p>
+              <p class="chapter-variables mono"><span>Fixed: first frame, camera</span> <span>Varies: motion in the scene</span></p>
+            </div>
+          </div>
+          <figure class="chapter-player">
+            <div class="chapter-controls">
+              <div class="chapter-tabs" data-chapter-tabs role="group" aria-label="Choose a scene" hidden></div>
+              <span class="output-badge mono" data-chapter-badge hidden></span>
+            </div>
+            <div class="chapter-media">
+              <img class="chapter-poster" data-chapter-poster src="./media/showcase-v1/posters/promo-intersection.jpg?v=909f86b7fb08" width="1600" height="914" loading="lazy" alt="Intersection. Proxies for versions A and B above, model outputs for each version below, first frame.">
+              <div class="chapter-stage" data-chapter-stage hidden><span class="stage-note mono">Same first frame</span></div>
+            </div>
+            <figcaption><span class="mono" data-chapter-label>Intersection</span> <span>Both versions open on one first frame and share the camera. Only the motion in the proxy differs. Each proxy is inset at top left.</span> <button class="text-button" type="button" data-chapter-toggle hidden>Pause</button> <span class="chapter-error" data-chapter-error role="status" hidden>This clip did not load. Its first frame is shown.</span><span class="chapter-error" data-showcase-error role="status" hidden>Video is unavailable. The first frame is shown.</span></figcaption>
+          </figure>
+        </section>
+        <section class="chapter" id="correspondence" aria-labelledby="correspondence-title">
+          <div class="chapter-text">
+            <div>
+              <p class="chapter-index mono">03</p>
+              <h2 id="correspondence-title">Proxy correspondence</h2>
+            </div>
+            <div>
+              <p class="chapter-claim">Every element in the proxy lands at the same place in the video: the pillars, the temple and the figure through a dolly zoom, the colonnades and the statue of a sunken street as the camera rises to the sea surface, the parts of a motorcycle, the lamps of a car as the camera circles behind it. Fade the proxy over the output to compare them in place.</p>
+              <p class="chapter-variables mono"><span>Fixed: one proxy and first frame per scene</span> <span>Varies: scene</span></p>
+            </div>
+          </div>
+          <figure class="chapter-player">
+            <div class="chapter-controls">
+              <div class="chapter-tabs" data-chapter-tabs role="group" aria-label="Choose a scene" hidden></div>
+              <span class="output-badge mono" data-chapter-badge hidden></span>
+            </div>
+            <div class="chapter-media">
+              <img class="chapter-poster" data-chapter-poster src="./media/showcase-v1/posters/correspondence-cliff-temple.jpg?v=e8a552caddbb" width="1792" height="512" loading="lazy" alt="Cliff temple. Proxy and model output, first frame.">
+              <div class="chapter-stage" data-chapter-stage data-blend hidden></div>
+            </div>
+            <figcaption><label class="blend-control mono">Proxy opacity <input type="range" min="0" max="100" value="50" data-chapter-blend></label> <span class="mono" data-chapter-label>Cliff temple</span> <span>Proxy drawn over the output at the chosen opacity, frame-synced.</span> <button class="text-button" type="button" data-chapter-toggle hidden>Pause</button> <span class="chapter-error" data-chapter-error role="status" hidden>This clip did not load. Its first frame is shown.</span><span class="chapter-error" data-showcase-error role="status" hidden>Video is unavailable. The first frame is shown.</span></figcaption>
+          </figure>
+        </section>
+        <section class="chapter" id="granularity" aria-labelledby="granularity-title">
+          <div class="chapter-text">
+            <div>
+              <p class="chapter-index mono">04</p>
+              <h2 id="granularity-title">Any granularity</h2>
+            </div>
+            <div>
+              <p class="chapter-claim">One first frame and one camera route, with four proxies at different levels of detail. Each carries a different amount of scene structure into the video.</p>
+              <p class="chapter-variables mono"><span>Fixed: first frame, camera route</span> <span>Varies: proxy granularity</span></p>
+            </div>
+          </div>
+          <figure class="chapter-player">
+            <div class="chapter-controls">
+              <div class="chapter-tabs" data-chapter-tabs role="group" aria-label="Choose a proxy" hidden></div>
+              <span class="output-badge mono" data-chapter-badge hidden></span>
+            </div>
+            <div class="chapter-media">
+              <img class="chapter-poster" data-chapter-poster src="./media/showcase-v1/posters/granularity-rainy-depth.jpg?v=9614673dcee2" width="1792" height="512" loading="lazy" alt="Rainy chase. Proxy and model output, first frame.">
+              <div class="chapter-stage" data-chapter-stage hidden></div>
+            </div>
+            <figcaption><span class="mono" data-chapter-label>Rainy chase</span> <span>Proxy inset at top left, frame-synced with the output. Switching proxy keeps the playback position.</span> <button class="text-button" type="button" data-chapter-toggle hidden>Pause</button> <span class="chapter-error" data-chapter-error role="status" hidden>This clip did not load. Its first frame is shown.</span><span class="chapter-error" data-showcase-error role="status" hidden>Video is unavailable. The first frame is shown.</span></figcaption>
+          </figure>
+        </section>
+        <section class="chapter live" id="live" aria-labelledby="live-title">
+          <div class="chapter-text">
+            <div>
+              <p class="chapter-index mono">05</p>
+              <h2 id="live-title">Play it live</h2>
+            </div>
+          </div>
+          <figure class="chapter-player">
+            <div class="frame live-frame" data-live-frame>
+              <img class="live-poster" data-live-poster src="./media/showcase-v1/posters/live-akina.jpg" width="1280" height="720" loading="lazy" alt="Racing session. Model output full frame, proxy at bottom left, the player's controller at bottom right.">
+            </div>
+            <figcaption><span class="chapter-error" data-live-error role="status" hidden>The video did not load. Its first frame is shown.</span></figcaption>
+          </figure>
+        </section>
+      </div>
+
+      <section class="infra page-width" id="infra" aria-labelledby="infra-title" tabindex="-1">
+        <div class="chapter-text">
+          <div>
+            <p class="chapter-index mono">Infra</p>
+            <h2 id="infra-title">Real-time streaming</h2>
+          </div>
+          <div>
+            <p class="chapter-claim">The video is generated chunk by chunk, and the final pipeline delivers a chunk every 930 ms, 18.0 frames per second, 1.82× the 1770 ms baseline. Each chunk takes four denoising passes of the DiT on 8 GPUs (Ulysses8). The first pass is fused with the commit of clean history and proxy condition into the KV cache, which keeps a sink and a recent window and evicts the rest. Between DiT chunks, a lightweight TAE encodes the next proxy chunk while the decoder turns the current one into RGB, and a CPU worker delivers those frames while the DiT renders the next chunk.</p>
+            <p class="chapter-variables mono"><span>8 GPUs · Ulysses8</span> <span>Fused pass 1 + KV commit</span> <span>Concurrent encode / decode</span> <span>Async delivery</span></p>
+          </div>
+        </div>
+        <figure class="infra-figure">
+          <div class="infra-diagram"><img src="./media/infra-v1/infra-io-package-v3.svg?rev=20261117" width="1080" height="625" loading="lazy" alt="Infra overview. A KV cache holds a sink, evicted slots, earlier chunks of clean history H and proxy condition C, and the newly committed KV. Two DiT blocks, each four passes on 8 GPUs with Ulysses8, read the cache; pass 1 is fused with the commit of H and C. Between them, a codec interval runs the encoder (×2) and decoder (×4) concurrently, taking proxy chunk n+1 in and putting RGB chunk n out."></div>
+          <figcaption>Infra overview. Concept diagram, not drawn to time scale. <span class="mono">H</span> clean history · <span class="mono">C</span> proxy condition · <span class="mono">D</span> noisy latent.</figcaption>
+        </figure>
+        <figure class="infra-figure">
+          <div class="infra-diagram"><img src="./media/infra-v1/swimlane-wide.svg" width="1080" height="368" loading="lazy" alt="Stage timeline of the final pipeline over three consecutive chunks, 0 to 3 seconds. Lanes: proxy encode with TAE on 1 GPU, DiT render with Ulysses-8, decode and device-to-host copy with causal TP4, CPU delivery on an async worker, and frames out. Each chunk runs a fused pass with clean history, proxy condition and the first noisy latent, then three more denoising passes. Between chunks, encoding of the next proxy chunk overlaps decoding of the current one, and CPU delivery of a chunk overlaps the DiT render of the next. Frames out: 21, 13 and 21 frames, about one chunk period apart."></div>
+          <figcaption>Stage timeline of the final pipeline over three consecutive chunks, laid out from a profiled run on one time axis. Dashed boxes mark work that runs concurrently.</figcaption>
+        </figure>
+      </section>
+
+      <section class="cite page-width" id="cite" aria-labelledby="cite-title" tabindex="-1">
+        <div class="cite-head">
+          <h2 id="cite-title">Citation</h2>
+          <button class="text-button" type="button" data-cite-copy>Copy BibTeX</button>
+        </div>
+        <pre class="cite-bibtex" data-cite-bibtex style="--bib-hang: 19ch"><code><span class="bib-line">@<span class="bib-type">misc</span>{<span class="bib-key">wang2026codeworldmodel20</span>,
+</span><span class="bib-line">  <span class="bib-field">title        </span> = {Code World Model 2.0: Towards Infinite Controllable Video Generation},
+</span><span class="bib-line">  <span class="bib-field">author       </span> = {Ruoyu Wang and Hao Zhong and Yanming Yang and Jiahao Tian and Lin Liu and Biao Gong and Guoshan Lu and Yiding Tian and Chunhua Shen and Zhenzhong Lan and Chi Zhang},
+</span><span class="bib-line">  <span class="bib-field">year         </span> = {2026},
+</span><span class="bib-line">  <span class="bib-field">eprint       </span> = {2611.22925},
+</span><span class="bib-line">  <span class="bib-field">archivePrefix</span> = {arXiv},
+</span><span class="bib-line">  <span class="bib-field">primaryClass </span> = {cs.CV},
+</span><span class="bib-line">  <span class="bib-field">url          </span> = {https://arxiv.org/abs/2611.22925}
+</span><span class="bib-line">}</span></code></pre>
+      </section>
+
+    </main>
+
+    <footer class="site-footer page-width">
+      <p>Code World Model 2.0</p>
+      <a href="#top">Back to top ↑</a>
+    </footer>
+    <p class="visually-hidden" id="selection-announcement" aria-live="polite" aria-atomic="true"></p>
+  </body>
+</html>

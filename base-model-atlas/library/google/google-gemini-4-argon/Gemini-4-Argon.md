@@ -12,8 +12,12 @@ tags: [model-note, base-model, gemini, agent-training, long-context, safety]
 topic: "13_base_model"
 status: read
 created: 2026-10-14
-updated: 2026-11-12
+updated: 2026-11-20
 ---
+
+> [!important] 2026-11-20现状复核
+> 新增Neon平衡成员，首发北京11/19；由Carbon适配，现与Argon/Carbon/Hydrogen共用Gemini4 family。 详见[[Gemini-4-Neon]]。
+
 
 # Gemini 4 · Argon / Carbon
 

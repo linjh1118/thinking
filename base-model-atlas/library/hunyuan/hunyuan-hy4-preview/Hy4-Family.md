@@ -3,13 +3,17 @@ title: "Hy4 家族｜从百万上下文 Preview 到视觉与电脑操作正式�
 type: model-note
 organization: Tencent Hunyuan
 release: 2026-08-28
-updated: 2026-11-04
+updated: 2026-11-20
 tags: [model-note, base-model, hunyuan, multimodal, agent-training]
 topic: "13_base_model"
 status: read
 html_tabs: true
 url: "https://hunyuan.tencent.com/research/hy4?langVersion=zh"
 ---
+
+> [!important] 2026-11-20现状复核
+> 11/18开放Hy4Flash/Base/FP8，约220B总量/12B激活与DFly2共享起草，作为同族阶段。 详见[[Hy4-Flash]]。
+
 
 # Hy4 家族 · 正式版研读
 

@@ -1,11 +1,16 @@
 ---
 title: "Genie 4 — Gemini 规划与原生声画世界模拟的协同"
 type: model-note
+html_tabs: true
 tags: [model-note, google, world-model, agent-training]
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-11-20
 url: "https://deepmind.google/blog/genie-4-a-new-generation-of-world-simulation/"
 ---
+
+> [!important] 2026-11-20现状复核
+> ProjectGenie在北京11/19进入新开放阶段；下文trusted-testers为10/28当时状态。新卡仍无完整可复现训练/权重。 详见[[Genie-4-Availability]]。
+
 
 # Genie 4：Gemini 规划与原生声画世界模拟的协同
 
