@@ -88,3 +88,10 @@ Preview 的结构、部署与过度验证问题详见 [[Hy4-Preview]]。两个�
 - [HF Model Card · 8 月 Preview](https://huggingface.co/tencent/Hy4-preview)。公开卡与参数仅归属 Preview。
 - [Tech Blog · Hyra 2.0](https://hunyuan.tencent.com/research/hyra2)。用于理解科研工作流背景。
 - 中文 Poster：[[hy4-20261104_poster_zh.html]]。
+
+
+## 11/20 正式版权重开放补充
+
+[[Hy4-Open-Weights]]：770B骨干、DFly2、完整官方评测图与部署/微调边界。Base/Instruct/FP8归同族，首发不变。
+
+> 📊 相关可视化: [[hy4_open_weights_poster_zh.html]]
