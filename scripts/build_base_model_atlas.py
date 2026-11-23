@@ -3046,6 +3046,7 @@ def build_records() -> tuple[list[dict], list[dict]]:
                 "slug": slug, "team": team["id"], "teamName": team["name"],
                 "teamDir": team["dir"], "region": team["region"], "color": team["color"],
                 "date": release["date"], "rawDate": raw_date, "name": release["name"],
+                "dateBasis": release.get("dateBasis", ""),
                 "summary": release["summary"], "source": release["sources"][0]["url"],
                 "sourceType": release["sources"][0]["label"], "thesis": release.get("thesis", team["thesis"]),
                 "lineageType": release["lineageType"], "lineageLabel": release["label"],
