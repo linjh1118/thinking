@@ -1,0 +1,402 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://help.aliyun.com/zh/model-studio/qwen-audio-live">打开官方原文 ↗</a> · <a href="qwen-live-integration.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Qwen-Audio-Live-阿里云帮助中心 大模型 产品 解决方案 权益 定价 AI 应用市场 伙伴 服务 了解阿里云 查看 &quot;&quot; 全部搜索结果 AI 助理 文档 备案 控制台 官方文档 
+Token Plan 
+模型 
+Agent 
+模型 API 
+Agent API 
+CLI 
+产品动态与公告 首页 大模型服务平台百炼 模型 模型调用 语音 语音转语音 Qwen-Audio-Live 
+Qwen-Audio-Live 更新时间： 复制 MD 格式 产品详情 我的收藏 
+为语音助手和客服应用接入实时语音对话与工具调用。 
+Qwen-Audio-Live 的前台模型负责听取用户语音、提问和回复。遇到需要调用业务接口或进行推理的任务，可以把任务交给应用或后台模型，继续与用户对话。 
+以查订单为例，查询期间，前台模型仍可以接收用户补充的订单号，并播报查询进展和结果。Client 模式由应用处理任务并回传结果。Responses 模式由百炼调用配置的后台模型处理任务，并将结果交给前台模型。 
+会话配置、音频收发和用量查询见 管理会话 。接入业务系统或后台模型见 任务委派与工具 。 
+快速开始 
+想先验证接入，可以 运行本页的 Python 示例 ，发送一段录音，检查能否收到字幕和音频。 
+想直接和模型对话，可以 运行 WebRTC 浏览器示例 ，用麦克风说话，并听取模型回复。 
+建立第一个会话 
+本例通过 WebSocket 将一段录音发送给模型，并将语音回复保存到 reply.wav 。 准备录音和凭证 
+准备华北 2（北京）的业务空间 ID 和 API Key 。长期 API Key 保存在应用服务端。 
+安装 Python 和 FFmpeg。录一句「请从一数到三」，保存为 input.wav 。 
+将 API Key 配置到环境变量 DASHSCOPE_API_KEY ，然后安装依赖，并将录音转换为 16 kHz、16 位、单声道的 PCM 音频。 python -m pip install &quot;websockets&gt;=15&quot;
+ffmpeg -i input.wav -ar 16000 -ac 1 -f s16le input.pcm 发送录音并接收回复 
+Qwen-Audio-Live 仅支持业务空间专属域名。这个示例连接华北 2（北京），请在代码中填写该地域的业务空间 ID。 
+示例中的两个模型参数已经填好。连接地址里的 model 用于接入 Qwen-Audio-Live 服务， session.model 则指定与用户交谈的前台模型。本例使用 qwen-audio-4.0-realtime-preview ，并将 turn_detection.type 设为 duplex ，开启全双工对话。此时模型可以边听边说，在回复时仍能接收用户语音。其他会话设置见 session.update 。 
+将以下示例保存为 live_quickstart.py 。 import base64
+import json
+import os
+import sys
+import time
+import uuid
+import wave
+from pathlib import Path
+
+from websockets.sync.client import connect
+
+WEBSOCKET_URL = &quot;wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime?model=qwen-audio-3.1-live&quot;
+SESSION_MODEL = &quot;qwen-audio-4.0-realtime-preview&quot;
+REPLY_TIMEOUT_SECONDS = 12
+
+
+def main():
+    audio = Path(sys.argv[1]).read_bytes()
+    if not audio or len(audio) % 2:
+        raise ValueError(&quot;请提供非空的 16 位 PCM 文件&quot;)
+    headers = {&quot;Authorization&quot;: f&quot;Bearer {os.environ[&#x27;DASHSCOPE_API_KEY&#x27;]}&quot;}
+    with connect(
+        WEBSOCKET_URL,
+        additional_headers=headers,
+        close_timeout=2,
+    ) as ws:
+        def send(event_type, **payload):
+            ws.send(json.dumps({
+                &quot;type&quot;: event_type,
+                &quot;event_id&quot;: uuid.uuid4().hex,
+                **payload,
+            }))
+
+        session = {
+            &quot;model&quot;: SESSION_MODEL,
+            &quot;modalities&quot;: [&quot;text&quot;, &quot;audio&quot;],
+            &quot;turn_detection&quot;: {&quot;type&quot;: &quot;duplex&quot;},
+            &quot;delegation&quot;: {&quot;type&quot;: &quot;client&quot;},
+        }
+        send(&quot;session.update&quot;, session=session)
+
+        deadline = time.monotonic() + 20
+        while True:
+            event = json.loads(ws.recv(timeout=max(0, deadline - time.monotonic())))
+            if event[&quot;type&quot;] == &quot;session.updated&quot;:
+                break
+            if event[&quot;type&quot;] in (&quot;error&quot;, &quot;session.closed&quot;):
+                raise RuntimeError(event)
+
+        audio += bytes(32000 * 3)
+        with wave.open(&quot;reply.wav&quot;, &quot;wb&quot;) as reply:
+            reply.setparams((1, 2, 24000, 0, &quot;NONE&quot;, &quot;not compressed&quot;))
+            start = time.monotonic()
+            offset = 0
+            deadline = start + len(audio) / 32000 + REPLY_TIMEOUT_SECONDS
+            while time.monotonic() &lt; deadline:
+                if offset &lt; len(audio) and time.monotonic() &gt;= start + offset / 32000:
+                    frame = audio[offset:offset + 640]
+                    send(&quot;session.input_audio.append&quot;,
+                         audio=base64.b64encode(frame).decode(&quot;ascii&quot;))
+                    offset += len(frame)
+                try:
+                    event = json.loads(ws.recv(timeout=0.02 if offset &lt; len(audio) else 0.25))
+                except TimeoutError:
+                    continue
+                event_type = event[&quot;type&quot;]
+                if event_type == &quot;session.output_audio.delta&quot;:
+                    reply.writeframesraw(base64.b64decode(event[&quot;delta&quot;]))
+                elif event_type == &quot;session.output_transcript.delta&quot;:
+                    print(event[&quot;delta&quot;], end=&quot;&quot;, flush=True)
+                elif event_type == &quot;session.closed&quot;:
+                    break
+                elif event_type == &quot;error&quot;:
+                    raise RuntimeError(event[&quot;error&quot;])
+            else:
+                send(&quot;session.close&quot;)
+                close_deadline = time.monotonic() + 2
+                while time.monotonic() &lt; close_deadline:
+                    try:
+                        event = json.loads(ws.recv(timeout=max(0, close_deadline - time.monotonic())))
+                    except TimeoutError:
+                        break
+                    if event[&quot;type&quot;] == &quot;session.closed&quot;:
+                        break
+            if not reply.getnframes():
+                raise RuntimeError(&quot;未收到语音回复&quot;)
+
+
+main() python live_quickstart.py input.pcm 
+运行后，终端会显示回复字幕。打开生成的 reply.wav ，确认能听到模型数数。该文件是 24 kHz、16 位、单声道 WAV。 
+如果没有收到回复，先检查 API Key、业务空间 ID 和连接地址是否属于同一地域，再确认脚本是在收到 session.updated 后才发送录音。其他现象可按 排查接入问题 逐项检查。 
+选择接入方式 
+两种接入方式都先建立 WebSocket 主连接。您可以用这条连接直接收发音频，也可以另外建立一条 WebRTC 或 AOQ 媒体连接来收发音频。 
+
+仅用 WebSocket 。适合用录音验证接入，或由服务端直接处理音频。音频、字幕和任务事件都走同一条连接。 
+
+WebSocket + WebRTC 或 AOQ 。保留 WebSocket 主连接，用它配置会话、协商媒体连接和发送任务请求。媒体连接就绪后，用它收发音频，同时可从 WebSocket 主连接或媒体连接接收服务端事件。 
+WebRTC 。适合在浏览器或应用中实时采集和播放语音。通过控制 WebSocket 交换 SDP。 
+AOQ 。适合已集成 AOQ Client SDK 的应用。通过控制 WebSocket 获取临时凭证，再用 SDK 连接 Relay。 
+API 参考 按操作提供请求与响应事件的入口。 模型详情 列出地域、限流和价格。 
+编写提示词 
+编写前台对话提示词 
+在 session.instructions 中设置前台的角色和语气，说明何时追问、何时委派，以及如何播报结果。 
+初次配置会话时，省略 session.instructions 会使用内置提示词。如果填写了自定义提示词，它会替换内置提示词，因此请把对话需要遵循的规则写完整。 
+要让客服先简短回答，再问客户是否需要帮助，可在 session.update 的 session 中加入以下字段，并保留已有的 model 和 delegation 等设置。 {
+  &quot;instructions&quot;: &quot;担任门店客服。先用一句话回答，再询问用户是否需要其他帮助。&quot;
+} 
+编写任务处理规则 
+任务提示词说明处理步骤、输入校验和结果格式。用 Client 模式时，在应用或 Agent 中定义这些规则。用 Responses 模式时，在 session.delegation.responses.instructions 中写明后台模型需要遵循的规则，百炼没有内置的后台提示词。 
+用提示词分配计算任务 
+在 Responses 模式下，可以让前台问清计算条件，由后台计算总价。 
+前台提示词 说明何时追问、何时交给后台。例如，缺少单价或数量时，先向用户确认。条件齐全后，把计算任务交给后台模型，并在收到结果后用一句话播报。 
+后台提示词 说明怎么算、返回什么。例如，根据单价和数量计算总价，返回金额和币种。 
+完整的会话配置和验证步骤见 Responses 模式示例 。 
+管理会话 
+建立连接后，先配置会话，确定由哪个前台模型和用户交谈、使用什么音色、如何传输音频，以及任务交给谁处理。 
+配置会话 
+设置 配置位置和用途 
+前台模型 通过 session.model 选择与用户交谈的模型。要开启全双工对话，选择 qwen-audio-4.0-realtime-preview ，并将 session.turn_detection.type 设为 duplex 。 
+对话指令和音色 通过 instructions 和 voice 设置。见 编写提示词 和 配置音色 。 
+输出类型 modalities 同时包含 text 和 audio 时，服务返回语音和字幕。 
+音频传输方式 通过 session.transport 选择音频走哪条连接。省略时，音频通过 WebSocket 收发。使用 WebRTC 或 AOQ 时，按各自的 接入流程 建立媒体连接。 
+任务处理模式 通过 session.delegation 设置。见 任务委派与工具 。 
+发送 session.update 后，通过 session.updated 确认哪些配置已生效。仅用 WebSocket 时，收到该事件后就可以发送音频。使用 WebRTC 或 AOQ 时，还要等媒体连接就绪。 
+配置音色 
+在 session.update 的 session 对象中设置音色 ID，保留其余会话配置。 {
+  &quot;voice&quot;: &quot;qingyou&quot;
+} 
+示例中的 qingyou 对应「青柚」，默认值为 yunshu （云舒）。完整列表见 客户端事件 。 
+收发语音和字幕 
+发送麦克风音频和播放模型回复时，使用建连时选定的音频通道。开启全双工对话后，播放回复时也要继续采集并发送用户语音，同时读取服务端事件。 
+WebRTC 通过媒体轨道收发音频。浏览器收到远端音轨后，将它交给播放器。 
+AOQ 通过 SDK 发送用户语音和播放模型回复。上行音频必须通过 AOQ 发送。将 session.transport.aoq.ws_audio 设为 true 后，控制 WebSocket 也会收到一份模型的回复音频。详见 AOQ 接入 。 
+WebSocket 通过 JSON 事件收发音频。输入和输出都使用单声道 PCM，采样率见下表。 
+下表的音频收发流程适用于纯 WebSocket 接入。字幕事件适用于三种接入方式。 
+数据 事件 处理方式 
+麦克风音频或录音 发送 session.input_audio.append 将 16 kHz、16 位、单声道 PCM 音频分片并编码为 Base64。快速开始以 20 毫秒为一帧。 
+模型回复音频 接收 session.output_audio.delta 解码事件的 delta ，按到达顺序播放 24 kHz、16 位、单声道 PCM。 
+字幕 接收 session.input_transcript.delta 和 session.output_transcript.delta 前者是用户语音的转写，后者是模型回复的字幕。 
+如果用户在模型播报时补充一句话，用户字幕和模型字幕可能同时更新。将两路字幕分别追加到各自的对话气泡，并根据播放器的实际状态更新界面上的播报指示。 
+WebRTC 或 AOQ 媒体连接就绪后，控制 WebSocket 和媒体连接都可用于接收字幕。如果两路都收到同一个 event_id ，只追加一次。 
+如果界面有麦克风开关，可在用户切换时发送 session.input_audio.mute 或 session.input_audio.unmute ，等服务确认后再更新开关状态。静音期间，会话仍保持连接。 
+发送文字消息 
+除了语音，用户也可以在通话中用文字补充信息，例如输入要查的商品名。应用通过 session.item.create 将这段文字作为用户消息发给模型。 {
+  &quot;type&quot;: &quot;session.item.create&quot;,
+  &quot;event_id&quot;: &quot;evt_user_message&quot;,
+  &quot;item&quot;: {
+    &quot;role&quot;: &quot;user&quot;,
+    &quot;type&quot;: &quot;message&quot;,
+    &quot;content&quot;: [
+      {&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: &quot;我想查黑色折叠伞。&quot;}
+    ]
+  }
+} 
+结束会话和查看用量 
+单次会话没有时长上限，费用按会话时长（秒）计算。连接建立后至少计费 3 秒，超过 3 秒则按实际会话时长计费。发送文字消息、静音和空闲的时间都计入会话时长。百炼调用后台模型时，还会按该模型的实际 Token 用量另行计费。 
+用户挂断或点击结束时，发送 session.close 并停止采集麦克风音频。等收到 session.closed 后，再关闭连接并释放资源。 
+会话激活后，服务每 5 秒通过 session.usage.updated 上报 usage.seconds ，表示会话累计计费时长（秒）。会话期间取最新值，结束后以 session.closed 中的 usage.seconds 为准。价格及后台模型计费见 计费说明 。 
+排查接入问题 
+问题现象 排查方法 
+上传音频后没有回复 先确认收到 session.updated 。纯 WebSocket 接入时，检查上行音频是否为 16 kHz、16 位、单声道 PCM。使用 WebRTC 或 AOQ 时，确认媒体连接已就绪，并已通过该连接发送音频。 
+收到字幕，未听到语音回复 纯 WebSocket 接入时，检查是否收到 session.output_audio.delta ，并以 24 kHz 播放。使用 WebRTC 或 AOQ 时，检查播放器是否接收到所选通道的下行音频。 
+任务已处理，未听到语音播报 检查应用是否接收并播放前台模型的语音。Client 模式下，确认回传的 delegation_id 与任务一致。 
+收到 error 或 session.closed 收到 error 时，按 错误事件 检查请求。会话关闭后，如需继续通话，重新建连并配置会话。 
+任务委派与工具 
+本节示例沿用 快速开始 的纯 WebSocket 连接。使用 WebRTC 或 AOQ 时，会话配置和任务请求仍通过控制 WebSocket 发送，音频则通过媒体连接收发。 
+前后台工具选型 
+用户在对话中提出业务请求时，前台模型可以直接发起函数调用，也可以把任务委派给后台。接入时，可以根据任务的处理步骤和响应要求，选择把工具配置在哪里。 
+前台工具 适合可直接执行、需要快速响应的操作。例如，用户说「播放音乐」时，前台模型调用通过 session.tools 注册的函数，由应用执行播放指令。 
+后台工具 适合需要判断条件或依次调用多个工具的任务。例如，办理改签时，后台先查询订单和改签规则，再查找可选班次。前台模型收到结果后，向用户说明有哪些班次可选。 
+选择处理任务模式 
+希望百炼调用后台模型并传回结果时，选择 Responses 模式 。已有业务接口、工作流或 Agent，或者需要由应用先核对结果再决定播报内容时，选择 Client 模式 。 
+在 session.update 中设置 session.delegation.type 。Responses 模式填 responses ，Client 模式填 client 。 
+要决定的事 Responses 模式 Client 模式 
+谁处理任务 百炼调用配置的后台 Responses 模型。 应用调用业务接口、工作流、Agent 或模型。 
+谁准备任务输入 百炼根据会话发起后台请求，应用配置后台模型和任务指令。 应用从委派事件读取任务摘要和上下文，结合业务数据构造请求。 
+谁决定回传什么 后台结果由百炼交给前台模型。 应用可以校验、汇总或筛选结果，再把适合播报的内容交给前台模型。 
+例如，只需根据用户给出的单价和数量计算总价，可以用 Responses 模式。查询库存需要按门店权限调用内部接口，并由应用校验结果，可以用 Client 模式。 
+两种模式都可以 配置前台函数 ，用 call_id 将函数调用与结果对应起来。Client 模式中的任务委派则使用 delegation_id 关联同一任务的进度、追问和结果。接入业务系统前，先确认应用拥有接口权限，并了解接口需要哪些输入、会返回什么。 
+使用 Responses 模式调用后台模型 接入准备 
+准备业务空间可调用的后台 Responses 模型。示例使用 qwen4-max 计算总价，再由前台模型播报。 配置会话 
+将 快速开始 中的脚本另存为 live_responses.py 。在发送 session.update 前，用下面的代码设置前台指令并替换 session 的委派配置。可以将 REPLY_TIMEOUT_SECONDS 设为 30 秒，给后台处理和语音播报留出时间。 
+百炼将 session.delegation.responses 中的 model 、 instructions 和 tools 配置传给所选的后台模型。 session[&quot;instructions&quot;] = (
+    &quot;担任语音客服。&quot;
+    &quot;计算总价时，如果缺少单价或数量，先向用户确认。&quot;
+    &quot;条件齐全后，将计算任务交给后台模型。&quot;
+    &quot;收到结果后，用一句话播报。&quot;
+)
+session[&quot;delegation&quot;] = {
+    &quot;type&quot;: &quot;responses&quot;,
+    &quot;responses&quot;: {
+        &quot;model&quot;: &quot;qwen4-max&quot;,
+        &quot;instructions&quot;: (
+            &quot;根据单价和数量计算总价，返回金额和币种。&quot;
+            &quot;缺少必要条件时，说明缺少哪一项。&quot;
+        ),
+    },
+} 接收后台事件 
+自动委派开始时，服务发送 session.delegation.created 。后台生成期间，服务通过 response.event 转发后台事件。按外层的 delegation_id （如有）关联任务，按 event.type 区分后台事件。 
+在音频接收循环中，将下面两个分支加在 session.output_transcript.delta 分支之后。用内层 response.completed 判断后台何时完成本次生成，再从前台字幕和音频事件获取面向用户的回复。 elif event_type == &quot;session.delegation.created&quot;:
+    print(f&quot;\n已派发任务 {event[&#x27;delegation_id&#x27;]}&quot;, flush=True)
+elif event_type == &quot;response.event&quot;:
+    backend_event = event[&quot;event&quot;]
+    if backend_event[&quot;type&quot;] == &quot;response.completed&quot;:
+        print(&quot;\n后台模型已完成生成&quot;, flush=True)
+    elif backend_event[&quot;type&quot;] == &quot;response.failed&quot;:
+        print(&quot;\n后台生成失败&quot;, backend_event.get(&quot;response&quot;, {}).get(&quot;error&quot;), flush=True) 验证委派与播报 
+录下「每件商品三百二十七元，买十三件一共多少钱」，保存为 responses.wav 。转换录音并运行脚本。 ffmpeg -i responses.wav -ar 16000 -ac 1 -f s16le responses.pcm
+python live_responses.py responses.pcm 
+先看终端是否记录了任务派发，以及 response.event 中的 response.completed 。再打开 reply.wav ，确认模型播报了总价 4,251 元。应用中如需显示播报进度，以播放器的实际状态为准。 
+再录一段只提供单价的请求，例如「每件三百二十七元，一共多少钱」。用同样的方法转换录音并运行脚本，检查字幕或新的 reply.wav 是否追问购买数量。 配置和观察后台工具 
+通过 session.delegation.responses.tools 声明供后台模型使用的工具。工具定义的格式见 Responses API 。自动委派中，服务执行受支持的后台工具并处理结果。应用可监听 response.event 观察执行情况。收到内层 response.output_item.done 且 event.item.type 为 function_call 时，可从 event.item 读取函数名 name 、参数 arguments 和调用 ID call_id 。 
+如果业务系统需要由应用执行和校验，使用 Client 模式 接收任务，或 在前台声明函数 以获取结构化参数。 由应用发起后台生成 
+应用已有完整输入时，可通过 response.item.create 提供文本，再通过 response.create 发起独立的后台任务。结果从 response.event 读取。 
+将上述示例另存为 live_responses_text.py 。保留 Responses 会话配置，删除 main() 开头读取和校验 PCM 文件的代码。将收到 session.updated 后从 audio += 开始的音频处理代码替换为下方代码，缩进与 send(&quot;session.update&quot;, session=session) 一致。保留文件末尾的 main() 调用。 send(&quot;response.item.create&quot;, item={
+    &quot;type&quot;: &quot;message&quot;,
+    &quot;role&quot;: &quot;user&quot;,
+    &quot;content&quot;: [{&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: &quot;单价 327 元，数量 13，计算总价。&quot;}],
+})
+send(&quot;response.create&quot;)
+
+deadline = time.monotonic() + REPLY_TIMEOUT_SECONDS
+while True:
+    event = json.loads(ws.recv(timeout=max(0, deadline - time.monotonic())))
+    if event[&quot;type&quot;] in (&quot;error&quot;, &quot;session.closed&quot;):
+        raise RuntimeError(event)
+    if event[&quot;type&quot;] != &quot;response.event&quot;:
+        continue
+
+    backend_event = event[&quot;event&quot;]
+    kind = backend_event[&quot;type&quot;]
+    if kind == &quot;response.output_text.delta&quot;:
+        print(backend_event[&quot;delta&quot;], end=&quot;&quot;, flush=True)
+    elif kind == &quot;response.completed&quot;:
+        print()
+        break
+    elif kind == &quot;response.failed&quot;:
+        raise RuntimeError(backend_event)
+
+send(&quot;session.close&quot;) 
+运行 python live_responses_text.py 。终端应输出后台模型返回的金额。 
+使用 Client 模式接入业务系统 接入准备 
+可以先用下方的固定库存结果，验证应用能否把任务结果交给前台模型播报。接入真实库存接口时，应用需要有调用权限，能把用户说的商品名称转换为接口所需的商品 ID，并把查询结果整理成包含商品名称的回复。 配置会话 
+将 快速开始 的原始脚本另存为 live_client.py ，用于验证固定结果的回传和播报。保留 delegation 中的 &quot;type&quot;: &quot;client&quot; ，可将 REPLY_TIMEOUT_SECONDS 设为 30 秒，为任务处理和播报留出时间。在发送 session.update 前为 session 添加以下指令。 session[&quot;instructions&quot;] = &quot;将库存查询交给应用，收到结果后用语音回复用户。&quot;
+seen_delegation_events = set() 接收任务并准备上下文 
+收到 session.delegation.created 后，用 event_id 去重，并保存 delegation_id ，用于关联后续更新。从 summary 和 context （如有）提取任务信息，再结合应用保存的业务状态准备请求。例如，查库存时，可以用任务里的商品名称和当前门店，找到库存接口所需的商品 ID。 
+如果用户没说要查哪件商品，先请前台模型追问。收到后续的 session.delegation.created 时，用 delegation_id 关联同一任务。如果事件带有 supplements ，可以从中读取补充内容。等查询条件齐全后再执行。 回传进度、补充问题和结果 
+根据要回传的是进度、追问还是结果，选择下表中的事件。发送时填入当前任务的 delegation_id 。 
+要回传的内容 发送的事件 content 示例 
+更新进度，暂不播报 session.thinking.append 正在查询该门店的库存。 
+需要向用户追问的条件 session.instruction.append 请询问用户要查询哪件商品。 
+要让前台模型播报的结果 session.commentary.append 黑色折叠伞还有七把。 
+业务调用较慢时，可以在应用后台执行，让主循环继续收发音频和处理事件。核对业务结果后，再把适合播报的内容交给前台模型。 
+在快速开始的音频接收循环中，紧接在 session.output_transcript.delta 分支后添加以下两个分支。它们复用示例中的 send 函数。 elif event_type == &quot;session.delegation.created&quot;:
+    if event[&quot;event_id&quot;] in seen_delegation_events:
+        continue
+    seen_delegation_events.add(event[&quot;event_id&quot;])
+    task_id = event[&quot;delegation_id&quot;]
+    print(f&quot;\n收到任务 {task_id}&quot;, flush=True)
+    send(&quot;session.commentary.append&quot;,
+         delegation_id=task_id,
+         content=&quot;黑色折叠伞还有七把。&quot;)
+elif event_type == &quot;session.commentary.appended&quot;:
+    print(&quot;\n服务已受理任务结果&quot;, flush=True) 验证任务派发和结果播报 
+录下「请查一下黑色折叠伞有没有货」，保存为 client.wav 。转换录音并运行脚本。 ffmpeg -i client.wav -ar 16000 -ac 1 -f s16le client.pcm
+python live_client.py client.pcm 
+先在终端确认应用收到了任务派发，而且服务已受理回传的结果。再打开 reply.wav ，听模型是否说出了库存结果。接入真实库存接口后，用查询结果替换示例中的固定结果。 
+配置和处理前台函数 
+如果应用的库存查询需要商品名称，可以在 session.tools 中声明一个函数，让前台模型从对话中提取商品名称，再按声明的格式传给应用。将以下字段加入 session.update 的 session 对象，其余会话配置沿用原值。 {
+  &quot;tools&quot;: [
+    {
+      &quot;type&quot;: &quot;function&quot;,
+      &quot;name&quot;: &quot;lookup_stock&quot;,
+      &quot;description&quot;: &quot;查询指定商品的库存数量&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;item&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;商品名称&quot;}
+        },
+        &quot;required&quot;: [&quot;item&quot;]
+      }
+    }
+  ]
+} 
+收到 session.event 后，读取 event.item 中 type 为 function_call 的调用项。 
+按 name 找到函数，将 arguments 从 JSON 字符串解析为参数，校验后执行。同一个 call_id 只执行一次。 
+发送 session.item.create 回传结果。将 item.type 设为 function_call_output ，填入本次调用的 item.call_id 。会话级任务的结果仍通过 session.commentary.append 按 delegation_id 回传。 
+在 Client 模式下，前台模型等待函数结果时仍可接收用户语音并回复。应用可继续收发音频和处理事件。需要查询网页或其他实时信息时，可注册搜索服务，或由 Client 模式下的应用调用搜索服务。 
+从 Qwen-Audio-Realtime 接入 
+如果应用已使用 Qwen-Audio-Realtime，可保留现有业务接口和工具实现。先用快速开始验证 Qwen-Audio-Live 的语音收发，再迁移事件处理和任务逻辑。 
+迁移项 在 Qwen-Audio-Live 中的处理方式 
+WebSocket 连接 使用 Qwen-Audio-Live 请求地址 ，并在 session.update 中配置前台模型和任务处理模式。 
+WebSocket 音频 用 session.input_audio.append 发送用户语音，从 session.output_audio.delta 读取模型回复。按本页示例开启全双工对话后，应用持续发送音频即可，无需再用手动模式的 input_audio_buffer.commit 和 response.create 触发语音回复。格式和采样率见 收发语音和字幕 。 
+WebRTC 信令 原来通过 HTTP 交换 SDP。接入 Live 时，通过控制 WebSocket 发送 Offer，并从 session.updated 的 session.transport.sdp 读取 Answer。见 WebRTC 接入 。 
+前台函数 从 session.event 读取函数调用。执行后通过 session.item.create 按 call_id 回传。旧流程用 response.create 触发前台继续回复。Live 的 response.create 用于显式启动后台任务。 
+耗时业务任务 按 任务委派与工具 选择 Client 或 Responses。用一条需要调用工具的语音请求验证任务结果和语音播报。 上一篇：Qwen-Audio-Realtime 下一篇：向量 该文章对您有帮助吗？ 反馈 
+为什么选择阿里云 什么是云计算 全球基础设施 技术领先 稳定可靠 安全合规 分析师报告 
+大模型 大模型服务平台 千问大模型 模型市场 
+产品和定价 全部产品 免费试用 产品动态 产品定价 配置报价器 云上成本管理 
+技术内容 技术解决方案 帮助文档 开发者社区 天池大赛 阿里云认证 
+权益 免费试用 解决方案免费试用 高校计划 推荐返现计划 
+服务 基础服务 企业增值服务 迁云服务 官网公告 健康看板 信任中心 
+关注阿里云 
+关注阿里云公众号或下载阿里云APP，关注云资讯，随时随地运维管控云服务 
+联系我们：4008013260 法律声明 Cookies 政策 廉正举报 安全举报 联系我们 加入我们 
+友情链接 阿里巴巴集团 淘宝网 千问AI平台 千问办公 天猫 全球速卖通 阿里巴巴国际交易市场 1688 阿里妈妈 飞猪 阿里云计算 万网 高德 UC 友盟 优酷 钉钉 支付宝 达摩院 淘宝海外 阿里云盘 
+© 2009-现在 Aliyun.com 版权所有 增值电信业务经营许可证： 浙B2-20080101 域名注册服务机构许可： 浙D3-20210002 
+浙公网安备 33010602009975号</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

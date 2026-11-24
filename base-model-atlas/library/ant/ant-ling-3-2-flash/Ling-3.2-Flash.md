@@ -49,3 +49,6 @@ tags: [model-note, ant, multimodal, agent]
 - [官方 Ling 模型页](https://developer.ant-ling.com/en/docs/models/ling)
 - [官方发布文章](https://mp.weixin.qq.com/s/-eHoHAYQXgPP-EUpkgoCcA)
 - [[ling32_poster_zh.html|中文 Poster]]
+
+
+> 2026-11-24 更新：[[Ling-3.2-Air|最新同族/服务专项研读]]。保留原发布日与原规格口径。

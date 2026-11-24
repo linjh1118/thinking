@@ -90,3 +90,6 @@ Flash 的音频历史还有 **最多50轮、累计300秒** 的限制。262K总�
 - 原始模型页、正文提取与官方日期证据在 `src/`；没有下载权重、PDF或音色样音。
 
 > 📊 相关可视化: [[Topics/13_base_model/Alibaba_Qwen/Variants/260920_Qwen_Audio_3_1_Realtime/qwen_audio_3_1_realtime_poster_zh.html|Qwen Audio 3.1 中文 Poster]]
+
+
+> 2026-11-24 更新：[[Qwen-Audio-3.1-Live|最新同族/服务专项研读]]。保留原发布日与原规格口径。

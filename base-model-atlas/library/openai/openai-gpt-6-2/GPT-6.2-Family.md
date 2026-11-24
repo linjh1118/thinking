@@ -140,3 +140,6 @@ CoT更短导致同effort时更难监控；相同reasoning长度时Astra CoT-only
 - 原始HTTP系统卡、社区公告、浏览器DOM/API正文和官方SVG均在src；SVG仅冻结原站计算色与背景，原始未处理SVG在巡检证据中。手绘图由内置ImageGen制作，提示词随src/assets保存，非官方架构图。
 - [[Topics/13_base_model/NVIDIA_Nemotron/Variants/261117_Qwen3_8_27B_External_Drafts/External-Draft-Family]]、[[Topics/13_base_model/Alibaba_Qwen/261111_Qwen4/Qwen4-Max-Preview]]
 - 中文Poster：[[Topics/13_base_model/OpenAI_GPT/261118_GPT_6_2/gpt62_poster_zh.html]]
+
+
+> 2026-11-24 更新：[[GPT-6.2-ChatGPT-Nov23|最新同族/服务专项研读]]。保留原发布日与原规格口径。

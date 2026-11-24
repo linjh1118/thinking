@@ -1,0 +1,338 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://help.aliyun.com/zh/model-studio/qwen-audio-asr-captioner-http-api">打开官方原文 ↗</a> · <a href="qwen-captioner-api.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>音频打标 HTTP API-阿里云帮助中心 大模型 产品 解决方案 权益 定价 AI 应用市场 伙伴 服务 了解阿里云 查看 &quot;&quot; 全部搜索结果 AI 助理 文档 备案 控制台 官方文档 
+Token Plan 
+模型 
+Agent 
+模型 API 
+Agent API 
+CLI 
+产品动态与公告 首页 大模型服务平台百炼 模型 API 音视频（非实时） 音频打标 
+音频打标 HTTP API 更新时间： 复制 MD 格式 产品详情 我的收藏 
+提交录音文件，异步获取按时间标注的语音、音效和背景声，以及整段录音的场景描述。 
+说明 示例使用华北 2（北京）地域。将 WORKSPACE_ID 设为 业务空间 ID ，将 DASHSCOPE_API_KEY 设为该地域的 API Key 。 
+提交任务 
+提交一个音频或视频文件，创建异步标注任务。 POST https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api/v1/services/audio/asr/transcription 
+请求头 Authorization string 必填 
+Bearer $DASHSCOPE_API_KEY 。 Content-Type string 必填 
+application/json X-DashScope-Async string 必填 
+固定为 enable ，以异步方式处理文件。 
+请求体 model string 必填 
+音频标注模型 ID，例如 qwen-audio-3.1-captioner 。 input object 必填 file_url string 必填 
+单个音频或视频文件的 HTTP(S) 下载地址。 parameters object 可选 channel_id array[integer] 可选 
+要处理的声道编号，从 0 开始。单声道文件可传 [0] ；处理多声道时传入多个编号。 
+返回参数 output object task_id string 
+服务端生成的任务 ID。保存此值，用于查询任务。 task_status string 
+任务状态。 request_id string 
+本次请求的 ID，用于排查错误。 curl --request POST &quot;https://${WORKSPACE_ID}.cn-beijing.maas.aliyuncs.com/api/v1/services/audio/asr/transcription&quot; \
+  --header &quot;Authorization: Bearer $DASHSCOPE_API_KEY&quot; \
+  --header &quot;Content-Type: application/json&quot; \
+  --header &quot;X-DashScope-Async: enable&quot; \
+  --data &#x27;{
+    &quot;model&quot;: &quot;qwen-audio-3.1-captioner&quot;,
+    &quot;input&quot;: {
+      &quot;file_url&quot;: &quot;https://g-adoc.alcasset.com/media/maas_docs/sfm-cn/zh/audios/6a4b3c2d1e0f9093.wav&quot;
+    },
+    &quot;parameters&quot;: {&quot;channel_id&quot;: [0]}
+  }&#x27; {
+  &quot;output&quot;: {
+    &quot;task_id&quot;: &quot;12345678-abcd-4abc-8123-123456789abc&quot;,
+    &quot;task_status&quot;: &quot;PENDING&quot;
+  },
+  &quot;request_id&quot;: &quot;01234567-abcd-4abc-8234-123456789abc&quot;
+} 
+查询任务 
+根据任务 ID 查询处理状态。任务成功后，响应中包含标注结果的下载地址。 GET https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api/v1/tasks/{task_id} 
+路径参数 task_id string 必填 
+提交时返回的任务 ID。 
+返回参数 request_id string 
+本次请求的 ID，用于排查错误。 output object task_id string 
+服务端生成的任务 ID。保存此值，用于查询任务。 task_status string 
+任务状态： 
+PENDING ：排队中，稍后再查询。 
+RUNNING ：处理中，稍后再查询。 
+SUCCEEDED ：任务成功，检查文件状态并下载结果。 
+FAILED ：任务失败。 
+CANCELED ：任务已取消。 submit_time string 
+提交任务的时间。 scheduled_time string 
+任务开始调度的时间。 end_time string 
+任务结束的时间。 file_url string 
+提交的文件地址。 subtask_status string 
+文件处理状态。 SUCCEEDED 表示该文件已生成标注结果。 transcription_url string 
+成功后返回的结果文件下载地址，有效期为 24 小时。使用完整 URL 下载，包括查询字符串。 curl &quot;https://${WORKSPACE_ID}.cn-beijing.maas.aliyuncs.com/api/v1/tasks/${TASK_ID}&quot; \
+  --header &quot;Authorization: Bearer $DASHSCOPE_API_KEY&quot; {
+  &quot;request_id&quot;: &quot;01234567-abcd-4abc-8234-123456789abc&quot;,
+  &quot;output&quot;: {
+    &quot;task_id&quot;: &quot;12345678-abcd-4abc-8123-123456789abc&quot;,
+    &quot;task_status&quot;: &quot;SUCCEEDED&quot;,
+    &quot;submit_time&quot;: &quot;2026-11-23 11:00:00.000&quot;,
+    &quot;scheduled_time&quot;: &quot;2026-11-23 11:00:01.000&quot;,
+    &quot;end_time&quot;: &quot;2026-11-23 11:00:08.000&quot;,
+    &quot;file_url&quot;: &quot;https://g-adoc.alcasset.com/media/maas_docs/sfm-cn/zh/audios/6a4b3c2d1e0f9093.wav&quot;,
+    &quot;subtask_status&quot;: &quot;SUCCEEDED&quot;,
+    &quot;transcription_url&quot;: &quot;https://example.com/result.json?signature=...&quot;
+  }
+} 
+下载并解析结果 
+任务成功后，可下载各声道的标注结果文件。文件包含原始音频属性、分段标注和 Token 用量。 
+结果文件 file_url string 
+输入文件的地址。 properties object 
+输入音频的属性。 audio_format string 
+音频编码格式，例如 pcm_s16le 。 channels array[integer] 
+声道编号列表。 original_sampling_rate integer 
+原始音频采样率，单位为 Hz。 original_duration_in_milliseconds integer 
+原始音频时长，单位为毫秒。 transcripts array[object] 
+每个元素对应一个声道。 channel_id integer 
+声道编号。 content_duration_in_milliseconds integer 
+该声道的标注时长，单位为毫秒。 text string 
+包含该声道标注结果的 JSON 字符串。 sentences array[object] 
+该声道的分段标注。 begin_time integer 
+片段起始位置，单位为毫秒。 end_time integer 
+片段结束位置，单位为毫秒。 text string 
+该片段的标注文本。 speaker_id integer 
+说话人编号（如返回）。 usage object 
+本次任务的 Token 用量。 input_tokens integer 
+输入 Token 数。 output_tokens integer 
+输出 Token 数。 total_tokens integer 
+输入和输出 Token 总数。 
+标注内容 
+解析结果文件中的 transcripts[].text 后，可读取以下字段。 sound_segments array[object] 
+音效和声音事件。 start_time string 
+相对于当前音频片段起点的开始时间，格式为 MM:SS.cc （分:秒.百分秒）。跨段时可以为负值。 end_time string 
+相对于当前片段起点的结束时间，格式为 MM:SS.cc 。 tag array[string] 
+声音事件标签。 description string 
+声音描述，无描述时为空字符串。 speech_segments array[object] 
+人声片段。 start string 
+相对于当前音频片段起点的开始时间，格式为 MM:SS.cc （分:秒.百分秒）。跨段时可以为负值。 end string 
+相对于当前片段起点的结束时间，格式为 MM:SS.cc 。 language array[string] 
+语种及口音标签，无人声时为空列表。 text string 
+转写文本，可包含说话人、语气和句内声音事件的标注。 para object 
+片段的表达方式和说话人信息。 speech_mode string 
+表达方式。取值： 
+唱歌 
+说唱 
+朗诵 
+播报 
+解说 
+讲解 
+演讲 
+讲故事 
+访谈 
+闲聊 
+独白 
+无人声 speed string 
+语速。无人声时为空字符串。其他取值： 
+极慢 
+偏慢 
+中速 
+偏快 
+极快 
+短促 volume string 
+音量。无人声时为空字符串。其他取值： 
+轻声 
+中等 
+偏大 
+高亢 intonation string 
+描述语调、重音、情绪及其变化。 speaker array[string] 
+片段中的说话人角色。 speaker_index array[string] 
+片段中的说话人编号，用于关联整段录音的说话人信息。 background_segments array[object] 
+背景音乐、持续的环境声或安静时段。 start_time string 
+相对于当前音频片段起点的开始时间，格式为 MM:SS.cc （分:秒.百分秒）。跨段时可以为负值。 end_time string 
+相对于当前片段起点的结束时间，格式为 MM:SS.cc 。 description array[string] 
+背景声描述。 speech_globals object 
+整段录音的说话人信息。 speakers array[object] 
+按说话人汇总的描述。 speaker_index string 
+说话人编号，例如 SPK_0 。 role string 
+说话人的角色描述。 gender string 
+对声音性别特征的描述。 age string 
+听感上的年龄段。 name string 
+可识别时返回的姓名。 description string 
+对说话人的综合描述。 voice object 
+声音特征。 nature array[string] 
+声音气质标签。 texture array[string] 
+音色质感标签。 global object 
+整段录音的场景与情绪描述。 scene object 
+整体场景。 description string 
+场景描述。 format array[string] 
+内容形式。 topic array[string] 
+内容主题。 style array[string] 
+风格标签。 emotion object 
+情绪及变化。 overall array[string] 
+整体情绪标签。 flow array[array[string]] 
+情绪变化阶段。每项依次包含阶段标题和变化描述。 curl --fail &quot;$TRANSCRIPTION_URL&quot; -o annotation.json import json
+
+with open(&quot;annotation.json&quot;, encoding=&quot;utf-8&quot;) as f:
+    result = json.load(f)
+
+for channel in result[&quot;transcripts&quot;]:
+    annotation = json.loads(channel[&quot;text&quot;])
+    for segment in annotation[&quot;speech_segments&quot;]:
+        print(channel[&quot;channel_id&quot;], segment[&quot;start&quot;], segment[&quot;end&quot;], segment[&quot;text&quot;])
+    for segment in annotation[&quot;background_segments&quot;]:
+        print(segment[&quot;start_time&quot;], segment[&quot;end_time&quot;], segment[&quot;description&quot;]) {
+  &quot;sound_segments&quot;: [
+    {
+      &quot;start_time&quot;: &quot;00:00.00&quot;,
+      &quot;end_time&quot;: &quot;00:06.08&quot;,
+      &quot;tag&quot;: [
+        &quot;合成语音&quot;
+      ],
+      &quot;description&quot;: &quot;吐字清晰，全程音量稳定。&quot;
+    }
+  ],
+  &quot;speech_segments&quot;: [
+    {
+      &quot;start&quot;: &quot;00:00.00&quot;,
+      &quot;end&quot;: &quot;00:06.08&quot;,
+      &quot;language&quot;: [
+        &quot;中文-普通话&quot;
+      ],
+      &quot;text&quot;: &quot;[说话人:职场女职员]请把七元项目的报告发给罗科，下周我们要上线玄书系统。&quot;,
+      &quot;para&quot;: {
+        &quot;speech_mode&quot;: &quot;播报&quot;,
+        &quot;speed&quot;: &quot;中速&quot;,
+        &quot;volume&quot;: &quot;中等&quot;,
+        &quot;intonation&quot;: &quot;语气正式平稳&quot;,
+        &quot;speaker&quot;: [
+          &quot;职场女职员&quot;
+        ],
+        &quot;speaker_index&quot;: [
+          &quot;SPK_0&quot;
+        ]
+      }
+    }
+  ],
+  &quot;background_segments&quot;: [
+    {
+      &quot;start_time&quot;: &quot;00:00.00&quot;,
+      &quot;end_time&quot;: &quot;00:06.08&quot;,
+      &quot;description&quot;: [
+        &quot;背景环境安静&quot;
+      ]
+    }
+  ],
+  &quot;speech_globals&quot;: {
+    &quot;speakers&quot;: [
+      {
+        &quot;speaker_index&quot;: &quot;SPK_0&quot;,
+        &quot;role&quot;: &quot;职场女职员&quot;,
+        &quot;description&quot;: &quot;声音清亮，语速平稳。&quot;,
+        &quot;voice&quot;: {
+          &quot;nature&quot;: [
+            &quot;干练&quot;,
+            &quot;正式&quot;
+          ],
+          &quot;texture&quot;: [
+            &quot;清亮&quot;
+          ]
+        }
+      }
+    ]
+  },
+  &quot;global&quot;: {
+    &quot;scene&quot;: {
+      &quot;description&quot;: &quot;说话人正在交代工作安排。&quot;,
+      &quot;format&quot;: [
+        &quot;工作指令传达&quot;
+      ],
+      &quot;topic&quot;: [
+        &quot;项目工作安排&quot;,
+        &quot;系统上线筹备&quot;
+      ],
+      &quot;style&quot;: [
+        &quot;正式商务&quot;
+      ]
+    },
+    &quot;emotion&quot;: {
+      &quot;overall&quot;: [
+        &quot;中性正式&quot;
+      ],
+      &quot;flow&quot;: [
+        [
+          &quot;指令传达&quot;,
+          &quot;语调平稳。&quot;
+        ]
+      ]
+    }
+  }
+} 上一篇：同步语音合成 下一篇：音频生成 该文章对您有帮助吗？ 反馈 
+为什么选择阿里云 什么是云计算 全球基础设施 技术领先 稳定可靠 安全合规 分析师报告 
+大模型 大模型服务平台 千问大模型 模型市场 
+产品和定价 全部产品 免费试用 产品动态 产品定价 配置报价器 云上成本管理 
+技术内容 技术解决方案 帮助文档 开发者社区 天池大赛 阿里云认证 
+权益 免费试用 解决方案免费试用 高校计划 推荐返现计划 
+服务 基础服务 企业增值服务 迁云服务 官网公告 健康看板 信任中心 
+关注阿里云 
+关注阿里云公众号或下载阿里云APP，关注云资讯，随时随地运维管控云服务 
+联系我们：4008013260 法律声明 Cookies 政策 廉正举报 安全举报 联系我们 加入我们 
+友情链接 阿里巴巴集团 淘宝网 千问AI平台 千问办公 天猫 全球速卖通 阿里巴巴国际交易市场 1688 阿里妈妈 飞猪 阿里云计算 万网 高德 UC 友盟 优酷 钉钉 支付宝 达摩院 淘宝海外 阿里云盘 
+© 2009-现在 Aliyun.com 版权所有 增值电信业务经营许可证： 浙B2-20080101 域名注册服务机构许可： 浙D3-20210002 
+浙公网安备 33010602009975号</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

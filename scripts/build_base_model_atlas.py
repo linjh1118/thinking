@@ -2266,6 +2266,10 @@ def render_markdown(source_file: Path, destination: Path, targets: dict[str, Pat
                 )
                 if match:
                     hf_asset_base = match.group(1) + "/resolve/main/"
+                elif raw_url.startswith("https://raw.githubusercontent.com/"):
+                    # GitHub READMEs also mix relative images and HTML. Keep
+                    # their archived originals intact; resolve only the reader.
+                    hf_asset_base = raw_url.rsplit("/", 1)[0] + "/"
             except (KeyError, TypeError, json.JSONDecodeError):
                 pass
     if not hf_asset_base:

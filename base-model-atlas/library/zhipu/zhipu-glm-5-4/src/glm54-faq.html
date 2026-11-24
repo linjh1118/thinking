@@ -1,0 +1,326 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://zcode.z.ai/en/docs/qa">打开官方原文 ↗</a> · <a href="glm54-faq.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>FAQ (Q&amp;A) | ZCode Docs Docs Changelog Search docs... ⌘ K 中文 Download Get Started 
+ZCode for GLM-5.4 
+Install 
+Connect Models 
+Feedback &amp; Support Core Features 
+ZCode Agent 
+Goal Mode 
+Subagents 
+Dynamic Workflows 
+Browser Automation 
+Computer Use 
+Task &amp; File Management 
+Memory 
+Scheduled Tasks 
+Idle-time Tasks 
+Edit History 
+Remote Development 
+Remote Control 
+Bot Channel 
+Plugin 
+Skill 
+MCP 
+Command 
+Hooks 
+Usage Stats 
+Keyboard Shortcuts Integration 
+Safety Confirmation 
+ADE Tools Support 
+FAQ (Q&amp;A) Support Copy page 
+FAQ (Q&amp;A) 
+The questions people ask most: the new GLM-5.4 model, plans and pricing, sign-in and connection, context, and install and environment troubleshooting. Find your question by topic below and jump straight to the answer. Browse by topic The new GLM-5.4 5 
+1 Which plans include it 
+2 What “1.5× quota” means 
+3 Switching to it, or it&#x27;s missing 
+4 Long thinking, quota drains fast 
+5 Flash version? Is GLM-5.3 still there? Product and pricing 2 
+6 What ZCode is 
+7 Is ZCode free Sign-in and connection 6 
+8 No BigModel option on sign-in 
+9 “Login failed, please try again” 
+10 Connect keeps loading 
+11 Start Plan suspended (405 / 3012) 
+12 GLM set up in the terminal already 
+13 The three API endpoints Context and compaction 2 
+14 Context capacity looks too small 
+15 Compaction before the window fills Features and extensions 6 
+16 A whole folder as context 
+17 Subagent ignores my model 
+18 The skills list is empty 
+19 Workflows only run with /workflow 
+20 Many MCP tools, fast usage, error 1210 
+21 Watermarks on generated images Install, updates, environment 7 
+22 Version number and early updates 
+23 Project on a network drive hangs 
+24 Slow SSH remote updates 
+25 Linux / WSL start, sign-in, input 
+26 Config files to copy to a new computer 
+27 Can I delete the exec folder 
+28 config.json `mode` stopped working 
+The new GLM-5.4 GLM-5.4 at a glance Context window 1M auto-compacts near 966K Thinking levels 3 Low / High / Max, Max by default GLM Coding Plan All tiers Lite, Pro, Max, and Team Usable tokens 1.5× on the same quota, versus GLM-5.3 
+There is no GLM-5.4 Flash yet; GLM-5.3 is still available and is never swapped for 5.4 automatically. 
+1. Which plans include GLM-5.4? 
+GLM-5.4 is available to all GLM Coding Plan users : Lite, Pro, Max, and Team. It isn&#x27;t exclusive to ZCode; other coding tools that support the Coding Plan can switch to it too. 
+Start Plan : the trial plan for new users also includes GLM-5.4 quota; see Connect Models → Start Plan . 
+Legacy V1 plans : can use GLM-5.4 with their existing benefits unchanged, but are not part of the 1.5× quota described next. 
+2. What does the “1.5× quota” in the announcement mean? Is ZCode’s extra 1.5× still there? 
+1.5× : on the same plan quota, you can use 1.5 times as many tokens with GLM-5.4 as with GLM-5.3. This applies to the current GLM Coding Plan and Team plans; legacy V1 plans are not included. 
+ZCode’s extra 1.5× : that was a limited-time promotion, and it has ended. ZCode now has the same quota as other tools that support the Coding Plan, and the old 1.5× badge no longer appears in the app. 
+3. How do I switch to GLM-5.4? What if it isn’t in the model list? 
+Click the model name at the bottom right of the composer and choose GLM-5.4 . If it isn&#x27;t listed yet, try these in order: 
+Update ZCode to the latest version. 
+Open Settings → Model settings and click Refresh in the top-right corner. 
+When using the Coding Plan in other tools, set the model name to glm-5.4 ; in Claude Code, use glm-5.4[1m] . 
+4. GLM-5.4 thinks for a long time and uses quota quickly. What can I do? 
+GLM-5.4 uses the highest thinking level by default, so it reasons thoroughly at every step. For simple questions and clear, small edits, drop it a level: click the model name at the bottom right of the composer and adjust the Effort slider, or press Ctrl + T ( Control + T on macOS) to cycle through levels. 
+Lower levels respond faster and usually use fewer tokens. Switch back to the highest level for architecture design, hard bugs, and long tasks. See Reasoning Effort for what each level is for. 
+5. Is there a GLM-5.4 Flash? Can I still use GLM-5.3? 
+There is no GLM-5.4 Flash at the moment. 
+GLM-5.3 and GLM-5.3-Flash are still available and are never swapped for GLM-5.4 automatically: whichever model you pick in the model picker is the one that runs. 
+Product and pricing 
+6. What is ZCode’s product positioning? 
+ZCode is a new Agentic Development Environment (ADE) . Unlike a traditional IDE that centers manual coding, ZCode puts AI Agents at the center of the workflow. You describe the task in natural language, and the Agent can drive the full loop from coding and debugging to preview and iteration. 
+ADE platform : centers on the first-party ZCode Agent, with built-in file management, terminal, Git commit, and live browser preview, driving the Agent through full-lifecycle development tasks with natural-language instructions 
+Full-context awareness : Agents can understand project structure, file content, and UI visuals without requiring you to memorize complex command-line flags 
+Current focus : strengthening long-task execution and stability around the self-developed ZCode Agent, connecting workspace context, tools, models, permissions, and Review into one continuous development flow 
+7. Is ZCode free? 
+The ZCode application itself is completely free. As a developer, you still need your own API Key or a model service plan. Current supported options include: 
+Zhipu family : GLM Coding Plan (every tier includes GLM-5.4; see Which plans include GLM-5.4? ), BigModel resource packages or account balance, and Z.ai 
+Model services : model plans and services connected for ZCode Agent 
+Enterprise channels : team-managed model channels for ZCode Agent 
+Self-hosted services : private model services approved by your team 
+Sign-in and connection 
+8. The sign-in screen no longer has a BigModel option. How do I sign in, and is my plan still there? 
+ZCode uses a single Z.ai sign-in. The sign-in screen offers Login with Browser and Use API key , and has no separate BigModel sign-in. 
+Users in mainland China (including existing BigModel users) : with a Chinese interface, Login with Browser opens Z.ai China (zchat.z.ai). Sign in with the same phone number as your BigModel account, and the plans and benefits on that BigModel account are linked automatically. You don&#x27;t need to sign in to BigModel separately. 
+Ended up on the English site : the region follows ZCode&#x27;s interface language, and an English interface opens Z.ai Global. Go back to the sign-in screen and click the 切换到中国 link in the same spot; the interface switches to Chinese, and Login with Browser then opens Z.ai China. 
+Subscriptions in both regions : ZCode keeps one signed-in identity at a time and does not support two accounts at once. Choose which plan to use with the connection method in Settings → Model settings . To use an account in the other region, sign out, switch region on the sign-in screen, and sign in again. 
+Can&#x27;t receive a verification code right now : click Use API key on the sign-in screen, choose BigModel or Z.ai, and enter an API key from that platform to get started. 
+A new account shows &quot;login required&quot; on the trial plan, or the trial models don&#x27;t work : this is a known issue in 3.18.0 and 3.18.1. Update to 3.18.2 or later; you don&#x27;t need to sign in again. 
+Paid plugins fail with error 3706 saying there is no Z.ai account : sign in to zchat.z.ai with the same phone number as your BigModel account, link your plan benefits, then start a new session in ZCode and try again. 
+9. Signing in shows &quot;Login failed, please try again&quot;? 
+Every sign-in failure shows this same message. Check the following in order: 
+
+Network : open zcode.z.ai in a browser on the same computer and make sure it loads. 
+
+System clock : turn on automatic time sync. If your clock runs fast (by roughly 5 minutes or more), sign-in fails. 
+
+Windows shows System credential storage is unavailable : open Credential Manager, remove old credentials you no longer use, and try again. 
+
+Windows is missing the VC++ runtime : search for PowerShell in the Start menu, open it, then paste the line below and press Enter. If the result is False , the Microsoft VC++ runtime is missing: download and install Microsoft Visual C++ Redistributable (x64) . If the installer says another version is already installed, open Windows Settings → Apps , find Microsoft Visual C++ Redistributable (x64), and choose Modify → Repair . Then quit ZCode completely (including the tray icon) and sign in again. Test-Path &quot;$env:windir\System32\vcruntime140.dll&quot; 
+
+Sign-in fails after you changed the data storage path , or sign-in keeps failing on Linux (including WSL) without a system keyring : update to 3.18.2 or later. 
+
+The browser doesn&#x27;t open : on the waiting screen, click Browser didn&#x27;t open? → Copy login link and paste the link into your browser. 
+
+Restart your computer and try again. 
+If none of these work, click Use API key on the sign-in screen and skip the input to reach the main window, then submit feedback with logs from inside ZCode, including your operating system and ZCode version. Other channels are listed in Feedback . 
+10. Why does Connect keep loading? 
+If model connection remains in Loading, check both of the following: 
+Network environment : make sure the machine can reach the selected model service 
+Account availability : make sure the signed-in account or API Key has quota and model access 
+System time : turn on automatic time sync. If the computer&#x27;s clock is off, connecting to a plan can keep loading 
+11. The Start Plan says my account is suspended (405 / 3012), or the nightly claim reminder stopped showing? 
+The Start Plan can only be used in the official ZCode app. If its quota is routed to other tools, or used through a modified ZCode client, the Start Plan is suspended: requests fail with Your account has been suspended for misusing the Start Plan (405 / 3012), and the nightly claim reminder no longer appears. 
+The suspension only affects the Start Plan ; a GLM Coding Plan you purchased is not affected. 
+After you stop using it in other tools, you can send feedback with a screenshot of the error to request a manual review. 
+12. My terminal already has a GLM API configured. Do I still need to configure it again in ZCode? 
+Yes. Terminal environment variables and the ZCode desktop model setup are separate entry points, so configuration is not synced automatically. You can choose either method: 
+Quick Connect : click Login with Browser on the sign-in screen to sign in to ZCode (users in mainland China use the same phone number as their BigModel account); if the account has an active plan, it will connect automatically 
+Manual setup : open Model settings via Manage models at the bottom of the model picker, then add the Base URL and API Key manually 
+13. What is the difference between the Coding Plan endpoint, Anthropic endpoint, and general OpenAI endpoint? 
+BigModel (China) and Z.ai (global) expose three endpoint types in API Key mode (see Connect Models → BigModel / Z.ai API Endpoints ): 
+Endpoint Example (BigModel) When to use 
+Coding Plan only https://open.bigmodel.cn/api/coding/paas/v4 You have a GLM Coding Plan and connect with its API Key for coding 
+General OpenAI https://open.bigmodel.cn/api/paas/v4 Resource packages / prepaid balance via the OpenAI-compatible API 
+Anthropic https://open.bigmodel.cn/api/anthropic You have a GLM Coding Plan and connect over the Anthropic protocol (ZCode&#x27;s built-in Coding Plan template uses this URL); do not use it for resource packages / balance 
+Common mistakes: 
+Subscribed to Coding Plan but set the OpenAI URL to the general endpoint /api/paas/v4 → plan quota will not work correctly. 
+Using only resource packages / balance but filling in the Coding endpoint /api/coding/paas/v4 → the Coding endpoint is for coding scenarios only, not general API usage. 
+Connected through Coding Plan account authorization (not API Key) → no manual URL setup needed; ZCode routes automatically. 
+For Z.ai , replace the host with api.z.ai ; the path rules are the same. 
+Context and compaction 
+14. Context capacity looks smaller than the model&#x27;s real window. How do I set it for a custom model? 
+Every model entry carries a context window value, and ZCode computes capacity from it: 
+For models that match a built-in rule, Smart configuration fills in the window automatically. 
+Models that match no built-in rule (for example, a model you just added to a custom provider) default to 1M (1000000). If the model&#x27;s real window is smaller, change it to the actual value. 
+A value you enter takes priority over the recommended one. 
+GLM-5.4 has a 1M context window. If it shows a noticeably smaller capacity, update ZCode to the latest version and click Refresh in Settings → Model settings , or set it to 1000000 manually as described below. 
+To change it, open Settings → Model settings , click the Edit icon to the right of the model in the model list, and change Context window in the Edit model settings dialog. Models in custom providers, presets, and plans can all be edited; see Connect Models → Changing the Context Window . 
+The capacity shown for a session comes from the model currently selected in that session , so different sessions in the same project can legitimately show different numbers — an older session keeps the model it was created with. 
+15. Why does auto-compaction kick in long before the window is full? 
+Compaction doesn&#x27;t wait for the window to fill up — it reserves output space and a safety buffer in advance: 
+Trigger point = context window − output reserve (capped at 21,000) − a safety buffer of about 13,000 
+The output reserve is the smaller of &quot;Max output tokens&quot; and 21,000, so the combined deduction is normally a fixed ~34K tokens . 
+In practice: a 128K window compacts around 94K tokens (~73%), 200K around 166K, 1M around 966K. The smaller the window, the lower the trigger point as a percentage — this is expected. 
+The trigger count includes a live estimate of this turn&#x27;s tool results, so it runs slightly ahead of the meter above the input box — which is why compaction can appear to fire &quot;before the line&quot;. 
+If the window value you entered doesn&#x27;t match the model&#x27;s real window (see the previous entry), the compaction timing shifts with it — fix the window value first, then re-check the timing. There is currently no user-facing switch or threshold for automatic compaction. 
+Frequent compaction through a third-party relay : ZCode decides when to compact from the token usage the model API returns . Some relay or proxy services report inflated usage, so ZCode thinks the context is nearly full and compacts again and again. Compare against the official endpoint first; once you confirm the relay reports usage incorrectly, contact that service. 
+Compaction uses the model the conversation is currently using. 
+Features and extensions 
+16. How do I give the Agent an entire folder as context? 
+Either of two ways works. 
+Pick it with @ : the picker in the input box lists both files and folders, and it can also reference skills and agents. Type @ followed by part of the name to filter, then cycle through the candidates with the arrow keys. 
+Drag it into the input box : 
+Drag a folder from the ZCode file tree into the input box. 
+Drag a folder from Finder, File Explorer, or another system file manager into the input box. 
+Either way, ZCode references the folder as context so the Agent can analyze the directory structure and work with files inside it. 
+17. My subagent isn&#x27;t using the model I configured 
+Two different cases: 
+The built-in general-purpose and Explore agents : you can assign each of them a model in settings. With no override, they inherit the parent session&#x27;s main model — that&#x27;s by design. Set a persistent override to pin a model; clear it to go back to inheriting. 
+Custom / workspace / plugin subagents : these still follow the model field in their own Markdown file. 
+So a dispatched subagent running on the parent session&#x27;s model is the expected result when no override is set — not a fault. 
+18. The skills list is empty, or global skills don&#x27;t show up 
+First check that the skill files are in the right place: 
+User level (global) : ~/.zcode/skills/&lt;skill-name&gt;/SKILL.md 
+Workspace level : &lt;workspace&gt;/.zcode/skills/&lt;skill-name&gt;/SKILL.md 
+If the directory is empty, there are no global skills to list. Once you&#x27;ve confirmed skills exist there, work through these three steps: 
+In Settings → Skills , browse by source and make sure the search box or source filter isn&#x27;t hiding them. 
+Newly created or imported skills only appear after you click Refresh . 
+Check the enable toggle on the right of each entry. 
+For the full directory layout and import options, see Skill . 
+19. ZCode Agent never starts dynamic workflows on its own unless I type /workflow ? 
+Check which option is selected under Settings → Behavior and tools → Dynamic workflows : 
+On command : a new workflow runs only when you type /workflow . 
+Always on : besides /workflow , ZCode Agent can also start a workflow on its own when the task calls for one. 
+Changes apply to new or resumed sessions; see Turn On Dynamic Workflows . 
+20. Usage climbs quickly after installing many MCP servers, or tool calls fail with error 1210? 
+Fast usage : the more MCP tools you have, the longer the tool catalog sent with every request. Open Settings → Behavior and tools → Tool search and choose Auto so ZCode loads tools on demand; if Auto causes problems, choose Local instead. The setting applies to new sessions and sessions restored after an app restart. 
+Error 1210 : a common cause is a third-party MCP server whose tool definitions don&#x27;t follow the schema rules. Disable the third-party MCP servers you added most recently, send /reload in the current task (see Reload the current task ), and narrow it down one server at a time. 
+21. Generated images have a watermark. Can I remove it? 
+No. Images generated through the mainland China service carry a visible “Generated by Z.ai” watermark and AIGC label for compliance, and there is no option to turn them off. 
+Install, updates, and environment 
+22. Where do I find the ZCode version number, and how do I get new versions sooner? 
+Click the Help icon (the question mark) in the top-right corner → About ZCode ; on macOS you can also use the menu bar ZCode → About ZCode . The dialog shows the current version, and update-check toasts include it too. There is currently no version entry in Settings. 
+New versions roll out in stages, so the app may offer an update while the download page still shows the previous release; just update from inside the app. To get new versions earlier, turn on Receive preview updates early in Settings → General ; Automatically download and install updates on the same page saves you the manual download. 
+23. My project is on a network drive or NAS, and new sessions or messages hang? 
+Older versions could not reliably watch for file changes on network shares (SMB shares, NAS, mapped network drives), so creating a session or sending a message could hang and eventually time out. Update ZCode to the latest version first. 
+For very large projects, reads and writes on a network drive are still slower than local ones, so we recommend keeping the working folder on a local disk. 
+24. Updating ZCode on the server is slow every time I use SSH remote development? 
+There are two ways to update the remote side, and you can choose when connecting or updating: 
+Download locally, then upload : downloads over your computer&#x27;s network and uploads to the server, so speed depends on your connection and upload bandwidth. 
+Download on remote server : the server downloads directly, skipping the upload. The server must be able to reach the ZCode CDN and have download, extraction, and checksum tools. 
+If the server&#x27;s internet access is faster, the second option usually saves time; see When should I choose &quot;Download on remote server&quot;? . 
+25. ZCode won&#x27;t start on Linux / WSL, login doesn&#x27;t return to the app, or the input method doesn&#x27;t work? 
+On Linux desktops and Windows WSLg, these are the three most common issues, and most cases can be narrowed down quickly: 
+AppImage fails to start : usually a missing libfuse2 (on Ubuntu / Debian run sudo apt install libfuse2 ); if nothing happens when clicking the icon, launch it once from a terminal to see the error; for GPU-related errors, add software-rendering flags such as --disable-gpu . 
+Browser login completes but never returns to ZCode : the system handler for zcode:// is usually misconfigured — common causes are launching with sudo , moving the AppImage around login, or installing both the deb package and the AppImage. Check with xdg-mime query default x-scheme-handler/zcode , keep the AppImage at a fixed path, and restart it. 
+Only English input works / input method broken : this relates to the IBus / Fcitx5 environment variables of the current session — launch ZCode from a shell where the input method is already configured. The first CJK character not appearing under WSLg is a known compatibility issue; type a placeholder character and delete it as a workaround. 
+For the full commands, launcher script examples, and the diagnostic info to collect when reporting, see the Linux / WSL Troubleshooting Guide . 
+26. Switching computers — which config files should I copy? 
+Copy these to the same locations on the new machine and almost all of your configuration comes with you: 
+Path What it carries 
+~/.zcode/cli/config.json MCP servers, permission defaults, plugin &amp; skill toggles, hooks, and other Agent config 
+~/.zcode/v2/provider_config.json Model provider setup (API keys, base URLs, model lists) 
+~/.zcode/AGENTS.md Global rules 
+~/.zcode/agents/ , ~/.zcode/skills/ , ~/.zcode/commands/ Custom subagents, skills, and commands 
+Project-level config (the &lt;project&gt;/.zcode/ directory) travels with the repository — no need to copy it separately. 
+Do not copy these two files: ~/.zcode/v2/credentials.json (login credentials are encrypted per device and won&#x27;t decrypt on another machine — just sign in again) and ~/.zcode/v2/telemetry-state.json (contains a device identifier that must not be shared between machines). Session history and logs aren&#x27;t worth moving either. 
+27. ~/.zcode/cli/exec is taking up a lot of space — can I delete it? 
+Yes. It stores terminal command output from past sessions and is currently never cleaned up automatically, so it grows over time. With ZCode fully quit and no background commands running, you can delete the whole directory — ZCode recreates it as needed. The only cost is that command output from historical tasks can no longer be viewed; configuration and session records are unaffected. 
+28. My hand-maintained config.json&#x27;s mode field stopped working? 
+The subagent-related config key was renamed from mode to subagent . This is a breaking change: the old key is no longer read and is not migrated automatically. If you edit config.json under ~/.zcode/ directly or generate it with scripts, rename the mode key to subagent . Configuration changed through the Settings UI is unaffected. On this page 
+The new GLM-5.4 
+1. Which plans include GLM-5.4? 
+2. What does the “1.5× quota” in the announcement mean? Is ZCode’s extra 1.5× still there? 
+3. How do I switch to GLM-5.4? What if it isn’t in the model list? 
+4. GLM-5.4 thinks for a long time and uses quota quickly. What can I do? 
+5. Is there a GLM-5.4 Flash? Can I still use GLM-5.3? 
+Product and pricing 
+6. What is ZCode’s product positioning? 
+7. Is ZCode free? 
+Sign-in and connection 
+8. The sign-in screen no longer has a BigModel option. How do I sign in, and is my plan still there? 
+9. Signing in shows &quot;Login failed, please try again&quot;? 
+10. Why does Connect keep loading? 
+11. The Start Plan says my account is suspended (405 / 3012), or the nightly claim reminder stopped showing? 
+12. My terminal already has a GLM API configured. Do I still need to configure it again in ZCode? 
+13. What is the difference between the Coding Plan endpoint, Anthropic endpoint, and general OpenAI endpoint? 
+Context and compaction 
+14. Context capacity looks smaller than the model&#x27;s real window. How do I set it for a custom model? 
+15. Why does auto-compaction kick in long before the window is full? 
+Features and extensions 
+16. How do I give the Agent an entire folder as context? 
+17. My subagent isn&#x27;t using the model I configured 
+18. The skills list is empty, or global skills don&#x27;t show up 
+19. ZCode Agent never starts dynamic workflows on its own unless I type `/workflow`? 
+20. Usage climbs quickly after installing many MCP servers, or tool calls fail with error 1210? 
+21. Generated images have a watermark. Can I remove it? 
+Install, updates, and environment 
+22. Where do I find the ZCode version number, and how do I get new versions sooner? 
+23. My project is on a network drive or NAS, and new sessions or messages hang? 
+24. Updating ZCode on the server is slow every time I use SSH remote development? 
+25. ZCode won&#x27;t start on Linux / WSL, login doesn&#x27;t return to the app, or the input method doesn&#x27;t work? 
+26. Switching computers — which config files should I copy? 
+27. `~/.zcode/cli/exec` is taking up a lot of space — can I delete it? 
+28. My hand-maintained config.json&#x27;s `mode` field stopped working?</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
