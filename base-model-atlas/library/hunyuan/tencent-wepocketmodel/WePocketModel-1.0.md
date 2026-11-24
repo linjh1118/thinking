@@ -112,8 +112,6 @@ HCD示意 \(\mathrm{HCD}=K H_w(p_1,\ldots,p_K)/M\)，K按达到可用阈值的�
 
 [[src/wepm_original_tables|官方报告全部原表]]
 
-![官方报告原图](src/assets/wepm-report-figure-0.png)
-
 ![完整官方报告原图](src/assets/wepm-report-figure-2.png)
 
 ![完整官方报告原图](src/assets/wepm-report-figure-3.png)
