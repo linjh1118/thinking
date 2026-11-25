@@ -178,3 +178,7 @@ UE5.8武侠案例为11小时C++工程，整合不同代资产，模型看不到�
 
 - [官方Preview发布页](https://ernie.baidu.com/release/ernie-5-5-flash-preview/)
 - [[ernie_5_5_flash_poster_zh.html|更新后的家族Poster]]
+
+
+> [!update] 2026-11-25研读补充
+> [[Topics/13_base_model/Baidu_ERNIE/261105_ERNIE_5_5_Flash/ERNIE-5.5-Flash-Preview-OpenWeights|ERNIE 5.5 Flash Preview · 开放权重]]：本次来源和旧结论的差异请以这份新增笔记为准；旧记录按历史保留。

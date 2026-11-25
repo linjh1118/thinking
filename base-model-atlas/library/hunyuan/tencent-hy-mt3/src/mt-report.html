@@ -1,0 +1,542 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2611.27673">打开官方原文 ↗</a> · <a href="mt-report.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>Hy-MT3: More Accurate, Robust and PracticalMultilingual Translation Models in the Wild Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+Abstract 
+1 From Hy-MT2 to Hy-MT3 
+2 TransRubric: Rubric-Based Automatic Evaluation for Translation 
+3 Experiments 
+3.1 Experimental Setup 
+3.2 General Translation 
+3.3 Real-World, Hard-Case and Instruction-Following Translation 
+3.4 Domain-Wise Analysis 
+3.5 Improvements over Hy-MT2 
+3.6 Case Study 
+3.7 Game Translation 
+3.8 Image Translation 
+3.9 Quantization 
+4 Conclusion 
+5 Contributions 
+5.1 Core Contributors 
+5.2 Contributors 
+A Supported Languages 
+References License: CC BY 4.0 arXiv:2611.27673v2 [cs.CL] 23 Nov 2026 
+Hy-MT3: More Accurate, Robust and Practical Multilingual Translation Models in the Wild Tencent Hunyuan Team Abstract 
+Hy-MT3 is the third generation of the Hunyuan multilingual translation model family, including Hy-MT3-1.8B , Hy-MT3-7B and Hy-MT3-30B-A3B (MoE) . Compared with Hy-MT2, Hy-MT3 translates more accurately, more completely and more faithfully to user constraints : on real-world scenario data, the share of samples with mistranslations is reduced by 43% , omissions or additions by 74% , and instruction-following errors by 40% , while language coverage is expanded from 38 to 102 languages.
+With only 3B activated parameters, Hy-MT3-30B-A3B achieves the best overall performance among all evaluated models in non-thinking mode , including flagship models such as Qwen3.8-Max, Kimi-K3.1-Pro and DeepSeek-V4.1-Flash, and approaches the strongest closed-source thinking models such as GPT-6.1-Sol and Gemini-4-Argon, while surpassing models that consume more than 30 × \times its inference compute.
+Beyond general translation, Hy-MT3 is optimized for two industrial scenarios. For game localization , built with high-quality game-domain data and a professional evaluation system from the Honor of Kings team, Hy-MT3-30B-A3B matches or outperforms strong closed-source models such as Gemini 3.1 Pro on all core metrics, and can be plugged into game development pipelines through the open-source toolchain TiMiHOKGameTranslator. For image translation , Hy-MT3 improves context understanding and error correction to better tolerate OCR errors, achieving the best result among models of comparable size.
+Finally, we open-source TransRubric , a rubric-based automatic evaluation suite for translation, which outperforms other evaluation schemes on the WMT26 metrics shared task test set and is more stable with respect to human evaluation. 
+https://huggingface.co/collections/tencent/hy-mt3 
+https://github.com/Tencent-Hunyuan/Hy-MT3 Figure 1: Overall performance of Hy-MT3 and representative baselines. General Translation is the average over FLORES-200, FLORES-200 low-resource, WMT26 and Mandarin ⇔ \Leftrightarrow Minority translation (Table 2 ); WildMTBench-202611 is built from the latest real-world scenario data; IFMTBench measures translation instruction following. General Translation and WildMTBench-202611 are scored by TransRubric. The dashed lines mark GPT-6.1-Sol (T) as a thinking-mode reference. (T) denotes thinking mode; all other models, including Hy-MT3, are run in non-thinking mode. 
+1 From Hy-MT2 to Hy-MT3 
+Building on Hy-MT1.5 ( Zheng et al., 2025 ) , Hy-MT2 ( Zheng et al., 2026 ) introduced a family of fast-thinking translation models (1.8B, 7B and 30B-A3B) for real-world translation that follow translation instructions in multiple languages. As Hy-MT2 was adopted by the open-source community and in more production scenarios, several limitations became apparent. 
+First, faithfulness remains the main source of errors in real-world translation . A fine-grained analysis of Hy-MT2-30B-A3B on 5,000 samples of real-world scenario data (Table 5 ) shows that 56.0% of its outputs contain at least one accuracy issue and 21.2% contain omissions or additions. Such errors are rarely captured by surface-level fluency, but they directly determine whether a translation can be used without post-editing. 
+Second, language coverage is insufficient for long-tail demand . Hy-MT2 covers 38 languages and performs poorly on lower-resource languages outside this set: on 64 additional lower-resource languages paired with Chinese or English, Hy-MT2-30B-A3B obtains a TransRubric score of only 63.89 (ZH ⇔ \Leftrightarrow XX) and 67.75 (EN ⇔ \Leftrightarrow XX). 
+Third, vertical scenarios impose requirements that general benchmarks do not measure . Game localization requires strict preservation of placeholders and rich-text tags as well as consistent use of in-game terminology, and a single off-target or broken tag can break the game client. Image translation takes OCR output as input, which often contains misrecognized characters, missing text or wrong segmentation that the translation model must tolerate and correct from context. 
+Finally, reliable automatic evaluation becomes the bottleneck . As strong models converge on standard benchmarks, holistic scores and neural metrics ( Guerreiro et al., 2023 ; Rei et al., 2022 ) struggle to distinguish them or to explain where they fail. We need an evaluation method that is fine-grained, interpretable and consistent with human judgments, both to measure progress and to guide model development. 
+To address these issues, we present Hy-MT3. Our main contributions are as follows: 
+• 
+More accurate, complete and constraint-faithful translation. Compared with Hy-MT2-30B-A3B, the share of samples with mistranslations, omissions/additions and instruction-following errors is reduced by 43%, 74% and 40%, respectively, and language coverage is expanded from 38 to 102 languages (Appendix A ). 
+• 
+Outperforming much larger models with high efficiency. Hy-MT3-30B-A3B achieves the best overall performance among all evaluated models in non-thinking mode, including Qwen3.8-Max, Kimi-K3.1-Pro and DeepSeek-V4.1-Flash, and approaches the strongest closed-source thinking models such as GPT-6.1-Sol and Gemini-4-Argon. 
+• 
+Game translation. Together with the Honor of Kings team, we improve game translation with high-quality game-domain data and a professional evaluation system. Hy-MT3-30B-A3B matches or outperforms strong closed-source models such as Gemini 3.1 Pro on all core metrics, and an open-source toolchain allows it to be integrated into game development pipelines for high-quality, low-cost localization. 
+• 
+Image translation. Hy-MT3 is optimized for OCR-cascaded image translation, with stronger context understanding and error correction to tolerate OCR errors, achieving the best result among models of comparable size. 
+• 
+TransRubric. We open-source TransRubric, an automatic evaluation suite for translation, which outperforms other evaluation schemes on the WMT26 metrics shared task test set and is more stable with respect to human evaluation. 
+2 TransRubric: Rubric-Based Automatic Evaluation for Translation 
+To evaluate translation quality in a fine-grained and interpretable way, we develop TransRubric, a rubric-based LLM-as-a-judge ( Zheng et al., 2023 ; Kocmi &amp; Federmann, 2023 ) evaluation suite, and use it as the primary metric throughout this report. Given a source text, a candidate translation, the translation instruction and optionally a reference translation, a TransRubric judge checks the candidate against a translation rubric, identifies each issue together with its error type (e.g., completeness, accuracy, terminology and instruction following) and severity level, in the spirit of MQM-style error annotation ( Lommel et al., 2014 ; Freitag et al., 2021 ) , and outputs a pointwise score on a 0–100 scale. The issue annotations make the score interpretable and enable error analyses such as Table 5 . TransRubric supports both reference-based evaluation (used for FLORES-200, WMT26, Mandarin ⇔ \Leftrightarrow Minority and HardMTBench) and reference-free evaluation (used for WildMTBench-202611, which has no reference translations). 
+In this report, each TransRubric score is the arithmetic mean of two judges, DeepSeek-V4.1-Flash ( DeepSeek-AI, 2026 ) and Qwen3.5-397B-A17B ( Qwen Team, 2026a ) . To make scores comparable across models, each benchmark score is computed with the fixed expected number of samples as the denominator, so empty outputs and unscored samples count as 0. 
+Meta-evaluation on WMT26. We validate TransRubric on Task 2 (segment-level quality score prediction) of the WMT26 shared task on automated translation quality evaluation ( Lavie et al., 2026 ) , following its official meta-evaluation on the eight priority translation directions: screen-based Pairwise Difference Pearson (PDP) at the segment level, source-based Soft Pairwise Accuracy (SPA) at the system level, and their average (Avg Corr). In this experiment, TransRubric runs reference-free with Gemini 3.6 Flash as the underlying judge. As shown in Table 1 , TransRubric achieves the highest PDP (0.744) and Avg Corr (0.832), ahead of the top-ranked official submission Gemini-3.6-Flash (0.736 / 0.830), which uses the same underlying model, as well as GPT-5.6 Sol (0.828) and the ensemble system bytepop_pro10 (0.826). Its system-level SPA (0.920) is on par with the best system (0.924), and all LLM-based evaluators clearly outperform conventional metrics such as chrF, COMET22 and xCOMET. Table 1: Meta-evaluation on Task 2 (segment-level quality score prediction) of the WMT26 shared task on automated translation quality evaluation. 
+Auto-evaluator Underlying model PDP SPA Avg Corr 
+TransRubric (ours) ∗ Gemini 3.6 Flash 0.744 0.920 0.832 
+Gemini-3.6-Flash ∗ Gemini 3.6 Flash 0.736 0.924 0.830 
+GPT-5.6 Sol - Medium Reasoning ∗ GPT-5.6 Sol 0.735 0.920 0.828 
+bytepop_pro10 EnsembleE2 0.733 0.918 0.826 
+chrF – 0.601 0.890 0.746 
+COMET22 XLM-RoBERTa-large 0.610 0.862 0.736 
+spBLEU – 0.566 0.885 0.725 
+gemba-poly ∗ Llama 3.3 70B 0.510 0.884 0.697 
+xCOMET XXL † xCOMET-XXL 0.540 0.822 0.681 
+BERTScore XLM-RoBERTa-large 0.496 0.858 0.677 
+COMETKiwi22 ∗ XLM-RoBERTa-large 0.426 0.724 0.575 
+Notes. Results of all systems other than TransRubric are taken from Table 8 of the WMT26 findings ( Lavie et al., 2026 ) , which covers the eight priority translation directions. PDP is the screen-based Pairwise Difference Pearson at the segment level, SPA is the source-based Soft Pairwise Accuracy at the system level, and Avg Corr is their arithmetic mean; both are averaged equally across directions. ∗ marks reference-free evaluators and † fine-tuned systems. The best result in each column is highlighted with an orange background . 
+Comparison with human annotators. We further compare TransRubric with 10 professional annotators majoring in English on 651 translations, i.e., 217 source texts with three candidate translations each, covering both Chinese → \rightarrow English and English → \rightarrow Chinese. Each annotator scores every translation once on a 0–100 scale, and TransRubric (with the DeepSeek-V4.1-Flash and Qwen3.5-397B-A17B judges) scores every translation 10 times. Figure 2 summarizes the results. 
+• 
+Stability. For each translation, we compute the standard deviation of its 10 scores. Across the 10 human annotators, the per-sample standard deviation averages 15.57 points, whereas across the 10 TransRubric runs it averages only 3.31 points (average variance 285.79 vs. 26.20). TransRubric scores are thus far more consistent than human judgments. 
+• 
+Pairwise accuracy. For the three translations of each source text, we form all pairs (651 pairs in total) and check whether each rater prefers the same translation as the gold standard. The gold score of each translation is obtained by English translation experts, who revise the 10 annotators’ scores and take the average of the revised scores. Since the gold standard is built on the annotators’ own scores, this comparison may favor the human annotators. TransRubric reaches 59.91%, ranking 4th among the 11 raters: it is higher than 7 of the 10 annotators and lower only than three of them (61.29%, 60.37% and 60.06%), well above the human average of 54.7%. Figure 2: TransRubric versus 10 human annotators on 651 Chinese ⇔ \Leftrightarrow English translations. (a) Distribution of the per-sample standard deviation of the 10 scores, across annotators for humans and across 10 repeated runs for TransRubric; diamonds mark the means. (b) Pairwise accuracy of each rater; the dashed line marks the average of the 10 annotators. 
+TransRubric is released together with Hy-MT3 at https://github.com/Tencent-Hunyuan/Hy-MT3 . 
+3 Experiments 
+3.1 Experimental Setup 
+Benchmarks. We evaluate Hy-MT3 from three perspectives. 
+• 
+General translation. FLORES-200 ( Team et al., 2022 ) on 33 languages with all 33 × 32 = 1056 33\times 32=1056 directions; FLORES-200 on 64 additional lower-resource languages paired with Chinese or English (256 directions); WMT26 GenMT ( Kocmi et al., 2026 ) on 20 language pairs after excluding English → \rightarrow Ligurian, English → \rightarrow Ladin and English → \rightarrow Northern Sami; and Mandarin ⇔ \Leftrightarrow Minority translation between Mandarin and Tibetan, Uyghur, Traditional Mongolian, Arabic-script Kazakh and Cantonese (10 directions). 
+• 
+Real-world translation. WildMTBench-202611, the latest version of our in-the-wild benchmark, consists of 5,000 samples of real-world scenario data evenly distributed over 10 domains; HardMTBench ( Li et al., 2026b ) is an open-source benchmark of knowledge-intensive, long-form Chinese--English cases in both directions 1 1 1 https://github.com/jasonNLP/HardMTBench . 
+• 
+Translation instruction following. IFMTBench ( Zheng et al., 2026 ) 2 2 2 https://github.com/Tencent-Hunyuan/Hy-MT2/tree/main/IFMTBench contains 7,344 samples covering industrial translation constraints such as code tags, inline code, layout preservation, style, glossary, context and structured data, split into single-constraint (Simple) and multi-constraint (Complex) subsets. 
+In addition, we report human evaluation on game translation (Section 3.7 ) and cascaded image translation on VISTA-Bench ( Lv et al., 2026 ) (Section 3.8 ). 
+Metrics. We report TransRubric (Section 2 ) as the primary metric, and GEMBA ( Kocmi &amp; Federmann, 2023 ) with GPT-OSS-120B ( OpenAI, 2025 ) (medium reasoning) as a complementary LLM-based metric. IFMTBench is scored with its official rules and LLM judge. 
+Baselines. We compare Hy-MT3 with Hy-MT2 and three groups of baselines: (1) general models in non-thinking mode, including Kimi-K3.1-Pro ( Moonshot AI, 2026 ) , DeepSeek-V4.1-Flash ( DeepSeek-AI, 2026 ) , the Qwen3.8 ( Qwen Team, 2026c ; Qwen Team, 2026d ) / Qwen3.6 ( Qwen Team, 2026b ) series and the Gemma4 series ( Gemma Team, 2026 ) ; (2) translation-specialized models and commercial translation APIs, including the Index-Translate series ( Li et al., 2026a ) , Tower-Plus-72B ( Rei et al., 2025 ) , Qwen-MT-Flash ( Qwen Team, 2025 ) , Microsoft Translator, Volcano Translator and iFlytek Translator; and (3) models in thinking mode, including GPT-6.1-Sol ( OpenAI, 2026 ) , Claude-Opus-5.5 ( Anthropic, 2026 ) , Gemini-4-Argon ( Google DeepMind, 2026 ) , GLM-5.3 ( GLM-5 Team, 2026 ; Z.ai, 2026 ) and the thinking variants of the open-weight models above. All Hy-MT3 models are run in non-thinking mode, so the most direct comparison is with groups (1) and (2). 
+3.2 General Translation 
+Table 2 reports results on general translation benchmarks. Table 2: Performance comparison on general multilingual translation benchmarks. 
+Models FLORES-200 (33 languages, all pairs) FLORES-200 (low-resource ⇔ \Leftrightarrow ZH/EN) WMT26 Mand. ⇔ \Leftrightarrow Min. Avg. 
+ZH ⇔ \Leftrightarrow XX EN ⇔ \Leftrightarrow XX XX ⇔ \Leftrightarrow XX ZH ⇔ \Leftrightarrow XX EN ⇔ \Leftrightarrow XX 
+Hy-MT3-30B-A3B 94.06 / 90.72 94.82 / 91.37 92.12 / 89.14 91.52 / 86.59 92.74 / 87.15 85.63 / 81.07 83.85 / 70.17 88.50 / 81.87 
+Hy-MT3-7B 92.30 / 89.61 93.64 / 90.66 90.26 / 88.01 88.38 / 84.29 90.35 / 85.36 81.74 / 79.82 82.79 / 68.66 86.12 / 80.39 
+Hy-MT3-1.8B 85.89 / 85.02 88.18 / 86.58 81.82 / 81.65 73.48 / 72.28 77.40 / 74.14 70.62 / 70.39 71.72 / 60.88 75.05 / 71.66 
+Hy-MT2-30B-A3B 90.42 / 90.40 92.06 / 90.90 88.28 / 88.54 63.89 / 66.37 67.75 / 67.42 73.03 / 75.39 79.51 / 69.59 76.75 / 75.17 
+Hy-MT2-7B 86.52 / 88.65 89.95 / 89.43 84.51 / 86.66 37.75 / 44.24 38.81 / 44.14 66.30 / 69.20 78.88 / 68.82 67.10 / 67.29 
+Hy-MT2-1.8B 80.78 / 82.42 82.81 / 83.72 75.56 / 78.41 24.44 / 27.50 26.88 / 30.09 53.59 / 55.84 70.50 / 62.24 56.51 / 56.46 
+Kimi-K3.1-Pro 92.95 / 90.79 93.82 / 91.27 90.60 / 89.00 88.98 / 85.74 91.68 / 87.31 85.86 / 81.60 76.90 / 68.54 86.01 / 81.47 
+DeepSeek-V4.1-Flash 93.49 / 90.37 94.23 / 90.90 90.56 / 87.95 90.46 / 85.78 92.96 / 87.01 83.68 / 79.18 70.72 / 62.06 84.27 / 78.98 
+Qwen3.8-Max 93.60 / 91.51 94.56 / 92.12 91.82 / 89.86 91.38 / 88.27 92.99 / 88.89 86.88 / 81.28 81.94 / 64.36 88.02 / 81.08 
+Qwen3.8-Flash-Next 86.93 / 87.06 88.51 / 87.74 79.30 / 80.54 83.39 / 83.18 86.99 / 84.49 80.00 / 79.77 60.52 / 61.76 76.50 / 76.68 
+Qwen3.8-27B 83.60 / 84.09 85.44 / 84.67 74.25 / 75.95 73.89 / 75.21 78.78 / 77.06 72.73 / 72.63 49.33 / 54.45 68.47 / 70.04 
+Qwen3.6-35B-A3B 87.28 / 87.73 89.35 / 88.73 82.92 / 84.51 76.16 / 77.83 82.15 / 80.92 73.20 / 74.40 50.28 / 56.64 71.55 / 73.84 
+Gemma4-31B 90.69 / 90.02 93.23 / 90.93 89.33 / 88.75 80.47 / 79.51 85.82 / 81.64 79.98 / 77.72 50.73 / 55.38 75.87 / 75.66 
+Gemma4-26B-A4B 89.59 / 89.08 92.55 / 90.48 87.83 / 87.72 73.16 / 73.34 81.66 / 78.14 76.92 / 75.96 40.63 / 43.94 70.79 / 70.90 
+Gemma4-E4B 84.06 / 84.00 88.29 / 86.82 79.60 / 80.40 55.89 / 57.63 68.42 / 65.72 65.36 / 64.98 31.92 / 38.88 59.95 / 61.63 
+Gemma4-E2B 76.39 / 76.95 84.88 / 83.56 75.30 / 76.20 40.61 / 42.45 59.12 / 56.38 58.13 / 58.28 26.78 / 33.18 52.68 / 54.39 
+Index-Translate-35B-A3B 90.61 / 90.05 93.00 / 90.72 88.46 / 87.95 85.51 / 83.84 88.96 / 85.12 81.66 / 81.53 57.24 / 62.71 78.75 / 79.24 
+Index-Translate-9B 90.13 / 89.68 92.49 / 90.36 87.30 / 87.13 84.47 / 82.84 87.95 / 84.62 79.86 / 80.64 56.80 / 62.23 77.66 / 78.52 
+Index-Translate-2B 76.49 / 77.30 78.68 / 77.54 63.45 / 63.87 64.68 / 65.20 68.05 / 66.65 64.54 / 66.25 44.42 / 50.80 60.11 / 62.12 
+Tower-Plus-72B 79.59 / 78.30 80.29 / 78.43 67.19 / 66.37 52.23 / 51.15 55.82 / 53.04 65.57 / 64.06 27.62 / 28.45 53.98 / 53.10 
+Qwen-MT-Flash 88.70 / 88.98 90.06 / 89.15 84.72 / 85.71 71.03 / 73.89 72.43 / 73.56 77.77 / 80.05 33.21 / 38.37 67.00 / 69.56 
+Microsoft-Translator 85.74 / 85.61 89.12 / 87.50 83.70 / 83.91 76.40 / 76.59 79.38 / 78.35 66.53 / 66.96 55.82 / 50.99 71.09 / 69.91 
+iFlytek-Translator 86.79 / 85.25 87.14 / 84.98 77.61 / 78.22 77.84 / 76.28 76.70 / 73.90 60.26 / 59.16 76.79 / 63.56 73.26 / 69.21 
+Volcano-Translator 83.82 / 82.28 86.15 / 84.35 80.17 / 79.23 51.59 / 52.06 52.07 / 52.23 51.48 / 51.79 30.57 / 36.02 53.65 / 54.92 
+GPT-6.1-Sol T 94.08 / 91.18 95.17 / 91.80 92.66 / 89.70 93.83 / 88.71 93.84 / 88.08 89.49 / 81.73 92.12 / 71.80 92.08 / 82.96 
+Claude-Opus-5.5 T 94.07 / 92.29 95.05 / 93.21 92.83 / 90.91 93.92 / 90.06 95.13 / 90.83 89.19 / 81.27 90.62 / 70.17 91.84 / 83.25 
+Gemini-4-Argon T 93.58 / 91.79 94.60 / 92.33 91.85 / 90.41 93.12 / 89.23 94.12 / 89.41 87.10 / 79.19 86.85 / 69.80 89.92 / 82.23 
+Kimi-K3.1-Pro T 95.34 / 92.08 95.82 / 92.47 93.35 / 90.50 94.32 / 89.04 94.80 / 89.41 89.46 / 83.04 90.88 / 68.10 92.13 / 82.77 
+DeepSeek-V4.1-Flash T 96.19 / 91.70 96.75 / 92.14 95.08 / 90.04 96.14 / 88.89 96.61 / 89.37 92.57 / 83.46 92.18 / 67.87 94.09 / 82.68 
+GLM-5.3 T 94.89 / 91.80 95.42 / 91.87 92.95 / 89.60 93.48 / 88.19 94.17 / 88.25 78.35 / 75.97 71.40 / 60.21 84.20 / 78.57 
+Qwen3.8-Max T 94.97 / 91.76 96.16 / 92.05 94.13 / 90.31 94.55 / 89.05 95.86 / 89.53 91.34 / 83.51 84.93 / 66.92 91.45 / 82.56 
+Qwen3.8-Flash-Next T 92.62 / 90.24 94.27 / 90.76 90.79 / 88.07 91.52 / 87.39 92.84 / 87.27 86.67 / 80.15 80.15 / 60.60 87.52 / 79.11 
+Qwen3.8-27B T 90.31 / 88.32 91.70 / 88.30 86.22 / 84.34 84.80 / 82.04 86.20 / 81.37 78.84 / 73.48 64.10 / 53.71 78.81 / 73.43 
+Qwen3.6-35B-A3B T 91.83 / 90.24 93.00 / 90.50 88.90 / 87.96 87.54 / 84.78 88.68 / 84.47 76.32 / 74.79 66.03 / 59.12 79.94 / 76.70 
+Gemma4-31B T 93.45 / 91.20 94.94 / 91.73 92.39 / 89.90 88.35 / 85.52 90.48 / 85.77 84.10 / 80.17 73.12 / 55.26 84.81 / 77.79 
+Gemma4-26B-A4B T 93.01 / 90.86 94.67 / 91.54 91.91 / 89.34 85.22 / 82.94 87.74 / 83.42 82.09 / 80.15 60.73 / 47.61 80.36 / 75.13 
+Gemma4-E4B T 84.10 / 84.57 89.05 / 87.51 83.00 / 83.43 58.22 / 59.79 69.79 / 67.36 66.21 / 66.08 32.80 / 38.86 61.61 / 63.06 
+Gemma4-E2B T 85.05 / 84.57 87.77 / 86.39 81.89 / 82.14 59.83 / 59.87 64.10 / 61.46 60.74 / 61.38 32.15 / 41.25 59.32 / 61.46 
+Notes. Each cell reports TransRubric / GEMBA scores on a 0–100 scale; higher is better. Both are reference-based LLM-as-a-judge metrics. TransRubric is the arithmetic mean of two pointwise judges, DeepSeek-V4.1-Flash and Qwen3.5-397B-A17B, with scores averaged over the fixed expected number of samples. GEMBA uses GPT-OSS-120B with medium reasoning and is macro-averaged over language pairs. For both metrics, empty translations receive a score of 0.
+For the 33-language FLORES-200 set, ZH ⇔ \Leftrightarrow XX covers all directions involving Chinese, including Chinese–English; EN ⇔ \Leftrightarrow XX covers directions involving English but not Chinese; and XX ⇔ \Leftrightarrow XX covers directions involving neither Chinese nor English. Mand. ⇔ \Leftrightarrow Min. denotes Mandarin ⇔ \Leftrightarrow Minority translation. Avg. is the unweighted mean of four benchmark-level scores: FLORES-200, FLORES-200 low-resource, WMT26 and Mand. ⇔ \Leftrightarrow Min. T denotes thinking mode; unmarked models use non-thinking mode. Our models are shown in bold. Orange and blue backgrounds indicate the best non-thinking and thinking results, respectively, in each metric column. 
+Hy-MT3-30B-A3B achieves the best overall result among all non-thinking systems. Its average TransRubric / GEMBA scores reach 88.50 / 81.87, ahead of Qwen3.8-Max (88.02 / 81.08), Kimi-K3.1-Pro (86.01 / 81.47) and DeepSeek-V4.1-Flash (84.27 / 78.98). On the 33-language FLORES-200 set, Hy-MT3-30B-A3B obtains the best TransRubric scores among non-thinking systems on all three subsets (94.06 / 94.82 / 92.12 on ZH ⇔ \Leftrightarrow XX, EN ⇔ \Leftrightarrow XX and XX ⇔ \Leftrightarrow XX). 
+Language expansion brings large gains on lower-resource languages. On the 64 additional lower-resource languages, Hy-MT3-30B-A3B improves the TransRubric score over Hy-MT2-30B-A3B from 63.89 to 91.52 (ZH ⇔ \Leftrightarrow XX), the best among non-thinking systems, and from 67.75 to 92.74 (EN ⇔ \Leftrightarrow XX), close to Qwen3.8-Max (92.99). The gains are even larger for smaller models: Hy-MT3-1.8B improves from 24.44 to 73.48 on ZH ⇔ \Leftrightarrow XX. 
+Hy-MT3 is strong on WMT26 and Mandarin ⇔ \Leftrightarrow Minority translation. On WMT26, Hy-MT3-30B-A3B improves over Hy-MT2-30B-A3B from 73.03 to 85.63 in TransRubric, close to the strongest non-thinking systems Qwen3.8-Max (86.88) and Kimi-K3.1-Pro (85.86). On Mandarin ⇔ \Leftrightarrow Minority translation, it achieves 83.85 / 70.17, the best among non-thinking systems on both metrics. 
+Smaller models remain highly competitive. Hy-MT3-7B reaches an average of 86.12 / 80.39, surpassing DeepSeek-V4.1-Flash and all translation-specialized models, including Index-Translate-35B-A3B (78.75 / 79.24). Hy-MT3-1.8B improves the average TransRubric score of Hy-MT2-1.8B from 56.51 to 75.05, outperforming commercial APIs such as iFlytek Translator (73.26), Microsoft Translator (71.09) and Qwen-MT-Flash (67.00), as well as Index-Translate-2B (60.11). Figure 3: General translation quality versus inference compute. The x-axis is the estimated inference compute per test sample, approximately 2 × 2\times activated parameters × \times generated tokens (including thinking tokens), in log scale. The y-axis is the average TransRubric score in Table 2 . Arrows connect the non-thinking and thinking modes of the same model; dashed horizontal lines denote closed-source models whose sizes are undisclosed. 
+Efficiency. Figure 3 plots translation quality against estimated inference compute. Hy-MT3 models lie on the upper-left frontier: Hy-MT3-30B-A3B requires less than 1 TFLOP per sample, yet outperforms models that consume more than 30 × \times its compute, such as Qwen3.8-Max and Kimi-K3.1-Pro in non-thinking mode. Thinking mode improves the quality of general models, but typically requires several times to more than an order of magnitude more compute. 
+3.3 Real-World, Hard-Case and Instruction-Following Translation 
+Table 3 reports results on WildMTBench-202611, HardMTBench and IFMTBench. Table 3: Performance comparison on in-the-wild, hard-case and instruction-following translation benchmarks. 
+Models WildMTBench-202611 HardMTBench IFMTBench 
+Simple Complex Total 
+Hy-MT3-30B-A3B 91.30 88.93 / 89.80 91.02 79.74 86.66 
+Hy-MT3-7B 89.09 83.91 / 86.50 88.36 76.19 83.66 
+Hy-MT3-1.8B 84.45 76.44 / 81.77 76.40 55.56 68.34 
+Hy-MT2-30B-A3B 83.62 81.38 / 88.84 89.14 74.14 83.35 
+Hy-MT2-7B 80.99 73.16 / 84.12 87.87 71.08 81.38 
+Hy-MT2-1.8B 76.91 68.07 / 78.15 74.76 52.68 66.23 
+Kimi-K3.1-Pro 90.23 92.04 / 91.47 85.53 82.21 84.25 
+DeepSeek-V4.1-Flash 89.82 90.48 / 90.34 81.75 79.06 80.71 
+Qwen3.8-Max 90.94 92.30 / 91.71 88.79 82.84 86.49 
+Qwen3.8-Flash-Next 86.28 87.98 / 90.64 83.02 78.89 81.42 
+Qwen3.8-27B 85.46 84.54 / 88.13 81.55 76.29 79.52 
+Qwen3.6-35B-A3B 84.53 84.26 / 88.62 77.73 70.02 74.75 
+Gemma4-31B 84.77 84.74 / 88.31 84.25 72.77 79.81 
+Gemma4-26B-A4B 85.41 83.01 / 87.17 82.89 73.59 79.29 
+Gemma4-E4B 82.11 74.23 / 81.17 74.19 67.05 71.43 
+Gemma4-E2B 76.90 69.27 / 76.94 62.86 48.94 57.48 
+Index-Translate-35B-A3B 86.47 85.57 / 88.94 80.26 76.88 78.96 
+Index-Translate-9B 85.94 83.45 / 88.26 78.49 72.76 76.27 
+Index-Translate-2B 77.56 73.06 / 80.72 70.66 57.67 65.64 
+Tower-Plus-72B 84.55 82.12 / 87.34 79.01 73.07 76.72 
+Qwen-MT-Flash – 84.22 / 88.74 – – – 
+Microsoft-Translator – 71.13 / 77.21 – – – 
+iFlytek-Translator – 73.99 / 78.81 – – – 
+Volcano-Translator – 69.43 / 73.66 – – – 
+GPT-6.1-Sol T 92.50 93.26 / 91.98 90.68 84.75 88.38 
+Claude-Opus-5.5 T 92.09 92.90 / 91.85 87.44 75.51 82.82 
+Gemini-4-Argon T 90.30 91.65 / 91.32 93.41 83.73 89.68 
+Kimi-K3.1-Pro T 93.51 94.69 / 92.30 88.89 84.75 87.29 
+DeepSeek-V4.1-Flash T 94.21 94.38 / 91.53 86.57 83.46 85.37 
+GLM-5.3 T 91.39 92.25 / 90.75 86.85 81.29 84.70 
+Qwen3.8-Max T 91.96 93.49 / 91.72 87.87 83.87 86.32 
+Qwen3.8-Flash-Next T 90.40 91.11 / 91.13 88.09 84.06 86.53 
+Qwen3.8-27B T 90.55 89.24 / 89.45 88.00 83.49 86.26 
+Qwen3.6-35B-A3B T 88.73 88.00 / 90.55 84.02 82.42 83.40 
+Gemma4-31B T 88.91 87.28 / 89.54 86.11 74.21 81.51 
+Gemma4-26B-A4B T 88.70 86.23 / 88.77 84.48 74.61 80.67 
+Gemma4-E4B T 82.01 75.06 / 82.28 76.84 69.65 74.06 
+Gemma4-E2B T 80.71 71.54 / 78.90 73.87 63.97 70.04 
+Notes. All scores are on a 0–100 scale; higher is better. TransRubric follows the same two-judge protocol as in Table 2 , with empty or missing outputs scored as 0. WildMTBench-202611 contains 5,000 real-world samples and reports reference-free TransRubric scores using the fixed expected number of samples as the denominator. HardMTBench contains bidirectional Chinese–English cases and reports TransRubric / GEMBA scores, with GEMBA macro-averaged over the two directions. IFMTBench is evaluated using its official rules and GPT-OSS-120B judge and reports the mean over valid samples. Simple and Complex denote the single- and multi-constraint subsets, respectively, and Total aggregates all 7,344 test cases across both subsets. T denotes thinking mode; unmarked models use non-thinking mode. A dash indicates that the model was not evaluated on the corresponding benchmark. Our models are shown in bold. Orange and blue backgrounds indicate the best non-thinking and thinking results, respectively, in each score column. 
+Real-world translation. On WildMTBench-202611, Hy-MT3-30B-A3B achieves 91.30, the best among non-thinking systems, ahead of Qwen3.8-Max (90.94) and Kimi-K3.1-Pro (90.23). It also outperforms several thinking models, such as Gemini-4-Argon T (90.30) and Qwen3.8-Flash-Next T (90.40), and is close to GPT-6.1-Sol T (92.50). Notably, Hy-MT3-1.8B (84.45) already surpasses the previous-generation Hy-MT2-30B-A3B (83.62). 
+Hard, knowledge-intensive translation. On HardMTBench, Hy-MT3-30B-A3B improves over Hy-MT2-30B-A3B from 81.38 to 88.93 in TransRubric and clearly outperforms models of comparable size, such as Index-Translate-35B-A3B (85.57), Qwen3.6-35B-A3B (84.26) and Gemma4-26B-A4B (83.01). However, a gap remains compared with much larger models such as Qwen3.8-Max (92.30) and Kimi-K3.1-Pro (92.04). This suggests that in knowledge-intensive scenarios, larger models benefit from their greater parameter capacity to store world and domain knowledge. 
+Translation instruction following. On IFMTBench, Hy-MT3-30B-A3B achieves 91.02 / 79.74 / 86.66 on Simple, Complex and Total, obtaining the best Simple and Total scores among non-thinking systems and surpassing thinking models such as Qwen3.8-Max T (86.32), DeepSeek-V4.1-Flash T (85.37) and Claude-Opus-5.5 T (82.82) in Total. On Complex instructions, it still trails Qwen3.8-Max (82.84) and Kimi-K3.1-Pro (82.21), indicating room for improvement under multi-constraint instructions. Hy-MT3-7B (83.66) also surpasses Hy-MT2-30B-A3B (83.35). 
+3.4 Domain-Wise Analysis 
+We further break down WildMTBench-202611 into 10 domains (Table 4 and Figure 4 ). Hy-MT3-30B-A3B achieves the best score among non-thinking systems in 5 of the 10 domains (politics, finance, technology, medical and others) and is within 0.35 points of the best in legal, education, culture &amp; entertainment and life &amp; social. The largest margin appears in the “others” domain, where Hy-MT3-30B-A3B leads Qwen3.8-Max by 3.23 points (90.93 vs. 87.70), indicating strong robustness on long-tail inputs. The largest remaining gap is in sports (90.17 vs. 91.14 for Qwen3.8-Max). Table 4: Domain-wise performance on WildMTBench-202611. 
+Models Politics Finance Tech. Medical Legal Education Culture &amp; Ent. Sports Life &amp; Social Others Avg. 
+Hy-MT3-30B-A3B 91.80 91.41 92.63 92.32 92.57 89.73 91.55 90.17 89.90 90.93 91.30 
+Hy-MT3-7B 89.87 89.30 90.21 90.02 91.69 87.81 88.74 86.73 87.91 88.61 89.09 
+Hy-MT3-1.8B 84.45 84.26 86.66 85.38 87.43 83.89 83.72 80.16 82.89 85.64 84.45 
+Hy-MT2-30B-A3B 84.17 84.17 83.72 81.33 86.15 82.14 84.13 83.86 83.01 83.49 83.62 
+Hy-MT2-7B 81.19 82.14 80.95 79.11 83.39 80.00 81.95 79.70 81.00 80.52 80.99 
+Hy-MT2-1.8B 76.73 78.11 77.97 75.14 80.99 76.47 76.94 73.41 73.93 79.38 76.91 
+Kimi-K3.1-Pro 90.78 89.51 91.45 91.12 91.86 89.66 90.48 90.84 88.53 88.04 90.23 
+DeepSeek-V4.1-Flash 89.85 90.32 90.96 90.89 91.82 89.36 89.61 90.21 88.30 86.91 89.82 
+Qwen3.8-Max 90.90 91.33 92.33 91.59 92.74 90.05 91.61 91.14 90.03 87.70 90.94 
+Qwen3.8-Flash-Next 87.38 86.22 88.23 86.99 88.42 85.72 86.32 86.09 83.72 83.68 86.28 
+Qwen3.8-27B 86.11 86.21 87.77 85.83 88.18 84.96 85.21 84.76 82.68 82.94 85.46 
+Qwen3.6-35B-A3B 85.24 85.96 86.36 85.49 87.14 83.84 83.87 83.88 81.54 81.97 84.53 
+Gemma4-31B 86.63 80.29 86.00 85.21 87.88 83.61 87.20 87.40 79.96 83.48 84.77 
+Gemma4-26B-A4B 86.21 85.75 86.80 85.98 88.16 84.22 86.26 84.88 82.56 83.24 85.41 
+Gemma4-E4B 81.37 82.74 84.17 81.12 84.77 82.29 82.19 78.75 82.29 81.36 82.11 
+Gemma4-E2B 74.80 76.62 80.76 76.22 81.29 78.59 77.43 68.42 77.16 77.73 76.90 
+Index-Translate-35B-A3B 84.57 87.14 87.97 86.22 87.65 86.12 87.06 85.51 86.44 85.97 86.47 
+Index-Translate-9B 84.48 86.91 87.14 85.49 88.05 85.36 87.06 84.34 85.88 84.69 85.94 
+Index-Translate-2B 76.05 79.68 79.84 77.84 81.55 77.73 76.39 73.15 75.30 78.10 77.56 
+Tower-Plus-72B 84.36 85.70 85.91 84.72 86.86 84.52 84.22 83.84 81.99 83.38 84.55 
+GPT-6.1-Sol T 91.71 91.85 92.70 93.28 93.71 91.62 93.09 93.67 91.26 92.10 92.50 
+Claude-Opus-5.5 T 92.54 91.91 92.18 92.02 93.40 91.51 91.91 93.01 91.87 90.53 92.09 
+Gemini-4-Argon T 91.08 89.92 90.91 92.16 91.80 88.87 89.71 91.03 89.89 87.60 90.30 
+Kimi-K3.1-Pro T 93.56 92.78 94.46 94.16 94.66 92.88 93.49 94.12 93.20 91.75 93.51 
+DeepSeek-V4.1-Flash T 94.31 93.41 94.86 94.58 95.59 93.08 94.81 94.89 93.39 93.15 94.21 
+GLM-5.3 T 90.84 90.92 92.28 91.95 93.28 90.96 91.98 92.03 90.24 89.47 91.39 
+Qwen3.8-Max T 91.58 92.04 93.29 92.73 93.32 91.62 92.34 92.65 91.31 88.75 91.96 
+Qwen3.8-Flash-Next T 90.06 90.90 92.30 91.77 91.57 90.02 90.39 89.41 88.70 88.94 90.40 
+Qwen3.8-27B T 91.00 90.36 92.81 91.22 92.14 89.61 90.18 90.13 88.76 89.31 90.55 
+Qwen3.6-35B-A3B T 88.67 87.99 90.12 90.53 90.74 87.60 88.98 88.93 86.32 87.46 88.73 
+Gemma4-31B T 89.93 87.06 89.63 89.12 91.06 87.28 90.71 89.74 86.58 88.00 88.91 
+Gemma4-26B-A4B T 89.01 87.82 89.41 89.45 89.91 87.03 89.56 89.30 87.30 88.16 88.70 
+Gemma4-E4B T 81.93 82.52 83.70 82.06 84.79 82.22 82.06 78.90 81.31 80.61 82.01 
+Gemma4-E2B T 78.22 82.08 85.02 80.84 84.25 81.64 80.18 72.05 81.59 81.26 80.71 
+Notes. All scores are reference-free TransRubric scores on a 0–100 scale; higher is better. WildMTBench-202611 contains 5,000 samples evenly divided into 10 domains of 500 samples each. Each domain score is the mean of the DeepSeek-V4.1-Flash and Qwen3.5-397B-A17B judge scores, using 500 as the fixed denominator; empty or missing translations are assigned a score of 0. Avg. is the score over all 5,000 samples and, because the domains are equally sized, is also the unweighted mean of the 10 domain scores. Judge-side failures are also scored as 0 (one case each for Hy-MT3-30B-A3B and Hy-MT3-7B, and two cases for Claude-Opus-5.5 T ). T denotes thinking mode; unmarked models use non-thinking mode. Commercial translation APIs were not evaluated and are omitted. Orange and blue backgrounds indicate the best non-thinking and thinking results, respectively, in each column. Figure 4: Domain-wise TransRubric scores on WildMTBench-202611. Numbers in parentheses are the overall averages. (T) denotes thinking mode. 
+3.5 Improvements over Hy-MT2 
+To understand where the improvements come from, we compare Hy-MT2-30B-A3B and Hy-MT3-30B-A3B on WildMTBench-202611 using the issue annotations produced by TransRubric (Table 5 ). Table 5: Fine-grained comparison between Hy-MT2-30B-A3B and Hy-MT3-30B-A3B on WildMTBench-202611. 
+(a) Score distribution 
+Metric Hy-MT2-30B-A3B Hy-MT3-30B-A3B Change 
+Average judge score ↑ \uparrow 83.62 91.30 +7.68 
+Perfect-score rate (score = 100 =100 ) ↑ \uparrow 25.5% 40.6% +15.1 pt 
+Samples with score ≥ 90 \geq 90 ↑ \uparrow 46.1% 70.9% +24.8 pt 
+Samples with score ≥ 80 \geq 80 ↑ \uparrow 68.2% 87.2% +19.0 pt 
+Poor-translation rate (score &lt; 60 &lt;60 ) ↓ \downarrow 7.4% 2.2% − - 5.2 pt ( − - 70%) 
+Average issues per sample ↓ \downarrow 2.14 1.13 − - 1.01 ( − - 47%) 
+(b) Error types (share of samples, ↓ \downarrow ) 
+Error type Hy-MT2-30B-A3B Hy-MT3-30B-A3B Rel. change 
+Completeness (omission / addition) 21.2% 5.5% − - 74% 
+Accuracy (mistranslation) 56.0% 31.8% − - 43% 
+Terminology 28.3% 17.9% − - 37% 
+Instruction following 16.5% 9.8% − - 40% 
+Notes. All statistics are computed over the 5,000 WildMTBench-202611 samples using TransRubric scores and issue annotations. ↑ \uparrow and ↓ \downarrow indicate that higher and lower values are better, respectively.
+“pt” denotes an absolute change in percentage points, while values in parentheses denote relative changes from Hy-MT2-30B-A3B.
+In (b), each value is the share of samples containing at least one issue of the corresponding type; issue types are not mutually exclusive. 
+Score distribution. Hy-MT3 raises the average score from 83.62 to 91.30 (+7.68). The share of samples scoring at least 90 increases from 46.1% to 70.9%, and the poor-translation rate (score below 60) drops from 7.4% to 2.2%. In a per-sample comparison, Hy-MT3 wins on 58.9% of the samples and loses on only 15.5%. 
+Error types. The improvements mainly come from faithfulness (Figure 5 ). The share of samples with omissions or additions drops from 21.2% to 5.5% ( − - 74%), mistranslations from 56.0% to 31.8% ( − - 43%), terminology issues from 28.3% to 17.9% ( − - 37%), and instruction-following issues from 16.5% to 9.8% ( − - 40%). The reduction in instruction-following issues mainly comes from Hy-MT3 no longer completing or extending the source text on its own, and from better preservation of formats and tags. Figure 5: Share of samples containing each error type on WildMTBench-202611, Hy-MT2-30B-A3B versus Hy-MT3-30B-A3B (Table 5 b). Labels above each pair give the relative reduction. 
+3.6 Case Study 
+Figure 6 compares Hy-MT2 and Hy-MT3 on representative cases of the three error types where Hy-MT3 improves the most. 
+Mistranslation. Hy-MT2 misreads the person name “夏雨雨” as “summer rains” and over-interprets “动容” as “moved to tears”, while Hy-MT3 correctly transliterates the name and keeps the original meaning. In the marketing copy, Hy-MT2 adds embellishments that are not in the source (“卓越功效”, “完美”), whereas Hy-MT3 translates “powerful pairing” and “designed to support” faithfully. 
+Omission. Hy-MT2 drops key information such as “Chippy Exhibition” and “硬核”, while Hy-MT3 preserves it (“对抗激烈的表演赛”, “Hardcore shots”) together with the inline tags. 
+Instruction following. Hy-MT3 keeps the author list and journal name of a bibliographic reference in their original form, following the citation convention, while Hy-MT2 translates them. When asked for a colloquial translation, Hy-MT3 produces a more conversational rendering than the formal output of Hy-MT2. Figure 6: Case study comparing Hy-MT2 and Hy-MT3. 
+Type Prompt Hy-MT2 Response Hy-MT3 Response 
+Mistranslation 将以下文本翻译为英语，注意只需要输出翻译后的结果，不要额外解释： 夏雨雨 感动无数国人，14亿人为之 动容 ｜ 体坛记忆 The summer rains touched the hearts of countless Chinese people;
+1.4 billion individuals were moved to tears — Sports Memories Xia Yuyu Moved Countless Chinese People—1.4 Billion Were Touched — Sports Memories 
+将以下文本从英语翻译为简体中文，注意只需要输出翻译后的结果，不要额外解释：Creatine MagnaPower® unites the powerful pairing of creatine and magnesium
+in a clinically proven formulation designed to support strength, power and high-intensity performance. Creatine MagnaPower®将 具有卓越功效的 creatine与镁元素 完美 结合，
+这种经过临床验证的配方 有助于提升 力量、爆发力以及高强度运动表现。 Creatine MagnaPower® 将肌酸与镁这一 强效组合 融合于经临床验证的配方之中，
+该配方 旨在助力提升 力量、爆发力及高强度表现。 
+Omission 将以下文本翻译为简体中文，注意只需要输出翻译后的结果，不要额外解释： &lt;x0&gt;Men’s Hockey Debuts Propel No. 13 Men’s Hockey to a Chippy Exhibition Victory Over University of Waterloo&lt;/x0&gt; &lt;x0&gt;男子冰球新人的出色表现助力排名第13的男子冰球队 以险胜 战胜滑铁卢大学&lt;/x0&gt; &lt;x0&gt;男子冰球首秀助力排名第13的男子冰球队在一场 对抗激烈的表演赛 中战胜滑铁卢大学&lt;/x0&gt; 
+将以下文本翻译为英语，注意只需要输出翻译后的结果，不要额外解释： 野球场 硬核 投篮，肘姐出手就进，这准度谁能顶得住 In a streetball game, Elbow Sister made every shot she took;
+no one could match such accuracy. Hardcore shots on the street court—Sister Elbow drains it the moment she releases—who
+can handle this kind of accuracy? 
+Instruction following 将以下文本翻译为中文，注意只需要输出翻译后的结果，不要额外解释： Wang R, Liang L, Matsumoto M, Iwata K, Umemura A, He F. Reactive oxygen species and NRF2 signaling, friends or foes in cancer?
+Biomolecules 13: 353, 2023. 王R、梁L、松本M、岩田K、梅村A、何F。 活性氧与NRF2信号通路：在癌症中是“帮手”还是“敌人”？
+《生物分子》13: 353，2023年。 Wang R, Liang L, Matsumoto M, Iwata K, Umemura A, He F. 活性氧与NRF2信号通路：在癌症中是盟友还是对手？Biomolecules 13: 353, 2023. 
+用最符合口语表达的标准进行翻译 参考上面的信息，把下面的文本翻译成英语，注意不需要翻译上文，也不要额外解释： 我们要特别重视挖掘中华五千年文明中的精华，把弘扬优秀文化同马克思主义立场观点方法 We must pay special attention to drawing out the essence of China’s 5,000-year civilization,
+and integrate the promotion of excellent culture with the stance, viewpoints, and methods of Marxism. We really need to pay special attention to drawing out the best of China’s
+five-thousand-year-old civilization, and to linking the promotion of fine culture with the
+positions, viewpoints, and methods of Marxism 
+3.7 Game Translation 
+Game localization places strict requirements on output format and terminology: placeholders and rich-text tags must be preserved exactly, in-game terms must be translated consistently, and any off-target output can directly break the game client. Together with the Honor of Kings team, we collected high-quality game-domain data to make Hy-MT3-30B-A3B a leading model for game translation. We also jointly built an evaluation system covering multiple game genres. The evaluation set is stratified by localization characteristics such as text length, rich text and placeholders, and includes long texts with high terminology density from MOBA and open-world games, to comprehensively test how well a model handles game context, terminology and complex text structures. Under this system, we establish four game-specific evaluation criteria: off-target rate, placeholder errors, rich-text errors and terminology errors. 
+As shown in Table 6 , Hy-MT3-30B-A3B achieves the lowest error rate on all four criteria (tied with Gemini 3.1 Pro on placeholder errors) and the highest total score in human evaluation, outperforming strong thinking models such as Gemini 3.1 Pro (88.7), GPT-5.5 (88.6) and DeepSeek-V4-Pro (88.3). In particular, its terminology error rate is 0.08%, compared with 0.54% for Gemini 3.1 Pro. 
+The Honor of Kings team has also open-sourced a game translation toolchain 3 3 3 https://github.com/Tencent/TiMiHOKGameTranslator that supports multiple translation platforms, multiple file formats, pluggable workflows and various code management methods. It seamlessly embeds Hy-MT3-30B-A3B into the game development pipeline, connecting translation with downstream engineering. After integration, localization requires no additional manual effort, providing a reusable reference solution for game localization. Table 6: Human evaluation on game translation. 
+Models Off-target ↓ \downarrow Placeholder Error ↓ \downarrow Rich-text Error ↓ \downarrow Terminology Error ↓ \downarrow Total Score ↑ \uparrow 
+Hy-MT3-30B-A3B 0.24% 0.08% 0.08% 0.08% 89.6 
+Gemini 3.1 Pro T 0.38% 0.08% 0.19% 0.54% 88.7 
+GPT-5.5 T 0.58% 0.15% 0.46% 0.27% 88.6 
+DeepSeek-V4-Pro T 0.65% 0.12% 0.46% 0.54% 88.3 
+Qwen3.6-35B-A3B T 2.81% 0.42% 1.38% 1.15% 83.4 
+Gemma4-26B-A4B T 2.11% 0.35% 1.38% 0.81% 83.2 
+Notes. The evaluation set and the human evaluation protocol are jointly built with the Honor of Kings team. Off-target, placeholder, rich-text and terminology errors are reported as the percentage of samples containing the corresponding error; lower is better ( ↓ \downarrow ). The total score is the overall human rating; higher is better ( ↑ \uparrow ). T denotes thinking mode. Our model is shown in bold and thinking models in blue .
+The best result in each column is highlighted with an orange background . 
+3.8 Image Translation 
+In image translation, text in an image is typically first recognized by an OCR engine and then translated. OCR output often contains misrecognized characters, missing text or wrong segmentation, so the translation model must infer the intended content from context. We optimize Hy-MT3 for this scenario by strengthening its context understanding and error correction. 
+We evaluate on VISTA-Bench ( Lv et al., 2026 ) in a cascaded setting with PaddleOCR ( Cui et al., 2025 ) . As shown in Table 7 , Hy-MT3-30B-A3B achieves 45.73, the best among non-thinking and translation-specialized models, ahead of Gemma4-26B-A4B (45.46) and Index-Translate-35B-A3B (43.63), and also above the thinking model GLM-5.3 T (42.84). Table 7: Translation quality on VISTA-Bench (text track, PaddleOCR input). 
+Models Translation quality 
+Hy-MT3-30B-A3B 45.73 
+Gemma4-26B-A4B 45.46 
+Qwen3.6-35B-A3B 41.82 
+Index-Translate-35B-A3B 43.63 
+Index-Translate-9B 43.05 
+Index-Translate-2B 33.35 
+GPT-6.1-Sol T 51.97 
+GLM-5.3 T 42.84 
+Notes. All scores are on a 0–100 scale.
+Test data and the judging protocol are taken from VISTA-Bench ( Lv et al., 2026 ) , a multilingual image translation benchmark covering 23 source languages and 10 everyday-use domains with image-specific rubrics.
+We evaluate in a cascaded setting: text in each test image is first recognized by PaddleOCR, and the recognized text is then given to each model for translation, so no model has access to the image.
+Following the official protocol, a text-only LLM judge checks each translation against the image-specific rubric without seeing the image or the reference translation; each atomic criterion is scored as fully met or unmet, criteria are weighted by importance (core / supporting / minor = 3 / 2 / 1 =3/2/1 ), and we report the translation-quality (T) dimension averaged over all 506 translation directions.
+Because OCR errors (misrecognized, missing or wrongly segmented text) propagate to the translation input and cannot be recovered without the image, the absolute scores of all models are considerably lower than on text-only benchmarks; the scores are intended for relative comparison under identical OCR input. T denotes thinking mode; models without the marker are run in non-thinking mode.
+Our model is shown in bold at the top, followed by general models in non-thinking mode , translation-specialized models , and models in thinking mode .
+The best result among non-thinking-mode systems is highlighted with an orange background ,
+and the best result among thinking-mode models with a blue background . 
+3.9 Quantization 
+To support deployment under different resource budgets, we evaluate Hy-MT3 under several quantization settings: FP8, and the Q8, Q4_K_M and IQ2 formats of llama.cpp, ranging from 8-bit to 2-bit precision. Table 8 compares them with the BF16 models. 
+8-bit and 4-bit quantization is nearly lossless for the larger models. For Hy-MT3-7B, FP8, Q8 and Q4_K_M stay within 0.6 points of BF16 on every benchmark; for Hy-MT3-30B-A3B, the gap is within 0.4 points, and some settings even score slightly higher than BF16. 
+2-bit quantization remains usable. With IQ2, the scores of Hy-MT3-7B and Hy-MT3-30B-A3B drop by at most 1.95 and 2.53 points, respectively, with the largest drops on low-resource FLORES-200, WMT26 and Mandarin ⇔ \Leftrightarrow Minority translation. Hy-MT3-30B-A3B-IQ2 still outperforms the BF16 Hy-MT3-7B on all benchmarks except Mandarin ⇔ \Leftrightarrow Minority translation. 
+The smallest model is more sensitive to quantization. For Hy-MT3-1.8B, Q8 stays within 0.6 points of BF16 except on IFMTBench ( − - 1.60), whereas FP8 and Q4_K_M lower scores by up to 3.25 and 2.55 points, respectively, mainly on low-resource FLORES-200, Mandarin ⇔ \Leftrightarrow Minority translation and IFMTBench. Its scores on WildMTBench-202611 and HardMTBench drop by less than 0.6 points under all settings. Table 8: Performance comparison of Hy-MT3 models under different quantization settings. 
+Models FLORES-200 WMT26 Mand WMTB HMTB IFMTB 
+All-33 Low-Res. 
+Hy-MT3-1.8B-BF16 82.44 75.44 70.62 71.72 84.45 76.44 68.34 
+Hy-MT3-1.8B-FP8 81.41 73.61 69.08 70.16 83.88 76.09 65.09 
+Hy-MT3-1.8B-Q8 82.11 74.96 70.08 71.68 84.36 76.38 66.74 
+Hy-MT3-1.8B-Q4_K_M 81.16 72.89 69.00 69.20 83.89 76.01 66.01 
+Hy-MT3-7B-BF16 90.58 89.36 81.74 82.79 89.09 83.91 83.66 
+Hy-MT3-7B-FP8 90.48 89.31 81.63 82.36 88.86 83.73 83.06 
+Hy-MT3-7B-Q8 90.50 89.26 81.67 82.56 88.94 83.87 83.21 
+Hy-MT3-7B-Q4_K_M 90.45 89.21 81.53 82.45 88.87 83.78 83.34 
+Hy-MT3-7B-IQ2 89.59 87.57 79.85 80.84 88.34 82.81 81.85 
+Hy-MT3-30B-A3B-BF16 92.40 92.13 85.63 83.85 91.30 88.93 86.66 
+Hy-MT3-30B-A3B-FP8 92.29 92.06 85.40 83.85 91.09 88.78 86.84 
+Hy-MT3-30B-A3B-Q8 92.37 92.15 85.65 83.98 91.17 88.93 86.69 
+Hy-MT3-30B-A3B-Q4_K_M 92.33 92.09 85.46 83.48 91.22 88.82 86.64 
+Hy-MT3-30B-A3B-IQ2 91.44 90.08 83.37 81.32 90.81 87.74 85.74 
+Notes. All scores are on a 0–100 scale. Except for IFMTB, scores are TransRubric scores averaged over the DeepSeek-V4.1-Flash and Qwen3.5-397B-A17B judges. All-33 covers all pairs among the 33 FLORES-200 languages, while Low-Res. covers low-resource languages paired with Chinese or English. Mand, WMTB, HMTB and IFMTB denote Mandarin ⇔ \Leftrightarrow Minority translation, WildMTBench-202611, HardMTBench and IFMTBench, respectively. IFMTB is independently judged by GPT-OSS-120B. 
+4 Conclusion 
+We present Hy-MT3, a family of multilingual translation models comprising Hy-MT3-1.8B, Hy-MT3-7B and Hy-MT3-30B-A3B. Compared with Hy-MT2, Hy-MT3 substantially reduces mistranslations, omissions/additions and instruction-following errors, and expands language coverage from 38 to 102 languages. Running in non-thinking mode with only 3B activated parameters, Hy-MT3-30B-A3B achieves the best overall performance among all evaluated non-thinking models on general translation, real-world translation and translation instruction following, and approaches the strongest closed-source thinking models at a fraction of their inference compute. Hy-MT3 further delivers leading results in game localization and OCR-cascaded image translation. Together with the models, we release TransRubric to support fine-grained and reliable evaluation of translation quality. We hope Hy-MT3 and TransRubric will facilitate both research and real-world applications of machine translation. 
+5 Contributions 
+5.1 Core Contributors 
+Mao Zheng, Zheng Li, Fangxu Liu, Tao Chen, Bingxin Qu, Bo Lv, Mingrui Sun 
+5.2 Contributors 
+Shiqi Huang, Hongyu Li, Hong Huang, Jinlong Song, Decheng Wu, Guanghua Yu, Shijia Wen, Jianwei Wu, Lizhi Fang, Sijia Wang, Zhongfu Zheng, Jing Zhao, Weiwei Xun, Yutong Li, Hengjian Long, Hanxin Liu, Dawei Wu, Jia Qing, Kaiyou He, Youning Liang 
+Appendix A Supported Languages 
+Table 9 lists the 102 languages supported by Hy-MT3, including the 38 languages already supported by Hy-MT2 and 64 newly supported languages. Table 9: Languages supported by Hy-MT3 (102 in total). 
+Language Code Chinese Name Language Code Chinese Name Language Code Chinese Name 
+Supported since Hy-MT2 (33 languages) 
+Chinese zh 中文 Italian it 意大利语 Khmer km 高棉语 
+English en 英语 German de 德语 Burmese my 缅甸语 
+French fr 法语 Vietnamese vi 越南语 Persian fa 波斯语 
+Portuguese pt 葡萄牙语 Malay ms 马来语 Gujarati gu 古吉拉特语 
+Spanish es 西班牙语 Indonesian id 印尼语 Urdu ur 乌尔都语 
+Japanese ja 日语 Filipino tl 菲律宾语 Telugu te 泰卢固语 
+Turkish tr 土耳其语 Hindi hi 印地语 Marathi mr 马拉地语 
+Russian ru 俄语 Traditional Chinese zh-TR 繁体中文 Hebrew he 希伯来语 
+Arabic ar 阿拉伯语 Polish pl 波兰语 Bengali bn 孟加拉语 
+Korean ko 韩语 Czech cs 捷克语 Tamil ta 泰米尔语 
+Thai th 泰语 Dutch nl 荷兰语 Ukrainian uk 乌克兰语 
+Chinese minority languages and dialects, supported since Hy-MT2 (5 languages) 
+Tibetan bo 藏语 Traditional Mongolian mn 传统蒙古语 Cantonese yue 粤语 
+Arabic Kazakh kk 阿拉伯字母哈萨克语 Uyghur ug 维吾尔语 
+Newly supported in Hy-MT3 (64 languages) 
+Greek el 希腊语 Welsh cy 威尔士语 Sinhala si 僧伽罗语 
+Romanian ro 罗马尼亚语 Catalan ca 加泰罗尼亚语 Punjabi pa 旁遮普语 
+Hungarian hu 匈牙利语 Galician gl 加利西亚语 Sindhi sd 信德语 
+Bulgarian bg 保加利亚语 Basque eu 巴斯克语 Assamese as 阿萨姆语 
+Serbian sr 塞尔维亚语 Afrikaans af 南非荷兰语 Odia or 奥里亚语 
+Croatian hr 克罗地亚语 Luxembourgish lb 卢森堡语 Kannada kn 卡纳达语 
+Slovak sk 斯洛伐克语 Maltese mt 马耳他语 Malayalam ml 马拉雅拉姆语 
+Slovenian sl 斯洛文尼亚语 Esperanto eo 世界语 Sanskrit sa 梵语 
+Albanian sq 阿尔巴尼亚语 Yiddish yi 意第绪语 Lao lo 老挝语 
+Macedonian mk 马其顿语 Armenian hy 亚美尼亚语 Javanese jv 爪哇语 
+Belarusian be 白俄罗斯语 Georgian ka 格鲁吉亚语 Sundanese su 巽他语 
+Lithuanian lt 立陶宛语 Azerbaijani az 阿塞拜疆语 Cebuano ceb 宿务语 
+Latvian lv 拉脱维亚语 Uzbek uz 乌兹别克语 Waray war 瓦瑞语 
+Estonian et 爱沙尼亚语 Kyrgyz ky 吉尔吉斯语 Swahili sw 斯瓦希里语 
+Finnish fi 芬兰语 Turkmen tk 土库曼语 Amharic am 阿姆哈拉语 
+Swedish sv 瑞典语 Tajik tg 塔吉克语 Somali so 索马里语 
+Danish da 丹麦语 Tatar tt 鞑靼语 Malagasy mg 马达加斯加语 
+Norwegian nb 挪威语 Bashkir ba 巴什基尔语 Haitian Creole ht 海地克里奥尔语 
+Norwegian Nynorsk nn 新挪威语 Kurdish ku 库尔德语 Cyrillic Kazakh kk-Cyrl 西里尔哈萨克语 
+Icelandic is 冰岛语 Central Kurdish ckb 中库尔德语 Cyrillic Mongolian mn-Cyrl 西里尔蒙古语 
+Irish ga 爱尔兰语 Pashto ps 普什图语 
+Scottish Gaelic gd 苏格兰盖尔语 Nepali ne 尼泊尔语 
+References 
+Anthropic (2026) Anthropic. System card: Claude Opus 5.5, September 2026. URL https://assets.claude.com/fc1b44717c85dc068bc6ba5024219938094694bd.pdf . 
+Cui et al. (2025) Cheng Cui, Ting Sun, Manhui Lin, Tingquan Gao, Yubo Zhang, Jiaxuan Liu, Xueqing
+Wang, Zelun Zhang, Changda Zhou, Hongen Liu, Yue Zhang, Wenyu Lv, Kui Huang,
+Yichao Zhang, Jing Zhang, Jun Zhang, Yi Liu, Dianhai Yu, and Yanjun Ma. PaddleOCR 3.0 technical report, 2025. URL https://arxiv.org/abs/2507.05595 . 
+DeepSeek-AI (2026) DeepSeek-AI. DeepSeek-V4.1-Flash: Pushing the limits of KV cache compression,
+2026. URL https://arxiv.org/abs/2609.19969 . 
+Freitag et al. (2021) Markus Freitag, Ricardo Rei, Nitika Mathur, Chi-kiu Lo, Craig Stewart, George
+Foster, Alon Lavie, and Ondřej Bojar. Results of the WMT21 metrics shared task: Evaluating metrics with
+expert-based human evaluations on TED and news domain. In Loic Barrault, Ondrej Bojar, Fethi Bougares, Rajen Chatterjee,
+Marta R. Costa-jussa, Christian Federmann, Mark Fishel, Alexander Fraser,
+Markus Freitag, Yvette Graham, Roman Grundkiewicz, Paco Guzman, Barry Haddow,
+Matthias Huck, Antonio Jimeno Yepes, Philipp Koehn, Tom Kocmi, Andre Martins,
+Makoto Morishita, and Christof Monz (eds.), Proceedings of the Sixth
+Conference on Machine Translation , pp.  733–774, Online, November 2021.
+Association for Computational Linguistics. URL https://aclanthology.org/2021.wmt-1.73/ . 
+Gemma Team (2026) Gemma Team. Gemma 4 technical report, 2026. URL https://arxiv.org/abs/2607.02770 . 
+GLM-5 Team (2026) GLM-5 Team. GLM-5: from vibe coding to agentic engineering, 2026. URL https://arxiv.org/abs/2602.15763 . 
+Google DeepMind (2026) Google DeepMind. Gemini 4 Argon model card, October 2026. URL https://deepmind.google/models/model-cards/gemini-4-argon/ . 
+Guerreiro et al. (2023) Nuno M. Guerreiro, Ricardo Rei, Daan van Stigt, Luisa Coheur, Pierre Colombo,
+and André F. T. Martins. xCOMET: Transparent machine translation evaluation through
+fine-grained error detection, 2023. URL https://arxiv.org/abs/2310.10482 . 
+Kocmi &amp; Federmann (2023) Tom Kocmi and Christian Federmann. Large language models are state-of-the-art evaluators of translation
+quality. In Proceedings of the 24th Annual Conference of the European
+Association for Machine Translation , pp.  193–203, Tampere, Finland, June
+2023. European Association for Machine Translation. URL https://aclanthology.org/2023.eamt-1.19 . 
+Kocmi et al. (2026) Tom Kocmi, Ekaterina Artemova, Eleftherios Avramidis, Rachel Bawden,
+Ondřej Bojar, Sergey Dukanov, Anton Dvorkovich, Mark Fishel, Markus
+Freitag, Samuel Frontull, Thamme Gowda, Roman Grundkiewicz, Barry Haddow,
+Stan Kharevich, Philipp Koehn, Zheng Li, Jean Maillard, Christof Monz,
+Alexander Murauski, Kenton Murray, Masaaki Nagata, Stefano Perrella, Martin
+Popel, Maja Popović, Lorenzo Proietti, Sara Rajaee, Parker Riley, Mariya
+Shmatova, Steinþór Steingrímsson,
+Lisa Yankovskaya, and Vilém Zouhar. Findings of the WMT26 general machine translation shared task:
+Contrastive dynamic human evaluation at scale. In Proceedings of the Eleventh Conference on Machine
+Translation , pp.  873–923. Association for Computational Linguistics,
+October 2026. URL https://aclanthology.org/2026.wmt-main.48/ . 
+Lavie et al. (2026) Alon Lavie, Greg Hanneman, Stefano Perrella, Shuoyang Ding, Eleftherios
+Avramidis, Lorenzo Proietti, Chi-kiu Lo, Ammon Shurtz, Chrysoula Zerva,
+Archchana Sindhujan, Vilém Zouhar, Diptesh Kanojia, Frédéric
+Blain, Brian Thompson, Giorgos Filandrianos, Orfeas Menis Mastromichalakis,
+Tom Kocmi, and Pranav Gupta. Findings of the WMT26 shared task on automated translation quality
+evaluation systems: Compact open models are competitive quality evaluators. In Proceedings of the Eleventh Conference on Machine
+Translation , pp.  924–1023. Association for Computational Linguistics,
+October 2026. URL https://aclanthology.org/2026.wmt-main.49/ . 
+Li et al. (2026a) Tianjiao Li, Mengran Yu, Chenyu Shi, Lusheng Zhang, Qisi Chen, Yanshan Zhou,
+Ji Qi, Jingying Liu, Yuang Feng, Ziang Cui, and Tianxing Yan. Index-Translate: A multilingual translation model family — text,
+speech, controlled dubbing, and long-document translation. Technical report, Index LLM Team, September 2026a. URL https://arxiv.org/abs/2609.40181 . 
+Li et al. (2026b) Zheng Li, Mao Zheng, Mingyang Song, and Tianxiang Fei. HardMTBench: Stress-testing Chinese-English translation on
+knowledge-intensive domains. In Findings of the Association for Computational Linguistics:
+EMNLP 2026 , pp.  4947–4957, Budapest, Hungary, October 2026b.
+Association for Computational Linguistics. URL https://aclanthology.org/2026.findings-emnlp.235/ . 
+Lommel et al. (2014) Arle Lommel, Aljoscha Burchardt, Maja Popović, Kim Harris, Eleftherios
+Avramidis, and Hans Uszkoreit. Using a new analytic measure for the annotation and analysis of MT
+errors on real data. In Mauro Cettolo, Marcello Federico, Lucia Specia, and Andy Way
+(eds.), Proceedings of the 17th Annual Conference of the European
+Association for Machine Translation , pp.  165–172, Dubrovnik, Croatia,
+June 16-18 2014. European Association for Machine Translation. URL https://aclanthology.org/2014.eamt-1.38/ . 
+Lv et al. (2026) Bo Lv, Mao Zheng, Zheng Li, Fangxu Liu, Mingrui Sun, and Tao Chen. VISTA-Bench: Benchmarking multilingual image translation with
+image-specific rubrics, 2026. URL https://arxiv.org/abs/2609.37287 . 
+Moonshot AI (2026) Moonshot AI. Introducing Kimi K3.1 Pro, 2026. URL https://www.kimi.ai/blog/kimi-k3-1-pro . 
+OpenAI (2025) OpenAI. gpt-oss-120b &amp; gpt-oss-20b model card, 2025. URL https://arxiv.org/abs/2508.10925 . 
+OpenAI (2026) OpenAI. GPT-6.1 Sol system card, September 2026. URL https://deploymentsafety.openai.com/gpt-6-1-sol . 
+Qwen Team (2025) Qwen Team. Qwen-MT: Where speed meets smart translation, July 2025. URL https://qwenlm.github.io/blog/qwen-mt/ . 
+Qwen Team (2026a) Qwen Team. Qwen3.5: Towards native multimodal agents, February
+2026a. URL https://qwen.ai/blog?id=qwen3.5 . 
+Qwen Team (2026b) Qwen Team. Qwen3.6-35B-A3B: Agentic coding power, now open to all, April
+2026b. URL https://qwen.ai/blog?id=qwen3.6-35b-a3b . 
+Qwen Team (2026c) Qwen Team. Qwen3.8-Max: A new bar for coding and cowork, August
+2026c. URL https://qwen.ai/blog?id=qwen3.8 . 
+Qwen Team (2026d) Qwen Team. On the design of Qwen3.8-Next architecture: Evaluation, efficiency,
+and training stability, 2026d. URL https://arxiv.org/abs/2608.30320 . 
+Rei et al. (2022) Ricardo Rei, Marcos Treviso, Nuno M. Guerreiro, Chrysoula Zerva, Ana C.
+Farinha, Christine Maroti, José G. C. de Souza, Taisiya Glushkova, Duarte M.
+Alves, Alon Lavie, Luisa Coheur, and André F. T. Martins. CometKiwi: IST-Unbabel 2022 submission for the quality estimation
+shared task, 2022. URL https://arxiv.org/abs/2209.06243 . 
+Rei et al. (2025) Ricardo Rei, Nuno M. Guerreiro, José Pombal, João Alves, Pedro Teixeirinha,
+Amin Farajian, and André F. T. Martins. Tower+: Bridging generality and translation specialization in
+multilingual LLMs, 2025. URL https://arxiv.org/abs/2506.17080 . 
+Team et al. (2022) NLLB Team, Marta R. Costa-jussà, James Cross, Onur Çelebi, Maha Elbayad,
+Kenneth Heafield, Kevin Heffernan, Elahe Kalbassi, Janice Lam, Daniel Licht,
+Jean Maillard, Anna Sun, Skyler Wang, Guillaume Wenzek, Al Youngblood, Bapi
+Akula, Loic Barrault, Gabriel Mejia Gonzalez, Prangthip Hansanti, John
+Hoffman, Semarley Jarrett, Kaushik Ram Sadagopan, Dirk Rowe, Shannon Spruit,
+Chau Tran, Pierre Andrews, Necip Fazil Ayan, Shruti Bhosale, Sergey Edunov,
+Angela Fan, Cynthia Gao, Vedanuj Goswami, Francisco Guzmán, Philipp Koehn,
+Alexandre Mourachko, Christophe Ropers, Safiyyah Saleem, Holger Schwenk, and
+Jeff Wang. No language left behind: Scaling human-centered machine translation,
+2022. URL https://arxiv.org/abs/2207.04672 . 
+Z.ai (2026) Z.ai. GLM-5.3: Frontier coding with emergent cyber capabilities, August
+2026. URL https://z.ai/blog/glm-5.3 . 
+Zheng et al. (2023) Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao
+Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang, Joseph E.
+Gonzalez, and Ion Stoica. Judging LLM-as-a-judge with MT-bench and chatbot arena. In Advances in Neural Information Processing Systems ,
+volume 36, 2023. 
+Zheng et al. (2025) Mao Zheng, Zheng Li, Tao Chen, Mingyang Song, and Di Wang. HY-MT1.5 technical report, 2025. URL https://arxiv.org/abs/2512.24092 . 
+Zheng et al. (2026) Mao Zheng, Zheng Li, Tao Chen, Bo Lv, Mingrui Sun, Mingyang Song, Jinlong Song,
+Hong Huang, Decheng Wu, Hai Wang, Yifan Song, Yanfeng Chen, and Guanwei
+Zhang. Hy-MT2: A family of fast, efficient and powerful multilingual
+translation models in the wild, 2026. URL https://arxiv.org/abs/2605.22064 . Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

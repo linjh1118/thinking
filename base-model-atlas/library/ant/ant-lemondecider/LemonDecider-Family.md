@@ -272,3 +272,7 @@ are generated from this model run, not from the earlier v3 card.
 - [同族step1241包替换提交](https://huggingface.co/inclusionAI/LemonDecider/commit/ef27e061ea67b7df6109b189aaf6b1231fc9bfd9)
 - [[Topics/13_base_model/Ant_Ling/Variants/2611_Sing_VL_S1/Sing-VL-S1]]、[[Topics/13_base_model/Ant_Ling/Variants/261111_ZoomGain/ZoomGain-Family]]
 - 中文Poster：[[Topics/13_base_model/Ant_Ling/Variants/2610_LemonDecider/lemondecider_poster_zh.html]]
+
+
+> [!update] 2026-11-25研读补充
+> [[Topics/13_base_model/Ant_Ling/Variants/2610_LemonDecider/LemonDecider-4B-v3.2|LemonDecider 4B · v3.2]]：本次来源和旧结论的差异请以这份新增笔记为准；旧记录按历史保留。

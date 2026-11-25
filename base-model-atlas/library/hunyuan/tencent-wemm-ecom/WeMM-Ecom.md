@@ -91,3 +91,7 @@ BF16/FP8/GPTQ/GGUF是checkpoint格式，不能把打包存储元素当实际参�
 - [[WePocketModel-1.0]]、[[Qwen3.5]]：共享骨干与领域适配的不同路线。
 
 > 📊 相关可视化: [[wemm_ecom_poster_zh.html]]
+
+
+> [!update] 2026-11-25研读补充
+> [[Topics/13_base_model/Tencent_Hunyuan/Variants/261123_WeMM_Ecom/WeMM-Ecom-Report|WeMM-Ecom · 技术报告补全]]：本次来源和旧结论的差异请以这份新增笔记为准；旧记录按历史保留。
