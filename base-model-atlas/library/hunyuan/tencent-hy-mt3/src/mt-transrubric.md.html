@@ -1,0 +1,121 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TransRubric: Rubric-Based Automatic Evaluation for Translation · BrainHao</title><style>
+:root{--bg:#0b0d12;--panel:#11151d;--line:#283244;--text:#e8edf6;--muted:#8d99ad;--accent:#a78bfa}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 70% -15%,#4338ca2b,transparent 34%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:1320px;margin:auto;display:grid;grid-template-columns:290px minmax(0,820px);gap:56px;padding:42px 28px 100px}.rail{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line);border-radius:20px;background:#11151dcc}.back,.rail nav a{display:block;color:#aeb9ca;text-decoration:none}.vault{font-size:10px;letter-spacing:.18em;color:#8ab4ff;margin:34px 0 12px}.rail h2{font-size:20px;line-height:1.3;margin:0 0 12px}.meta{font-size:11px;line-height:1.7;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:16px}.rail nav a{font-size:12px;padding:6px 0}.rail nav .toc-l3{padding-left:12px;color:#748096}.note{min-width:0;font-family:ui-serif,"Source Han Serif SC","Noto Serif CJK SC",Georgia,serif;font-size:17px;line-height:1.86}.note h1,.note h2,.note h3,.note h4{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.025em;scroll-margin-top:24px}.note h1{font-size:clamp(42px,7vw,72px);line-height:1.05;margin:16px 0 42px}.note h2{font-size:30px;margin:58px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.note h3{font-size:22px;margin:38px 0 12px}.note p{margin:16px 0}.note a{color:#9db7ff;text-decoration:none;border-bottom:1px solid #9db7ff55}.wikilink{font-family:Inter,sans-serif;color:#b9a4ff!important}.unresolved{opacity:.72}.callout{margin:24px 0;padding:18px 20px;border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:#a78bfa12;font-family:Inter,sans-serif;font-size:15px}.callout-title{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd;margin-bottom:8px}.callout.insight{--accent:#2dd4bf;background:#2dd4bf12}.callout.tldr{--accent:#60a5fa;background:#60a5fa12}blockquote{margin:20px 0;padding:8px 20px;color:#b9c2d1;border-left:2px solid #475569}pre{position:relative;background:#0a0d13;border:1px solid #252e3e;border-radius:14px;padding:38px 18px 18px;overflow:auto;font-size:13px;line-height:1.65}.code-lang{position:absolute;top:10px;right:14px;color:#68758a;font-family:Inter,sans-serif;font-size:10px;text-transform:uppercase}.note code{font-family:"SFMono-Regular",Consolas,monospace}.note p code,.note li code{background:#202737;padding:2px 6px;border-radius:5px;font-size:.84em}.note img{max-width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}.table-wrap{overflow:auto;margin:24px 0;border:1px solid var(--line);border-radius:14px}table{border-collapse:collapse;width:100%;font-family:Inter,sans-serif;font-size:13px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#171d28;color:#cdd6e5}tr:last-child td{border-bottom:0}li{margin:7px 0}@media(max-width:900px){.app{grid-template-columns:1fr;padding:20px;gap:28px}.rail{position:relative;top:0;max-height:none}.rail nav{display:none}.note{font-size:16px}}
+</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><div class="app"><aside class="rail"><a class="back" href="../../../../library.html">← 资料馆</a><div class="vault">BRAINHAO / NOTE</div><h2>TransRubric: Rubric-Based Automatic Evaluation for Translation</h2><div class="meta">note · <br></div><nav><a class="toc-l1" href="#transrubric-rubric-based-automatic-evaluation-for-translation">TransRubric: Rubric-Based Automatic Evaluation for Translation</a><a class="toc-l2" href="#released-rubric-resources">Released Rubric Resources</a><a class="toc-l2" href="#data-format">Data Format</a><a class="toc-l2" href="#rubric-construction-prompts">Rubric Construction Prompts</a><a class="toc-l2" href="#translation-judge-prompt">Translation Judge Prompt</a><a class="toc-l2" href="#project-structure">Project Structure</a><a class="toc-l2" href="#data-sources">Data Sources</a><a class="toc-l2" href="#references">References</a></nav></aside><main class="note"><h1 id="transrubric-rubric-based-automatic-evaluation-for-translation">TransRubric: Rubric-Based Automatic Evaluation for Translation</h1><p>English | <a href="https://raw.githubusercontent.com/Tencent-Hunyuan/Hy-MT3/main/TransRubric/README_zh.md" target="_blank" rel="noopener">中文</a></p><p>TransRubric is a rubric-based LLM-as-a-judge evaluation method for fine-grained and interpretable translation quality assessment. Given a translation task, a candidate translation, and a task-specific rubric, a TransRubric judge identifies concrete issues with their error categories and severity levels, and produces a pointwise translation quality score on a 0–100 scale.</p><p>This repository releases resources for applying TransRubric: sample-specific rubrics for four test sets derived from FLORES-200, WMT26 GenMT, and HardMTBench, prompt templates for constructing translation rubrics, and the pointwise translation judge prompt. The source texts, references, instructions, and benchmark-specific metadata come from the corresponding upstream benchmarks; the sample-specific <code>rubric</code> field is the added evaluation resource.</p><h2 id="released-rubric-resources">Released Rubric Resources</h2><div class="table-wrap"><table><thead><tr><th>File</th><th>Upstream benchmark</th><th>Coverage</th><th>Directions / pairs</th><th>Samples</th></tr></thead><tbody><tr><td><code>testsets/flores200_33langs_rubric.jsonl</code></td><td>FLORES-200</td><td>33 languages</td><td>1,056 directions</td><td>106,656</td></tr><tr><td><code>testsets/flores200_low_resource_rubric.jsonl</code></td><td>FLORES-200</td><td>64 additional lower-resource languages paired with Chinese or English</td><td>256 directions</td><td>25,856</td></tr><tr><td><code>testsets/wmt26_genmt_rubric.jsonl</code></td><td>WMT26 GenMT</td><td>20 language pairs</td><td>20 pairs</td><td>4,303</td></tr><tr><td><code>testsets/hardmtbench_rubric.jsonl</code></td><td>HardMTBench</td><td>12 knowledge-intensive domains, Chinese and English</td><td>2 directions</td><td>20,000</td></tr></tbody></table></div><p>The WMT26 GenMT subset excludes English-to-Ligurian, English-to-Ladin, and English-to-Northern-Sami.</p><h2 id="data-format">Data Format</h2><p>Each JSONL record follows the same top-level schema:</p><div class="table-wrap"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>id</code></td><td>string</td><td>Unique sample identifier. WMT26 IDs are inherited from <code>doc_id</code>; FLORES IDs are generated from record order in the released files.</td></tr><tr><td><code>benchmark</code></td><td>string</td><td>Upstream benchmark: <code>flores200</code>, <code>wmt26</code>, or <code>hardmtbench</code>.</td></tr><tr><td><code>subset</code></td><td>string</td><td>Benchmark subset: <code>33langs</code>, <code>low_resource</code>, <code>genmt</code>, or <code>full</code>.</td></tr><tr><td><code>source_language</code></td><td>string</td><td>Source-language name or code retained from the upstream data.</td></tr><tr><td><code>target_language</code></td><td>string</td><td>Target-language name or code retained from the upstream data.</td></tr><tr><td><code>source_text</code></td><td>string</td><td>Source text to translate.</td></tr><tr><td><code>task_prompt</code></td><td>string</td><td>Complete translation task prompt.</td></tr><tr><td><code>reference</code></td><td>string or null</td><td>Upstream reference translation, when available.</td></tr><tr><td><code>reference_type</code></td><td>string or null</td><td>Reference type supplied by the upstream data, such as <code>human</code>, <code>synthetic</code>, or <code>none</code>.</td></tr><tr><td><code>rubric</code></td><td>list[string]</td><td>Sample-specific evaluation criteria added by TransRubric.</td></tr><tr><td><code>meta</code></td><td>object</td><td>Benchmark-specific upstream metadata.</td></tr></tbody></table></div><p>Language identifiers retain the representation used by each upstream benchmark. FLORES uses language names in Chinese, WMT26 uses language-script codes, and HardMTBench uses <code>Chinese</code> and <code>English</code>.</p><p>For HardMTBench, <code>meta</code> retains the upstream <code>pair_id</code>, translation direction, domain and sub-domain, domain keywords, bilingual terminology, and difficulty scores. The released file excludes rubric-construction candidates and model-generation artifacts such as <code>response_list</code> and <code>model_res</code>.</p><p>Example:</p><pre><div class="code-lang">json</div><code>{
+  &quot;id&quot;: &quot;flores200_33langs_000001&quot;,
+  &quot;benchmark&quot;: &quot;flores200&quot;,
+  &quot;subset&quot;: &quot;33langs&quot;,
+  &quot;source_language&quot;: &quot;中文&quot;,
+  &quot;target_language&quot;: &quot;英语&quot;,
+  &quot;source_text&quot;: &quot;他们通常会提供特别的食品、饮料和娱乐活动，让客人保持愉悦，留在赌场。&quot;,
+  &quot;task_prompt&quot;: &quot;将以下文本翻译为英语，注意只需要输出翻译后的结果，不要额外解释：\n他们通常会提供特别的食品、饮料和娱乐活动，让客人保持愉悦，留在赌场。&quot;,
+  &quot;reference&quot;: &quot;They usually have special food, drink and entertainment offers, to keep guests in a good mood, and keep them at the premise.&quot;,
+  &quot;reference_type&quot;: null,
+  &quot;rubric&quot;: [
+    &quot;指令遵循：输出必须仅为英文译文，不包含解释或其他多余内容。&quot;,
+    &quot;语义完整：译文须覆盖原文的核心信息，不得漏译或增译关键信息。&quot;,
+    &quot;逻辑关系：须准确表达提供食品、饮料和娱乐活动是为了让客人保持愉悦并继续留在赌场，不得弱化或颠倒该目的关系。&quot;,
+    &quot;行为主体：须明确留在赌场的是客人，不得因代词或句法结构不当而误解为提供服务的一方留在赌场。&quot;
+  ],
+  &quot;meta&quot;: {
+    &quot;l1&quot;: &quot;wikivoyage&quot;,
+    &quot;l2&quot;: &quot;英语&quot;,
+    &quot;l3&quot;: &quot;中文&quot;,
+    &quot;l4&quot;: &quot;travel&quot;,
+    &quot;class&quot;: &quot;中文-英语-wikivoyage&quot;
+  }
+}</code></pre><h2 id="rubric-construction-prompts">Rubric Construction Prompts</h2><p><a href="https://raw.githubusercontent.com/Tencent-Hunyuan/Hy-MT3/main/TransRubric/transrubric_prompts.py" target="_blank" rel="noopener"><code>transrubric_prompts.py</code></a> provides the complete prompt templates for a three-stage rubric construction workflow:</p><ol><li><code>RUBRIC_DRAFT_PROMPT</code> generates an initial source-grounded rubric.</li><li><code>RUBRIC_DELTA_PROMPT</code> identifies missing discriminative criteria from unlabeled candidate translations.</li><li><code>RUBRIC_MERGE_PROMPT</code> conservatively merges valid new criteria into the rubric.</li></ol><p>The corresponding message builders are:</p><pre><div class="code-lang">python</div><code>build_rubric_draft_messages(...)
+build_rubric_delta_messages(...)
+build_rubric_merge_messages(...)</code></pre><p>Rubric items are written in Simplified Chinese and are intended to be concrete, verifiable checks rather than rigid reference translations.</p><h2 id="translation-judge-prompt">Translation Judge Prompt</h2><p><code>TRANSLATION_JUDGE_PROMPT</code> performs pointwise evaluation of one candidate translation against the translation task and its sample-specific rubric. It returns structured issues, an overall summary, a confidence value, and a translation quality score from 0 to 100.</p><p>The helper below only constructs model messages; users may pass the returned messages to their preferred multilingual model or inference framework.</p><pre><div class="code-lang">python</div><code>import json
+
+from transrubric_prompts import build_translation_evaluation_messages
+
+with open(
+    &quot;testsets/flores200_33langs_rubric.jsonl&quot;,
+    encoding=&quot;utf-8&quot;,
+) as f:
+    sample = json.loads(next(f))
+
+messages = build_translation_evaluation_messages(
+    task_prompt=sample[&quot;task_prompt&quot;],
+    candidate_response=&quot;Candidate translation&quot;,
+    rubric=sample[&quot;rubric&quot;],
+    response_id=sample[&quot;id&quot;],
+)</code></pre><p>The rubric is a verification checklist, not a reference answer or evidence that an error exists. Equivalent and natural translations should be accepted.</p><h2 id="project-structure">Project Structure</h2><pre><div class="code-lang">text</div><code>TransRubric/
+├── README.md
+├── README_zh.md
+├── transrubric_prompts.py
+└── testsets/
+    ├── flores200_33langs_rubric.jsonl
+    ├── flores200_low_resource_rubric.jsonl
+    ├── wmt26_genmt_rubric.jsonl
+    └── hardmtbench_rubric.jsonl</code></pre><h2 id="data-sources">Data Sources</h2><p>The test data is derived from the open-source FLORES-200, WMT26 GenMT, and HardMTBench benchmarks. The released files retain their source texts, references, instructions, and benchmark-specific metadata, while adding sample-specific rubrics and a unified release schema.</p><ul><li><a href="https://github.com/facebookresearch/flores" target="_blank" rel="noopener">FLORES-200</a></li><li><a href="https://github.com/wmt-conference/wmt26-general-mt" target="_blank" rel="noopener">WMT26 General Machine Translation Shared Task</a></li><li><a href="https://github.com/jasonNLP/HardMTBench" target="_blank" rel="noopener">HardMTBench</a></li></ul><h2 id="references">References</h2><p>If you use a TransRubric test set, please also cite its corresponding upstream benchmark:</p><ul><li>NLLB Team et al. (2022). <em>No Language Left Behind: Scaling Human-Centered Machine Translation</em>.</li><li>Kocmi et al. (2026). <em>Findings of the WMT26 General Machine Translation Shared Task: Contrastive Dynamic Human Evaluation at Scale</em>.</li><li>Li, Z., Zheng, M., Song, M., and Fei, T. (2026). <a href="https://aclanthology.org/2026.findings-emnlp.235/" target="_blank" rel="noopener">*HardMTBench: Stress-Testing Chinese-English Translation on Knowledge-Intensive Domains*</a>. In <em>Findings of the Association for Computational Linguistics: EMNLP 2026</em>, pages 4947–4957, Budapest, Hungary. Association for Computational Linguistics.</li></ul></main></div><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>
