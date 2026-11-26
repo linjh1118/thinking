@@ -5495,7 +5495,7 @@
     "date": "2026-11-11",
     "rawDate": "261111",
     "name": "Qwen4 · Max / Max Preview",
-    "summary": "11/11 10:00 Preview首发、11/16 Max正式上线；服务与预算分别冻结，训练与受控评测仍缺。 同族更新（2026-11-16）：官方日志11/16上线；1M上下文、思考/非思考输出262144/131072，默认high，北京按量¥10/30每M。Preview改持续迭代、11/25仍结束；训练与受控评测不足。",
+    "summary": "11/11 10:00 Preview首发、11/16 Max正式上线；服务与预算分别冻结，训练与受控评测仍缺。 同族更新（2026-11-16）：官方日志11/16上线；1M上下文、思考/非思考输出262144/131072，默认high，北京按量¥10/30每M。Preview改持续迭代、11/25仍结束；训练与受控评测不足。 11/25 Preview已下线，旧ID自动路由Max并按正式价；非新训练版本。",
     "source": "https://help.aliyun.com/zh/model-studio/qwen4-max",
     "sourceType": "Official Model Page · Max正式版",
     "thesis": "先冻结输出总预算、多轮reasoning_content回传和预览生命周期，再比较实际工具任务；不从API规格反推参数或训练算法。",
@@ -5613,8 +5613,9 @@
     "color": "#b991ff",
     "date": "2026-09-24",
     "rawDate": "260924",
-    "name": "Decision Model Preview",
-    "summary": "百炼独立结构化判断模型：choice/noul/score同次forward返回概率分布、零生成文本；不声称已证实其Qwen基座。",
+    "name": "Decision Model · Preview / Stable",
+    "dateBasis": "",
+    "summary": "百炼独立结构化判断模型：choice/noul/score同次forward返回概率分布、零生成文本；不声称已证实其Qwen基座。 11/25正式服务上线；训练变化未披露，268288/65536上下文冲突显著保留。 同族更新（2026-11-25）：百炼decision-model正式上线；typed前向判断无生成文本。模型页268288/API65536上下文冲突，参数/训练/受控Bench仍缺。",
     "source": "https://help.aliyun.com/en/model-studio/decision-model-preview",
     "sourceType": "Official Model Page",
     "thesis": "统一 thinking/non-thinking，继而走向原生多模态、稀疏高效和 1M context。",
@@ -5632,6 +5633,18 @@
       {
         "label": "Official API Reference",
         "url": "https://help.aliyun.com/en/model-studio/decision-model-api"
+      },
+      {
+        "label": "Official Release Record",
+        "url": "https://help.aliyun.com/zh/model-studio/newly-released-models"
+      },
+      {
+        "label": "Official Model Page · Stable",
+        "url": "https://help.aliyun.com/zh/model-studio/decision-model-stable"
+      },
+      {
+        "label": "API Contract",
+        "url": "https://help.aliyun.com/zh/model-studio/decision-model-api"
       }
     ],
     "incrementalRelease": true,
@@ -5667,13 +5680,45 @@
         "source": "https://github.com/QwenLM/Qwen3Guard"
       }
     ],
+    "releaseUpdates": [
+      {
+        "slug": "qwen-decision-model-preview",
+        "date": "2026-11-25",
+        "name": "Decision Model · 正式服务",
+        "lineageLabel": "同族正式服务阶段 · 训练变更未披露",
+        "summary": "百炼decision-model正式上线；typed前向判断无生成文本。模型页268288/API65536上下文冲突，参数/训练/受控Bench仍缺。",
+        "dateBasis": "百炼官方上架日志明确2026-11-25，正式型号页/API可读；保持9/24Preview家族首发，不以API SDK或新代际计数。",
+        "officialSources": [
+          {
+            "label": "Official Release Record",
+            "url": "https://help.aliyun.com/zh/model-studio/newly-released-models"
+          },
+          {
+            "label": "Official Model Page · Stable",
+            "url": "https://help.aliyun.com/zh/model-studio/decision-model-stable"
+          },
+          {
+            "label": "API Contract",
+            "url": "https://help.aliyun.com/zh/model-studio/decision-model-api"
+          }
+        ],
+        "evidence": "src/release_watch_evidence/2026-11-26/0759"
+      }
+    ],
     "note": "library/qwen/qwen-decision-model-preview/Decision-Model-Preview.html",
     "posters": [
-      "library/qwen/qwen-decision-model-preview/decision_model_preview_poster_zh.html"
+      "library/qwen/qwen-decision-model-preview/decision_model_preview_poster_zh.html",
+      "library/qwen/qwen-decision-model-preview/decision_model_stable_poster_zh.html"
     ],
     "sources": "library/qwen/qwen-decision-model-preview/Sources.html",
-    "sourceReader": "library/qwen/qwen-decision-model-preview/src/decision_api.html",
+    "sourceReader": "library/qwen/qwen-decision-model-preview/src/blog-qwen-model-studio.html",
     "sourceDocs": [
+      {
+        "label": "Blog-Qwen-Model-Studio · 网页静态阅读",
+        "path": "library/qwen/qwen-decision-model-preview/src/blog-qwen-model-studio.html",
+        "kind": "static-html",
+        "name": "blog-qwen-model-studio.html"
+      },
       {
         "label": "Decision Api · 网页静态阅读",
         "path": "library/qwen/qwen-decision-model-preview/src/decision_api.html",
@@ -5687,11 +5732,27 @@
         "name": "official_model.html"
       },
       {
+        "label": "Qwen-Decision-Api · 网页静态阅读",
+        "path": "library/qwen/qwen-decision-model-preview/src/qwen-decision-api.html",
+        "kind": "static-html",
+        "name": "qwen-decision-api.html"
+      },
+      {
+        "label": "Qwen-Decision-Stable · 网页静态阅读",
+        "path": "library/qwen/qwen-decision-model-preview/src/qwen-decision-stable.html",
+        "kind": "static-html",
+        "name": "qwen-decision-stable.html"
+      },
+      {
         "label": "Release Record · 网页静态阅读",
         "path": "library/qwen/qwen-decision-model-preview/src/release_record.html",
         "kind": "static-html",
         "name": "release_record.html"
       }
+    ],
+    "relatedNotes": [
+      "library/qwen/qwen-decision-model-preview/Decision-Model-Stable.html",
+      "library/qwen/qwen-decision-model-preview/Decision-Model-Preview.html"
     ]
   },
   {
@@ -11594,13 +11655,17 @@
     "rawDate": "261124",
     "name": "OmniEVIE-4B",
     "dateBasis": "官方HF提交b661acf7明确Initial open-source release of OmniEVIE-4B，2026-11-24T04:23:48UTC→北京11/24；区分此前空initial commit与后续截图修订，不取lastModified。",
-    "summary": "4.54B多模态多向量检索；PrefixMRL/ST-HAC压缩与三阶段索引，返回页面/时间证据；54.2ms仅索引查询。",
-    "source": "https://huggingface.co/tencent/OmniEVIE-4B",
-    "sourceType": "HF Model Card",
+    "summary": "4.54B多向量检索；57集约2M样本、四阶段与分块合并，训练对齐STHAC；54.2ms仅索引查询，span相交94.3%非边界准确率。",
+    "source": "https://arxiv.org/html/2611.32203v1",
+    "sourceType": "Tech Report · HTML",
     "thesis": "腾讯云产品化、MoE 效率、hybrid reasoning 与开放权重并行推进。",
     "lineageType": "variant",
     "lineageLabel": "多模态检索专项",
     "officialSources": [
+      {
+        "label": "Tech Report · HTML",
+        "url": "https://arxiv.org/html/2611.32203v1"
+      },
       {
         "label": "HF Model Card",
         "url": "https://huggingface.co/tencent/OmniEVIE-4B"
@@ -11618,11 +11683,24 @@
     "variants": [],
     "note": "library/hunyuan/tencent-omnievie/OmniEVIE-4B.html",
     "posters": [
-      "library/hunyuan/tencent-omnievie/omnievie_poster_zh.html"
+      "library/hunyuan/tencent-omnievie/omnievie_poster_zh.html",
+      "library/hunyuan/tencent-omnievie/omnievie_report_poster_zh.html"
     ],
     "sources": "library/hunyuan/tencent-omnievie/Sources.html",
-    "sourceReader": "library/hunyuan/tencent-omnievie/src/omni-github-README.md.html",
+    "sourceReader": "library/hunyuan/tencent-omnievie/src/card-tencent--OmniEVIE-4B.md.html",
     "sourceDocs": [
+      {
+        "label": "Card-Tencent--Omnievie-4B · Markdown 阅读版",
+        "path": "library/hunyuan/tencent-omnievie/src/card-tencent--OmniEVIE-4B.md.html",
+        "kind": "readable",
+        "name": "card-tencent--OmniEVIE-4B.md"
+      },
+      {
+        "label": "Omni-Abs · 网页静态阅读",
+        "path": "library/hunyuan/tencent-omnievie/src/omni-abs.html",
+        "kind": "static-html",
+        "name": "omni-abs.html"
+      },
       {
         "label": "Omni-Github-Readme · Markdown 阅读版",
         "path": "library/hunyuan/tencent-omnievie/src/omni-github-README.md.html",
@@ -11636,14 +11714,27 @@
         "name": "omni-README.md"
       },
       {
+        "label": "Omni-Report · 网页静态阅读",
+        "path": "library/hunyuan/tencent-omnievie/src/omni-report.html",
+        "kind": "static-html",
+        "name": "omni-report.html"
+      },
+      {
         "label": "Sources-20261125 · Markdown 阅读版",
         "path": "library/hunyuan/tencent-omnievie/src/Sources-20261125.md.html",
         "kind": "readable",
         "name": "Sources-20261125.md"
+      },
+      {
+        "label": "Tables 20261126 · Markdown 阅读版",
+        "path": "library/hunyuan/tencent-omnievie/src/official_tables_20261126.md.html",
+        "kind": "readable",
+        "name": "official_tables_20261126.md"
       }
     ],
     "relatedNotes": [
-      "library/hunyuan/tencent-omnievie/OmniEVIE-4B.html"
+      "library/hunyuan/tencent-omnievie/OmniEVIE-4B.html",
+      "library/hunyuan/tencent-omnievie/OmniEVIE-Report.html"
     ]
   },
   {
@@ -23587,6 +23678,144 @@
     ],
     "relatedNotes": [
       "library/nvidia/nvidia-bioreason-pro-2/BioReason-Pro-2.html"
+    ]
+  },
+  {
+    "slug": "nvidia-nemotron-labs-image",
+    "team": "nvidia",
+    "teamName": "NVIDIA · Nemotron",
+    "teamDir": "NVIDIA_Nemotron",
+    "region": "海外",
+    "color": "#b5e853",
+    "date": "2026-11-24",
+    "rawDate": "261124",
+    "name": "Nemotron-Labs-Image · 30B-A3B",
+    "dateBasis": "官方arXiv v1 2026-11-23T18:57:41UTC→北京11/24 02:57:41；HF createdAt9/24和snapshot提交不用于首发。Image当前公开权重的首次转公开时刻待核；VisionCode仅研究披露、权重待法律审核。",
+    "summary": "30B/A3B视觉token生成，153M tokenizer图/374M图文对，三段mid→GRPO；单模型/原生agent/GPT6系统分列，开放Image非完整Harness。",
+    "source": "https://arxiv.org/html/2611.31358v1",
+    "sourceType": "Tech Report · HTML",
+    "thesis": "开放模型 + 数据 + recipe + 推理栈共同服务 enterprise agents。",
+    "lineageType": "variant",
+    "lineageLabel": "自回归图像生成专项",
+    "officialSources": [
+      {
+        "label": "Tech Report · HTML",
+        "url": "https://arxiv.org/html/2611.31358v1"
+      },
+      {
+        "label": "First Version Record · UTC",
+        "url": "https://arxiv.org/abs/2611.31358"
+      },
+      {
+        "label": "Official Model Card / Release Plan",
+        "url": "https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B"
+      }
+    ],
+    "incrementalRelease": true,
+    "variants": [],
+    "note": "library/nvidia/nvidia-nemotron-labs-image/Nemotron-Labs-Image.html",
+    "posters": [
+      "library/nvidia/nvidia-nemotron-labs-image/nemotron_labs_image_poster_zh.html"
+    ],
+    "sources": "library/nvidia/nvidia-nemotron-labs-image/Sources.html",
+    "sourceReader": "library/nvidia/nvidia-nemotron-labs-image/src/card-nvidia--Nemotron-Labs-Image-30B-A3B.md.html",
+    "sourceDocs": [
+      {
+        "label": "Card-Nvidia--Nemotron-Labs-Image-30B-A3B · Markdown 阅读版",
+        "path": "library/nvidia/nvidia-nemotron-labs-image/src/card-nvidia--Nemotron-Labs-Image-30B-A3B.md.html",
+        "kind": "readable",
+        "name": "card-nvidia--Nemotron-Labs-Image-30B-A3B.md"
+      },
+      {
+        "label": "Image-Abs · 网页静态阅读",
+        "path": "library/nvidia/nvidia-nemotron-labs-image/src/image-abs.html",
+        "kind": "static-html",
+        "name": "image-abs.html"
+      },
+      {
+        "label": "Image-Report · 网页静态阅读",
+        "path": "library/nvidia/nvidia-nemotron-labs-image/src/image-report.html",
+        "kind": "static-html",
+        "name": "image-report.html"
+      },
+      {
+        "label": "Tables 20261126 · Markdown 阅读版",
+        "path": "library/nvidia/nvidia-nemotron-labs-image/src/official_tables_20261126.md.html",
+        "kind": "readable",
+        "name": "official_tables_20261126.md"
+      }
+    ],
+    "relatedNotes": [
+      "library/nvidia/nvidia-nemotron-labs-image/Nemotron-Labs-Image.html"
+    ]
+  },
+  {
+    "slug": "nvidia-nemotron-labs-visioncode",
+    "team": "nvidia",
+    "teamName": "NVIDIA · Nemotron",
+    "teamDir": "NVIDIA_Nemotron",
+    "region": "海外",
+    "color": "#b5e853",
+    "date": "2026-11-24",
+    "rawDate": "261124",
+    "name": "Nemotron-Labs-VisionCode · 30B / 120B",
+    "dateBasis": "官方arXiv v1 2026-11-23T18:57:41UTC→北京11/24 02:57:41；HF createdAt9/24和snapshot提交不用于首发。Image当前公开权重的首次转公开时刻待核；VisionCode仅研究披露、权重待法律审核。",
+    "summary": "30B/120B同族；4.7M有效样本SFT→沙箱GRPO，五任务归一化分数98.27非准确率。研究报告已公开，VisionCode/Harness待法律审核。",
+    "source": "https://arxiv.org/html/2611.31358v1",
+    "sourceType": "Tech Report · HTML",
+    "thesis": "开放模型 + 数据 + recipe + 推理栈共同服务 enterprise agents。",
+    "lineageType": "variant",
+    "lineageLabel": "结构化视觉代码研究专项 · 权重待开放",
+    "officialSources": [
+      {
+        "label": "Tech Report · HTML",
+        "url": "https://arxiv.org/html/2611.31358v1"
+      },
+      {
+        "label": "First Version Record · UTC",
+        "url": "https://arxiv.org/abs/2611.31358"
+      },
+      {
+        "label": "Official Model Card / Release Plan",
+        "url": "https://huggingface.co/nvidia/Nemotron-Labs-Image-30B-A3B"
+      }
+    ],
+    "incrementalRelease": true,
+    "variants": [],
+    "note": "library/nvidia/nvidia-nemotron-labs-visioncode/Nemotron-Labs-VisionCode.html",
+    "posters": [
+      "library/nvidia/nvidia-nemotron-labs-visioncode/nemotron_labs_visioncode_poster_zh.html"
+    ],
+    "sources": "library/nvidia/nvidia-nemotron-labs-visioncode/Sources.html",
+    "sourceReader": "library/nvidia/nvidia-nemotron-labs-visioncode/src/card-nvidia--Nemotron-Labs-Image-30B-A3B.md.html",
+    "sourceDocs": [
+      {
+        "label": "Card-Nvidia--Nemotron-Labs-Image-30B-A3B · Markdown 阅读版",
+        "path": "library/nvidia/nvidia-nemotron-labs-visioncode/src/card-nvidia--Nemotron-Labs-Image-30B-A3B.md.html",
+        "kind": "readable",
+        "name": "card-nvidia--Nemotron-Labs-Image-30B-A3B.md"
+      },
+      {
+        "label": "Image-Abs · 网页静态阅读",
+        "path": "library/nvidia/nvidia-nemotron-labs-visioncode/src/image-abs.html",
+        "kind": "static-html",
+        "name": "image-abs.html"
+      },
+      {
+        "label": "Image-Report · 网页静态阅读",
+        "path": "library/nvidia/nvidia-nemotron-labs-visioncode/src/image-report.html",
+        "kind": "static-html",
+        "name": "image-report.html"
+      },
+      {
+        "label": "Tables 20261126 · Markdown 阅读版",
+        "path": "library/nvidia/nvidia-nemotron-labs-visioncode/src/official_tables_20261126.md.html",
+        "kind": "readable",
+        "name": "official_tables_20261126.md"
+      }
+    ],
+    "relatedNotes": [
+      "library/nvidia/nvidia-nemotron-labs-visioncode/Nemotron-Labs-VisionCode.html"
     ]
   },
   {

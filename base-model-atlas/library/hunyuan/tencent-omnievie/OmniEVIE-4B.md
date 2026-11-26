@@ -88,3 +88,5 @@ Full的GUI42.00、Memory37.60，低于WeMM9B的43.33/38.65；MMEB-V2图像/视�
 ![官方完整图：omni-bbb81060eb.png](src/assets/omni-bbb81060eb.png)
 
 ![官方完整图：omni-49d64a4de2.png](src/assets/omni-49d64a4de2.png)
+> [!info] 2026-11-26补充
+> [[OmniEVIE-Report|正式版/完整报告补充笔记]]已归档；本文的材料限制描述保留为历史检查状态。

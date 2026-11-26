@@ -1,0 +1,514 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>官方网页响应 · 静态阅读</title><style>body{max-width:1000px;margin:40px auto;padding:0 24px;background:#0c111c;color:#dfe9fa;font:16px/1.8 sans-serif}a{color:#93caff}pre{white-space:pre-wrap;word-break:break-word}</style><style id="atlas-theme-style">
+html{color-scheme:dark}
+#atlas-theme-toggle{position:fixed;top:14px;right:18px;z-index:10000;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:9px 14px;border:1px solid #53617b;border-radius:999px;background:#182234;color:#f1f5ff;box-shadow:0 4px 18px #0003;font:600 13px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+#atlas-theme-toggle:hover{border-color:#a2b8ee}
+#atlas-theme-toggle:focus-visible{outline:3px solid #79b7ff;outline-offset:3px}
+.topbar,.crumb{padding-right:136px}
+html[data-theme="light"]{color-scheme:light;--bg:#f5f7fb;--panel:#ffffff;--panel2:#edf1f8;--line:#cbd5e1;--text:#172338;--muted:#4b5d75;--accent:#6243b5}
+html[data-theme="light"] body{background:radial-gradient(circle at 55% -10%,#dce5ff88,transparent 34%),#f5f7fb;color:#172338}
+html[data-theme="light"] #atlas-theme-toggle{background:#fff;color:#172338;border-color:#8090aa}
+html[data-theme="light"] :is(.rail,.stat,.doc,.card2,.datecard,.box,.recent-releases,.branch,.repo,.next,.control,.panel,.panel-head,.toolbar){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] .controls{background:#f5f7fbf2}
+html[data-theme="light"] :is(.search,.chip,.button,.ghost,.variant,select){background:#edf1f8;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.chip.active,.button.primary){background:#304b8b;color:#fff;border-color:#304b8b}
+html[data-theme="light"] :is(.brand,.hero p,.lead,.lead2,.footnote,.team p,.meta,.stat span,.leaf time,.leaf .status,.branch-pack>summary,.lane-title,.empty,.legend,.recent-note,.recent-head p,.recent-releases details,.recent-scroll small,.rail nav a,.back,.crumb a,blockquote){color:#4b5d75}
+html[data-theme="light"] :is(.kicker,.vault,.callout-title,.recent-head h2){color:#315aa3}
+html[data-theme="light"] :is(.note a,.recent-scroll a,.recent-links a,.box a,.open){color:#2455ad}
+html[data-theme="light"] .wikilink{color:#6741a5!important}
+html[data-theme="light"] .recent-links .recent-note{color:#136344}
+html[data-theme="light"] :is(th,.recent-scroll th){background:#e5ecf6;color:#2a4162}
+html[data-theme="light"] :is(th,td,.recent-scroll th,.recent-scroll td,.branch-pack,.branch-lane){border-color:#cbd5e1}
+html[data-theme="light"] pre{background:#e9eef6;color:#25334a;border-color:#bdc9da}
+html[data-theme="light"] :is(.note p code,.note li code,code){background:#e9eef6;color:#25334a}
+html[data-theme="light"] .code-lang{color:#53657e}
+html[data-theme="light"] .callout{background:#ede7fa}
+html[data-theme="light"] .callout.tldr{background:#e1edfc}
+html[data-theme="light"] .callout.insight{background:#dcf3ee}
+html[data-theme="light"] .badge{background:#e0e9f8;color:#304b76}
+html[data-theme="light"] .leaf:before{border-color:#fff}
+html[data-theme="light"] :is(.branch-name,.team h2,.leaf:hover b){color:color-mix(in srgb,var(--team),#172338 58%)}
+html[data-theme="light"] .branch-scroll .leaf b{color:#172338}
+/* Survey tree originally used a paper palette; use a true dark first view. */
+html[data-theme="dark"] body:has(.forest){background:#0f1117;color:#e8edf6;background-image:none}
+html[data-theme="dark"] .forest :is(.team-box,.trunk a,.twig a){background:#171d28;color:#e8edf6;border-color:#3c485e}
+html[data-theme="dark"] .forest :is(.trunk,.twig){border-color:#3c485e}
+html[data-theme="dark"] body:has(.forest) .nav a{background:#171d28;color:#aec8ff;border-color:#4a5870}
+html[data-theme="light"] :is(.team-box,.grid>article,.trunk a,.twig a,.audit-main a,.audit-branch a){background:#fff;color:#253b5a;border-color:#bdc9da}
+html[data-theme="light"] :is(.lead,.lead2,.sub,.recent-releases p,.recent-status,.recent-heading>span,.lane-title,.branch-label){color:#4b5d75!important}
+html[data-theme="light"] :is(.card,.doc-card){background:#fff;color:#172338;border-color:#cbd5e1}
+html[data-theme="light"] :is(.card p,.doc-card p,.card h2,.doc-card h2){color:#253b5a}
+/* Preserve the original AgentScaler dimensions/type; only alternate colors. */
+html[data-theme="light"] .poster{background:#faf8f4;color:#30251e}
+html[data-theme="light"] .poster :is(.bottom-strip,.fig-cap){background:#f0e9df}
+html[data-theme="light"] .poster :is(p.body,.gap-box p,.stage-item p,.trick-box p,.bstrip p,.rtable td,.ood-table td,.abl-card .adesc){color:#463c34}
+html[data-theme="light"] .poster :is(.sec-head h2,.gap-box .title,.stitle,.flabel,.trick-title,.hl,.rtable td.left,.ood-table td.left,.abl-card .aname){color:#785011}
+html[data-theme="light"] .poster :is(.rtable .ours td,.ood-table .ours td,.rtable .cat td){background:#fff0cb;color:#624209}
+html[data-theme="light"] .poster :is(.rtable th,.ood-table th){background:#eadac2;color:#543a17}
+html[data-theme="light"] .poster :is(.abl-card,.formula-box){background:#f4ede3;border-color:#d8c5aa}
+html[data-theme="light"] .poster :is(.fig-cap,.bhead){color:#65584c}
+html[data-theme="light"] .poster :is(.hl,.stitle,.trick-title,.flabel){color:#785011!important}
+html[data-theme="light"] .quality-warning .callout-title{color:#805000!important}
+html[data-theme="light"] .poster :is(.backlinks a,.adelta){color:#9b5108}
+html[data-theme="light"] .poster .score-box .sub{color:#e7d9c8}
+html[data-theme="light"] .poster .score-box .num{color:#fbbf24}
+html[data-theme="light"] mjx-container,html[data-theme="light"] mjx-container *{color:#3d3026!important}
+html[data-theme="light"] mjx-container svg,html[data-theme="light"] mjx-container svg *{fill:#3d3026!important}
+@media(max-width:700px){#atlas-theme-toggle{top:10px;right:10px}.topbar{padding-top:42px;padding-right:0}.crumb{padding-top:42px;padding-right:0}}
+</style></head><body><h1>官方网页响应 · 静态阅读</h1><p>若这里只显示站点导航，原始响应为动态壳；完整正文请打开官方网页，不能视为已离线归档。</p><p><a href="https://arxiv.org/html/2611.32203v1">打开官方原文 ↗</a> · <a href="omni-report.html.raw.txt">原始HTML响应源码（不运行脚本）</a></p><pre>OmniEVIE: Evidence-Vector-Informed Embedding for Multi-modal Retrieval Skip to main content Report GitHub Issue × Title: 
+Content selection saved. Describe the issue below: Description: Submit without GitHub Submit in GitHub Why HTML? Report Issue Back to Abstract Download PDF Contents Reading mode Colour theme 
+Abstract 
+1 Introduction 
+1.1 From a single vector to multi-vector retrieval 
+1.2 Three obstacles at serving time 
+1.3 What OmniEVIE does 
+2 Related work 
+2.1 General multimodal embeddings and multi-vector representations 
+2.2 Compression and fast multi-vector search 
+2.3 False negatives, rank distillation, and model merging 
+3 Training data 
+3.1 One sample format 
+3.2 Scene instructions 
+3.3 Evidence grades and temporal hard negatives 
+3.4 Dynamic sampling from a baseline and several teachers 
+4 Model and training 
+4.1 Backbone, bidirectional attention, and native video 
+4.2 Prefix-MRL 
+4.3 Four training stages 
+4.4 Loss, distillation, and clustering during training 
+4.5 Query-side saliency gate and noise floor 
+5 Block-wise model merging 
+5.1 What is merged 
+5.2 Per-block coefficients 
+6 ST-HAC 
+6.1 Agglomerative clustering 
+6.2 One procedure for every modality 
+6.3 A monotone time code 
+6.4 Semantic centroids 
+6.5 Fixed-scale int8 and the bytes in one record 
+7 Three-stage retrieval 
+7.1 Three views of one record 
+7.2 Latency and window trade-offs 
+7.3 Order preservation of the sign stage 
+7.4 PLAID and MUVERA 
+7.5 Localizing the hit 
+8 Experiments 
+8.1 Protocol 
+8.2 MMEB-V2 and MMEB-V3 
+8.3 Visual documents, fine-grained images, and video 
+8.4 Ablations 
+8.5 Compression methods at the same budget 
+8.6 Business scenarios 
+9 Analysis 
+9.1 Two degrees of freedom in the byte budget 
+9.2 Int8 scales 
+9.3 Latency 
+9.4 Token alignment and gate weights 
+9.5 Evidence localization and video time localization 
+9.6 Limitations 
+10 Conclusion 
+References 
+A Hyperparameters 
+B Evaluation suites License: CC BY-SA 4.0 arXiv:2611.32203v1 [cs.IR] 24 Nov 2026 \correspondence 
+jawnrwen@tencent.com \sourcecode https://github.com/Tencent/OmniEVIE \model https://huggingface.co/tencent/OmniEVIE-4B \youtufinalcopy 
+OmniEVIE: Evidence-Vector-Informed Embedding for Multi-modal Retrieval Zifei Wang 1,∗ Wei Wen 2,∗† Qiang Ji 1 Qian-Wen Zhang 1,2 Ruizhi Qiao 2 He Liu 1 Xing Sun 2 Qiang Lin 2 Affiliation: 1 Tencent IMA Product Center 2 Tencent Youtu Lab November 19, 2026 Abstract 
+Multimodal retrieval now has to match dense pages, fine-grained entities, ordered video, and the tools and memory an agent looks up. A single vector drops the local evidence that decides these matches. A cross-encoder can recover it, but only by rereading every recalled page or clip. Late interaction keeps the evidence in the index; storing every token vector is too large to serve. OmniEVIE is a 4.5B multi-vector embedding model that covers text, images, visual documents, video, and tools with one compressed index and a three-stage retriever. Each record holds at most 128 128 int8 vectors of dimension 64 64 : 9,472 9{,}472 bytes per record, or 8.82 8.82 GiB per million records. Retrieval runs on that compressed index, and a returned hit names the page region or the video interval. Training, merging, indexing, and retrieval are designed together. Every task is written as one retrieval sample. A three-grade evidence check removes false negatives, and the sampling rate follows the gap between the baseline and the teachers. Candidates are compressed with ST-HAC during training, in the form stored in the index, so the training score and the serving score use the same vectors. Stage-wise runs and specialist branches are merged by parameter block. A saliency gate and a noise floor rewrite the query score. One compressed record supplies a mean vector, 1 1 -bit signs, and int8 multi-vectors, used for the coarse, middle, and final stages. Trained on public datasets, the full sequence at d = 2048 d=2048 scores 60.68 60.68 on MMEB-V3 (190 tasks), and the K ​ 128 × d ​ 64 K128\times d64 int8 index scores 60.06 60.06 . The same compressed index scores 77.96 77.96 on MMEB-V2 (78 tasks) and 62.96 62.96 on ViDoRe V3 (48 tasks). On corpora of 1 1 million and 5 5 million records, one single-thread query takes 54.2 54.2 ms and 120.2 120.2 ms, 11.1 × 11.1\times and 25.3 × 25.3\times faster than exact search over 4096 4096 -dimensional single vectors, and 236 × 236\times and 532 × 532\times faster than full int8 MaxSim. Video is encoded directly from frames and a hit is read back to its start and end in seconds, so neither indexing nor localization uses a video parsing model. On the 1,083 1{,}083 queries of the QVHighlights validation set, the heat peak falls inside the labeled segment for 78.0 % 78.0\% of them and the returned span intersects it for 94.3 % 94.3\% , against 44.9 % 44.9\% for a random span of the same length; the span covers 18 % 18\% of the video on average. Weights and code are at https://huggingface.co/tencent/OmniEVIE-4B and https://github.com/Tencent/OmniEVIE . 1 1 footnotetext: Equal contribution. 2 2 footnotetext: Corresponding author. Contact: jawnrwen@tencent.com . 
+1 Introduction 
+1.1 From a single vector to multi-vector retrieval 
+Retrieval queries now include multi-page reports, fine-grained products and landmarks, long videos with ordered actions, and agent contexts built from tool descriptions, interface state, and multi-step history [ 12 , 22 , 9 ] . Relevance often depends on a few non-adjacent pieces of evidence: a header and one cell in a financial table, the order of two actions in a video, or one parameter in a long tool document. 
+A single d d -dimensional vector scores a query and a candidate by one inner product. Weller et al. [36] show that this score can place only some combinations first: past a corpus size that grows polynomially with d d , a document that must be recognized by several pieces at once cannot be ranked first by any query. Adding data or enlarging the backbone does not remove that limit. 
+Late interaction keeps a query token set Q = { q 1 , … , q L q } Q=\{q_{1},\ldots,q_{L_{q}}\} and a candidate set D = { v 1 , … , v K } D=\{v_{1},\ldots,v_{K}\} , and scores each query token by its best match in the candidate [ 13 , 6 ] : 
+MaxSim ⁡ ( Q , D ) = ∑ i = 1 L q w i ​ max 1 ≤ j ≤ K ​ ⟨ q i , v j ⟩ , \operatorname{MaxSim}(Q,D)=\sum_{i=1}^{L_{q}}w_{i}\max_{1\leq j\leq K}\langle q_{i},v_{j}\rangle, (1) 
+with w i &gt; 0 w_{i}&gt;0 . Because each query token can land on a different span, the score is no longer limited by the dimension of one vector. The leading visual-document and text-to-video retrievers use this form [ 6 , 23 , 27 , 33 ] . 
+1.2 Three obstacles at serving time 
+That representation is expensive to serve, for three separate reasons. A high-resolution page or a clip of tens of seconds produces thousands of vectors, so a million records occupy hundreds of gigabytes in floating point. A query then has to be compared with every vector: one single-thread query on a million-record corpus takes on the order of ten seconds. Failure modes also differ across documents, images, video, and tools: upweighting one modality often degrades the others, and a model trained on the full token sequence loses accuracy once those tokens are compressed for the index. 
+1.3 What OmniEVIE does 
+The usual compromise retrieves with one vector and reranks with a cross-encoder [ 23 , 17 ] . Each of the k k recalled pages or clips is forwarded again with the query, so the system has to read the raw media online. An uncompressed multi-vector index has the opposite problem: prior studies show that MaxSim selects only about 1 % 1\% of the stored vectors [ 25 ] . OmniEVIE keeps the width at d ≤ 128 d\leq 128 , bounds the number of vectors, and stores them at low bit width. Search runs on that compressed index (Table 1 ). 
+The model extends the evidence check and the local multi-vector index of EVIE from visual documents to general multimodal retrieval [ 34 ] . A mined candidate stays a negative only when it lacks the evidence the query asks for. Position codes guide clustering and are then discarded, so the index stores semantic centroids. The same integer record is what the retriever filters and what it uses to name the hit. This release is trained on 57 57 public datasets. The changes are in the backbone, the order in which modalities are added, and the decision to train on the same clustered vectors that are written to the index. 
+A hit also carries the place of its evidence. A page or an image returns the bounding rectangle of the hit clusters, and a video returns the start and end in seconds of the hit centroids, so the downstream generator reads that region or that span instead of the whole page or video. The video side encodes the sampled frames directly and takes time from the frame indices, so neither indexing nor localization goes through a parsing model that transcribes video into text. The localization numbers are in Section 9.5 . Figure 1 shows the resulting accuracy and latency, and Table 1 compares the four serving designs. Figure 1: Accuracy and latency of OmniEVIE. (a) MMEB-V3 mean over 190 tasks against parameter scale. The blue line is the full sequence at d = 2048 d=2048 : the same weights keep every token vector, with no ST-HAC and no int8 quantization, and score 60.68 60.68 . The circle and the diamond are the released K ​ 128 × d ​ 64 K128\times d64 int8 index, 8.82 8.82 GiB per million records, at 60.06 60.06 for 32 32 frames and 59.76 59.76 for 8 8 frames. WeMM-Embedding-4B and OmniEVIE share a 4.5 4.5 B backbone. (b) Single-thread latency against corpus size for full int8 MaxSim, exact single-vector search at d = 2048 d=2048 and d = 4096 d=4096 , and the three-stage retriever, whose first stage is a d = 64 d=64 mean vector. Table 1: Serving comparison of four multimodal retrieval designs. 
+Single vector Single vector + reranker Full multi-vector OmniEVIE 
+Score One inner product Coarse score, then cross-attention Full-token MaxSim Fixed multi-vector, K ≤ 128 K\leq 128 , d = 64 d=64 
+Local hit None No coordinates Per-token hit Page rectangle and video seconds; span hit 94.3 % 94.3\% 
+Million-scale index A few GiB of vectors Must read raw media for reranking Hundreds of GiB 7.87 7.87 – 8.82 8.82 GiB 
+Online forwards Encode the query once One query encode plus k k media forwards Encode the query once Encode the query once 
+Bottleneck Dimension of one vector Rerank tail latency Index size and full scan Integer and bit operations 
+Width One trained width, or a separate MRL head Reranker maintained apart from the retriever Fixed high dimension One Prefix-MRL head, six widths, ST-HAC at training time 
+The rest of the report follows that record from training to search. Section 3 writes retrieval, classification, question answering, grounding, and tool use as one sample, grades the evidence in mined negatives, and adds video negatives that differ only in order. Section 4 trains a bidirectional backbone with native video tokens and one Prefix-MRL head for widths 64 64 through 2048 2048 ; clustering during training and the query-side score are in that section. Section 5 adds stage-wise and specialist checkpoints by parameter block. Section 6 uses one spatiotemporal clustering for every modality; the bytes in one record are given there. Section 7 derives three representations from one record and narrows the candidate window. Section 7.5 reads the hit back to a page rectangle or to seconds in a video without a video parsing model. The numbers are in Section 9.5 . 
+2 Related work 
+2.1 General multimodal embeddings and multi-vector representations 
+One general embedding model is now expected to handle text, images, documents, and video. VLM2Vec and the MMEB suites put retrieval, classification, question answering, and grounding into one evaluation [ 12 , 22 , 9 ] . Esfandiarpoor et al. [5] measure what that similarity score costs once the query needs several pieces of evidence. Qwen3-VL-Embedding, WeMM-Embedding, Ovis-Embedding, and U-MARVEL train a single vector with multi-stage contrastive learning, hard negatives, reranker supervision, and cross-scale distillation [ 17 , 40 , 24 , 19 ] . By contrast, jina-embeddings-v4 and v5-omni keep both a single vector and a multi-vector output, and lock the vision tower so the geometry stays aligned [ 7 , 8 ] . 
+Late interaction was established for text by ColBERT and ColBERTv2 [ 13 , 30 ] and carried to full-page visual documents by ColPali, which replaces an OCR pipeline with a page screenshot [ 6 ] . ViDoRe V3 extends that evaluation to multilingual pages [ 20 ] . Jina-ColBERT-v2 covers multilingual text [ 11 ] . ModernVBERT and Nemotron-ColEmbed-V2 study bidirectional attention and model merging for document late interaction [ 32 , 23 ] . Video-ColBERT and CLAMR extend late interaction to video [ 27 , 33 ] . EVIE applies evidence checking, a Prefix-MRL head, and layout-aware HAC to visual documents [ 34 ] . Matryoshka representation learning and MatFormer nest several widths in one forward pass [ 15 , 3 ] . MetaEmbed changes the number of meta-tokens at test time [ 37 ] . OmniEVIE carries this design to images, video, text, and agent tasks, and adds a shared spatiotemporal compression, block-wise merging, query-side scoring, and million-scale three-stage retrieval. 
+2.2 Compression and fast multi-vector search 
+Compressing a multi-vector index is a choice of which part of the match to keep. MUVERA replaces MaxSim by one fixed-dimensional vector so that an existing maximum-inner-product index can be reused [ 4 ] . PLAID keeps the multi-vector score but filters through a global codebook and residual codes [ 29 ] , and query-aware token budgeting delays the choice of raw tokens until the final stage [ 28 ] . A third line reduces the number of stored vectors, either by merging tokens inside the encoder [ 1 ] or by clustering and pruning a frozen index, as in attention-guided clustering [ 25 ] , MarginMerge [ 21 ] , and prune-then-merge [ 39 ] . ST-HAC belongs to this third line, with one difference: the same clustering is used while training and again when the index is written. The mean, the 1 1 -bit signs, and the int8 multi-vectors are then three readings of that one record, at a fixed int8 scale. 
+2.3 False negatives, rank distillation, and model merging 
+The quality of a contrastive embedding depends on which negatives are false and on whose ranking is distilled. FALCON studies false negatives in large-scale image-text pretraining [ 14 ] . CORE distills a reranker ranking into an embedding with Rank-KL [ 31 ] . On the parameter side, task arithmetic adds and subtracts task vectors [ 10 ] , and TIES-Merging drops small deltas and resolves sign conflicts [ 38 ] . Conan-embedding-v3, PlaM, and training-free mitigation study modality-specific fusion, layer-selective injection, and the recovery of language ability after multimodal tuning [ 18 , 35 , 26 ] . The merge in OmniEVIE gives each parameter block its own coefficient, so the merger and the projection head can take a different step from the language layers. 
+3 Training data 
+OmniEVIE puts every task into one retrieval sample. The instruction says which task it is, the evidence grade says whether a mined negative is truly negative, and a dynamic sampling rule adjusts how often each sample is revisited. 
+3.1 One sample format 
+Each example is 
+z i = ( I i , q i , d i + , 𝒩 i , y i ) , z_{i}=\big(I_{i},\,q_{i},\,d_{i}^{+},\,\mathcal{N}_{i},\,y_{i}\big), (2) 
+where I i I_{i} is a scene instruction, q i q_{i} is text, an image, an image-text pair, or a video, d i + d_{i}^{+} is the positive, 𝒩 i \mathcal{N}_{i} is a set of explicit hard negatives, and y i y_{i} is a teacher score or a distribution. Retrieval and grounding use the page, image, crop, or clip as the positive. Classification uses the class name as a candidate and prefers near-miss classes from the same dataset, balanced by class frequency. Open question answering pairs the question and the image with the reference answer. Multiple choice uses the correct option as the positive and the other options as hard negatives. Tool retrieval uses the tool document or skill description as the candidate. Interface and memory tasks are held out for zero-shot evaluation. 
+A batch contains one task, so every in-batch negative is another candidate of that task. The training mixture comprises about 2 2 M samples from 57 57 public datasets (Figure 2 ). Figure 2: Training mixture across 57 57 public datasets (about 2 2 M samples). (a) Sample share by task family: image retrieval 25.8 % 25.8\% , QA and grounding 24.9 % 24.9\% , text retrieval 15.6 % 15.6\% , classification 13.5 % 13.5\% , video retrieval 13.0 % 13.0\% , tool retrieval 5.2 % 5.2\% , and visual documents 2.0 % 2.0\% . (b) Dataset count and query-to-candidate mapping per family; visual documents are replayed from stage 1. 
+3.2 Scene instructions 
+Image-to-image search takes the instruction, the image, and an empty text span as the query. Composed search places the real question after the image. A text query places the instruction in front of the question, and the remaining zero-shot tasks share one task prefix (Table 2 ). Very thin or very small images are resized on the short side and padded so that the aspect ratio stays bounded. Table 2: Scene instructions and query layout. 
+Scene Query Instruction Candidate 
+Image to image Instruction + image, empty text Find an image of the same object or entity Image 
+Composed image-text Instruction + image + question Find an image that answers the question about the given image Image 
+Text to image or page Instruction + query text Retrieve the image or page the request names Image or page 
+Text to video Instruction + query text Retrieve the video the request names; the instruction is prepended Native video 
+Other zero-shot tasks Task instruction + query One shared task prefix Text, image, or video 
+3.3 Evidence grades and temporal hard negatives 
+High-scoring mined candidates are the usual source of hard negatives, and they are also where missed positives hide. If a page that answers the query is treated as a negative, the gradient pushes that page away from the query. A multimodal judge assigns each mined negative one of three grades (Table 3 ). Candidates with full evidence are promoted to positives (each receiving weight ω i = 1 / n i + \omega_{i}=1/n_{i}^{+} when a query has n i + n_{i}^{+} positives), those with partial evidence are masked in the loss denominator, and those with no evidence remain hard negatives. Table 3: Three-grade evidence check on the visual-document pool. Counts are candidate negatives before the grade is applied. 
+Grade Meaning Treatment 
+Full evidence The candidate answers the query Promoted to a positive. Of 775,635 775{,}635 queries, 175,137 175{,}137 gain an extra positive. 
+Partial evidence A useful clue, not a full answer Masked in the denominator. Together with full evidence, 223,877 / 1,551,270 223{,}877/1{,}551{,}270 ( 14.4 % 14.4\% ) of candidate negatives are masked. 
+No evidence Irrelevant or contradictory Kept. 1,327,393 1{,}327{,}393 hard negatives remain. 
+Static background is often enough to recognize a clip, so two hard negatives put the loss on temporal order. A reversed negative pairs a forward clip (positive) with the same clip in reverse, and the query pairs a forward description with a reversed one. An off-window negative keeps the target span as the positive and takes another span of the same long video as the negative, under the original query. 
+3.4 Dynamic sampling from a baseline and several teachers 
+Not every sample deserves the same update. Some are already solved by the baseline, and on some tasks every available teacher is weak. The teacher is chosen by the form of the answer. Open answers and fine-grained classification use a multimodal embedding teacher and its in-batch similarity distribution. Ranking tasks, including text-to-image, video grounding, and tool retrieval, use a cross-encoder and the gaps among candidates. Multiple choice uses a discriminative teacher and the distribution over options. 
+Each sample is then labeled by whether the baseline and the teacher place the positive first (Table 4 ). Samples that both models rank correctly by a wide margin are downsampled. Samples the teacher ranks correctly and the baseline misses are upweighted. When the baseline beats the teacher, distillation is turned off and the loss uses the gold label. If the baseline outperforms the teacher on more samples of a task than the reverse, distillation is turned off for that task. Table 4: Five-way sample policy. “First” means the positive is ranked first. Distillation is on only when the teacher is correct. 
+Class Baseline Teacher Keep rule Hard negatives 
+1, easy agreement First, large margin Correct Fixed downsample; class tasks keep a per-class floor Baseline picks plus the original set 
+1b, borderline First, small margin Correct Keep all Same as class 1 
+2, teacher fills a gap Not first Correct Upweight Same as class 1 
+3, baseline ahead First Wrong Keep all, gold label only Original set only 
+4, hard Not first Wrong Keep all, gold label only Original set only 
+4 Model and training 
+4.1 Backbone, bidirectional attention, and native video 
+OmniEVIE is built on the Qwen3.5-VL mixed-attention backbone: a vision encoder, a cross-modal merger, language layers, and a Prefix-MRL head. The released model has 4.5 4.5 B parameters and hidden width d hid = 2560 d_{\mathrm{hid}}=2560 . Language layers alternate GatedDeltaNet blocks and full attention. The document stage distills an 8 8 B bidirectional EVIE teacher with d hid = 4096 d_{\mathrm{hid}}=4096 into this 4.5 4.5 B model [ 34 ] . 
+Text is embedded by the tokenizer. Images and pages become patch tokens after the vision encoder and a spatial merge. A causal mask would hide a later instruction from the visual tokens that precede it. Full-attention layers use bidirectional attention, and the mask marks padding. Linear-attention blocks stay as in the backbone. Every token can then attend over the full sequence [ 23 , 34 , 32 ] . 
+OmniEVIE feeds each clip as one sequence, so adjacent frames meet inside the encoder. Per-frame encoding instead runs one forward per frame and pools the vectors afterward, so frames meet only after the backbone, a reversed clip yields the same set of frames, and exceeding the token budget forces dropping frames. Adjacent frames are packed at the vision-encoder input with temporal stride Δ ​ t patch = 2 \Delta t_{\mathrm{patch}}=2 , and the last frame is repeated when the count is odd. Each temporal group is prefixed by a timestamp in seconds. When the token budget is exceeded, every frame is scaled down by the same factor and the time samples stay. Timestamps increase with position, so a reversed clip pairs content with a different timestamp, and the reversed negatives of Section 3 have a nonzero gradient. 
+4.2 Prefix-MRL 
+Distillation needs a wide vector, and the index needs a narrow one. One shared matrix W ∈ ℝ 2048 × 2560 W\in\mathbb{R}^{2048\times 2560} sits on top of the backbone. For a final hidden state h ∈ ℝ 2560 h\in\mathbb{R}^{2560} and a width d ∈ 𝒟 = { 64,128,256,512 , 1024 , 2048 } d\in\mathcal{D}=\{64,128,256,512,1024,2048\} , 
+e ( d ) ( h ) = L2 ( W : d h ) = W : d h ∥ W : d h ∥ 2 ∈ 𝕊 d − 1 . e^{(d)}(h)=\operatorname{L2}\!\left(W_{:d}\,h\right)=\frac{W_{:d}\,h}{\|W_{:d}\,h\|_{2}}\in\mathbb{S}^{d-1}. (3) 
+A single forward pass produces every width, and a low-width loss updates only the first d d rows. Serving always stores d = 64 d=64 , while the d = 2048 d=2048 branch provides the high-width reference for self-distillation. 
+4.3 Four training stages 
+Training every modality from scratch in one stage lets frequent easy tasks crowd out the harder alignment, and adding a modality later can erase the document behavior already learned. OmniEVIE adds modalities in four stages (Figure 3 , Table 5 ) and replays earlier data at a fixed rate. Each batch is still a single task. Figure 3: Four-stage schedule and the forward graph. (a) The curriculum and the four specialist branches split off after stage 3. (b) Vision, instruction, and text pass through the backbone and the Prefix-MRL head, then split into a d = 2048 d=2048 reference branch and a d = 64 d=64 serving branch. The query keeps its full sequence, and stage 4 attaches the gate and the noise floor. Candidates are clustered with ST-HAC during training. The d = 2048 d=2048 branch and an external teacher distill the d = 64 d=64 branch. Table 5: The four training stages and what each stage replays. 
+Stage Input Supervision Replay 
+1, documents Bidirectional document vectors and the six Prefix-MRL widths Listwise distillation from EVIE-8B, the three-grade check, joint training of the six widths Document pool for later stages 
+2, image and video Image-to-image, composed image-text, text-to-image, native video Scene instructions, temporal hard negatives, a one-way ranking constraint, ST-HAC on the candidates in the batch Document and earlier data at a fixed rate; one batch is one task 
+3, all tasks Classification, question answering, grounding, long text, tools, interfaces, memory The five-way sampler, three teachers by task, a projection bridge to the high-width teacher Replay quotas kept; batches stay single-task 
+4, merge and query score Specialists added back; the query-side score is trained Block-wise merge and the gate with the noise floor Deltas added on the blocks they were trained on 
+4.4 Loss, distillation, and clustering during training 
+Both the d = 64 d=64 branch and the d = 2048 d=2048 branch are trained. Candidates on the narrow branch are clustered as they will be at indexing time, and the score uses those centroids. 
+The candidate pool of a query is the other documents in the batch plus its own hard negatives. Three kinds of candidate are excluded from the negative set (other positives of the same query stay positives, samples from another source leave this loss, and candidates scored at least as high as the positive by the teacher leave the negatives), and every remaining candidate in the pool is a negative. Let π i \pi_{i} be the softmax probability of the positive. A focal weight emphasizes queries that are not yet separated. 
+ℒ focal = 𝔼 batch ​ [ a i ​ ( − log ⁡ π i ) ] , a i = sg ⁡ ( ( 1 − π i ) γ ) 𝔼 batch ​ [ sg ⁡ ( ( 1 − π j ) γ ) ] , γ = 1 . \mathcal{L}_{\mathrm{focal}}=\mathbb{E}_{\mathrm{batch}}\big[a_{i}\,(-\log\pi_{i})\big],\quad a_{i}=\frac{\operatorname{sg}\!\big((1-\pi_{i})^{\gamma}\big)}{\mathbb{E}_{\mathrm{batch}}\!\big[\operatorname{sg}((1-\pi_{j})^{\gamma})\big]},\quad\gamma=1. (4) 
+sg \operatorname{sg} stops the gradient through a i a_{i} , so the weight is a constant with respect to the parameters. Dividing by the batch mean keeps the average weight at 1 1 , so the scale of the loss does not follow how hard the batch is. Bidirectional samples add the reverse cross-entropy ℒ d → q \mathcal{L}_{d\to q} with weight β = 0.5 \beta=0.5 . Ordered pairs, including a forward clip against its reverse and negatives that have been graded, add a pairwise term ℒ ord \mathcal{L}_{\mathrm{ord}} . The gradient through the higher score s 0 s_{0} is stopped, so only the lower score s 1 s_{1} is decreased. The retrieval loss on one branch is 
+ℒ ret = ℒ focal + β ​ ℒ d → q + λ ord ​ ℒ ord . \mathcal{L}_{\mathrm{ret}}=\mathcal{L}_{\mathrm{focal}}+\beta\,\mathcal{L}_{d\to q}+\lambda_{\mathrm{ord}}\,\mathcal{L}_{\mathrm{ord}}. (5) 
+The distillation target mixes the model’s internal d = 2048 d=2048 scores s in s^{\mathrm{in}} with external teacher scores s te s^{\mathrm{te}} . Both are standardized on the valid candidates. With mixture weight w e w_{e} , the target is placed back on the scale of s in s^{\mathrm{in}} : 
+s ~ te = μ in + σ in ​ ( ( 1 − w e ) ​ z ^ ​ ( s in ) + w e ​ z ^ ​ ( s te ) ) . \tilde{s}^{\mathrm{te}}=\mu_{\mathrm{in}}+\sigma_{\mathrm{in}}\big((1-w_{e})\hat{z}(s^{\mathrm{in}})+w_{e}\hat{z}(s^{\mathrm{te}})\big). 
+The distillation loss is a KL divergence between the teacher and student rankings plus a margin term, 
+ℒ kd = c i [ KL ( p te ∥ p stu ) + λ margin ℒ margin ] , \mathcal{L}_{\mathrm{kd}}=c_{i}\Big[\operatorname{KL}\!\big(p^{\mathrm{te}}\,\|\,p^{\mathrm{stu}}\big)+\lambda_{\mathrm{margin}}\,\mathcal{L}_{\mathrm{margin}}\Big], (6) 
+where c i c_{i} is larger when the teacher distribution has lower entropy. 
+An external teacher may have dimension d T = 4096 d_{T}=4096 , which cannot be scored directly against a 2048 2048 -dimensional student vector. A bias-free linear map B aux ∈ ℝ d T × 2048 B_{\mathrm{aux}}\in\mathbb{R}^{d_{T}\times 2048} , initialized orthogonally, sends the student mean vector into the teacher space. The point term is one minus the cosine. The batch term is a smoothed ℓ 1 \ell_{1} loss between the query–document cosine matrices. B aux B_{\mathrm{aux}} is discarded after training, and inference uses the Prefix-MRL head. 
+At each step the narrow branch clusters candidates using budget K = 64 K=64 with probability 0.3 0.3 and K = 128 K=128 with probability 0.7 0.7 . Cluster assignment is held fixed. The mean inside a cluster and the normalization that follows it receive gradient. Every token in a cluster receives the same share 1 / | C k | 1/|C_{k}| of the centroid gradient. The step loss is 
+ℒ step = 1 2 ​ ( ℒ ret ( 64 ) + ℒ ret ( 2048 ) ) + λ kd ​ ℒ kd + λ aux ​ ℒ bridge . \mathcal{L}_{\mathrm{step}}=\frac{1}{2}\big(\mathcal{L}_{\mathrm{ret}}^{(64)}+\mathcal{L}_{\mathrm{ret}}^{(2048)}\big)+\lambda_{\mathrm{kd}}\,\mathcal{L}_{\mathrm{kd}}+\lambda_{\mathrm{aux}}\,\mathcal{L}_{\mathrm{bridge}}. (7) 
+The d = 64 d=64 branch scores centroids. The d = 2048 d=2048 branch scores the full sequence. 
+4.5 Query-side saliency gate and noise floor 
+Uniform MaxSim, with w i = 1 w_{i}=1 on every non-pad token, fails on multimodal queries for two reasons. Visual patches and background tokens dominate the sum, and every query token can find a medium inner product on any candidate. Those medium matches add up and dilute the real hit. 
+The gate starts from the uniform weights w i ( 0 ) w_{i}^{(0)} . Its input is ten domain-free features ϕ i \phi_{i} of each token: the pre-normalization norm, deviation from the query mean direction, difference from the neighboring token, uniqueness inside the query, modality and position marks, and the query length. A two-layer SiLU network produces a score g i g_{i} . A linear term on the token direction carries an ℓ 2 \ell_{2} penalty. The weights are then 
+m i = exp ⁡ ( τ gate ​ tanh ⁡ ( g i ) ) , w i = L q ​ w i ( 0 ) ​ m i ∑ j = 1 L q w j ( 0 ) ​ m j . m_{i}=\exp\!\big(\tau_{\mathrm{gate}}\tanh(g_{i})\big),\qquad w_{i}=\frac{L_{q}\,w_{i}^{(0)}m_{i}}{\sum_{j=1}^{L_{q}}w_{j}^{(0)}m_{j}}. (8) 
+The gate output layer is initialized at zero, so training starts from uniform MaxSim. With τ gate = 0.6 \tau_{\mathrm{gate}}=0.6 , each token is rescaled between about 0.55 0.55 and 1.8 1.8 , and the weights still sum to L q L_{q} . The gate has 257 257 parameters. 
+Let r i = max v ∈ D ⁡ ⟨ q ^ i , v ⟩ r_{i}=\max_{v\in D}\langle\hat{q}_{i},v\rangle . The noise-floor score amplifies the part of r i r_{i} above θ nf \theta_{\mathrm{nf}} : 
+s tok ​ ( q i , D ) = r i + β nf ​ ReLU ⁡ ( r i − θ nf ) , s ⁡ ( Q , D ) = ∑ i = 1 L q w i ​ s tok ​ ( q i , D ) . s_{\mathrm{tok}}(q_{i},D)=r_{i}+\beta_{\mathrm{nf}}\,\operatorname{ReLU}\!\big(r_{i}-\theta_{\mathrm{nf}}\big),\qquad s(Q,D)=\sum_{i=1}^{L_{q}}w_{i}\,s_{\mathrm{tok}}(q_{i},D). (9) 
+Matches below the floor are unchanged. Matches above it are multiplied by 1 + β nf 1+\beta_{\mathrm{nf}} on the excess only. β nf = 0 \beta_{\mathrm{nf}}=0 recovers equation 1 . s tok s_{\mathrm{tok}} is monotone in r i r_{i} . The argmax cluster is the same as in standard MaxSim, and Section 7.5 localizes with that cluster. 
+On the unit sphere in d d dimensions, a query token and a random centroid have an inner product of mean 0 0 and variance 1 / d 1/d . The expected maximum over K K centroids is at most 
+𝔼 ⁡ [ max 1 ≤ j ≤ K ⁡ ⟨ q ^ i , v j ⟩ ] ≤ 2 ​ ln ⁡ K d = 2 ​ ln ⁡ 128 64 ≈ 0.389 . \mathbb{E}\Big[\max_{1\leq j\leq K}\langle\hat{q}_{i},v_{j}\rangle\Big]\;\leq\;\sqrt{\frac{2\ln K}{d}}\;=\;\sqrt{\frac{2\ln 128}{64}}\;\approx\;0.389. (10) 
+An unrelated record therefore contributes about 0.389 0.389 per query token. The floor is set to θ nf = 0.38 \theta_{\mathrm{nf}}=0.38 . On ViDoRe V3 the measured mean of r i r_{i} is 0.393 0.393 on unrelated pages and 0.694 0.694 on relevant pages, and 92 % 92\% of tokens on relevant pages exceed 0.38 0.38 . With β nf = 2.5 \beta_{\mathrm{nf}}=2.5 , a token at the relevant-page mean is scored about 3.8 3.8 times the unrelated-page mean, while a match near the floor is almost unchanged. The noise floor is computed in S3 (Section 7 ). 
+5 Block-wise model merging 
+5.1 What is merged 
+The weights are a merge of the models trained across stages. One level averages full-data runs that share a starting point, and averages neighboring stages. After stage 3, a second level trains specialists for video, fine-grained entities, visual question answering, and tool use, then adds their deltas back to the trunk (Figure 4 ). Each ability is trained on its own data and added in parameter space [ 10 ] . Figure 4: Two-level block-wise merge. (a) Full-data variants from one start, and weights from neighboring rounds, are averaged with one coefficient per block into the trunk P P . (b) Four specialists add Δ k = θ ( k ) − P \Delta_{k}=\theta^{(k)}-P , weighted per block; bar length is c k , b c_{k,b} . Text and tool specialists set the vision and merger coefficients to 0 0 , and language-layer deltas are trimmed by 𝒯 ρ \mathcal{T}_{\rho} . (c) The per-block policy after the merge. 
+Parameters are split into five blocks b ∈ { vis , merger , vocab , llm , head } b\in\{\mathrm{vis},\mathrm{merger},\mathrm{vocab},\mathrm{llm},\mathrm{head}\} : the vision encoder, the merger, the token embedding, the language layers, and the Prefix-MRL head. Let P P be the trunk and θ ( k ) \theta^{(k)} the k k -th model. The delta is Δ k = θ ( k ) − P \Delta_{k}=\theta^{(k)}-P , and Δ k , b \Delta_{k,b} is its restriction to block b b . The merged block is 
+θ b = P b + ∑ k = 1 M c k , b ​ 𝒯 ρ ​ ( Δ k , b ) , c k , b ∈ [ 0 , 1 ] . \theta_{b}=P_{b}+\sum_{k=1}^{M}c_{k,b}\,\mathcal{T}_{\rho}\!\left(\Delta_{k,b}\right),\qquad c_{k,b}\in[0,1]. (11) 
+A uniform average is the special case in which every block shares one coefficient. A text or tool specialist takes coefficient 0 0 on the vision encoder and the merger, and a positive coefficient on the language layers. In Figure 4 the length of a bar is that coefficient. The vision bar of a text or tool specialist is empty because the coefficient is zero. 
+𝒯 ρ \mathcal{T}_{\rho} keeps the largest-magnitude fraction ρ \rho of each tensor and zeros the rest [ 38 ] : 
+𝒯 ρ ​ ( Δ ) j = { Δ j , | Δ j | ≥ τ ρ , 0 , otherwise , \mathcal{T}_{\rho}(\Delta)_{j}=\begin{cases}\Delta_{j},&amp;|\Delta_{j}|\geq\tau_{\rho},\\
+0,&amp;\text{otherwise},\end{cases} (12) 
+where τ ρ \tau_{\rho} is the ( 1 − ρ ) (1-\rho) -quantile of | Δ | |\Delta| . Most entries in a specialist delta are small and close to random. They add little to the target ability and interfere with other specialists. Language-layer deltas use ρ = 0.75 \rho=0.75 . Vision, merger, and head deltas use ρ = 1 \rho=1 . 
+5.2 Per-block coefficients 
+A second-order expansion writes the extra loss of one coefficient shared by every block. Consider a single model, with trimmed block delta δ b \delta_{b} and coefficient c b c_{b} . Let g g and H H be the gradient and Hessian of the loss at P P , and ignore cross-block second derivatives. The loss after the merge is approximately 
+ℒ ⁡ ( θ ) ≈ ℒ ⁡ ( P ) + ∑ b ( a b ​ c b + 1 2 ​ h b ​ c b 2 ) , a b = g b ⊤ ​ δ b , h b = δ b ⊤ ​ H b ​ b ​ δ b . \mathcal{L}(\theta)\approx\mathcal{L}(P)+\sum_{b}\Big(a_{b}\,c_{b}+\frac{1}{2}h_{b}\,c_{b}^{2}\Big),\qquad a_{b}=g_{b}^{\top}\delta_{b},\quad h_{b}=\delta_{b}^{\top}H_{bb}\,\delta_{b}. (13) 
+a b &lt; 0 a_{b}&lt;0 means the delta reduces the loss, and h b &gt; 0 h_{b}&gt;0 is the curvature cost. Each block is a quadratic in c b c_{b} , with vertex 
+c b ∗ = − a b h b , c_{b}^{\ast}=-\frac{a_{b}}{h_{b}}, (14) 
+and the coefficient used is that value clipped to [ 0 , 1 ] [0,1] . If every block is forced to share a coefficient c c , the best shared value is the curvature-weighted average of the per-block vertices, and the extra loss is 
+Δ ​ ℒ = 1 2 ​ ∑ b h b ​ ( c ¯ − c b ∗ ) 2 ≥ 0 . \Delta\mathcal{L}=\frac{1}{2}\sum_{b}h_{b}\big(\bar{c}-c_{b}^{\ast}\big)^{2}\;\geq\;0. (15) 
+The gap grows as the per-block optima diverge. The projection head, which writes the stored vectors, has large curvature and a smaller optimal coefficient. The language layers carry most of the task ability and prefer a larger coefficient. A text or tool specialist has a b ≥ 0 a_{b}\geq 0 on the vision encoder, so that coefficient is 0 0 . Trimming removes entries that barely change a b a_{b} but inflate h b h_{b} and the interference with other specialists. Measured effects of each merge step are in Table 12 . 
+6 ST-HAC 
+6.1 Agglomerative clustering 
+A high-resolution page or a 32 32 -frame clip emits hundreds to thousands of vectors, and they are not spread uniformly. The vectors that Section 1.3 counts as unselected are mostly collinear background and static frames [ 25 ] . The evidence that decides a retrieval, a single cell, a small logo, or a short action, is an isolated point far from the background. The compression merges collinear background and static frames into a few clusters, and leaves an isolated piece of evidence in a cluster of its own. Ward clustering merges the pair whose union increases the within-cluster sum of squares the least: nearby background tokens merge first, and an isolated point stays until the end. ST-HAC runs this clustering in a spatiotemporal feature space. Table 13 compares it with uniform pooling and random pruning. 
+6.2 One procedure for every modality 
+After the d = 64 d=64 projection and per-token ℓ 2 \ell_{2} normalization, any input is a sequence { v ^ i } i = 1 N ⊂ 𝕊 d − 1 \{\hat{v}_{i}\}_{i=1}^{N}\subset\mathbb{S}^{d-1} . ST-HAC replaces that sequence by at most K ≤ 128 K\leq 128 vectors of dimension 64 64 . Figure 5 shows the steps. If clustering used semantics alone, similar digits in two columns of a report, or similar backgrounds far apart in a video, would fall into one cluster. Each token therefore receives normalized coordinates ( x i , y i , t i ) ∈ [ 0 , 1 ] 3 (x_{i},y_{i},t_{i})\in[0,1]^{3} . For a video packed with stride Δ ​ t patch = 2 \Delta t_{\mathrm{patch}}=2 into F F groups, 
+t i = f i max ⁡ ( F − 1 , 1 ) . t_{i}=\frac{f_{i}}{\max(F-1,\,1)}. (16) 
+For a text sequence, t i = ( i − 1 ) / max ⁡ ( N − 1 , 1 ) t_{i}=(i-1)/\max(N-1,1) . The clustering feature mixes the semantic vector with sinusoidal space and time codes and renormalizes: 
+z i = L2 ⁡ ( w v ​ v ^ i + w s ​ p x ​ y ​ ( x i , y i ) + w t ​ p t ​ ( t i ) ) , w v = 1 − w s − w t . z_{i}=\operatorname{L2}\!\Big(w_{v}\,\hat{v}_{i}+w_{s}\,p_{xy}(x_{i},y_{i})+w_{t}\,p_{t}(t_{i})\Big),\qquad w_{v}=1-w_{s}-w_{t}. (17) 
+Video uses ( w s , w t ) = ( 0.07 , 0.03 ) (w_{s},w_{t})=(0.07,0.03) . Images and pages use ( 0.10 , 0 ) (0.10,0) . Text uses ( 0 , 0.10 ) (0,0.10) . A missing axis has weight zero. The code and the output format are shared. Figure 5: ST-HAC offline compression. (a)(b) Ward clustering on semantic vectors plus the spatiotemporal code. (c) An isolated region stays its own cluster, and adjacent static frames merge. (d) A centroid is the renormalized mean of the semantic vectors only. (e) Fixed-scale int8. (f) The bytes in one record. 
+Long inputs are segmented first. Video is cut at 60 60 seconds and text at 1,024 1{,}024 tokens. Each segment is clustered, and the segment centroids are clustered again up to K K with a segment-time code of weight w t = 0.03 w_{t}=0.03 . The Ward distance matrix then stays inside a segment. Ward clustering on { z i } \{z_{i}\} stops at K K clusters. If N ≤ K N\leq K , the full sequence is kept. Position weights are much smaller than the semantic weight, so the partition is still driven by semantics. 
+6.3 A monotone time code 
+The spatial code p x ​ y p_{xy} is a standard multi-frequency sinusoid. The same frequencies are unsafe on time. A frequency above π \pi wraps, so two shots that are far apart can receive similar codes. ST-HAC draws M = d / 2 M=d/2 frequencies evenly from [ π / 4 , π ] [\pi/4,\pi] , 
+p t ( t ) = 1 M ( sin ω 1 t , cos ω 1 t , … , sin ω M t , cos ω M t ) ⊤ . p_{t}(t)=\frac{1}{\sqrt{M}}\big(\sin\omega_{1}t,\ \cos\omega_{1}t,\ \ldots,\ \sin\omega_{M}t,\ \cos\omega_{M}t\big)^{\!\top}. (18) 
+The leading factor is 1 / M 1/\sqrt{M} . Each sine–cosine pair then contributes 1 / M 1/M to the squared norm, and M M pairs give ‖ p t ​ ( t ) ‖ 2 2 = 1 \|p_{t}(t)\|_{2}^{2}=1 . The inner product of two times separated by Δ ​ t \Delta t is 
+K t ​ ( Δ ​ t ) = ⟨ p t ​ ( t ) , p t ​ ( t + Δ ​ t ) ⟩ = 1 M ​ ∑ m = 1 M cos ⁡ ( ω m ​ Δ ​ t ) . K_{t}(\Delta t)=\langle p_{t}(t),\,p_{t}(t+\Delta t)\rangle=\frac{1}{M}\sum_{m=1}^{M}\cos(\omega_{m}\Delta t). (19) 
+Every ω m ​ Δ ​ t \omega_{m}\Delta t for Δ ​ t ∈ [ 0 , 1 ] \Delta t\in[0,1] lies in [ 0 , π ] [0,\pi] , where cosine decreases, so K t K_{t} decreases from K t ​ ( 0 ) = 1 K_{t}(0)=1 . Adjacent static frames merge first, and distant shots stay apart. The time coordinate is normalized to [ 0 , 1 ] [0,1] , independent of frame rate and duration. 
+6.4 Semantic centroids 
+The position features set the partition and then leave the index. Otherwise the inner product with a query would contain a content-independent bias. Given clusters 𝒞 = { C 1 , … , C K } \mathcal{C}=\{C_{1},\ldots,C_{K}\} , the centroid uses only the original semantic vectors, v ¯ k = 1 | C k | ​ ∑ i ∈ C k v ^ i \bar{v}_{k}=\frac{1}{|C_{k}|}\sum_{i\in C_{k}}\hat{v}_{i} , and is renormalized: 
+μ k = v ¯ k ‖ v ¯ k ‖ 2 ∈ 𝕊 d − 1 . \mu_{k}=\frac{\bar{v}_{k}}{\|\bar{v}_{k}\|_{2}}\in\mathbb{S}^{d-1}. (20) 
+Because every member is a unit vector, 
+1 | C k | ​ ∑ i ∈ C k ‖ v ^ i − v ¯ k ‖ 2 2 = 1 − ‖ v ¯ k ‖ 2 2 . \frac{1}{|C_{k}|}\sum_{i\in C_{k}}\|\hat{v}_{i}-\bar{v}_{k}\|_{2}^{2}=1-\|\bar{v}_{k}\|_{2}^{2}. (21) 
+A more dispersed cluster has a shorter mean. Scoring with v ¯ k \bar{v}_{k} would penalize clusters that cover more content. After equation 20 the inner product is cos ⁡ θ \cos\theta , which matches the score used during training. Table 13 compares the two. 
+6.5 Fixed-scale int8 and the bytes in one record 
+Each coordinate of μ k \mu_{k} lies in [ − 1 , 1 ] [-1,1] , and the corpus shares the scale 1 / 127 1/127 . Indexing rounds at that scale, μ ^ k , j = clip ⁡ ( round ⁡ ( 127 ​ μ k , j ) , − 127,127 ) \hat{\mu}_{k,j}=\operatorname{clip}(\operatorname{round}(127\,\mu_{k,j}),-127,127) .
+The per-coordinate error is at most 1 / 254 1/254 . Scores accumulate in integer arithmetic, and a new record is appended directly. Table 17 compares the scales. At K ≤ 128 K\leq 128 and d = 64 d=64 , the int8 multi-vectors take at most 8,192 8{,}192 bytes, the fp32 mean takes 256 256 bytes, and the optional 1 1 -bit signs take 1,024 1{,}024 bytes. The two-level index is at most 8,448 8{,}448 bytes ( 7.87 7.87 GiB per million records). With the sign bits, the three-stage index is at most 9,472 9{,}472 bytes ( 8.82 8.82 GiB per million records). 
+7 Three-stage retrieval 
+7.1 Three views of one record 
+A two-stage pipeline often reads a full-precision side index after the coarse pass, and that side index is hundreds of gigabytes at million scale. OmniEVIE reads all three stages from the record in Section 6 (Figure 6 , Table 6 ). Table 6: Candidate representation, operator, and bytes of the three stages. K ′ K^{\prime} is the number of stored centroids, at most 128 128 . 
+Stage Representation Operator Window Bytes 
+S1 μ avg = L2 ⁡ ( 1 K ′ ​ ∑ k μ k ) \mu_{\mathrm{avg}}=\operatorname{L2}(\frac{1}{K^{\prime}}\sum_{k}\mu_{k}) Exact inner product or ANN N db → N 1 N_{\mathrm{db}}\to N_{1} 256 256 
+S2 sign ⁡ ( μ k ) \operatorname{sign}(\mu_{k}) Hamming MaxSim, XOR and popcount N 1 → N 2 N_{1}\to N_{2} 1,024 1{,}024 
+S3 Fixed-scale int8 μ ^ k \hat{\mu}_{k} Int8 MaxSim, plus equation 9 N 2 → top ​ - ​ k N_{2}\to\mathrm{top}\text{-}k 8,192 8{,}192 
+The query is encoded once, and its mean and sign bits are read from that same output. 
+7.2 Latency and window trade-offs 
+With corpus size N db N_{\mathrm{db}} , L q L_{q} query tokens, at most K K centroids, and dimension d d , the retrieval time is 
+T total = c s1 ​ N db ​ d + c pop ​ N 1 ​ L q ​ K + c int8 ​ N 2 ​ L q ​ K . T_{\mathrm{total}}=c_{\mathrm{s1}}\,N_{\mathrm{db}}\,d+c_{\mathrm{pop}}\,N_{1}\,L_{q}\,K+c_{\mathrm{int8}}\,N_{2}\,L_{q}\,K. (22) 
+The first term is the S1 scan, the second is Hamming S2, and the third is int8 S3. At d = 64 d=64 the sign pattern of one centroid is one 64 64 -bit word, scored by one XOR and one popcount, while the int8 dot product performs 64 64 multiply-adds. At the median query length and K = 128 K=128 , int8 scoring costs about 20.0 ​ μ ​ s 20.0\,\mu\mathrm{s} per candidate and Hamming scoring about 4.0 ​ μ ​ s 4.0\,\mu\mathrm{s} , so r = c int8 / c pop = 5 r=c_{\mathrm{int8}}/c_{\mathrm{pop}}=5 . Holding the sum of S2 and S3 fixed, dropping Δ ​ N 2 \Delta N_{2} int8 candidates buys 
+Δ ​ N 1 = r ​ Δ ​ N 2 \Delta N_{1}=r\,\Delta N_{2} (23) 
+extra candidates in the S1 window. An S1 window that feeds S3 directly stays small, because the int8 score dominates the time. On a larger corpus that fixed window is a smaller fraction of the records, and the mean vector drops the true hit before S3 ever sees it. S2 cuts the int8 window to about a thousand candidates and, by equation 23 , buys about r r times as many candidates in S1 at a lower total time. 
+S2 stores signs on both sides, so one pair is one XOR and one popcount. A floating-point query against a 1 1 -bit document still costs on the order of an int8 dot product; that row is the last line of Table 18 . Symmetric 1 1 -bit is the middle stage, and symmetric int8 is the final stage. 
+7.3 Order preservation of the sign stage 
+S2 keeps the relevant candidates inside the top N 2 N_{2} . S3 produces the final order. Signs keep the orthant of each coordinate. For unit vectors u , v u,v and a random rotation R R [ 2 ] , 
+𝔼 ⁡ [ 1 d ​ ⟨ sign ⁡ ( R ​ u ) , sign ⁡ ( R ​ v ) ⟩ ] = 1 − 2 ​ θ π , θ = arccos ⁡ ⟨ u , v ⟩ . \mathbb{E}\!\left[\frac{1}{d}\langle\operatorname{sign}(Ru),\,\operatorname{sign}(Rv)\rangle\right]=1-\frac{2\theta}{\pi},\qquad\theta=\arccos\langle u,v\rangle. (24) 
+Hamming similarity is monotone in cosine, so the middle stage keeps that order. OmniEVIE takes signs in the original coordinates. Retention of the full-scan top- 10 10 is reported in Table 18 . 
+7.4 PLAID and MUVERA 
+PLAID clusters the corpus into a global codebook and stores residuals in an inverted index [ 29 ] . MUVERA projects the multi-vectors of a record to one fixed-dimensional encoding and reuses a single-vector index [ 4 ] . Table 7 compares the three as systems that have to be updated. PLAID fits a corpus that can be reclustered. MUVERA fits a stack that already searches single vectors. OmniEVIE fits a corpus that keeps receiving records of different modalities. Table 7: Deployment properties of three multi-vector retrieval designs. 
+PLAID MUVERA OmniEVIE 
+Index Global codebook and residual postings One high-dimensional FDE vector Mean, 1 1 -bit signs, and int8 centroids on the record 
+Updates Codebook is rebuilt when the corpus shifts Fixed random hyperplanes Append an independently encoded record 
+Filters Scalar filters inside the postings Filters of a single-vector engine Restrict the S1 candidate set 
+Local hit Centroid map, residuals must be decoded Dropped by the projection Kept, from the S3 argmax 
+Engine Inverted index and residual decode High-dimensional MIPS Inner product, popcount, int8 dot product 
+7.5 Localizing the hit 
+Each centroid corresponds to a set of patches or a time interval. Bounding boxes and time spans are metadata of the source document, and the S3 argmax names the hit. 
+For a page or an image, the metadata of μ k \mu_{k} stores the minimum rectangle of its member patches and the page index. For a high-weight query token, k ^ = arg ⁡ max k ​ ⟨ q ^ i , μ ^ k ⟩ \hat{k}=\arg\max_{k}\langle\hat{q}_{i},\hat{\mu}_{k}\rangle highlights that rectangle. The argmax is an intermediate of MaxSim. Localization keeps a cluster whose rectangle covers at most 5 % 5\% of the page. A larger rectangle is whitespace and background spread over the page. For a long video, clips are encoded in fixed windows with the same record format, and each centroid stores [ t min , t max ] [t_{\min},t_{\max}] . The windows of one video are placed on a single timeline by video identifier, and the span is the heat of equation 25 . 
+The interval hit by one action word covers part of the segment, and the whole segment comes from placing every query token on one time axis. On the QVHighlights validation set, 60.7 % 60.7\% of the relevant segments cross a window boundary. Windows are encoded and clustered separately, and a centroid stays inside its window, so each token takes its best centroid in every window and evidence above the noise floor enters the heat on both sides of the boundary. Let r i ( j ) r_{i}^{(j)} be the maximum similarity of token i i inside window j j and k ^ i ( j ) \hat{k}_{i}^{(j)} the corresponding centroid. The heat of group g g is 
+h ( g ) = ∑ j = 1 N win ∑ i : g ∈ [ t min ​ ( k ^ i ( j ) ) , t max ​ ( k ^ i ( j ) ) ] w i ReLU ( r i ( j ) − θ nf ) . h(g)=\sum_{j=1}^{N_{\mathrm{win}}}\;\sum_{i:\,g\in[t_{\min}(\hat{k}_{i}^{(j)}),\,t_{\max}(\hat{k}_{i}^{(j)})]}w_{i}\operatorname{ReLU}\!\big(r_{i}^{(j)}-\theta_{\mathrm{nf}}\big). (25) 
+Each token adds the part of equation 9 above the noise floor, multiplied by the gate weight of equation 8 , onto the temporal groups of its centroid, and a larger weight contributes more. The group with the highest heat is the located point, and the connected segment where the heat is at least 80 % 80\% of the peak is the returned span. The ranking score still takes the global maximum of equation 9 . Figure 9 gives the examples, the measurements, and the context passed to the downstream generator. Figure 6: Three-stage retrieval. (a) The candidate window and the time of each stage on one million records. (b) Time per candidate of the three operators, at the median query length and K = 128 K=128 . (c) The S2 window N 2 N_{2} and top-10 retention on the mixed video pool. 
+8 Experiments 
+8.1 Protocol 
+Unless a row says otherwise, every OmniEVIE number uses K ≤ 128 K\leq 128 , d = 64 d=64 , and the fixed int8 scale. Task definitions follow MMEB [ 12 , 22 , 9 ] ; Appendix B lists the suites. MMEB-V2 numbers for WeMM-Embedding and Qwen3-VL-Embedding are the official leaderboard results. The MMEB-V3 text and agent numbers for Qwen3-VL-Embedding are taken from Zhou et al. [40] . In Table 10 the Qwen3-VL-Embedding-8B average is the published ViDoRe V3 number [ 20 ] ; the per-domain numbers are our rerun of that setup, and the rerun average is 58.37 58.37 . WeMM-Embedding-9B on MMEB-V3 is the leaderboard value 59.33 59.33 . 
+8.2 MMEB-V2 and MMEB-V3 
+Table 8 breaks out the text and agent subgroups of MMEB-V3 (190 tasks). Text subgroups are reasoning retrieval (T-RR), instruction following (T-IF), long context (T-LC), multi-condition (T-MC), and general retrieval (T-GR). Agent subgroups are Tool, GUI, Memory, and MCMR. Table 9 reports MMEB-V2 (78 tasks) as four families: all, image, video, and visual documents. The full-sequence rows are the blue line in Figure 1 . Table 8: MMEB-V3 over 190 tasks. All is the unweighted mean in Appendix B . Text reports nDCG@5; other groups report Hit@1. The 8-frame row changes only the video frame cap. Bold marks the best value in the column. 
+Model All Text T-RR T-IF T-LC T-MC T-GR Agent Tool GUI Mem. MCMR 
+Tasks 190 53 20 9 6 5 13 47 35 8 4 1 
+Qwen3-VL-Emb-2B 50.9 39.2 16.6 40.6 53.1 61.2 58.0 39.3 42.6 30.4 28.4 42.0 
+Qwen3-VL-Emb-8B 53.5 42.5 18.2 44.8 58.0 61.2 61.2 38.4 41.3 33.5 22.8 38.0 
+WeMM-Emb-2B 55.77 45.34 26.29 49.30 61.90 59.72 58.74 44.05 46.23 38.87 35.38 42.51 
+WeMM-Emb-4B 57.97 47.88 30.01 52.02 62.43 60.14 61.09 48.06 50.58 41.44 39.19 41.91 
+WeMM-Emb-9B 59.33 48.76 31.82 52.78 64.48 58.28 61.12 50.10 52.95 43.33 38.65 49.34 
+OmniEVIE-4B 60.06 51.77 26.36 69.65 70.71 67.75 63.58 54.03 58.84 41.34 37.35 47.39 
+OmniEVIE-4B, 8 frames 59.76 51.77 26.36 69.65 70.71 67.75 63.58 54.03 58.84 41.34 37.35 47.39 
+OmniEVIE-4B, full sequence d = 2048 d=2048 60.68 52.97 27.46 70.81 73.04 68.55 64.60 54.14 58.81 42.00 37.60 49.74 Table 9: MMEB-V2 over 78 tasks. All is the unweighted mean. Image and video report Hit@1; visual documents report nDCG@5. WeMM-Emb-4B uses the same 4.5 4.5 B backbone as OmniEVIE. Bold marks the best value in the column. 
+Model All Image Video VisDoc 
+Tasks 78 36 18 24 
+Qwen3-VL-Emb-2B 73.25 74.96 61.87 79.22 
+Qwen3-VL-Emb-8B 77.82 80.12 67.15 82.36 
+WeMM-Emb-2B 77.94 79.63 70.82 80.75 
+WeMM-Emb-4B 79.19 80.84 72.11 82.04 
+WeMM-Emb-9B 80.58 81.87 74.31 83.34 
+OmniEVIE-4B 77.96 78.09 69.62 84.02 
+OmniEVIE-4B, 8 frames 77.24 78.09 66.49 84.02 
+OmniEVIE-4B, full sequence d = 2048 d=2048 78.56 78.70 70.08 84.70 
+OmniEVIE reaches 60.06 60.06 on MMEB-V3. With video capped at the official 8 8 frames the same weights score 59.76 59.76 , above the WeMM-Embedding-9B value of 59.33 59.33 . MMEB-V2 is 77.96 77.96 , which is 2.62 2.62 below WeMM-Embedding-9B overall, 3.78 3.78 on images, and 4.69 4.69 on video. Those image and video gaps are in fine-grained classification and video retrieval. The MMEB-V3 gain is on long text: text overall is 51.77 51.77 , with instruction following at 69.65 69.65 , long context at 70.71 70.71 , and multi-condition retrieval at 67.75 67.75 . Agent overall is 54.03 54.03 , and tool retrieval is 58.84 58.84 . Late interaction matches each query condition to a different span of that text. The released index scores 84.02 84.02 on visual documents. The highest entry in that column of Table 9 is the full sequence at d = 2048 d=2048 , 84.70 84.70 . 
+8.3 Visual documents, fine-grained images, and video 
+Table 10 and Table 11 report visual documents, fine-grained images, and video. Table 10: ViDoRe V3 graded nDCG@10, macro-averaged over eight domains and six languages. Storage is GiB per million pages for the compressed rows. Bold marks the best value in the column. 
+Model Index Avg Comp. Energy Fin-EN Fin-FR HR Ind. Med. Phys. 
+Nemotron-ColEmbed-V2-8B Full multi-vector 63.76 79.35 70.05 67.72 51.50 66.92 56.81 67.39 50.31 
+Qwen3-VL-Emb-8B Single vector 59.00 75.86 64.47 60.88 44.70 58.88 47.78 66.05 48.31 
+OmniEVIE-4B, d = 2048 d=2048 Prefix-MRL, full sequence 64.34 79.89 71.25 67.76 53.45 66.33 57.03 68.11 50.87 
+OmniEVIE-4B, K ​ 128 × d ​ 64 K128\times d64 7.87 7.87 GiB/M 62.96 78.73 69.94 66.01 52.52 64.68 55.08 66.47 50.28 
+OmniEVIE-4B, K ​ 32 × d ​ 64 K32\times d64 2.15 2.15 GiB/M 61.16 78.13 68.61 64.52 49.43 60.90 51.73 65.73 50.22 Table 11: Fine-grained image Top-1, video nDCG@10, and forward-versus-reversed accuracy. The four-set mean is MSR-VTT, MSVD, DiDeMo, and VATEX. Bold marks the best value in the column. 
+Model FORB S2S MFashion MSR MSVD DiDeMo VATEX Vid-4 Order 
+Qwen3-VL-Emb-8B 92.80 62.90 65.10 71.95 77.84 74.54 76.60 75.23 51.63 
+Frame-independent – – – 63.76 73.11 78.30 69.37 71.13 51.17 
+OmniEVIE-4B 89.94 72.16 75.98 72.38 78.89 87.54 76.14 78.74 75.63 
+In Table 10 , the K ​ 128 × d ​ 64 K128\times d64 int8 index scores 62.96 62.96 on ViDoRe V3, against 64.34 64.34 for the uncompressed d = 2048 d=2048 sequence. The compressed index is 7.87 7.87 GiB per million pages, about 1 / 486 1/486 of the fp16 full sequence, and the loss is 1.38 1.38 points. Reducing K K further to 32 32 , or 2.15 2.15 GiB per million pages, leaves 61.16 61.16 . Computing and energy are the highest domains ( 78.73 78.73 and 69.94 69.94 ); French finance and physics are the lowest ( 52.52 52.52 and 50.28 50.28 ). 
+In Table 11 , Top-1 on FORB, Street2Shop, and MovingFashion is 89.94 89.94 , 72.16 72.16 , and 75.98 75.98 . Street2Shop and MovingFashion pair product photos taken in different scenes, so the match is a local part of the product across different scenes. OmniEVIE averages 78.74 78.74 across the four video datasets. Replacing the native video tokens by an independent encoding of each frame drops that average to 71.13 71.13 and drops forward-versus-reversed accuracy from 75.63 % 75.63\% to 51.17 % 51.17\% . The forward and reversed clips then produce the same set of vectors, and the accuracy falls to chance. 
+8.4 Ablations 
+In the M rows of Table 12 , each cell is the score before the merge and the score after it. The video number in T1 uses 8 8 frames. Table 12: Stage, query-side, and merge ablations on MMEB-V3. M cells are written as before → \to after. T1 video uses 8 frames. 
+ID Variant V3 Image Video VisDoc Text Agent 
+T1 End of stage 2 44.38 39.33 45.17 83.59 45.74 36.73 
+T2 End of stage 3 58.14 75.67 67.25 82.71 50.77 50.85 
+T3 Final model 60.06 78.09 69.62 84.02 51.77 54.03 
+Q1 Gate only 59.85 78.02 69.65 83.87 51.71 53.35 
+Q2 Uniform MaxSim 59.71 78.04 69.37 83.80 51.64 52.99 
+M1 One variant → \to linear average 58.37 → \to 58.80 76.34 → \to 76.97 67.90 → \to 67.81 82.93 → \to 83.25 50.96 → \to 51.27 50.65 → \to 51.41 
+M2 One round → \to cross-round 59.16 → \to 59.29 77.15 → \to 77.59 68.74 → \to 68.76 83.69 → \to 83.83 51.24 → \to 51.30 52.25 → \to 52.31 
+M3 Trunk → \to four specialists 59.44 → \to 59.67 77.84 → \to 78.11 68.95 → \to 69.31 83.98 → \to 83.66 51.48 → \to 51.67 52.34 → \to 52.83 
+M4 Shared coefficient → \to per block 59.60 → \to 59.66 77.95 → \to 77.98 69.24 → \to 69.36 83.84 → \to 83.62 51.56 → \to 51.65 52.72 → \to 52.94 
+Stage 3 is where image, text, and agent move. Adding classification, question answering, and tools takes image from 39.33 39.33 to 75.67 75.67 , text from 45.74 45.74 to 50.77 50.77 , and agent from 36.73 36.73 to 50.85 50.85 , while visual documents stay near 83 83 . Against uniform MaxSim, the gate adds 0.36 0.36 on agent and 0.28 0.28 on video; the noise floor then adds 0.68 0.68 on agent and 0.15 0.15 on visual documents. Tool and memory candidates are long documents, and a few query tokens decide the score; amplifying the excess above the floor gives those tokens a larger share. Each of the four merge steps operates by parameter addition. Averaging full-data runs from one start adds 0.76 0.76 on agent and 0.63 0.63 on image. Merging across rounds adds 0.44 0.44 on image. The four specialists add 0.49 0.49 on agent, 0.36 0.36 on video, and 0.27 0.27 on image, and visual documents change by − 0.32 -0.32 . A per-block coefficient, compared with one shared coefficient, adds 0.22 0.22 on agent and 0.12 0.12 on video, as equation 15 predicts, and visual documents change by − 0.22 -0.22 . 
+8.5 Compression methods at the same budget Table 13: Compression at K = 128 K=128 , d = 64 d=64 , scored by ViDoRe V3 nDCG@10. Indexing time is single-thread milliseconds per page. 
+Method Training nDCG@10 ms / rec. 
+Full sequence – 63.09 – 
+Uniform grid pool At indexing 56.50 2.3 
+Keep K K random tokens At indexing 60.41 0.1 
+ST-HAC With training 62.96 20.0 
+ST-HAC, w s = 0 w_{s}=0 With training 62.90 20.1 
+ST-HAC, raw mean With training 63.00 20.0 
+At the same budget of 128 128 int8 vectors of dimension 64 64 , ST-HAC scores 62.96 62.96 , the full sequence scores 63.09 63.09 , uniform pooling scores 56.50 56.50 , and random token retention scores 60.41 60.41 . Two ablations stay within 0.06 0.06 of ST-HAC: w s = 0 w_{s}=0 drops the spatial term from the clustering feature and groups by semantics and time alone ( 62.90 62.90 ), and the raw-mean variant skips the centroid renormalization of equation 20 and keeps the raw norm of the cluster mean ( 63.00 63.00 ). Building the index takes about 20.0 20.0 single-thread milliseconds per page. Records are split across processes: one hundred million pages take about 2 × 10 6 2\times 10^{6} single-thread seconds, or about 9 9 hours over 64 64 processes, and a new record is appended directly. 
+8.6 Business scenarios 
+Beyond the public benchmarks, we evaluate on real business scenarios (finance, industry, museums, landmarks, and automotive) covering text-to-image, image-to-image, and combined image-text retrieval; the scenario names are generalized and do not map to specific data sources. Table 14 reports Top-1 against two strong business baselines, Qwen3-VL-Embedding-8B and WeMM-Embedding-9B. Table 14: Business-scenario retrieval, Top-1, averaged within each scenario. Scenario names are generalized. Bold marks the best value in the row. 
+Scenario Qwen3-VL-Emb-8B WeMM-Emb-9B OmniEVIE-4B 
+Text to image (mean) 54.6 61.2 64.2 
+Image to image (mean) 93.4 94.1 96.5 
+Image-text (mean) 81.2 84.1 90.4 
+Finance, text to image 76.3 66.4 76.3 
+Industry, text to image 61.8 70.9 81.8 
+Museums, text to image 53.2 67.5 79.2 
+Landmarks, image to image 78.6 81.4 92.9 
+Automotive, image-text 86.4 90.9 100.0 
+On the category means OmniEVIE is first on all three: text-to-image 64.2 64.2 against 61.2 61.2 , image-to-image 96.5 96.5 against 94.1 94.1 , and image-text 90.4 90.4 against 84.1 84.1 . Among representative scenarios, finance, industry, and museums in text-to-image reach 76.3 76.3 , 81.8 81.8 , and 79.2 79.2 , which are 9.9 9.9 , 10.9 10.9 , and 11.7 11.7 points above the 9 9 B baseline; landmarks in image-to-image reach 92.9 92.9 , a gain of 11.5 11.5 ; and automotive in image-text reaches 100.0 100.0 , a gain of 9.1 9.1 . The gains are largest where matching needs layout detail or a local product feature, consistent with the public-set results above. 
+9 Analysis 
+9.1 Two degrees of freedom in the byte budget 
+At a fixed number of bytes the index can keep more vectors K K or a higher dimension d d . Table 15 separates the two choices. The first rows are the full Prefix-MRL sequence at each width. The last comparison holds the multi-vector payload at 4,096 4{,}096 bytes and asks whether K = 64 , d = 64 K=64,d=64 beats K = 32 , d = 128 K=32,d=128 . Section 1 says the count decides how many local pieces can be matched at once, while the dimension decides how well one vector separates lookalikes. When the evidence is scattered, the count should matter more. Table 15: Prefix-MRL width and ST-HAC budget on ViDoRe V3. Bytes include the mean vector where ST-HAC stores one. Storage is per million records. 
+Setting ( K , d ) (K,d) Bytes / rec. GiB / M ViDoRe V3 
+Prefix-MRL, full seq. × 2048 \times 2048 4,106,184 4{,}106{,}184 3,824 3{,}824 64.34 
+Prefix-MRL, full seq. × 512 \times 512 1,026,546 1{,}026{,}546 956 956 64.12 
+Prefix-MRL, full seq. × 128 \times 128 256,636 256{,}636 239 239 63.55 
+Prefix-MRL, full seq. × 64 \times 64 128,318 128{,}318 120 120 63.09 
+ST-HAC ≤ 128 × 64 \leq 128\times 64 8,448 8{,}448 7.87 7.87 62.96 
+ST-HAC ≤ 64 × 64 \leq 64\times 64 4,352 4{,}352 4.05 4.05 62.47 
+ST-HAC ≤ 32 × 128 \leq 32\times 128 4,608 4{,}608 4.29 4.29 61.82 
+ST-HAC ≤ 32 × 64 \leq 32\times 64 2,304 2{,}304 2.15 2.15 61.16 Figure 7: Storage against ViDoRe V3 accuracy for the Prefix-MRL width and the ST-HAC budget, per million records on a log axis. The gray square and triangle are the single-vector baseline Qwen3-VL-Embedding-8B and the multi-vector baseline Nemotron-ColEmbed-V2-8B, placed at their own index storage (the latter at 4096 4096 dimensions and about 773 773 tokens per page, about 5,898 5{,}898 GiB per million in fp16); marker size reflects the roughly 8 8 B model scale, larger than the 4.5 4.5 B of OmniEVIE. 
+As shown in Figure 7 and Table 15 , cutting the full sequence from dimension 2048 2048 to 512 512 , 128 128 , and 64 64 yields 64.34 64.34 , 64.12 64.12 , 63.55 63.55 , and 63.09 63.09 . A 32 × 32\times cut in storage costs 1.25 1.25 points, so most of the full-sequence score survives a much narrower vector. At a payload of 4,096 4{,}096 bytes, K = 64 , d = 64 K=64,d=64 scores 62.47 62.47 and K = 32 , d = 128 K=32,d=128 scores 61.82 61.82 . Spending the bytes on more vectors beats spending them on a higher dimension. 
+On MMEB the same comparison uses the full d = 2048 d=2048 sequence, the blue line in Figure 1 , as the 190-task mean in Appendix B (Table 16 ). The released index scores 60.06 60.06 on V3, 0.62 0.62 below the ceiling of 60.68 60.68 , and 77.96 77.96 on V2, 0.60 0.60 below 78.56 78.56 . A full sequence cut to d = 64 d=64 scores 59.02 59.02 on V3, below the released index. Table 16: Full-sequence ceiling and the released index on MMEB. V3 and V2 use the means in Appendix B . 
+Representation V3 V2 Image Video VisDoc Text Agent 
+Full sequence, d = 2048 d=2048 60.68 78.56 78.70 70.08 84.70 52.97 54.14 
+Full sequence, d = 64 d=64 59.02 77.89 78.06 69.52 83.90 52.50 49.17 
+K ​ 128 × d ​ 64 K128\times d64 int8 59.71 77.81 78.04 69.37 83.80 51.64 52.99 
+Released index 60.06 77.96 78.09 69.62 84.02 51.77 54.03 
+9.2 Int8 scales 
+Table 17 compares the fixed scale of Section 6 on ViDoRe V3. Table 17: Int8 quantization on ViDoRe V3, graded nDCG@10. 
+Scheme Extra / vec. Compare Append nDCG@10 
+fp16 centroids + 64 +64 B Float Direct 62.99 
+int8 + fp16 scale + 2 +2 B Float Direct 62.96 
+int8, scale dropped 0 0 Integer Direct 57.82 
+Corpus max / 127 /127 0 0 Integer Rescan 62.97 
+Fixed scale 1 / 127 1/127 0 0 Integer Direct 62.96 
+The fixed scale scores 62.96 62.96 , within 0.03 0.03 of fp16 centroids ( 62.99 62.99 ), a per-vector fp16 scale ( 62.96 62.96 ), and a corpus-wide scale ( 62.97 62.97 ). Dropping the scale falls to 57.82 57.82 . 
+9.3 Latency 
+Table 18 reports single-thread CPU retrieval time at three corpus sizes. The operating point is N 1 = 5,000 N_{1}=5{,}000 and N 2 = 1,000 N_{2}=1{,}000 . Deltas and top-10 retention are measured against full int8 MaxSim on a ViDoRe V3 pool of 19,252 19{,}252 pages and a video pool of 13,932 13{,}932 clips. Table 19 varies the query length on the one-million corpus. Table 18: Single-thread retrieval latency in milliseconds. Cells are totals. Δ \Delta is the nDCG@10 change on the document pool and the video pool. 
+Pipeline N 1 N_{1} N 2 N_{2} 100k 1M 5M Δ \Delta doc / vid 
+Full int8 MaxSim all – 1,657 1{,}657 12,781 12{,}781 63,892 63{,}892 0 0 / 0 0 
+Single vector d = 2048 d=2048 all – 34.6 331.0 1,666 1{,}666 – 
+Single vector d = 4096 d=4096 all – 60.9 604.0 3,039 3{,}039 – 
+S1 + S3 2,000 2{,}000 – 41.8 55.2 128.5 − 0.60 -0.60 / − 0.66 -0.66 
+S1 + S3 5,000 5{,}000 – 103.9 115.1 186.5 − 0.13 -0.13 / − 0.10 -0.10 
+Three-stage 5,000 5{,}000 200 200 24.6 38.4 110.2 − 0.20 -0.20 / − 3.09 -3.09 
+Three-stage 5,000 5{,}000 500 500 30.6 44.2 116.6 − 0.13 -0.13 / − 0.84 -0.84 
+Three-stage 5,000 5{,}000 1,000 1{,}000 41.9 54.2 120.2 − 0.13 -0.13 / − 0.26 -0.26 
+Three-stage 10,000 10{,}000 1,000 1{,}000 62.3 75.7 127.7 0.00 0.00 / − 0.35 -0.35 
+Float × \times 1 1 -bit 5,000 5{,}000 100 100 72.7 85.8 156.7 − 0.21 -0.21 / − 1.05 -1.05 
+Top-10 retention for the operating point ( N 1 = 5,000 N_{1}=5{,}000 , N 2 = 1,000 N_{2}=1{,}000 ) is 99.5 % 99.5\% on documents and 98.2 % 98.2\% on video. The same windows at N 2 = 200 N_{2}=200 retain 98.5 % 98.5\% and 85.7 % 85.7\% . At N 2 = 500 N_{2}=500 they retain 99.4 % 99.4\% and 94.9 % 94.9\% . At N 1 = 10,000 N_{1}=10{,}000 they retain 99.9 % 99.9\% and 97.7 % 97.7\% . The two-stage rows at N 1 = 2,000 N_{1}=2{,}000 and N 1 = 5,000 N_{1}=5{,}000 retain 97.8 % / 97.8 % 97.8\%/97.8\% and 99.5 % / 99.6 % 99.5\%/99.6\% . The asymmetric float × \times 1 1 -bit row retains 98.6 % 98.6\% and 89.8 % 89.8\% . Table 19: Latency in milliseconds by query length on 1 1 million records, at N 1 = 5,000 N_{1}=5{,}000 and N 2 = 1,000 N_{2}=1{,}000 . Speedup is against full int8 MaxSim. 
+Query L q L_{q} S1 S2 S3 Total 
+Short text 20 20 – 40 40 14.8 14.6 17.3 46.7 ( 274 × 274\times ) 
+Image or image-text 90 90 – 270 270 14.8 91.6 49.8 156.2 ( 82 × 82\times ) 
+Long context or a full page 150 150 – 500 + 500+ 14.8 321.8 103.3 439.9 ( 29 × 29\times ) 
+On one million records the operating point takes 54.2 54.2 ms, of which S1, S2, and S3 take 14.6 14.6 , 19.7 19.7 , and 19.9 19.9 ms. Full int8 MaxSim takes 12,781 12{,}781 ms, so the three-stage path is 236 × 236\times faster, and nDCG@10 changes by − 0.13 -0.13 on documents and − 0.26 -0.26 on video. The same split is 1.5 1.5 / 19.6 19.6 / 20.8 20.8 ms at 100 100 thousand records. At five million records S1 grows to 80.5 80.5 ms, because it scans the whole corpus, and the total is 120.2 120.2 ms. 
+S1 is a 64 64 -dimensional scan, so the same comparison also favors OmniEVIE over an exact high-dimensional single vector once the corpus is large. At 100 100 thousand records, d = 2048 d=2048 and d = 4096 d=4096 take 34.6 34.6 ms and 60.9 60.9 ms, close to the three-stage total. At one million records they take 331.0 331.0 ms and 604.0 604.0 ms, against 54.2 54.2 ms ( 6.1 × 6.1\times and 11.1 × 11.1\times ). At five million records they take 1,666 1{,}666 ms and 3,039 3{,}039 ms, against 120.2 120.2 ms ( 13.9 × 13.9\times and 25.3 × 25.3\times ). The two-stage pipeline at a similar latency, N 1 = 2,000 N_{1}=2{,}000 and 55.2 55.2 ms, drops nDCG by 0.60 0.60 and 0.66 0.66 . The two-stage pipeline with a similar accuracy, N 1 = 5,000 N_{1}=5{,}000 , takes 115.1 115.1 ms. S1 is constant in the query length. S2 and S3 grow with it. A query of about 400 400 tokens takes 439.9 439.9 ms and is still 29 × 29\times faster than full int8 MaxSim. 
+9.4 Token alignment and gate weights 
+A single vector returns one scalar. The multi-vector index shows which part of the candidate each token hits. Figure 8 uses one medical query from ViDoRe V3: “Did the FDA’s 2018 Strategic Policy Roadmap eliminate the need for clinical trials in biosimilar approval processes?” The tokens Strategic, Policy, and Road each hit the cluster of the matching word in the bold title. Those clusters contain 3 3 to 6 6 patches, and the maximum similarity is above 0.94 0.94 . The gate lifts these three tokens above the uniform weight and puts the last 10 10 expansion tokens below it. On the relevant page every token is above the noise floor, with mean 0.82 0.82 . On an unrelated page from the same domain the mean is 0.43 0.43 , and about half of the tokens fall below the floor. A word that appears on both pages, such as FDA, still matches. Equation ( 9 ) amplifies the excess above 0.38 0.38 , and a token below the floor keeps its original value. Figure 8: Per-token hits and query-side gate weights. (a)(b) Member patches of the clusters hit by three query words on a medical document page from ViDoRe V3, with each cluster colored separately. (c) Per-token weights from the salience gate, with the dashed line marking the uniform weight. (d) Per-token maximum similarity on the relevant page versus an unrelated same-domain page, with the dashed line at the noise floor θ nf = 0.38 \theta_{\mathrm{nf}}=0.38 . 
+9.5 Evidence localization and video time localization 
+The same argmax places the hit on a page region or a video time (Section 7.5 ). In Figure 9 (a)(b)(c), three ViDoRe V3 queries hit the answer on the page ranked first by S3: Denmark hits the DK row and contracts hits the column header; the page in (b) is French, where percentage hits “3 %” and photovoltaic hits “photovoltaïque totale” in the same sentence; in (c), 2014 hits the 2014 column of the bar chart and Therapy hits the chart title. 
+Figure 9 (d) is a 150 150 s QVHighlights video [ 16 ] , encoded in 4 4 windows. The labeled segment of 66 66 – 90 90 s crosses the window boundary at 75 75 s. Couch scores 0.77 0.77 and 0.69 0.69 on the two sides and hosts scores 0.74 0.74 and 0.57 0.57 , all above the noise floor, so equation 25 adds them; news hits another shot at 9 9 – 38 38 s. The heat peaks at 77 77 s, and the returned span of 75 75 – 94 94 s overlaps the label and runs 4 4 s past it. Over all 1,083 1{,}083 queries, the peak falls inside the label for 78.0 % 78.0\% and the span intersects it for 94.3 % 94.3\% . The span averages 27.7 27.7 s, 18 % 18\% of the video, against 44.9 % 44.9\% for a random span of the same length and 24.0 % 24.0\% for a random point (Figure 9 (e)). 
+A global vector returns the whole video or the whole page, so a question about which second or which part of the page still sends that whole video or page to the downstream generator. An OmniEVIE hit carries its place: a bounding rectangle for a page or an image, and the returned span of equation 25 for a video. The downstream generator reads only that rectangle or that span; Figure 9 (a) passes the row for DK, and Figure 9 (d) passes 75 75 – 94 94 s. The video side also needs no video parsing model. A common long-video pipeline first runs a video understanding model to transcribe each segment into timestamped captions and then retrieves over the text. OmniEVIE encodes the sampled frames directly and takes the time interval of each centroid from the frame indices, so neither indexing nor localization goes through transcription; this is a native route to video retrieval. A long video is stored as fixed windows, one record per window, and equation 25 returns the start and end of the matched segment on the full video timeline. 
+Figure 10 shows three QVHighlights queries, with the middle frames of each row taken from the returned span and the side frames from outside it. In (a), closing a packed suitcase, the label is 24 24 – 40 40 s, the span is 23 23 – 38 38 s, and the peak is at 26 26 s, where she presses the clothes down into the case; outside are a close view of the bag, her facing the camera, a close-up of her face, and the two of them in a car. In (b), dolls in a display case, the label and the span are both 84 84 – 98 98 s with the peak at 87 87 s; the case fills the span, and the sides show a banquet hall, piled goods, a top-down view of a circular floor pattern, and a selfie of the woman. In (c), a man in a blue shirt driving a yellow car, the label is 118 118 – 136 136 s, the span is 117 117 – 136 136 s, and the peak is at 120 120 s; the span shows the driver from the back seat, and the sides are the same woman’s selfies. Figure 9: Localized evidence. (a)(b)(c) Clusters hit on the top-ranked page: one color is one cluster, the box is its bounding rectangle, and the bold query words match the boxes. (d) Timestamp lookup in a 150 150 s video: bars are each query word’s best centroid in each window, shaded by the margin over the noise floor; the curve is the heat of equation 25 , the band is the labeled segment, and the outlined bar is the returned span. (e) Hit rate of the peak and of the returned span, against a random span of the same length. Figure 10: Returned spans for three QVHighlights queries. The outlined middle frames come from the returned span and the gray side frames come from outside it; the number under a frame is its time and the dots mark these frames. The bar is the returned span, the dashed box is the labeled segment, and the triangle is the heat peak. (a) Closing a suitcase. (b) Dolls in a display case. (c) Driving the yellow car. 
+9.6 Limitations 
+A clip of a few seconds, sampled at a low frame rate, collapses to a handful of temporal groups under the stride of 2 2 , so little of the action remains. The frame rate can be chosen from the length of the clip. Reasoning retrieval, GUI, and memory are still the lowest text and agent subgroups; they need multi-step reasoning retrieval data and interface screenshots. The gate and the noise floor are computed inside S3, so their cost grows linearly with L q L_{q} . 
+10 Conclusion 
+OmniEVIE serves text, images, documents, video, and tools from one 4.5 4.5 B model and one index. MMEB-V3 is 60.06 60.06 , 0.62 0.62 below the full d = 2048 d=2048 sequence at 60.68 60.68 on the same 190 tasks. A record is at most 9,472 9{,}472 bytes, about 8.8 8.8 GiB per million records. On one million and five million records, a single thread takes 54.2 54.2 ms and 120.2 120.2 ms, 11.1 × 11.1\times and 25.3 × 25.3\times faster than exact search over a 4096 4096 -dimensional vector. Search uses the compressed index. The hit names a page region or a video interval. 
+Training and search use the same score. Evidence grades decide which negatives are false. Candidates are clustered during training into the vectors that will be stored. Specialists trained separately are merged by parameter block, and each block receives its own coefficient. Online, the score is an inner product, a popcount, or an int8 dot product. 
+An agent that retrieves several times in one task benefits when each hit already names its evidence: the generator then reads that region or interval (Figure 9 ). This release tests the architecture, the schedule, and the compressed index on public data: 57 57 datasets and about 2 2 M samples. The next stage adds domain data, extends the same record to audio and to long mixed documents, and passes the localized region or interval to a generator. At larger scale the mean vector can itself be quantized or placed in a graph index. 
+Weights are at https://huggingface.co/tencent/OmniEVIE-4B . Inference, indexing, and the three-stage retriever are at https://github.com/Tencent/OmniEVIE . The corpora are public benchmarks and licensed document, image, and video collections. The evidence check filters sensitive material and personally identifiable information. Hyperparameters and evaluation suites are listed in Appendix A and Appendix B . 
+References 
+[1] D. Bolya, C. Fu, X. Dai, P. Zhang, C. Feichtenhofer, and J. Hoffman (2023) Token merging: your ViT but faster . In International Conference on Learning Representations , Cited by: §2.2 . 
+[2] M. S. Charikar (2002) Similarity estimation techniques from rounding algorithms . In Proceedings of the 34th Annual ACM Symposium on Theory of Computing , pp. 380–388 . Cited by: §7.3 . 
+[3] Devvrit, S. Kudugunta, A. Kusupati, T. Dettmers, K. Chen, I. Dhillon, Y. Tsvetkov, H. Hajishirzi, S. Kakade, A. Farhadi, and P. Jain (2023) MatFormer: nested transformer for elastic inference . arXiv:2310.07707 . Cited by: §2.1 . 
+[4] L. Dhulipala, M. Hadian, R. Jayaram, J. Lee, and V. Mirrokni (2024) MUVERA: multi-vector retrieval via fixed dimensional encodings . arXiv:2405.19504 . Cited by: §2.2 , §7.4 . 
+[5] R. Esfandiarpoor, R. Osmulski, Y. Babakhin, G. d. S. P. Moreira, O. Holworthy, J. He, R. Ak, J. Cai, R. Chesler, B. Liu, and E. Oldridge (2026) Beyond semantic similarity: performance and costs of agentic retrieval for complex tasks . arXiv:2610.05750 . Cited by: §2.1 . 
+[6] M. Faysse, H. Sibille, T. Wu, B. Omrani, G. Viaud, C. Hudelot, and P. Colombo (2025) ColPali: efficient document retrieval with vision language models . In International Conference on Learning Representations , Cited by: §1.1 , §1.1 , §2.1 . 
+[7] M. Günther, S. Sturua, M. K. Akram, I. Mohr, A. Ungureanu, B. Wang, S. Eslami, S. Martens, M. Werk, N. Wang, and H. Xiao (2025) Jina-embeddings-v4: universal embeddings for multimodal multilingual retrieval . arXiv:2506.18902 . Cited by: §2.1 . 
+[8] F. Hönicke, M. Günther, A. Koukounas, M. K. Akram, S. Martens, S. Sturua, and H. Xiao (2026) Jina-embeddings-v5-omni: geometry-preserving embeddings via locked aligned towers . arXiv:2605.08384 . Cited by: §2.1 . 
+[9] H. Huang, X. Lu, M. Su, X. Zhang, Z. Jiang, P. Nie, K. Zou, T. Pfister, W. Chen, W. Zhang, X. Shen, and R. Meng (2026) MMEB-V3: measuring the performance gaps of omni-modality embedding models . arXiv:2604.23321 . Cited by: §1.1 , §2.1 , §8.1 . 
+[10] G. Ilharco, M. T. Ribeiro, M. Wortsman, S. Gururangan, L. Schmidt, H. Hajishirzi, and A. Farhadi (2023) Editing models with task arithmetic . In International Conference on Learning Representations , Cited by: §2.3 , §5.1 . 
+[11] R. Jha, B. Wang, M. Günther, G. Mastrapas, S. Sturua, I. Mohr, A. Koukounas, M. K. Akram, N. Wang, and H. Xiao (2024) Jina-colbert-v2: a general-purpose multilingual late interaction retriever . arXiv:2408.16672 . Cited by: §2.1 . 
+[12] Z. Jiang, R. Meng, X. Yang, S. Yavuz, Y. Zhou, and W. Chen (2024) VLM2Vec: training vision-language models for massive multimodal embedding tasks . arXiv:2410.05160 . Cited by: §1.1 , §2.1 , §8.1 . 
+[13] O. Khattab and M. Zaharia (2020) ColBERT: efficient and effective passage search via contextualized late interaction over BERT . In Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval , pp. 39–48 . Cited by: §1.1 , §2.1 . 
+[14] M. Kim, S. Shim, and B. Lee (2025) FALCON: false-negative aware learning of contrastive negatives in vision-language alignment . arXiv:2505.11192 . Cited by: §2.3 . 
+[15] A. Kusupati, G. Bhatt, A. Rege, M. Wallingford, A. Sinha, V. Ramanujan, W. Howard-Snyder, K. Chen, S. Kakade, P. Jain, and A. Farhadi (2022) Matryoshka representation learning . In Advances in Neural Information Processing Systems , Vol. 35 , pp. 30233–30249 . Cited by: §2.1 . 
+[16] J. Lei, T. L. Berg, and M. Bansal (2021) Detecting moments and highlights in videos via natural language queries . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: §9.5 . 
+[17] M. Li, Y. Zhang, D. Long, K. Chen, S. Song, S. Bai, Z. Yang, P. Xie, A. Yang, D. Liu, J. Zhou, and J. Lin (2026) Qwen3-VL-Embedding and Qwen3-VL-Reranker: a unified framework for state-of-the-art multimodal retrieval and ranking . arXiv:2601.04720 . Cited by: §1.3 , §2.1 . 
+[18] S. Li, Z. Hu, Y. Wang, P. Li, Z. Wei, and Y. Tang (2026) Conan-embedding-v3: fusing modality-specific models for omni-modal embedding . arXiv:2606.09331 . Cited by: §2.3 . 
+[19] X. Li, C. Li, S. Chen, and X. Chen (2026) U-MARVEL: unveiling key factors for universal multimodal retrieval via embedding learning with MLLMs . In International Conference on Learning Representations , Cited by: §2.1 . 
+[20] A. Loison, Q. Macé, A. Edy, V. Xing, T. Balough, G. Moreira, B. Liu, M. Faysse, C. Hudelot, and G. Viaud (2026) ViDoRe V3: a comprehensive evaluation of retrieval augmented generation in complex real-world scenarios . arXiv:2601.08620 . Cited by: §2.1 , §8.1 . 
+[21] A. Mahdizadeh, A. Salari, S. Rajabi, S. Mirabbasi, P. Nasiopoulos, and A. Morsali (2026) Coverage matters: MarginMerge for compressing multi-vector visual document retrievers . arXiv:2608.02969 . Cited by: §2.2 . 
+[22] R. Meng, Z. Jiang, Y. Liu, M. Su, X. Yang, Y. Fu, C. Qin, Z. Chen, R. Xu, C. Xiong, Y. Zhou, W. Chen, and S. Yavuz (2025) VLM2Vec-V2: advancing multimodal embedding for videos, images, and visual documents . arXiv:2507.04590 . Cited by: §1.1 , §2.1 , §8.1 . 
+[23] G. d. S. P. Moreira, R. Ak, M. Xu, O. Holworthy, B. Schifferer, Z. Yu, Y. Babakhin, R. Osmulski, J. Cai, R. Chesler, B. Liu, and E. Oldridge (2026) Nemotron ColEmbed V2: top-performing late interaction embedding models for visual document retrieval . arXiv:2602.03992 . Cited by: §1.1 , §1.3 , §2.1 , §4.1 . 
+[24] Ovis-Embedding Team (2026) Ovis-embedding: pushing the frontiers of universal omni-modal embeddings . arXiv:2609.25165 . Cited by: §2.1 . 
+[25] H. Qin, A. Martin, R. Jha, C. Zuo, R. Kriz, and B. Van Durme (2026) Multi-vector index compression in any modality . arXiv:2602.21202 . Cited by: §1.3 , §2.2 , §6.1 . 
+[26] N. Ratzlaff, M. Luo, X. Su, V. Lal, and P. Howard (2024) Training-free mitigation of language reasoning degradation after multimodal instruction tuning . arXiv:2412.03467 . Cited by: §2.3 . 
+[27] A. Reddy, A. Martin, E. Yang, A. Yates, K. Sanders, K. Murray, R. Kriz, C. M. de Melo, B. Van Durme, and R. Chellappa (2025) Video-colbert: contextualized late interaction for text-to-video retrieval . arXiv:2503.19009 . Cited by: §1.1 , §2.1 . 
+[28] P. Rishi, R. R. Dwivedi, and V. K. Kurmi (2026) Query-aware token budgeting for efficient late-interaction visual document retrieval . arXiv:2609.07262 . Cited by: §2.2 . 
+[29] K. Santhanam, O. Khattab, C. Potts, and M. Zaharia (2022) PLAID: an efficient engine for late interaction retrieval . arXiv:2205.09707 . Cited by: §2.2 , §7.4 . 
+[30] K. Santhanam, O. Khattab, J. Saad-Falcon, C. Potts, and M. Zaharia (2022) ColBERTv2: effective and efficient retrieval via lightweight late interaction . In Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies , pp. 3715–3734 . Cited by: §2.1 . 
+[31] T. Song, M. Li, Y. Zhang, D. Long, C. Liu, P. Xie, Y. Zhao, and S. Wu (2026) CORE: improving compositional reasoning in MLLM embedding via reranker distillation . arXiv:2609.04083 . Cited by: §2.3 . 
+[32] P. Teiletche, Q. Macé, M. Conti, A. Loison, G. Viaud, P. Colombo, and M. Faysse (2025) ModernVBERT: towards smaller visual document retrievers . arXiv:2510.01149 . Cited by: §2.1 , §4.1 . 
+[33] D. Wan, H. Wang, E. Stengel-Eskin, J. Cho, and M. Bansal (2025) CLAMR: contextualized late-interaction for multimodal content retrieval . arXiv:2506.06144 . Cited by: §1.1 , §2.1 . 
+[34] Z. Wang, W. Wen, Q. Ji, Q. Zhang, R. Qiao, and X. Sun (2026) EVIE: evidence-vector-informed embeddings for visual document retrieval . arXiv:2610.11553 . Cited by: §1.3 , §2.1 , §4.1 , §4.1 . 
+[35] Z. Wang, Y. Liu, M. Wang, E. Nie, D. Chen, Z. Zhao, S. Feng, D. Wang, X. Yang, Y. Zhang, and H. Schütze (2026) PlaM: training-free plateau-guided model merging for better visual grounding in MLLMs . arXiv:2601.07645 . Cited by: §2.3 . 
+[36] O. Weller, M. Boratko, I. Naim, and J. Lee (2026) On the theoretical limitations of embedding-based retrieval . In International Conference on Learning Representations , Cited by: §1.1 . 
+[37] Z. Xiao, Q. Ma, M. Gu, C. J. Chen, X. Chen, V. Ordonez, and V. Mohan (2026) MetaEmbed: scaling multimodal retrieval at test-time with flexible late interaction . In International Conference on Learning Representations , Cited by: §2.1 . 
+[38] P. Yadav, D. Tam, L. Choshen, C. Raffel, and M. Bansal (2023) TIES-Merging: resolving interference when merging models . In Advances in Neural Information Processing Systems , Cited by: §2.3 , §5.1 . 
+[39] Y. Yan, M. Ou, Y. Cao, X. Zou, J. Huo, S. Liu, J. Kwok, and X. Hu (2026) Sculpting the vector space: towards efficient multi-vector visual document retrieval via prune-then-merge framework . arXiv:2602.19549 . Cited by: §2.2 . 
+[40] J. Zhou, K. Mei, L. Li, T. Wang, F. Rao, and J. Lyu (2026) WeMM-Embedding: WeChat multi-modal embedding technical report . arXiv:2608.24053 . Cited by: §2.1 , §8.1 . 
+Appendix A Hyperparameters Table 20: Training and index settings used for the released model. 
+Group Setting 
+Backbone Qwen3.5-VL with bidirectional full attention; d hid = 2560 d_{\mathrm{hid}}=2560 ; W ∈ ℝ 2048 × 2560 W\in\mathbb{R}^{2048\times 2560} ; widths { 64,128,256,512 , 1024 , 2048 } \{64,128,256,512,1024,2048\} . 
+Video Δ ​ t patch = 2 \Delta t_{\mathrm{patch}}=2 . Training pads clips shorter than 12 12 frames up to 12 12 , with a cap of 3,600 3{,}600 tokens. Evaluation uses 32 32 frames and 14,400 14{,}400 tokens, and the official comparison uses 8 8 frames and 3,600 3{,}600 tokens. 
+Optimization AdamW, weight decay 0.02 0.02 . LoRA rank 64 64 or 128 128 , α = 4 ​ r \alpha=4r , dropout 0.05 0.05 . Learning rate 2 × 10 − 5 2\times 10^{-5} on LoRA and 4 × 10 − 6 4\times 10^{-6} on the merger and the head, cosine decay to 0.1 × 0.1\times the peak, warmup 5 % 5\% of steps. Global batch 512 512 . One epoch per stage. 
+Loss τ = 0.02 \tau=0.02 , γ = 1 \gamma=1 , β = 0.5 \beta=0.5 , λ ord = 0.10 \lambda_{\mathrm{ord}}=0.10 . λ kd \lambda_{\mathrm{kd}} is frozen after it is set from the early gradient-norm ratio. w e = 0.80 w_{e}=0.80 . 
+Train-time K K { 64,128 } \{64,128\} with probabilities 0.3 0.3 and 0.7 0.7 . 
+Query side τ gate = 0.6 \tau_{\mathrm{gate}}=0.6 , θ nf = 0.38 \theta_{\mathrm{nf}}=0.38 , β nf = 2.5 \beta_{\mathrm{nf}}=2.5 . 
+Merge c k , b ∈ [ 0 , 1 ] c_{k,b}\in[0,1] per block. Language-layer trim keeps ρ = 0.75 \rho=0.75 ; other blocks use ρ = 1 \rho=1 . 
+ST-HAC Video ( w s , w t ) = ( 0.07 , 0.03 ) (w_{s},w_{t})=(0.07,0.03) ; images and pages ( 0.10 , 0 ) (0.10,0) ; text ( 0 , 0.10 ) (0,0.10) . K ≤ 128 K\leq 128 , d = 64 d=64 . Time frequencies in [ π / 4 , π ] [\pi/4,\pi] . 
+Quantization Scale 1 / 127 1/127 , integers in [ − 127,127 ] [-127,127] . Record caps 8,448 8{,}448 bytes (two-level) and 9,472 9{,}472 bytes (three-stage). 
+Retrieval N 1 = 5,000 N_{1}=5{,}000 , N 2 = 1,000 N_{2}=1{,}000 , k = 10 k=10 . 
+Appendix B Evaluation suites Table 21: Suites reported in Section 8. MMEB-V3 scores 11 audio tasks as zero and includes them in the denominator. Agent is Tool + GUI + Memory, with MCMR reported separately in Table 8 . 
+Suite Coverage Tasks Metric 
+MMEB-V3 Image, video, visual documents, text, tool, GUI, memory, multi-hop 190 Hit@1; nDCG@5 on text and visual documents 
+MMEB-V2 Image (36), video (18), visual documents (24) 78 Hit@1 on image and video; nDCG@5 on visual documents 
+ViDoRe V3 8 domains, 6 languages 48 Graded nDCG@10 
+Fine-grained FORB, Street2Shop, MovingFashion; MSR-VTT, MSVD, DiDeMo, VATEX; ActivityNet order 8 Top-1 / nDCG@10 / win rate 
+Video in the fine-grained suite is encoded at 1 1 frame per second, at most 32 32 frames, as one native sequence. Experimental support, please view the build logs for errors. Generated by L A T E xml . 
+Instructions for reporting errors 
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below: 
+Click the &quot;Report Issue&quot; ( ) button, located in the page header. 
+Tip: You can select the relevant text first, to include it in your report. 
+Our team has already identified the following issues . We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all. 
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion , and welcome developer contributions . We gratefully acknowledge support from our major funders , member institutions , ,
+        and all contributors. About · Help · Contact · Subscribe · Copyright · Privacy · Accessibility · Operational Status (opens in new tab)</pre><button id="atlas-theme-toggle" type="button" aria-label="切换为浅色主题" aria-pressed="false">☀️ 浅色</button>
+<script id="atlas-theme-script">
+(()=>{
+  const root=document.documentElement;
+  const button=document.getElementById('atlas-theme-toggle');
+  button.addEventListener('click',()=>{
+    const light=root.dataset.theme!=='light';
+    root.dataset.theme=light?'light':'dark';
+    button.textContent=light?'🌙 深色':'☀️ 浅色';
+    button.setAttribute('aria-pressed',String(light));
+    button.setAttribute('aria-label',light?'切换为深色主题':'切换为浅色主题');
+    window.dispatchEvent(new Event('atlas-theme-change'));
+  });
+})();
+</script></body></html>

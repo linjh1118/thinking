@@ -74,3 +74,6 @@ API 文档说所有问题在一个 forward pass 中判断，不生成文本。�
 - `src/` 保留三页原始 HTML 和正文提取；当前没有独立报告可链接。
 
 > 📊 相关可视化: [[Topics/13_base_model/Alibaba_Qwen/Variants/260924_Decision_Model_Preview/decision_model_preview_poster_zh.html|Decision Model 中文 Poster]]
+
+> [!info] 2026-11-26补充
+> [[Decision-Model-Stable|正式版/完整报告补充笔记]]已归档；本文的材料限制描述保留为历史检查状态。
