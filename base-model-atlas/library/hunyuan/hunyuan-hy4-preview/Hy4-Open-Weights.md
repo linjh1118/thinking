@@ -19,7 +19,7 @@ tags: [model-note, base-model, hy4]
 > [!tldr]
 > 770B只指语言骨干；视觉和起草器另计。总参数、激活量、运行显存三者不能互换。
 
-![手绘：骨干、视觉和共享起草](src/assets/hy4_handdrawn.png)
+![手绘：骨干、视觉和共享起草](src/assets/hy4_handdrawn_20261127.png)
 
 | 部分 | 官方口径 |
 |---|---|
