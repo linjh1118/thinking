@@ -1,6 +1,7 @@
 ---
 title: "Flora — 机器人数据的时间、语义与奖励三层标注"
 type: model-note
+html_tabs: true
 tags: [model, nvidia, agent-training, reward-model]
 created: 2026-10-21
 updated: 2026-10-23
@@ -60,7 +61,7 @@ WGO有100episodes（HomER25、DROID50、Galaxea25）、743gold segments。训练
 
 ## 许可、复现与研究判断
 
-NVIDIA OneWay **Noncommercial**用于研究开发；基座Apache2.0不覆盖这个后训练权重的限制。H100测试不等于吞吐或显存保证。原生推理混合BF16与FP32 Gated DeltaNet；TempSeg另有FP32 LoRA，不能把所有参数无条件cast成BF16。
+2026-11-27复核：Captioner/TempSeg/Rewarder三张当前官方模型卡已把frontmatter与GOVERNING DOWNLOAD TERMS改为 **Apache-2.0**，并去掉“non-commercial”措辞。此前OneWay Noncommercial为历史卡片口径；这是许可/文档变化，没有新权重或新发布日期证据。当前卡仍称research and development、not intended or supported for production，不能由许可字段推定生产性能或安全保证。H100测试不等于吞吐或显存保证。原生推理混合BF16与FP32 Gated DeltaNet；TempSeg另有FP32 LoRA，不能把所有参数无条件cast成BF16。
 
 10月23日复核：三卡 frontmatter 新增 `license: other`、许可名称与仓库 `LICENSE.pdf` 链接，正文的非商业许可口径没有变化。这是文档元数据补齐，不作为新权重、能力升级或新发布日期。按当前不下载 PDF 的要求，仅保留官方许可链接，未宣称已经阅读该 PDF 或许可发生变更。
 

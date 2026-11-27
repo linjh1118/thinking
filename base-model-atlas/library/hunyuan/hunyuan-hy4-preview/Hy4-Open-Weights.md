@@ -31,7 +31,7 @@ tags: [model-note, base-model, hy4]
 |上下文|1,048,576 tokens|
 |iHC|4条residual streams|
 
-ViT/adapter/DFly2不含在770B骨干值；HF总量约774.43B为不同统计口径，不把它与770B差额都说成视觉参数。动态分辨率图片与视频帧经adapter进入语言骨干，输出文本；没有原生声音输入的公开契约。
+ViT/adapter/DFly2不含在770B骨干值；HF总量约774.43B为不同统计口径，不把它与770B差额都说成视觉参数。2026-11-27当前Hy4/FP8/base模型卡将介绍从“text, image, and video”修正为“text and image”。现行公开契约按文本/图片记；源码或微调示例里的视频相关接口不证明已发布权重承诺视频质量。输出文本，没有原生声音输入的公开契约。
 
 ## 稀疏索引与DFly2
 
@@ -63,7 +63,7 @@ Instruct：TerminalBench4.0为44.4，GPT6.1Sol55.5、Opus5.5 66.4、KimiK3.1Pro6
 ## 部署与微调契约
 
 > [!tldr]
-> 模型卡支持视频，示例vLLM却设置video=0；需要区分模型能力与该命令实际启用范围。
+> 11/27卡片已移除视频支持介绍；旧卡提到视频为历史口径，vLLM示例仍video=0，不将源码接口或旧描述当现行能力承诺。
 
 推荐temperature0.9、top_p1，reasoning_effort默认high，可no_think。Base不是chat模型，不能直接套Instruct模板评判。vLLM官方hy4镜像示例TP8、FP8、FLASHMLA_SPARSE、hy_v4推理/工具解析、DFly5tokens；其中limit-mm设置image1/video0。SGLang hy4多架构镜像示例TP8。未运行这些示例，不能承诺任意8GPU或1M上下文可装下；镜像tag仍需固定digest。
 
