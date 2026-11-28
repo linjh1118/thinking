@@ -4,7 +4,7 @@ type: model-note
 html_tabs: true
 status: read
 created: 2026-11-21
-updated: 2026-11-21
+updated: 2026-11-28
 tags: [model-note, base-model, wemm]
 ---
 
@@ -41,7 +41,7 @@ tags: [model-note, base-model, wemm]
 
 音频encoder初始化自Qwen2.5-Omni，视觉encoder/投影继承各自骨干。0.1秒窗口映射一个音频token，在控制音频长度的同时保留局部时序；仍需要确认时间戳、帧采样和声音是否来自同一时段。仅有画面或把音轨错配，都可能改变任务本身。
 
-35BA3B配置给40层、hidden2048、256专家选8、每四层一次全注意力，其余线性注意力，视觉27层hidden1152；text_config.max_position_embeddings=262144。这个字段是配置上限，不是任意视频时长下已验证的有效推理长度。官方默认服务max_model_len8192、2fps/4–16帧也是示例资源配置，不能互相替代。
+35BA3B配置给40层、hidden2048、256专家选8、每四层一次全注意力，其余线性注意力，视觉27层hidden1152；text_config.max_position_embeddings=262144。这个字段是配置上限，不是任意视频时长下已验证的有效推理长度。2026-11-28复核官方README：vLLM的max_model_len与SGLang的context_length示例均改为65536；视频采样继承processor_config的2fps、min_frames4、max_frames128、total_pixels25165824、min_pixels4096。max_frames仅上限，实际帧数还受视频时长和fps影响；逐帧像素还涉及temporal factor2。低资源quick check才显式用1fps、16帧、262144总像素。旧8192与4–16帧属于当时示例，不再当当前默认；配置上限、服务预算和实际能力仍须分开。
 
 ## 数据与三阶段预训练
 
